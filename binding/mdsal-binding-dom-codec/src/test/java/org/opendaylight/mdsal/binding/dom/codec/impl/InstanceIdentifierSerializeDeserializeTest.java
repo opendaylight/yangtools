@@ -195,7 +195,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
             () -> codecContext.fromYangInstanceIdentifier(yiid));
         assertThat(ex.getMessage(),
             startsWith("Argument (urn:opendaylight:params:xml:ns:yang:controller:md:sal:test:bi:ba:notification"
-                + "?revision=2015-02-05)out-of-pixie-dust-notification is not valid child of "));
+                + "?revision=2015-02-05)out-of-pixie-dust-notification is not valid data tree child of "));
     }
 
     @Test

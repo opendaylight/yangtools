@@ -47,14 +47,12 @@ public class Mdsal600Test {
         // The real thing, used to kaboom
         final var runtimeTypes = new DefaultBindingRuntimeGenerator().generateTypeMapping(models);
 
-        // Verify schema-to-type lookup
-        final var barType = runtimeTypes.findType(barTypeSchema).orElseThrow();
-        final var bazType = runtimeTypes.findType(bazTypeSchema).orElseThrow();
-        assertEquals(FOO.createEnclosed("Bar"), barType.getIdentifier());
-        assertEquals(FOO.createEnclosed("Baz"), bazType.getIdentifier());
-
         // Verify type-to-schema lookup
-        assertSame(barTypeSchema, runtimeTypes.findSchema(barType).orElseThrow());
-        assertSame(bazTypeSchema, runtimeTypes.findSchema(bazType).orElseThrow());
+        final var barType = runtimeTypes.findSchema(FOO.createEnclosed("Bar")).orElseThrow();
+        final var bazType = runtimeTypes.findSchema(FOO.createEnclosed("Baz")).orElseThrow();
+
+        // Verify underlying schema lookup
+        assertSame(barSchema, barType.statement());
+        assertSame(bazSchema, bazType.statement());
     }
 }

@@ -71,6 +71,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     private State state = State.INITIALIZED;
 
     public GeneratorReactor(final EffectiveModelContext context) {
+        super(context);
         inferenceStack = SchemaInferenceStack.of(context);
 
         // Construct modules and their subtrees. Dependency sort is very much needed here, as it establishes order of
@@ -245,13 +246,13 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
             gen.ensureMember();
             collectCollisionDomains(result, gen);
             if (gen instanceof AbstractCompositeGenerator) {
-                result.add(((AbstractCompositeGenerator<?>) gen).domain());
+                result.add(((AbstractCompositeGenerator<?, ?>) gen).domain());
             }
         }
     }
 
     @Override
-    <E extends EffectiveStatement<QName, ?>, G extends AbstractExplicitGenerator<E>> G resolveTreeScoped(
+    <E extends EffectiveStatement<QName, ?>, G extends AbstractExplicitGenerator<E, ?>> G resolveTreeScoped(
             final Class<G> type, final QName argument) {
         LOG.trace("Searching for tree-scoped argument {} at {}", argument, stack);
 
@@ -297,7 +298,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     }
 
     @Override
-    AbstractTypeObjectGenerator<?> resolveLeafref(final PathExpression path) {
+    AbstractTypeObjectGenerator<?, ?> resolveLeafref(final PathExpression path) {
         LOG.trace("Resolving path {}", path);
         verify(inferenceStack.isEmpty(), "Unexpected data tree state %s", inferenceStack);
         try {
@@ -319,7 +320,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         }
     }
 
-    private @NonNull AbstractTypeAwareGenerator<?, ?> strictResolvePath(final @NonNull PathExpression path) {
+    private @NonNull AbstractTypeAwareGenerator<?, ?, ?> strictResolvePath(final @NonNull PathExpression path) {
         try {
             inferenceStack.resolvePathExpression(path);
         } catch (IllegalArgumentException e) {
@@ -328,7 +329,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         return mapToGenerator();
     }
 
-    private @Nullable AbstractTypeAwareGenerator<?, ?> lenientResolveLeafref(final @NonNull PathExpression path) {
+    private @Nullable AbstractTypeAwareGenerator<?, ?, ?> lenientResolveLeafref(final @NonNull PathExpression path) {
         try {
             inferenceStack.resolvePathExpression(path);
         } catch (IllegalArgumentException e) {
@@ -339,7 +340,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     }
 
     // Map a statement to the corresponding generator
-    private @NonNull AbstractTypeAwareGenerator<?, ?> mapToGenerator() {
+    private @NonNull AbstractTypeAwareGenerator<?, ?, ?> mapToGenerator() {
         // Some preliminaries first: we need to be in the correct module to walk the path
         final ModuleEffectiveStatement module = inferenceStack.currentModule();
         final ModuleGenerator gen = verifyNotNull(generators.get(module.localQNameModule()),
@@ -347,9 +348,9 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
         // Now kick of the search
         final List<EffectiveStatement<?, ?>> stmtPath = inferenceStack.toInference().statementPath();
-        final AbstractExplicitGenerator<?> found = gen.findGenerator(stmtPath);
+        final AbstractExplicitGenerator<?, ?> found = gen.findGenerator(stmtPath);
         if (found instanceof AbstractTypeAwareGenerator) {
-            return (AbstractTypeAwareGenerator<?, ?>) found;
+            return (AbstractTypeAwareGenerator<?, ?, ?>) found;
         }
         throw new VerifyException("Statements " + stmtPath + " resulted in unexpected " + found);
     }
@@ -359,7 +360,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         for (Generator child : parent) {
             if (child instanceof AbstractCompositeGenerator) {
                 LOG.trace("Visiting composite {}", child);
-                final AbstractCompositeGenerator<?> composite = (AbstractCompositeGenerator<?>) child;
+                final var composite = (AbstractCompositeGenerator<?, ?>) child;
                 stack.push(composite);
                 composite.linkUsesDependencies(this);
                 linkUsesDependencies(composite);
@@ -395,7 +396,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     private void linkDependencies(final Iterable<? extends Generator> parent) {
         for (Generator child : parent) {
             if (child instanceof AbstractDependentGenerator) {
-                ((AbstractDependentGenerator<?>) child).linkDependencies(this);
+                ((AbstractDependentGenerator<?, ?>) child).linkDependencies(this);
             } else if (child instanceof AbstractCompositeGenerator) {
                 stack.push(child);
                 linkDependencies(child);
@@ -408,7 +409,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         for (Generator child : parent) {
             stack.push(child);
             if (child instanceof AbstractTypeObjectGenerator) {
-                ((AbstractTypeObjectGenerator<?>) child).bindTypeDefinition(this);
+                ((AbstractTypeObjectGenerator<?, ?>) child).bindTypeDefinition(this);
             } else if (child instanceof AbstractCompositeGenerator) {
                 bindTypeDefinition(child);
             }

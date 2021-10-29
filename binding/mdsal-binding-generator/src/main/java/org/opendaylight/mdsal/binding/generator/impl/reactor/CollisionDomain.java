@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -139,7 +140,7 @@ final class CollisionDomain {
 
         Secondary(final Generator gen, final Member primary, final String classSuffix) {
             super(gen);
-            this.classPrimary = requireNonNull(primary);
+            classPrimary = requireNonNull(primary);
             this.classSuffix = requireNonNull(classSuffix);
             primary.addSecondary(this);
         }
@@ -217,12 +218,12 @@ final class CollisionDomain {
         }
     }
 
-    private final AbstractCompositeGenerator<?> gen;
+    private final AbstractCompositeGenerator<?, ?> gen;
 
     private List<Member> members = List.of();
     private boolean solved;
 
-    CollisionDomain(final AbstractCompositeGenerator<?> gen) {
+    CollisionDomain(final AbstractCompositeGenerator<?, ?> gen) {
         this.gen = requireNonNull(gen);
     }
 
@@ -239,9 +240,14 @@ final class CollisionDomain {
         return addMember(new LeafSecondary(memberGen, primary, classSuffix));
     }
 
-    @NonNull Member addSecondary(final RpcContainerGenerator memberGen, final Member primary, final String classSuffix,
-            final AbstractQName packageSuffix) {
-        return addMember(new SuffixSecondary(memberGen, primary, classSuffix, packageSuffix));
+    @NonNull Member addSecondary(final RpcInputGenerator memberGen, final Member primary) {
+        return addMember(new SuffixSecondary(memberGen, primary, BindingMapping.RPC_INPUT_SUFFIX,
+            memberGen.statement().argument()));
+    }
+
+    @NonNull Member addSecondary(final RpcOutputGenerator memberGen, final Member primary) {
+        return addMember(new SuffixSecondary(memberGen, primary, BindingMapping.RPC_OUTPUT_SUFFIX,
+            memberGen.statement().argument()));
     }
 
     @NonNull Member addSecondary(final AbstractAugmentGenerator memberGen, final Member classPrimary,

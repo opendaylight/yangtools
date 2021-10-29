@@ -9,15 +9,16 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
-final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ContainerLike>
+final class ContainerNodeCodecContext<D extends DataObject>
+        extends DataObjectCodecContext<D, ContainerLikeRuntimeType<?, ?>>
         implements RpcInputCodec<D> {
 
-    ContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerLike> prototype) {
+    ContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerLikeRuntimeType<?, ?>> prototype) {
         super(prototype);
     }
 

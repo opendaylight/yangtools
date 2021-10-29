@@ -14,21 +14,23 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
+import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 
 abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
         extends ListNodeCodecContext<D> {
     private static final class Ordered<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
             extends KeyedListNodeCodecContext<I, D> {
-        Ordered(final DataContainerCodecPrototype<ListSchemaNode> prototype, final Method keyMethod,
+        Ordered(final DataContainerCodecPrototype<ListRuntimeType> prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
         }
@@ -36,7 +38,7 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
 
     static final class Unordered<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
             extends KeyedListNodeCodecContext<I, D> {
-        Unordered(final DataContainerCodecPrototype<ListSchemaNode> prototype, final Method keyMethod,
+        Unordered(final DataContainerCodecPrototype<ListRuntimeType> prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
         }
@@ -49,14 +51,14 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
 
     private final IdentifiableItemCodec codec;
 
-    KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype,
+    KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListRuntimeType> prototype,
             final Method keyMethod, final IdentifiableItemCodec codec) {
         super(prototype, keyMethod);
         this.codec = requireNonNull(codec);
     }
 
     @SuppressWarnings("rawtypes")
-    static KeyedListNodeCodecContext create(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
+    static KeyedListNodeCodecContext create(final DataContainerCodecPrototype<ListRuntimeType> prototype) {
         final Class<?> bindingClass = prototype.getBindingClass();
         final Method keyMethod;
         try {
@@ -65,10 +67,12 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
             throw new IllegalStateException("Required method not available", e);
         }
 
-        final ListSchemaNode schema = prototype.getSchema();
-        final IdentifiableItemCodec codec = prototype.getFactory().getPathArgumentCodec(bindingClass, schema);
-        return schema.isUserOrdered() ? new Ordered<>(prototype, keyMethod, codec)
-                : new Unordered<>(prototype, keyMethod, codec);
+        final ListRuntimeType type = prototype.getType();
+        final IdentifiableItemCodec codec = prototype.getFactory().getPathArgumentCodec(bindingClass, type);
+
+        return type.statement().findFirstEffectiveSubstatementArgument(OrderedByEffectiveStatement.class)
+            .orElse(Ordering.SYSTEM) == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
+                : new Ordered<>(prototype, keyMethod, codec);
     }
 
     @Override

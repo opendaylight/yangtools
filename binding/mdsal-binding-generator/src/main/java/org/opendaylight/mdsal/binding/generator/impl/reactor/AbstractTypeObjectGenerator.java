@@ -42,6 +42,7 @@ import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.RegexPatterns;
@@ -222,7 +223,8 @@ import org.slf4j.LoggerFactory;
  * type indirection in YANG constructs is therefore explicitly excluded from the generated Java code, but the Binding
  * Specification still takes them into account when determining types as outlined above.
  */
-abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> extends AbstractDependentGenerator<T> {
+abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
+        extends AbstractDependentGenerator<S, R> {
     private static final class UnionDependencies implements Immutable {
         private final Map<EffectiveStatement<?, ?>, TypeReference> identityTypes = new HashMap<>();
         private final Map<EffectiveStatement<?, ?>, TypeReference> leafTypes = new HashMap<>();
@@ -294,9 +296,15 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
     private TypeReference refType;
     private List<GeneratedType> auxiliaryGeneratedTypes = List.of();
     private UnionDependencies unionDependencies;
-    private List<AbstractTypeObjectGenerator<?>> inferred = List.of();
+    private List<AbstractTypeObjectGenerator<?, ?>> inferred = List.of();
 
-    AbstractTypeObjectGenerator(final T statement, final AbstractCompositeGenerator<?> parent) {
+    /**
+     * The type of single-element return type of the getter method associated with this generator. This is retained for
+     * run-time type purposes. It may be uninitialized, in which case this object must have a generated type.
+     */
+    private Type methodReturnTypeElement;
+
+    AbstractTypeObjectGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         type = statement().findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
     }
@@ -317,16 +325,16 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
             return;
         }
 
-        final AbstractExplicitGenerator<?> prev = previous();
+        final AbstractExplicitGenerator<S, R> prev = previous();
         if (prev != null) {
             verify(prev instanceof AbstractTypeObjectGenerator, "Unexpected previous %s", prev);
-            ((AbstractTypeObjectGenerator<?>) prev).linkInferred(this);
+            ((AbstractTypeObjectGenerator<S, R>) prev).linkInferred(this);
         } else {
             linkBaseGen(context.resolveTypedef(typeName));
         }
     }
 
-    private void linkInferred(final AbstractTypeObjectGenerator<?> downstream) {
+    private void linkInferred(final AbstractTypeObjectGenerator<?, ?> downstream) {
         if (inferred == null) {
             downstream.linkBaseGen(verifyNotNull(baseGen, "Mismatch on linking between %s and %s", this, downstream));
             return;
@@ -340,13 +348,13 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
 
     private void linkBaseGen(final TypedefGenerator upstreamBaseGen) {
         verify(baseGen == null, "Attempted to replace base %s with %s in %s", baseGen, upstreamBaseGen, this);
-        final List<AbstractTypeObjectGenerator<?>> downstreams = verifyNotNull(inferred,
+        final List<AbstractTypeObjectGenerator<?, ?>> downstreams = verifyNotNull(inferred,
             "Duplicated linking of %s", this);
         baseGen = verifyNotNull(upstreamBaseGen);
         baseGen.addDerivedGenerator(this);
         inferred = null;
 
-        for (AbstractTypeObjectGenerator<?> downstream : downstreams) {
+        for (AbstractTypeObjectGenerator<?, ?> downstream : downstreams) {
             downstream.linkBaseGen(upstreamBaseGen);
         }
     }
@@ -364,7 +372,7 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
                 .map(context::resolveIdentity)
                 .collect(Collectors.toUnmodifiableList()));
         } else if (TypeDefinitions.LEAFREF.equals(arg)) {
-            final AbstractTypeObjectGenerator<?> targetGenerator = context.resolveLeafref(
+            final AbstractTypeObjectGenerator<?, ?> targetGenerator = context.resolveLeafref(
                 type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow());
             checkArgument(targetGenerator != this, "Effective model contains self-referencing leaf %s",
                 statement().argument());
@@ -448,7 +456,30 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
         return methodReturnElementType(builderFactory);
     }
 
+    @Override
+    final R createRuntimeType() {
+        if (methodReturnTypeElement != null) {
+            return createRuntimeType(methodReturnTypeElement);
+        }
+        final var genType = generatedType();
+        if (genType.isPresent()) {
+            return createRuntimeType(genType.orElseThrow());
+        }
+        final var prev = verifyNotNull(previous(), "No previous generator for %s", this);
+        return prev.runtimeType().orElse(null);
+    }
+
+    abstract @NonNull R createRuntimeType(Type type);
+
     final @NonNull Type methodReturnElementType(final @NonNull TypeBuilderFactory builderFactory) {
+        var local = methodReturnTypeElement;
+        if (local == null) {
+            methodReturnTypeElement = local = createMethodReturnElementType(builderFactory);
+        }
+        return local;
+    }
+
+    private @NonNull Type createMethodReturnElementType(final @NonNull TypeBuilderFactory builderFactory) {
         final GeneratedType generatedType = tryGeneratedType(builderFactory);
         if (generatedType != null) {
             // We have generated a type here, so return it. This covers 'bits', 'enumeration' and 'union'.
@@ -460,7 +491,7 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
             return refType.methodReturnType(builderFactory);
         }
 
-        final AbstractExplicitGenerator<?> prev = previous();
+        final AbstractExplicitGenerator<?, ?> prev = previous();
         if (prev != null) {
             // We have been added through augment/uses, defer to the original definition
             return prev.methodReturnType(builderFactory);
@@ -518,8 +549,8 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
             return;
         }
 
-        final AbstractTypeObjectGenerator<?> prev =
-            (AbstractTypeObjectGenerator<?>) verifyNotNull(previous(), "Missing previous link in %s", this);
+        final AbstractTypeObjectGenerator<?, ?> prev =
+            (AbstractTypeObjectGenerator<?, ?>) verifyNotNull(previous(), "Missing previous link in %s", this);
         if (prev.refType instanceof ResolvedLeafref) {
             // We should be already inheriting the correct type
             return;
@@ -715,7 +746,7 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
                     Type baseType = SIMPLE_TYPES.get(subName);
                     if (baseType == null) {
                         // This has to be a reference to a typedef, let's lookup it up and pick up its type
-                        final AbstractTypeObjectGenerator<?> baseGen = verifyNotNull(
+                        final AbstractTypeObjectGenerator<?, ?> baseGen = verifyNotNull(
                             dependencies.baseTypes.get(subName), "Cannot resolve base type %s in %s", subName,
                             definingStatement);
                         baseType = baseGen.methodReturnType(builderFactory);

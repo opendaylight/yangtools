@@ -60,7 +60,7 @@ public abstract class Generator implements Iterable<Generator> {
     private static final JavaTypeName DEPRECATED_ANNOTATION = JavaTypeName.create(Deprecated.class);
     static final JavaTypeName OVERRIDE_ANNOTATION = JavaTypeName.create(Override.class);
 
-    private final AbstractCompositeGenerator<?> parent;
+    private final AbstractCompositeGenerator<?, ?> parent;
 
     private Optional<Member> member;
     private GeneratorResult result;
@@ -71,7 +71,7 @@ public abstract class Generator implements Iterable<Generator> {
         parent = null;
     }
 
-    Generator(final AbstractCompositeGenerator<?> parent) {
+    Generator(final AbstractCompositeGenerator<?, ?> parent) {
         this.parent = requireNonNull(parent);
     }
 
@@ -94,7 +94,7 @@ public abstract class Generator implements Iterable<Generator> {
      *
      * @return Parent generator
      */
-    final @NonNull AbstractCompositeGenerator<?> getParent() {
+    final @NonNull AbstractCompositeGenerator<?, ?> getParent() {
         return verifyNotNull(parent, "No parent for %s", this);
     }
 
@@ -239,7 +239,7 @@ public abstract class Generator implements Iterable<Generator> {
         return JavaTypeName.create(getPackageParent().javaPackage(), assignedName());
     }
 
-    @NonNull AbstractCompositeGenerator<?> getPackageParent() {
+    @NonNull AbstractCompositeGenerator<?, ?> getPackageParent() {
         return getParent();
     }
 
@@ -253,7 +253,7 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     final void addImplementsChildOf(final GeneratedTypeBuilder builder) {
-        AbstractCompositeGenerator<?> ancestor = getParent();
+        AbstractCompositeGenerator<?, ?> ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
             if (ancestor instanceof CaseGenerator || ancestor instanceof ChoiceGenerator) {
@@ -263,7 +263,7 @@ public abstract class Generator implements Iterable<Generator> {
 
             // if we into a choice we need to follow the hierararchy of that choice
             if (ancestor instanceof AbstractAugmentGenerator) {
-                final AbstractCompositeGenerator<?> target = ((AbstractAugmentGenerator) ancestor).targetGenerator();
+                final AbstractCompositeGenerator<?, ?> target = ((AbstractAugmentGenerator) ancestor).targetGenerator();
                 if (target instanceof ChoiceGenerator) {
                     ancestor = target;
                     continue;
@@ -369,12 +369,12 @@ public abstract class Generator implements Iterable<Generator> {
         defineImplementedInterfaceMethod(builder, Type.of(builder)).setDefault(true);
     }
 
-    static final <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T> getChild(final Generator parent,
+    static final <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Generator parent,
             final Class<T> type) {
         for (Generator child : parent) {
             if (child instanceof AbstractExplicitGenerator) {
                 @SuppressWarnings("unchecked")
-                final AbstractExplicitGenerator<T> explicit = (AbstractExplicitGenerator<T>)child;
+                final AbstractExplicitGenerator<T, ?> explicit = (AbstractExplicitGenerator<T, ?>)child;
                 if (type.isInstance(explicit.statement())) {
                     return explicit;
                 }

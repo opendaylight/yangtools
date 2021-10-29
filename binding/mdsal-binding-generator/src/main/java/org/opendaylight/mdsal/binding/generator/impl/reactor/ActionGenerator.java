@@ -7,12 +7,17 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
@@ -21,8 +26,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code action} statement.
  */
-final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffectiveStatement, ActionGenerator> {
-    ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffectiveStatement, ActionRuntimeType> {
+    ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -55,13 +60,19 @@ final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffective
         return builder.build();
     }
 
+    @Override
+    ActionRuntimeType createRuntimeType(final GeneratedType type, final ActionEffectiveStatement statement,
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+        return new DefaultActionRuntimeType(type, statement, children, augments);
+    }
+
     private @NonNull Type implementedType(final TypeBuilderFactory builderFactory) {
         final GeneratedType input = getChild(this, InputEffectiveStatement.class).getOriginal()
             .getGeneratedType(builderFactory);
         final GeneratedType output = getChild(this, OutputEffectiveStatement.class).getOriginal()
             .getGeneratedType(builderFactory);
 
-        final AbstractCompositeGenerator<?> parent = getParent();
+        final AbstractCompositeGenerator<?, ?> parent = getParent();
         if (parent instanceof ListGenerator) {
             final KeyGenerator keyGen = ((ListGenerator) parent).keyGenerator();
             if (keyGen != null) {

@@ -10,20 +10,20 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ListSchemaNode> {
-    ListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
+class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ListRuntimeType> {
+    ListNodeCodecContext(final DataContainerCodecPrototype<ListRuntimeType> prototype) {
         super(prototype);
     }
 
-    ListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype,
+    ListNodeCodecContext(final DataContainerCodecPrototype<ListRuntimeType> prototype,
             final Method keyMethod) {
         super(prototype, keyMethod);
     }

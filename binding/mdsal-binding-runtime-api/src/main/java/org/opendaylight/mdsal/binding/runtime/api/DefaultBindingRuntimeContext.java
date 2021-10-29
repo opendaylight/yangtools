@@ -11,16 +11,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 
 /**
  * Runtime Context for Java YANG Binding classes. It provides information derived from the backing effective model,
  * which is not captured in generated classes (and hence cannot be obtained from {@code BindingReflections}.
- *
- * <p>Some of this information are for example list of all available children for cases
- * {@link #getChoiceCaseChildren(DataNodeContainer)}, since choices are augmentable and new choices may be introduced
- * by additional models. Same goes for all possible augmentations.
  */
 @Beta
 public final class DefaultBindingRuntimeContext extends AbstractBindingRuntimeContext {
@@ -38,7 +33,7 @@ public final class DefaultBindingRuntimeContext extends AbstractBindingRuntimeCo
     }
 
     @Override
-    public <T> Class<T> loadClass(Type type) throws ClassNotFoundException {
-        return moduleInfos.loadClass(type.getFullyQualifiedName());
+    public <T> Class<T> loadClass(final JavaTypeName type) throws ClassNotFoundException {
+        return moduleInfos.loadClass(type.toString());
     }
 }

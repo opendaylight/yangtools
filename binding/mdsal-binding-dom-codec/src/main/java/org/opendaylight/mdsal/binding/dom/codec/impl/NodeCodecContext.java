@@ -15,11 +15,11 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Location specific context for schema nodes, which contains codec specific information to properly serialize
@@ -64,16 +64,16 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
          * @param schema  Instantiated schema of binding type.
          * @return Map of local name to leaf node context.
          */
-        ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(Class<?> type, DataNodeContainer schema);
+        ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(Class<?> type, EffectiveStatement<?, ?> schema);
 
         /**
          * Returns Path argument codec for list item.
          *
-         * @param type Type of list item
-         * @param schema Schema of list item
+         * @param listClz Type of list item
+         * @param type Schema of list item
          * @return Path argument codec for supplied list item.
          */
-        IdentifiableItemCodec getPathArgumentCodec(Class<?> type, ListSchemaNode schema);
+        IdentifiableItemCodec getPathArgumentCodec(Class<?> listClz, ListRuntimeType type);
 
         /**
          * Return the codec loader associated with this factory.

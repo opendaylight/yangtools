@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 /**
@@ -24,9 +25,20 @@ final class UsesAugmentGenerator extends AbstractAugmentGenerator {
     private GroupingGenerator grouping;
 
     UsesAugmentGenerator(final AugmentEffectiveStatement statement, final UsesEffectiveStatement uses,
-            final AbstractCompositeGenerator<?> parent) {
+            final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         this.uses = requireNonNull(uses);
+
+        // FIXME: use SchemaTreeAwareEffectiveStatement
+        var stmt = parent.statement();
+        for (var qname : statement.argument().getNodeIdentifiers()) {
+            final var tmp = stmt;
+            stmt = stmt.streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class)
+                .filter(child -> qname.equals(child.argument()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Failed to find " + qname + " in " + tmp));
+        }
+        setTargetStatement(stmt);
     }
 
     void resolveGrouping(final UsesEffectiveStatement resolvedUses, final GroupingGenerator resolvedGrouping) {

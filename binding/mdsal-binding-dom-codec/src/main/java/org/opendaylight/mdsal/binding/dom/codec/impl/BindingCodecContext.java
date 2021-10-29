@@ -51,8 +51,8 @@ import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
 import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingSchemaMapping;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
@@ -83,15 +83,15 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -344,15 +344,22 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(final Class<?> type,
-            final DataNodeContainer schema) {
+            final EffectiveStatement<?, ?> schema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
-        for (final DataSchemaNode leaf : schema.getChildNodes()) {
-            if (leaf instanceof TypedDataSchemaNode || leaf instanceof AnyxmlSchemaNode
-                    || leaf instanceof AnydataSchemaNode) {
-                getterToLeafSchema.put(BindingSchemaMapping.getGetterMethodName(leaf), leaf);
+        for (var stmt : schema.effectiveSubstatements()) {
+            if (stmt instanceof TypedDataSchemaNode) {
+                putLeaf(getterToLeafSchema, (TypedDataSchemaNode) stmt);
+            } else if (stmt instanceof AnydataSchemaNode) {
+                putLeaf(getterToLeafSchema, (AnydataSchemaNode) stmt);
+            } else if (stmt instanceof AnyxmlSchemaNode) {
+                putLeaf(getterToLeafSchema, (AnyxmlSchemaNode) stmt);
             }
         }
         return getLeafNodesUsingReflection(type, getterToLeafSchema);
+    }
+
+    private static void putLeaf(final Map<String, DataSchemaNode> map, final DataSchemaNode leaf) {
+        map.put(BindingSchemaMapping.getGetterMethodName(leaf), leaf);
     }
 
     private ImmutableMap<Method, ValueNodeCodecContext> getLeafNodesUsingReflection(
@@ -447,27 +454,34 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
         } else if (typeDef instanceof LeafrefTypeDefinition) {
-            final Entry<GeneratedType, WithStatus> typeWithSchema = context.getTypeWithSchema(valueType);
-            final WithStatus schema = typeWithSchema.getValue();
-            checkState(schema instanceof TypeDefinition, "Unexpected schema %s", schema);
-            return getCodec(valueType, (TypeDefinition<?>) schema);
+            final var typeWithSchema = context.getTypeWithSchema(valueType);
+            final var schema = typeWithSchema.statement();
+            final TypeDefinition<?> def;
+            if (schema instanceof TypeDefinitionAware) {
+                def = ((TypeDefinitionAware) schema).getTypeDefinition();
+            } else if (schema instanceof TypeAware) {
+                def = ((TypeAware) schema).getType();
+            } else {
+                throw new IllegalStateException("Unexpected schema " + schema);
+            }
+            return getCodec(valueType, def);
         }
         return ValueTypeCodec.getCodecFor(valueType, typeDef);
     }
 
     @Override
-    public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListSchemaNode schema) {
+    public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListRuntimeType type) {
         final Optional<Class<Identifier<?>>> optIdentifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
                 Identifiable.class);
         checkState(optIdentifier.isPresent(), "Failed to find identifier for %s", listClz);
 
         final Class<Identifier<?>> identifier = optIdentifier.get();
         final Map<QName, ValueContext> valueCtx = new HashMap<>();
-        for (final ValueNodeCodecContext leaf : getLeafNodes(identifier, schema).values()) {
+        for (final ValueNodeCodecContext leaf : getLeafNodes(identifier, type.statement()).values()) {
             final QName name = leaf.getDomPathArgument().getNodeType();
             valueCtx.put(name, new ValueContext(identifier, leaf));
         }
-        return IdentifiableItemCodec.of(schema, identifier, listClz, valueCtx);
+        return IdentifiableItemCodec.of(type.statement(), identifier, listClz, valueCtx);
     }
 
     @SuppressWarnings("unchecked")

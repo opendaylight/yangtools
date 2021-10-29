@@ -7,13 +7,15 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A simple {@link Generator} which (potentially) has dependencies on other generators.
  */
-abstract class AbstractDependentGenerator<T extends EffectiveStatement<?, ?>> extends AbstractExplicitGenerator<T> {
-    AbstractDependentGenerator(final T statement, final AbstractCompositeGenerator<?> parent) {
+abstract class AbstractDependentGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
+        extends AbstractExplicitGenerator<S, R> {
+    AbstractDependentGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

@@ -11,9 +11,11 @@ import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.BASE_IDENTITY
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultIdentityRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.mdsal.binding.runtime.api.IdentityRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -21,10 +23,11 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code identity} statement.
  */
-final class IdentityGenerator extends AbstractDependentGenerator<IdentityEffectiveStatement> {
+public final class IdentityGenerator
+        extends AbstractDependentGenerator<IdentityEffectiveStatement, IdentityRuntimeType> {
     private List<IdentityGenerator> baseIdentities = null;
 
-    IdentityGenerator(final IdentityEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+    IdentityGenerator(final IdentityEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -65,6 +68,16 @@ final class IdentityGenerator extends AbstractDependentGenerator<IdentityEffecti
 //        builder.setSchemaPath(identity.getPath());
 
         return builder.build();
+    }
+
+    @Override
+    IdentityRuntimeType createRuntimeType() {
+        return generatedType().map(type -> new DefaultIdentityRuntimeType(type, statement())).orElse(null);
+    }
+
+    @Override
+    IdentityRuntimeType rebaseRuntimeType(final IdentityRuntimeType type, final IdentityEffectiveStatement statement) {
+        return new DefaultIdentityRuntimeType(type.javaType(), statement);
     }
 
     @Override

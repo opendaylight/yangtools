@@ -7,25 +7,28 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Set;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultKeyRuntimeType;
+import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement> {
+final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement, KeyRuntimeType> {
     private final ListGenerator listGen;
 
-    KeyGenerator(final KeyEffectiveStatement statement, final AbstractCompositeGenerator<?> parent,
+    KeyGenerator(final KeyEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent,
             final ListGenerator listGen) {
         super(statement, parent);
         this.listGen = requireNonNull(listGen);
@@ -42,7 +45,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
         final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName());
 
         builder.addImplementsType(BindingTypes.identifier(Type.of(listGen.typeName())));
@@ -71,6 +74,19 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
         addSerialVersionUID(builder);
 
         return builder.build();
+    }
+
+    @Override
+    KeyRuntimeType createRuntimeType() {
+        return generatedType().map(type -> {
+            verify(type instanceof GeneratedTransferObject, "Unexpected type %s", type);
+            return new DefaultKeyRuntimeType((GeneratedTransferObject) type, statement());
+        }).orElse(null);
+    }
+
+    @Override
+    KeyRuntimeType rebaseRuntimeType(final KeyRuntimeType type, final KeyEffectiveStatement statement) {
+        return new DefaultKeyRuntimeType(type.javaType(), statement);
     }
 
     @Override

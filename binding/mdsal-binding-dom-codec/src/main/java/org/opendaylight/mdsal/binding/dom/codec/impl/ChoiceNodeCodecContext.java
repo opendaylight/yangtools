@@ -28,7 +28,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
@@ -39,9 +44,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.NormalizedNodeSchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +96,7 @@ import org.slf4j.LoggerFactory;
  * ambiguous reference and issue warn once when they are encountered -- tracking warning information in
  * {@link #ambiguousByCaseChildWarnings}.
  */
-final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceSchemaNode> {
+final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceRuntimeType> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceNodeCodecContext.class);
 
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChild;
@@ -101,7 +105,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
     private final Set<Class<?>> ambiguousByCaseChildWarnings;
 
-    ChoiceNodeCodecContext(final DataContainerCodecPrototype<ChoiceSchemaNode> prototype) {
+    ChoiceNodeCodecContext(final DataContainerCodecPrototype<ChoiceRuntimeType> prototype) {
         super(prototype);
         final Map<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChildBuilder =
             new HashMap<>();
@@ -110,10 +114,11 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             SetMultimapBuilder.hashKeys().hashSetValues().build();
         final Set<Class<?>> potentialSubstitutions = new HashSet<>();
         // Walks all cases for supplied choice in current runtime context
-        for (final Class<?> caze : factory().getRuntimeContext().getCases(getBindingClass())) {
+        // FIXME: 9.0.0: factory short-circuits to prototype, just as getBindingClass() does
+        for (final Class<?> caze : loadCaseClasses()) {
             // We try to load case using exact match thus name
             // and original schema must equals
-            final DataContainerCodecPrototype<CaseSchemaNode> cazeDef = loadCase(caze);
+            final DataContainerCodecPrototype<CaseRuntimeType> cazeDef = loadCase(caze);
             // If we have case definition, this case is instantiated
             // at current location and thus is valid in context of parent choice
             if (cazeDef != null) {
@@ -125,17 +130,21 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
                     childToCase.put(cazeChild, cazeDef);
                 }
                 // Updates collection of YANG instance identifier to case
-                for (final DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
-                    if (cazeChild.isAugmenting()) {
-                        final AugmentationSchemaNode augment =
-                            NormalizedNodeSchemaUtils.findCorrespondingAugment(cazeDef.getSchema(), cazeChild);
-                        if (augment != null) {
-                            byYangCaseChildBuilder.put(DataSchemaContextNode.augmentationIdentifierFrom(augment),
-                                cazeDef);
-                            continue;
+                for (var stmt : cazeDef.getType().statement().effectiveSubstatements()) {
+                    if (stmt instanceof DataSchemaNode) {
+                        final DataSchemaNode cazeChild = (DataSchemaNode) stmt;
+                        if (cazeChild.isAugmenting()) {
+                            final AugmentationSchemaNode augment = NormalizedNodeSchemaUtils.findCorrespondingAugment(
+                                // FIXME: bad cast
+                                (DataSchemaNode) cazeDef.getType().statement(), cazeChild);
+                            if (augment != null) {
+                                byYangCaseChildBuilder.put(DataSchemaContextNode.augmentationIdentifierFrom(augment),
+                                    cazeDef);
+                                continue;
+                            }
                         }
+                        byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), cazeDef);
                     }
-                    byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), cazeDef);
                 }
             } else {
                 /*
@@ -189,6 +198,28 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         byClass = ImmutableMap.copyOf(byClassBuilder);
     }
 
+    private List<Class<?>> loadCaseClasses() {
+        final var context = factory().getRuntimeContext();
+        final var type = getType();
+
+        return Stream.concat(type.validCaseChildren().stream(), type.additionalCaseChildren().stream())
+            .map(caseChild -> {
+                final var caseName = caseChild.getIdentifier();
+                try {
+                    return context.loadClass(caseName);
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalStateException("Failed to load class for " + caseName, e);
+                }
+            })
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public WithStatus getSchema() {
+        // FIXME: Bad cast, we should be returning an EffectiveStatement perhaps?
+        return (WithStatus) getType().statement();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
@@ -212,15 +243,14 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         return Iterables.concat(byCaseChildClass.keySet(), ambiguousByCaseChildClass.keySet());
     }
 
-    protected DataContainerCodecPrototype<CaseSchemaNode> loadCase(final Class<?> childClass) {
-        final Optional<CaseSchemaNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(getSchema(),
-            childClass);
-        if (childSchema.isPresent()) {
-            return DataContainerCodecPrototype.from(childClass, childSchema.get(), factory());
+    protected DataContainerCodecPrototype<CaseRuntimeType> loadCase(final Class<?> childClass) {
+        final var child = getType().bindingCaseChild(JavaTypeName.create(childClass));
+        if (child == null) {
+            LOG.debug("Supplied class {} is not valid case in schema {}", childClass, getSchema());
+            return null;
         }
 
-        LOG.debug("Supplied class {} is not valid case in schema {}", childClass, getSchema());
-        return null;
+        return DataContainerCodecPrototype.from(childClass, child, factory());
     }
 
     @Override

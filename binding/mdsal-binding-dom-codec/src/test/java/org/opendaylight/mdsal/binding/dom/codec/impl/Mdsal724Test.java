@@ -7,8 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -26,7 +24,9 @@ public class Mdsal724Test extends AbstractBindingCodecTest {
         final var iid = InstanceIdentifier.create((Class) OutOfPixieDustNotification.class);
 
         final var ex = assertThrows(IllegalArgumentException.class, () -> codecContext.toYangInstanceIdentifier(iid));
-        assertThat(ex.getMessage(), startsWith("Supplied class must not be a notification ("));
+        assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test"
+            + ".bi.ba.notification.rev150205.OutOfPixieDustNotification is not a valid data tree child of "
+            + "SchemaRootCodecContext [interface org.opendaylight.yangtools.yang.binding.DataRoot]", ex.getMessage());
     }
 
     @Test

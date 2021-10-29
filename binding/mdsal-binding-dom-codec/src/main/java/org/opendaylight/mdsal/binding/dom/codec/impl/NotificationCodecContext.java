@@ -36,16 +36,16 @@ import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.GeneratorResult;
+import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.EventInstantAware;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
-final class NotificationCodecContext<D extends DataObject & Notification>
-        extends DataObjectCodecContext<D, NotificationDefinition> {
+final class NotificationCodecContext<D extends DataObject & Notification<D>>
+        extends DataObjectCodecContext<D, NotificationRuntimeType> {
     private static final Generic EVENT_INSTANT_AWARE = TypeDefinition.Sort.describe(EventInstantAware.class);
 
     private static final String EVENT_INSTANT_NAME;
@@ -69,7 +69,7 @@ final class NotificationCodecContext<D extends DataObject & Notification>
 
     private final MethodHandle eventProxy;
 
-    NotificationCodecContext(final Class<?> key, final NotificationDefinition schema,
+    NotificationCodecContext(final Class<?> key, final NotificationRuntimeType schema,
             final CodecContextFactory factory) {
         super(DataContainerCodecPrototype.from(key, schema, factory));
         final Class<D> bindingClass = getBindingClass();

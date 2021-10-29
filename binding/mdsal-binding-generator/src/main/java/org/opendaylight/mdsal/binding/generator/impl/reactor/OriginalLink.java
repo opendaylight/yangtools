@@ -13,27 +13,29 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Link to the original definition of an {@link AbstractExplicitGenerator}.
  */
 // FIXME: sealed when we have JDK17+
-abstract class OriginalLink<T extends EffectiveStatement<?, ?>> {
-    private static final class Complete<T extends EffectiveStatement<?, ?>> extends OriginalLink<T> {
-        private final @NonNull AbstractExplicitGenerator<T> original;
+abstract class OriginalLink<T extends EffectiveStatement<?, ?>, R extends RuntimeType> {
+    private static final class Complete<T extends EffectiveStatement<?, ?>, R extends RuntimeType>
+            extends OriginalLink<T, R> {
+        private final @NonNull AbstractExplicitGenerator<T, R> original;
 
-        Complete(final AbstractExplicitGenerator<T> original) {
+        Complete(final AbstractExplicitGenerator<T, R> original) {
             this.original = requireNonNull(original);
         }
 
         @Override
-        AbstractExplicitGenerator<T> previous() {
+        AbstractExplicitGenerator<T, R> previous() {
             return original;
         }
 
         @Override
-        @NonNull AbstractExplicitGenerator<T> original() {
+        @NonNull AbstractExplicitGenerator<T, R> original() {
             return original;
         }
 
@@ -43,21 +45,22 @@ abstract class OriginalLink<T extends EffectiveStatement<?, ?>> {
         }
     }
 
-    private static final class Partial<T extends EffectiveStatement<?, ?>> extends OriginalLink<T> {
-        private final @NonNull AbstractExplicitGenerator<T> previous;
-        private AbstractExplicitGenerator<T> original;
+    private static final class Partial<T extends EffectiveStatement<?, ?>, R extends RuntimeType>
+            extends OriginalLink<T, R> {
+        private final @NonNull AbstractExplicitGenerator<T, R> previous;
+        private AbstractExplicitGenerator<T, R> original;
 
-        Partial(final AbstractExplicitGenerator<T> previous) {
+        Partial(final AbstractExplicitGenerator<T, R> previous) {
             this.previous = requireNonNull(previous);
         }
 
         @Override
-        AbstractExplicitGenerator<T> previous() {
+        AbstractExplicitGenerator<T, R> previous() {
             return previous;
         }
 
         @Override
-        AbstractExplicitGenerator<T> original() {
+        AbstractExplicitGenerator<T, R> original() {
             if (original == null) {
                 final var link = previous.originalLink();
                 if (link instanceof Complete || link.previous() != previous) {
@@ -77,19 +80,19 @@ abstract class OriginalLink<T extends EffectiveStatement<?, ?>> {
         // Hidden on purpose
     }
 
-    static <T extends EffectiveStatement<?, ?>> @NonNull OriginalLink<T> complete(
-            final AbstractExplicitGenerator<T> original) {
+    static <T extends EffectiveStatement<?, ?>, R extends RuntimeType> @NonNull OriginalLink<T, R> complete(
+            final AbstractExplicitGenerator<T, R> original) {
         return new Complete<>(original);
     }
 
-    static <T extends EffectiveStatement<?, ?>> @NonNull OriginalLink<T> partial(
-            final AbstractExplicitGenerator<T> previous) {
+    static <T extends EffectiveStatement<?, ?>, R extends RuntimeType> @NonNull OriginalLink<T, R> partial(
+            final AbstractExplicitGenerator<T, R> previous) {
         return new Partial<>(previous);
     }
 
-    abstract @NonNull AbstractExplicitGenerator<T> previous();
+    abstract @NonNull AbstractExplicitGenerator<T, R> previous();
 
-    abstract @Nullable AbstractExplicitGenerator<T> original();
+    abstract @Nullable AbstractExplicitGenerator<T, R> original();
 
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 

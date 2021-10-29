@@ -9,28 +9,19 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
+import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.RpcInput;
+import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 @Beta
 public abstract class ForwardingBindingRuntimeContext extends ForwardingObject implements BindingRuntimeContext {
@@ -43,60 +34,28 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     }
 
     @Override
-    public <T extends Augmentation<?>> AugmentationSchemaNode getAugmentationDefinition(final Class<T> augClass) {
+    public <T extends Augmentation<?>> AugmentRuntimeType getAugmentationDefinition(final Class<T> augClass) {
         return delegate().getAugmentationDefinition(augClass);
     }
 
     @Override
-    public DataSchemaNode getSchemaDefinition(final Class<?> cls) {
+    public CompositeRuntimeType getSchemaDefinition(final Class<?> cls) {
         return delegate().getSchemaDefinition(cls);
     }
 
     @Override
-    public DataSchemaNode findChildSchemaDefinition(final DataNodeContainer parentSchema,
-            final QNameModule parentNamespace, final Class<?> childClass) {
-        return delegate().findChildSchemaDefinition(parentSchema, parentNamespace, childClass);
-    }
-
-    @Override
-    public ActionDefinition getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
+    public ActionRuntimeType getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
         return delegate().getActionDefinition(cls);
     }
 
     @Override
-    public Entry<AugmentationIdentifier, AugmentationSchemaNode> getResolvedAugmentationSchema(
-            final DataNodeContainer target, final Class<? extends Augmentation<?>> aug) {
-        return delegate().getResolvedAugmentationSchema(target, aug);
-    }
-
-    @Override
-    public Optional<CaseSchemaNode> getCaseSchemaDefinition(final ChoiceSchemaNode schema, final Class<?> childClass) {
-        return delegate().getCaseSchemaDefinition(schema, childClass);
-    }
-
-    @Override
-    public Entry<GeneratedType, WithStatus> getTypeWithSchema(final Class<?> type) {
+    public RuntimeType getTypeWithSchema(final Class<?> type) {
         return delegate().getTypeWithSchema(type);
     }
 
     @Override
-    public Map<Type, Entry<Type, Type>> getChoiceCaseChildren(final DataNodeContainer schema) {
-        return delegate().getChoiceCaseChildren(schema);
-    }
-
-    @Override
-    public Set<Class<?>> getCases(final Class<?> choice) {
-        return delegate().getCases(choice);
-    }
-
-    @Override
-    public Class<?> getClassForSchema(final SchemaNode childSchema) {
-        return delegate().getClassForSchema(childSchema);
-    }
-
-    @Override
-    public ImmutableMap<AugmentationIdentifier, Type> getAvailableAugmentationTypes(final DataNodeContainer container) {
-        return delegate().getAvailableAugmentationTypes(container);
+    public Class<?> getClassForSchema(final Absolute schema) {
+        return delegate().getClassForSchema(schema);
     }
 
     @Override
@@ -105,7 +64,17 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     }
 
     @Override
-    public <T> Class<T> loadClass(final Type type) throws ClassNotFoundException {
-        return delegate().loadClass(type);
+    public <T> Class<T> loadClass(final JavaTypeName typeName) throws ClassNotFoundException {
+        return delegate().loadClass(typeName);
+    }
+
+    @Override
+    public Class<? extends RpcInput> getRpcInput(final QName rpcName) {
+        return delegate().getRpcInput(rpcName);
+    }
+
+    @Override
+    public Class<? extends RpcOutput> getRpcOutput(final QName rpcName) {
+        return delegate().getRpcOutput(rpcName);
     }
 }

@@ -11,13 +11,19 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
  * Abstract view on generation tree as viewed by a particular {@link Generator}.
  */
-abstract class GeneratorContext {
+abstract class GeneratorContext extends AbstractEffectiveModelContextProvider {
+    GeneratorContext(final EffectiveModelContext modelContext) {
+        super(modelContext);
+    }
+
     /**
      * Resolve generator for the type object pointed to by a {@code path} expression, or {@code null} it the if cannot
      * the current generator is nested inside a {@code grouping} and the generator cannot be found.
@@ -27,7 +33,7 @@ abstract class GeneratorContext {
      * @throws NullPointerException if {@code path} is {@code null}
      * @throws IllegalStateException if this generator is not inside a {@code grouping} and the path cannot be resolved
      */
-    abstract @Nullable AbstractTypeObjectGenerator<?> resolveLeafref(@NonNull PathExpression path);
+    abstract @Nullable AbstractTypeObjectGenerator<?, ?> resolveLeafref(@NonNull PathExpression path);
 
     /**
      * Resolve a tree-scoped namespace reference. This covers {@code typedef} and {@code grouping} statements, as per
@@ -40,7 +46,7 @@ abstract class GeneratorContext {
      * @throws NullPointerException if any argument is null
      * @throws IllegalStateException if the generator cannot be found
      */
-    abstract <E extends EffectiveStatement<QName, ?>, G extends AbstractExplicitGenerator<E>>
+    abstract <E extends EffectiveStatement<QName, ?>, G extends AbstractExplicitGenerator<E, ?>>
         @NonNull G resolveTreeScoped(@NonNull Class<G> type, @NonNull QName argument);
 
     abstract @NonNull ModuleGenerator resolveModule(@NonNull QNameModule namespace);

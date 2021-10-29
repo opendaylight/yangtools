@@ -9,17 +9,23 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
 
+import java.util.List;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DerivedCaseRuntimeType;
+import org.opendaylight.mdsal.binding.generator.impl.rt.OriginalCaseRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Generator corresponding to a {@code case} statement.
  */
-final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStatement, CaseGenerator> {
-    CaseGenerator(final CaseEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStatement, CaseRuntimeType> {
+    CaseGenerator(final CaseEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -36,10 +42,10 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)
         // - being a child of an augment (i.e. augmented into a choice)
-        final AbstractCompositeGenerator<?> parent = getParent();
+        final AbstractCompositeGenerator<?, ?> parent = getParent();
         final ChoiceGenerator choice;
         if (parent instanceof AbstractAugmentGenerator) {
-            final AbstractCompositeGenerator<?> target = ((AbstractAugmentGenerator) parent).targetGenerator();
+            final AbstractCompositeGenerator<?, ?> target = ((AbstractAugmentGenerator) parent).targetGenerator();
             verify(target instanceof ChoiceGenerator, "Unexpected parent augment %s target %s", parent, target);
             choice = (ChoiceGenerator) target;
         } else {
@@ -65,5 +71,14 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();
+    }
+
+    @Override
+    CaseRuntimeType createRuntimeType(final GeneratedType type, final CaseEffectiveStatement statement,
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+        final var original = getOriginal();
+        return statement.equals(original.statement())
+            ? new OriginalCaseRuntimeType(type, statement, children, augments)
+                : new DerivedCaseRuntimeType(type, statement, children, augments, original.runtimeType().orElseThrow());
     }
 }

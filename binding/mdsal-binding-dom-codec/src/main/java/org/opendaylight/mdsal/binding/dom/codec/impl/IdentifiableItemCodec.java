@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
@@ -30,7 +31,8 @@ import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,7 @@ abstract class IdentifiableItemCodec
         private final MethodHandle ctor;
         private final QName keyName;
 
-        SingleKey(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
+        SingleKey(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
                 final Class<?> identifiable, final QName keyName, final ValueContext keyContext) {
             super(schema, keyClass, identifiable);
             this.keyContext = requireNonNull(keyContext);
@@ -71,19 +73,20 @@ abstract class IdentifiableItemCodec
         private final ImmutableList<QName> keysInBindingOrder;
         private final MethodHandle ctor;
 
-        MultiKey(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
+        MultiKey(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
                 final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
             super(schema, keyClass, identifiable);
 
             final MethodHandle tmpCtor = getConstructor(keyClass, keyValueContexts.size());
             final MethodHandle inv = MethodHandles.spreadInvoker(tmpCtor.type(), 0);
-            this.ctor = inv.asType(inv.type().changeReturnType(Identifier.class)).bindTo(tmpCtor);
+            ctor = inv.asType(inv.type().changeReturnType(Identifier.class)).bindTo(tmpCtor);
 
             /*
              * We need to re-index to make sure we instantiate nodes in the order in which they are defined. We will
              * also need to instantiate values in the same order.
              */
-            final List<QName> keyDef = schema.getKeyDefinition();
+            final Set<QName> keyDef = schema.findFirstEffectiveSubstatementArgument(KeyEffectiveStatement.class)
+                .orElseThrow();
             predicateTemplate = ImmutableOffsetMapTemplate.ordered(keyDef);
             this.keyValueContexts = predicateTemplate.instantiateTransformed(keyValueContexts, (key, value) -> value);
 
@@ -96,7 +99,7 @@ abstract class IdentifiableItemCodec
             final List<QName> tmp = new ArrayList<>(keyDef);
             // This is not terribly efficient but gets the job done
             tmp.sort(Comparator.comparing(qname -> BindingMapping.getPropertyName(qname.getLocalName())));
-            this.keysInBindingOrder = ImmutableList.copyOf(tmp.equals(keyDef) ? keyDef : tmp);
+            keysInBindingOrder = ImmutableList.copyOf(tmp.equals(List.copyOf(keyDef)) ? keyDef : tmp);
         }
 
         @Override
@@ -127,13 +130,13 @@ abstract class IdentifiableItemCodec
     private final Class<?> identifiable;
     private final QName qname;
 
-    IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
+    IdentifiableItemCodec(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
             final Class<?> identifiable) {
         this.identifiable = requireNonNull(identifiable);
-        this.qname = schema.getQName();
+        qname = schema.argument();
     }
 
-    static IdentifiableItemCodec of(final ListSchemaNode schema,
+    static IdentifiableItemCodec of(final ListEffectiveStatement schema,
             final Class<? extends Identifier<?>> keyClass, final Class<?> identifiable,
                     final Map<QName, ValueContext> keyValueContexts) {
         switch (keyValueContexts.size()) {

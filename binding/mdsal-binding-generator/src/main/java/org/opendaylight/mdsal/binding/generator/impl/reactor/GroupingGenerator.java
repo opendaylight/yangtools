@@ -7,18 +7,23 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import java.util.List;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultGroupingRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.GroupingRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Generator corresponding to a {@code grouping} statement.
  */
-final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffectiveStatement> {
-    GroupingGenerator(final GroupingEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffectiveStatement, GroupingRuntimeType> {
+    GroupingGenerator(final GroupingEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -47,6 +52,12 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
         builderFactory.addCodegenInformation(module, statement(), builder);
 
         return builder.build();
+    }
+
+    @Override
+    GroupingRuntimeType createRuntimeType(final GeneratedType type, final GroupingEffectiveStatement statement,
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+        return new DefaultGroupingRuntimeType(type, statement, children, augments);
     }
 
     @Override

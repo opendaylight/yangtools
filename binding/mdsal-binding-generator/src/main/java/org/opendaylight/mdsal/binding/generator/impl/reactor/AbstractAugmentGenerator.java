@@ -13,23 +13,30 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAugmentRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * A generator corresponding to a {@code augment} statement. This class is further specialized for the two distinct uses
  * an augment is used.
  */
-abstract class AbstractAugmentGenerator extends AbstractCompositeGenerator<AugmentEffectiveStatement> {
+abstract class AbstractAugmentGenerator
+        extends AbstractCompositeGenerator<AugmentEffectiveStatement, AugmentRuntimeType> {
     /**
      * Comparator comparing target path length. This is useful for quickly determining order the order in which two
      * (or more) {@link AbstractAugmentGenerator}s need to be evaluated. This is necessary when augments are layered on
@@ -78,9 +85,10 @@ abstract class AbstractAugmentGenerator extends AbstractCompositeGenerator<Augme
         return otherIt.hasNext() ? -1 : 0;
     };
 
-    private AbstractCompositeGenerator<?> targetGen;
+    private AugmentEffectiveStatement effectiveStatement;
+    private AbstractCompositeGenerator<?, ?> targetGen;
 
-    AbstractAugmentGenerator(final AugmentEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+    AbstractAugmentGenerator(final AugmentEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -98,7 +106,7 @@ abstract class AbstractAugmentGenerator extends AbstractCompositeGenerator<Augme
     ClassPlacement classPlacement() {
         // if the target is a choice we are NOT creating an explicit augmentation, but we still need a phantom to
         // reserve the appropriate package name
-        final AbstractCompositeGenerator<?> target = targetGenerator();
+        final AbstractCompositeGenerator<?, ?> target = targetGenerator();
         return target instanceof ChoiceGenerator ? ClassPlacement.PHANTOM : super.classPlacement();
     }
 
@@ -140,16 +148,36 @@ abstract class AbstractAugmentGenerator extends AbstractCompositeGenerator<Augme
     }
 
     @Override
+    final AugmentEffectiveStatement effectiveStatement() {
+        return verifyNotNull(effectiveStatement, "Effective statement not set in %s", this);
+    }
+
+    @Override
+    final AugmentRuntimeType createRuntimeType(final GeneratedType type, final AugmentEffectiveStatement statement,
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+        verify(statement instanceof TargetAugmentEffectiveStatement, "Unexpected statement %s", statement);
+        return new DefaultAugmentRuntimeType(type, ((TargetAugmentEffectiveStatement) statement).delegate(), children,
+            augments);
+    }
+
+    @Override
     final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
         // Augments are never added as getters, as they are handled via Augmentable mechanics
     }
 
-    final void setTargetGenerator(final AbstractCompositeGenerator<?> targetGenerator) {
+    final void setTargetGenerator(final AbstractCompositeGenerator<?, ?> targetGenerator) {
         verify(targetGen == null, "Attempted to relink %s, already have target %s", this, targetGen);
         targetGen = requireNonNull(targetGenerator);
     }
 
-    final @NonNull AbstractCompositeGenerator<?> targetGenerator() {
+    final @NonNull AbstractCompositeGenerator<?, ?> targetGenerator() {
         return verifyNotNull(targetGen, "No target for %s", this);
+    }
+
+    final void setTargetStatement(final EffectiveStatement<?, ?> targetStatement) {
+        verify(targetStatement instanceof SchemaTreeAwareEffectiveStatement, "Unexpected target statement %s",
+            targetStatement);
+        effectiveStatement = new TargetAugmentEffectiveStatement(statement(),
+            (SchemaTreeAwareEffectiveStatement<?, ?>) targetStatement);
     }
 }

@@ -53,9 +53,9 @@ abstract class TypeReference {
     }
 
     static final class ResolvedLeafref extends Leafref {
-        private final AbstractTypeObjectGenerator<?> referencedGenerator;
+        private final AbstractTypeObjectGenerator<?, ?> referencedGenerator;
 
-        private ResolvedLeafref(final AbstractTypeObjectGenerator<?> referencedGenerator) {
+        private ResolvedLeafref(final AbstractTypeObjectGenerator<?, ?> referencedGenerator) {
             this.referencedGenerator = requireNonNull(referencedGenerator);
         }
 
@@ -78,7 +78,7 @@ abstract class TypeReference {
         }
     }
 
-    static @NonNull TypeReference leafRef(final @Nullable AbstractTypeObjectGenerator<?> referencedGenerator) {
+    static @NonNull TypeReference leafRef(final @Nullable AbstractTypeObjectGenerator<?, ?> referencedGenerator) {
         return referencedGenerator == null ? UnresolvedLeafref.INSTANCE : new ResolvedLeafref(referencedGenerator);
     }
 

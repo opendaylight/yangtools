@@ -7,11 +7,16 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import java.util.List;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultNotificationRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -19,8 +24,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Generator corresponding to a {@code notification} statement.
  */
 final class NotificationGenerator
-        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationGenerator> {
-    NotificationGenerator(final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationRuntimeType> {
+    NotificationGenerator(final NotificationEffectiveStatement statement,
+            final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -52,12 +58,18 @@ final class NotificationGenerator
     }
 
     @Override
+    NotificationRuntimeType createRuntimeType(final GeneratedType type, final NotificationEffectiveStatement statement,
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+        return new DefaultNotificationRuntimeType(type, statement, children, augments);
+    }
+
+    @Override
     void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
         // Notifications are a distinct concept
     }
 
     private Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        final AbstractCompositeGenerator<?> parent = getParent();
+        final AbstractCompositeGenerator<?, ?> parent = getParent();
         if (parent instanceof ModuleGenerator) {
             return BindingTypes.notification(builder);
         }

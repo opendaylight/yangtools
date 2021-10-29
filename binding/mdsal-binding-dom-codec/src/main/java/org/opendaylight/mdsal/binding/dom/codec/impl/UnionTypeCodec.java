@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeGeneratedUnion;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
@@ -36,7 +36,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
             final BindingCodecContext codecContext) {
         return () -> {
             final List<String> unionProperties = extractUnionProperties(codecContext.getRuntimeContext()
-                .getTypeWithSchema(unionCls).getKey());
+                .getTypeWithSchema(unionCls).javaType());
             final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
             verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
                 unionTypes, unionProperties);
@@ -56,7 +56,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         };
     }
 
-    private static List<String> extractUnionProperties(final GeneratedType type) {
+    private static List<String> extractUnionProperties(final Type type) {
         verify(type instanceof GeneratedTransferObject, "Unexpected runtime type %s", type);
 
         GeneratedTransferObject gto = (GeneratedTransferObject) type;

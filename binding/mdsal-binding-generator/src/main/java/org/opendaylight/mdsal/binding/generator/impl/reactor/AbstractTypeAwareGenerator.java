@@ -9,13 +9,13 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
 
-import org.opendaylight.mdsal.binding.generator.impl.tree.SchemaTreeChild;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -26,20 +26,14 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Common base class for {@link LeafGenerator} and {@link LeafListGenerator}.
  */
-abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?>,
-        G extends AbstractTypeAwareGenerator<T, G>>
-        extends AbstractTypeObjectGenerator<T> implements SchemaTreeChild<T, G> {
+abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?>, R extends RuntimeType,
+        G extends AbstractTypeAwareGenerator<T, R, G>>
+        extends AbstractTypeObjectGenerator<T, R> {
     private IdentityGenerator contextType;
 
-    AbstractTypeAwareGenerator(final T statement, final AbstractCompositeGenerator<?> parent) {
+    AbstractTypeAwareGenerator(final T statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         verify(statement instanceof TypeAware, "Unexpected statement %s", statement);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public final G generator() {
-        return (G) this;
     }
 
     @Override
@@ -62,7 +56,9 @@ abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?
 
     @Override
     final TypeDefinition<?> extractTypeDefinition() {
-        return ((TypedDataSchemaNode) statement()).getType();
+        final var stmt = statement();
+        verify(stmt instanceof TypedDataSchemaNode, "Unexpected statement %s", stmt);
+        return ((TypedDataSchemaNode) stmt).getType();
     }
 
     @Override

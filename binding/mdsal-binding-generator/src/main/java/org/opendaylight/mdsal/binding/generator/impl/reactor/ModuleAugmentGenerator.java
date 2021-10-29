@@ -9,16 +9,20 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Generator corresponding to a {@code augment} statement used as a child of a {@code module} statement.
  */
 final class ModuleAugmentGenerator extends AbstractAugmentGenerator {
-    ModuleAugmentGenerator(final AugmentEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+    ModuleAugmentGenerator(final AugmentEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
     @NonNull AugmentRequirement startLinkage(final GeneratorContext context) {
+        setTargetStatement(SchemaInferenceStack.of(context.getEffectiveModelContext())
+            .enterSchemaTree(statement().argument()));
+
         return new AugmentRequirement(this,
             context.resolveModule(statement().argument().firstNodeIdentifier().getModule()));
     }

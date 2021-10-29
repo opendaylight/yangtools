@@ -8,23 +8,25 @@
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.generator.impl.tree.SchemaTreeChild;
-import org.opendaylight.mdsal.binding.generator.impl.tree.SchemaTreeParent;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
@@ -112,24 +114,20 @@ import org.slf4j.LoggerFactory;
  * with linking original instances in the tree iteration order. The part dealing with augment attachment lives mostly
  * in {@link AugmentRequirement}.
  */
-public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>>
-        extends AbstractExplicitGenerator<T> implements SchemaTreeParent<T> {
+public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
+        extends AbstractExplicitGenerator<S, R> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCompositeGenerator.class);
 
     // FIXME: we want to allocate this lazily to lower memory footprint
     private final @NonNull CollisionDomain domain = new CollisionDomain(this);
     private final @NonNull List<Generator> childGenerators;
-    /**
-     * {@link SchemaTreeChild} children of this generator. Generator linkage is ensured on first access.
-     */
-    private final @NonNull List<SchemaTreeChild<?, ?>> schemaTreeChildren;
 
     /**
      * List of {@code augment} statements targeting this generator. This list is maintained only for the primary
      * incarnation. This list is an evolving entity until after we have finished linkage of original statements. It is
      * expected to be stable at the start of {@code step 2} in {@link GeneratorReactor#execute(TypeBuilderFactory)}.
      */
-    private List<AbstractAugmentGenerator> augments = List.of();
+    private @NonNull List<AbstractAugmentGenerator> augments = List.of();
 
     /**
      * List of {@code grouping} statements this statement references. This field is set once by
@@ -142,27 +140,21 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
      * have some children which have not completed linking. Once we have completed linking of all children, including
      * {@link #unlinkedChildren}, this will be set to {@code null}.
      */
-    private List<AbstractCompositeGenerator<?>> unlinkedComposites = List.of();
+    private List<AbstractCompositeGenerator<?, ?>> unlinkedComposites = List.of();
     /**
      * List of children which have not had their original linked. This list starts of as null. When we first attempt
      * linkage, it becomes non-null.
      */
     private List<Generator> unlinkedChildren;
 
-    AbstractCompositeGenerator(final T statement) {
+    AbstractCompositeGenerator(final S statement) {
         super(statement);
-
-        final var children = createChildren(statement);
-        childGenerators = children.getKey();
-        schemaTreeChildren = children.getValue();
+        childGenerators = createChildren(statement);
     }
 
-    AbstractCompositeGenerator(final T statement, final AbstractCompositeGenerator<?> parent) {
+    AbstractCompositeGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-
-        final var children = createChildren(statement);
-        childGenerators = children.getKey();
-        schemaTreeChildren = children.getValue();
+        childGenerators = createChildren(statement);
     }
 
     @Override
@@ -170,14 +162,77 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
         return childGenerators.iterator();
     }
 
+    @NonNull S effectiveStatement() {
+        return statement();
+    }
+
     @Override
-    public List<SchemaTreeChild<?, ?>> schemaTreeChildren() {
-        for (var child : schemaTreeChildren) {
-            if (child instanceof SchemaTreePlaceholder) {
-                ((SchemaTreePlaceholder<?, ?>) child).setGenerator(this);
+    public final R createRuntimeType() {
+        return generatedType()
+            .map(type -> {
+                final var stmt = effectiveStatement();
+                return createRuntimeType(type, stmt, indexChildren(stmt), augmentRuntimeTypes());
+            })
+            .orElse(null);
+    }
+
+    abstract @NonNull R createRuntimeType(@NonNull GeneratedType type, @NonNull S statement,
+        @NonNull List<RuntimeType> children, @NonNull List<AugmentRuntimeType> augments);
+
+    @Override
+    final R rebaseRuntimeType(final R type, final S statement) {
+        return createRuntimeType(type.javaType(), statement, indexChildren(statement), augmentRuntimeTypes());
+    }
+
+    private @NonNull List<RuntimeType> indexChildren(final @NonNull S statement) {
+        final var childMap = new ArrayList<RuntimeType>();
+
+        for (var stmt : statement.effectiveSubstatements()) {
+            if (stmt instanceof SchemaTreeEffectiveStatement) {
+                final var child = (SchemaTreeEffectiveStatement<?>) stmt;
+                final var qname = child.getIdentifier();
+
+                // Note: getOriginal() is needed for augments of cases
+                @SuppressWarnings("rawtypes")
+                final AbstractExplicitGenerator childGen = getOriginal().resolveRuntimeChild(statement.argument(),
+                    qname);
+                @SuppressWarnings("unchecked")
+                final Optional<RuntimeType> rt = childGen.runtimeTypeOf(child);
+                rt.ifPresent(childMap::add);
             }
         }
-        return schemaTreeChildren;
+
+        return childMap;
+    }
+
+    private @NonNull AbstractExplicitGenerator<?, ?> resolveRuntimeChild(final Object parentArg, final QName qname) {
+        final var exact = findSchemaTreeGenerator(qname);
+        if (exact != null) {
+            return exact;
+        }
+
+        // TODO: this is quite hacky: what we are trying to do is rebase the lookup QName to parent QName, as the only
+        //       way we should be arriving here is through uses -> grouping squash
+        verify(parentArg instanceof QName, "Cannot deal with parent argument %s", parentArg);
+        final var namespace = ((QName) parentArg).getModule();
+
+        verify(namespace.equals(qname.getModule()), "Cannot deal with %s in namespace %s", qname, namespace);
+        final var local = qname.bindTo(getQName().getModule());
+        return verifyNotNull(findSchemaTreeGenerator(local), "Failed to find %s as %s in %s", qname, local, this);
+    }
+
+    final @NonNull List<AbstractAugmentGenerator> augments() {
+        return augments;
+    }
+
+    private @NonNull List<AugmentRuntimeType> augmentRuntimeTypes() {
+        // Augments are attached to original instance: at least CaseGenerator is instantiated in non-original place
+        // and thus we need to go back to original
+        return getOriginal().augments.stream()
+            .map(AbstractAugmentGenerator::runtimeType)
+            .filter(Optional::isPresent)
+            .map(Optional::orElseThrow)
+            .collect(ImmutableList.toImmutableList());
     }
 
     @Override
@@ -185,17 +240,17 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
         return childGenerators.isEmpty();
     }
 
-    final @Nullable AbstractExplicitGenerator<?> findGenerator(final List<EffectiveStatement<?, ?>> stmtPath) {
+    final @Nullable AbstractExplicitGenerator<?, ?> findGenerator(final List<EffectiveStatement<?, ?>> stmtPath) {
         return findGenerator(MatchStrategy.identity(), stmtPath, 0);
     }
 
-    final @Nullable AbstractExplicitGenerator<?> findGenerator(final MatchStrategy childStrategy,
+    final @Nullable AbstractExplicitGenerator<?, ?> findGenerator(final MatchStrategy childStrategy,
             // TODO: Wouldn't this method be nicer with Deque<EffectiveStatement<?, ?>> ?
             final List<EffectiveStatement<?, ?>> stmtPath, final int offset) {
         final EffectiveStatement<?, ?> stmt = stmtPath.get(offset);
 
         // Try direct children first, which is simple
-        AbstractExplicitGenerator<?> ret = childStrategy.findGenerator(stmt, childGenerators);
+        AbstractExplicitGenerator<?, ?> ret = childStrategy.findGenerator(stmt, childGenerators);
         if (ret != null) {
             final int next = offset + 1;
             if (stmtPath.size() == next) {
@@ -204,7 +259,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
             }
             if (ret instanceof AbstractCompositeGenerator) {
                 // We know how to descend down
-                return ((AbstractCompositeGenerator<?>) ret).findGenerator(childStrategy, stmtPath, next);
+                return ((AbstractCompositeGenerator<?, ?>) ret).findGenerator(childStrategy, stmtPath, next);
             }
             // Yeah, don't know how to continue here
             return null;
@@ -272,7 +327,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
                 requirements.add(((UsesAugmentGenerator) child).startLinkage());
             }
             if (child instanceof AbstractCompositeGenerator) {
-                ((AbstractCompositeGenerator<?>) child).startUsesAugmentLinkage(requirements);
+                ((AbstractCompositeGenerator<?, ?>) child).startUsesAugmentLinkage(requirements);
             }
         }
     }
@@ -299,7 +354,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
         if (unlinkedChildren == null) {
             unlinkedChildren = childGenerators.stream()
                 .filter(AbstractExplicitGenerator.class::isInstance)
-                .map(child -> (AbstractExplicitGenerator<?>) child)
+                .map(child -> (AbstractExplicitGenerator<?, ?>) child)
                 .collect(Collectors.toList());
         }
 
@@ -310,7 +365,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
             while (it.hasNext()) {
                 final var child = it.next();
                 if (child instanceof AbstractExplicitGenerator) {
-                    if (((AbstractExplicitGenerator<?>) child).linkOriginalGenerator()) {
+                    if (((AbstractExplicitGenerator<?, ?>) child).linkOriginalGenerator()) {
                         progress = LinkageProgress.SOME;
                         it.remove();
 
@@ -319,7 +374,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
                             if (unlinkedComposites.isEmpty()) {
                                 unlinkedComposites = new ArrayList<>();
                             }
-                            unlinkedComposites.add((AbstractCompositeGenerator<?>) child);
+                            unlinkedComposites.add((AbstractCompositeGenerator<?, ?>) child);
                         }
                     }
                 }
@@ -354,20 +409,21 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
     }
 
     @Override
-    final AbstractCompositeGenerator<T> getOriginal() {
-        return (AbstractCompositeGenerator<T>) super.getOriginal();
+    final AbstractCompositeGenerator<S, R> getOriginal() {
+        return (AbstractCompositeGenerator<S, R>) super.getOriginal();
     }
 
     @Override
-    final AbstractCompositeGenerator<T> tryOriginal() {
-        return (AbstractCompositeGenerator<T>) super.tryOriginal();
+    final AbstractCompositeGenerator<S, R> tryOriginal() {
+        return (AbstractCompositeGenerator<S, R>) super.tryOriginal();
     }
 
-    final <S extends EffectiveStatement<?, ?>> @Nullable OriginalLink<S> originalChild(final QName childQName) {
+    final <X extends EffectiveStatement<?, ?>, Y extends RuntimeType> @Nullable OriginalLink<X, Y> originalChild(
+            final QName childQName) {
         // First try groupings/augments ...
         var found = findInferredGenerator(childQName);
         if (found != null) {
-            return (OriginalLink<S>) OriginalLink.partial(found);
+            return (OriginalLink<X, Y>) OriginalLink.partial(found);
         }
 
         // ... no luck, we really need to start looking at our origin
@@ -376,7 +432,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
             final QName prevQName = childQName.bindTo(prev.getQName().getModule());
             found = prev.findSchemaTreeGenerator(prevQName);
             if (found != null) {
-                return (OriginalLink<S>) found.originalLink();
+                return (OriginalLink<X, Y>) found.originalLink();
             }
         }
 
@@ -384,8 +440,8 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
     }
 
     @Override
-    final AbstractExplicitGenerator<?> findSchemaTreeGenerator(final QName qname) {
-        final AbstractExplicitGenerator<?> found = super.findSchemaTreeGenerator(qname);
+    final AbstractExplicitGenerator<?, ?> findSchemaTreeGenerator(final QName qname) {
+        final AbstractExplicitGenerator<?, ?> found = super.findSchemaTreeGenerator(qname);
         return found != null ? found : findInferredGenerator(qname);
     }
 
@@ -409,7 +465,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
         return null;
     }
 
-    private @Nullable AbstractExplicitGenerator<?> findInferredGenerator(final QName qname) {
+    private @Nullable AbstractExplicitGenerator<?, ?> findInferredGenerator(final QName qname) {
         // First search our local groupings ...
         for (var grouping : groupings) {
             final var gen = grouping.findSchemaTreeGenerator(qname.bindTo(grouping.statement().argument().getModule()));
@@ -450,7 +506,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
         for (Generator child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator) {
-                ((AbstractExplicitGenerator<?>) child).addAsGetterMethod(builder, builderFactory);
+                ((AbstractExplicitGenerator<?, ?>) child).addAsGetterMethod(builder, builderFactory);
             }
 
             final GeneratedType enclosedType = child.enclosedType(builderFactory);
@@ -464,97 +520,70 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
         }
     }
 
-    private Entry<List<Generator>, List<SchemaTreeChild<?, ?>>> createChildren(
-            final EffectiveStatement<?, ?> statement) {
+    private @NonNull List<Generator> createChildren(final EffectiveStatement<?, ?> statement) {
         final var tmp = new ArrayList<Generator>();
         final var tmpAug = new ArrayList<AbstractAugmentGenerator>();
-        final var tmpSchema = new ArrayList<SchemaTreeChild<?, ?>>();
 
         for (var stmt : statement.effectiveSubstatements()) {
             if (stmt instanceof ActionEffectiveStatement) {
-                final var cast = (ActionEffectiveStatement) stmt;
-                if (isAugmenting(cast)) {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, ActionGenerator.class));
-                } else {
-                    tmp.add(new ActionGenerator(cast, this));
+                if (!isAugmenting(stmt)) {
+                    tmp.add(new ActionGenerator((ActionEffectiveStatement) stmt, this));
                 }
             } else if (stmt instanceof AnydataEffectiveStatement) {
-                final var cast = (AnydataEffectiveStatement) stmt;
-                if (isAugmenting(stmt)) {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, OpaqueObjectGenerator.class));
-                } else {
-                    tmp.add(new OpaqueObjectGenerator<>(cast, this));
+                if (!isAugmenting(stmt)) {
+                    tmp.add(new OpaqueObjectGenerator.Anydata((AnydataEffectiveStatement) stmt, this));
                 }
             } else if (stmt instanceof AnyxmlEffectiveStatement) {
-                final var cast = (AnyxmlEffectiveStatement) stmt;
-                if (isAugmenting(stmt)) {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, OpaqueObjectGenerator.class));
-                } else {
-                    tmp.add(new OpaqueObjectGenerator<>(cast, this));
+                if (!isAugmenting(stmt)) {
+                    tmp.add(new OpaqueObjectGenerator.Anyxml((AnyxmlEffectiveStatement) stmt, this));
                 }
             } else if (stmt instanceof CaseEffectiveStatement) {
                 tmp.add(new CaseGenerator((CaseEffectiveStatement) stmt, this));
             } else if (stmt instanceof ChoiceEffectiveStatement) {
-                final var cast = (ChoiceEffectiveStatement) stmt;
                 // FIXME: use isOriginalDeclaration() ?
-                if (isAddedByUses(stmt)) {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, ChoiceGenerator.class));
-                } else {
-                    tmp.add(new ChoiceGenerator(cast, this));
+                if (!isAddedByUses(stmt)) {
+                    tmp.add(new ChoiceGenerator((ChoiceEffectiveStatement) stmt, this));
                 }
             } else if (stmt instanceof ContainerEffectiveStatement) {
-                final var cast = (ContainerEffectiveStatement) stmt;
                 if (isOriginalDeclaration(stmt)) {
                     tmp.add(new ContainerGenerator((ContainerEffectiveStatement) stmt, this));
-                } else {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, ContainerGenerator.class));
                 }
             } else if (stmt instanceof GroupingEffectiveStatement) {
                 tmp.add(new GroupingGenerator((GroupingEffectiveStatement) stmt, this));
             } else if (stmt instanceof IdentityEffectiveStatement) {
                 tmp.add(new IdentityGenerator((IdentityEffectiveStatement) stmt, this));
             } else if (stmt instanceof InputEffectiveStatement) {
+                final var cast = (InputEffectiveStatement) stmt;
                 // FIXME: do not generate legacy RPC layout
-                tmp.add(this instanceof RpcGenerator ? new RpcContainerGenerator((InputEffectiveStatement) stmt, this)
-                    : new OperationContainerGenerator((InputEffectiveStatement) stmt, this));
+                tmp.add(this instanceof RpcGenerator ? new RpcInputGenerator(cast, this)
+                    : new InputGenerator(cast, this));
             } else if (stmt instanceof LeafEffectiveStatement) {
-                final var cast = (LeafEffectiveStatement) stmt;
-                if (isAugmenting(stmt)) {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, LeafGenerator.class));
-                } else {
-                    tmp.add(new LeafGenerator(cast, this));
+                if (!isAugmenting(stmt)) {
+                    tmp.add(new LeafGenerator((LeafEffectiveStatement) stmt, this));
                 }
             } else if (stmt instanceof LeafListEffectiveStatement) {
-                final var cast = (LeafListEffectiveStatement) stmt;
-                if (isAugmenting(stmt)) {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, LeafListGenerator.class));
-                } else {
+                if (!isAugmenting(stmt)) {
                     tmp.add(new LeafListGenerator((LeafListEffectiveStatement) stmt, this));
                 }
             } else if (stmt instanceof ListEffectiveStatement) {
-                final var cast = (ListEffectiveStatement) stmt;
                 if (isOriginalDeclaration(stmt)) {
-                    final ListGenerator listGen = new ListGenerator(cast, this);
+                    final ListGenerator listGen = new ListGenerator((ListEffectiveStatement) stmt, this);
                     tmp.add(listGen);
 
                     final KeyGenerator keyGen = listGen.keyGenerator();
                     if (keyGen != null) {
                         tmp.add(keyGen);
                     }
-                } else {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, ListGenerator.class));
                 }
             } else if (stmt instanceof NotificationEffectiveStatement) {
-                final var cast = (NotificationEffectiveStatement) stmt;
-                if (isAugmenting(stmt)) {
-                    tmpSchema.add(new SchemaTreePlaceholder<>(cast, NotificationGenerator.class));
-                } else {
-                    tmp.add(new NotificationGenerator(cast, this));
+                if (!isAugmenting(stmt)) {
+                    tmp.add(new NotificationGenerator((NotificationEffectiveStatement) stmt, this));
                 }
             } else if (stmt instanceof OutputEffectiveStatement) {
+                final var cast = (OutputEffectiveStatement) stmt;
                 // FIXME: do not generate legacy RPC layout
-                tmp.add(this instanceof RpcGenerator ? new RpcContainerGenerator((OutputEffectiveStatement) stmt, this)
-                    : new OperationContainerGenerator((OutputEffectiveStatement) stmt, this));
+                tmp.add(this instanceof RpcGenerator ? new RpcOutputGenerator(cast, this)
+                    : new OutputGenerator(cast, this));
             } else if (stmt instanceof RpcEffectiveStatement) {
                 tmp.add(new RpcGenerator((RpcEffectiveStatement) stmt, this));
             } else if (stmt instanceof TypedefEffectiveStatement) {
@@ -589,13 +618,6 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
             }
         }
 
-        // Add any SchemaTreeChild generators to the list
-        for (var child : tmp) {
-            if (child instanceof SchemaTreeChild) {
-                tmpSchema.add((SchemaTreeChild<?, ?>) child);
-            }
-        }
-
         // Sort augments and add them last. This ensures child iteration order always reflects potential
         // interdependencies, hence we do not need to worry about them. This is extremely important, as there are a
         // number of places where we would have to either move the logic to parent statement and explicitly filter/sort
@@ -624,7 +646,7 @@ public abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?,
             }
         }
 
-        return Map.entry(List.copyOf(tmp), List.copyOf(tmpSchema));
+        return List.copyOf(tmp);
     }
 
     // Utility equivalent of (!isAddedByUses(stmt) && !isAugmenting(stmt)). Takes advantage of relationship between

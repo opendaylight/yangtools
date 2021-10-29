@@ -28,11 +28,11 @@ abstract class MatchStrategy {
         static final @NonNull Identity INSTANCE = new Identity();
 
         @Override
-        AbstractExplicitGenerator<?> findGenerator(final EffectiveStatement<?, ?> needle,
+        AbstractExplicitGenerator<?, ?> findGenerator(final EffectiveStatement<?, ?> needle,
                 final Iterable<? extends Generator> haystack) {
             for (Generator gen : haystack) {
                 if (gen instanceof AbstractExplicitGenerator) {
-                    final AbstractExplicitGenerator<?> ret = (AbstractExplicitGenerator<?>) gen;
+                    final AbstractExplicitGenerator<?, ?> ret = (AbstractExplicitGenerator<?, ?>) gen;
                     if (needle == ret.statement()) {
                         return ret;
                     }
@@ -49,17 +49,18 @@ abstract class MatchStrategy {
         static final @NonNull OnQName INSTANCE = new OnQName();
 
         @Override
-        final AbstractExplicitGenerator<?> findGenerator(final EffectiveStatement<?, ?> needle,
+        final AbstractExplicitGenerator<?, ?> findGenerator(final EffectiveStatement<?, ?> needle,
                 final Iterable<? extends Generator> haystack) {
             final Object arg = needle.argument();
             verify(arg instanceof QName, "Unexpected argument %s in %s", arg, needle);
             return findGenerator((QName) arg, haystack);
         }
 
-        AbstractExplicitGenerator<?> findGenerator(final QName needle, final Iterable<? extends Generator> haystack) {
+        AbstractExplicitGenerator<?, ?> findGenerator(final QName needle,
+                final Iterable<? extends Generator> haystack) {
             for (Generator gen : haystack) {
                 if (gen instanceof AbstractExplicitGenerator) {
-                    final AbstractExplicitGenerator<?> ret = (AbstractExplicitGenerator<?>) gen;
+                    final AbstractExplicitGenerator<?, ?> ret = (AbstractExplicitGenerator<?, ?>) gen;
                     if (needle.equals(ret.statement().argument())) {
                         return ret;
                     }
@@ -81,7 +82,8 @@ abstract class MatchStrategy {
         }
 
         @Override
-        AbstractExplicitGenerator<?> findGenerator(final QName needle, final Iterable<? extends Generator> haystack) {
+        AbstractExplicitGenerator<?, ?> findGenerator(final QName needle,
+                final Iterable<? extends Generator> haystack) {
             return super.findGenerator(needle.bindTo(module), haystack);
         }
 
@@ -107,7 +109,7 @@ abstract class MatchStrategy {
         return Identity.INSTANCE;
     }
 
-    abstract @Nullable AbstractExplicitGenerator<?> findGenerator(EffectiveStatement<?, ?> needle,
+    abstract @Nullable AbstractExplicitGenerator<?, ?> findGenerator(EffectiveStatement<?, ?> needle,
             Iterable<? extends Generator> haystack);
 
     @Override

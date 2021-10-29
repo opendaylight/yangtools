@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.field.FieldDescription;
@@ -73,7 +72,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -178,8 +176,8 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     static Class<? extends DataObjectStreamer<?>> generateStreamer(final CodecClassLoader loader,
             final CodecContextFactory registry, final Class<?> type) {
 
-        final Entry<GeneratedType, WithStatus> typeAndSchema = registry.getRuntimeContext().getTypeWithSchema(type);
-        final WithStatus schema = typeAndSchema.getValue();
+        final var typeAndSchema = registry.getRuntimeContext().getTypeWithSchema(type);
+        final var schema = typeAndSchema.statement();
 
         final StackManipulation startEvent;
         if (schema instanceof ContainerLike || schema instanceof NotificationDefinition) {
@@ -199,8 +197,9 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         }
 
         return loader.generateClass(type, "streamer",
-            new DataObjectStreamerGenerator<>(registry, typeAndSchema.getKey(), (DataNodeContainer) schema, type,
-                    startEvent));
+            // FIXME: cast to GeneratedType: we really should adjust getTypeWithSchema()
+            new DataObjectStreamerGenerator<>(registry, (GeneratedType) typeAndSchema.javaType(),
+                (DataNodeContainer) schema, type, startEvent));
     }
 
     @Override

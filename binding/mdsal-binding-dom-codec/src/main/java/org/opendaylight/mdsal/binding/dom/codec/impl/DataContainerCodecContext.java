@@ -29,6 +29,8 @@ import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -41,9 +43,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
-abstract class DataContainerCodecContext<D extends DataObject, T extends WithStatus> extends NodeCodecContext
+abstract class DataContainerCodecContext<D extends DataObject, T extends RuntimeTypeContainer> extends NodeCodecContext
         implements BindingDataObjectCodecTreeNode<D>  {
     private static final VarHandle EVENT_STREAM_SERIALIZER;
 
@@ -66,9 +67,8 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         this.prototype = requireNonNull(prototype);
     }
 
-    @Override
-    public final T getSchema() {
-        return prototype.getSchema();
+    public final @NonNull T getType() {
+        return prototype.getType();
     }
 
     @Override
@@ -201,7 +201,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
     private IllegalArgumentException childNullException(final Class<?> childClass, final String message,
             final Object... args) {
         final BindingRuntimeContext runtimeContext = factory().getRuntimeContext();
-        final WithStatus schema;
+        final CompositeRuntimeType schema;
         if (Augmentation.class.isAssignableFrom(childClass)) {
             schema = runtimeContext.getAugmentationDefinition(childClass.asSubclass(Augmentation.class));
         } else {
