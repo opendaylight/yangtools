@@ -17,11 +17,11 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 

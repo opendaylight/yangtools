@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
 public final class EmptyAugmentStatement extends WithArgument<SchemaNodeIdentifier> implements AugmentStatement {

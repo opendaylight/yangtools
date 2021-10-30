@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
 public final class RefDeviationStatement extends AbstractRefStatement<Absolute, DeviationStatement>

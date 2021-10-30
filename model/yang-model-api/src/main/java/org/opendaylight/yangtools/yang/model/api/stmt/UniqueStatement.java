@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Set;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;

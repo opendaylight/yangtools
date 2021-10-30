@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
 public final class RefRefineStatement extends AbstractRefStatement<Descendant, RefineStatement>

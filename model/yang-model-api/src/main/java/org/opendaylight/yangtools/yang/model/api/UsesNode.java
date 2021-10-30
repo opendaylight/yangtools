@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.api;
 import java.util.Collection;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 /**

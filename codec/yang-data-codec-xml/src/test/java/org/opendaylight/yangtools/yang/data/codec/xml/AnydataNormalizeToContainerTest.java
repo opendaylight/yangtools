@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNotNull;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -24,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 

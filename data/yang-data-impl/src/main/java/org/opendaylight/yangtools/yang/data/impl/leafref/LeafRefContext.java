@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 public final class LeafRefContext extends AbstractEffectiveModelContextProvider {

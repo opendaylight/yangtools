@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 

@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * Interface describing YANG 'deviation' statement.

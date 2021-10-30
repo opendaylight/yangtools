@@ -22,9 +22,9 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Represents unique path to the every node inside the module.
