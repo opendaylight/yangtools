@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Absolute;
 
 /**
  * An XPath expression. This interface defines a parsed representation of an XPath defined in a YANG context, as
@@ -105,5 +106,5 @@ public interface YangXPathExpression extends Immutable {
 
     // FIXME: this really should be YangInstanceIdentifier without AugmentationIdentifier. Implementations are
     //        strongly encouraged to validate it as such.
-    YangLocationPath interpretAsInstanceIdentifier(YangLiteralExpr expr) throws XPathExpressionException;
+    Absolute interpretAsInstanceIdentifier(YangLiteralExpr expr) throws XPathExpressionException;
 }
