@@ -20,6 +20,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser;
@@ -54,13 +55,18 @@ abstract class InstanceIdentifierParser {
         }
 
         @Override
-        YangQNameExpr createExpr(final String prefix, final String localName) {
-            return YangQNameExpr.of(UnresolvedQName.qualified(prefix, localName));
+        YangQNameExpr createExpr(final String first, final @Nullable String second) {
+            return YangQNameExpr.of(qnameOf(first, second));
         }
 
         @Override
-        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
-            return YangXPathAxis.CHILD.asStep(UnresolvedQName.qualified(prefix, localName), predicates);
+        QNameStep createChildStep(final String first, final @Nullable String second,
+                final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(qnameOf(first, second), predicates);
+        }
+
+        private static UnresolvedQName qnameOf(final String first, final @Nullable String second) {
+            return second != null ? UnresolvedQName.qualified(first, second) : UnresolvedQName.unqualified(first);
         }
     }
 
@@ -73,16 +79,17 @@ abstract class InstanceIdentifierParser {
         }
 
         @Override
-        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
-            return YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+        QNameStep createChildStep(final String first, final @Nullable String second,
+                final Collection<YangExpr> predicates) {
+            return second == null ? YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified(first), predicates)
+                : YangXPathAxis.CHILD.asStep(namespaceContext.createQName(first, second), predicates);
         }
-
 
         @Override
-        YangQNameExpr createExpr(final String prefix, final String localName) {
-            return YangQNameExpr.of(namespaceContext.createQName(prefix, localName));
+        YangQNameExpr createExpr(final String first, final @Nullable String second) {
+            return second == null ? YangQNameExpr.of(UnresolvedQName.unqualified(first))
+                : YangQNameExpr.of(namespaceContext.createQName(first, second));
         }
-
     }
 
     private final YangXPathMathSupport mathSupport;
@@ -112,20 +119,30 @@ abstract class InstanceIdentifierParser {
         return YangLocationPath.absolute(steps);
     }
 
-    abstract YangQNameExpr createExpr(String prefix, String localName);
+    abstract YangQNameExpr createExpr(String first, @Nullable String second);
 
-    abstract QNameStep createChildStep(String prefix, String localName, Collection<YangExpr> predicates);
+    abstract QNameStep createChildStep(String first, @Nullable String second, Collection<YangExpr> predicates);
 
     private QNameStep parsePathArgument(final PathArgumentContext expr) {
         final NodeIdentifierContext childExpr = getChild(expr, NodeIdentifierContext.class, 0);
-        final String prefix = verifyIdentifier(childExpr, 0);
-        final String localName = verifyIdentifier(childExpr, 2);
+        final String first = verifyIdentifier(childExpr, 0);
+        final String second;
+        switch (childExpr.getChildCount()) {
+            case 1:
+                second = null;
+                break;
+            case 3:
+                second = verifyIdentifier(childExpr, 2);
+                break;
+            default:
+                throw illegalShape(childExpr);
+        }
 
         switch (expr.getChildCount()) {
             case 1:
-                return createChildStep(prefix, localName, ImmutableSet.of());
+                return createChildStep(first, second, ImmutableSet.of());
             case 2:
-                return createChildStep(prefix, localName, parsePredicate(getChild(expr, PredicateContext.class, 1)));
+                return createChildStep(first, second, parsePredicate(getChild(expr, PredicateContext.class, 1)));
             default:
                 throw illegalShape(expr);
         }
