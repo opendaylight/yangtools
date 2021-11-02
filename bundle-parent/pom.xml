@@ -34,4 +34,11 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
+        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://wiki.opendaylight.org/display/ODL/YANG+Tools</url>
+    </scm>
 </project>
