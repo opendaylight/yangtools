@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Collections2;
@@ -120,7 +121,7 @@ public class CompilationTest extends BaseCompilationTest {
         // Test generated 'list links'
         assertTrue(linksClass.isInterface());
         CompilationTestUtils.assertImplementsIfc(linksClass, keyArgsClass);
-        assertEquals(7, abstractMethods(linksClass).size());
+        assertEquals(8, abstractMethods(linksClass).size());
         CompilationTestUtils.assertContainsMethod(linksClass,
             "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.links.Text", "getText", loader);
         CompilationTestUtils.assertContainsMethod(linksClass,
@@ -132,6 +133,56 @@ public class CompilationTest extends BaseCompilationTest {
         final Field suid = CompilationTestUtils.assertContainsField(linksKeyClass, "serialVersionUID", Long.TYPE);
         suid.setAccessible(true);
         assertEquals(-8829501012356283881L, suid.getLong(null));
+
+        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    /**
+     * Test that nonnull getter method is generated for non-presence containers only.
+     *
+     * @throws Exception when any exception occurs during the test
+     */
+    @Test
+    public void testContainerGettersGeneration() throws Exception {
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("containers-gen");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("containers-gen");
+        generateTestSources("/compilation/containers-gen", sourcesOutputDir);
+
+        // Test if all sources were generated from 'module containers'
+        File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_TEST);
+        assertTrue(new File(parent, "RootContainer.java").exists());
+        assertTrue(new File(parent, "rootcontainer/PresenceContainer.java").exists());
+        assertTrue(new File(parent, "rootcontainer/NonPresenceContainer.java").exists());
+        CompilationTestUtils.assertFilesCount(parent, 5);
+
+        // Test if sources are compilable
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final Class<?> rootClass = Class.forName(CompilationTestUtils.BASE_PKG
+                + ".urn.opendaylight.test.rev131008.RootContainer", true, loader);
+
+        // Test generated 'container root'
+        assertTrue(rootClass.isInterface());
+        assertEquals(3, abstractMethods(rootClass).size());
+
+        // Test generated getter and not-generated nonnull method for presence container
+        CompilationTestUtils.assertContainsMethod(rootClass,
+                "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.rootcontainer.PresenceContainer",
+                "getPresenceContainer", loader);
+        final var error = assertThrows(AssertionError.class, () ->
+                CompilationTestUtils.assertContainsMethod(rootClass,
+                        "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.rootcontainer.PresenceContainer",
+                        "nonnullPresenceContainer", loader));
+        assertTrue(error.getCause() instanceof NoSuchMethodException);
+
+        // Test generated getter and nonnull methods for non-presence container
+        CompilationTestUtils.assertContainsMethod(rootClass,
+                "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.rootcontainer.NonPresenceContainer",
+                "getNonPresenceContainer", loader);
+        CompilationTestUtils.assertContainsMethod(rootClass,
+                "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.rootcontainer.NonPresenceContainer",
+                "nonnullNonPresenceContainer", loader);
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

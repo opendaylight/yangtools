@@ -190,10 +190,10 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static final class Reusable<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
             implements LocalNameProvider<T> {
         private final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties;
-        private final Map<Method, Class<?>> daoProperties;
+        private final Map<Class<?>, PropertyInfo> daoProperties;
 
         Reusable(final TypeDescription superClass, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
-                final Map<Method, Class<?>> daoProperties, final @Nullable Method keyMethod) {
+                final Map<Class<?>, PropertyInfo> daoProperties, final @Nullable Method keyMethod) {
             super(superClass, keyMethod);
             this.simpleProperties = requireNonNull(simpleProperties);
             this.daoProperties = requireNonNull(daoProperties);
@@ -209,13 +209,20 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
                 tmp = tmp.defineMethod(methodName, retType, PUB_FINAL).intercept(
                     new SimpleGetterMethodImplementation(methodName, retType));
             }
-            for (Entry<Method, Class<?>> entry : daoProperties.entrySet()) {
-                final Method method = entry.getKey();
+            for (Entry<Class<?>, PropertyInfo> entry : daoProperties.entrySet()) {
+                final PropertyInfo info = entry.getValue();
+                final Method method = info.getterMethod();
                 LOG.trace("Generating for structured method {}", method);
                 final String methodName = method.getName();
                 final TypeDescription retType = TypeDescription.ForLoadedType.of(method.getReturnType());
                 tmp = tmp.defineMethod(methodName, retType, PUB_FINAL).intercept(
-                    new StructuredGetterMethodImplementation(methodName, retType, entry.getValue()));
+                        new StructuredGetterMethodImplementation(methodName, retType, entry.getKey()));
+
+                if (info instanceof PropertyInfo.GetterAndNonnull orEmpty) {
+                    final String nonnullName = orEmpty.nonnullMethod().getName();
+                    tmp = tmp.defineMethod(nonnullName, retType, PUB_FINAL).intercept(
+                        new NonnullMethodImplementation(nonnullName, retType, entry.getKey(), method));
+                }
             }
 
             return tmp;
@@ -255,7 +262,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
 
     static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generate(final CodecClassLoader loader,
             final Class<D> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
-            final Map<Method, Class<?>> daoProperties, final Method keyMethod) {
+            final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
         return loader.generateClass(bindingInterface, "codecImpl",
             new Reusable<>(BB_CDO, simpleProperties, daoProperties, keyMethod));
     }
@@ -263,7 +270,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generateAugmentable(
             final CodecClassLoader loader, final Class<D> bindingInterface,
             final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
-            final Map<Method, Class<?>> daoProperties, final Method keyMethod) {
+            final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
         return loader.generateClass(bindingInterface, "codecImpl",
             new Reusable<>(BB_ACDO, simpleProperties, daoProperties, keyMethod));
     }
@@ -331,6 +338,17 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     private abstract static class AbstractMethodImplementation implements Implementation {
+        final TypeDescription retType;
+        // getFoo, usually
+        final String methodName;
+
+        AbstractMethodImplementation(final String methodName, final TypeDescription retType) {
+            this.methodName = requireNonNull(methodName);
+            this.retType = requireNonNull(retType);
+        }
+    }
+
+    private abstract static class AbstractCachedMethodImplementation extends AbstractMethodImplementation {
         private static final Generic BB_HANDLE = TypeDefinition.Sort.describe(VarHandle.class);
         private static final Generic BB_OBJECT = TypeDefinition.Sort.describe(Object.class);
         private static final StackManipulation OBJECT_CLASS = ClassConstant.of(TypeDescription.OBJECT);
@@ -342,16 +360,12 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
                 | Opcodes.ACC_SYNTHETIC;
         private static final int PRIV_VOLATILE = Opcodes.ACC_PRIVATE | Opcodes.ACC_VOLATILE | Opcodes.ACC_SYNTHETIC;
 
-        final TypeDescription retType;
-        // getFoo
-        final String methodName;
         // getFoo$$$V
         final String handleName;
 
-        AbstractMethodImplementation(final String methodName, final TypeDescription retType) {
-            this.methodName = requireNonNull(methodName);
-            this.retType = requireNonNull(retType);
-            this.handleName = methodName + "$$$V";
+        AbstractCachedMethodImplementation(final String methodName, final TypeDescription retType) {
+            super(methodName, retType);
+            handleName = methodName + "$$$V";
         }
 
         @Override
@@ -374,7 +388,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         }
     }
 
-    private static final class KeyMethodImplementation extends AbstractMethodImplementation {
+    private static final class KeyMethodImplementation extends AbstractCachedMethodImplementation {
         private static final StackManipulation CODEC_KEY = invokeMethod(CodecDataObject.class,
             "codecKey", VarHandle.class);
 
@@ -394,6 +408,40 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         }
     }
 
+    private static final class NonnullMethodImplementation extends AbstractMethodImplementation {
+        private static final StackManipulation NONNULL_MEMBER = invokeMethod(CodecDataObject.class,
+                "codecMemberOrEmpty", Object.class, Class.class);
+
+        private final Class<?> bindingClass;
+        private final Method getterMethod;
+
+        NonnullMethodImplementation(final String methodName, final TypeDescription retType,
+                final Class<?> bindingClass, final Method getterMethod) {
+            super(methodName, retType);
+            this.bindingClass = requireNonNull(bindingClass);
+            this.getterMethod = requireNonNull(getterMethod);
+        }
+
+        @Override
+        public ByteCodeAppender appender(final Target implementationTarget) {
+            return new ByteCodeAppender.Simple(
+                    // return (FooType) codecMemberOrEmpty(getFoo(), FooType.class)
+                    loadThis(),
+                    loadThis(),
+                    invokeMethod(getterMethod),
+                    ClassConstant.of(TypeDefinition.Sort.describe(bindingClass).asErasure()),
+                    NONNULL_MEMBER,
+                    TypeCasting.to(retType),
+                    MethodReturn.REFERENCE);
+        }
+
+        @Override
+        public InstrumentedType prepare(final InstrumentedType instrumentedType) {
+            // No-op
+            return instrumentedType;
+        }
+    }
+
     /*
      * A simple leaf method, which looks up child by a String constant. This is slightly more complicated because we
      * want to make sure we are using the same String instance as the one stored in associated DataObjectCodecContext,
@@ -401,7 +449,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
      * as minimizing footprint. Since that string is not guaranteed to be interned in the String Pool, we cannot rely
      * on the constant pool entry to resolve to the same object.
      */
-    private static final class SimpleGetterMethodImplementation extends AbstractMethodImplementation {
+    private static final class SimpleGetterMethodImplementation extends AbstractCachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataObject.class,
             "codecMember", VarHandle.class, String.class);
         private static final StackManipulation BRIDGE_RESOLVE = invokeMethod(ClassGeneratorBridge.class,
@@ -413,7 +461,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
 
         SimpleGetterMethodImplementation(final String methodName, final TypeDescription retType) {
             super(methodName, retType);
-            this.stringName = methodName + "$$$S";
+            stringName = methodName + "$$$S";
         }
 
         @Override
@@ -443,7 +491,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         }
     }
 
-    private static final class StructuredGetterMethodImplementation extends AbstractMethodImplementation {
+    private static final class StructuredGetterMethodImplementation extends AbstractCachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataObject.class,
             "codecMember", VarHandle.class, Class.class);
 
@@ -468,7 +516,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         }
     }
 
-    private static final class SupplierGetterMethodImplementation extends AbstractMethodImplementation {
+    private static final class SupplierGetterMethodImplementation extends AbstractCachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataObject.class,
             "codecMember", VarHandle.class, NodeContextSupplier.class);
         private static final StackManipulation BRIDGE_RESOLVE = invokeMethod(ClassGeneratorBridge.class,

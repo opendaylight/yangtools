@@ -20,6 +20,7 @@ import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
@@ -44,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -248,7 +250,11 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
     // This method must allow concurrent loading, i.e. nothing in it may have effects outside of the loaded object
     private @NonNull DataContainerCodecContext<?, T> createInstance() {
         // FIXME: make protected abstract
-        if (type instanceof ContainerLikeRuntimeType) {
+        if (type instanceof ContainerLikeRuntimeType containerLike) {
+            if (containerLike instanceof ContainerRuntimeType container
+                && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isEmpty()) {
+                return new NonPresenceContainerNodeCodecContext(this);
+            }
             return new ContainerNodeCodecContext(this);
         } else if (type instanceof ListRuntimeType) {
             return Identifiable.class.isAssignableFrom(getBindingClass())

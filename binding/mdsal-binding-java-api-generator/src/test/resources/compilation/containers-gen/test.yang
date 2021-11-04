@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2022 PANTHEON.tech s.r.o. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module containers {
+    yang-version 1;
+    namespace "urn:opendaylight:test";
+    prefix "t";
+
+    revision "2013-10-08" {
+    }
+
+    container rootContainer {
+        container presenceContainer {
+            presence "Enables some feature";
+        }
+        container nonPresenceContainer;
+    }
+}

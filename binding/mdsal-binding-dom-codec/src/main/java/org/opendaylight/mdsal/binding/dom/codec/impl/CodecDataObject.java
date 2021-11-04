@@ -85,6 +85,17 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return cached != null ? unmaskNull(cached) : loadMember(handle, supplier.get());
     }
 
+    protected final @NonNull Object codecMemberOrEmpty(final @Nullable Object value,
+            final @NonNull Class<? extends DataObject> bindingClass) {
+        return value != null ? value : emptyObject(bindingClass);
+    }
+
+    private @NonNull Object emptyObject(final @NonNull Class<? extends DataObject> bindingClass) {
+        final var childContext = context.streamChild(bindingClass);
+        verify(childContext instanceof NonPresenceContainerNodeCodecContext, "Unexpected context %s", childContext);
+        return ((NonPresenceContainerNodeCodecContext<?>) childContext).emptyObject();
+    }
+
     protected final @NonNull Object codecKey(final VarHandle handle) {
         final Object cached = handle.getAcquire(this);
         return cached != null ? cached : loadKey(handle);

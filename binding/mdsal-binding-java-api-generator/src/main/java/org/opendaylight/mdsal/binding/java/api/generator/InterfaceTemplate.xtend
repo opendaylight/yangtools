@@ -193,6 +193,8 @@ class InterfaceTemplate extends BaseTemplate {
                     «generateStaticMethod(m)»
                 «ELSEIF m.parameters.empty && m.name.isGetterMethodName»
                     «generateAccessorMethod(m)»
+                «ELSEIF m.parameters.empty && m.name.isNonnullMethodName»
+                    «generateNonnullAccessorMethod(m)»
                 «ELSE»
                     «generateMethod(m)»
                 «ENDIF»
@@ -265,6 +267,14 @@ class InterfaceTemplate extends BaseTemplate {
             «accessorJavadoc(method, ", or {@code null} if it is not present.")»
             «method.generateAccessorAnnotations»
             «method.returnType.nullableType» «method.name»();
+        '''
+    }
+
+    def private generateNonnullAccessorMethod(MethodSignature method) {
+        return '''
+            «accessorJavadoc(method, ", or an empty instance if it is not present.")»
+            «method.annotations.generateAnnotations»
+            «method.returnType.importedNonNull» «method.name»();
         '''
     }
 

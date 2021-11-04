@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
@@ -122,7 +123,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         }
         this.leafChild = leafChildBuilder.build();
 
-        final Map<Method, Class<?>> tmpDataObjects = new HashMap<>();
+        final Map<Class<?>, PropertyInfo> daoProperties = new HashMap<>();
         for (final Entry<Class<? extends DataContainer>, Method> childDataObj : clsToMethod.entrySet()) {
             final Method method = childDataObj.getValue();
             verify(!method.isDefault(), "Unexpected default method %s in %s", method, bindingClass);
@@ -133,10 +134,11 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
                 continue;
             }
 
+            // Record getter method
+            daoProperties.put(retClass, new PropertyInfo.Getter(method));
+
             final DataContainerCodecPrototype<?> childProto = loadChildPrototype(retClass);
-            final Class<?> childClass = childProto.getBindingClass();
-            tmpDataObjects.put(method, childClass);
-            byStreamClassBuilder.put(childClass, childProto);
+            byStreamClassBuilder.put(childProto.getBindingClass(), childProto);
             byYangBuilder.put(childProto.getYangArg(), childProto);
 
             // FIXME: It really feels like we should be specializing DataContainerCodecPrototype so as to ditch
@@ -146,6 +148,15 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
                 for (final Class<?> cazeChild : choice.getCaseChildrenClasses()) {
                     byBindingArgClassBuilder.put(cazeChild, childProto);
                 }
+            }
+        }
+
+        // Find all non-default nonnullFoo() methods and update the corresponding property info
+        for (var entry : BindingReflections.getChildrenClassToNonnullMethod(bindingClass).entrySet()) {
+            final var method = entry.getValue();
+            if (!method.isDefault()) {
+                daoProperties.compute(entry.getKey(), (key, value) -> new PropertyInfo.GetterAndNonnull(
+                    verifyNotNull(value, "No getter for %s", key).getterMethod(), method));
             }
         }
 
@@ -167,11 +178,11 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
                 bindingClass);
             possibleAugmentations = ((AugmentableRuntimeType) type).augments();
             generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
-                bindingClass, tmpLeaves, tmpDataObjects, keyMethod);
+                bindingClass, tmpLeaves, daoProperties, keyMethod);
         } else {
             possibleAugmentations = List.of();
             generatedClass = CodecDataObjectGenerator.generate(prototype.getFactory().getLoader(), bindingClass,
-                tmpLeaves, tmpDataObjects, keyMethod);
+                tmpLeaves, daoProperties, keyMethod);
         }
 
         // Iterate over all possible augmentations, indexing them as needed

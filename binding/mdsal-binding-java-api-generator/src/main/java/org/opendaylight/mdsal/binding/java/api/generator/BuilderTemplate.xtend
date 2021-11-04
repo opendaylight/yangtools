@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
+import static extension org.opendaylight.mdsal.binding.java.api.generator.GeneratorUtil.isNonPresenceContainer;
 import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.DATA_OBJECT
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
@@ -94,6 +95,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             public «generateCopyConstructor(targetType, type.enclosedTypes.get(0))»
 
             «generateMethodFieldsFrom()»
+
+            «IF isNonPresenceContainer(targetType)»
+                «generateEmptyInstance()»
+            «ENDIF»
 
             «generateGetters(false)»
             «IF augmentType !== null»
@@ -215,6 +220,30 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 }
             «ENDIF»
         «ENDIF»
+    '''
+
+    /**
+     * Generate EMPTY instance which is lazily initialized in empty() method.
+     */
+    // TODO: use lazy static field once we have https://openjdk.org/jeps/8209964
+    def private generateEmptyInstance() '''
+        «val nonnullTarget = targetType.importedNonNull»
+        private static final class LazyEmpty {
+            static final «nonnullTarget» INSTANCE = new «type.name»().build();
+
+            private LazyEmpty() {
+                // Hidden on purpose
+            }
+        }
+
+        /**
+         * Get empty instance of «targetType.name».
+         *
+         * @return An empty {@link «targetType.name»}
+         */
+        public static «nonnullTarget» empty() {
+            return LazyEmpty.INSTANCE;
+        }
     '''
 
     def private generateMethodFieldsFromComment(GeneratedType type) '''

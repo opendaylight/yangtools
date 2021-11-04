@@ -49,7 +49,7 @@ public class GeneratedTypesTest {
         assertNotNull(simpleContainer);
         assertNotNull(nestedContainer);
         // FIXME: split this into getter/default/static asserts
-        assertEquals(9, simpleContainer.getMethodDefinitions().size());
+        assertEquals(10, simpleContainer.getMethodDefinitions().size());
         // FIXME: split this into getter/default/static asserts
         assertEquals(8, nestedContainer.getMethodDefinitions().size());
 
@@ -132,7 +132,7 @@ public class GeneratedTypesTest {
         assertNotNull(simpleContainer);
         assertNotNull(nestedContainer);
         // FIXME: split this into getter/default/static asserts
-        assertEquals(9, simpleContainer.getMethodDefinitions().size());
+        assertEquals(10, simpleContainer.getMethodDefinitions().size());
         // FIXME: split this into getter/default/static asserts
         assertEquals(8, nestedContainer.getMethodDefinitions().size());
 
@@ -298,7 +298,7 @@ public class GeneratedTypesTest {
         assertEquals(1, getBarMethodCount);
 
         // FIXME: split this into getter/default/static asserts
-        assertEquals(14, simpleListMethodsCount);
+        assertEquals(15, simpleListMethodsCount);
     }
 
     @Test
