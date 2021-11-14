@@ -29,7 +29,7 @@ final class EmptyXmlCodec implements XmlCodec<Empty> {
 
     @Override
     public Empty parseValue(final NamespaceContext ctx, final String str) {
-        return Empty.getInstance();
+        return Empty.value();
     }
 
     @Override

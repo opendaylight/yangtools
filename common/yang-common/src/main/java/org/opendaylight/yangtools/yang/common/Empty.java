@@ -24,10 +24,26 @@ public final class Empty implements Immutable, Serializable {
     private static final Empty INSTANCE = new Empty();
 
     private Empty() {
-
+        // Hidden on purpose
     }
 
+    /**
+     * Return the singleton {@link Empty} value.
+     *
+     * @return Empty value.
+     * @deprecated Use {@link #value()} instead.
+     */
+    @Deprecated(since = "7.0.10", forRemoval = true)
     public static Empty getInstance() {
+        return value();
+    }
+
+    /**
+     * Return the singleton {@link Empty} value.
+     *
+     * @return Empty value.
+     */
+    public static Empty value()  {
         return INSTANCE;
     }
 

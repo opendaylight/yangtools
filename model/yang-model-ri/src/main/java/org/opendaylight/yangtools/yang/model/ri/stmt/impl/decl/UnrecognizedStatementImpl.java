@@ -34,6 +34,6 @@ public final class UnrecognizedStatementImpl extends WithSubstatements<Object> i
     @Override
     public Object argument() {
         final String raw = rawArgument();
-        return raw != null ? raw : Empty.getInstance();
+        return raw != null ? raw : Empty.value();
     }
 }

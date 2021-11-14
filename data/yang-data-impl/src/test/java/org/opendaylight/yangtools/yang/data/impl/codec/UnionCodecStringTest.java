@@ -61,7 +61,7 @@ public class UnionCodecStringTest {
         assertEquals("deserialize", 123, codec.deserialize("123"));
         assertEquals("deserialize", -123, codec.deserialize("-123"));
         assertEquals("deserialize", 41234567890L, codec.deserialize("41234567890"));
-        assertEquals("deserialize", Empty.getInstance(), codec.deserialize(""));
+        assertEquals("deserialize", Empty.value(), codec.deserialize(""));
 
         deserializeWithExpectedIllegalArgEx(codec, "enum3");
         deserializeWithExpectedIllegalArgEx(codec, "123o");

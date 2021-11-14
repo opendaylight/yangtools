@@ -139,7 +139,7 @@ final class SemanticVersionImport {
                     ModuleCtxToSourceIdentifier.class, importedModule);
                 final SemVerSourceIdentifier semVerModuleIdentifier = createSemVerModuleIdentifier(
                     importedModuleIdentifier, importedVersion);
-                stmt.addToNs(ImportedVersionNamespace.class, Empty.getInstance(), semVerModuleIdentifier);
+                stmt.addToNs(ImportedVersionNamespace.class, Empty.value(), semVerModuleIdentifier);
 
                 linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
                     importedModule);

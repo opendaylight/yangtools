@@ -205,7 +205,7 @@ public final class ModuleStatementSupport
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", stmt.argument());
 
-        stmt.addToNs(QNameModuleNamespace.class, Empty.getInstance(), qNameModule);
+        stmt.addToNs(QNameModuleNamespace.class, Empty.value(), qNameModule);
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
         stmt.addToNs(ModuleNameToModuleQName.class, moduleName, qNameModule);
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
@@ -274,8 +274,7 @@ public final class ModuleStatementSupport
             submodules.add((Submodule) submodule);
         }
 
-        final QNameModule qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.class,
-            Empty.getInstance()));
+        final QNameModule qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.class, Empty.value()));
         try {
             return new ModuleEffectiveStatementImpl(stmt, substatements, submodules, qnameModule);
         } catch (SubstatementIndexingException e) {

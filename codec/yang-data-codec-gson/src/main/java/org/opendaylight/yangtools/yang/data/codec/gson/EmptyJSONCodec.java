@@ -27,7 +27,7 @@ final class EmptyJSONCodec implements JSONCodec<Empty> {
 
     @Override
     public Empty parseValue(final Object ctx, final String input) {
-        return Empty.getInstance();
+        return Empty.value();
     }
 
     @Override

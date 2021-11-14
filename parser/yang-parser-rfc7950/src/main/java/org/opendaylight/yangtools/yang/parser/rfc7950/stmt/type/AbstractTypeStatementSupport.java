@@ -138,7 +138,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
 
         final BuiltinEffectiveStatement builtin = STATIC_BUILT_IN_TYPES.get(stmt.getRawArgument());
         if (builtin != null) {
-            stmt.addToNs(BaseTypeNamespace.class, Empty.getInstance(), builtin);
+            stmt.addToNs(BaseTypeNamespace.class, Empty.value(), builtin);
             return;
         }
 
@@ -156,7 +156,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             @Override
             public void apply(final InferenceContext ctx) {
                 // Note: do not attempt to call buildEffective() here
-                stmt.addToNs(BaseTypeNamespace.class, Empty.getInstance(), typePrereq.resolve(ctx));
+                stmt.addToNs(BaseTypeNamespace.class, Empty.value(), typePrereq.resolve(ctx));
             }
 
             @Override
@@ -270,7 +270,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
      * @throws SourceException if the target type cannot be found
      */
     private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final Current<QName, ?> ctx) {
-        final Object obj = verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.class, Empty.getInstance()));
+        final Object obj = verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.class, Empty.value()));
         if (obj instanceof BuiltinEffectiveStatement) {
             return (BuiltinEffectiveStatement) obj;
         } else if (obj instanceof StmtContext) {

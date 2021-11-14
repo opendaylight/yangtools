@@ -26,7 +26,7 @@ public class EmptyCodecStringTest {
     public void testSerialize() {
         EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.emptyType(), EmptyCodec.class);
 
-        assertEquals("serialize", "", codec.serialize(Empty.getInstance()));
+        assertEquals("serialize", "", codec.serialize(Empty.value()));
     }
 
     @SuppressWarnings("unchecked")
@@ -34,7 +34,7 @@ public class EmptyCodecStringTest {
     public void testDeserialize() {
         EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.emptyType(), EmptyCodec.class);
 
-        assertEquals("deserialize", Empty.getInstance(), codec.deserialize(""));
+        assertEquals("deserialize", Empty.value(), codec.deserialize(""));
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "foo");
     }

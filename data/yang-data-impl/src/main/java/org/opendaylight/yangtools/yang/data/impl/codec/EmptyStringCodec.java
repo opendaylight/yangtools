@@ -25,7 +25,7 @@ final class EmptyStringCodec extends TypeDefinitionAwareCodec<Empty, EmptyTypeDe
     @Override
     protected Empty deserializeImpl(final String product) {
         checkArgument(product.isEmpty(), "The value must be empty");
-        return Empty.getInstance();
+        return Empty.value();
     }
 
     @Override

@@ -117,7 +117,7 @@ public final class UsesStatementSupport
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                 resolveUsesNode(usesNode, targetNodeStmtCtx);
                 StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
-                usesNode.addToNs(SourceGroupingNamespace.class, Empty.getInstance(), sourceGrpStmtCtx);
+                usesNode.addToNs(SourceGroupingNamespace.class, Empty.value(), sourceGrpStmtCtx);
             }
 
             @Override
@@ -144,7 +144,7 @@ public final class UsesStatementSupport
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final EffectiveStatement<?, ?> source =
-            verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.class, Empty.getInstance())).buildEffective();
+            verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.class, Empty.value())).buildEffective();
         verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
         final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
 
@@ -318,7 +318,7 @@ public final class UsesStatementSupport
         // Target is a prerequisite for the 'refine', hence if the target is not supported, the refine is not supported
         // as well. Otherwise add a pointer to the target into refine's local namespace.
         if (refineTargetNodeCtx.isSupportedToBuildEffective()) {
-            subStmtCtx.addToNs(RefineTargetNamespace.class, Empty.getInstance(), refineTargetNodeCtx);
+            subStmtCtx.addToNs(RefineTargetNamespace.class, Empty.value(), refineTargetNodeCtx);
         } else {
             subStmtCtx.setIsSupportedToBuildEffective(false);
         }

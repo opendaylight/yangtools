@@ -389,7 +389,7 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
             // very low. We'd have to know the yang type but, even if we did, we can't let a null value pass upstream
             // so we'd have to drop the leaf which might cause other issues.
             case LithiumValue.NULL_TYPE:
-                return Empty.getInstance();
+                return Empty.value();
 
             default:
                 return null;

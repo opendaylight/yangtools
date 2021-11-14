@@ -81,6 +81,6 @@ public class Bug1412Test extends AbstractYangTest {
         assertNotNull(output);
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "output"),
             output.statementDefinition().getStatementName());
-        assertEquals(Empty.getInstance(), output.argument());
+        assertEquals(Empty.value(), output.argument());
     }
 }

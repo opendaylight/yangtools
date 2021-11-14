@@ -71,7 +71,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<NodeWithValue> {
         LeafListEntryNormalization(final LeafListSchemaNode potential) {
             // We are fudging a value here
-            super(new NodeWithValue<>(potential.getQName(), Empty.getInstance()));
+            super(new NodeWithValue<>(potential.getQName(), Empty.value()));
         }
 
         @Override

@@ -24,7 +24,7 @@ public abstract class AbstractComplexJsonTest {
 
     static final ContainerNode CONT1_WITH_EMPTYLEAF = Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(CONT_1))
-            .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.getInstance()))
+            .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.value()))
             .build();
 
     static EffectiveModelContext schemaContext;

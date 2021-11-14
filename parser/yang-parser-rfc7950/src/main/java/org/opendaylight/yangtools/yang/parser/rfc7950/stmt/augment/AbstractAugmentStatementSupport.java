@@ -129,7 +129,7 @@ abstract class AbstractAugmentStatementSupport
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
         // children through target's implicit wrapping.
         final StatementContextBase<?, ?, ?> implicitDef = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.class,
-            Empty.getInstance());
+            Empty.value());
         return implicitDef == null ? substatements : Lists.transform(substatements, subCtx -> {
             verify(subCtx instanceof StatementContextBase);
             return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx);
