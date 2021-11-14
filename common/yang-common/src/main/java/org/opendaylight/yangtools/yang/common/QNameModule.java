@@ -24,6 +24,11 @@ import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
+/**
+ * A {@link XMLNamespace} bound to a particular model {@link Revision}. This is the primary way of identifying a YANG
+ * module namespace within an effective model world. The reason for this is that we support coexistence of multiple
+ * module revisions and hence cannot use plain module name or namespace to address them.
+ */
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
@@ -162,8 +167,10 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
 
     @Override
     public @NonNull String toString() {
-        return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", namespace)
-            .add("rev", revision).toString();
+        return MoreObjects.toStringHelper(QNameModule.class).omitNullValues()
+            .add("ns", namespace)
+            .add("rev", revision)
+            .toString();
     }
 
     Object writeReplace() {
