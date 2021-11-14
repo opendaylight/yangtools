@@ -703,7 +703,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             case MagnesiumValue.BOOLEAN_TRUE:
                 return Boolean.TRUE;
             case MagnesiumValue.EMPTY:
-                return Empty.getInstance();
+                return Empty.value();
             case MagnesiumValue.INT8:
                 return input.readByte();
             case MagnesiumValue.INT8_0:

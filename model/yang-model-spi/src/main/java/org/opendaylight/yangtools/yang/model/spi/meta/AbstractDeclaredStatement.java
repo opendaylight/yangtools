@@ -215,7 +215,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         @Override
         public final Empty argument() {
-            return Empty.getInstance();
+            return Empty.value();
         }
 
         @Override

@@ -29,7 +29,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
         path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
-        valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, Empty.getInstance());
+        valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, Empty.value());
     }
 
     @Override

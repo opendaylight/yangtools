@@ -84,6 +84,6 @@ public class Bug1412Test {
 
         expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "output");
         assertEquals(expectedNodeType, output.statementDefinition().getStatementName());
-        assertEquals(Empty.getInstance(), output.argument());
+        assertEquals(Empty.value(), output.argument());
     }
 }

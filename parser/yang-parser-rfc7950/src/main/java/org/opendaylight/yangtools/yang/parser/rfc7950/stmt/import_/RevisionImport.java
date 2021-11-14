@@ -65,7 +65,7 @@ final class RevisionImport {
 
                 final SourceIdentifier importedModuleIdentifier =
                     stmt.getFromNamespace(ModuleCtxToSourceIdentifier.class, importedModule);
-                stmt.addToNs(ImportedVersionNamespace.class, Empty.getInstance(), importedModuleIdentifier);
+                stmt.addToNs(ImportedVersionNamespace.class, Empty.value(), importedModuleIdentifier);
 
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
                     ModuleCtxToModuleQName.class, importedModule), stmt, "Failed to find module of %s", importedModule);

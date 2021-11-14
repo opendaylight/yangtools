@@ -158,7 +158,7 @@ public class NormalizedNodeStreamReaderWriterTest {
                         new NodeIdentifier(TestModel.BINARY_LEAF_LIST_QNAME))
                         .withChild(entry1).withChild(entry2).build())
                 .withChild(ImmutableNodes.leafNode(TestModel.SOME_BINARY_DATA_QNAME, new byte[]{1, 2, 3, 4}))
-                .withChild(ImmutableNodes.leafNode(TestModel.EMPTY_QNAME, Empty.getInstance()))
+                .withChild(ImmutableNodes.leafNode(TestModel.EMPTY_QNAME, Empty.value()))
                 .withChild(Builders.orderedMapBuilder()
                       .withNodeIdentifier(new NodeIdentifier(TestModel.ORDERED_LIST_QNAME))
                       .withChild(ImmutableNodes.mapEntry(TestModel.ORDERED_LIST_ENTRY_QNAME,

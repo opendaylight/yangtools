@@ -28,7 +28,7 @@ public final class ThirdPartyExtensionSupport
     public void onFullDefinitionDeclared(
             final Mutable<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
-        stmt.addToNs(ThirdPartyNamespace.class, Empty.getInstance(), "Third-party namespace test.");
+        stmt.addToNs(ThirdPartyNamespace.class, Empty.value(), "Third-party namespace test.");
     }
 
     @Override

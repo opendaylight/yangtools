@@ -22,19 +22,19 @@ public class EmptyTest {
 
     @Test
     public void testInstanceNotNull() {
-        assertNotNull(Empty.getInstance());
+        assertNotNull(Empty.value());
     }
 
     @Test
     public void testToString() {
-        assertEquals("empty", Empty.getInstance().toString());
+        assertEquals("empty", Empty.value().toString());
     }
 
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(Empty.getInstance());
+            oos.writeObject(Empty.value());
         }
 
         final Object read;
@@ -42,6 +42,6 @@ public class EmptyTest {
             read = ois.readObject();
         }
 
-        assertSame(Empty.getInstance(), read);
+        assertSame(Empty.value(), read);
     }
 }

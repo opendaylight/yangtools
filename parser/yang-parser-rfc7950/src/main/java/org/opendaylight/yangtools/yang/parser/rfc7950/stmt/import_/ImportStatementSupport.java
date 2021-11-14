@@ -142,6 +142,6 @@ public final class ImportStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");
         return EffectiveStatements.createImport(stmt.declared(), substatements,
-            verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.class, Empty.getInstance())));
+            verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.class, Empty.value())));
     }
 }

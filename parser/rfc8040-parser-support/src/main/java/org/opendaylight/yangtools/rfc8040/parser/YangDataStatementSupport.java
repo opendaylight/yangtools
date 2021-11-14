@@ -59,7 +59,7 @@ public final class YangDataStatementSupport
         // Parse and populate our argument to be picked up when we build the effecitve statement
         final String argument = SourceException.throwIfNull(ctx.argument(), ctx, "yang-data requires an argument");
         final QName qname = StmtContextUtils.parseIdentifier(ctx, argument);
-        ctx.addToNs(YangDataArgumentNamespace.class, Empty.getInstance(), qname);
+        ctx.addToNs(YangDataArgumentNamespace.class, Empty.value(), qname);
     }
 
     @Override
@@ -100,6 +100,6 @@ public final class YangDataStatementSupport
         }
 
         return new YangDataEffectiveStatementImpl(stmt, substatements,
-            verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.class, Empty.getInstance())));
+            verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.class, Empty.value())));
     }
 }
