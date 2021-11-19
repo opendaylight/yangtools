@@ -205,8 +205,9 @@ public class InstanceIdToNodesTest {
                                         Builders.leafSetEntryBuilder().withNodeIdentifier(leafListWithValue)
                                                 .withValue(leafListWithValue.getValue()).build()).build()).build();
 
-        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, leafList, leafListWithValue));
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.create(rootContainer,
+                leafList, leafListWithValue), Builders.leafBuilder().withNodeIdentifier(leafList)
+                .withValue(leafListWithValue.getValue()).build());
         assertEquals(expectedFilter, filter);
     }
 

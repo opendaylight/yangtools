@@ -34,14 +34,9 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     @Override
     final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
             final Optional<NormalizedNode> deepestChild) {
-        final NormalizedNodeBuilder<? extends PathArgument, Object, ? extends NormalizedNode> builder =
-            getBuilder(first);
-
-        if (deepestChild.isPresent()) {
-            builder.withValue(deepestChild.orElseThrow().body());
-        }
-
-        return builder.build();
+        return getBuilder(first)
+                .withValue(deepestChild.map(NormalizedNode::body).orElse(Empty.value()))
+                .build();
     }
 
     @Override
