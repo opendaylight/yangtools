@@ -47,7 +47,7 @@ public class EmptyLeafTest extends AbstractBindingCodecTest {
     public void testCaseWithEmptyLeafType() {
         final TopLevelList withEmptyCase = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
-            .setChoiceInList(new EmptyLeafBuilder().setEmptyType(Empty.getInstance()).build())
+            .setChoiceInList(new EmptyLeafBuilder().setEmptyType(Empty.value()).build())
             .build();
         final Entry<YangInstanceIdentifier, NormalizedNode> dom = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
             withEmptyCase);

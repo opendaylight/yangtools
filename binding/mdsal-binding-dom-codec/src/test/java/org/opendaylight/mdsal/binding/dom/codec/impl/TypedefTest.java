@@ -50,9 +50,9 @@ public class TypedefTest extends AbstractBindingCodecTest {
     @Test
     public void testTypedefEmptyType() {
         TestCont binding = new TestContBuilder()
-                .setEmptyLeaf(Empty.getInstance())
-                .setEmptyLeaf2(new TypedefEmpty(Empty.getInstance()))
-                .setEmptyLeaf3(Empty.getInstance())
+                .setEmptyLeaf(Empty.value())
+                .setEmptyLeaf2(new TypedefEmpty(Empty.value()))
+                .setEmptyLeaf3(Empty.value())
                 .build();
         final Entry<YangInstanceIdentifier, NormalizedNode> dom =
                 codecContext.toNormalizedNode(BA_TEST_CONT, binding);
