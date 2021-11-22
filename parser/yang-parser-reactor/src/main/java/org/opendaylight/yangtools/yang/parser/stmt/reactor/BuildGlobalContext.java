@@ -56,7 +56,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -117,7 +116,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
-        addToNamespace(ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES,
+        addToNamespace(ModulesDeviatedByModules.class, Empty.value(),
                     ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
     }
 
