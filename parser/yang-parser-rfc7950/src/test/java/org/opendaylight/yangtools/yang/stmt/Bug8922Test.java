@@ -18,30 +18,32 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 public class Bug8922Test {
-    private static final String NS = "foo";
+    private static final QName MY_CON = QName.create("foo", "my-con");
+    private static final QName TARGET = QName.create("foo", "target");
 
     @Test
     public void testAllFeaturesSupported() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSource("/bugs/bug8922/foo.yang");
+        final var context = StmtTestUtils.parseYangSource("/bugs/bug8922/foo.yang");
         assertNotNull(context);
-        final SchemaNode findNode = context.findDataTreeChild(qN("target"), qN("my-con")).get();
+        final var findNode = context.findDataTreeChild(TARGET, MY_CON).get();
         assertThat(findNode, instanceOf(ContainerSchemaNode.class));
         assertEquals(Optional.of("New description"), findNode.getDescription());
+
+        assertEquals(1, context.findModuleStatements("foo").iterator().next()
+            .streamEffectiveSubstatements(FeatureEffectiveStatement.class).count());
     }
 
     @Test
     public void testNoFeatureSupported() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSource("/bugs/bug8922/foo.yang", ImmutableSet.of());
+        final var context = StmtTestUtils.parseYangSource("/bugs/bug8922/foo.yang", ImmutableSet.of());
         assertNotNull(context);
-        assertEquals(Optional.empty(), context.findDataTreeChild(qN("target"), qN("my-con")));
+        assertEquals(Optional.empty(), context.findDataTreeChild(TARGET, MY_CON));
         assertTrue(context.getAvailableAugmentations().isEmpty());
-    }
 
-    private static QName qN(final String localName) {
-        return QName.create(NS, localName);
+        assertEquals(0, context.findModuleStatements("foo").iterator().next()
+            .streamEffectiveSubstatements(FeatureEffectiveStatement.class).count());
     }
 }

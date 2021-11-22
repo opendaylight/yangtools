@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 
 public final class FeatureStatementSupport
         extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
@@ -53,6 +55,13 @@ public final class FeatureStatementSupport
     public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
         stmt.addContext(FeatureNamespace.class, stmt.getArgument(), stmt);
+
+        // Do not build effective statement if supported features does not include this feature
+        final var supportedFeatures = stmt.getFromNamespace(SupportedFeaturesNamespace.class,
+            SupportedFeatures.SUPPORTED_FEATURES);
+        if (supportedFeatures != null && !supportedFeatures.contains(stmt.getArgument())) {
+            stmt.setIsSupportedToBuildEffective(false);
+        }
     }
 
     @Override
