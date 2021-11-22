@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -45,7 +46,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -464,8 +464,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
          */
         if (isParentSupportedByFeatures()) {
             // If the set of supported features has not been provided, all features are supported by default.
-            final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
-                    SupportedFeatures.SUPPORTED_FEATURES);
+            final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class, Empty.value());
             if (supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures)) {
                 flags |= SET_SUPPORTED_BY_FEATURES;
                 return true;
