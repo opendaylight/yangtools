@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -50,7 +51,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
@@ -228,7 +228,7 @@ abstract class AbstractDeviateStatementSupport
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
         final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
-                ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES);
+                ModulesDeviatedByModules.class, Empty.value());
         if (modulesDeviatedByModules == null) {
             return true;
         }
