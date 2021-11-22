@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -59,7 +60,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModule
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
@@ -113,8 +113,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     void setSupportedFeatures(final Set<QName> supportedFeatures) {
-        addToNamespace(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
-                    ImmutableSet.copyOf(supportedFeatures));
+        addToNamespace(SupportedFeaturesNamespace.class, Empty.value(), ImmutableSet.copyOf(supportedFeatures));
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -30,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 
 public final class FeatureStatementSupport
         extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
@@ -57,8 +57,7 @@ public final class FeatureStatementSupport
         stmt.addContext(FeatureNamespace.class, stmt.getArgument(), stmt);
 
         // Do not build effective statement if supported features does not include this feature
-        final var supportedFeatures = stmt.getFromNamespace(SupportedFeaturesNamespace.class,
-            SupportedFeatures.SUPPORTED_FEATURES);
+        final var supportedFeatures = stmt.getFromNamespace(SupportedFeaturesNamespace.class, Empty.value());
         if (supportedFeatures != null && !supportedFeatures.contains(stmt.getArgument())) {
             stmt.setIsSupportedToBuildEffective(false);
         }
