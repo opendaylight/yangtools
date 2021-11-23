@@ -1,0 +1,48 @@
+module ietf-subscribed-notifications {
+  yang-version 1.1;
+  namespace "test:test:subscriber";
+  prefix sn;
+
+  revision 2021-11-11 {
+      description "Initial version.";
+      reference "RFC 8639: A YANG Data Model for Subscriptions to Event Notifications";
+  }
+
+  extension subscription-state-notification {
+  }
+
+  typedef subscription-id {
+      type uint32;
+  }
+
+  feature configured {
+      description
+        "This feature indicates that configuration of subscriptions is
+         supported.";
+    }
+
+  notification subscription-started {
+    sn:subscription-state-notification;
+    if-feature "configured";
+    choice target {
+        mandatory true;
+        case stream {
+          choice stream-filter {
+            case by-reference {
+              leaf stream-filter-name {
+                type string;
+                mandatory true;
+              }
+            }
+            case within-subscription {
+              leaf stream {
+                  type string;
+                  mandatory true;
+                }
+            }
+          }
+        }
+      }
+  }
+
+}

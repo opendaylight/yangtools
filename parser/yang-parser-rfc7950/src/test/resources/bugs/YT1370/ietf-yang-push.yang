@@ -1,0 +1,39 @@
+module ietf-yang-push {
+  yang-version 1.1;
+  namespace "test:test:push";
+  prefix p;
+
+  import ietf-subscribed-notifications {
+        prefix sn;
+   }
+
+  revision 2021-11-11 {
+        description "Initial version.";
+        reference "RFC 8641: Subscriptions to YANG Datastores";
+  }
+  grouping datastore-criteria {
+        leaf datastore {
+          type string;
+        }
+        choice selection-filter {
+            case within-subscription {
+              choice filter-spec {
+                anydata datastore-subtree-filter {
+                }
+                leaf datastore-xpath-filter {
+                  type string;
+                }
+              }
+            }
+        }
+      }
+  augment "/sn:subscription-started/sn:target" {
+      if-feature "sn:configured";
+      case datastore {
+        leaf datastore {
+            type string;
+            mandatory true;
+        }
+      }
+    }
+}
