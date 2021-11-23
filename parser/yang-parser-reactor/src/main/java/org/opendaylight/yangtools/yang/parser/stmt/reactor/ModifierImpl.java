@@ -16,8 +16,10 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPha
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
@@ -43,6 +45,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private final Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>(1);
     private final Set<AbstractPrerequisite<?>> mutations = new HashSet<>(1);
+    private List<Runnable> bootstraps;
 
     private InferenceAction action;
     private boolean actionApplied = false;
@@ -250,7 +253,10 @@ final class ModifierImpl implements ModelActionBuilder {
         addReq(ret);
         addMutation(ret);
 
-        ret.hookOnto(context, namespace);
+        if (bootstraps == null) {
+            bootstraps = new ArrayList<>(1);
+        }
+        bootstraps.add(() -> ret.hookOnto(context, namespace));
         return ret;
     }
 
@@ -259,6 +265,10 @@ final class ModifierImpl implements ModelActionBuilder {
     public void apply(final InferenceAction action) {
         checkState(this.action == null, "Action already defined to %s", this.action);
         this.action = requireNonNull(action);
+        if (bootstraps != null) {
+            bootstraps.forEach(Runnable::run);
+            bootstraps = null;
+        }
     }
 
     private abstract class AbstractPrerequisite<T> implements Prerequisite<T> {
