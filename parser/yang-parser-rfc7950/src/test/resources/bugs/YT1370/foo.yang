@@ -1,0 +1,14 @@
+module foo {
+  prefix foo;
+  namespace foo;
+
+  feature foo;
+
+  container foo {
+    if-feature foo;
+  }
+
+  augment /foo {
+    container bar;
+  }
+}
