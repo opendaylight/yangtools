@@ -97,6 +97,11 @@ abstract class AbstractAugmentStatementSupport
         augmentAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
+                if (!augmentNode.isSupportedToBuildEffective()) {
+                    // We are not building effective model, hence we should not be performing any effects
+                    return;
+                }
+
                 final StatementContextBase<?, ?, ?> augmentTargetCtx =
                         (StatementContextBase<?, ?, ?>) target.resolve(ctx);
                 if (!isSupportedAugmentTarget(augmentTargetCtx)
@@ -143,6 +148,15 @@ abstract class AbstractAugmentStatementSupport
 
                 throw new InferenceException(augmentNode.getStatementSourceReference(),
                         "Augment target '%s' not found", augmentNode.getStatementArgument());
+            }
+
+            @Override
+            public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+                if (target.equals(unavail)) {
+                    augmentNode.setIsSupportedToBuildEffective(false);
+                } else {
+                    prerequisiteFailed(List.of(unavail));
+                }
             }
         });
     }
