@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -62,6 +63,11 @@ final class AugmentInferenceAction implements InferenceAction {
 
     @Override
     public void apply(final InferenceContext ctx) {
+        if (!augmentNode.isSupportedToBuildEffective()) {
+            // We are not building effective model, hence we should not be performing any effects
+            return;
+        }
+
         final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.resolve(ctx);
         if (!isSupportedAugmentTarget(augmentTargetCtx)
                 || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
@@ -97,6 +103,15 @@ final class AugmentInferenceAction implements InferenceAction {
         }
 
         throw new InferenceException(augmentNode, "Augment target '%s' not found", augmentNode.argument());
+    }
+
+    @Override
+    public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+        if (target.equals(unavail)) {
+            augmentNode.setIsSupportedToBuildEffective(false);
+        } else {
+            prerequisiteFailed(List.of(unavail));
+        }
     }
 
     private void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
