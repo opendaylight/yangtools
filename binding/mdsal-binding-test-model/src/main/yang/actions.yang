@@ -56,6 +56,12 @@ module actions {
         uses grp;
     }
 
+    grouping nested {
+        container baz {
+            uses other;
+        }
+    }
+
     container grpcont {
         uses grp;
     }
@@ -70,6 +76,10 @@ module actions {
 
     container othercont {
         uses other;
+    }
+
+    container nestedcont {
+        uses nested;
     }
 }
 

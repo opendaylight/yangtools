@@ -99,6 +99,7 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
 
     @Nullable ActionDefinition getActionDefinition(Class<? extends Action<?, ?, ?>> cls);
 
+    @Deprecated(forRemoval = true)
     @Nullable Absolute getActionIdentifier(Class<? extends Action<?, ?, ?>> cls);
 
     @NonNull Entry<AugmentationIdentifier, AugmentationSchemaNode> getResolvedAugmentationSchema(
