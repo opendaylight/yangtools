@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
@@ -63,6 +64,28 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         FINISHED
     }
 
+    private final class SupportedStatements
+            extends NamespaceBehaviour<QName, StatementSupport<?, ?, ?>, StatementSupportNamespace> {
+        SupportedStatements() {
+            super(StatementSupportNamespace.class);
+        }
+
+        @Override
+        public StatementSupport<?, ?, ?> getFrom(final NamespaceStorageNode storage, final QName key) {
+            return qnameToStmtDefMap.get(key);
+        }
+
+        @Override
+        public Map<QName, StatementSupport<?, ?, ?>> getAllFrom(final NamespaceStorageNode storage) {
+            throw new UnsupportedOperationException("StatementSupportNamespace is immutable");
+        }
+
+        @Override
+        public void addTo(final NamespaceStorageNode storage, final QName key, final StatementSupport<?, ?, ?> value) {
+            throw new UnsupportedOperationException("StatementSupportNamespace is immutable");
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
 
     // TODO: consider keying by Byte equivalent of ExecutionOrder
@@ -70,6 +93,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
     private final @NonNull BuildGlobalContext globalContext;
+    private final @NonNull SupportedStatements statementSupports = new SupportedStatements();
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
     private StatementStreamSource source;
@@ -253,8 +277,12 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
             final Class<N> type) {
+        if (StatementSupportNamespace.class.equals(type)) {
+            return (NamespaceBehaviour<K, V, N>) statementSupports;
+        }
         return globalContext.getNamespaceBehaviour(type);
     }
 

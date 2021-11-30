@@ -18,6 +18,21 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  *
  * @author Robert Varga
  */
+// FIXME: 8.0.0: Fix naming and javadoc of this namespace.
+//
+// We have three competing namespaces dealing with various things and the interaction is no entirely clear:
+// - ExtensionNamespace, which is populated by ExtensionStatementSupport for all extensions with the corresponding
+//                       effective statement and used by SubstatementValidator
+// - StatementDefinitionNamespace (this), which is again populated by ExtensionStatementSupport to point to unrecognized
+//                                        statement support, i.e. preventing instantiation, and is used only by
+//                                        reactor's SourceSpecificContext
+// - StatementSupportNamespace, which is a virtual namespace providing access to StatementSupport instances for all
+//                              statements available in current processing phase of the source. It works as a union of
+//                              this namespace (StatementDefinitionNamespace) and the contents of
+//                              StatementSupportBundles.
+//
+// At the end of the day this feels like an under-utilized namespace: provided the contents of ExtensionNamespace and
+// StatementSupportBundles, SourceSpecificSpecificContext should be able to work its magic even without this namespace.
 @Beta
 public interface StatementDefinitionNamespace extends ParserNamespace<QName, StatementSupport<?, ?, ?>> {
     NamespaceBehaviour<QName, StatementSupport<?, ?, ?>, @NonNull StatementDefinitionNamespace> BEHAVIOUR =
