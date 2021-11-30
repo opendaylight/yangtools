@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -53,14 +54,8 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
             .addAny(YangStmtMapping.TYPEDEF)
             .build();
 
-    private final InputStatementSupport implicitInput;
-    private final OutputStatementSupport implicitOutput;
-
-    public RpcStatementSupport(final YangParserConfiguration config, final InputStatementSupport implicitInput,
-            final OutputStatementSupport implicitOutput) {
+    public RpcStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.RPC, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
-        this.implicitInput = requireNonNull(implicitInput);
-        this.implicitOutput = requireNonNull(implicitOutput);
     }
 
     @Override
@@ -69,10 +64,10 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
 
         verify(stmt instanceof StatementContextBase);
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitInput, null);
+            appendImplicitSubstatement(stmt, YangStmtMapping.INPUT.getStatementName());
         }
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitOutput, null);
+            appendImplicitSubstatement(stmt, YangStmtMapping.OUTPUT.getStatementName());
         }
     }
 
@@ -104,5 +99,11 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
         return new FlagsBuilder()
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
+    }
+
+    private static void appendImplicitSubstatement(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt,
+            final QName substatementName) {
+        ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
+            verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null);
     }
 }

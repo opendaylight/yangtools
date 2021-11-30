@@ -210,11 +210,6 @@ public final class RFC7950Reactors {
 
     private static StatementSupportBundle stmtDefBundle(final StatementSupportBundle linkageBundle,
             final YangParserConfiguration config) {
-        final InputStatementSupport rfc6020input = InputStatementSupport.rfc6020Instance(config);
-        final InputStatementSupport rfc7950input = InputStatementSupport.rfc7950Instance(config);
-        final OutputStatementSupport rfc6020output = OutputStatementSupport.rfc6020Instance(config);
-        final OutputStatementSupport rfc7950output = OutputStatementSupport.rfc7950Instance(config);
-
         return StatementSupportBundle.derivedFrom(linkageBundle)
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
@@ -252,13 +247,13 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, ListStatementSupport.rfc7950Instance(config))
             .addSupport(ConfigListWarningNamespace.BEHAVIOUR)
             .addSupport(new UniqueStatementSupport(config))
-            .addVersionSpecificSupport(VERSION_1_1, new ActionStatementSupport(config, rfc7950input, rfc7950output))
-            .addVersionSpecificSupport(VERSION_1, new RpcStatementSupport(config, rfc6020input, rfc6020output))
-            .addVersionSpecificSupport(VERSION_1_1, new RpcStatementSupport(config, rfc7950input, rfc7950output))
-            .addVersionSpecificSupport(VERSION_1, rfc6020input)
-            .addVersionSpecificSupport(VERSION_1_1, rfc7950input)
-            .addVersionSpecificSupport(VERSION_1, rfc6020output)
-            .addVersionSpecificSupport(VERSION_1_1, rfc7950output)
+            .addVersionSpecificSupport(VERSION_1_1, new ActionStatementSupport(config))
+            .addVersionSpecificSupport(VERSION_1, new RpcStatementSupport(config))
+            .addVersionSpecificSupport(VERSION_1_1, new RpcStatementSupport(config))
+            .addVersionSpecificSupport(VERSION_1, InputStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, InputStatementSupport.rfc7950Instance(config))
+            .addVersionSpecificSupport(VERSION_1, OutputStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, OutputStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1, new NotificationStatementRFC6020Support(config))
             .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRFC7950Support(config))
             .addSupport(new FractionDigitsStatementSupport(config))

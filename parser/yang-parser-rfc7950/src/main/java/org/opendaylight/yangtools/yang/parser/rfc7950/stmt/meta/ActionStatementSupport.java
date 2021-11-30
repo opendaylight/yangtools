@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -56,14 +57,8 @@ public final class ActionStatementSupport extends
             .addAny(YangStmtMapping.TYPEDEF)
             .build();
 
-    private final InputStatementSupport implicitInput;
-    private final OutputStatementSupport implicitOutput;
-
-    public ActionStatementSupport(final YangParserConfiguration config, final InputStatementSupport implicitInput,
-             final OutputStatementSupport implicitOutput) {
+    public ActionStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.ACTION, uninstantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
-        this.implicitInput = requireNonNull(implicitInput);
-        this.implicitOutput = requireNonNull(implicitOutput);
     }
 
     @Override
@@ -86,10 +81,10 @@ public final class ActionStatementSupport extends
 
         verify(stmt instanceof StatementContextBase);
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitInput, null);
+            appendImplicitSubstatement(stmt, YangStmtMapping.INPUT.getStatementName());
         }
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitOutput, null);
+            appendImplicitSubstatement(stmt, YangStmtMapping.OUTPUT.getStatementName());
         }
     }
 
@@ -124,5 +119,11 @@ public final class ActionStatementSupport extends
             final ActionEffectiveStatement original) {
         return EffectiveStatements.copyAction(original, stmt.getArgument(),
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
+    }
+
+    private static void appendImplicitSubstatement(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt,
+            final QName substatementName) {
+        ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
+            verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null);
     }
 }

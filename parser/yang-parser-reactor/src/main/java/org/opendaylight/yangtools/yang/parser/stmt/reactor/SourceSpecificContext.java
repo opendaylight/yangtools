@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
@@ -63,11 +64,37 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         FINISHED
     }
 
+    private static final class SupportedStatements
+            extends NamespaceBehaviour<QName, StatementSupport<?, ?, ?>, StatementSupportNamespace> {
+        private final QNameToStatementDefinitionMap statementDefinitions;
+
+        SupportedStatements(final QNameToStatementDefinitionMap statementDefinitions) {
+            super(StatementSupportNamespace.class);
+            this.statementDefinitions = requireNonNull(statementDefinitions);
+        }
+
+        @Override
+        public StatementSupport<?, ?, ?> getFrom(final NamespaceStorageNode storage, final QName key) {
+            return statementDefinitions.get(key);
+        }
+
+        @Override
+        public Map<QName, StatementSupport<?, ?, ?>> getAllFrom(final NamespaceStorageNode storage) {
+            throw new UnsupportedOperationException("StatementSupportNamespace is immutable");
+        }
+
+        @Override
+        public void addTo(final NamespaceStorageNode storage, final QName key, final StatementSupport<?, ?, ?> value) {
+            throw new UnsupportedOperationException("StatementSupportNamespace is immutable");
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
 
     // TODO: consider keying by Byte equivalent of ExecutionOrder
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
+    private final SupportedStatements statementSupports = new SupportedStatements(qnameToStmtDefMap);
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
     private final @NonNull BuildGlobalContext globalContext;
 
@@ -253,8 +280,12 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
             final Class<N> type) {
+        if (StatementSupportNamespace.class.equals(type)) {
+            return (NamespaceBehaviour<K, V, N>) statementSupports;
+        }
         return globalContext.getNamespaceBehaviour(type);
     }
 
