@@ -33,14 +33,11 @@ import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 import org.opendaylight.mdsal.binding.model.ri.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
-import org.opendaylight.yangtools.concepts.Builder
 
 /**
  * Template for generating JAVA builder classes.
  */
 class BuilderTemplate extends AbstractBuilderTemplate {
-    static val BUILDER = JavaTypeName.create(Builder)
-
     val BuilderImplTemplate implTemplate
 
     /**
@@ -66,7 +63,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «wrapToDocumentation(formatDataForJavaDoc(targetType))»
         «targetType.annotations.generateDeprecatedAnnotation»
         «generatedAnnotation»
-        public class «type.name» implements «BUILDER.importedName»<«targetType.importedName»> {
+        public class «type.name» {
 
             «generateFields(false)»
 
@@ -90,7 +87,11 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
             «generateSetters»
 
-            @«OVERRIDE.importedName»
+            /**
+             * A new {@link «targetType.name»} instance.
+             *
+             * @return A new {@link «targetType.name»} instance.
+             */
             public «targetType.name» build() {
                 return new «type.enclosedTypes.get(0).importedName»(this);
             }
@@ -476,7 +477,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         </ul>
 
         @see «target»
-        @see «BUILDER.importedName»
     '''
     }
 
