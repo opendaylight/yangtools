@@ -16,7 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * An example of this is RFC6020/RFC7950 choice statement, which creates implicit case statements for child containers
  * and others.
  *
- * @author Robert Varga
+ * @param <A> Argument type
+ * @param <D> Declared Statement representation
+ * @param <E> Effective Statement representation
  */
 @Beta
 public interface ImplicitParentAwareStatementSupport {
@@ -25,9 +27,9 @@ public interface ImplicitParentAwareStatementSupport {
      * implementations of this interface add implicit parent to the build context hierarchy before a substatement
      * is created.
      *
+     * @param parent parent statement context
      * @param stmtDef statement definition of substatement
      * @return optional of implicit parent statement support
      */
-    // FIXME: YANGTOOLS-1371: pass a NamespaceStmtCtx here, so choice/case can be decoupled
-    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(StatementDefinition stmtDef);
+    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(NamespaceStmtCtx parent, StatementDefinition stmtDef);
 }

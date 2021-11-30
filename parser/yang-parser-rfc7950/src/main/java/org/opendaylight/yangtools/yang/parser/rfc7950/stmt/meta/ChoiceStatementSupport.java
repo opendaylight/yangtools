@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -39,7 +40,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStateme
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -83,28 +86,26 @@ public final class ChoiceStatementSupport
             .addOptional(YangStmtMapping.WHEN)
             .build();
 
-    private final CaseStatementSupport implicitCase;
-
-    private ChoiceStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
-            final CaseStatementSupport implicitCase) {
+    private ChoiceStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.CHOICE, instantiatedPolicy(), config, requireNonNull(validator));
-        this.implicitCase = requireNonNull(implicitCase);
     }
 
-    public static @NonNull ChoiceStatementSupport rfc6020Instance(final YangParserConfiguration config,
-            final CaseStatementSupport implicitCase) {
-        return new ChoiceStatementSupport(config, RFC6020_VALIDATOR, implicitCase);
+    public static @NonNull ChoiceStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new ChoiceStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull ChoiceStatementSupport rfc7950Instance(final YangParserConfiguration config,
-            final CaseStatementSupport implicitCase) {
-        return new ChoiceStatementSupport(config, RFC7950_VALIDATOR, implicitCase);
+    public static @NonNull ChoiceStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new ChoiceStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override
-    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        return YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef) ? Optional.of(implicitCase)
-            : Optional.empty();
+    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final NamespaceStmtCtx parent,
+            final StatementDefinition stmtDef) {
+        if (!YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef)) {
+            return Optional.empty();
+        }
+        return Optional.of(verifyNotNull(parent.getFromNamespace(StatementSupportNamespace.class,
+            YangStmtMapping.CASE.getStatementName())));
     }
 
     @Override

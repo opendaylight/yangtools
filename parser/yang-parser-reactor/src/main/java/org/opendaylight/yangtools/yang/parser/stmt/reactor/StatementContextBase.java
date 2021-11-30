@@ -819,8 +819,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
             final StatementContextBase<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
-        final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
-            original.publicDefinition());
+        final var implicitParent = definition.getImplicitParentFor(this, original.publicDefinition());
 
         final StatementContextBase<X, Y, Z> result;
         final InferredStatementContext<X, Y, Z> copy;
@@ -873,13 +872,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Beta
     public final StatementContextBase<?, ?, ?> wrapWithImplicit(final StatementContextBase<?, ?, ?> original) {
-        final Optional<StatementSupport<?, ?, ?>> optImplicit = definition.getImplicitParentFor(
-            original.publicDefinition());
+        final var optImplicit = definition.getImplicitParentFor(this, original.publicDefinition());
         if (optImplicit.isEmpty()) {
             return original;
         }
 
-        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.get());
+        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.orElseThrow());
         final CopyType type = original.history().getLastOperation();
         final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def,
             original.sourceReference(), original.rawArgument(), original.argument(), type);

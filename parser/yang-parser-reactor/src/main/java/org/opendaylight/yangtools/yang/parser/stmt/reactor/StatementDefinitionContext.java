@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -55,9 +56,11 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         return support.getPublicView();
     }
 
-    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
+    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final NamespaceStmtCtx parent,
+            final StatementDefinition stmtDef) {
         return support instanceof ImplicitParentAwareStatementSupport
-                ? ((ImplicitParentAwareStatementSupport) support).getImplicitParentFor(stmtDef) : Optional.empty();
+                ? ((ImplicitParentAwareStatementSupport) support).getImplicitParentFor(parent, stmtDef)
+                    : Optional.empty();
     }
 
     void onStatementAdded(final Mutable<A, D, E> stmt) {

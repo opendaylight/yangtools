@@ -172,11 +172,10 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", sourceReference());
 
-        final Optional<StatementSupport<?, ?, ?>> implicitParent =
-                definition().getImplicitParentFor(def.getPublicView());
+        final var implicitParent = definition().getImplicitParentFor(this, def.getPublicView());
         if (implicitParent.isPresent()) {
-            return createImplicitParent(offset, implicitParent.get(), ref, argument).createSubstatement(offset, def,
-                    ref, argument);
+            return createImplicitParent(offset, implicitParent.orElseThrow(), ref, argument)
+                .createSubstatement(offset, def, ref, argument);
         }
 
         final AbstractResumedStatement<X, Y, Z> ret = new SubstatementContext<>(this, def, ref, argument);
