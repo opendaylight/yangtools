@@ -375,19 +375,16 @@ public final class RFC7950Reactors {
 
     private static @NonNull StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle stmtDefBundle,
             final XPathSupport xpathSupport, final YangParserConfiguration config) {
-        final CaseStatementSupport rfc6020case = CaseStatementSupport.rfc6020Instance(config);
-        final CaseStatementSupport rfc7950case = CaseStatementSupport.rfc7950Instance(config);
-
         return StatementSupportBundle.derivedFrom(stmtDefBundle)
             .addSupport(new LeafStatementSupport(config))
             .addSupport(new ConfigStatementSupport(config))
             .addSupport(new DeviationStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1, new DeviateStatementRFC6020Support(config))
             .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRFC7950Support(config))
-            .addVersionSpecificSupport(VERSION_1, ChoiceStatementSupport.rfc6020Instance(config, rfc6020case))
-            .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementSupport.rfc7950Instance(config, rfc7950case))
-            .addVersionSpecificSupport(VERSION_1, rfc6020case)
-            .addVersionSpecificSupport(VERSION_1_1, rfc7950case)
+            .addVersionSpecificSupport(VERSION_1, ChoiceStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementSupport.rfc7950Instance(config))
+            .addVersionSpecificSupport(VERSION_1, CaseStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, CaseStatementSupport.rfc7950Instance(config))
             .addSupport(new MustStatementSupport(xpathSupport, config))
             .addSupport(new MandatoryStatementSupport(config))
             .addSupport(new AnyxmlStatementSupport(config))
