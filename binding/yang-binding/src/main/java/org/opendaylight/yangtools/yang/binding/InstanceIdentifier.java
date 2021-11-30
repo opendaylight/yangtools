@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
@@ -827,7 +826,7 @@ public class InstanceIdentifier<T extends DataObject>
         }
     }
 
-    public interface InstanceIdentifierBuilder<T extends DataObject> extends Builder<InstanceIdentifier<T>> {
+    public interface InstanceIdentifierBuilder<T extends DataObject> {
         /**
          * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This
          * method should be used when you want to build an instance identifier by appending top-level elements, for
@@ -912,8 +911,7 @@ public class InstanceIdentifier<T extends DataObject>
          *
          * @return Resulting instance identifier.
          */
-        @Override
-        InstanceIdentifier<T> build();
+        @NonNull InstanceIdentifier<T> build();
     }
 
     private Object writeReplace() throws ObjectStreamException {

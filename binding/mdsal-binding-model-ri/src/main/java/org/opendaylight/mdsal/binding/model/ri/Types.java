@@ -35,7 +35,6 @@ import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.WildcardType;
-import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -56,7 +55,6 @@ public final class Types {
     public static final @NonNull ConcreteType STRING = typeForClass(String.class);
     public static final @NonNull ConcreteType VOID = typeForClass(Void.class);
 
-    private static final @NonNull ConcreteType BUILDER = typeForClass(Builder.class);
     private static final @NonNull ConcreteType LIST_TYPE = typeForClass(List.class);
     private static final @NonNull ConcreteType LISTENABLE_FUTURE = typeForClass(ListenableFuture.class);
     private static final @NonNull ConcreteType MAP_TYPE = typeForClass(Map.class);
@@ -233,17 +231,6 @@ public final class Types {
      */
     public static @NonNull ParameterizedType listenableFutureTypeFor(final Type valueType) {
         return parameterizedTypeFor(LISTENABLE_FUTURE, valueType);
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed
-     * {@link Builder}&lt;V&gt; with concrete type of value.
-     *
-     * @param valueType Value Type
-     * @return Description of type instance of Builder
-     */
-    public static @NonNull ParameterizedType builderTypeFor(final Type valueType) {
-        return parameterizedTypeFor(BUILDER, valueType);
     }
 
     /**

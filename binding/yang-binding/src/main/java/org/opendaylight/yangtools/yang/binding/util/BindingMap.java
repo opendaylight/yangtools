@@ -492,8 +492,7 @@ public final class BindingMap {
      * @param <K> the {@code Map}'s key type
      * @param <V> the {@code Map}'s value type
      */
-    public abstract static class Builder<K extends Identifier<V>, V extends Identifiable<K>>
-            implements org.opendaylight.yangtools.concepts.Builder<Map<K, V>> {
+    public abstract static class Builder<K extends Identifier<V>, V extends Identifiable<K>> {
         static final int DEFAULT_INITIAL_CAPACITY = 4;
 
         Builder() {
@@ -536,8 +535,27 @@ public final class BindingMap {
             return this;
         }
 
+        /**
+         * Build map from existing map entries in this builder.
+         *
+         * @return Resulting map
+         * @throws IllegalArgumentException if duplicate keys were added
+         */
+        public abstract @NonNull Map<K, V> build();
+
+        /**
+         * Add map entry identified by its {@code key} and containing {@code value} to this builder.
+         *
+         * @param key Key of the map entry
+         * @param value Value of the map entry
+         */
         abstract void addEntry(K key, V value);
 
+        /**
+         * Add collection of map entries to this builder.
+         *
+         * @param entries Map entries to add
+         */
         abstract void addEntries(Collection<Entry<K, V>> entries);
     }
 
