@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,11 +136,6 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     @Override
     public final ActionDefinition getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
         return (ActionDefinition) getTypes().findSchema(Type.of(cls)).orElse(null);
-    }
-
-    @Override
-    public final Absolute getActionIdentifier(final Class<? extends Action<?, ?, ?>> cls) {
-        return getTypes().findSchemaNodeIdentifier(Type.of(cls)).orElse(null);
     }
 
     @Override

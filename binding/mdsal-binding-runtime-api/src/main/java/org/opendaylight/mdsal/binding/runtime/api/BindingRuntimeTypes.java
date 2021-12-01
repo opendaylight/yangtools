@@ -14,13 +14,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -38,10 +35,8 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,16 +46,6 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class BindingRuntimeTypes implements EffectiveModelContextProvider, Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingRuntimeTypes.class);
-    private static final VarHandle TYPE_TO_IDENTIFIER;
-
-    static {
-        try {
-            TYPE_TO_IDENTIFIER = MethodHandles.lookup().findVarHandle(BindingRuntimeTypes.class, "typeToIdentifier",
-                ImmutableMap.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
 
     private final @NonNull EffectiveModelContext schemaContext;
     private final ImmutableMap<Type, AugmentationSchemaNode> typeToAugmentation;
@@ -69,10 +54,6 @@ public final class BindingRuntimeTypes implements EffectiveModelContextProvider,
     private final ImmutableMap<QName, Type> identities;
     // Not Immutable as we use two different implementations
     private final Map<WithStatus, Type> schemaToType;
-
-    @SuppressWarnings("unused")
-    // Accessed via TYPE_TO_IDENTIFIER
-    private volatile ImmutableMap<Type, Absolute> typeToIdentifier = ImmutableMap.of();
 
     public BindingRuntimeTypes(final EffectiveModelContext schemaContext,
             final Map<Type, AugmentationSchemaNode> typeToAugmentation,
@@ -151,12 +132,6 @@ public final class BindingRuntimeTypes implements EffectiveModelContextProvider,
         return Optional.ofNullable(typeToSchema.get(type));
     }
 
-    public Optional<Absolute> findSchemaNodeIdentifier(final Type type) {
-        final ImmutableMap<Type, Absolute> local = (ImmutableMap<Type, Absolute>) TYPE_TO_IDENTIFIER.getAcquire(this);
-        final Absolute existing = local.get(type);
-        return existing != null ? Optional.of(existing) : loadSchemaNodeIdentifier(local, type);
-    }
-
     public Optional<Type> findType(final WithStatus schema) {
         return Optional.ofNullable(schemaToType.get(schema));
     }
@@ -202,41 +177,5 @@ public final class BindingRuntimeTypes implements EffectiveModelContextProvider,
                 .add("choiceToCases", choiceToCases)
                 .add("identities", identities)
                 .toString();
-    }
-
-    private Optional<Absolute> loadSchemaNodeIdentifier(final ImmutableMap<Type, Absolute> local, final Type type) {
-        final WithStatus schema = typeToSchema.get(type);
-        if (!(schema instanceof SchemaNode)) {
-            return Optional.empty();
-        }
-
-        // TODO: do not rely on getPath() here
-        final Absolute created = Absolute.of(ImmutableList.copyOf(((SchemaNode) schema).getPath().getPathFromRoot()))
-                .intern();
-
-        ImmutableMap<Type, Absolute> prev = local;
-        while (true) {
-            // Compute next cache
-            final ImmutableMap<Type, Absolute> next =
-                    ImmutableMap.<Type, Absolute>builderWithExpectedSize(prev.size() + 1)
-                        .putAll(prev)
-                        .put(type, created).build();
-
-            final Object witness = TYPE_TO_IDENTIFIER.compareAndExchangeRelease(this, prev, next);
-            if (witness == prev) {
-                // Cache populated successfully, we are all done now
-                return Optional.of(created);
-            }
-
-            // Remember cache for next computation
-            prev = (ImmutableMap<Type, Absolute>) witness;
-            final Absolute raced = prev.get(type);
-            if (raced != null) {
-                // We have raced on this item, use it from cache
-                return Optional.of(raced);
-            }
-
-            // We have raced on a different item, loop around and repeat
-        }
     }
 }
