@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -22,7 +25,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -62,5 +67,13 @@ abstract class AbstractNotificationStatementSupport
             final NotificationEffectiveStatement original) {
         return EffectiveStatements.copyNotification(original, stmt.getArgument(),
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
+    }
+
+    @Override
+    public final EffectiveStatementState extractEffectiveState(final NotificationEffectiveStatement stmt) {
+        verify(stmt instanceof NotificationDefinition, "Unexpected statement %s", stmt);
+        final var schema = (NotificationDefinition) stmt;
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
+            EffectiveStatementMixins.historyAndStatusFlags(schema));
     }
 }

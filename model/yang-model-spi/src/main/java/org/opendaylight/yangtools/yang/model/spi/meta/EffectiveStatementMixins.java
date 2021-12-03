@@ -550,6 +550,7 @@ public final class EffectiveStatementMixins {
     }
 
     private EffectiveStatementMixins() {
+        // Hidden on purpose
     }
 
     static <T extends ContainerLike> T findAsContainer(final EffectiveStatement<?, ?> stmt,
@@ -572,5 +573,9 @@ public final class EffectiveStatementMixins {
                     .map(stmt -> ((StatusEffectiveStatement) stmt).argument())
                     .orElse(Status.CURRENT))
                 .toFlags();
+    }
+
+    public static <T extends CopyableNode & DocumentedNode.WithStatus>int historyAndStatusFlags(final T stmt) {
+        return new FlagsBuilder().setHistory(stmt).setStatus(stmt.getStatus()).toFlags();
     }
 }
