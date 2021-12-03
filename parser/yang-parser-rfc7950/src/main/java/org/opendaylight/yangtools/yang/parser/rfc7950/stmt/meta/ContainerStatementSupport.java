@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -30,7 +32,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -127,6 +131,18 @@ public final class ContainerStatementSupport
             final ContainerEffectiveStatement original) {
         return EffectiveStatements.copyContainer(original, stmt.getArgument(),
             createFlags(stmt, original.effectiveSubstatements()), stmt.original(ContainerSchemaNode.class));
+    }
+
+    @Override
+    public EffectiveStatementState extractEffectiveState(final ContainerEffectiveStatement stmt) {
+        verify(stmt instanceof ContainerSchemaNode, "Unexpected statement %s", stmt);
+        final var schema = (ContainerSchemaNode) stmt;
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
+            .setHistory(schema)
+            .setStatus(schema.getStatus())
+            .setConfiguration(schema.effectiveConfig().orElse(null))
+            .setPresence(schema.isPresenceContainer())
+            .toFlags());
     }
 
     private static int createFlags(final Current<?, ?> stmt,

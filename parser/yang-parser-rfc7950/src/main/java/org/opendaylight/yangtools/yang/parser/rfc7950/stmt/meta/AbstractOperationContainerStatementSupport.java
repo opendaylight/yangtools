@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -14,6 +15,7 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -92,4 +96,11 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
 
     abstract @NonNull E createUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
+
+    @Override
+    public final EffectiveStatementState extractEffectiveState(final E stmt) {
+        verify(stmt instanceof ContainerLike, "Unexpected statement %s", stmt);
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
+            EffectiveStatementMixins.historyAndStatusFlags((ContainerLike) stmt));
+    }
 }

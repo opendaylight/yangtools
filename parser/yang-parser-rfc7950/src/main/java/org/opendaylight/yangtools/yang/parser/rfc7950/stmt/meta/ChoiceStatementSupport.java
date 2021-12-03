@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -37,10 +38,12 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -153,6 +156,18 @@ public final class ChoiceStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public EffectiveStatementState extractEffectiveState(final ChoiceEffectiveStatement stmt) {
+        verify(stmt instanceof ChoiceSchemaNode, "Unexpected statement %s", stmt);
+        final var schema = (ChoiceSchemaNode) stmt;
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
+            .setHistory(schema)
+            .setStatus(schema.getStatus())
+            .setConfiguration(schema.effectiveConfig().orElse(null))
+            .setMandatory(schema.isMandatory())
+            .toFlags());
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

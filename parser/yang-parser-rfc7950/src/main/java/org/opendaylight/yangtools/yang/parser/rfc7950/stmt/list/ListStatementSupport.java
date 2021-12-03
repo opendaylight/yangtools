@@ -41,11 +41,13 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -183,6 +185,18 @@ public final class ListStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public EffectiveStatementState extractEffectiveState(final ListEffectiveStatement stmt) {
+        verify(stmt instanceof ListSchemaNode, "Unexpected statement %s", stmt);
+        final var schema = (ListSchemaNode) stmt;
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
+            .setHistory(schema)
+            .setStatus(schema.getStatus())
+            .setConfiguration(schema.effectiveConfig().orElse(null))
+            .setUserOrdered(schema.isUserOrdered())
+            .toFlags());
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
