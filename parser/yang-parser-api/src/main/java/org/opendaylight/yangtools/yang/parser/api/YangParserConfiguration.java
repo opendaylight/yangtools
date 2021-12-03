@@ -31,18 +31,25 @@ public final class YangParserConfiguration implements Immutable {
 
     private final ImportResolutionMode importResolutionMode;
     private final boolean retainDeclarationReferences;
+    private final boolean omitDocumentationStatements;
     private final boolean warnForUnkeyedLists;
 
     private YangParserConfiguration(final ImportResolutionMode importResolutionMode,
-            final boolean retainDeclarationReferences, final boolean warnForUnkeyedLists) {
+            final boolean retainDeclarationReferences, final boolean omitDocumentationStatements,
+            final boolean warnForUnkeyedLists) {
         this.importResolutionMode = requireNonNull(importResolutionMode);
         this.retainDeclarationReferences = retainDeclarationReferences;
+        this.omitDocumentationStatements = omitDocumentationStatements;
         this.warnForUnkeyedLists = warnForUnkeyedLists;
     }
 
     @Beta
     public ImportResolutionMode importResolutionMode() {
         return importResolutionMode;
+    }
+
+    public boolean omitDocumentationStatements() {
+        return omitDocumentationStatements;
     }
 
     /**
@@ -77,10 +84,9 @@ public final class YangParserConfiguration implements Immutable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof YangParserConfiguration)) {
+        if (!(obj instanceof YangParserConfiguration other)) {
             return false;
         }
-        final YangParserConfiguration other = (YangParserConfiguration) obj;
         return importResolutionMode == other.importResolutionMode
             && retainDeclarationReferences == other.retainDeclarationReferences;
     }
@@ -105,6 +111,7 @@ public final class YangParserConfiguration implements Immutable {
     public static final class Builder implements Mutable {
         private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
         private boolean retainDeclarationReferences;
+        private boolean omitDocumentationStatements;
         // FIXME: YANGTOOLS-1423: default to false
         private boolean warnForUnkeyedLists = true;
 
@@ -118,7 +125,8 @@ public final class YangParserConfiguration implements Immutable {
          * @return A YangParserConfiguration
          */
         public YangParserConfiguration build() {
-            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences, warnForUnkeyedLists);
+            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences,
+                omitDocumentationStatements, warnForUnkeyedLists);
         }
 
         @Beta
@@ -158,6 +166,11 @@ public final class YangParserConfiguration implements Immutable {
          */
         public Builder warnForUnkeyedLists(final boolean newWarnForUnkeyedLists) {
             warnForUnkeyedLists = newWarnForUnkeyedLists;
+            return this;
+        }
+
+        public Builder omitDocumentationStatements(final boolean newOmitDocumentationStatements) {
+            omitDocumentationStatements = newOmitDocumentationStatements;
             return this;
         }
     }

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class OrganizationStatementSupport
@@ -26,8 +27,18 @@ public final class OrganizationStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.ORGANIZATION).build();
 
+    private final boolean omitEffective;
+
     public OrganizationStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.ORGANIZATION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        omitEffective = config.omitDocumentationStatements();
+    }
+
+    @Override
+    public void onStatementAdded(final Mutable<String, OrganizationStatement, OrganizationEffectiveStatement> stmt) {
+        if (omitEffective) {
+            stmt.setIsSupportedToBuildEffective(false);
+        }
     }
 
     @Override

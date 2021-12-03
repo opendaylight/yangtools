@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DescriptionStatementSupport
@@ -28,8 +29,18 @@ public final class DescriptionStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DESCRIPTION).build();
 
+    private final boolean omitEffective;
+
     public DescriptionStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.DESCRIPTION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        omitEffective = config.omitDocumentationStatements();
+    }
+
+    @Override
+    public void onStatementAdded(final Mutable<String, DescriptionStatement, DescriptionEffectiveStatement> stmt) {
+        if (omitEffective) {
+            stmt.setIsSupportedToBuildEffective(false);
+        }
     }
 
     @Override
