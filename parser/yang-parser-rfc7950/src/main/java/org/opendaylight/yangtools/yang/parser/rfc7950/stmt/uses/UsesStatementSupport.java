@@ -39,9 +39,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
@@ -148,7 +148,7 @@ public final class UsesStatementSupport
         verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
         final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
 
-        final int flags = EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements);
+        final int flags = EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements);
         final QName argument = stmt.getArgument();
         final UsesStatement declared = stmt.declared();
 

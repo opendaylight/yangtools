@@ -17,19 +17,24 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.CopyableNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -196,5 +201,21 @@ public final class EffectiveStmtUtils {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, statement);
             }
         }
+    }
+
+    public static int historyAndStatusFlags(final CopyableNode history,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+                .setHistory(history)
+                .setStatus(substatements.stream()
+                    .filter(StatusEffectiveStatement.class::isInstance)
+                    .findAny()
+                    .map(stmt -> ((StatusEffectiveStatement) stmt).argument())
+                    .orElse(Status.CURRENT))
+                .toFlags();
+    }
+
+    public static <T extends CopyableNode & DocumentedNode.WithStatus> int historyAndStatusFlags(final T stmt) {
+        return new FlagsBuilder().setHistory(stmt).setStatus(stmt.getStatus()).toFlags();
     }
 }

@@ -55,10 +55,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -550,6 +548,7 @@ public final class EffectiveStatementMixins {
     }
 
     private EffectiveStatementMixins() {
+        // Hidden on purpose
     }
 
     static <T extends ContainerLike> T findAsContainer(final EffectiveStatement<?, ?> stmt,
@@ -560,17 +559,5 @@ public final class EffectiveStatementMixins {
     static Collection<? extends @NonNull TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
         return Collections2.transform(stmt.filterEffectiveStatements(TypedefEffectiveStatement.class),
             TypedefEffectiveStatement::getTypeDefinition);
-    }
-
-    public static int historyAndStatusFlags(final CopyableNode history,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        return new FlagsBuilder()
-                .setHistory(history)
-                .setStatus(substatements.stream()
-                    .filter(StatusEffectiveStatement.class::isInstance)
-                    .findAny()
-                    .map(stmt -> ((StatusEffectiveStatement) stmt).argument())
-                    .orElse(Status.CURRENT))
-                .toFlags();
     }
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -14,15 +15,18 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -53,8 +57,8 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     @Override
     final @NonNull E copyDeclaredEffective(final Current<QName, D> stmt, final E original) {
         return copyDeclaredEffective(
-            EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()),
-            stmt, original);
+            EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()), stmt,
+            original);
     }
 
     abstract @NonNull E copyDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
@@ -63,8 +67,8 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     @Override
     final @NonNull E copyUndeclaredEffective(final Current<QName, D> stmt, final E original) {
         return copyUndeclaredEffective(
-            EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()),
-            stmt, original);
+            EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()), stmt,
+            original);
     }
 
     abstract @NonNull E copyUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt, @NonNull E original);
@@ -74,7 +78,7 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return createDeclaredEffective(
-                EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
+                EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -86,10 +90,17 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     @Override
     final E createUndeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createUndeclaredEffective(EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements),
-            stmt, substatements);
+        return createUndeclaredEffective(EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), stmt,
+            substatements);
     }
 
     abstract @NonNull E createUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
+
+    @Override
+    public final EffectiveStatementState extractEffectiveState(final E stmt) {
+        verify(stmt instanceof ContainerLike, "Unexpected statement %s", stmt);
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
+            EffectiveStmtUtils.historyAndStatusFlags((ContainerLike) stmt));
+    }
 }
