@@ -28,16 +28,22 @@ public final class YangParserConfiguration implements Immutable {
 
     private final ImportResolutionMode importResolutionMode;
     private final boolean retainDeclarationReferences;
+    private final boolean omitDocumentationStatements;
 
     private YangParserConfiguration(final ImportResolutionMode importResolutionMode,
-            final boolean retainDeclarationReferences) {
+            final boolean retainDeclarationReferences, final boolean omitDocumentationStatements) {
         this.importResolutionMode = requireNonNull(importResolutionMode);
         this.retainDeclarationReferences = retainDeclarationReferences;
+        this.omitDocumentationStatements = omitDocumentationStatements;
     }
 
     @Beta
     public ImportResolutionMode importResolutionMode() {
         return importResolutionMode;
+    }
+
+    public boolean omitDocumentationStatements() {
+        return omitDocumentationStatements;
     }
 
     public boolean retainDeclarationReferences() {
@@ -77,6 +83,7 @@ public final class YangParserConfiguration implements Immutable {
     public static final class Builder implements org.opendaylight.yangtools.concepts.Builder<YangParserConfiguration> {
         private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
         private boolean retainDeclarationReferences = false;
+        private boolean omitDocumentationStatements = false;
 
         private Builder() {
             // Hidden on purpose
@@ -84,17 +91,23 @@ public final class YangParserConfiguration implements Immutable {
 
         @Override
         public YangParserConfiguration build() {
-            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences);
+            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences,
+                omitDocumentationStatements);
         }
 
         @Beta
         public Builder importResolutionMode(final ImportResolutionMode newImportResolutionMode) {
-            this.importResolutionMode = requireNonNull(newImportResolutionMode);
+            importResolutionMode = requireNonNull(newImportResolutionMode);
+            return this;
+        }
+
+        public Builder omitDocumentationStatements(final boolean newOmitDocumentationStatements) {
+            omitDocumentationStatements = newOmitDocumentationStatements;
             return this;
         }
 
         public Builder retainDeclarationReferences(final boolean newRetainDeclarationReferences) {
-            this.retainDeclarationReferences = newRetainDeclarationReferences;
+            retainDeclarationReferences = newRetainDeclarationReferences;
             return this;
         }
     }
