@@ -68,7 +68,7 @@ public final class PatternStatementSupport
         } catch (final PatternSyntaxException e) {
             throw new SourceException(ctx, e, "Pattern \"%s\" failed to compile", pattern);
         }
-        return PatternExpression.of(value, pattern);
+        return PatternExpression.of(value, pattern).intern();
     }
 
     @Override

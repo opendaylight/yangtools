@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -21,6 +23,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @Beta
 @NonNullByDefault
 public final class PatternExpression implements Immutable {
+    private static final Interner<PatternExpression> INTERNER = Interners.newWeakInterner();
+
     private final String pattern;
     private final String regex;
 
@@ -55,6 +59,15 @@ public final class PatternExpression implements Immutable {
      */
     public String getRegularExpressionString() {
         return regex;
+    }
+
+    /**
+     * Returns an interned instance of this expression.
+     *
+     * @return A shared interned instance.
+     */
+    public PatternExpression intern() {
+        return INTERNER.intern(this);
     }
 
     @Override
