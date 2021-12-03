@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,7 +28,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -72,6 +76,18 @@ public final class AnyxmlStatementSupport
             final AnyxmlEffectiveStatement original) {
         return EffectiveStatements.copyAnyxml(original, stmt.getArgument(),
             createFlags(stmt, original.effectiveSubstatements()), stmt.original(AnyxmlSchemaNode.class));
+    }
+
+    @Override
+    public EffectiveStatementState extractEffectiveState(final AnyxmlEffectiveStatement stmt) {
+        verify(stmt instanceof AnyxmlSchemaNode, "Unexpected statement %s", stmt);
+        final var anyxml = (AnyxmlSchemaNode) stmt;
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
+            .setHistory(anyxml)
+            .setStatus(anyxml.getStatus())
+            .setConfiguration(anyxml.effectiveConfig().orElse(null))
+            .setMandatory(anyxml.isMandatory())
+            .toFlags());
     }
 
     private static int createFlags(final Current<QName, AnyxmlStatement> stmt,

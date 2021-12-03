@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
@@ -32,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
@@ -55,6 +58,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
@@ -550,6 +554,7 @@ public final class EffectiveStatementMixins {
     }
 
     private EffectiveStatementMixins() {
+        // Hidden on purpose
     }
 
     static <T extends ContainerLike> T findAsContainer(final EffectiveStatement<?, ?> stmt,
@@ -572,5 +577,11 @@ public final class EffectiveStatementMixins {
                     .map(stmt -> ((StatusEffectiveStatement) stmt).argument())
                     .orElse(Status.CURRENT))
                 .toFlags();
+    }
+
+    public static int historyAndStatusFlags(final SchemaTreeEffectiveStatement<?> stmt) {
+        checkArgument(stmt instanceof CopyableNode, "Statement %s does not expose copy history", stmt);
+        checkArgument(stmt instanceof WithStatus, "Statement %s does not expose status", stmt);
+        return new FlagsBuilder().setHistory((CopyableNode) stmt).setStatus(((WithStatus) stmt).getStatus()).toFlags();
     }
 }
