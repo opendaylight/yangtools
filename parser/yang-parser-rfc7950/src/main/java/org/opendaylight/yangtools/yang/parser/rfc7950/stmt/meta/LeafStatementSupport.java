@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -29,7 +31,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.E
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -96,8 +100,20 @@ public final class LeafStatementSupport
             substatements, stmt.original(LeafSchemaNode.class));
     }
 
+    @Override
+    public EffectiveStatementState extractEffectiveState(final LeafEffectiveStatement stmt) {
+        verify(stmt instanceof LeafSchemaNode, "Unexpected statement %s", stmt);
+        final var schema = (LeafSchemaNode) stmt;
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
+            .setHistory(schema)
+            .setStatus(schema.getStatus())
+            .setConfiguration(schema.effectiveConfig().orElse(null))
+            .setMandatory(schema.isMandatory())
+            .toFlags());
+    }
+
     private static int computeFlags(final Current<?, ?> stmt,
-        final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))

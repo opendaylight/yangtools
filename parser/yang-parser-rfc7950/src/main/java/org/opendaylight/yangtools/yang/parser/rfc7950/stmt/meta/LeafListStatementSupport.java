@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -33,7 +35,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.E
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -129,6 +133,18 @@ public final class LeafListStatementSupport
             computeFlags(stmt, substatements), substatements, defaultValues,
             EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null),
             stmt.original(LeafListSchemaNode.class));
+    }
+
+    @Override
+    public EffectiveStatementState extractEffectiveState(final LeafListEffectiveStatement stmt) {
+        verify(stmt instanceof LeafListSchemaNode, "Unexpected statement %s", stmt);
+        final var schema = (LeafListSchemaNode) stmt;
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
+            .setHistory(schema)
+            .setStatus(schema.getStatus())
+            .setConfiguration(schema.effectiveConfig().orElse(null))
+            .setUserOrdered(schema.isUserOrdered())
+            .toFlags());
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
