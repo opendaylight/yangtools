@@ -94,7 +94,8 @@ final class BindingRuntimeTypesFactory implements Mutable {
             }
 
             typeToSchema.put(type, schema);
-            schemaToType.put(schema, type);
+            final var prevType = schemaToType.put(schema, type);
+            verify(prevType == null, "Conflicting types %s and %s on %s", type, prevType, schema);
         }
     }
 }
