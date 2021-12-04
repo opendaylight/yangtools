@@ -320,7 +320,7 @@ public final class UsesStatementSupport
         if (refineTargetNodeCtx.isSupportedToBuildEffective()) {
             subStmtCtx.addToNs(RefineTargetNamespace.class, Empty.value(), refineTargetNodeCtx);
         } else {
-            subStmtCtx.setIsSupportedToBuildEffective(false);
+            subStmtCtx.setUnsupported();
         }
     }
 

@@ -93,7 +93,7 @@ abstract class AbstractAugmentStatementSupport
             final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode) {
         if (!augmentNode.isSupportedByFeatures()) {
             // We need this augment node to be present, but it should not escape to effective world
-            augmentNode.setIsSupportedToBuildEffective(false);
+            augmentNode.setUnsupported();
         }
 
         super.onFullDefinitionDeclared(augmentNode);

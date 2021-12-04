@@ -81,7 +81,7 @@ final class UnrecognizedStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement> stmt) {
-        stmt.setIsSupportedToBuildEffective(false);
+        stmt.setUnsupported();
     }
 
     @Override

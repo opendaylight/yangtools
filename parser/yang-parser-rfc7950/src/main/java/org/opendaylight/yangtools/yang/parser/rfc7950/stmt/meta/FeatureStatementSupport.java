@@ -59,7 +59,7 @@ public final class FeatureStatementSupport
         // Do not build effective statement if supported features does not include this feature
         final var supportedFeatures = stmt.getFromNamespace(SupportedFeaturesNamespace.class, Empty.value());
         if (supportedFeatures != null && !supportedFeatures.contains(stmt.getArgument())) {
-            stmt.setIsSupportedToBuildEffective(false);
+            stmt.setUnsupported();
         }
     }
 

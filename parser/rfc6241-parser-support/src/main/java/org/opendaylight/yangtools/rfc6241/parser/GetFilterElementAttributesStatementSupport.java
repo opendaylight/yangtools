@@ -41,7 +41,9 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
     public void onFullDefinitionDeclared(final Mutable<Empty, GetFilterElementAttributesStatement,
             GetFilterElementAttributesEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
-        stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
+        if (!computeSupported(stmt)) {
+            stmt.setUnsupported();
+        }
     }
 
     @Override

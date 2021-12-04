@@ -151,7 +151,7 @@ abstract class AbstractDeviateStatementSupport
 
                 switch (deviateKind) {
                     case NOT_SUPPORTED:
-                        targetNodeStmtCtx.setIsSupportedToBuildEffective(false);
+                        targetNodeStmtCtx.setUnsupported();
                         break;
                     case ADD:
                         performDeviateAdd(sourceNodeStmtCtx, targetNodeStmtCtx);
@@ -306,7 +306,7 @@ abstract class AbstractDeviateStatementSupport
 
         for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
-                targetCtxSubstatement.setIsSupportedToBuildEffective(false);
+                targetCtxSubstatement.setUnsupported();
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
                 return;
             }
@@ -351,7 +351,7 @@ abstract class AbstractDeviateStatementSupport
         for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
                     targetCtxSubstatement.rawArgument())) {
-                targetCtxSubstatement.setIsSupportedToBuildEffective(false);
+                targetCtxSubstatement.setUnsupported();
                 return;
             }
         }

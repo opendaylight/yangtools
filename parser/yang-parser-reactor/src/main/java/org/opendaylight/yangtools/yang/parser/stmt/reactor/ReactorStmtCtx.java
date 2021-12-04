@@ -473,8 +473,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
-    public final void setIsSupportedToBuildEffective(final boolean isSupportedToBuildEffective) {
-        this.isSupportedToBuildEffective = isSupportedToBuildEffective;
+    public final void setUnsupported() {
+        this.isSupportedToBuildEffective = false;
     }
 
     @Override

@@ -65,7 +65,7 @@ final class AugmentInferenceAction implements InferenceAction {
         final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.resolve(ctx);
         if (!isSupportedAugmentTarget(augmentTargetCtx)
                 || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
-            augmentNode.setIsSupportedToBuildEffective(false);
+            augmentNode.setUnsupported();
             return;
         }
 
@@ -89,7 +89,7 @@ final class AugmentInferenceAction implements InferenceAction {
             final Optional<StmtContext<?, ?, ?>> targetNode = SchemaTreeNamespace.findNode(
                 AbstractAugmentStatementSupport.getSearchRoot(augmentNode), augmentArg);
             if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
-                augmentNode.setIsSupportedToBuildEffective(false);
+                augmentNode.setUnsupported();
                 LOG.warn("Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
                     augmentArg, augmentNode.sourceReference());
                 return;
@@ -135,7 +135,7 @@ final class AugmentInferenceAction implements InferenceAction {
 
             final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
             if (unsupported) {
-                copy.setIsSupportedToBuildEffective(false);
+                copy.setUnsupported();
             }
             buffer.add(copy);
         } else if (!unsupported && original.publicDefinition() == YangStmtMapping.TYPEDEF) {

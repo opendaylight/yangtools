@@ -50,7 +50,7 @@ public final class YangDataStatementSupport
         // as per https://tools.ietf.org/html/rfc8040#section-8,
         // yang-data is ignored unless it appears as a top-level statement
         if (ctx.coerceParentContext().getParentContext() != null) {
-            ctx.setIsSupportedToBuildEffective(false);
+            ctx.setUnsupported();
         }
     }
 

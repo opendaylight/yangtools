@@ -344,6 +344,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         void setRootIdentifier(SourceIdentifier identifier);
 
-        void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
+        void setUnsupported();
     }
 }
