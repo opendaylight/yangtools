@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -37,7 +38,7 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      *
      * @return Collection of statements, which were explicitly declared in source of model.
      */
-    @NonNull Collection<? extends DeclaredStatement<?>> declaredSubstatements();
+    @NonNull List<? extends DeclaredStatement<?>> declaredSubstatements();
 
     /**
      * Returns collection of explicitly declared child statements, while preserving its original ordering from original

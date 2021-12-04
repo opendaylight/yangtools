@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,7 +30,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
     }
 
     @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
         // Default to reduce load on subclasses and keep the number of implementations down
         return ImmutableList.of();
     }
@@ -61,7 +60,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
 
             @Override
-            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -89,7 +88,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
 
             @Override
-            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -122,7 +121,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
 
             @Override
-            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -148,7 +147,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
 
             @Override
-            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -177,7 +176,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
 
             @Override
-            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -208,7 +207,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
 
             @Override
-            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }

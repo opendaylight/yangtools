@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,7 +23,7 @@ public final class RegularKeyStatement extends AbstractKeyStatement {
     }
 
     @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
         return unmaskList(substatements);
     }
 }

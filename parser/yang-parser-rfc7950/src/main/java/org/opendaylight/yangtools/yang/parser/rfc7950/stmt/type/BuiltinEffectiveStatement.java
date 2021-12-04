@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -72,7 +71,7 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     }
 
     @Override
-    public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+    public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return ImmutableList.of();
     }
 

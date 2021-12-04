@@ -55,7 +55,7 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
     }
 
     @Override
-    public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return ImmutableList.of();
     }
 

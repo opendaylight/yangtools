@@ -58,7 +58,7 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
     }
 
     @Override
-    public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+    public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return substatements;
     }
 

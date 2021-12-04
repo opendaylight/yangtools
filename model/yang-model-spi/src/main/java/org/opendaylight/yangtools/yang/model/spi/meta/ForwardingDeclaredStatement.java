@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -26,7 +26,7 @@ public abstract class ForwardingDeclaredStatement<A, D extends DeclaredStatement
     }
 
     @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public List<? extends DeclaredStatement<?>> declaredSubstatements() {
         return delegate().declaredSubstatements();
     }
 

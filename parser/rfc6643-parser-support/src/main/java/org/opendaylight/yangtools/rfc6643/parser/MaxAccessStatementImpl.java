@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc6643.parser;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
@@ -38,7 +37,7 @@ final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> 
     }
 
     @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
         return unmaskList(substatements);
     }
 }

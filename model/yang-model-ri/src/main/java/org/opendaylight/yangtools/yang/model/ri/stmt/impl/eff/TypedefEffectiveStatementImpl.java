@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.VarHandle;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -140,7 +139,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
         }
 
         @Override
-        public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
             return TypedefEffectiveStatementImpl.this.effectiveSubstatements();
         }
 

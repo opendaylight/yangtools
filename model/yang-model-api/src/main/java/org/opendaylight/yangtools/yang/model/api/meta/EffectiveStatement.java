@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.meta;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -62,7 +62,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      *
      * @return collection of all effective substatements.
      */
-    @NonNull Collection<? extends @NonNull EffectiveStatement<?, ?>> effectiveSubstatements();
+    @NonNull List<? extends @NonNull EffectiveStatement<?, ?>> effectiveSubstatements();
 
     /**
      * Find the first effective substatement of specified type.
