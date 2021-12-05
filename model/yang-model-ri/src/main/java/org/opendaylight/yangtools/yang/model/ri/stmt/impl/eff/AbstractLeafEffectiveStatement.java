@@ -15,14 +15,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
@@ -85,23 +79,7 @@ public abstract class AbstractLeafEffectiveStatement
     }
 
     private TypeDefinition<?> loadType() {
-        final var typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
-        final var builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(), getQName());
-        for (var stmt : effectiveSubstatements()) {
-            if (stmt instanceof DefaultEffectiveStatement) {
-                builder.setDefaultValue(((DefaultEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof DescriptionEffectiveStatement) {
-                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement) {
-                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatement) {
-                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatement) {
-                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
-            }
-        }
-
-        final var ret = builder.build();
+        final var ret = ConcreteTypes.typeOf(this);
         final var witness = (TypeDefinition<?>) TYPE.compareAndExchangeRelease(this, null, ret);
         return witness != null ? witness : ret;
     }
