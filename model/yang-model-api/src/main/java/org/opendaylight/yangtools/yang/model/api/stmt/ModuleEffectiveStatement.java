@@ -53,17 +53,52 @@ public interface ModuleEffectiveStatement
         }
     }
 
+    /**
+     * Conformance type, as defined by <a href="https://datatracker.ietf.org/doc/html/rfc7895#page-9">RFC7895</a> and
+     * indirectly referenced in <a href="https://datatracker.ietf.org/doc/html/rfc7950#section-5.6.4">RFC7950</a>. The
+     * NMDA revision of <a href="https://datatracker.ietf.org/doc/html/rfc8525">YANG Library</a> does not directly
+     * define these, but makes a distiction on the same concept.
+     */
+    enum ConformanceType {
+        /**
+         * This module is being implemented. As per RFC7895:
+         * <pre>
+         *   Indicates that the server implements one or more
+         *   protocol-accessible objects defined in the YANG module
+         *   identified in this entry.  This includes deviation
+         *   statements defined in the module.
+         *
+         *   For YANG version 1.1 modules, there is at most one
+         *   module entry with conformance type 'implement' for a
+         *   particular module name, since YANG 1.1 requires that,
+         *   at most, one revision of a module is implemented.
+         *
+         *   For YANG version 1 modules, there SHOULD NOT be more
+         *   than one module entry for a particular module name.
+         * </pre>
+         */
+        IMPLEMENT,
+        /**
+         * This module is being used only for reusable constructs. As per RFC7895:
+         * <pre>
+         *   Indicates that the server imports reusable definitions
+         *   from the specified revision of the module but does
+         *   not implement any protocol-accessible objects from
+         *   this revision.
+         *
+         *   Multiple module entries for the same module name MAY
+         *   exist.  This can occur if multiple modules import the
+         *   same module but specify different revision dates in
+         *   the import statements.
+         * </pre>
+         */
+        IMPORT;
+    }
+
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MODULE;
     }
-
-    /**
-     * Get the local QNameModule of this module. All implementations need to override this default method.
-     *
-     * @return Local QNameModule
-     */
-    @NonNull QNameModule localQNameModule();
 
     /**
      * {@inheritDoc}
@@ -75,4 +110,18 @@ public interface ModuleEffectiveStatement
     default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final SchemaNodeIdentifier path) {
         return findSchemaTreeNode(path.getNodeIdentifiers());
     }
+
+    /**
+     * Get the local QNameModule of this module. All implementations need to override this default method.
+     *
+     * @return Local QNameModule
+     */
+    @NonNull QNameModule localQNameModule();
+
+    /**
+     * Return the conformance type of this module.
+     *
+     * @return Conformance type.
+     */
+    @NonNull ConformanceType conformance();
 }
