@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
@@ -42,29 +40,20 @@ abstract class AbstractListEffectiveStatement
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
-    private final @NonNull QName argument;
     private final @NonNull Object keyDefinition;
 
-    AbstractListEffectiveStatement(final ListStatement declared, final QName argument, final int flags,
+    AbstractListEffectiveStatement(final ListStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
         super(declared, substatements);
-        this.argument = requireNonNull(argument);
         this.keyDefinition = maskList(keyDefinition);
         this.flags = flags;
     }
 
-    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final QName argument,
-            final int flags) {
+    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final int flags) {
         super(original);
-        this.argument = requireNonNull(argument);
-        this.keyDefinition = original.keyDefinition;
+        keyDefinition = original.keyDefinition;
         this.flags = flags;
-    }
-
-    @Override
-    public final QName argument() {
-        return argument;
     }
 
     @Override

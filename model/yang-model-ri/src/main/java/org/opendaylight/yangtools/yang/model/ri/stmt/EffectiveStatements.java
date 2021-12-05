@@ -618,8 +618,8 @@ public final class EffectiveStatements {
     public static ListEffectiveStatement createList(final ListStatement declared, final QName argument,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition, final @Nullable ElementCountConstraint elementCountConstraint) {
-        return elementCountConstraint == null
-            ? new EmptyListEffectiveStatement(declared, argument, flags, substatements, keyDefinition)
+        return elementCountConstraint == null && argument.equals(declared.argument())
+            ? new EmptyListEffectiveStatement(declared, flags, substatements, keyDefinition)
                 : new RegularListEffectiveStatement(declared, argument, flags, substatements, keyDefinition,
                     elementCountConstraint);
     }

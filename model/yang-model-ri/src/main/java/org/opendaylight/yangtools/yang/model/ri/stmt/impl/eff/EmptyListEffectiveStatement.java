@@ -15,15 +15,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
 public final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
-    public EmptyListEffectiveStatement(final ListStatement declared, final QName argument, final int flags,
+    public EmptyListEffectiveStatement(final ListStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
-        super(declared, argument, flags, substatements, keyDefinition);
+        super(declared, flags, substatements, keyDefinition);
     }
 
-    public EmptyListEffectiveStatement(final EmptyListEffectiveStatement original, final QName argument,
-            final int flags) {
-        super(original, argument, flags);
+    @Override
+    public QName argument() {
+        return getDeclared().argument();
     }
 
     @Override
