@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
@@ -34,31 +33,34 @@ public abstract class AbstractLeafEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<LeafStatement>,
             MandatoryMixin<QName, LeafStatement>, MustConstraintMixin<QName, LeafStatement> {
-    private final @NonNull Object substatements;
-    // FIXME: YANGTOOLS-1316: this seems to imply that argument.equals(declared.argument()) and we could save a field,
-    //                        except we need it in the constructors to materialize type. But if we turn it into a lazy
-    //                        field, we should be okay.
-    private final @NonNull QName argument;
-    private final @NonNull TypeDefinition<?> type;
+    private static final VarHandle TYPE;
 
-    private final int flags;
-
-    AbstractLeafEffectiveStatement(final LeafStatement declared, final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared);
-        this.argument = requireNonNull(argument);
-        this.substatements = maskList(substatements);
-        this.flags = flags;
-        type = buildType();
+    static {
+        try {
+            TYPE = MethodHandles.lookup().findVarHandle(AbstractLeafEffectiveStatement.class, "type",
+                TypeDefinition.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
-    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final QName argument,
-            final int flags) {
-        super(original);
-        this.argument = requireNonNull(argument);
-        substatements = original.substatements;
+    private final @NonNull Object substatements;
+    private final int flags;
+
+    @SuppressWarnings("unused")
+    private volatile TypeDefinition<?> type;
+
+    AbstractLeafEffectiveStatement(final LeafStatement declared, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared);
         this.flags = flags;
-        type = buildType();
+        this.substatements = maskList(substatements);
+    }
+
+    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final int flags) {
+        super(original);
+        this.flags = flags;
+        substatements = original.substatements;
     }
 
     @Override
@@ -72,25 +74,20 @@ public abstract class AbstractLeafEffectiveStatement
     }
 
     @Override
-    public final QName argument() {
-        return argument;
-    }
-
-    @Override
-    public final TypeDefinition<?> getType() {
-        return type;
-    }
-
-    @Override
     public final LeafEffectiveStatement asEffectiveStatement() {
         return this;
     }
 
-    private TypeDefinition<?> buildType() {
-        final TypeEffectiveStatement<?> typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-            getQName());
-        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+    @Override
+    public final TypeDefinition<?> getType() {
+        final var local = (TypeDefinition<?>) TYPE.getAcquire(this);
+        return local != null ? local : loadType();
+    }
+
+    private TypeDefinition<?> loadType() {
+        final var typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
+        final var builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(), getQName());
+        for (var stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {
                 builder.setDefaultValue(((DefaultEffectiveStatement)stmt).argument());
             } else if (stmt instanceof DescriptionEffectiveStatement) {
@@ -103,6 +100,9 @@ public abstract class AbstractLeafEffectiveStatement
                 builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
             }
         }
-        return builder.build();
+
+        final var ret = builder.build();
+        final var witness = (TypeDefinition<?>) TYPE.compareAndExchangeRelease(this, null, ret);
+        return witness != null ? witness : ret;
     }
 }
