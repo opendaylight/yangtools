@@ -13,8 +13,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 
 public final class EmptyLeafEffectiveStatement extends AbstractLeafEffectiveStatement {
-    public EmptyLeafEffectiveStatement(final LeafStatement declared, final QName argument, final int flags,
+    public EmptyLeafEffectiveStatement(final LeafStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, argument, flags, substatements);
+        super(declared, flags, substatements);
+    }
+
+    @Override
+    public QName argument() {
+        return getDeclared().argument();
     }
 }

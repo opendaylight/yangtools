@@ -565,8 +565,8 @@ public final class EffectiveStatements {
     public static LeafEffectiveStatement createLeaf(final LeafStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
                 throws SubstatementIndexingException {
-        // FIXME: YANGTOOLS-1316: instantiate RegularLeafEffectiveStatement() in argument mismatch
-        return new EmptyLeafEffectiveStatement(declared, argument, flags, substatements);
+        return argument.equals(declared.argument()) ? new EmptyLeafEffectiveStatement(declared, flags, substatements)
+            : new RegularLeafEffectiveStatement(declared, argument, flags, substatements);
     }
 
     public static LeafListEffectiveStatement copyLeafList(final LeafListEffectiveStatement original,
