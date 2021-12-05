@@ -11,6 +11,14 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -83,6 +91,43 @@ public final class ConcreteTypes {
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
+    }
+
+    public static TypeDefinition<?> typeOf(final LeafEffectiveStatement leaf) {
+        final var typeStmt = leaf.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
+        final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leaf.argument());
+        for (var stmt : leaf.effectiveSubstatements()) {
+            if (stmt instanceof DefaultEffectiveStatement) {
+                builder.setDefaultValue(((DefaultEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof DescriptionEffectiveStatement) {
+                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement) {
+                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatement) {
+                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatement) {
+                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
+            }
+        }
+        return builder.build();
+    }
+
+    public static TypeDefinition<?> typeOf(final LeafListEffectiveStatement leafList) {
+        final var typeStmt = leafList.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
+        final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leafList.argument());
+        for (var stmt : leafList.effectiveSubstatements()) {
+            // NOTE: 'default' is omitted here on purpose
+            if (stmt instanceof DescriptionEffectiveStatement) {
+                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement) {
+                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatement) {
+                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatement) {
+                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
+            }
+        }
+        return builder.build();
     }
 
     private static ConcreteTypeBuilder<BinaryTypeDefinition> concreteBinaryBuilder(
