@@ -105,7 +105,7 @@ public final class LeafListStatementSupport
     public LeafListEffectiveStatement copyEffective(final Current<QName, LeafListStatement> stmt,
             final LeafListEffectiveStatement original) {
         return EffectiveStatements.copyLeafList(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(LeafListSchemaNode.class));
+            computeFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override
@@ -131,8 +131,7 @@ public final class LeafListStatementSupport
 
         return EffectiveStatements.createLeafList(stmt.declared(), stmt.getArgument(),
             computeFlags(stmt, substatements), substatements, defaultValues,
-            EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null),
-            stmt.original(LeafListSchemaNode.class));
+            EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null));
     }
 
     @Override

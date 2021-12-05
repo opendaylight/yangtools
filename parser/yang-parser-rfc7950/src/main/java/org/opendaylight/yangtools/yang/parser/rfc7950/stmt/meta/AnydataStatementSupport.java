@@ -67,15 +67,15 @@ public final class AnydataStatementSupport
     @Override
     protected AnydataEffectiveStatement createEffective(final Current<QName, AnydataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return EffectiveStatements.createAnydata(stmt.declared(), stmt.getArgument(),
-            createFlags(stmt, substatements), substatements, stmt.original(AnydataSchemaNode.class));
+        return EffectiveStatements.createAnydata(stmt.declared(), stmt.getArgument(), createFlags(stmt, substatements),
+            substatements);
     }
 
     @Override
     public AnydataEffectiveStatement copyEffective(final Current<QName, AnydataStatement> stmt,
             final AnydataEffectiveStatement original) {
         return EffectiveStatements.copyAnydata(original, stmt.getArgument(),
-            createFlags(stmt, original.effectiveSubstatements()), stmt.original(AnydataSchemaNode.class));
+            createFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override

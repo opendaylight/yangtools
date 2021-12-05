@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -42,22 +40,19 @@ public final class ContainerEffectiveStatementImpl
 
     private final int flags;
     private final @NonNull QName argument;
-    private final @Nullable ContainerSchemaNode original;
 
     public ContainerEffectiveStatementImpl(final ContainerStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
-            final int flags, final @Nullable ContainerSchemaNode original) {
+            final int flags) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
-        this.original = original;
         this.flags = flags;
     }
 
     public ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final QName argument,
-            final int flags, final @Nullable ContainerSchemaNode original) {
+            final int flags) {
         super(origEffective);
         this.argument = requireNonNull(argument);
-        this.original = original;
         this.flags = flags;
     }
 
@@ -69,12 +64,6 @@ public final class ContainerEffectiveStatementImpl
     @Override
     public QName argument() {
         return argument;
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public Optional<ContainerSchemaNode> getOriginal() {
-        return Optional.ofNullable(original);
     }
 
     @Override

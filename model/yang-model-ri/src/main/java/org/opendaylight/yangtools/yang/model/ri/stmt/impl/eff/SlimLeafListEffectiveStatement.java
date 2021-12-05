@@ -11,25 +11,24 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 public final class SlimLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffectiveStatement {
     public SlimLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint) {
-        super(declared, argument, flags, substatements, original, elementCountConstraint);
+            final ElementCountConstraint elementCountConstraint) {
+        super(declared, argument, flags, substatements, elementCountConstraint);
     }
 
-    public SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement originalEffective,
-            final LeafListSchemaNode original, final QName argument, final int flags) {
-        super(originalEffective, original, argument, flags);
+    public SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement originalEffective, final QName argument,
+            final int flags) {
+        super(originalEffective, argument, flags);
     }
 
-    public SlimLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
-            final LeafListSchemaNode original, final QName argument, final int flags) {
-        super(originalEffective, original, argument, flags);
+    public SlimLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective, final QName argument,
+            final int flags) {
+        super(originalEffective, argument, flags);
     }
 
     @Override

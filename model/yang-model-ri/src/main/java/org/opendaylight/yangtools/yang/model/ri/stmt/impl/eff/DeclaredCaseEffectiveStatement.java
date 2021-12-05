@@ -10,11 +10,8 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
@@ -24,25 +21,22 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 public final class DeclaredCaseEffectiveStatement
         extends DefaultWithDataTree<QName, CaseStatement, CaseEffectiveStatement>
         implements CaseEffectiveStatementMixin {
-    private final CaseSchemaNode original;
     private final @NonNull QName argument;
     private final int flags;
 
     public DeclaredCaseEffectiveStatement(final CaseStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
-            final int flags, final @Nullable CaseSchemaNode original) {
+            final int flags) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
         this.flags = flags;
-        this.original = original;
     }
 
     public DeclaredCaseEffectiveStatement(final DeclaredCaseEffectiveStatement origEffective, final QName argument,
-            final int flags, final @Nullable CaseSchemaNode original) {
+            final int flags) {
         super(origEffective);
         this.argument = requireNonNull(argument);
         this.flags = flags;
-        this.original = original;
     }
 
     @Override
@@ -53,12 +47,6 @@ public final class DeclaredCaseEffectiveStatement
     @Override
     public int flags() {
         return flags;
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public Optional<CaseSchemaNode> getOriginal() {
-        return Optional.ofNullable(original);
     }
 
     @Override

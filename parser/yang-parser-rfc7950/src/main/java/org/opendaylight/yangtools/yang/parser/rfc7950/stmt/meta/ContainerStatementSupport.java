@@ -120,7 +120,7 @@ public final class ContainerStatementSupport
 
         try {
             return EffectiveStatements.createContainer(stmt.declared(), stmt.getArgument(),
-                createFlags(stmt, substatements), substatements, stmt.original(ContainerSchemaNode.class));
+                createFlags(stmt, substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -130,7 +130,7 @@ public final class ContainerStatementSupport
     public ContainerEffectiveStatement copyEffective(final Current<QName, ContainerStatement> stmt,
             final ContainerEffectiveStatement original) {
         return EffectiveStatements.copyContainer(original, stmt.getArgument(),
-            createFlags(stmt, original.effectiveSubstatements()), stmt.original(ContainerSchemaNode.class));
+            createFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override

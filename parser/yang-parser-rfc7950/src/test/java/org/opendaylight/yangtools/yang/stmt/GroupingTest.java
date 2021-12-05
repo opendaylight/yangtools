@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -19,7 +18,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -32,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -154,8 +151,7 @@ public class GroupingTest extends AbstractModelTest {
 
         final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(bazQName("data"));
         assertFalse(data_g.isAddedByUses());
-        assertFalse(data_u.equals(data_g));
-        assertEquals(data_g, extractOriginal(data_u));
+        assertNotEquals(data_u, data_g);
 
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName(fooQName("how"));
         assertIsAddedByUses(how_u, true);
@@ -164,8 +160,7 @@ public class GroupingTest extends AbstractModelTest {
         final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(bazQName("how"));
         assertIsAddedByUses(how_g, false);
         assertEquals(2, how_g.getCases().size());
-        assertFalse(how_u.equals(how_g));
-        assertEquals(how_g, extractOriginal(how_u));
+        assertNotEquals(how_u, how_g);
 
         final LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName(fooQName("address"));
         assertEquals(Optional.of("1.2.3.4"), address_u.getType().getDefaultValue());
@@ -179,27 +174,24 @@ public class GroupingTest extends AbstractModelTest {
         assertFalse(address_g.isAddedByUses());
         assertEquals(Optional.empty(), address_g.getType().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
-        assertFalse(address_g.getReference().isPresent());
+        assertEquals(Optional.empty(), address_g.getReference());
         assertEquals(Optional.empty(), address_g.effectiveConfig());
-        assertFalse(address_u.equals(address_g));
         assertTrue(address_g.isMandatory());
-        assertEquals(address_g, extractOriginal(address_u));
+        assertNotEquals(address_u, address_g);
 
         final ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName(fooQName("port"));
         assertIsAddedByUses(port_u, true);
 
         final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(bazQName("port"));
         assertIsAddedByUses(port_g, false);
-        assertFalse(port_u.equals(port_g));
-        assertEquals(port_g, extractOriginal(port_u));
+        assertNotEquals(port_u, port_g);
 
         final ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName(fooQName("addresses"));
         assertIsAddedByUses(addresses_u, true);
 
         final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(bazQName("addresses"));
         assertIsAddedByUses(addresses_g, false);
-        assertFalse(addresses_u.equals(addresses_g));
-        assertEquals(addresses_g, extractOriginal(addresses_u));
+        assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
         final Collection<? extends GroupingDefinition> groupings_u = destination.getGroupings();
@@ -236,8 +228,7 @@ public class GroupingTest extends AbstractModelTest {
 
         final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(bazQName("data"));
         assertFalse(data_g.isAddedByUses());
-        assertFalse(data_u.equals(data_g));
-        assertEquals(data_g, extractOriginal(data_u));
+        assertNotEquals(data_u, data_g);
 
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) FOO.getDataChildByName(fooQName("how"));
         assertIsAddedByUses(how_u, true);
@@ -253,8 +244,7 @@ public class GroupingTest extends AbstractModelTest {
 
         final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(bazQName("how"));
         assertIsAddedByUses(how_g, false);
-        assertFalse(how_u.equals(how_g));
-        assertEquals(how_g, extractOriginal(how_u));
+        assertNotEquals(how_u, how_g);
 
         final LeafSchemaNode address_u = (LeafSchemaNode) FOO.getDataChildByName(fooQName("address"));
         assertEquals(Optional.empty(), address_u.getType().getDefaultValue());
@@ -269,24 +259,21 @@ public class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertFalse(address_g.getReference().isPresent());
         assertEquals(Optional.empty(), address_g.effectiveConfig());
-        assertFalse(address_u.equals(address_g));
-        assertEquals(address_g, extractOriginal(address_u));
+        assertNotEquals(address_u, address_g);
 
         final ContainerSchemaNode port_u = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("port"));
         assertIsAddedByUses(port_u, true);
 
         final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(bazQName("port"));
         assertIsAddedByUses(port_g, false);
-        assertFalse(port_u.equals(port_g));
-        assertEquals(port_g, extractOriginal(port_u));
+        assertNotEquals(port_u, port_g);
 
         final ListSchemaNode addresses_u = (ListSchemaNode) FOO.getDataChildByName(fooQName("addresses"));
         assertIsAddedByUses(addresses_u, true);
 
         final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(bazQName("addresses"));
         assertIsAddedByUses(addresses_g, false);
-        assertFalse(addresses_u.equals(addresses_g));
-        assertEquals(addresses_g, extractOriginal(addresses_u));
+        assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
         final Collection<? extends GroupingDefinition> groupings_u = FOO.getGroupings();
@@ -371,7 +358,6 @@ public class GroupingTest extends AbstractModelTest {
         final LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName(
             QName.create(namespace, "leaf-grouping-U"));
         assertFalse(leafGroupingU.isAddedByUses());
-        assertNull(extractOriginal(leafGroupingU));
 
         for (final DataSchemaNode childNode : childNodes) {
             if (!childNode.getQName().equals(leafGroupingU.getQName())) {
@@ -460,33 +446,6 @@ public class GroupingTest extends AbstractModelTest {
             QName.create(namespace, "leaf-grouping-ZZ"));
         assertFalse(leafZZinGZZ.isAddedByUses());
         assertEquals(QName.create(expectedModule, "leaf-grouping-ZZ"), leafZZinGZZ.getQName());
-
-        // TEST getOriginal from grouping-U
-        assertEquals(gv.getDataChildByName(QName.create(namespace, "leaf-grouping-V")),
-            extractOriginal(gu.getDataChildByName(QName.create(namespace, "leaf-grouping-V"))));
-        containerGroupingV = (ContainerSchemaNode) gu.getDataChildByName(
-            QName.create(namespace, "container-grouping-V"));
-        assertEquals(gv.getDataChildByName(QName.create(namespace, "container-grouping-V")),
-            extractOriginal(containerGroupingV));
-        assertEquals(gx.getDataChildByName(QName.create(namespace, "leaf-grouping-X")),
-            extractOriginal(containerGroupingV.getDataChildByName(QName.create(namespace, "leaf-grouping-X"))));
-        assertEquals(gy.getDataChildByName(QName.create(namespace, "leaf-grouping-Y")),
-            extractOriginal(containerGroupingV.getDataChildByName(QName.create(namespace, "leaf-grouping-Y"))));
-
-        assertEquals(gz.getDataChildByName(QName.create(namespace, "leaf-grouping-Z")),
-            extractOriginal(gu.getDataChildByName(QName.create(namespace, "leaf-grouping-Z"))));
-        assertEquals(gzz.getDataChildByName(QName.create(namespace, "leaf-grouping-ZZ")),
-            extractOriginal(gu.getDataChildByName(QName.create(namespace, "leaf-grouping-ZZ"))));
-
-        // TEST getOriginal from grouping-V
-        assertEquals(gz.getDataChildByName(QName.create(namespace, "leaf-grouping-Z")),
-            extractOriginal(gv.getDataChildByName(QName.create(namespace, "leaf-grouping-Z"))));
-        assertEquals(gzz.getDataChildByName(QName.create(namespace, "leaf-grouping-ZZ")),
-            extractOriginal(gv.getDataChildByName(QName.create(namespace, "leaf-grouping-ZZ"))));
-
-        // TEST getOriginal from grouping-X
-        assertEquals(gy.getDataChildByName(QName.create(namespace, "leaf-grouping-Y")),
-            extractOriginal(gx.getDataChildByName(QName.create(namespace, "leaf-grouping-Y"))));
     }
 
     @Test
@@ -539,10 +498,5 @@ public class GroupingTest extends AbstractModelTest {
                 assertIsAddedByUses(caseNode, expected);
             }
         }
-    }
-
-    private static @Nullable DerivableSchemaNode<?> extractOriginal(final SchemaNode node) {
-        assertThat(node, instanceOf(DerivableSchemaNode.class));
-        return ((DerivableSchemaNode<?>) node).getOriginal().orElse(null);
     }
 }

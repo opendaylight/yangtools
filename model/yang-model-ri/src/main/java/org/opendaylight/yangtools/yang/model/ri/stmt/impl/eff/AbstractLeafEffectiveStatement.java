@@ -35,8 +35,12 @@ public abstract class AbstractLeafEffectiveStatement
         implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<LeafStatement>,
             MandatoryMixin<QName, LeafStatement>, MustConstraintMixin<QName, LeafStatement> {
     private final @NonNull Object substatements;
+    // FIXME: YANGTOOLS-1316: this seems to imply that argument.equals(declared.argument()) and we could save a field,
+    //                        except we need it in the constructors to materialize type. But if we turn it into a lazy
+    //                        field, we should be okay.
     private final @NonNull QName argument;
     private final @NonNull TypeDefinition<?> type;
+
     private final int flags;
 
     AbstractLeafEffectiveStatement(final LeafStatement declared, final QName argument, final int flags,
@@ -45,18 +49,16 @@ public abstract class AbstractLeafEffectiveStatement
         this.argument = requireNonNull(argument);
         this.substatements = maskList(substatements);
         this.flags = flags;
-        // TODO: lazy instantiation?
-        this.type = buildType();
+        type = buildType();
     }
 
     AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final QName argument,
             final int flags) {
         super(original);
         this.argument = requireNonNull(argument);
-        this.substatements = original.substatements;
+        substatements = original.substatements;
         this.flags = flags;
-        // FIXME: share with original?
-        this.type = buildType();
+        type = buildType();
     }
 
     @Override

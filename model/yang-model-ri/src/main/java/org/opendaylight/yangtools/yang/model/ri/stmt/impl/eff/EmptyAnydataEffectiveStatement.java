@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -22,26 +21,21 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
 
 public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
-        implements AnydataEffectiveStatement, AnydataSchemaNode,
-            OpaqueDataSchemaNodeMixin<AnydataStatement, AnydataSchemaNode> {
+        implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
     private final @NonNull QName argument;
-    private final AnydataSchemaNode original;
     private final int flags;
 
-    public EmptyAnydataEffectiveStatement(final AnydataStatement declared, final QName argument, final int flags,
-            final @Nullable AnydataSchemaNode original) {
+    public EmptyAnydataEffectiveStatement(final AnydataStatement declared, final QName argument, final int flags) {
         super(declared);
         this.argument = requireNonNull(argument);
         this.flags = flags;
-        this.original = original;
     }
 
     public EmptyAnydataEffectiveStatement(final EmptyAnydataEffectiveStatement original, final QName argument,
-            final int flags, final @Nullable AnydataSchemaNode newOriginal) {
+            final int flags) {
         super(original);
         this.argument = requireNonNull(argument);
         this.flags = flags;
-        this.original = newOriginal;
     }
 
     @Override
@@ -52,12 +46,6 @@ public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatem
     @Override
     public final int flags() {
         return flags;
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public final Optional<AnydataSchemaNode> getOriginal() {
-        return Optional.ofNullable(original);
     }
 
     @Override

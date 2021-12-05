@@ -12,40 +12,29 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveStatement {
-    private final @Nullable LeafListSchemaNode original;
     private final @Nullable ElementCountConstraint elementCountConstraint;
 
     AbstractNonEmptyLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint) {
+            final ElementCountConstraint elementCountConstraint) {
         super(declared, argument, flags, substatements);
-        this.original = original;
         this.elementCountConstraint = elementCountConstraint;
     }
 
     AbstractNonEmptyLeafListEffectiveStatement(final AbstractNonEmptyLeafListEffectiveStatement originalEffecive,
-            final LeafListSchemaNode original, final QName argument, final int flags) {
+            final QName argument, final int flags) {
         super(originalEffecive, argument, flags);
         elementCountConstraint = originalEffecive.elementCountConstraint;
-        this.original = original;
     }
 
     AbstractNonEmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
-            final LeafListSchemaNode original, final QName argument, final int flags) {
+            final QName argument, final int flags) {
         super(originalEffective, argument, flags);
         elementCountConstraint = null;
-        this.original = original;
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public final Optional<LeafListSchemaNode> getOriginal() {
-        return Optional.ofNullable(original);
     }
 
     @Override

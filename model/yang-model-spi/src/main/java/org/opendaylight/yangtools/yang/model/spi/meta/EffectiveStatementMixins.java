@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
@@ -400,9 +399,9 @@ public final class EffectiveStatementMixins {
      *
      * @param <D> Class representing declared version of this statement.
      */
-    public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>, S extends DerivableSchemaNode<S>>
-            extends DerivableSchemaNode<S>, DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>,
-                    MandatoryMixin<QName, D>, MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D> {
+    public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>>
+            extends DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>, MandatoryMixin<QName, D>,
+                    MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D> {
         @Override
         default QName getQName() {
             return argument();

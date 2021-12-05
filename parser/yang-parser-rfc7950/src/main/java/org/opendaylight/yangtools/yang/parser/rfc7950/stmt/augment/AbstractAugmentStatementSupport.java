@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -137,6 +138,7 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
+    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Cast of original(), should be always safe")
     protected final AugmentEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -146,7 +148,7 @@ abstract class AbstractAugmentStatementSupport
 
         try {
             return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags,
-                stmt.moduleName().getModule(), substatements, stmt.original(AugmentationSchemaNode.class));
+                stmt.moduleName().getModule(), substatements, (AugmentationSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

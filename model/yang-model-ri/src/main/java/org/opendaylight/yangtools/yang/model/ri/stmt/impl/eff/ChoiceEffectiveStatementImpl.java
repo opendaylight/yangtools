@@ -31,27 +31,24 @@ public final class ChoiceEffectiveStatementImpl
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DataSchemaNodeMixin<ChoiceStatement>,
             AugmentationTargetMixin<QName, ChoiceStatement>, MandatoryMixin<QName, ChoiceStatement> {
     private final CaseSchemaNode defaultCase;
-    private final ChoiceSchemaNode original;
     private final @NonNull QName argument;
     private final int flags;
 
     public ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
-            final int flags, final @Nullable CaseSchemaNode defaultCase, final @Nullable ChoiceSchemaNode original) {
+            final int flags, final @Nullable CaseSchemaNode defaultCase) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
         this.flags = flags;
         this.defaultCase = defaultCase;
-        this.original = original;
     }
 
     public ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final QName argument,
-            final int flags, final ChoiceSchemaNode newOriginal) {
+            final int flags) {
         super(origEffective);
         this.argument = requireNonNull(argument);
         this.flags = flags;
         defaultCase = origEffective.defaultCase;
-        original = newOriginal;
     }
 
     @Override
@@ -62,12 +59,6 @@ public final class ChoiceEffectiveStatementImpl
     @Override
     public int flags() {
         return flags;
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public Optional<ChoiceSchemaNode> getOriginal() {
-        return Optional.ofNullable(original);
     }
 
     @Override

@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
  * substatements is captured in the type returned via {@link #getType()}.
  */
 public interface LeafSchemaNode extends TypedDataSchemaNode, MandatoryAware, MustConstraintAware,
-        DerivableSchemaNode<LeafSchemaNode>, EffectiveStatementEquivalent<LeafEffectiveStatement> {
+        EffectiveStatementEquivalent<LeafEffectiveStatement> {
 
 }

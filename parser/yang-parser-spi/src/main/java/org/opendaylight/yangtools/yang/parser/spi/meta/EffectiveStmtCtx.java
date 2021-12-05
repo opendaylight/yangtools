@@ -113,11 +113,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         @Deprecated(since = "7.0.9", forRemoval = true)
         @Nullable EffectiveStatement<?, ?> original();
 
-        @Deprecated(since = "7.0.9", forRemoval = true)
-        default <T> @Nullable T original(final @NonNull Class<T> type) {
-            return type.cast(original());
-        }
-
         // FIXME: 8.0.0: this method should be moved to stmt.type in some shape or form
         @NonNull QName argumentAsTypeQName();
 
