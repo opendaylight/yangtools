@@ -93,6 +93,12 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     }
 
     @Override
+    public ConformanceType conformance() {
+        // FIXME: YANGTOOLS-837: provide an accurate value here
+        return ConformanceType.IMPLEMENT;
+    }
+
+    @Override
     public QNameModule localQNameModule() {
         return qnameModule;
     }
