@@ -588,8 +588,8 @@ public final class EffectiveStatements {
             final ImmutableSet<String> defaultValues, final @Nullable ElementCountConstraint elementCountConstraint)
                 throws SubstatementIndexingException {
         if (defaultValues.isEmpty()) {
-            return elementCountConstraint == null
-                ? new EmptyLeafListEffectiveStatement(declared, argument, flags, substatements)
+            return elementCountConstraint == null && argument.equals(declared.argument())
+                ? new EmptyLeafListEffectiveStatement(declared, flags, substatements)
                     : new SlimLeafListEffectiveStatement(declared, argument, flags, substatements,
                         elementCountConstraint);
         }
