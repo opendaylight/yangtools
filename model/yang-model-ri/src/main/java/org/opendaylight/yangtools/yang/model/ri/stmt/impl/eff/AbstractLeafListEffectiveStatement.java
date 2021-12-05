@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -33,29 +33,34 @@ abstract class AbstractLeafListEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode, UserOrderedMixin<QName, LeafListStatement>,
             DataSchemaNodeMixin<LeafListStatement>, MustConstraintMixin<QName, LeafListStatement> {
-    private final @NonNull Object substatements;
-    private final @NonNull QName argument;
-    private final @NonNull TypeDefinition<?> type;
-    private final int flags;
+    private static final VarHandle TYPE;
 
-    AbstractLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared);
-        this.argument = requireNonNull(argument);
-        this.substatements = maskList(substatements);
-        this.flags = flags;
-        // TODO: lazy instantiation?
-        this.type = buildType();
+    static {
+        try {
+            TYPE = MethodHandles.lookup().findVarHandle(AbstractLeafListEffectiveStatement.class, "type",
+                TypeDefinition.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
-    AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final QName argument,
-            final int flags) {
-        super(original);
-        this.argument = requireNonNull(argument);
-        this.substatements = original.substatements;
+    private final @NonNull Object substatements;
+    private final int flags;
+
+    @SuppressWarnings("unused")
+    private volatile TypeDefinition<?> type;
+
+    AbstractLeafListEffectiveStatement(final LeafListStatement declared, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared);
+        this.substatements = maskList(substatements);
         this.flags = flags;
-        // TODO: lazy instantiation?
-        this.type = buildType();
+    }
+
+    AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final int flags) {
+        super(original);
+        substatements = original.substatements;
+        this.flags = flags;
     }
 
     @Override
@@ -66,16 +71,6 @@ abstract class AbstractLeafListEffectiveStatement
     @Override
     public final int flags() {
         return flags;
-    }
-
-    @Override
-    public final QName argument() {
-        return argument;
-    }
-
-    @Override
-    public final TypeDefinition<?> getType() {
-        return type;
     }
 
     @Override
@@ -90,10 +85,16 @@ abstract class AbstractLeafListEffectiveStatement
 
     @Override
     public final String toString() {
-        return getClass().getSimpleName() + "[" + argument + "]";
+        return getClass().getSimpleName() + "[" + argument() + "]";
     }
 
-    private TypeDefinition<?> buildType() {
+    @Override
+    public final TypeDefinition<?> getType() {
+        final var local = (TypeDefinition<?>) TYPE.getAcquire(this);
+        return local != null ? local : loadType();
+    }
+
+    private TypeDefinition<?> loadType() {
         final TypeEffectiveStatement<?> typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             getQName());
@@ -109,6 +110,9 @@ abstract class AbstractLeafListEffectiveStatement
                 builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
             }
         }
-        return builder.build();
+
+        final var ret = builder.build();
+        final var witness = (TypeDefinition<?>) TYPE.compareAndExchangeRelease(this, null, ret);
+        return witness != null ? witness : ret;
     }
 }

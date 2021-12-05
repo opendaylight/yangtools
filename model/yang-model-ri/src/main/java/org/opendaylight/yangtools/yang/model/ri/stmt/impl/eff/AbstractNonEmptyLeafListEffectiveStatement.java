@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -17,24 +20,33 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveStatement {
     private final @Nullable ElementCountConstraint elementCountConstraint;
+    private final @NonNull QName argument;
 
     AbstractNonEmptyLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ElementCountConstraint elementCountConstraint) {
-        super(declared, argument, flags, substatements);
+        super(declared, flags, substatements);
+        this.argument = requireNonNull(argument);
         this.elementCountConstraint = elementCountConstraint;
     }
 
     AbstractNonEmptyLeafListEffectiveStatement(final AbstractNonEmptyLeafListEffectiveStatement originalEffecive,
             final QName argument, final int flags) {
-        super(originalEffecive, argument, flags);
+        super(originalEffecive, flags);
+        this.argument = requireNonNull(argument);
         elementCountConstraint = originalEffecive.elementCountConstraint;
     }
 
     AbstractNonEmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
             final QName argument, final int flags) {
-        super(originalEffective, argument, flags);
+        super(originalEffective, flags);
+        this.argument = requireNonNull(argument);
         elementCountConstraint = null;
+    }
+
+    @Override
+    public final QName argument() {
+        return argument;
     }
 
     @Override

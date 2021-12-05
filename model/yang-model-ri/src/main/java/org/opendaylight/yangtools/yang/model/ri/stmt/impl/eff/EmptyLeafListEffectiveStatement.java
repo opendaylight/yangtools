@@ -17,14 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 public final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveStatement {
-    public EmptyLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
+    public EmptyLeafListEffectiveStatement(final LeafListStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, argument, flags, substatements);
+        super(declared, flags, substatements);
     }
 
-    public EmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement original, final QName argument,
-            final int flags) {
-        super(original, argument, flags);
+    public EmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement original, final int flags) {
+        super(original, flags);
+    }
+
+    @Override
+    public QName argument() {
+        return getDeclared().argument();
     }
 
     @Override
