@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -226,7 +225,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
-        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull Object substatements;
         private final @NonNull D declared;
 
@@ -234,7 +233,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
             this.substatements = maskList(substatements);
-            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
+            this.schemaTree = immutableNamespaceOf(createSchemaTreeNamespace(substatements));
         }
 
         protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D, E> original) {
@@ -293,8 +292,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             }
         }
 
-        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
-        private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
+        private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull Map<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull Object substatements;
         private final @NonNull D declared;
 
@@ -305,7 +304,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
 
             // Note we call schema.values() so we do not retain them, as that is just pure memory overhead
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
-            this.schemaTree = ImmutableMap.copyOf(schema);
+            this.schemaTree = immutableNamespaceOf(schema);
             this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
         }
 

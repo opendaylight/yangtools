@@ -101,10 +101,10 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         return schemaChildren;
     }
 
-    protected static @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
+    protected static @NonNull Map<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
             final Collection<SchemaTreeEffectiveStatement<?>> schemaTreeStatements,
             // Note: this dance is needed to not retain ImmutableMap$Values
-            final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace) {
+            final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace) {
         final Map<QName, DataTreeEffectiveStatement<?>> dataChildren = new LinkedHashMap<>();
         boolean sameAsSchema = true;
 
@@ -116,7 +116,12 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
 
         // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
         // the two maps are equal and hence we can share the instance.
-        return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
+        return sameAsSchema ? (Map) schemaTreeNamespace : immutableNamespaceOf(dataChildren);
+    }
+
+    protected static <T extends SchemaTreeEffectiveStatement<?>> @NonNull Map<QName, T> immutableNamespaceOf(
+            final Map<QName, T> map) {
+        return map.size() == 1 ? new SingletonNamespace<>(map.values().iterator().next()) : ImmutableMap.copyOf(map);
     }
 
     protected static @NonNull HashMap<QName, TypedefEffectiveStatement> createTypedefNamespace(
