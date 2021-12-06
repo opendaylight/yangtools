@@ -153,11 +153,11 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ActionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AugmentEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ChoiceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredInputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredOutputEffectiveStatement;
@@ -169,6 +169,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyArgumentEffec
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyContainerEffectiveStatement;
@@ -223,6 +224,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularArgumentEff
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularContainerEffectiveStatement;
@@ -385,14 +387,19 @@ public final class EffectiveStatements {
 
     public static ChoiceEffectiveStatement copyChoice(final ChoiceEffectiveStatement original,
             final QName argument, final int flags) {
-        checkArgument(original instanceof ChoiceEffectiveStatementImpl, "Unsupported original %s", original);
-        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original, argument, flags);
+        checkArgument(original instanceof AbstractChoiceEffectiveStatement, "Unsupported original %s", original);
+        final var orig = (AbstractChoiceEffectiveStatement) original;
+        return argument.equals(orig.getDeclared().argument()) && orig.getDefaultCase().isEmpty()
+            ? new EmptyChoiceEffectiveStatement(orig, flags)
+                : new RegularChoiceEffectiveStatement((AbstractChoiceEffectiveStatement) original, argument, flags);
     }
 
     public static ChoiceEffectiveStatement createChoice(final ChoiceStatement declared, final QName argument,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable CaseSchemaNode defaultCase) {
-        return new ChoiceEffectiveStatementImpl(declared, substatements, argument, flags, defaultCase);
+        return defaultCase == null && argument.equals(declared.argument())
+            ? new EmptyChoiceEffectiveStatement(declared, substatements, flags)
+                : new RegularChoiceEffectiveStatement(declared, substatements, argument, flags, defaultCase);
     }
 
     public static ConfigEffectiveStatement createConfig(final boolean argument) {
