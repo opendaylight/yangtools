@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -28,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.PresenceMixin;
 
-public final class ContainerEffectiveStatementImpl
+public abstract class AbstractContainerEffectiveStatement
         extends WithTypedefNamespace<QName, ContainerStatement, ContainerEffectiveStatement>
         implements ContainerEffectiveStatement, ContainerSchemaNode, DataSchemaNodeMixin<ContainerStatement>,
             DataNodeContainerMixin<QName, ContainerStatement>, ActionNodeContainerMixin<QName, ContainerStatement>,
@@ -37,52 +34,41 @@ public final class ContainerEffectiveStatementImpl
             NotificationNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
             MustConstraintMixin<QName, ContainerStatement>, PresenceMixin<QName, ContainerStatement>,
             AugmentationTargetMixin<QName, ContainerStatement> {
-
     private final int flags;
-    private final @NonNull QName argument;
 
-    public ContainerEffectiveStatementImpl(final ContainerStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
-            final int flags) {
+    AbstractContainerEffectiveStatement(final ContainerStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags) {
         super(declared, substatements);
-        this.argument = requireNonNull(argument);
         this.flags = flags;
     }
 
-    public ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final QName argument,
-            final int flags) {
+    AbstractContainerEffectiveStatement(final AbstractContainerEffectiveStatement origEffective, final int flags) {
         super(origEffective);
-        this.argument = requireNonNull(argument);
         this.flags = flags;
     }
 
     @Override
-    public int flags() {
+    public final int flags() {
         return flags;
     }
 
     @Override
-    public QName argument() {
-        return argument;
-    }
-
-    @Override
-    public boolean isPresenceContainer() {
+    public final boolean isPresenceContainer() {
         return presence();
     }
 
     @Override
-    public DataSchemaNode dataChildByName(final QName name) {
+    public final DataSchemaNode dataChildByName(final QName name) {
         return dataSchemaNode(name);
     }
 
     @Override
-    public ContainerEffectiveStatement asEffectiveStatement() {
+    public final ContainerEffectiveStatement asEffectiveStatement() {
         return this;
     }
 
     @Override
-    public String toString() {
-        return "container " + argument.getLocalName();
+    public final String toString() {
+        return "container " + argument().getLocalName();
     }
 }

@@ -153,11 +153,11 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ActionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AugmentEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ChoiceEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ContainerEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredInputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredOutputEffectiveStatement;
@@ -171,6 +171,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBelongsToEffe
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyEnumEffectiveStatement;
@@ -224,6 +225,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBelongsToEf
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularEnumEffectiveStatement;
@@ -419,13 +421,17 @@ public final class EffectiveStatements {
 
     public static ContainerEffectiveStatement copyContainer(final ContainerEffectiveStatement original,
             final QName argument, final int flags) {
-        checkArgument(original instanceof ContainerEffectiveStatementImpl, "Unsupported original %s", original);
-        return new ContainerEffectiveStatementImpl((ContainerEffectiveStatementImpl) original, argument, flags);
+        checkArgument(original instanceof AbstractContainerEffectiveStatement, "Unsupported original %s", original);
+        final var orig = (AbstractContainerEffectiveStatement) original;
+        return argument.equals(orig.getDeclared().argument()) ? new EmptyContainerEffectiveStatement(orig, flags)
+            : new RegularContainerEffectiveStatement(orig, argument, flags);
     }
 
     public static ContainerEffectiveStatement createContainer(final ContainerStatement declared, final QName argument,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ContainerEffectiveStatementImpl(declared, substatements, argument, flags);
+        return argument.equals(declared.argument())
+            ? new EmptyContainerEffectiveStatement(declared, substatements, flags)
+                : new RegularContainerEffectiveStatement(declared, substatements, argument, flags);
     }
 
     public static DefaultEffectiveStatement createDefault(final DefaultStatement declared,
