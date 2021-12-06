@@ -18,6 +18,10 @@ public final class EmptyLeafEffectiveStatement extends AbstractLeafEffectiveStat
         super(declared, flags, substatements);
     }
 
+    public EmptyLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final int flags) {
+        super(original, flags);
+    }
+
     @Override
     public QName argument() {
         return getDeclared().argument();

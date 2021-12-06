@@ -565,7 +565,9 @@ public final class EffectiveStatements {
     public static LeafEffectiveStatement copyLeaf(final LeafEffectiveStatement original, final QName argument,
             final int flags) {
         checkArgument(original instanceof AbstractLeafEffectiveStatement, "Unsupported original %s", original);
-        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, argument, flags);
+        final var orig = (AbstractLeafEffectiveStatement) original;
+        return argument.equals(orig.getDeclared().argument()) ? new EmptyLeafEffectiveStatement(orig, flags)
+            : new RegularLeafEffectiveStatement(orig, argument, flags);
     }
 
     public static LeafEffectiveStatement createLeaf(final LeafStatement declared, final QName argument, final int flags,
