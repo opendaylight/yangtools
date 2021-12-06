@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -24,45 +21,37 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
-public final class GroupingEffectiveStatementImpl
+public abstract class AbstractGroupingEffectiveStatement
         extends WithTypedefNamespace<QName, GroupingStatement, GroupingEffectiveStatement>
         implements GroupingDefinition, GroupingEffectiveStatement,
             DataNodeContainerMixin<QName, GroupingStatement>, SchemaNodeMixin<GroupingStatement>,
             ActionNodeContainerMixin<QName, GroupingStatement>,
             NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
-    private final @NonNull QName argument;
     private final int flags;
 
-    public GroupingEffectiveStatementImpl(final GroupingStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
-            final int flags) {
+    AbstractGroupingEffectiveStatement(final GroupingStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags) {
         super(declared, substatements);
-        this.argument = requireNonNull(argument);
         this.flags = flags;
     }
 
     @Override
-    public int flags() {
+    public final int flags() {
         return flags;
     }
 
     @Override
-    public QName argument() {
-        return argument;
-    }
-
-    @Override
-    public DataSchemaNode dataChildByName(final QName name) {
+    public final DataSchemaNode dataChildByName(final QName name) {
         return dataSchemaNode(name);
     }
 
     @Override
-    public GroupingEffectiveStatement asEffectiveStatement() {
+    public final GroupingEffectiveStatement asEffectiveStatement() {
         return this;
     }
 
     @Override
-    public String toString() {
-        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + argument + "]";
+    public final String toString() {
+        return AbstractGroupingEffectiveStatement.class.getSimpleName() + "[" + "qname=" + argument() + "]";
     }
 }
