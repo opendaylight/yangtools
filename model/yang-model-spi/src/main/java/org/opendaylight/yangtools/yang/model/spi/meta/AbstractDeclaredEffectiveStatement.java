@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
 
 /**
@@ -272,17 +271,15 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
         public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement<A>,
                 E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
-            private final @NonNull ImmutableMap<QName, TypedefEffectiveStatement> typedefNamespace;
-
             protected WithTypedefNamespace(final D declared,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
                 super(declared, substatements);
-                this.typedefNamespace = createTypedefNamespace(substatements);
+                // Consistency check only
+                createTypedefNamespace(substatements);
             }
 
             protected WithTypedefNamespace(final WithTypedefNamespace<A, D, E> original) {
                 super(original);
-                this.typedefNamespace = original.typedefNamespace;
             }
 
             @Override
@@ -290,7 +287,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
                     final Class<N> namespace) {
                 if (TypedefNamespace.class.equals(namespace)) {
-                    return Optional.of((Map<K, V>) typedefNamespace);
+                    return Optional.of((Map<K, V>) new LinearTypedefNamespace(effectiveSubstatements()));
                 }
                 return super.getNamespaceContents(namespace);
             }

@@ -118,14 +118,14 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
     }
 
-    protected static @NonNull ImmutableMap<QName, TypedefEffectiveStatement> createTypedefNamespace(
+    protected static @NonNull LinkedHashMap<QName, TypedefEffectiveStatement> createTypedefNamespace(
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        final Map<QName, TypedefEffectiveStatement> typedefs = new LinkedHashMap<>();
+        final LinkedHashMap<QName, TypedefEffectiveStatement> typedefs = new LinkedHashMap<>();
 
         substatements.stream().filter(TypedefEffectiveStatement.class::isInstance)
             .forEach(child -> putChild(typedefs, (TypedefEffectiveStatement) child, "typedef"));
 
-        return ImmutableMap.copyOf(typedefs);
+        return typedefs;
     }
 
     private static boolean indexDataTree(final Map<QName, DataTreeEffectiveStatement<?>> map,
