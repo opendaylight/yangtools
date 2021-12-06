@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.util.NoSuchElementException;
@@ -52,7 +53,7 @@ public class YT1127Test {
         assertThat(ex.getMessage(), startsWith("Illegal parent access in YangLocationPath"));
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(IllegalStateException.class));
-        assertThat(cause.getMessage(), startsWith("Unexpected current Grouping"));
+        assertEquals("Unexpected current EmptyGroupingEffectiveStatement{qname=(foo)grp}", cause.getMessage());
     }
 
     @Test

@@ -181,6 +181,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorMessageE
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyForeignKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFractionDigitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyGroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIncludeEffectiveStatement;
@@ -215,7 +216,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyWhenEffective
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ExtensionEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.GroupingEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ImportEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.NotificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnydataEffectiveStatement;
@@ -236,6 +236,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorMessag
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularForeignKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFractionDigitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularGroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIncludeEffectiveStatement;
@@ -505,7 +506,9 @@ public final class EffectiveStatements {
     public static GroupingEffectiveStatement createGrouping(final GroupingStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
             final int flags) throws SubstatementIndexingException {
-        return new GroupingEffectiveStatementImpl(declared, substatements, argument, flags);
+        return argument.equals(declared.argument())
+            ? new EmptyGroupingEffectiveStatement(declared, substatements, flags)
+                : new RegularGroupingEffectiveStatement(declared, substatements, argument, flags);
     }
 
     public static IfFeatureEffectiveStatement createIfFeature(final IfFeatureStatement declared,
