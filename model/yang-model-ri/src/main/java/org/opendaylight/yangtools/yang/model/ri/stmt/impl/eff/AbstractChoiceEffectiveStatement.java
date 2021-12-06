@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -26,64 +25,46 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.A
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
 
-public final class ChoiceEffectiveStatementImpl
+public abstract class AbstractChoiceEffectiveStatement
         extends DefaultWithDataTree<QName, ChoiceStatement, ChoiceEffectiveStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DataSchemaNodeMixin<ChoiceStatement>,
             AugmentationTargetMixin<QName, ChoiceStatement>, MandatoryMixin<QName, ChoiceStatement> {
-    private final CaseSchemaNode defaultCase;
-    private final @NonNull QName argument;
     private final int flags;
 
-    public ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
-            final int flags, final @Nullable CaseSchemaNode defaultCase) {
+    AbstractChoiceEffectiveStatement(final ChoiceStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags) {
         super(declared, substatements);
-        this.argument = requireNonNull(argument);
         this.flags = flags;
-        this.defaultCase = defaultCase;
     }
 
-    public ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final QName argument,
-            final int flags) {
-        super(origEffective);
-        this.argument = requireNonNull(argument);
+    AbstractChoiceEffectiveStatement(final AbstractChoiceEffectiveStatement original, final int flags) {
+        super(original);
         this.flags = flags;
-        defaultCase = origEffective.defaultCase;
     }
 
     @Override
-    public QName argument() {
-        return argument;
-    }
-
-    @Override
-    public int flags() {
+    public final int flags() {
         return flags;
     }
 
     @Override
-    public Optional<? extends CaseSchemaNode> findCase(final QName qname) {
+    public final Optional<? extends CaseSchemaNode> findCase(final QName qname) {
         final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(qname));
         return child instanceof CaseSchemaNode ? Optional.of((CaseSchemaNode) child) : Optional.empty();
     }
 
     @Override
-    public Collection<? extends @NonNull CaseSchemaNode> getCases() {
+    public final Collection<? extends @NonNull CaseSchemaNode> getCases() {
         return filterEffectiveStatements(CaseSchemaNode.class);
     }
 
     @Override
-    public Optional<CaseSchemaNode> getDefaultCase() {
-        return Optional.ofNullable(defaultCase);
-    }
-
-    @Override
-    public ChoiceEffectiveStatement asEffectiveStatement() {
+    public final ChoiceEffectiveStatement asEffectiveStatement() {
         return this;
     }
 
     @Override
-    public String toString() {
-        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + argument + "]";
+    public final String toString() {
+        return AbstractChoiceEffectiveStatement.class.getSimpleName() + "[" + "qname=" + argument() + "]";
     }
 }
