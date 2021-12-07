@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.opendaylight.mdsal.binding.model.api.AnnotationType;
+import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.Constant;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
@@ -27,6 +29,8 @@ import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 
 public final class GeneratorUtil {
+    private static final ConcreteType PATTERN = Types.typeForClass(Pattern.class);
+
     private GeneratorUtil() {
         // Hidden on purpose
     }
@@ -56,7 +60,7 @@ public final class GeneratorUtil {
         // REGULAR EXPRESSION
         if (genType instanceof GeneratedTransferObject
                 && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, (GeneratedTransferObject) genType)) {
-            putTypeIntoImports(genType, Types.typeForClass(java.util.regex.Pattern.class), imports);
+            putTypeIntoImports(genType, PATTERN, imports);
         }
 
         final List<MethodSignature> methods = genType.getMethodDefinitions();
