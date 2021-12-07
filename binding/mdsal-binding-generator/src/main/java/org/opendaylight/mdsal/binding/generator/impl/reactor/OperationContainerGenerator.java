@@ -10,9 +10,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.binding.RpcInput;
-import org.opendaylight.yangtools.yang.binding.RpcOutput;
+import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -22,19 +20,16 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Generator corresponding to an {@code input} or an {@code output} statement.
  */
 class OperationContainerGenerator extends AbstractCompositeGenerator<SchemaTreeEffectiveStatement<?>> {
-    private static final ConcreteType RPC_INPUT = Types.typeForClass(RpcInput.class);
-    private static final ConcreteType RPC_OUTPUT = Types.typeForClass(RpcOutput.class);
-
     private final ConcreteType baseInterface;
 
     OperationContainerGenerator(final InputEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
-        baseInterface = RPC_INPUT;
+        baseInterface = BindingTypes.RPC_INPUT;
     }
 
     OperationContainerGenerator(final OutputEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
-        baseInterface = RPC_OUTPUT;
+        baseInterface = BindingTypes.RPC_OUTPUT;
     }
 
     @Override
