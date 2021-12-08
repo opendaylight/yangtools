@@ -169,7 +169,7 @@ public class LeafrefStaticAnalysisTest {
         assertThat(ex.getMessage(), startsWith("Illegal parent access in "));
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(IllegalStateException.class));
-        assertEquals("Unexpected current EmptyGroupingEffectiveStatement{qname=(leafrefs)grp}", cause.getMessage());
+        assertEquals("Unexpected current EmptyGroupingEffectiveStatement{argument=(leafrefs)grp}", cause.getMessage());
     }
 
     private static void assertThrowsMissingXyzzy(final SchemaInferenceStack stack, final LeafSchemaNode leaf,

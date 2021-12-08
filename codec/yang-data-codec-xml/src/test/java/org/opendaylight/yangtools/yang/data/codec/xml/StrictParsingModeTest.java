@@ -77,6 +77,6 @@ public class StrictParsingModeTest {
 
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("Schema for node with name unknown-container-a and namespace foo "
-            + "does not exist in parent container top-level-container"));
+            + "does not exist in parent EmptyContainerEffectiveStatement{argument=(foo)top-level-container}"));
     }
 }

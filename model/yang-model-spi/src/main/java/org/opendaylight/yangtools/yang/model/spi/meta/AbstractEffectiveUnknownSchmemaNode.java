@@ -85,12 +85,6 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
         return augmenting;
     }
 
-    @Override
-    public String toString() {
-        final QName type = getNodeType();
-        return type.getNamespace() + ":" + type.getLocalName() + " " + getNodeParameter();
-    }
-
     @SuppressWarnings("unchecked")
     public final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
         return Collection.class.cast(Collections2.filter(effectiveSubstatements(), type::isInstance));

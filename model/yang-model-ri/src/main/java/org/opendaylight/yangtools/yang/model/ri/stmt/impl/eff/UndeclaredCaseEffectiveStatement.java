@@ -57,9 +57,4 @@ public final class UndeclaredCaseEffectiveStatement
     public CaseEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public String toString() {
-        return UndeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + argument + "]";
-    }
 }

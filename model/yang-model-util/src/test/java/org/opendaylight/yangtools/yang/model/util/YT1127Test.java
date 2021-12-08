@@ -53,7 +53,7 @@ public class YT1127Test {
         assertThat(ex.getMessage(), startsWith("Illegal parent access in YangLocationPath"));
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(IllegalStateException.class));
-        assertEquals("Unexpected current EmptyGroupingEffectiveStatement{qname=(foo)grp}", cause.getMessage());
+        assertEquals("Unexpected current EmptyGroupingEffectiveStatement{argument=(foo)grp}", cause.getMessage());
     }
 
     @Test

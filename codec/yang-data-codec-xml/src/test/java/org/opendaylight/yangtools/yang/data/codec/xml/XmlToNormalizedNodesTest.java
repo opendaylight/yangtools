@@ -150,8 +150,9 @@ public class XmlToNormalizedNodesTest {
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("Duplicate element \"decimal64-leaf\" in namespace"
-            + " \"foo-namespace\" with parent \"container leaf-container\" in XML input"));
+        assertThat(ex.getMessage(), containsString("Duplicate element \"decimal64-leaf\" in namespace "
+            + "\"foo-namespace\" with parent "
+            + "\"EmptyContainerEffectiveStatement{argument=(foo-namespace)leaf-container}\" in XML input"));
     }
 
     @Test
@@ -166,8 +167,9 @@ public class XmlToNormalizedNodesTest {
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("Duplicate element \"my-anyxml\" in namespace"
-            + " \"foo-namespace\" with parent \"container anyxml-container\" in XML input"));
+        assertThat(ex.getMessage(), containsString("Duplicate element \"my-anyxml\" in namespace \"foo-namespace\" "
+            + "with parent \"EmptyContainerEffectiveStatement{argument=(foo-namespace)anyxml-container}\" in XML "
+            + "input"));
     }
 
     @Test
@@ -183,7 +185,8 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("Duplicate element \"leaf-container\" in namespace"
-            + " \"foo-namespace\" with parent \"container parent-container\" in XML input"));
+            + " \"foo-namespace\" with parent "
+            + "\"EmptyContainerEffectiveStatement{argument=(foo-namespace)parent-container}\" in XML input"));
     }
 
     @Test
@@ -245,7 +248,8 @@ public class XmlToNormalizedNodesTest {
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
 
         assertThat(ex.getMessage(), containsString("Schema for node with name my-container-1 and namespace "
-            + "baz-namespace does not exist in parent container my-container-1"));
+            + "baz-namespace does not exist in parent "
+            + "EmptyContainerEffectiveStatement{argument=(baz-namespace)my-container-1}"));
     }
 
     private static NormalizedNode buildOuterContainerNode() {

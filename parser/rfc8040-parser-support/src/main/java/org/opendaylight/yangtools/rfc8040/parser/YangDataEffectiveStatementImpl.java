@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import java.util.Optional;
@@ -78,12 +77,5 @@ final class YangDataEffectiveStatementImpl extends AbstractEffectiveUnknownSchme
             return Optional.of(ns);
         }
         return super.getNamespaceContents(namespace);
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).omitNullValues()
-                .add("qname", argumentQName)
-                .add("container", container).toString();
     }
 }

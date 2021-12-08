@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -49,10 +48,5 @@ public abstract class AbstractGroupingEffectiveStatement
     @Override
     public final GroupingEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this).add("qname", argument()).toString();
     }
 }

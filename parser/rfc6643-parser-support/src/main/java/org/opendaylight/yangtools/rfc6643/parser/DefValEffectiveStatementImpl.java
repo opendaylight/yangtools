@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Objects;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
@@ -32,23 +31,5 @@ final class DefValEffectiveStatementImpl extends AbstractEffectiveUnknownSchmema
     @Override
     public DefValEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getNodeType(), getNodeParameter());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof DefValEffectiveStatementImpl)) {
-            return false;
-        }
-        final DefValEffectiveStatementImpl other = (DefValEffectiveStatementImpl) obj;
-        return Objects.equals(getNodeType(), other.getNodeType())
-            && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }
