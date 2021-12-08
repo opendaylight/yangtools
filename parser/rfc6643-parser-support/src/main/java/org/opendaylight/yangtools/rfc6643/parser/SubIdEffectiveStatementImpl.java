@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Objects;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
@@ -33,23 +32,5 @@ final class SubIdEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaN
     @Override
     public SubIdEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getNodeType(), getNodeParameter());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof SubIdEffectiveStatementImpl)) {
-            return false;
-        }
-        final SubIdEffectiveStatementImpl other = (SubIdEffectiveStatementImpl) obj;
-        return Objects.equals(getNodeType(), other.getNodeType())
-            && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }

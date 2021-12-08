@@ -62,9 +62,4 @@ public abstract class AbstractChoiceEffectiveStatement
     public final ChoiceEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public final String toString() {
-        return AbstractChoiceEffectiveStatement.class.getSimpleName() + "[" + "qname=" + argument() + "]";
-    }
 }

@@ -49,8 +49,9 @@ public class YangParserSimpleTest extends AbstractYangTest {
         final AnyxmlSchemaNode data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
             QName.create(MODULE.getQNameModule(), "data"));
         assertFalse(data.equals(null));
-        assertEquals("RegularAnyxmlEffectiveStatement{qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data}",
-                data.toString());
+        assertEquals(
+            "RegularAnyxmlEffectiveStatement{argument=(urn:opendaylight:simple-nodes?revision=2013-07-30)data}",
+            data.toString());
 
         // test SchemaNode args
         assertEquals(QName.create(SN, "data"), data.getQName());
@@ -94,8 +95,9 @@ public class YangParserSimpleTest extends AbstractYangTest {
                 QName.create(MODULE.getQNameModule(), "data2")).orElse(null);
 
         assertNotNull("'anydata data not found'", anydata);
-        assertEquals("RegularAnydataEffectiveStatement{qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data2}",
-                anydata.toString());
+        assertEquals(
+            "RegularAnydataEffectiveStatement{argument=(urn:opendaylight:simple-nodes?revision=2013-07-30)data2}",
+            anydata.toString());
 
         // test SchemaNode args
         assertEquals(QName.create(SN, "data2"), anydata.getQName());

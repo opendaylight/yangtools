@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Objects;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
@@ -32,23 +31,5 @@ final class DisplayHintEffectiveStatementImpl extends AbstractEffectiveUnknownSc
     @Override
     public DisplayHintEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getNodeType(), getNodeParameter());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof DisplayHintEffectiveStatementImpl)) {
-            return false;
-        }
-        final DisplayHintEffectiveStatementImpl other = (DisplayHintEffectiveStatementImpl) obj;
-        return Objects.equals(getNodeType(), other.getNodeType())
-            && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }

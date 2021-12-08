@@ -25,10 +25,4 @@ public class EmptyBitEffectiveStatement extends DefaultArgument<String, BitState
     public final Status getStatus() {
         return findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class).orElse(Status.CURRENT);
     }
-
-    @Override
-    public final String toString() {
-        return "BitEffectiveStatementImpl[name=" + argument() + ", position=" + getDeclaredPosition().orElse(null)
-                + "]";
-    }
 }

@@ -73,10 +73,4 @@ public final class AugmentEffectiveStatementImpl
     public AugmentEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public String toString() {
-        return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" + "targetPath=" + getTargetPath() + ", when="
-                + getWhenCondition() + "]";
-    }
 }
