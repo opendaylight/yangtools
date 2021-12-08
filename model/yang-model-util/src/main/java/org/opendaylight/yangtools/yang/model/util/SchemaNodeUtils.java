@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-@Deprecated
+@Deprecated(since = "7.0.0", forRemoval = true)
 public final class SchemaNodeUtils {
     private SchemaNodeUtils() {
         // Hidden on purpose
