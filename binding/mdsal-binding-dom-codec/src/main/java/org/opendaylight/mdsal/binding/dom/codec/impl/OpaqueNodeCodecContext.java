@@ -15,7 +15,6 @@ import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Constructor;
 import javax.xml.transform.dom.DOMSource;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
@@ -78,8 +77,8 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         }
     }
 
-    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(OpaqueObject.class,
-        OpaqueData.class);
+    private static final MethodType CTOR_LOOKUP_TYPE = MethodType.methodType(void.class, OpaqueData.class);
+    private static final MethodType CTOR_INVOKE_TYPE = MethodType.methodType(OpaqueObject.class, OpaqueData.class);
     @SuppressWarnings("rawtypes")
     private static final Builder<CodecOpaqueObject> TEMPLATE = new ByteBuddy().subclass(CodecOpaqueObject.class)
             .modifiers(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC);
@@ -163,15 +162,9 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
                 .implement(bindingInterface)
                 .make()));
 
-        Constructor<?> ctor;
         try {
-            ctor = proxyClass.getDeclaredConstructor(OpaqueData.class);
-        } catch (NoSuchMethodException e) {
-            throw new LinkageError("Failed to acquire constructor for prototype " + proxyClass, e);
-        }
-        try {
-            return MethodHandles.publicLookup().unreflectConstructor(ctor).asType(CONSTRUCTOR_TYPE);
-        } catch (IllegalAccessException e) {
+            return MethodHandles.publicLookup().findConstructor(proxyClass, CTOR_LOOKUP_TYPE).asType(CTOR_INVOKE_TYPE);
+        } catch (IllegalAccessException | NoSuchMethodException e) {
             throw new LinkageError("Failed to access constructor for prototype " + proxyClass, e);
         }
     }
