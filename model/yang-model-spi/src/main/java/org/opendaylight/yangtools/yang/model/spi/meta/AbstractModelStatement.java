@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
@@ -20,6 +22,26 @@ import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
 abstract class AbstractModelStatement<A> implements ModelStatement<A> {
+
+    @Override
+    public final int hashCode() {
+        return System.identityHashCode(this);
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return this == obj;
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("argument", argument());
+    }
+
     /**
      * Utility method for squashing singleton lists into single objects. This is a CPU/mem trade-off, which we are
      * usually willing to make: for the cost of an instanceof check we can save one object and re-create it when needed.

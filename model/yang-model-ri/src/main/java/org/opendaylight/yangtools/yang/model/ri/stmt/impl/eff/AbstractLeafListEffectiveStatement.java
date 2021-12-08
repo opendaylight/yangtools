@@ -78,11 +78,6 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
-    public final String toString() {
-        return getClass().getSimpleName() + "[" + argument() + "]";
-    }
-
-    @Override
     public final TypeDefinition<?> getType() {
         final var local = (TypeDefinition<?>) TYPE.getAcquire(this);
         return local != null ? local : loadType();

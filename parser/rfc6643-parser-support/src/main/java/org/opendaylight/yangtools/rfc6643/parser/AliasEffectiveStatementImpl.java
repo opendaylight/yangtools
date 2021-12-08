@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Objects;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
@@ -32,23 +31,5 @@ final class AliasEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaN
     @Override
     public AliasEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getNodeType(), getNodeParameter());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof AliasEffectiveStatementImpl)) {
-            return false;
-        }
-        final AliasEffectiveStatementImpl other = (AliasEffectiveStatementImpl) obj;
-        return Objects.equals(getNodeType(), other.getNodeType())
-            && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }

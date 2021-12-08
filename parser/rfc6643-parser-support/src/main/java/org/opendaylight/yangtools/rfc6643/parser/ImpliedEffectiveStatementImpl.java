@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Objects;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
@@ -32,23 +31,5 @@ final class ImpliedEffectiveStatementImpl extends AbstractEffectiveUnknownSchmem
     @Override
     public ImpliedEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getNodeType(), getNodeParameter());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof ImpliedEffectiveStatementImpl)) {
-            return false;
-        }
-        final ImpliedEffectiveStatementImpl other = (ImpliedEffectiveStatementImpl) obj;
-        return Objects.equals(getNodeType(), other.getNodeType())
-            && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }

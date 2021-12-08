@@ -59,9 +59,4 @@ public final class UndeclaredOutputEffectiveStatement
     public OutputEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public String toString() {
-        return defaultToString();
-    }
 }

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -49,10 +48,5 @@ public class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatemen
     @Override
     public final AnyxmlEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this).add("qname", argument).toString();
     }
 }

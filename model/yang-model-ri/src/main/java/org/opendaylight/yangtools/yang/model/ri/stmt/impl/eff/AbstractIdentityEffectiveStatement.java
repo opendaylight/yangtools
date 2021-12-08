@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import com.google.common.base.MoreObjects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
@@ -24,10 +23,5 @@ abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName,
     @Override
     public final IdentityEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this).add("qname", getQName()).toString();
     }
 }
