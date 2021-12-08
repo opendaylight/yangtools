@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -74,7 +74,7 @@ public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatem
     }
 
     @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this).add("qname", getQName()).toString();
+    protected final ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("qname", getQName());
     }
 }

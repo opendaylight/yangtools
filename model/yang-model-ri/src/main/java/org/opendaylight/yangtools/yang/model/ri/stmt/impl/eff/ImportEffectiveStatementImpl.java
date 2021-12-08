@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -32,8 +32,8 @@ public final class ImportEffectiveStatementImpl extends WithSubstatements<String
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @NonNull SourceIdentifier importedSource) {
         super(declared, substatements);
-        this.revision = importedSource.getRevision().orElse(null);
-        this.semVer = importedSource instanceof SemVerSourceIdentifier
+        revision = importedSource.getRevision().orElse(null);
+        semVer = importedSource instanceof SemVerSourceIdentifier
             ? ((SemVerSourceIdentifier) importedSource).getSemanticVersion().orElse(null)
                 : null;
     }
@@ -59,14 +59,13 @@ public final class ImportEffectiveStatementImpl extends WithSubstatements<String
     }
 
     @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).omitNullValues()
-                .add("moduleName", getModuleName())
-                .add("revision", revision)
-                .add("version", semVer)
-                .add("prefix", getPrefix())
-                .add("description", getDescription().orElse(null))
-                .add("reference", getReference().orElse(null))
-                .toString();
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper
+            .add("moduleName", getModuleName())
+            .add("revision", revision)
+            .add("version", semVer)
+            .add("prefix", getPrefix())
+            .add("description", getDescription().orElse(null))
+            .add("reference", getReference().orElse(null));
     }
 }

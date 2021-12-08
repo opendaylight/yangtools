@@ -11,7 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -203,14 +203,13 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     }
 
     @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).omitNullValues()
-                .add("name", getName())
-                .add("namespace", getNamespace())
-                .add("revision", getRevision().orElse(null))
-                .add("prefix", prefix)
-                .add("yangVersion", getYangVersion())
-                .toString();
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper
+            .add("name", getName())
+            .add("namespace", getNamespace())
+            .add("revision", getRevision().orElse(null))
+            .add("prefix", prefix)
+            .add("yangVersion", getYangVersion());
     }
 
     protected static final @NonNull String findPrefix(final CommonStmtCtx stmt,
