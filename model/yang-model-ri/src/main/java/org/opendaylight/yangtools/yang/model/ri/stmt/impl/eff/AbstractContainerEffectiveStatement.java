@@ -66,9 +66,4 @@ public abstract class AbstractContainerEffectiveStatement
     public final ContainerEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public final String toString() {
-        return "container " + argument().getLocalName();
-    }
 }

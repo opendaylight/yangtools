@@ -60,9 +60,4 @@ public final class DeclaredOutputEffectiveStatement
     public OutputEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public String toString() {
-        return defaultToString();
-    }
 }

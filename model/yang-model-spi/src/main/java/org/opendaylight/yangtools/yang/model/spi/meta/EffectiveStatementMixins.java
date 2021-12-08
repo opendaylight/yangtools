@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -387,10 +386,6 @@ public final class EffectiveStatementMixins {
         @Override
         default Optional<Boolean> effectiveConfig() {
             return Optional.empty();
-        }
-
-        default String defaultToString() {
-            return MoreObjects.toStringHelper(this).add("qname", getQName()).toString();
         }
     }
 

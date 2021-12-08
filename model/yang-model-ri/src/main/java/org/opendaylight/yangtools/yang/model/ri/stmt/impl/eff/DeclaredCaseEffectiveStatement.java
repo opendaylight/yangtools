@@ -58,9 +58,4 @@ public final class DeclaredCaseEffectiveStatement
     public CaseEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public String toString() {
-        return DeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + argument + "]";
-    }
 }

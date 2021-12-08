@@ -68,9 +68,4 @@ public final class NotificationEffectiveStatementImpl
     public NotificationEffectiveStatement asEffectiveStatement() {
         return this;
     }
-
-    @Override
-    public String toString() {
-        return NotificationEffectiveStatementImpl.class.getSimpleName() + "[qname=" + argument + "]";
-    }
 }
