@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshotCursor;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshotCursor;
 
 abstract class AbstractCursor<T extends AbstractCursorAware> implements DataTreeSnapshotCursor {
     @SuppressWarnings("rawtypes")

@@ -1,0 +1,210 @@
+/*
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.tree.spi;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+import java.util.Optional;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
+import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
+
+public class DataTreeCandidatesTest {
+
+    @Test
+    public void testNewDataTreeCandidate() {
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        final DataTreeCandidate dataTreeCandidate = DataTreeCandidates.newDataTreeCandidate(mockedRootPath,
+                mockedDataTreeCandidateNode);
+
+        assertNotNull(dataTreeCandidate);
+        assertTrue(dataTreeCandidate instanceof DefaultDataTreeCandidate);
+        assertEquals(mockedRootPath, dataTreeCandidate.getRootPath());
+        assertEquals(mockedDataTreeCandidateNode, dataTreeCandidate.getRootNode());
+        assertTrue(dataTreeCandidate.toString().contains(
+                "DefaultDataTreeCandidate{rootPath=/, rootNode=Mock for DataTreeCandidateNode, hashCode: "));
+    }
+
+    @Test
+    public void testFromNormalizedNode() {
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
+        final DataTreeCandidate dataTreeCandidate = DataTreeCandidates.fromNormalizedNode(mockedRootPath,
+                mockedNormalizedNode);
+
+        assertNotNull(dataTreeCandidate);
+        assertTrue(dataTreeCandidate instanceof DefaultDataTreeCandidate);
+        assertEquals(mockedRootPath, dataTreeCandidate.getRootPath());
+        assertTrue(dataTreeCandidate.getRootNode() instanceof NormalizedNodeDataTreeCandidateNode);
+    }
+
+    @Test
+    public void testApplyToCursor() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
+
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+        DataTreeCandidates.applyToCursor(mockedCursor, mockedDataTreeCandidate);
+        verify(mockedCursor, times(1)).delete(isNull());
+    }
+
+    @Test
+    public void testApplyToCursorAwareModification() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final CursorAwareDataTreeModification mockedModification = mock(CursorAwareDataTreeModification.class);
+
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+        final YangInstanceIdentifier mockedRootPathParent = mock(YangInstanceIdentifier.class);
+        doReturn(mockedRootPathParent).when(mockedRootPath).getParent();
+
+        final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
+        doReturn(Optional.of(mockedCursor)).when(mockedModification).openCursor(mockedRootPathParent);
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
+
+        DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
+        verify(mockedRootPath, times(1)).getParent();
+        verify(mockedModification, times(1)).openCursor(mockedRootPathParent);
+        verify(mockedCursor, times(1)).delete(isNull());
+    }
+
+    @Test
+    public void testApplyToCursorAwareModificationRoot() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final CursorAwareDataTreeModification mockedModification = mock(CursorAwareDataTreeModification.class);
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+        doReturn(null).when(mockedRootPath).getParent();
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate));
+        assertEquals("Can not delete root.", thrown.getMessage());
+    }
+
+    @Test
+    public void testApplyToModificationWithDeleteModificationType() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final DataTreeModification mockedModification = mock(DataTreeModification.class);
+
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
+
+        DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
+        verify(mockedModification, times(1)).delete(any(YangInstanceIdentifier.class));
+    }
+
+    @Test
+    public void testApplyToModificationWithWriteModificationType() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final DataTreeModification mockedModification = mock(DataTreeModification.class);
+
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
+        doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
+
+        doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).getModificationType();
+
+        DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
+        verify(mockedModification, times(1)).write(any(YangInstanceIdentifier.class), any(NormalizedNode.class));
+    }
+
+    @Test
+    public void testApplyToModificationWithSubtreeModifiedModificationType() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final DataTreeModification mockedModification = mock(DataTreeModification.class);
+
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+
+        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).getModificationType();
+
+        final DataTreeCandidateNode mockedChildNode1 = mock(DataTreeCandidateNode.class);
+        doReturn(ModificationType.DELETE).when(mockedChildNode1).getModificationType();
+        final PathArgument mockedPathArgument1 = mock(PathArgument.class);
+        doReturn(mockedPathArgument1).when(mockedChildNode1).getIdentifier();
+
+        final DataTreeCandidateNode mockedChildNode2 = mock(DataTreeCandidateNode.class);
+        doReturn(ModificationType.WRITE).when(mockedChildNode2).getModificationType();
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
+        doReturn(Optional.of(mockedNormalizedNode)).when(mockedChildNode2).getDataAfter();
+        final PathArgument mockedPathArgument2 = mock(PathArgument.class);
+        doReturn(mockedPathArgument2).when(mockedChildNode2).getIdentifier();
+
+        final DataTreeCandidateNode mockedChildNode3 = mock(DataTreeCandidateNode.class);
+        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedChildNode3).getModificationType();
+        final PathArgument mockedPathArgument3 = mock(PathArgument.class);
+        doReturn(mockedPathArgument3).when(mockedChildNode3).getIdentifier();
+        final DataTreeCandidateNode mockedChildNode3ChildNode = mock(DataTreeCandidateNode.class);
+        doReturn(ModificationType.DELETE).when(mockedChildNode3ChildNode).getModificationType();
+        final PathArgument mockedPathArgument31 = mock(PathArgument.class);
+        doReturn(mockedPathArgument3).when(mockedChildNode3).getIdentifier();
+        doReturn(mockedPathArgument31).when(mockedChildNode3ChildNode).getIdentifier();
+        doReturn(List.of(mockedChildNode3ChildNode)).when(mockedChildNode3).getChildNodes();
+
+        final List<DataTreeCandidateNode> childNodes = List.of(mockedChildNode1, mockedChildNode2, mockedChildNode3);
+        doReturn(childNodes).when(mockedDataTreeCandidateNode).getChildNodes();
+
+        DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
+        verify(mockedModification, times(2)).delete(any(YangInstanceIdentifier.class));
+        verify(mockedModification, times(1)).write(any(YangInstanceIdentifier.class), any(NormalizedNode.class));
+    }
+
+    @Test
+    public void testApplyToModificationWithUnsupportedModificationType() {
+        final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
+        final DataTreeModification mockedModification = mock(DataTreeModification.class);
+
+        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
+        final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
+        doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
+
+        doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).getModificationType();
+
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate));
+        assertThat(ex.getMessage(), containsString("Unsupported modification"));
+    }
+}

@@ -34,6 +34,10 @@
         <module>yang-data-transform</module>
         <module>yang-data-util</module>
 
+        <!-- Data Tree API and implementation -->
+        <module>yang-data-tree-api</module>
+        <module>yang-data-tree-spi</module>
+
         <!-- Metadata (annotation) metamodel support -->
         <module>rfc7952-data-api</module>
         <module>rfc7952-data-util</module>
