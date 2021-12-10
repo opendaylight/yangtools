@@ -5,20 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
-
 module org.opendaylight.yangtools.yang.data.impl {
     // FIXME: do not export data.impl.*
     exports org.opendaylight.yangtools.yang.data.impl.codec;
-    exports org.opendaylight.yangtools.yang.data.impl.leafref;
     exports org.opendaylight.yangtools.yang.data.impl.schema;
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
     exports org.opendaylight.yangtools.yang.data.impl.schema.nodes;
-    exports org.opendaylight.yangtools.yang.data.impl.schema.tree;
-
-    provides DataTreeFactory with InMemoryDataTreeFactory;
 
     requires transitive java.xml;
     requires transitive com.google.common;
