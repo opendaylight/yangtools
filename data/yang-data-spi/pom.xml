@@ -36,6 +36,10 @@
         </dependency>
         <dependency>
           <groupId>org.opendaylight.yangtools</groupId>
+          <artifactId>yang-common</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.opendaylight.yangtools</groupId>
           <artifactId>yang-data-api</artifactId>
         </dependency>
     </dependencies>
