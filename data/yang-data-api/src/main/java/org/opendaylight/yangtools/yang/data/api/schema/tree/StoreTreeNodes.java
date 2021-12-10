@@ -101,12 +101,4 @@ public final class StoreTreeNodes {
         verify(nesting > 0);
         return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent);
     }
-
-    public static <T extends StoreTreeNode<T>> Optional<? extends T> getChild(final Optional<T> parent,
-            final PathArgument child) {
-        if (parent.isPresent()) {
-            return parent.get().findChildByArg(child);
-        }
-        return Optional.empty();
-    }
 }

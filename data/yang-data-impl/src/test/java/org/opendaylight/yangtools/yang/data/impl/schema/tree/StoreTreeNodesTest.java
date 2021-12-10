@@ -164,26 +164,6 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         assertTreeNodeEquals(expectedNode.get(), actualNode.getValue());
     }
 
-    @Test
-    public void getChildTestChildFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<? extends TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
-                TestModel.TEST_PATH.getLastPathArgument());
-        assertPresentAndType(node, TreeNode.class);
-    }
-
-    @Test
-    public void getChildTestChildNotFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<? extends TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
-                TestModel.OUTER_LIST_PATH.getLastPathArgument());
-        assertFalse(node.isPresent());
-    }
-
     private static ContainerNode createTestContainer() {
         return ImmutableContainerNodeBuilder
                 .create()
