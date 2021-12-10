@@ -12,16 +12,14 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class HashCodeBuilderTest {
-
     @Test
     public void testAllMethodsOfHashCodeBuilder() {
         final HashCodeBuilder<String> builder = new HashCodeBuilder<>();
-        assertEquals("Default hash code should be '1'.", 1, builder.build().intValue());
+        assertEquals(1, builder.build());
 
-        int nextHashCode = HashCodeBuilder.nextHashCode(1, "test");
-        assertEquals("Next hash code should be '3556529'.", 3556529, nextHashCode);
+        assertEquals(3556529, HashCodeBuilder.nextHashCode(1, "test"));
 
         builder.addArgument("another test");
-        assertEquals("Updated internal hash code should be '700442706'.", -700442706, builder.build().intValue());
+        assertEquals(-700442706, builder.build());
     }
 }
