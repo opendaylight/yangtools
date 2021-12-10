@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintException;
+import org.opendaylight.yangtools.yang.data.tree.api.UniqueConstraintException;
 
 /**
  * Exception thrown when unique constraints would be violated and we cannot throw a {@link UniqueConstraintException}.
