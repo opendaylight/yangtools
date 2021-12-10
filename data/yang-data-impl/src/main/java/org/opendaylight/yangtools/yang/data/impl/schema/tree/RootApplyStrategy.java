@@ -48,9 +48,9 @@ import java.util.Objects;
  *
  * <p>
  * Note: This is helpful for implementing
- * {@link org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification}
+ * {@link org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification}
  * which may be derived from
- * {@link org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree} before
+ * {@link org.opendaylight.yangtools.yang.data.tree.api.DataTree} before
  * update of schema and user actually writes data after schema update. During
  * update user did not invoked any operation.
  */

@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
+import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 /**
  * Abstract base class for our internal implementation of {@link DataTreeCandidateNode},
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
  * this component.
  */
 abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    private final ModificationType type;
+    private final @NonNull ModificationType type;
 
     AbstractDataTreeCandidateNode(final ModificationType type) {
         this.type = requireNonNull(type);

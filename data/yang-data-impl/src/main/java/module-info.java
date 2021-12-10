@@ -5,8 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
 
 module org.opendaylight.yangtools.yang.data.impl {
     // FIXME: do not export data.impl.*
@@ -46,4 +46,6 @@ module org.opendaylight.yangtools.yang.data.impl {
     requires static org.osgi.service.component.annotations;
     requires static javax.inject;
     requires static metainf.services;
+    requires yang.data.tree.api;
+    requires yang.data.tree.spi;
 }
