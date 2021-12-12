@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -84,6 +85,9 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase inProgressPhase;
+
+    // If not null, do not add anything to modifiers, but record it here.
+    private List<Entry<ModelProcessingPhase, ModifierImpl>> delayedModifiers;
 
     SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
         this.globalContext = requireNonNull(globalContext);
@@ -288,8 +292,12 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         return hasProgressed ? PhaseCompletionProgress.PROGRESS : PhaseCompletionProgress.NO_PROGRESS;
     }
 
-    private static boolean tryToProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
+    private boolean tryToProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
         boolean hasProgressed = false;
+
+        // We are about to iterate over the modifiers and invoke callbacks. Those callbacks can end up circling back
+        // and modifying the same collection. This asserts that modifiers should not be modified.
+        delayedModifiers = List.of();
 
         // Try making forward progress ...
         final Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
@@ -300,12 +308,34 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
             }
         }
 
+        // We have finished iterating, if we have any delayed modifiers, put them back. This may seem as if we want
+        // to retry the loop, but we do not have to, as we will be circling back anyway.
+        //
+        // The thing is, we are inherently single-threaded and therefore if we observe non-empty delayedModifiers, the
+        // only way that could happen is through a callback, which in turn means we have made progress.
+        if (!delayedModifiers.isEmpty()) {
+            verify(hasProgressed, "Delayed modifiers encountered without making progress in %s", this);
+            for (Entry<ModelProcessingPhase, ModifierImpl> entry : delayedModifiers) {
+                modifiers.put(entry.getKey(), entry.getValue());
+            }
+        }
+        delayedModifiers = null;
+
         return hasProgressed;
     }
 
     @NonNull ModelActionBuilder newInferenceAction(final @NonNull ModelProcessingPhase phase) {
         final ModifierImpl action = new ModifierImpl();
-        modifiers.put(phase, action);
+
+        if (delayedModifiers != null) {
+            if (delayedModifiers.isEmpty()) {
+                delayedModifiers = new ArrayList<>(2);
+            }
+            delayedModifiers.add(Map.entry(phase,action));
+        } else {
+            modifiers.put(phase, action);
+        }
+
         return action;
     }
 
