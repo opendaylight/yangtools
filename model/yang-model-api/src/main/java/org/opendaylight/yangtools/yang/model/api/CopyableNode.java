@@ -13,14 +13,12 @@ import com.google.common.annotations.Beta;
  * Represents a node that can be added by uses or by augmentation.
  */
 @Beta
-// FIXME: 8.0.0: refactor this interface to take into account DerivableSchemaNode
+@Deprecated(since = "8.0.0")
 public interface CopyableNode extends AddedByUsesAware {
     /**
-     * Returns <code>true</code> if this node was added by augmentation,
-     * otherwise returns <code>false</code>.
+     * Returns {@code true} if this node was added by augmentation, otherwise returns {@code false}.
      *
-     * @return <code>true</code> if this node was added by augmentation,
-     *         otherwise returns <code>false</code>
+     * @return {@code true} if this node was added by augmentation, otherwise returns {@code false}
      */
     boolean isAugmenting();
 }
