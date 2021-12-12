@@ -34,6 +34,6 @@ abstract class AbstractContainerNode extends TreeNode {
     static TreeNode getChildFromData(final DistinctNodeContainer<PathArgument, NormalizedNode> data,
             final PathArgument childId, final Version version) {
         final NormalizedNode child = data.childByArg(childId);
-        return child != null ? TreeNodeFactory.createTreeNode(child, version) : null;
+        return child != null ? TreeNode.of(child, version) : null;
     }
 }
