@@ -345,5 +345,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void setRootIdentifier(SourceIdentifier identifier);
 
         void setUnsupported();
+
+        // YANG example: RPC/action statements always have 'input' and 'output' defined
+        @Beta
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @NonNull Mutable<X, Y, Z> addEffectiveSubstatement(StatementSupport<X, Y, Z> support, X arg,
+                @Nullable String rawArg);
     }
 }

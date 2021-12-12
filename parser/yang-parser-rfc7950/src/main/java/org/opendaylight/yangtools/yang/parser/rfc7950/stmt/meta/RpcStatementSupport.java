@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
@@ -38,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 @Beta
 public final class RpcStatementSupport extends AbstractSchemaTreeStatementSupport<RpcStatement, RpcEffectiveStatement> {
@@ -62,7 +60,6 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
     public void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        verify(stmt instanceof StatementContextBase);
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
             appendImplicitSubstatement(stmt, YangStmtMapping.INPUT.getStatementName());
         }
@@ -103,7 +100,8 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
 
     private static void appendImplicitSubstatement(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt,
             final QName substatementName) {
-        ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
-            verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null);
+        stmt.addEffectiveSubstatement(
+            // FIXME: proper argument!
+            verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null, null);
     }
 }
