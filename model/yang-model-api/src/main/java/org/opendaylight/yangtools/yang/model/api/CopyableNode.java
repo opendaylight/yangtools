@@ -14,7 +14,7 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 @Deprecated(since = "8.0.0")
-public interface CopyableNode extends AddedByUsesAware {
+public interface CopyableNode {
     /**
      * Returns {@code true} if this node was added by augmentation, otherwise returns {@code false}.
      *

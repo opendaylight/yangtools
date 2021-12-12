@@ -131,56 +131,46 @@ public class YangParserWithContextTest {
         final AnyxmlSchemaNode data_u = (AnyxmlSchemaNode) destination.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "data"));
         assertNotNull(data_u);
-        assertTrue(data_u.isAddedByUses());
 
         final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(QName.create(
                 contextModule.getQNameModule(), "data"));
         assertNotNull(data_g);
-        assertFalse(data_g.isAddedByUses());
         assertFalse(data_u.equals(data_g));
 
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "how"));
         assertNotNull(how_u);
-        assertTrue(how_u.isAddedByUses());
 
         final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(QName.create(
                 contextModule.getQNameModule(), "how"));
         assertNotNull(how_g);
-        assertFalse(how_g.isAddedByUses());
         assertFalse(how_u.equals(how_g));
 
         final LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "address"));
         assertNotNull(address_u);
-        assertTrue(address_u.isAddedByUses());
 
         final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
                 contextModule.getQNameModule(), "address"));
         assertNotNull(address_g);
-        assertFalse(address_g.isAddedByUses());
         assertFalse(address_u.equals(address_g));
 
         final ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "port"));
         assertNotNull(port_u);
-        assertTrue(port_u.isAddedByUses());
 
         final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(QName.create(
                 contextModule.getQNameModule(), "port"));
         assertNotNull(port_g);
-        assertFalse(port_g.isAddedByUses());
         assertFalse(port_u.equals(port_g));
 
         final ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "addresses"));
         assertNotNull(addresses_u);
-        assertTrue(addresses_u.isAddedByUses());
 
         final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(QName.create(
                 contextModule.getQNameModule(), "addresses"));
         assertNotNull(addresses_g);
-        assertFalse(addresses_g.isAddedByUses());
         assertFalse(addresses_u.equals(addresses_g));
 
         // grouping defined by 'uses'
@@ -190,8 +180,6 @@ public class YangParserWithContextTest {
         // grouping defined in 'grouping' node
         final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
-        final GroupingDefinition grouping_g = groupings_g.iterator().next();
-        assertFalse(grouping_g.isAddedByUses());
     }
 
     @Test

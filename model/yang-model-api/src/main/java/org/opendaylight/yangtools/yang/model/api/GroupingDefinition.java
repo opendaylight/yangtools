@@ -15,13 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
  * <p>
  * It is used to define a reusable block of nodes, which may be used locally in
  * the module, in modules that include it, and by other modules that import from it.
- *
- * <p>
- * Note: this interface extends {@link AddedByUsesAware}, but this contradicts the javadoc of {@link #isAddedByUses()},
- *       as groupings can never be encountered in 'data schema node' context. It is their children, which are data
- *       schema node, but those really are instantiated and typically differ in {@link #getQName()}'s namespace.
  */
 public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer,
-       ActionNodeContainer, AddedByUsesAware, EffectiveStatementEquivalent<GroupingEffectiveStatement> {
+       ActionNodeContainer, EffectiveStatementEquivalent<GroupingEffectiveStatement> {
 
 }

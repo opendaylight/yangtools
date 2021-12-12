@@ -101,8 +101,7 @@ final class AugmentInferenceAction implements InferenceAction {
 
     private void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final CopyType typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
-            ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
+        final boolean inUses = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class);
         /*
          * Since Yang 1.1, if an augmentation is made conditional with a
          * "when" statement, it is allowed to add mandatory nodes.
@@ -115,25 +114,25 @@ final class AugmentInferenceAction implements InferenceAction {
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
         for (final Mutable<?, ?, ?> originalStmtCtx : declared) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes,
+            copyStatement(originalStmtCtx, targetCtx, inUses, buffer, skipCheckOfMandatoryNodes,
                 unsupported || !originalStmtCtx.isSupportedByFeatures());
         }
         for (final Mutable<?, ?, ?> originalStmtCtx : effective) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes, unsupported);
+            copyStatement(originalStmtCtx, targetCtx, inUses, buffer, skipCheckOfMandatoryNodes, unsupported);
         }
 
         targetCtx.addEffectiveSubstatements(buffer);
     }
 
     private static void copyStatement(final Mutable<?, ?, ?> original, final StatementContextBase<?, ?, ?> target,
-            final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer,
+            final boolean inUses, final Collection<Mutable<?, ?, ?>> buffer,
             final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
         if (!NOCOPY_DEF_SET.contains(original.publicDefinition())) {
-            validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
+            validateNodeCanBeCopiedByAugment(original, target, inUses, skipCheckOfMandatoryNodes);
 
-            final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
+            final Mutable<?, ?, ?> copy = target.childCopyOf(original, CopyType.ADDED_BY_AUGMENTATION);
             if (unsupported) {
                 copy.setUnsupported();
             }
@@ -148,10 +147,9 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private static void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy,
+            final StatementContextBase<?, ?, ?> targetCtx, final boolean inUses,
             final boolean skipCheckOfMandatoryNodes) {
-        if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
-                && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
+        if (!skipCheckOfMandatoryNodes && !inUses && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             checkForMandatoryNodes(sourceCtx);
         }
 

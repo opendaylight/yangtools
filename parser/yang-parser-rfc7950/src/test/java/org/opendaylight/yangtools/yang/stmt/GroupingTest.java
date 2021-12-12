@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -28,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -147,18 +148,13 @@ public class GroupingTest extends AbstractModelTest {
 
         // check uses process
         final AnyxmlSchemaNode data_u = (AnyxmlSchemaNode) destination.getDataChildByName(fooQName("data"));
-        assertTrue(data_u.isAddedByUses());
-
         final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(bazQName("data"));
-        assertFalse(data_g.isAddedByUses());
         assertNotEquals(data_u, data_g);
 
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName(fooQName("how"));
-        assertIsAddedByUses(how_u, true);
         assertEquals(2, how_u.getCases().size());
 
         final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(bazQName("how"));
-        assertIsAddedByUses(how_g, false);
         assertEquals(2, how_g.getCases().size());
         assertNotEquals(how_u, how_g);
 
@@ -167,11 +163,9 @@ public class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of("IP address of target node"), address_u.getDescription());
         assertEquals(Optional.of("address reference added by refine"), address_u.getReference());
         assertEquals(Optional.of(Boolean.FALSE), address_u.effectiveConfig());
-        assertTrue(address_u.isAddedByUses());
         assertFalse(address_u.isMandatory());
 
         final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(bazQName("address"));
-        assertFalse(address_g.isAddedByUses());
         assertEquals(Optional.empty(), address_g.getType().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertEquals(Optional.empty(), address_g.getReference());
@@ -180,17 +174,11 @@ public class GroupingTest extends AbstractModelTest {
         assertNotEquals(address_u, address_g);
 
         final ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName(fooQName("port"));
-        assertIsAddedByUses(port_u, true);
-
         final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(bazQName("port"));
-        assertIsAddedByUses(port_g, false);
         assertNotEquals(port_u, port_g);
 
         final ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName(fooQName("addresses"));
-        assertIsAddedByUses(addresses_u, true);
-
         final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(bazQName("addresses"));
-        assertIsAddedByUses(addresses_g, false);
         assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
@@ -200,8 +188,6 @@ public class GroupingTest extends AbstractModelTest {
         // grouping defined in 'grouping' node
         final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
-        final GroupingDefinition grouping_g = groupings_g.iterator().next();
-        assertIsAddedByUses(grouping_g, false);
 
         assertEquals(0, destination.getUnknownSchemaNodes().size());
         assertEquals(1,
@@ -224,14 +210,10 @@ public class GroupingTest extends AbstractModelTest {
 
         // check uses process
         final AnyxmlSchemaNode data_u = (AnyxmlSchemaNode) FOO.getDataChildByName(fooQName("data"));
-        assertTrue(data_u.isAddedByUses());
-
         final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(bazQName("data"));
-        assertFalse(data_g.isAddedByUses());
         assertNotEquals(data_u, data_g);
 
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) FOO.getDataChildByName(fooQName("how"));
-        assertIsAddedByUses(how_u, true);
         assertFalse(how_u.isAugmenting());
         final Collection<? extends CaseSchemaNode> cases_u = how_u.getCases();
         assertEquals(2, cases_u.size());
@@ -243,7 +225,6 @@ public class GroupingTest extends AbstractModelTest {
         assertFalse(intervalLeaf.isAugmenting());
 
         final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(bazQName("how"));
-        assertIsAddedByUses(how_g, false);
         assertNotEquals(how_u, how_g);
 
         final LeafSchemaNode address_u = (LeafSchemaNode) FOO.getDataChildByName(fooQName("address"));
@@ -251,10 +232,8 @@ public class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of("Target IP address"), address_u.getDescription());
         assertFalse(address_u.getReference().isPresent());
         assertEquals(Optional.empty(), address_u.effectiveConfig());
-        assertTrue(address_u.isAddedByUses());
 
         final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(bazQName("address"));
-        assertFalse(address_g.isAddedByUses());
         assertEquals(Optional.empty(), address_g.getType().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertFalse(address_g.getReference().isPresent());
@@ -262,17 +241,11 @@ public class GroupingTest extends AbstractModelTest {
         assertNotEquals(address_u, address_g);
 
         final ContainerSchemaNode port_u = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("port"));
-        assertIsAddedByUses(port_u, true);
-
         final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(bazQName("port"));
-        assertIsAddedByUses(port_g, false);
         assertNotEquals(port_u, port_g);
 
         final ListSchemaNode addresses_u = (ListSchemaNode) FOO.getDataChildByName(fooQName("addresses"));
-        assertIsAddedByUses(addresses_u, true);
-
         final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(bazQName("addresses"));
-        assertIsAddedByUses(addresses_g, false);
         assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
@@ -282,8 +255,6 @@ public class GroupingTest extends AbstractModelTest {
         // grouping defined in 'grouping' node
         final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
-        final GroupingDefinition grouping_g = groupings_g.iterator().next();
-        assertIsAddedByUses(grouping_g, false);
 
         assertEquals(0, grouping.getUnknownSchemaNodes().size());
         assertEquals(1, grouping.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class)
@@ -355,15 +326,7 @@ public class GroupingTest extends AbstractModelTest {
         Collection<? extends DataSchemaNode> childNodes = gu.getChildNodes();
         assertEquals(7, childNodes.size());
 
-        final LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName(
-            QName.create(namespace, "leaf-grouping-U"));
-        assertFalse(leafGroupingU.isAddedByUses());
-
-        for (final DataSchemaNode childNode : childNodes) {
-            if (!childNode.getQName().equals(leafGroupingU.getQName())) {
-                assertIsAddedByUses(childNode, true);
-            }
-        }
+        assertThat(gu.dataChildByName(QName.create(namespace, "leaf-grouping-U")), instanceOf(LeafSchemaNode.class));
 
         // grouping-V
         childNodes = gv.getChildNodes();
@@ -375,22 +338,15 @@ public class GroupingTest extends AbstractModelTest {
                 leafGroupingV = (LeafSchemaNode) childNode;
             } else if ("container-grouping-V".equals(childNode.getQName().getLocalName())) {
                 containerGroupingV = (ContainerSchemaNode) childNode;
-            } else {
-                assertIsAddedByUses(childNode, true);
             }
         }
         assertNotNull(leafGroupingV);
-        assertFalse(leafGroupingV.isAddedByUses());
 
         // grouping-V/container-grouping-V
         assertNotNull(containerGroupingV);
-        assertFalse(containerGroupingV.isAddedByUses());
         assertEquals(QName.create(expectedModule, "container-grouping-V"), containerGroupingV.getQName());
         childNodes = containerGroupingV.getChildNodes();
         assertEquals(2, childNodes.size());
-        for (final DataSchemaNode childNode : childNodes) {
-            assertIsAddedByUses(childNode, true);
-        }
 
         // grouping-V/container-grouping-V/leaf-grouping-X
         final LeafSchemaNode leafXinContainerV = (LeafSchemaNode) containerGroupingV.getDataChildByName(
@@ -408,13 +364,11 @@ public class GroupingTest extends AbstractModelTest {
         // grouping-X/leaf-grouping-X
         final LeafSchemaNode leafXinGX = (LeafSchemaNode) gx.getDataChildByName(
             QName.create(namespace, "leaf-grouping-X"));
-        assertFalse(leafXinGX.isAddedByUses());
         assertEquals(QName.create(expectedModule, "leaf-grouping-X"), leafXinGX.getQName());
 
         // grouping-X/leaf-grouping-Y
         final LeafSchemaNode leafYinGX = (LeafSchemaNode) gx.getDataChildByName(
             QName.create(namespace, "leaf-grouping-Y"));
-        assertTrue(leafYinGX.isAddedByUses());
         assertEquals(QName.create(expectedModule, "leaf-grouping-Y"), leafYinGX.getQName());
 
         // grouping-Y
@@ -424,7 +378,6 @@ public class GroupingTest extends AbstractModelTest {
         // grouping-Y/leaf-grouping-Y
         final LeafSchemaNode leafYinGY = (LeafSchemaNode) gy.getDataChildByName(
             QName.create(namespace, "leaf-grouping-Y"));
-        assertFalse(leafYinGY.isAddedByUses());
         assertEquals(QName.create(expectedModule, "leaf-grouping-Y"), leafYinGY.getQName());
 
         // grouping-Z
@@ -434,7 +387,6 @@ public class GroupingTest extends AbstractModelTest {
         // grouping-Z/leaf-grouping-Z
         final LeafSchemaNode leafZinGZ = (LeafSchemaNode) gz.getDataChildByName(
             QName.create(namespace, "leaf-grouping-Z"));
-        assertFalse(leafZinGZ.isAddedByUses());
         assertEquals(QName.create(expectedModule, "leaf-grouping-Z"), leafZinGZ.getQName());
 
         // grouping-ZZ
@@ -444,7 +396,6 @@ public class GroupingTest extends AbstractModelTest {
         // grouping-ZZ/leaf-grouping-ZZ
         final LeafSchemaNode leafZZinGZZ = (LeafSchemaNode) gzz.getDataChildByName(
             QName.create(namespace, "leaf-grouping-ZZ"));
-        assertFalse(leafZZinGZZ.isAddedByUses());
         assertEquals(QName.create(expectedModule, "leaf-grouping-ZZ"), leafZZinGZZ.getQName());
     }
 
@@ -470,33 +421,5 @@ public class GroupingTest extends AbstractModelTest {
 
         assertNotNull(impType);
         assertEquals(leaf.getType().getQName(), impType.getQName());
-    }
-
-    private static void assertIsAddedByUses(final GroupingDefinition node, final boolean expected) {
-        assertEquals(expected, node.isAddedByUses());
-        for (DataSchemaNode child : node.getChildNodes()) {
-            assertIsAddedByUses(child, expected);
-        }
-    }
-
-    /**
-     * Check if node has addedByUses flag set to expected value. In case this is
-     * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
-     *
-     * @param node node to check
-     * @param expected expected value
-     */
-    private static void assertIsAddedByUses(final DataSchemaNode node, final boolean expected) {
-        assertEquals(expected, node.isAddedByUses());
-        if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node)
-                    .getChildNodes()) {
-                assertIsAddedByUses(child, expected);
-            }
-        } else if (node instanceof ChoiceSchemaNode) {
-            for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
-                assertIsAddedByUses(caseNode, expected);
-            }
-        }
     }
 }
