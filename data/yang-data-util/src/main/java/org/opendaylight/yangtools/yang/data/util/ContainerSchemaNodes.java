@@ -161,12 +161,6 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        @Deprecated(forRemoval = true)
-        public boolean isAddedByUses() {
-            return false;
-        }
-
-        @Override
         public Collection<? extends ActionDefinition> getActions() {
             return ImmutableSet.of();
         }
@@ -216,13 +210,6 @@ public final class ContainerSchemaNodes {
         @Override
         public DataSchemaNode dataChildByName(final QName name) {
             return mapNodes.get(requireNonNull(name));
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        public boolean isAddedByUses() {
-            //FIXME: reference to https://bugs.opendaylight.org/show_bug.cgi?id=6897
-            return false;
         }
 
         @Override

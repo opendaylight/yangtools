@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.util.List;
@@ -35,12 +34,8 @@ public class YT1212Test {
         final AnyxmlEffectiveStatement foo = module
             .findFirstEffectiveSubstatement(AnyxmlEffectiveStatement.class).orElseThrow();
 
-        // The statements should not be the same due SchemaPath being part of ActionDefinition
-        assertNotSame(foo, grpFoo);
-        // The statements are instantiated in the same module, hence they should have the same argument
-        assertSame(foo.argument(), grpFoo.argument());
-        // All substatements are context-independent, hence they get reused
-        assertSame(foo.effectiveSubstatements(), grpFoo.effectiveSubstatements());
+        // The statements do not significantly differ, hence they end up being reused completely
+        assertSame(foo, grpFoo);
     }
 
     @Test
@@ -54,12 +49,8 @@ public class YT1212Test {
         final LeafEffectiveStatement foo = module
             .findFirstEffectiveSubstatement(LeafEffectiveStatement.class).orElseThrow();
 
-        // The statements should not be the same due SchemaPath being part of LeafSchemaNode
-        assertNotSame(foo, grpFoo);
-        // The statements are instantiated in the same module, hence they should have the same argument
-        assertSame(foo.argument(), grpFoo.argument());
-        // The 'type' is not context-independent, but it being copy-insensitive and statements get reused
-        assertSame(foo.effectiveSubstatements(), grpFoo.effectiveSubstatements());
+        // The statements do not significantly differ, hence they end up being reused completely
+        assertSame(foo, grpFoo);
     }
 
     @Test

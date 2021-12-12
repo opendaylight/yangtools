@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
@@ -30,12 +28,7 @@ public class YT1195Test {
         final ListEffectiveStatement foo = module
             .findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
 
-        // The statements should not be the same due history being part of ListSchemaNode
-        assertNotSame(foo, grpFoo);
-        // The statements are instantiated in the same module, hence they should have the same argument
-        assertSame(foo.argument(), grpFoo.argument());
-        // The statements' key substatement should be reused
-        assertSame(foo.findFirstEffectiveSubstatement(KeyEffectiveStatement.class).orElseThrow(),
-            grpFoo.findFirstEffectiveSubstatement(KeyEffectiveStatement.class).orElseThrow());
+        // The statements do not significantly differ, hence they end up being reused completely
+        assertSame(foo, grpFoo);
     }
 }

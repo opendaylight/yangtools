@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -120,7 +119,6 @@ public class ControllerStmtParserTest {
         final QName groupingQName = QName.create("urn:opendaylight:params:xml:ns:yang:controller:config", "2013-04-05",
             "service-ref");
         assertEquals(groupingQName, uses.getSourceGrouping().getQName());
-        assertEquals(0, getChildNodeSizeWithoutUses(schemaServiceContainer));
 
         final DataSchemaNode type = schemaServiceContainer.getDataChildByName(QName.create(module.getQNameModule(),
             "type"));
@@ -138,15 +136,5 @@ public class ControllerStmtParserTest {
         assertEquals("sal:schema-service", typeUnknownSchemaNode.argument());
         assertEquals(QName.create(groupingQName, "required-identity"),
             typeUnknownSchemaNode.statementDefinition().getStatementName());
-    }
-
-    private static int getChildNodeSizeWithoutUses(final DataNodeContainer csn) {
-        int result = 0;
-        for (final DataSchemaNode dsn : csn.getChildNodes()) {
-            if (!dsn.isAddedByUses()) {
-                result++;
-            }
-        }
-        return result;
     }
 }

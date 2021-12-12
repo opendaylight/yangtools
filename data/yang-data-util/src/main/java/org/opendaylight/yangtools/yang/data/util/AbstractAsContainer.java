@@ -53,12 +53,6 @@ abstract class AbstractAsContainer extends ForwardingObject implements Container
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public final boolean isAddedByUses() {
-        return false;
-    }
-
-    @Override
     public final Optional<Boolean> effectiveConfig() {
         return Optional.empty();
     }
