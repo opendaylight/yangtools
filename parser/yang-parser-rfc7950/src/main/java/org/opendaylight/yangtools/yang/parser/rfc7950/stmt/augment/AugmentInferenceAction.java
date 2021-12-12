@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -101,8 +100,6 @@ final class AugmentInferenceAction implements InferenceAction {
 
     private void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final CopyType typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
-            ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
         /*
          * Since Yang 1.1, if an augmentation is made conditional with a
          * "when" statement, it is allowed to add mandatory nodes.
@@ -115,11 +112,12 @@ final class AugmentInferenceAction implements InferenceAction {
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
         for (final Mutable<?, ?, ?> originalStmtCtx : declared) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes,
+            copyStatement(originalStmtCtx, targetCtx, CopyType.ADDED_BY_AUGMENTATION, buffer, skipCheckOfMandatoryNodes,
                 unsupported || !originalStmtCtx.isSupportedByFeatures());
         }
         for (final Mutable<?, ?, ?> originalStmtCtx : effective) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes, unsupported);
+            copyStatement(originalStmtCtx, targetCtx, CopyType.ADDED_BY_AUGMENTATION, buffer, skipCheckOfMandatoryNodes,
+                unsupported);
         }
 
         targetCtx.addEffectiveSubstatements(buffer);
