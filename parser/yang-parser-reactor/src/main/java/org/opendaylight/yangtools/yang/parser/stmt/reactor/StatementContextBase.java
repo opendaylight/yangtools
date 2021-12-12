@@ -106,8 +106,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Top four bits, of which we define the topmost two to 0. We use the bottom two to encode last CopyType, aight?
     private static final int COPY_CHILD_TYPE_SHIFT       = 4;
 
+    private static final CopyType @NonNull [] COPY_TYPE_VALUES = CopyType.values();
+
     static {
-        final int copyTypes = CopyType.values().length;
+        final int copyTypes = COPY_TYPE_VALUES.length;
         // This implies CopyType.ordinal() is <= COPY_TYPE_MASK
         verify(copyTypes == COPY_LAST_TYPE_MASK + 1, "Unexpected %s CopyType values", copyTypes);
     }
@@ -231,12 +233,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public final CopyType getLastOperation() {
-        return CopyType.values()[bitsAight & COPY_LAST_TYPE_MASK];
+        return COPY_TYPE_VALUES[bitsAight & COPY_LAST_TYPE_MASK];
     }
 
     // This method exists only for space optimization of InferredStatementContext
     final CopyType childCopyType() {
-        return CopyType.values()[bitsAight >> COPY_CHILD_TYPE_SHIFT & COPY_LAST_TYPE_MASK];
+        return COPY_TYPE_VALUES[bitsAight >> COPY_CHILD_TYPE_SHIFT & COPY_LAST_TYPE_MASK];
     }
 
     //
