@@ -50,7 +50,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         }
 
         private static boolean equalHistory(final CopyHistory copy, final CopyHistory current) {
-            return copy.isAugmenting() == current.isAugmenting() && copy.isAddedByUses() == current.isAddedByUses();
+            return copy.isAugmenting() == current.isAugmenting();
         }
     }
 
