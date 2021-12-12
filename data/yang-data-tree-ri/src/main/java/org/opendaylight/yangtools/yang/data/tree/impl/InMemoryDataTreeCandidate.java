@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import com.google.common.base.MoreObjects;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 
 final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 

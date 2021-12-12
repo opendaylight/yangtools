@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
-import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
-import org.opendaylight.yangtools.yang.data.spi.tree.Version;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.slf4j.Logger;
