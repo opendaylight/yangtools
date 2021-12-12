@@ -93,11 +93,11 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      * @deprecated See deprecation notice in {@link AddedByUsesAware}
      */
-    @Deprecated(since = "7.0.9")
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public interface AddedByUsesMixin<A, D extends DeclaredStatement<A>>
             extends EffectiveStatementWithFlags<A, D>, AddedByUsesAware {
         @Override
-        @Deprecated(since = "7.0.9")
+        @Deprecated(since = "7.0.9", forRemoval = true)
         default boolean isAddedByUses() {
             return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
         }
@@ -457,7 +457,7 @@ public final class EffectiveStatementMixins {
             static final int MANDATORY            = 0x0004;
 
             static final int AUGMENTING           = 0x0010;
-            @Deprecated(since = "7.0.9")
+            @Deprecated(since = "7.0.9", forRemoval = true)
             static final int ADDED_BY_USES        = 0x0020;
             private static final int MASK_HISTORY = 0x0030;
 

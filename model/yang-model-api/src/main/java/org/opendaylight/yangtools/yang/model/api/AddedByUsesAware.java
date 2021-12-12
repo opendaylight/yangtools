@@ -16,7 +16,7 @@ import com.google.common.annotations.Beta;
  *             EffectiveStatement tree to reconstruct this information.
  */
 @Beta
-@Deprecated(since = "7.0.9")
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface AddedByUsesAware {
     /**
      * Returns {@code true} if this node was added by uses statement, otherwise returns {@code false}.
