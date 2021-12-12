@@ -18,12 +18,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeCon
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.spi.tree.MutableTreeNode;
-import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
-import org.opendaylight.yangtools.yang.data.spi.tree.TreeNodeFactory;
-import org.opendaylight.yangtools.yang.data.spi.tree.Version;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.IncorrectDataStructureException;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeFactory;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
