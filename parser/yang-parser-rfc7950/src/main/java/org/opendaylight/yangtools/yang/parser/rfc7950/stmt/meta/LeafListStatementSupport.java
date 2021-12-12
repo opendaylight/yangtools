@@ -139,7 +139,6 @@ public final class LeafListStatementSupport
         verify(stmt instanceof LeafListSchemaNode, "Unexpected statement %s", stmt);
         final var schema = (LeafListSchemaNode) stmt;
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
-            .setHistory(schema)
             .setStatus(schema.getStatus())
             .setConfiguration(schema.effectiveConfig().orElse(null))
             .setUserOrdered(schema.isUserOrdered())
@@ -149,7 +148,6 @@ public final class LeafListStatementSupport
     private static int computeFlags(final Current<?, ?> stmt,
         final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-            .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)

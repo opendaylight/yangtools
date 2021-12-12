@@ -144,7 +144,7 @@ public final class GroupingStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createGrouping(stmt.declared(), substatements, stmt.getArgument(),
-                EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements));
+                EffectiveStmtUtils.statusFlags(substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

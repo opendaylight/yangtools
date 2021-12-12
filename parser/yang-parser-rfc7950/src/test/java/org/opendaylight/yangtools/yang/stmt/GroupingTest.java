@@ -214,15 +214,11 @@ public class GroupingTest extends AbstractModelTest {
         assertNotEquals(data_u, data_g);
 
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) FOO.getDataChildByName(fooQName("how"));
-        assertFalse(how_u.isAugmenting());
         final Collection<? extends CaseSchemaNode> cases_u = how_u.getCases();
         assertEquals(2, cases_u.size());
         final CaseSchemaNode interval = how_u.findCaseNodes("interval").iterator().next();
-        assertFalse(interval.isAugmenting());
         final LeafSchemaNode name = (LeafSchemaNode) interval.getDataChildByName(fooQName("name"));
-        assertTrue(name.isAugmenting());
         final LeafSchemaNode intervalLeaf = (LeafSchemaNode) interval.getDataChildByName(fooQName("interval"));
-        assertFalse(intervalLeaf.isAugmenting());
 
         final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(bazQName("how"));
         assertNotEquals(how_u, how_g);

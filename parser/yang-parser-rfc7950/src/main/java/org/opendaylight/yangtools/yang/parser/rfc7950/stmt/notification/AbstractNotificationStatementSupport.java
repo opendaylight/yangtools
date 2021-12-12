@@ -55,7 +55,7 @@ abstract class AbstractNotificationStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createNotification(stmt.declared(), stmt.getArgument(),
-                EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), substatements);
+                EffectiveStmtUtils.statusFlags(substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -66,14 +66,13 @@ abstract class AbstractNotificationStatementSupport
     public final NotificationEffectiveStatement copyEffective(final Current<QName, NotificationStatement> stmt,
             final NotificationEffectiveStatement original) {
         return EffectiveStatements.copyNotification(original, stmt.getArgument(),
-            EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
+            EffectiveStmtUtils.statusFlags(original.effectiveSubstatements()));
     }
 
     @Override
     public final EffectiveStatementState extractEffectiveState(final NotificationEffectiveStatement stmt) {
         verify(stmt instanceof NotificationDefinition, "Unexpected statement %s", stmt);
         final var schema = (NotificationDefinition) stmt;
-        return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
-            EffectiveStmtUtils.historyAndStatusFlags(schema));
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), EffectiveStmtUtils.statusFlags(schema));
     }
 }

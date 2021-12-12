@@ -148,7 +148,7 @@ public final class UsesStatementSupport
         verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
         final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
 
-        final int flags = EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements);
+        final int flags = EffectiveStmtUtils.statusFlags(substatements);
         final QName argument = stmt.getArgument();
         final UsesStatement declared = stmt.declared();
 

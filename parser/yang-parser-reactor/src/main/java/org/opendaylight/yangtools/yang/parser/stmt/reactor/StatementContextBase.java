@@ -214,12 +214,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    @Deprecated(since = "8.0.0")
-    public final boolean isAugmenting() {
-        return (bitsAight & COPY_ADDED_BY_AUGMENTATION) != 0;
-    }
-
-    @Override
     public final CopyType getLastOperation() {
         return COPY_TYPE_VALUES[bitsAight & COPY_LAST_TYPE_MASK];
     }

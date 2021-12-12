@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithArgument;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.CopyableMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin.WithStatus;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
@@ -39,8 +38,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
  * growing instance size. That case is handled by {@link FullCopiedUsesEffectiveStatement}.
  */
 class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstatements<QName, UsesStatement>
-        implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, UsesStatement>,
-            WhenConditionMixin<QName, UsesStatement>, WithStatus<QName, UsesStatement> {
+        implements UsesEffectiveStatement, UsesNode,
+                   WhenConditionMixin<QName, UsesStatement>, WithStatus<QName, UsesStatement> {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final int flags;
 

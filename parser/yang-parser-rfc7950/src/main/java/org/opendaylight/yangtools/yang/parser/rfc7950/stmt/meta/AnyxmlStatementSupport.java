@@ -83,7 +83,6 @@ public final class AnyxmlStatementSupport
         verify(stmt instanceof AnyxmlSchemaNode, "Unexpected statement %s", stmt);
         final var schema = (AnyxmlSchemaNode) stmt;
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
-            .setHistory(schema)
             .setStatus(schema.getStatus())
             .setConfiguration(schema.effectiveConfig().orElse(null))
             .setMandatory(schema.isMandatory())
@@ -93,7 +92,6 @@ public final class AnyxmlStatementSupport
     private static int createFlags(final Current<QName, AnyxmlStatement> stmt,
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-            .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))

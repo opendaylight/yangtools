@@ -60,7 +60,6 @@ public class YangParserSimpleTest extends AbstractYangTest {
         assertEquals(Status.OBSOLETE, data.getStatus());
         assertEquals(0, data.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
-        assertFalse(data.isAugmenting());
         assertEquals(Optional.of(Boolean.FALSE), data.effectiveConfig());
 
         assertTrue(data.isMandatory());
@@ -106,7 +105,6 @@ public class YangParserSimpleTest extends AbstractYangTest {
         assertEquals(Status.OBSOLETE, anydata.getStatus());
         assertEquals(0, anydata.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
-        assertFalse(anydata.isAugmenting());
         assertEquals(Optional.of(Boolean.FALSE), anydata.effectiveConfig());
 
         assertTrue(anydata.isMandatory());
@@ -147,7 +145,6 @@ public class YangParserSimpleTest extends AbstractYangTest {
         assertEquals(Status.CURRENT, nodes.getStatus());
         assertEquals(0, nodes.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
-        assertFalse(nodes.isAugmenting());
         assertEquals(Optional.of(Boolean.FALSE), nodes.effectiveConfig());
 
         // constraints

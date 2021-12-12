@@ -100,7 +100,6 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Status.CURRENT, ifEntry.getStatus());
         assertEquals(0, ifEntry.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
-        assertFalse(ifEntry.isAugmenting());
         assertEquals(Optional.of(Boolean.TRUE), ifEntry.effectiveConfig());
         // :TODO augment to ifEntry have when condition and so in consequence
         // ifEntry should be a context node ?

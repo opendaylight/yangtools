@@ -56,9 +56,7 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
 
     @Override
     final @NonNull E copyDeclaredEffective(final Current<QName, D> stmt, final E original) {
-        return copyDeclaredEffective(
-            EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()), stmt,
-            original);
+        return copyDeclaredEffective(EffectiveStmtUtils.statusFlags(original.effectiveSubstatements()), stmt, original);
     }
 
     abstract @NonNull E copyDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
@@ -66,8 +64,7 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
 
     @Override
     final @NonNull E copyUndeclaredEffective(final Current<QName, D> stmt, final E original) {
-        return copyUndeclaredEffective(
-            EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()), stmt,
+        return copyUndeclaredEffective(EffectiveStmtUtils.statusFlags(original.effectiveSubstatements()), stmt,
             original);
     }
 
@@ -77,8 +74,7 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     final @NonNull E createDeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return createDeclaredEffective(
-                EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
+            return createDeclaredEffective(EffectiveStmtUtils.statusFlags(substatements), stmt, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -90,8 +86,7 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     @Override
     final E createUndeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createUndeclaredEffective(EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), stmt,
-            substatements);
+        return createUndeclaredEffective(EffectiveStmtUtils.statusFlags(substatements), stmt, substatements);
     }
 
     abstract @NonNull E createUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
@@ -101,6 +96,6 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     public final EffectiveStatementState extractEffectiveState(final E stmt) {
         verify(stmt instanceof ContainerLike, "Unexpected statement %s", stmt);
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
-            EffectiveStmtUtils.historyAndStatusFlags((ContainerLike) stmt));
+            EffectiveStmtUtils.statusFlags((ContainerLike) stmt));
     }
 }

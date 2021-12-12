@@ -21,7 +21,7 @@ final class OpenConfigVersionEffectiveStatementImpl
         implements OpenConfigVersionEffectiveStatement {
     OpenConfigVersionEffectiveStatementImpl(final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.argument(), substatements);
     }
 
     @Override

@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
@@ -167,8 +165,6 @@ public class AugmentProcessTest {
                 .create(ns, rev, "lock-type"));
 
         final CaseSchemaNode leafAugCase = lockType.findCaseNodes("leaf-aug-case").iterator().next();
-        assertTrue(leafAugCase.isAugmenting());
         final DataSchemaNode leafAug = leafAugCase.getDataChildByName(QName.create(nsAug, rev, "leaf-aug-case"));
-        assertFalse(leafAug.isAugmenting());
     }
 }

@@ -70,7 +70,6 @@ public class EffectiveSchemaContextTest {
         assertFalse(schemaContext.findModule("foo", Revision.of("2016-08-21")).isPresent());
         assertFalse(schemaContext.findModule(XMLNamespace.of("foo-namespace"), Revision.of("2016-08-21")).isPresent());
 
-        assertFalse(schemaContext.isAugmenting());
         assertEquals(Optional.empty(), schemaContext.effectiveConfig());
         assertFalse(schemaContext.getWhenCondition().isPresent());
         assertEquals(0, schemaContext.getMustConstraints().size());

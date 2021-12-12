@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -56,32 +55,31 @@ public class Bug6183Test {
         final CaseSchemaNode declCaseTwo = myChoice.findCase(foo("declared-case-two")).get();
 
         assertEquals(1, declCaseOne.getChildNodes().size());
-        assertFalse(getLeafSchemaNode(declCaseOne, "leaf-in-declare-case-one").isAugmenting());
+        getLeafSchemaNode(declCaseOne, "leaf-in-declare-case-one");
         assertEquals(1, declCaseTwo.getChildNodes().size());
-        assertFalse(getLeafSchemaNode(declCaseTwo, "leaf-in-declare-case-two").isAugmenting());
+        getLeafSchemaNode(declCaseTwo, "leaf-in-declare-case-two");
 
         assertEquals(2, implCase.getChildNodes().size());
-        assertTrue(getLeafSchemaNode(implCase, "leaf-after-container").isAugmenting());
+        getLeafSchemaNode(implCase, "leaf-after-container");
         final ContainerSchemaNode implCaseContainer = getContainerSchemaNode(implCase, "implicit-case-container");
 
         assertEquals(3, implCaseContainer.getChildNodes().size());
-        assertTrue(getLeafSchemaNode(implCaseContainer, "leaf-inside-container").isAugmenting());
-        assertFalse(getLeafSchemaNode(implCaseContainer, "declared-leaf-in-case-container").isAugmenting());
+        getLeafSchemaNode(implCaseContainer, "leaf-inside-container");
+        getLeafSchemaNode(implCaseContainer, "declared-leaf-in-case-container");
         final ContainerSchemaNode declContInCaseCont = getContainerSchemaNode(implCaseContainer,
                 "declared-container-in-case-container");
 
         assertEquals(1, declContInCaseCont.getChildNodes().size());
-        assertFalse(getLeafSchemaNode(declContInCaseCont, "declared-leaf").isAugmenting());
+        getLeafSchemaNode(declContInCaseCont, "declared-leaf");
 
         assertEquals(2, secondImplCase.getChildNodes().size());
-        assertTrue(getLeafSchemaNode(secondImplCase, "leaf-after-second-container").isAugmenting());
+        getLeafSchemaNode(secondImplCase, "leaf-after-second-container");
         final ContainerSchemaNode secondImplCaseContainer = getContainerSchemaNode(secondImplCase,
                 "second-implicit-case-container");
 
         assertEquals(2, secondImplCaseContainer.getChildNodes().size());
-        assertTrue(getLeafSchemaNode(secondImplCaseContainer, "leaf-inside-second-container").isAugmenting());
-        assertFalse(getLeafSchemaNode(secondImplCaseContainer, "declared-leaf-in-second-case-container")
-            .isAugmenting());
+        getLeafSchemaNode(secondImplCaseContainer, "leaf-inside-second-container");
+        getLeafSchemaNode(secondImplCaseContainer, "declared-leaf-in-second-case-container");
     }
 
     private static ContainerSchemaNode getContainerSchemaNode(final DataNodeContainer parent,

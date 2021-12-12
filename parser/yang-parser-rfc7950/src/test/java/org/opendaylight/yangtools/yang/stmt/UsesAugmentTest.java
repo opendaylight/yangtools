@@ -172,7 +172,6 @@ public class UsesAugmentTest extends AbstractYangTest {
                 testModule.getQNameModule(), "order"));
         assertNotNull(order);
         assertEquals(QName.create(UG, "order"), order.getQName());
-        assertTrue(order.isAugmenting());
         assertEquals(2, order.getChildNodes().size());
         // * |-- |-- |-- |-- |-- leaf delete
         final LeafSchemaNode delete = (LeafSchemaNode) order.getDataChildByName(QName.create(
@@ -221,13 +220,11 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertEquals(QName.create(UG, "version"), version.getQName());
         assertTrue(version.getType() instanceof Uint8TypeDefinition);
         assertEquals(BaseTypes.uint8Type(), version.getType().getBaseType().getBaseType());
-        assertTrue(version.isAugmenting());
         // * |-- |-- |-- |-- |-- leaf type
         type = (LeafSchemaNode) pathKeys.getDataChildByName(QName.create(testModule.getQNameModule(), "type"));
         assertNotNull(type);
         assertEquals(QName.create(UG, "type"), type.getQName());
         assertTrue(type.getType() instanceof UnionTypeDefinition);
-        assertTrue(type.isAugmenting());
         // * |-- |-- container segment-computation
         final ContainerSchemaNode sc = (ContainerSchemaNode) requests.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "segment-computation"));

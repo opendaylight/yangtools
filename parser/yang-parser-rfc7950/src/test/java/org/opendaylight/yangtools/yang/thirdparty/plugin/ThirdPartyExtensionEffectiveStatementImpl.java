@@ -21,7 +21,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
 
     ThirdPartyExtensionEffectiveStatementImpl(final Current<String, ThirdPartyExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.argument(), substatements);
         valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, Empty.value());
     }
 

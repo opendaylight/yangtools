@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -66,9 +65,6 @@ public class AugmentTest extends AbstractYangTest {
 
         final Collection<? extends DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(4, augmentChildren.size());
-        for (final DataSchemaNode dsn : augmentChildren) {
-            checkIsAugmenting(dsn, false);
-        }
 
         final LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augment.getDataChildByName(QName.create(
                 module1.getQNameModule(), "ds0ChannelNumber"));
@@ -86,21 +82,17 @@ public class AugmentTest extends AbstractYangTest {
 
         // leaf ds0ChannelNumber
         assertEquals(QName.create(FOO, "ds0ChannelNumber"), ds0ChannelNumber.getQName());
-        assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
         assertEquals(TypeDefinitions.STRING, ds0ChannelNumber.getType().getQName());
 
         // leaf interface-id
         assertEquals(QName.create(FOO, "interface-id"), interfaceId.getQName());
-        assertFalse(interfaceId.isAugmenting());
 
         // container schemas
         assertEquals(QName.create(FOO, "schemas"), schemas.getQName());
-        assertFalse(schemas.isAugmenting());
 
         // choice odl
         assertEquals(QName.create(FOO, "odl"), odl.getQName());
-        assertFalse(odl.isAugmenting());
 
         // baz.yang
         final Module module3 = AUGMENT_IN_AUGMENT.findModules("baz").iterator().next();
@@ -150,7 +142,6 @@ public class AugmentTest extends AbstractYangTest {
         // augment "/br:interfaces/br:ifEntry" {
         final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(BAZ,
                 "augment-holder"));
-        checkIsAugmenting(augmentHolder, true);
         assertEquals(Q2, augmentHolder.getQName());
 
         // foo.yang
@@ -190,7 +181,6 @@ public class AugmentTest extends AbstractYangTest {
                 module2.getQNameModule(), "ifEntry"));
         final ContainerSchemaNode augmentedHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(
                 BAZ, "augment-holder"));
-        checkIsAugmenting(augmentedHolder, true);
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
@@ -281,7 +271,6 @@ public class AugmentTest extends AbstractYangTest {
                 "arguments"));
         final QName argumentsQName = QName.create(NS_BAR, revision, "arguments");
         assertEquals(argumentsQName, arguments.getQName());
-        assertFalse(arguments.isAugmenting());
         final Collection<? extends CaseSchemaNode> cases = arguments.getCases();
         assertEquals(3, cases.size());
 
@@ -300,10 +289,6 @@ public class AugmentTest extends AbstractYangTest {
         assertNotNull(attach);
         assertNotNull(create);
         assertNotNull(destroy);
-
-        assertTrue(attach.isAugmenting());
-        assertTrue(create.isAugmenting());
-        assertTrue(destroy.isAugmenting());
 
         // case attach
         assertEquals(QName.create(NS_FOO, revision, "attach"), attach.getQName());
@@ -339,26 +324,5 @@ public class AugmentTest extends AbstractYangTest {
         assertEquals(1, augments.size());
         assertEquals(1, node.getChildNodes().size());
         final LeafSchemaNode id = (LeafSchemaNode) node.getDataChildByName(QName.create(test.getQNameModule(), "id"));
-        assertTrue(id.isAugmenting());
-    }
-
-    /**
-     * Test if node has augmenting flag set to expected value. In case this is  DataNodeContainer/ChoiceNode, check its
-     * child nodes/case nodes too.
-     *
-     * @param node node to check
-     * @param expected expected value
-     */
-    private static void checkIsAugmenting(final DataSchemaNode node, final boolean expected) {
-        assertEquals(expected, node.isAugmenting());
-        if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
-                checkIsAugmenting(child, expected);
-            }
-        } else if (node instanceof ChoiceSchemaNode) {
-            for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
-                checkIsAugmenting(caseNode, expected);
-            }
-        }
     }
 }

@@ -105,7 +105,6 @@ public final class LeafStatementSupport
         verify(stmt instanceof LeafSchemaNode, "Unexpected statement %s", stmt);
         final var schema = (LeafSchemaNode) stmt;
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
-            .setHistory(schema)
             .setStatus(schema.getStatus())
             .setConfiguration(schema.effectiveConfig().orElse(null))
             .setMandatory(schema.isMandatory())
@@ -115,7 +114,6 @@ public final class LeafStatementSupport
     private static int computeFlags(final Current<?, ?> stmt,
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-            .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))

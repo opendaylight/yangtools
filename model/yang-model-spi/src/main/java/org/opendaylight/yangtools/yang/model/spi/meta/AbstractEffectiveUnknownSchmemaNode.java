@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -33,15 +32,12 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
     private final @NonNull D declared;
     private final @NonNull A argument;
-    private final boolean augmenting;
 
     protected AbstractEffectiveUnknownSchmemaNode(final @NonNull D declared, final A argument,
-            final CopyableNode history,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         this.argument = requireNonNull(argument);
         this.declared = requireNonNull(declared);
         this.substatements = requireNonNull(substatements);
-        this.augmenting = history.isAugmenting();
     }
 
     @Override
@@ -68,12 +64,6 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
     public final String getNodeParameter() {
         final String rawArgument = getDeclared().rawArgument();
         return rawArgument == null ? "" : rawArgument;
-    }
-
-    @Deprecated
-    @Override
-    public final boolean isAugmenting() {
-        return augmenting;
     }
 
     @SuppressWarnings("unchecked")

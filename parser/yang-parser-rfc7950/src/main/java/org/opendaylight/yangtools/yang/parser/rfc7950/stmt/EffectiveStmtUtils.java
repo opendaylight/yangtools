@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -203,10 +202,8 @@ public final class EffectiveStmtUtils {
         }
     }
 
-    public static int historyAndStatusFlags(final CopyableNode history,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+    public static int statusFlags(final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-                .setHistory(history)
                 .setStatus(substatements.stream()
                     .filter(StatusEffectiveStatement.class::isInstance)
                     .findAny()
@@ -215,7 +212,7 @@ public final class EffectiveStmtUtils {
                 .toFlags();
     }
 
-    public static <T extends CopyableNode & DocumentedNode.WithStatus> int historyAndStatusFlags(final T stmt) {
-        return new FlagsBuilder().setHistory(stmt).setStatus(stmt.getStatus()).toFlags();
+    public static int statusFlags(final DocumentedNode.WithStatus stmt) {
+        return new FlagsBuilder().setStatus(stmt.getStatus()).toFlags();
     }
 }

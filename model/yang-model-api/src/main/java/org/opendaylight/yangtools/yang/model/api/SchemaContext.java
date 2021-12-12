@@ -239,12 +239,6 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     @Deprecated
-    default boolean isAugmenting() {
-        return false;
-    }
-
-    @Override
-    @Deprecated
     default Optional<Boolean> effectiveConfig() {
         return Optional.empty();
     }

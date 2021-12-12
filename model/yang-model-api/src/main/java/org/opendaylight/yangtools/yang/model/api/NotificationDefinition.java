@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * Interface describing YANG 'notification' statement. The notification
  * statement is used to define a NETCONF notification.
  */
-public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget, CopyableNode,
-        MustConstraintAware, EffectiveStatementEquivalent<NotificationEffectiveStatement> {
+public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget, MustConstraintAware,
+        EffectiveStatementEquivalent<NotificationEffectiveStatement> {
 
 }

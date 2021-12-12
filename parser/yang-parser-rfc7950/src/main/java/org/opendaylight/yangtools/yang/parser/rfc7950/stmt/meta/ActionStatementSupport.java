@@ -111,7 +111,7 @@ public final class ActionStatementSupport extends
 
         try {
             return EffectiveStatements.createAction(stmt.declared(), stmt.getArgument(),
-                EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), substatements);
+                EffectiveStmtUtils.statusFlags(substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -121,15 +121,14 @@ public final class ActionStatementSupport extends
     public ActionEffectiveStatement copyEffective(final Current<QName, ActionStatement> stmt,
             final ActionEffectiveStatement original) {
         return EffectiveStatements.copyAction(original, stmt.getArgument(),
-            EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
+            EffectiveStmtUtils.statusFlags(original.effectiveSubstatements()));
     }
 
     @Override
     public EffectiveStatementState extractEffectiveState(final ActionEffectiveStatement stmt) {
         verify(stmt instanceof ActionDefinition, "Unexpected statement %s", stmt);
         final var schema = (ActionDefinition) stmt;
-        return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
-            EffectiveStmtUtils.historyAndStatusFlags(schema));
+        return new QNameWithFlagsEffectiveStatementState(stmt.argument(), EffectiveStmtUtils.statusFlags(schema));
     }
 
     private static void appendImplicitSubstatement(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt,

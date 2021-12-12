@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 
 /**
  * Reactor's view of significant semantic history of a particular statement.
@@ -17,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 @Beta
 @NonNullByDefault
 // FIXME: YANGTOOLS-1150: this should live in yang-reactor-api
-public interface CopyHistory extends CopyableNode {
+public interface CopyHistory {
     /**
      * Return the last copy operation in this history.
      *

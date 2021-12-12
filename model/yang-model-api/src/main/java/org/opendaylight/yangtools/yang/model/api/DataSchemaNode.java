@@ -28,7 +28,7 @@ import java.util.Optional;
  * @see AnyxmlSchemaNode
  * @see AnydataSchemaNode
  */
-public interface DataSchemaNode extends SchemaNode, CopyableNode, WhenConditionAware {
+public interface DataSchemaNode extends SchemaNode, WhenConditionAware {
     /**
      * Returns {@code true} if the data represents configuration data, otherwise returns {@code false}.
      *

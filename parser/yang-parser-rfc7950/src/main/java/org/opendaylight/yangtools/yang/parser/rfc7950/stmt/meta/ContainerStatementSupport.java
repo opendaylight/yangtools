@@ -138,7 +138,6 @@ public final class ContainerStatementSupport
         verify(stmt instanceof ContainerSchemaNode, "Unexpected statement %s", stmt);
         final var schema = (ContainerSchemaNode) stmt;
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
-            .setHistory(schema)
             .setStatus(schema.getStatus())
             .setConfiguration(schema.effectiveConfig().orElse(null))
             .setPresence(schema.isPresenceContainer())
@@ -148,7 +147,6 @@ public final class ContainerStatementSupport
     private static int createFlags(final Current<?, ?> stmt,
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-            .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)

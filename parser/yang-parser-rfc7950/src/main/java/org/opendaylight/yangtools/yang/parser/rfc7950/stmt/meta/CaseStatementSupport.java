@@ -147,7 +147,6 @@ public final class CaseStatementSupport
         verify(stmt instanceof CaseSchemaNode, "Unexpected statement %s", stmt);
         final var schema = (CaseSchemaNode) stmt;
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
-            .setHistory(schema)
             .setStatus(schema.getStatus())
             .setConfiguration(schema.effectiveConfig().orElse(null))
             .toFlags());
@@ -176,10 +175,9 @@ public final class CaseStatementSupport
         }
 
         return new FlagsBuilder()
-                .setHistory(stmt.history())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(config)
-                .toFlags();
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(config)
+            .toFlags();
     }
 
     @SuppressFBWarnings(value = "NP_BOOLEAN_RETURN_NULL", justification = "Internal use tagged with @Nullable")
