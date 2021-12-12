@@ -149,9 +149,12 @@ public final class EffectiveStatementMixins {
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
+     * @deprecated Scheduled for removal with {@link CopyableNode}.
      */
+    @Deprecated(since = "8.0.0")
     public interface CopyableMixin<A, D extends DeclaredStatement<A>> extends AddedByUsesMixin<A, D>, CopyableNode {
         @Override
+        @Deprecated(since = "8.0.0")
         default boolean isAugmenting() {
             return (flags() & FlagsBuilder.AUGMENTING) != 0;
         }
