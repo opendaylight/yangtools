@@ -44,7 +44,7 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         // Modified children add added by superclass. Here we filter the other children.
         return super.addToStringAttributes(helper).add("untouched", Collections2.filter(castData().body(),
             input -> getModifiedChild(input.getIdentifier()) == null));
