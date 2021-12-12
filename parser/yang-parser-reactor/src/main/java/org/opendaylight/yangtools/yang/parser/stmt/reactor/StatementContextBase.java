@@ -328,27 +328,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return shrinkEffective(effective);
     }
 
-    // YANG example: RPC/action statements always have 'input' and 'output' defined
-    @Beta
-    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> @NonNull Mutable<X, Y, Z>
-            appendImplicitSubstatement(final StatementSupport<X, Y, Z> support, final String rawArg) {
+    @Override
+    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            Mutable<X, Y, Z> addEffectiveSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
         //                       StatementContextBase subclass.
         final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
-                ImplicitSubstatement.of(sourceReference()), rawArg);
+                ImplicitSubstatement.of(sourceReference()), arg);
         support.onStatementAdded(ret);
         addEffectiveSubstatement(ret);
         return ret;
     }
-
-    /**
-     * Adds an effective statement to collection of substatements.
-     *
-     * @param substatement substatement
-     * @throws IllegalStateException if added in declared phase
-     * @throws NullPointerException if statement parameter is null
-     */
-    public abstract void addEffectiveSubstatement(Mutable<?, ?, ?> substatement);
 
     final List<ReactorStmtCtx<?, ?, ?>> addEffectiveSubstatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final Mutable<?, ?, ?> substatement) {
@@ -361,15 +351,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return resized;
     }
 
-    /**
-     * Adds an effective statement to collection of substatements.
-     *
-     * @param statements substatements
-     * @throws IllegalStateException
-     *             if added in declared phase
-     * @throws NullPointerException
-     *             if statement parameter is null
-     */
+    @Override
     public final void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
         if (!statements.isEmpty()) {
             statements.forEach(StatementContextBase::verifyStatement);

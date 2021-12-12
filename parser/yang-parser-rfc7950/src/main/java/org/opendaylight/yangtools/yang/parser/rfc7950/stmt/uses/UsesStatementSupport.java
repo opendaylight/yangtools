@@ -102,17 +102,16 @@ public final class UsesStatementSupport
 
         final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
                 GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Prerequisite<? extends StmtContext.Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
+        final Prerequisite<? extends Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
                 usesNode.getParentContext());
 
         usesAction.apply(new InferenceAction() {
 
             @Override
             public void apply(final InferenceContext ctx) {
-                final StatementContextBase<?, ?, ?> targetNodeStmtCtx =
-                        (StatementContextBase<?, ?, ?>) targetNodePre.resolve(ctx);
-                final StatementContextBase<?, ?, ?> sourceGrpStmtCtx =
-                        (StatementContextBase<?, ?, ?>) sourceGroupingPre.resolve(ctx);
+                final Mutable<?, ?, ?> targetNodeStmtCtx = targetNodePre.resolve(ctx);
+                // FIXME: remove this ugly cast, StmtContext should be enough
+                final Mutable<?, ?, ?> sourceGrpStmtCtx = (Mutable<?, ?, ?>) sourceGroupingPre.resolve(ctx);
 
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                 resolveUsesNode(usesNode, targetNodeStmtCtx);
@@ -196,8 +195,7 @@ public final class UsesStatementSupport
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx,
-            final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
+            final Mutable<?, ?, ?> targetCtx, final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
         final Collection<? extends Mutable<?, ?, ?>> declared = sourceGrpStmtCtx.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = sourceGrpStmtCtx.mutableEffectiveSubstatements();
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());

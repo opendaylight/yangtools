@@ -62,6 +62,7 @@ final class AugmentInferenceAction implements InferenceAction {
 
     @Override
     public void apply(final InferenceContext ctx) {
+        // FIXME: this cast should not be need
         final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.resolve(ctx);
         if (!isSupportedAugmentTarget(augmentTargetCtx)
                 || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
