@@ -42,8 +42,7 @@ public final class MountPointStatementSupport
         super(SchemaMountStatements.MOUNT_POINT, StatementPolicy.copyDeclared((copy, current, substatements) ->
             copy.getArgument().equals(current.getArgument())
             // Implied by UnknownSchemaNode
-            && copy.history().isAugmenting() == current.history().isAugmenting()
-            && copy.history().isAddedByUses() == current.history().isAddedByUses()), config, VALIDATOR);
+            && copy.history().isAugmenting() == current.history().isAugmenting()), config, VALIDATOR);
     }
 
     // FIXME: these two methods are not quite right. RFC8528 states that:

@@ -77,9 +77,7 @@ public final class GroupingStatementSupport
 
     GroupingStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.GROUPING, StatementPolicy.copyDeclared(
-            (copy, current, substatements) ->
-                copy.history().isAddedByUses() == current.history().isAddedByUses()
-                && copy.getArgument().equals(current.getArgument())), config, validator);
+            (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())), config, validator);
     }
 
     public static @NonNull GroupingStatementSupport rfc6020Instance(final YangParserConfiguration config) {

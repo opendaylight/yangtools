@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.util.List;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 public class YT1208Test {
     @Test
@@ -192,8 +190,7 @@ public class YT1208Test {
             .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow();
         final ContainerEffectiveStatement foo = module
             .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow();
-        assertNotSame(foo, grpFoo);
-        assertSame(foo.findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow(),
-            grpFoo.findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow());
+        // The statements do not significantly differ, hence they end up being reused completely
+        assertSame(foo, grpFoo);
     }
 }
