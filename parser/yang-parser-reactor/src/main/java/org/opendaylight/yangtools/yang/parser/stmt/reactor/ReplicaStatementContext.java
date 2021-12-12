@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -173,6 +174,12 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     boolean doTryToCompletePhase(final byte executionOrder) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            Mutable<X, Y, Z> addEffectiveSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         throw new UnsupportedOperationException();
     }
 
