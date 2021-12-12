@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
  * Instances of this class report all children as absent, subtree version
  * equal to this node's version and do not support mutable view.
  */
-final class ValueNode extends AbstractTreeNode {
+final class ValueNode extends TreeNode {
     private static final Logger LOG = LoggerFactory.getLogger(ValueNode.class);
 
-    protected ValueNode(final NormalizedNode data, final Version version) {
+    ValueNode(final NormalizedNode data, final Version version) {
         super(data, version);
     }
 
@@ -46,7 +46,7 @@ final class ValueNode extends AbstractTreeNode {
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("value", getData());
     }
 }

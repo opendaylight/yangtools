@@ -16,17 +16,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A TreeNode capable of holding child nodes. The fact that any of the children
  * changed is tracked by the subtree version.
  */
-abstract class AbstractContainerNode extends AbstractTreeNode {
-    protected AbstractContainerNode(final NormalizedNode data, final Version version) {
+abstract class AbstractContainerNode extends TreeNode {
+    AbstractContainerNode(final NormalizedNode data, final Version version) {
         super(data, version);
     }
 
     @SuppressWarnings("unchecked")
-    protected final DistinctNodeContainer<PathArgument, NormalizedNode> castData() {
+    final DistinctNodeContainer<PathArgument, NormalizedNode> castData() {
         return (DistinctNodeContainer<PathArgument, NormalizedNode>) getData();
     }
 
-    protected final @Nullable TreeNode getChildFromData(final PathArgument childId) {
+    final @Nullable TreeNode getChildFromData(final PathArgument childId) {
         // We do not cache the instantiated node as it is dirt cheap
         return getChildFromData(castData(), childId, getVersion());
     }
