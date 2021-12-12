@@ -13,11 +13,11 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateTip;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeTip;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 
 abstract class AbstractDataTreeTip implements DataTreeTip {
     /**
