@@ -29,7 +29,7 @@ public class TreeNodeFactoryTest {
     public void testNormalizedNodeContainer() {
         final ContainerNode data = Mockito.mock(ContainerNode.class);
         final Version version = Version.initial();
-        final TreeNode node = TreeNodeFactory.createTreeNode(data, version);
+        final TreeNode node = TreeNode.of(data, version);
 
         assertTrue(node instanceof SimpleContainerNode);
         checkTreeNode(node, data, version);
@@ -39,7 +39,7 @@ public class TreeNodeFactoryTest {
     public void testOrderedNodeContainer() {
         final UserMapNode data = Mockito.mock(UserMapNode.class);
         final Version version = Version.initial();
-        final TreeNode node = TreeNodeFactory.createTreeNode(data, version);
+        final TreeNode node = TreeNode.of(data, version);
 
         assertTrue(node instanceof SimpleContainerNode);
         checkTreeNode(node, data, version);
@@ -49,7 +49,7 @@ public class TreeNodeFactoryTest {
     public void testLeaf() {
         final LeafNode<?> data = Mockito.mock(LeafNode.class);
         final Version version = Version.initial();
-        final TreeNode node = TreeNodeFactory.createTreeNode(data, version);
+        final TreeNode node = TreeNode.of(data, version);
 
         assertTrue(node instanceof ValueNode);
         checkTreeNode(node, data, version);

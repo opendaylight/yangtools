@@ -14,7 +14,9 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
@@ -42,6 +44,25 @@ public abstract class TreeNode implements Identifiable<PathArgument>, StoreTreeN
     TreeNode(final NormalizedNode data, final Version version) {
         this.data = requireNonNull(data);
         this.version = requireNonNull(version);
+    }
+
+    /**
+     * Create a new AbstractTreeNode from a data node.
+     *
+     * @param data data node
+     * @param version data node version
+     * @return new AbstractTreeNode instance, covering the data tree provided
+     */
+    public static final TreeNode of(final NormalizedNode data, final Version version) {
+        if (data instanceof DistinctNodeContainer) {
+            @SuppressWarnings("unchecked")
+            final DistinctNodeContainer<?, NormalizedNode> container = (DistinctNodeContainer<?, NormalizedNode>) data;
+            return new SimpleContainerNode(container, version);
+        } else if (data instanceof OrderedNodeContainer) {
+            return new SimpleContainerNode(data, version);
+        } else {
+            return new ValueNode(data, version);
+        }
     }
 
     @Override
