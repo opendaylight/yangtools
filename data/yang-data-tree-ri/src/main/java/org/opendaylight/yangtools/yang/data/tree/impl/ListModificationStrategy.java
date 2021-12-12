@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -70,7 +69,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
+        final TreeNode newValueMeta = TreeNode.of(newValue, version);
         if (modification.getChildren().isEmpty()) {
             return newValueMeta;
         }

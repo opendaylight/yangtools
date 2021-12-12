@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 /**
@@ -101,7 +100,7 @@ final class AutomaticLifecycleMixin {
     }
 
     private static Optional<TreeNode> fakeMeta(final NormalizedNode emptyNode, final Version version) {
-        return Optional.of(TreeNodeFactory.createTreeNode(emptyNode, version));
+        return Optional.of(TreeNode.of(emptyNode, version));
     }
 
     private static boolean isEmpty(final TreeNode treeNode) {

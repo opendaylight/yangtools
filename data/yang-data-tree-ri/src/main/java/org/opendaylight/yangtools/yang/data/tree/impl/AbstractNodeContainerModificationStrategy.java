@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.ModifiedNodeDoesNotExistExc
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
@@ -165,7 +164,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
+        final TreeNode newValueMeta = TreeNode.of(newValue, version);
 
         if (modification.getChildren().isEmpty()) {
             return newValueMeta;
@@ -195,7 +194,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
-        return TreeNodeFactory.createTreeNode(result.getData(), version);
+        return TreeNode.of(result.getData(), version);
     }
 
     /**
@@ -386,7 +385,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     static final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
-        return TreeNodeFactory.createTreeNode(emptyNode, FAKE_VERSION);
+        return TreeNode.of(emptyNode, FAKE_VERSION);
     }
 
     @Override
