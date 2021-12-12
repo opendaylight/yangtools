@@ -22,18 +22,18 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     private final Map<PathArgument, TreeNode> children;
     private final Version subtreeVersion;
 
-    protected AbstractModifiedContainerNode(final NormalizedNode data, final Version version,
+    AbstractModifiedContainerNode(final NormalizedNode data, final Version version,
             final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
         super(data, version);
         this.subtreeVersion = requireNonNull(subtreeVersion);
         this.children = requireNonNull(children);
     }
 
-    protected final TreeNode getModifiedChild(final PathArgument childId) {
+    final TreeNode getModifiedChild(final PathArgument childId) {
         return children.get(childId);
     }
 
-    protected final Map<PathArgument, TreeNode> snapshotChildren() {
+    final Map<PathArgument, TreeNode> snapshotChildren() {
         return MapAdaptor.getDefaultInstance().takeSnapshot(children);
     }
 
@@ -43,7 +43,7 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("subtreeVersion", subtreeVersion).add("children", children);
     }
 }
