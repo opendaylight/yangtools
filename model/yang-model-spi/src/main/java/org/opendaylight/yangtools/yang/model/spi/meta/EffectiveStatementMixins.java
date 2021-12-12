@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
@@ -87,23 +86,6 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link AddedByUsesAware}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     * @deprecated See deprecation notice in {@link AddedByUsesAware}
-     */
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public interface AddedByUsesMixin<A, D extends DeclaredStatement<A>>
-            extends EffectiveStatementWithFlags<A, D>, AddedByUsesAware {
-        @Override
-        @Deprecated(since = "7.0.9", forRemoval = true)
-        default boolean isAddedByUses() {
-            return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
-        }
-    }
-
-    /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link ActionNodeContainer}.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -150,7 +132,8 @@ public final class EffectiveStatementMixins {
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public interface CopyableMixin<A, D extends DeclaredStatement<A>> extends AddedByUsesMixin<A, D>, CopyableNode {
+    public interface CopyableMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatementWithFlags<A, D>,
+            CopyableNode {
         @Override
         default boolean isAugmenting() {
             return (flags() & FlagsBuilder.AUGMENTING) != 0;
@@ -457,9 +440,7 @@ public final class EffectiveStatementMixins {
             static final int MANDATORY            = 0x0004;
 
             static final int AUGMENTING           = 0x0010;
-            @Deprecated(since = "7.0.9", forRemoval = true)
-            static final int ADDED_BY_USES        = 0x0020;
-            private static final int MASK_HISTORY = 0x0030;
+            private static final int MASK_HISTORY = 0x0010;
 
             static final int USER_ORDERED         = 0x0040;
             static final int PRESENCE             = 0x0080;
@@ -483,8 +464,7 @@ public final class EffectiveStatementMixins {
             }
 
             public FlagsBuilder setHistory(final CopyableNode history) {
-                flags = flags & ~MASK_HISTORY
-                    | (history.isAugmenting() ? AUGMENTING : 0) | (history.isAddedByUses() ? ADDED_BY_USES : 0);
+                flags = flags & ~MASK_HISTORY | (history.isAugmenting() ? AUGMENTING : 0);
                 return this;
             }
 

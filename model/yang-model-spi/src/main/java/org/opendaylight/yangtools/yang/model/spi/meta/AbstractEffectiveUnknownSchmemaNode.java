@@ -33,8 +33,6 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
     private final @NonNull D declared;
     private final @NonNull A argument;
-    @Deprecated(since = "7.0.9")
-    private final boolean addedByUses;
     private final boolean augmenting;
 
     protected AbstractEffectiveUnknownSchmemaNode(final @NonNull D declared, final A argument,
@@ -44,7 +42,6 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
         this.declared = requireNonNull(declared);
         this.substatements = requireNonNull(substatements);
         this.augmenting = history.isAugmenting();
-        this.addedByUses = history.isAddedByUses();
     }
 
     @Override
@@ -71,12 +68,6 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
     public final String getNodeParameter() {
         final String rawArgument = getDeclared().rawArgument();
         return rawArgument == null ? "" : rawArgument;
-    }
-
-    @Deprecated(forRemoval = true)
-    @Override
-    public final boolean isAddedByUses() {
-        return addedByUses;
     }
 
     @Deprecated
