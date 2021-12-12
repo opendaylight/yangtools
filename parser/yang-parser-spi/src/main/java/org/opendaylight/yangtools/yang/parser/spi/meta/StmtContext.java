@@ -334,6 +334,29 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         void addRequiredSource(SourceIdentifier dependency);
 
+        /**
+         * Adds an effective statement to collection of substatements.
+         *
+         * @param substatement substatement
+         * @throws IllegalStateException if added in declared phase
+         * @throws NullPointerException if statement parameter is null
+         */
+        void addEffectiveSubstatement(Mutable<?, ?, ?> substatement);
+
+        /**
+         * Adds an effective statement to collection of substatements.
+         *
+         * @param statements substatements
+         * @throws IllegalStateException if added in declared phase
+         * @throws NullPointerException if statement parameter is null
+         */
+        void addEffectiveSubstatements(Collection<? extends Mutable<?, ?, ?>> statements);
+
+        // YANG example: RPC/action statements always have 'input' and 'output' defined
+        @Beta
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @NonNull Mutable<X, Y, Z> addEffectiveSubstatement(StatementSupport<X, Y, Z> support, @Nullable X arg);
+
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
 
         /**

@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class ActionStatementSupport extends
         AbstractSchemaTreeStatementSupport<ActionStatement, ActionEffectiveStatement> {
@@ -82,7 +81,6 @@ public final class ActionStatementSupport extends
     public void onFullDefinitionDeclared(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        verify(stmt instanceof StatementContextBase);
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
             appendImplicitSubstatement(stmt, YangStmtMapping.INPUT.getStatementName());
         }
@@ -134,7 +132,7 @@ public final class ActionStatementSupport extends
 
     private static void appendImplicitSubstatement(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt,
             final QName substatementName) {
-        ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
+        stmt.addEffectiveSubstatement(
             verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null);
     }
 }
