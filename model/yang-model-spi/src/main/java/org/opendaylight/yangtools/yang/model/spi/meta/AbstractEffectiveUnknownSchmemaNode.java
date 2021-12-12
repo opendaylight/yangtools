@@ -73,7 +73,7 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
         return rawArgument == null ? "" : rawArgument;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @Override
     public final boolean isAddedByUses() {
         return addedByUses;

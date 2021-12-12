@@ -99,7 +99,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Bottom 4 bits, encoding a CopyHistory, aight?
     private static final byte COPY_ORIGINAL              = 0x00;
     private static final byte COPY_LAST_TYPE_MASK        = 0x03;
-    @Deprecated(since = "7.0.9")
+    @Deprecated(since = "7.0.9", forRemoval = true)
     private static final byte COPY_ADDED_BY_USES         = 0x04;
     private static final byte COPY_ADDED_BY_AUGMENTATION = 0x08;
 
@@ -219,7 +219,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    @Deprecated(since = "7.0.9")
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public final boolean isAddedByUses() {
         return (bitsAight & COPY_ADDED_BY_USES) != 0;
     }
