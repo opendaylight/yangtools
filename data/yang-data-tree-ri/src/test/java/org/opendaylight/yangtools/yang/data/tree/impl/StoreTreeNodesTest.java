@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -84,7 +83,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     @Test
     public void findNodeTestNodeFound() {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final Optional<? extends TreeNode> node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
         assertPresentAndType(node, TreeNode.class);
@@ -93,7 +92,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     @Test
     public void findNodeTestNodeNotFound() {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
@@ -105,7 +104,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     @Test
     public void findNodeCheckedTestNodeFound() {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         TreeNode foundNode = null;
         try {
@@ -119,7 +118,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     @Test
     public void findNodeCheckedTestNodeNotFound() {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
@@ -135,7 +134,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     @Test
     public void findClosestOrFirstMatchTestNodeExists() {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final Optional<? extends TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
@@ -147,7 +146,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     @Test
     public void findClosestOrFirstMatchTestNodeDoesNotExist() {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerListInnerListPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
                 .node(TestModel.INNER_LIST_QNAME)

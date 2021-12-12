@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 /**
@@ -127,7 +126,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             // Lazy instantiation, as we do not want do this for all writes. We are using the modification's version
             // here, as that version is what the SchemaAwareApplyOperation will see when dealing with the resulting
             // modifications.
-            writtenOriginal = TreeNodeFactory.createTreeNode(value, modVersion);
+            writtenOriginal = TreeNode.of(value, modVersion);
         }
 
         return writtenOriginal.findChildByArg(child);

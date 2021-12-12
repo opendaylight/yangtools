@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.InMemoryDataTree;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeFactory;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -67,7 +67,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig) {
-        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(createRoot(treeConfig.getRootPath()),
+        return new InMemoryDataTree(TreeNode.of(createRoot(treeConfig.getRootPath()),
             Version.initial()), treeConfig, null);
     }
 
@@ -108,7 +108,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
         final NormalizedNode rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
-        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(rootDataNode, Version.initial()), treeConfig,
+        return new InMemoryDataTree(TreeNode.of(rootDataNode, Version.initial()), treeConfig,
             initialSchemaContext, rootSchemaNode, maskMandatory);
     }
 
