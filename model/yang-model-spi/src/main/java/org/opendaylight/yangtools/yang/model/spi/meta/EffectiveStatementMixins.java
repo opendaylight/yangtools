@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
-import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -127,23 +126,6 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link CopyableNode}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     * @deprecated Scheduled for removal with {@link CopyableNode}.
-     */
-    @Deprecated(since = "8.0.0")
-    public interface CopyableMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatementWithFlags<A, D>,
-            CopyableNode {
-        @Override
-        @Deprecated(since = "8.0.0")
-        default boolean isAugmenting() {
-            return (flags() & FlagsBuilder.AUGMENTING) != 0;
-        }
-    }
-
-    /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link DataNodeContainer}.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -177,7 +159,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface DataSchemaNodeMixin<D extends DeclaredStatement<QName>>
-            extends DataSchemaNode, CopyableMixin<QName, D>, SchemaNodeMixin<D>, WhenConditionMixin<QName, D> {
+            extends DataSchemaNode, SchemaNodeMixin<D>, WhenConditionMixin<QName, D> {
         @Override
         default Optional<Boolean> effectiveConfig() {
             final int fl = flags() & FlagsBuilder.MASK_CONFIG;
@@ -307,7 +289,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface UnknownSchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends DocumentedNodeMixin.WithStatus<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
+            extends DocumentedNodeMixin.WithStatus<A, D>, UnknownSchemaNode {
         @Override
         default String getNodeParameter() {
             return Strings.nullToEmpty(getDeclared().rawArgument());
@@ -348,7 +330,7 @@ public final class EffectiveStatementMixins {
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
                     MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
-                    SchemaNodeMixin<D>, CopyableMixin<QName, D> {
+                    SchemaNodeMixin<D> {
         @Override
         default Optional<ActionDefinition> findAction(final QName qname) {
             return Optional.empty();
@@ -463,11 +445,6 @@ public final class EffectiveStatementMixins {
                     fl = CONFIG_UNDEF;
                 }
                 flags = flags & ~MASK_CONFIG | fl;
-                return this;
-            }
-
-            public FlagsBuilder setHistory(final CopyableNode history) {
-                flags = flags & ~MASK_HISTORY | (history.isAugmenting() ? AUGMENTING : 0);
                 return this;
             }
 

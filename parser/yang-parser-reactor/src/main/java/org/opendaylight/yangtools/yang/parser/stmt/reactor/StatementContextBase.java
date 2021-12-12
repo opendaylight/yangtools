@@ -14,7 +14,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -96,42 +95,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
-    // Bottom 2 bits, encoding a CopyHistory, aight?
-    private static final byte COPY_ORIGINAL              = 0x00;
-    private static final byte COPY_LAST_TYPE_MASK        = 0x01;
-    private static final byte COPY_ADDED_BY_AUGMENTATION = 0x02;
-
-    // Top 6 bits, of which we define the topmost 5 to 0. We use the bottom one to encode last CopyType, aight?
-    private static final int COPY_CHILD_TYPE_SHIFT       = 2;
-
-    private static final CopyType @NonNull [] COPY_TYPE_VALUES = CopyType.values();
-
-    static {
-        final int copyTypes = COPY_TYPE_VALUES.length;
-        // This implies CopyType.ordinal() is <= COPY_TYPE_MASK
-        verify(copyTypes == COPY_LAST_TYPE_MASK + 1, "Unexpected %s CopyType values", copyTypes);
-    }
-
-    /**
-     * 8 bits worth of instance storage. This is treated as a constant bit field with following structure:
-     * <pre>
-     *   <code>
-     * |7|6|5|4|3|2|1|0|
-     * |0 0|0|0|0|c|a|l|
-     *   </code>
-     * </pre>
-     *
-     * <p>
-     * The four allocated fields are:
-     * <ul>
-     *   <li>{@code l}, encoding the two states corresponding to {@link CopyHistory#getLastOperation()}</li>
-     *   <li>{@code a}, encoding {@link #isAugmenting()}</li>
-     *   <li>{@code c}, encoding {@link #childCopyType()}</li>
-     * </ul>
-     * We still have two unused bits.
-     */
-    private final byte bitsAight;
-
     // Note: this field can strictly be derived in InferredStatementContext, but it forms the basis of many of our
     //       operations, hence we want to keep it close by.
     private final @NonNull StatementDefinitionContext<A, D, E> definition;
@@ -150,41 +113,21 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
-        this.bitsAight = original.bitsAight;
         this.definition = original.definition;
         this.executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
         this.definition = requireNonNull(def);
-        this.bitsAight = COPY_ORIGINAL;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
         this.definition = requireNonNull(def);
-        this.bitsAight = (byte) copyFlags(copyType);
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
             final CopyType childCopyType) {
         this.definition = prototype.definition;
-        this.bitsAight = (byte) (copyFlags(copyType)
-            | prototype.bitsAight & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
-    }
-
-    private static int copyFlags(final CopyType copyType) {
-        return historyFlags(copyType) | copyType.ordinal();
-    }
-
-    private static byte historyFlags(final CopyType copyType) {
-        switch (copyType) {
-            case ADDED_BY_AUGMENTATION:
-                return COPY_ADDED_BY_AUGMENTATION;
-            case ORIGINAL:
-                return COPY_ORIGINAL;
-            default:
-                throw new VerifyException("Unhandled type " + copyType);
-        }
     }
 
     @Override
@@ -214,19 +157,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    @Deprecated(since = "8.0.0")
-    public final boolean isAugmenting() {
-        return (bitsAight & COPY_ADDED_BY_AUGMENTATION) != 0;
-    }
-
-    @Override
     public final CopyType getLastOperation() {
-        return COPY_TYPE_VALUES[bitsAight & COPY_LAST_TYPE_MASK];
-    }
-
-    // This method exists only for space optimization of InferredStatementContext
-    final CopyType childCopyType() {
-        return COPY_TYPE_VALUES[bitsAight >> COPY_CHILD_TYPE_SHIFT & COPY_LAST_TYPE_MASK];
+        return CopyType.ORIGINAL;
     }
 
     //
@@ -743,14 +675,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
+    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(this);
-        return Optional.ofNullable(copyAsChildOfImpl(parent, type, targetModule));
+        return Optional.ofNullable(copyAsChildOfImpl(parent, targetModule));
     }
 
-    private ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final CopyType type,
-            final QNameModule targetModule) {
+    private ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final QNameModule targetModule) {
         final StatementSupport<A, D, E> support = definition.support();
         final CopyPolicy policy = support.copyPolicy();
         switch (policy) {
@@ -764,7 +695,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 // fall through
             case DECLARED_COPY:
                 // FIXME: ugly cast
-                return (ReactorStmtCtx<A, D, E>) parent.childCopyOf(this, type, targetModule);
+                return (ReactorStmtCtx<A, D, E>) parent.childCopyOf(this, targetModule);
             case IGNORE:
                 return null;
             case REJECT:
@@ -775,9 +706,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    final ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> parent, final CopyType type,
+    final ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> parent,
             final QNameModule targetModule) {
-        final ReactorStmtCtx<A, D, E> copy = copyAsChildOfImpl(parent, type, targetModule);
+        final ReactorStmtCtx<A, D, E> copy = copyAsChildOfImpl(parent, targetModule);
         if (copy == null) {
             // The statement fizzled, this should never happen, perhaps a verify()?
             return null;
@@ -795,11 +726,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
-            final QNameModule targetModule) {
+    public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final QNameModule targetModule) {
         checkEffectiveModelCompleted(stmt);
         if (stmt instanceof StatementContextBase) {
-            return childCopyOf((StatementContextBase<?, ?, ?>) stmt, type, targetModule);
+            return childCopyOf((StatementContextBase<?, ?, ?>) stmt, targetModule);
         } else if (stmt instanceof ReplicaStatementContext) {
             return ((ReplicaStatementContext<?, ?, ?>) stmt).replicaAsChildOf(this);
         } else {
@@ -808,20 +738,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
-            final StatementContextBase<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
+            final StatementContextBase<X, Y, Z> original, final QNameModule targetModule) {
         final var implicitParent = definition.getImplicitParentFor(this, original.publicDefinition());
 
         final StatementContextBase<X, Y, Z> result;
         final InferredStatementContext<X, Y, Z> copy;
-
         if (implicitParent.isPresent()) {
             final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
             result = new SubstatementContext(this, def, original.sourceReference(), original.rawArgument(),
-                original.argument(), type);
-            copy = new InferredStatementContext<>(result, original, CopyType.ORIGINAL, type, targetModule);
+                original.argument());
+            copy = new InferredStatementContext<>(result, original, targetModule);
             result.addEffectiveSubstatement(copy);
         } else {
-            result = copy = new InferredStatementContext<>(this, original, type, type, targetModule);
+            result = copy = new InferredStatementContext<>(this, original, targetModule);
         }
 
         original.definition.onStatementAdded(copy);
@@ -853,9 +782,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
 
         final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.orElseThrow());
-        final CopyType type = original.history().getLastOperation();
         final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def,
-            original.sourceReference(), original.rawArgument(), original.argument(), type);
+            original.sourceReference(), original.rawArgument(), original.argument());
 
         result.addEffectiveSubstatement(original.reparent(result));
         result.setCompletedPhase(original.getCompletedPhase());

@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -70,7 +69,6 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      * reused as long as:
      * <ul>
      *   <li>{@link Current#argument()} does not change</li>
-     *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
      *   <li>{@link Current#effectiveConfig()} does not change</li>
      *   <li>{@link Current#original()} does not change</li>
      * </ul>
@@ -91,7 +89,6 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      * reused as long as:
      * <ul>
      *   <li>{@link Current#argument()} does not change</li>
-     *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
      * </ul>
      *
      * <p>

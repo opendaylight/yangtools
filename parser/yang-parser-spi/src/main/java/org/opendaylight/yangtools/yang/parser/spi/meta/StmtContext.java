@@ -235,13 +235,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @param stmt Statement to be used as a template
          * @param type Type of copy to record in history
          * @param targetModule Optional new target module
-         * @return copy of statement considering {@link CopyType} (augment, uses)
-         *
          * @throws IllegalArgumentException if stmt cannot be copied into this statement, for example because it comes
          *                                  from an alien implementation.
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
          */
-        Mutable<?, ?, ?> childCopyOf(StmtContext<?, ?, ?> stmt, CopyType type, @Nullable QNameModule targetModule);
+        Mutable<?, ?, ?> childCopyOf(StmtContext<?, ?, ?> stmt, @Nullable QNameModule targetModule);
 
         /**
          * Create a child sub-statement, which is a child of this statement, inheriting all attributes from specified
@@ -249,14 +247,12 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *
          * @param stmt Statement to be used as a template
          * @param type Type of copy to record in history
-         * @return copy of statement considering {@link CopyType} (augment, uses)
-         *
          * @throws IllegalArgumentException if stmt cannot be copied into this statement, for example because it comes
          *                                  from an alien implementation.
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
          */
-        default Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type) {
-            return childCopyOf(stmt, type, null);
+        default Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt) {
+            return childCopyOf(stmt, null);
         }
 
         /**
@@ -271,7 +267,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @NonNull Mutable<A, D, E> replicaAsChildOf(Mutable<?, ?, ?> parent);
 
         @Beta
-        @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
+        @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> parent,
                 @Nullable QNameModule targetModule);
 
         @Override

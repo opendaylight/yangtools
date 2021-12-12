@@ -114,8 +114,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
-            final CopyType myCopyType, final CopyType childCopyType, final QNameModule targetModule) {
-        super(prototype, myCopyType, childCopyType);
+            final QNameModule targetModule) {
+        super(prototype, CopyType.ORIGINAL, CopyType.ORIGINAL);
         this.parent = requireNonNull(parent);
         this.prototype = requireNonNull(prototype);
         this.argument = targetModule == null ? prototype.argument()
@@ -542,7 +542,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     //
 
     private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
-        final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, childCopyType(), targetModule);
+        final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, targetModule);
         return effective == null ? null : new EffectiveCopy(stmt, effective);
     }
 
@@ -565,7 +565,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private Optional<? extends Mutable<?, ?, ?>> copySubstatement(final Mutable<?, ?, ?> substatement) {
-        return substatement.copyAsChildOf(this, childCopyType(), targetModule);
+        return substatement.copyAsChildOf(this, targetModule);
     }
 
     private void addMaterialized(final StmtContext<?, ?, ?> template, final Mutable<?, ?, ?> copy) {

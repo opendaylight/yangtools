@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
@@ -113,15 +112,15 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> newParent, final CopyType type,
+    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> newParent,
             final QNameModule targetModule) {
-        return source.copyAsChildOf(newParent, type, targetModule);
+        return source.copyAsChildOf(newParent, targetModule);
     }
 
     @Override
-    ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> newParent, final CopyType type,
+    ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> newParent,
             final QNameModule targetModule) {
-        final ReactorStmtCtx<?, ?, ?> ret = source.asEffectiveChildOf(newParent, type, targetModule);
+        final ReactorStmtCtx<?, ?, ?> ret = source.asEffectiveChildOf(newParent, targetModule);
         return ret == null ? null : this;
     }
 
@@ -166,8 +165,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
-            final QNameModule targetModule) {
+    public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final QNameModule targetModule) {
         throw new UnsupportedOperationException();
     }
 

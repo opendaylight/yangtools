@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.CopyableNode;
  * Reactor's view of significant semantic history of a particular statement.
  */
 @Beta
+@Deprecated(forRemoval = true)
 @NonNullByDefault
 // FIXME: YANGTOOLS-1150: this should live in yang-reactor-api
 public interface CopyHistory extends CopyableNode {

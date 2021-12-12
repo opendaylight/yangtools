@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.Beta;
 
 @Beta
+@Deprecated(forRemoval = true)
 public enum CopyType {
     ORIGINAL,
     ADDED_BY_AUGMENTATION;
