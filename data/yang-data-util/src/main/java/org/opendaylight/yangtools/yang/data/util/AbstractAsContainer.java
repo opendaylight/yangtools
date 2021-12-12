@@ -52,8 +52,8 @@ abstract class AbstractAsContainer extends ForwardingObject implements Container
         return false;
     }
 
-    @Deprecated
     @Override
+    @Deprecated(forRemoval = true)
     public final boolean isAddedByUses() {
         return false;
     }
