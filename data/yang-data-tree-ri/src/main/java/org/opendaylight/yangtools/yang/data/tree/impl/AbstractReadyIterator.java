@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.opendaylight.yangtools.yang.data.spi.tree.Version;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 abstract class AbstractReadyIterator {
     final Iterator<ModifiedNode> children;
