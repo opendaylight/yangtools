@@ -205,13 +205,13 @@ public final class UsesStatementSupport
 
         for (final Mutable<?, ?, ?> original : declared) {
             if (original.isSupportedByFeatures() && shouldCopy(original)) {
-                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
+                original.copyAsChildOf(targetCtx, CopyType.ORIGINAL, newQNameModule).ifPresent(buffer::add);
             }
         }
 
         for (final Mutable<?, ?, ?> original : effective) {
             if (shouldCopy(original)) {
-                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
+                original.copyAsChildOf(targetCtx, CopyType.ORIGINAL, newQNameModule).ifPresent(buffer::add);
             }
         }
 

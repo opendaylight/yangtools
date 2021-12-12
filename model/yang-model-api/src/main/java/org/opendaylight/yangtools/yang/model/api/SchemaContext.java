@@ -245,12 +245,6 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     @Deprecated
-    default boolean isAddedByUses() {
-        return false;
-    }
-
-    @Override
-    @Deprecated
     default Optional<Boolean> effectiveConfig() {
         return Optional.empty();
     }

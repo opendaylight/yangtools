@@ -99,8 +99,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Bottom 4 bits, encoding a CopyHistory, aight?
     private static final byte COPY_ORIGINAL              = 0x00;
     private static final byte COPY_LAST_TYPE_MASK        = 0x03;
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    private static final byte COPY_ADDED_BY_USES         = 0x04;
     private static final byte COPY_ADDED_BY_AUGMENTATION = 0x08;
 
     // Top four bits, of which we define the topmost two to 0. We use the bottom two to encode last CopyType, aight?
@@ -181,10 +179,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         switch (copyType) {
             case ADDED_BY_AUGMENTATION:
                 return COPY_ADDED_BY_AUGMENTATION;
-            case ADDED_BY_USES:
-                return COPY_ADDED_BY_USES;
-            case ADDED_BY_USES_AUGMENTATION:
-                return COPY_ADDED_BY_AUGMENTATION | COPY_ADDED_BY_USES;
             case ORIGINAL:
                 return COPY_ORIGINAL;
             default:
@@ -216,12 +210,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public final CopyHistory history() {
         return this;
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public final boolean isAddedByUses() {
-        return (bitsAight & COPY_ADDED_BY_USES) != 0;
     }
 
     @Override
@@ -835,11 +823,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 case ADDED_BY_AUGMENTATION:
                     childCopyType = CopyType.ORIGINAL;
                     break;
-                case ADDED_BY_USES_AUGMENTATION:
-                    childCopyType = CopyType.ADDED_BY_USES;
-                    break;
-                case ADDED_BY_USES:
-                case ORIGINAL:
                 default:
                     childCopyType = type;
             }
