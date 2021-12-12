@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A container node which has not seen a modification. All nodes underneath it share the same subtree version.
  */
 final class SimpleContainerNode extends AbstractContainerNode {
-    protected SimpleContainerNode(final NormalizedNode data, final Version version) {
+    SimpleContainerNode(final NormalizedNode data, final Version version) {
         super(data, version);
     }
 
@@ -35,7 +35,7 @@ final class SimpleContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("data", getData());
     }
 }

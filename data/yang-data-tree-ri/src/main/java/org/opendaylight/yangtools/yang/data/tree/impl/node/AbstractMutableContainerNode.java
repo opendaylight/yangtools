@@ -20,30 +20,29 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * Abstract base for container-based {@link MutableTreeNode}s. It tracks modified nodes in a map and deals with
  * correctly implementing {@link #seal()}.
  */
-abstract class AbstractMutableContainerNode implements MutableTreeNode {
+abstract class AbstractMutableContainerNode extends MutableTreeNode {
     private final Version version;
     private Map<PathArgument, TreeNode> children;
     private NormalizedNode data;
     private Version subtreeVersion;
 
-    protected AbstractMutableContainerNode(final AbstractContainerNode parent,
-            final Map<PathArgument, TreeNode> children) {
-        this.data = parent.getData();
-        this.version = parent.getVersion();
-        this.subtreeVersion = parent.getSubtreeVersion();
+    AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
+        data = parent.getData();
+        version = parent.getVersion();
+        subtreeVersion = parent.getSubtreeVersion();
         this.children = requireNonNull(children);
     }
 
-    protected final Version getVersion() {
+    final Version getVersion() {
         return version;
     }
 
-    protected final TreeNode getModifiedChild(final PathArgument child) {
+    final TreeNode getModifiedChild(final PathArgument child) {
         return children.get(child);
     }
 
     @SuppressWarnings("unchecked")
-    protected final DistinctNodeContainer<PathArgument, NormalizedNode> getData() {
+    final DistinctNodeContainer<PathArgument, NormalizedNode> getData() {
         return (DistinctNodeContainer<PathArgument, NormalizedNode>) data;
     }
 
