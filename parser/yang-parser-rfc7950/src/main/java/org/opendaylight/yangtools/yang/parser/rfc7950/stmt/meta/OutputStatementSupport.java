@@ -16,16 +16,16 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
-import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.UndeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -73,15 +73,7 @@ public final class OutputStatementSupport
     @Override
     protected OutputStatement createDeclared(final StmtContext<QName, OutputStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        final StatementOrigin origin = ctx.origin();
-        switch (origin) {
-            case CONTEXT:
-                return ImplicitStatements.createOutput(ctx.getArgument(), substatements);
-            case DECLARATION:
-                return DeclaredStatements.createOutput(ctx.getArgument(), substatements);
-            default:
-                throw new IllegalStateException("Unhandled statement origin " + origin);
-        }
+        return DeclaredStatements.createOutput(ctx.getArgument(), substatements);
     }
 
     @Override
@@ -91,19 +83,13 @@ public final class OutputStatementSupport
     }
 
     @Override
-    OutputEffectiveStatement copyDeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
+    OutputEffectiveStatement copyEffective(final int flags, final Current<QName, OutputStatement> stmt,
             final OutputEffectiveStatement original) {
         return EffectiveStatements.copyOutput(original, stmt.getArgument(), flags);
     }
 
     @Override
-    OutputEffectiveStatement copyUndeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
-            final OutputEffectiveStatement original) {
-        return EffectiveStatements.copyOutput(original, stmt.getArgument(), flags);
-    }
-
-    @Override
-    OutputEffectiveStatement createDeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
+    OutputEffectiveStatement createEffective(final int flags, final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createOutput(stmt.declared(), stmt.getArgument(), flags, substatements);
@@ -113,10 +99,11 @@ public final class OutputStatementSupport
     }
 
     @Override
-    OutputEffectiveStatement createUndeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
+    OutputEffectiveStatement createUndeclaredEffective(final int flags,
+            final UndeclaredCurrent<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createOutput(stmt.getArgument(), flags, substatements);
+            return UndeclaredStatements.createOutput(stmt.getArgument(), flags, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

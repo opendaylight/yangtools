@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -312,10 +313,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            Mutable<X, Y, Z> addEffectiveSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
-        // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
-        //                       StatementContextBase subclass.
-        final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
+            Mutable<X, Y, Z> addUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
+        requireNonNull(support);
+        checkArgument(support instanceof UndeclaredStatementFactory, "Unsupported statement support %s", support);
+
+        final Mutable<X, Y, Z> ret = new UndeclaredStmtCtx<>(this, new StatementDefinitionContext<>(support),
                 ImplicitSubstatement.of(sourceReference()), arg);
         support.onStatementAdded(ret);
         addEffectiveSubstatement(ret);
@@ -358,7 +360,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return resized;
     }
 
-    abstract Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
+    abstract Collection<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
 
     // exposed for InferredStatementContext only
     final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
@@ -413,10 +415,17 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @NonNull E createEffective(final StatementFactory<A, D, E> factory) {
+        // Creating an effective statement does not strictly require a declared instance -- there are statements like
+        // 'input', which are implicitly defined.
+        //
+        // Nevertheless most of the times the actual implementation requires a declared statement to be present, hence
+        // we ensure that here by default.
+        declared();
+
         return createEffective(factory, this);
     }
 
-    // Creates EffectiveStatement through full materialization
+    // Creates EffectiveStatement through full materialization and assumes declared statement presence
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
             final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
         return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
