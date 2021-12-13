@@ -10,29 +10,20 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Intermediate subclass of StatementContextBase facing the parser stream via implementation of ResumedStatement. This
@@ -43,20 +34,15 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> implements ResumedStatement {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractResumedStatement.class);
-
-    private final @NonNull StatementSourceReference statementDeclSource;
+        extends OriginalStmtCtx<A, D, E> implements ResumedStatement {
     private final String rawArgument;
 
-    private List<ReactorStmtCtx<?, ?, ?>> effective = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
     private @Nullable D declaredInstance;
 
     // Copy constructor
     AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
         super(original);
-        this.statementDeclSource = original.statementDeclSource;
         this.rawArgument = original.rawArgument;
         this.substatements = original.substatements;
         this.declaredInstance = original.declaredInstance;
@@ -64,31 +50,8 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
-        super(def);
-        this.statementDeclSource = requireNonNull(ref);
+        super(def, ref);
         this.rawArgument = def.support().internArgument(rawArgument);
-    }
-
-    AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
-            final String rawArgument, final CopyType copyType) {
-        super(def, copyType);
-        this.statementDeclSource = requireNonNull(ref);
-        this.rawArgument = rawArgument;
-    }
-
-    @Override
-    public final Optional<StmtContext<A, D, E>> getOriginalCtx() {
-        return Optional.empty();
-    }
-
-    @Override
-    public final Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
-        return Optional.empty();
-    }
-
-    @Override
-    public final StatementSourceReference sourceReference() {
-        return statementDeclSource;
     }
 
     @Override
@@ -97,34 +60,8 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public final Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
-        return substatements;
-    }
-
-    @Override
-    public final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
-        return mutableEffectiveSubstatements(effective);
-    }
-
-    @Override
-    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
-        effective = removeStatementFromEffectiveSubstatements(effective, statementDef);
-    }
-
-    @Override
-    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
-            final String statementArg) {
-        effective = removeStatementFromEffectiveSubstatements(effective, statementDef, statementArg);
-    }
-
-    @Override
-    public final void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
-        effective = addEffectiveSubstatement(effective, substatement);
-    }
-
-    @Override
-    final void addEffectiveSubstatementsImpl(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        effective = addEffectiveSubstatementsImpl(effective, statements);
+    public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
+        return verifyNotNull(substatements);
     }
 
     @Override
@@ -140,18 +77,13 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         return declaredInstance = definition().getFactory().createDeclared(this, substatementsAsDeclared());
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private @NonNull Stream<DeclaredStatement<?>> substatementsAsDeclared() {
-        var stream = substatements.stream();
+        final Stream<AbstractResumedStatement<?, ?, ?>> stream;
         if (getImplicitDeclaredFlag()) {
-            stream = stream.map(stmt -> {
-                var ret = stmt;
-                while (ret.origin() == StatementOrigin.CONTEXT) {
-                    final var stmts = ret.substatements;
-                    verify(stmts.size() == 1, "Unexpected substatements %s", stmts);
-                    ret = verifyNotNull(stmts.get(0));
-                }
-                return ret;
-            });
+            stream = substatements.stream().map(AbstractResumedStatement::unmaskUndeclared);
+        } else {
+            stream = (Stream) substatements.stream();
         }
 
         return stream.map(AbstractResumedStatement::declared);
@@ -164,12 +96,30 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     public final StatementSourceReference getSourceReference() {
-        return statementDeclSource;
+        return sourceReference();
     }
 
     @Override
     public final boolean isFullyDefined() {
         return fullyDefined();
+    }
+
+    @Override
+    final E createEffective(final StatementFactory<A, D, E> factory) {
+        declared();
+        return createEffective(factory, this);
+    }
+
+    @Override
+    final E createEffective(final StatementContextBase<A, D, E> ctx) {
+        declared();
+        return createEffective(definition().getFactory(), ctx);
+    }
+
+    // Creates EffectiveStatement through full materialization and assumes declared statement presence
+    private static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
+            final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
+        return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
     }
 
     /**
@@ -193,38 +143,37 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", sourceReference());
 
+        final SubstatementContext<X, Y, Z> ret;
         final var implicitParent = definition().getImplicitParentFor(this, def.getPublicView());
         if (implicitParent.isPresent()) {
-            return createImplicitParent(offset, implicitParent.orElseThrow(), ref, argument)
-                .createSubstatement(0, def, ref, argument);
+            setImplicitDeclaredFlag();
+            final var parent = createUndeclared(offset, implicitParent.orElseThrow(), ref, argument);
+            ret = new SubstatementContext<>(parent, def, ref, argument);
+            parent.addEffectiveSubstatement(ret);
+        } else {
+            ret = new SubstatementContext<>(this, def, ref, argument);
+            substatements = substatements.put(offset, ret);
         }
 
-        final AbstractResumedStatement<X, Y, Z> ret = new SubstatementContext<>(this, def, ref, argument);
-        substatements = substatements.put(offset, ret);
         def.onStatementAdded(ret);
         return ret;
     }
 
-    @Override
-    final AbstractResumedStatement<A, D, E> unmodifiedEffectiveSource() {
-        // This statement is comes from the source
-        return this;
-    }
-
-    @Override
-    final boolean hasEmptySubstatements() {
-        return substatements.size() == 0 && effective.isEmpty();
-    }
-
-    @Override
-    final boolean noSensitiveSubstatements() {
-        return hasEmptySubstatements()
-            || noSensitiveSubstatements(substatements) && noSensitiveSubstatements(effective);
-    }
-
-    @Override
-    final Iterator<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
-        return effective.iterator();
+    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            UndeclaredStmtCtx<X, Y, Z> createUndeclared(final int offset, final StatementSupport<X, Y, Z> support,
+                final StatementSourceReference ref, final String rawArgument) {
+        final UndeclaredStmtCtx<X, Y, Z> ret;
+        final var implicitParent = definition().getImplicitParentFor(this, support.getPublicView());
+        if (implicitParent.isPresent()) {
+            final var parent = createUndeclared(offset, implicitParent.orElseThrow(), ref, rawArgument);
+            ret = new UndeclaredStmtCtx<>(parent, support, rawArgument);
+            parent.addEffectiveSubstatement(ret);
+        } else {
+            ret = new UndeclaredStmtCtx<>(this, support, rawArgument);
+            substatements = substatements.put(offset, ret);
+        }
+        support.onStatementAdded(ret);
+        return ret;
     }
 
     @Override
@@ -233,31 +182,8 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    final Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective() {
-        return effective.stream().filter(StmtContext::isSupportedToBuildEffective);
-    }
-
-    @Override
-    final void markNoParentRef() {
-        markNoParentRef(substatements);
-        markNoParentRef(effective);
-    }
-
-    @Override
-    final int sweepSubstatements() {
-        // First we need to sweep all statements, which may trigger sweeps all across the place, for example:
-        // - 'effective' member sweeping a 'substatements' member
-        // - 'substatements' member sweeping a 'substatements' member which came before it during iteration
-        // We then iterate once again, counting what remains unswept
-        sweep(substatements);
-        sweep(effective);
-        final int count = countUnswept(substatements) + countUnswept(effective);
-        if (count != 0) {
-            LOG.debug("{} children left to sweep from {}", count, this);
-        }
+    final void dropDeclaredSubstatements() {
         substatements = null;
-        effective = null;
-        return count;
     }
 
     /**
@@ -268,13 +194,17 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
      * @return Substatement, or null if substatement does not exist.
      */
     final @Nullable AbstractResumedStatement<?, ?, ?> enterSubstatement(final int offset) {
-        var ret = substatements.get(offset);
-        if (ret != null) {
-            while (ret.origin() == StatementOrigin.CONTEXT) {
-                ret = verifyNotNull(ret.substatements.get(0));
-            }
+        var stmt = substatements.get(offset);
+        return stmt == null ? null : unmaskUndeclared(stmt);
+    }
+
+    private static @NonNull AbstractResumedStatement<?, ?, ?> unmaskUndeclared(final ReactorStmtCtx<?, ?, ?> stmt) {
+        var ret = stmt;
+        while (!(ret instanceof AbstractResumedStatement)) {
+            verify(ret instanceof UndeclaredStmtCtx, "Unexpectred statement %s", ret);
+            ret = ((UndeclaredStmtCtx<?, ?, ?>) ret).getResumedSubstatement();
         }
-        return ret;
+        return (AbstractResumedStatement<?, ?, ?>) ret;
     }
 
     /**
@@ -292,25 +222,26 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
         var ret = verifyParent(parent);
         // Unwind all undeclared statements
-        while (ret.origin() == StatementOrigin.CONTEXT) {
+        while (!(ret instanceof AbstractResumedStatement)) {
             ret.finishDeclaration(phase);
             ret = verifyParent(ret.getParentContext());
         }
-        return ret;
+        return (AbstractResumedStatement<?, ?, ?>) ret;
     }
 
-    // FIXME: AbstractResumedStatement should only ever have AbstractResumedStatement parents, which would remove the
-    //        need for this method. In ordered to do that we need to untangle SubstatementContext's users and do not
-    //        allow it being reparent()ed.
-    private static AbstractResumedStatement<?, ?, ?> verifyParent(final StatementContextBase<?, ?, ?> parent) {
-        verify(parent instanceof AbstractResumedStatement, "Unexpected parent context %s", parent);
-        return (AbstractResumedStatement<?, ?, ?>) parent;
+    // FIXME: AbstractResumedStatement should only ever have OriginalStmtCtx parents, which would remove the need for
+    //        this method. In ordered to do that we need to untangle SubstatementContext's users and do not allow it
+    //        being reparent()ed.
+    private static OriginalStmtCtx<?, ?, ?> verifyParent(final StatementContextBase<?, ?, ?> parent) {
+        verify(parent instanceof OriginalStmtCtx, "Unexpected parent context %s", parent);
+        return (OriginalStmtCtx<?, ?, ?>) parent;
     }
 
     final void resizeSubstatements(final int expectedSize) {
         substatements = substatements.ensureCapacity(expectedSize);
     }
 
+    @Override
     final void declarationFinished(final ModelProcessingPhase phase) {
         finishChildrenDeclaration(phase);
         finishDeclaration(phase);
@@ -319,21 +250,5 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     private void finishChildrenDeclaration(final ModelProcessingPhase phase) {
         checkState(isFullyDefined());
         substatements.forEach(stmt -> stmt.declarationFinished(phase));
-    }
-
-    /**
-     * Ends declared section of current node for the specified phase.
-     *
-     * @param phase processing phase that ended
-     */
-    private void finishDeclaration(final ModelProcessingPhase phase) {
-        definition().onDeclarationFinished(this, phase);
-    }
-
-    private AbstractResumedStatement<?, ?, ?> createImplicitParent(final int offset,
-            final StatementSupport<?, ?, ?> implicitParent, final StatementSourceReference ref, final String argument) {
-        setImplicitDeclaredFlag();
-        return createSubstatement(offset, new StatementDefinitionContext<>(implicitParent),
-            ImplicitSubstatement.of(ref), argument);
     }
 }

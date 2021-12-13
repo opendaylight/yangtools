@@ -211,7 +211,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         // If we have not materialized we do not have a difference in effective substatements, hence we can forward
         // towards the source of the statement.
         accessSubstatements();
-        return substatements == null ? tryToReusePrototype(factory) : super.createEffective(factory);
+        return substatements == null ? tryToReusePrototype(factory) : createEffective(this);
+    }
+
+    @Override
+    E createEffective(final StatementContextBase<A, D, E> ctx) {
+        return prototype.createEffective(ctx);
     }
 
     private @NonNull E tryToReusePrototype(final StatementFactory<A, D, E> factory) {
@@ -286,7 +291,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // Fall back to full instantiation, which populates our substatements. Then check if we should be reusing
         // the substatement list, as this operation turned out to not affect them.
-        final E effective = super.createEffective(factory);
+        final E effective = createEffective(this);
         // Since we have forced instantiation to deal with this case, we also need to reset the 'modified' flag
         setUnmodified();
 

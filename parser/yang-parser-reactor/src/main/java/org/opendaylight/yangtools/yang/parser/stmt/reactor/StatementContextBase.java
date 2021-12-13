@@ -49,7 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.PredicateValueAddedListener;
@@ -321,11 +321,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            Mutable<X, Y, Z> addEffectiveSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
-        // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
-        //                       StatementContextBase subclass.
-        final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
-                ImplicitSubstatement.of(sourceReference()), arg);
+            Mutable<X, Y, Z> addUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
+        requireNonNull(support);
+        checkArgument(support instanceof UndeclaredStatementFactory, "Unsupported statement support %s", support);
+
+        final var ret = new UndeclaredStmtCtx<>(this, support, arg);
         support.onStatementAdded(ret);
         addEffectiveSubstatement(ret);
         return ret;
@@ -421,15 +421,9 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return result;
     }
 
-    @NonNull E createEffective(final StatementFactory<A, D, E> factory) {
-        return createEffective(factory, this);
-    }
+    abstract @NonNull E createEffective(StatementFactory<A, D, E> factory);
 
-    // Creates EffectiveStatement through full materialization
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
-            final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
-        return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
-    }
+    abstract @NonNull E createEffective(StatementContextBase<A, D, E> ctx);
 
     /**
      * Return a stream of declared statements which can be built into an {@link EffectiveStatement}, as per
@@ -795,9 +789,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         final InferredStatementContext<X, Y, Z> copy;
 
         if (implicitParent.isPresent()) {
-            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
-            result = new SubstatementContext(this, def, original.sourceReference(), original.rawArgument(),
-                original.argument(), type);
+            result = new UndeclaredStmtCtx(this, implicitParent.orElseThrow(), original, type);
 
             final CopyType childCopyType;
             switch (type) {
@@ -846,16 +838,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             return original;
         }
 
-        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.orElseThrow());
-        final CopyType type = original.history().getLastOperation();
-
         checkArgument(original instanceof StatementContextBase, "Unsupported original %s", original);
         final var origBase = (StatementContextBase<?, ?, ?>)original;
 
-        @SuppressWarnings({ "rawtypes", "unchecked"})
-        final SubstatementContext<?, ?, ?> result = new SubstatementContext(origBase.getParentContext(), def,
-            original.sourceReference(), original.rawArgument(), original.argument(), type);
-
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        final UndeclaredStmtCtx<?, ?, ?> result = new UndeclaredStmtCtx(origBase, optImplicit.orElseThrow());
         result.addEffectiveSubstatement(origBase.reparent(result));
         result.setCompletedPhase(original.getCompletedPhase());
         return result;
