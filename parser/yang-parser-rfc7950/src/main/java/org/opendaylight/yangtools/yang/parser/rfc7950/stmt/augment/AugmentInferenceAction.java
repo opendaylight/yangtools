@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +61,7 @@ final class AugmentInferenceAction implements InferenceAction {
 
     @Override
     public void apply(final InferenceContext ctx) {
-        // FIXME: this cast should not be need
-        final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.resolve(ctx);
+        final var augmentTargetCtx = target.resolve(ctx);
         if (!isSupportedAugmentTarget(augmentTargetCtx)
                 || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
             augmentNode.setUnsupported();
@@ -76,7 +74,7 @@ final class AugmentInferenceAction implements InferenceAction {
             augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, Empty.value(), augmentTargetCtx);
         }
 
-        copyFromSourceToTarget((StatementContextBase<?, ?, ?>) augmentNode, augmentTargetCtx);
+        copyFromSourceToTarget(augmentNode, augmentTargetCtx);
         augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
     }
 
@@ -100,8 +98,7 @@ final class AugmentInferenceAction implements InferenceAction {
         throw new InferenceException(augmentNode, "Augment target '%s' not found", augmentNode.argument());
     }
 
-    private void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    private void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx) {
         final CopyType typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
             ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
         /*
@@ -111,22 +108,22 @@ final class AugmentInferenceAction implements InferenceAction {
         final boolean skipCheckOfMandatoryNodes = statementSupport.allowsMandatory(sourceCtx);
         final boolean unsupported = !sourceCtx.isSupportedByFeatures();
 
-        final Collection<? extends Mutable<?, ?, ?>> declared = sourceCtx.mutableDeclaredSubstatements();
-        final Collection<? extends Mutable<?, ?, ?>> effective = sourceCtx.mutableEffectiveSubstatements();
-        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
+        final var declared = sourceCtx.declaredSubstatements();
+        final var effective = sourceCtx.effectiveSubstatements();
+        final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
 
-        for (final Mutable<?, ?, ?> originalStmtCtx : declared) {
+        for (final StmtContext<?, ?, ?> originalStmtCtx : declared) {
             copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes,
                 unsupported || !originalStmtCtx.isSupportedByFeatures());
         }
-        for (final Mutable<?, ?, ?> originalStmtCtx : effective) {
+        for (final StmtContext<?, ?, ?> originalStmtCtx : effective) {
             copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes, unsupported);
         }
 
         targetCtx.addEffectiveSubstatements(buffer);
     }
 
-    private static void copyStatement(final Mutable<?, ?, ?> original, final StatementContextBase<?, ?, ?> target,
+    private static void copyStatement(final StmtContext<?, ?, ?> original, final Mutable<?, ?, ?> target,
             final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer,
             final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
@@ -149,8 +146,7 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private static void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy,
-            final boolean skipCheckOfMandatoryNodes) {
+            final Mutable<?, ?, ?> targetCtx, final CopyType typeOfCopy, final boolean skipCheckOfMandatoryNodes) {
         if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
                 && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             checkForMandatoryNodes(sourceCtx);

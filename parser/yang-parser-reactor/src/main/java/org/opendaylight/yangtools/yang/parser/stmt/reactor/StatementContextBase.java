@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -64,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends ReactorStmtCtx<A, D, E> implements CopyHistory {
     /**
      * Event listener when an item is added to model namespace.
@@ -195,12 +194,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
+    public final Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
         return effectOfStatement;
     }
 
     @Override
-    public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
+    public final void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
         if (ctxs.isEmpty()) {
             return;
         }
@@ -272,8 +271,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effective.isEmpty() ? ImmutableList.of() : effective;
     }
 
-    public abstract void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef);
-
     static final List<ReactorStmtCtx<?, ?, ?>> removeStatementFromEffectiveSubstatements(
             final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition statementDef) {
         if (effective.isEmpty()) {
@@ -290,21 +287,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         return shrinkEffective(effective);
     }
-
-    /**
-     * Removes a statement context from the effective substatements based on its statement definition (i.e statement
-     * keyword) and raw (in String form) statement argument. The statement context is removed only if both statement
-     * definition and statement argument match with one of the effective substatements' statement definition
-     * and argument.
-     *
-     * <p>
-     * If the statementArg parameter is null, the statement context is removed based only on its statement definition.
-     *
-     * @param statementDef statement definition of the statement context to remove
-     * @param statementArg statement argument of the statement context to remove
-     */
-    public abstract void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef,
-            String statementArg);
 
     static final List<ReactorStmtCtx<?, ?, ?>> removeStatementFromEffectiveSubstatements(
             final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition statementDef,
@@ -732,13 +714,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<@NonNull N> namespace,
-            final KT key,final StmtContext<?, ?, ?> stmt) {
+    public final <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
+            final Class<@NonNull N> namespace, final KT key,final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, key, stmt);
     }
 
     @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
+    public final Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(this);
         return Optional.ofNullable(copyAsChildOfImpl(parent, type, targetModule));
@@ -849,14 +831,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 "Attempted to copy statement %s which has completed phase %s", stmt, phase);
     }
 
-    @Beta
-    // FIXME: this information should be exposed as a well-known Namespace
+    @Override
     public final boolean hasImplicitParentSupport() {
         return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
     }
 
-    @Beta
-    public final StatementContextBase<?, ?, ?> wrapWithImplicit(final StatementContextBase<?, ?, ?> original) {
+    @Override
+    public final StmtContext<?, ?, ?> wrapWithImplicit(final StmtContext<?, ?, ?> original) {
         final var optImplicit = definition.getImplicitParentFor(this, original.publicDefinition());
         if (optImplicit.isEmpty()) {
             return original;
@@ -864,10 +845,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.orElseThrow());
         final CopyType type = original.history().getLastOperation();
-        final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def,
+
+        checkArgument(original instanceof StatementContextBase, "Unsupported original %s", original);
+        final var origBase = (StatementContextBase<?, ?, ?>)original;
+
+        @SuppressWarnings({ "rawtypes", "unchecked"})
+        final SubstatementContext<?, ?, ?> result = new SubstatementContext(origBase.getParentContext(), def,
             original.sourceReference(), original.rawArgument(), original.argument(), type);
 
-        result.addEffectiveSubstatement(original.reparent(result));
+        result.addEffectiveSubstatement(origBase.reparent(result));
         result.setCompletedPhase(original.getCompletedPhase());
         return result;
     }

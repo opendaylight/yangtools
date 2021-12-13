@@ -63,7 +63,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,8 +109,7 @@ public final class UsesStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 final Mutable<?, ?, ?> targetNodeStmtCtx = targetNodePre.resolve(ctx);
-                // FIXME: remove this ugly cast, StmtContext should be enough
-                final Mutable<?, ?, ?> sourceGrpStmtCtx = (Mutable<?, ?, ?>) sourceGroupingPre.resolve(ctx);
+                final StmtContext<?, ?, ?> sourceGrpStmtCtx = sourceGroupingPre.resolve(ctx);
 
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                 resolveUsesNode(usesNode, targetNodeStmtCtx);
@@ -194,20 +192,20 @@ public final class UsesStatementSupport
      */
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
+    private static void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceGrpStmtCtx,
             final Mutable<?, ?, ?> targetCtx, final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
-        final Collection<? extends Mutable<?, ?, ?>> declared = sourceGrpStmtCtx.mutableDeclaredSubstatements();
-        final Collection<? extends Mutable<?, ?, ?>> effective = sourceGrpStmtCtx.mutableEffectiveSubstatements();
+        final Collection<? extends StmtContext<?, ?, ?>> declared = sourceGrpStmtCtx.declaredSubstatements();
+        final Collection<? extends StmtContext<?, ?, ?>> effective = sourceGrpStmtCtx.effectiveSubstatements();
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
-        for (final Mutable<?, ?, ?> original : declared) {
+        for (final StmtContext<?, ?, ?> original : declared) {
             if (original.isSupportedByFeatures() && shouldCopy(original)) {
                 original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
             }
         }
 
-        for (final Mutable<?, ?, ?> original : effective) {
+        for (final StmtContext<?, ?, ?> original : effective) {
             if (shouldCopy(original)) {
                 original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
             }
@@ -294,6 +292,8 @@ public final class UsesStatementSupport
         InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier), subStmtCtx,
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
+        // FIXME: this really should be handled via separate inference, i.e. we first instantiate the template and when
+        //        it appears, this refine will trigger on it. This reinforces the FIXME below.
         final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = SchemaTreeNamespace.findNode(
             usesParentCtx, (SchemaNodeIdentifier) refineArgument);
         InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx, "Refine target node %s not found.",
@@ -309,8 +309,8 @@ public final class UsesStatementSupport
                 subStmtCtx.coerceParentContext().argument(), refineTargetNodeCtx.argument(),
                 subStmtCtx.sourceReference());
         } else {
-            verify(refineTargetNodeCtx instanceof StatementContextBase);
-            addOrReplaceNodes(subStmtCtx, (StatementContextBase<?, ?, ?>) refineTargetNodeCtx);
+            verify(refineTargetNodeCtx instanceof Mutable, "Unexpected target %s", refineTargetNodeCtx);
+            addOrReplaceNodes(subStmtCtx, (Mutable<?, ?, ?>) refineTargetNodeCtx);
         }
 
         // Target is a prerequisite for the 'refine', hence if the target is not supported, the refine is not supported
@@ -322,20 +322,21 @@ public final class UsesStatementSupport
         }
     }
 
-    private static void addOrReplaceNodes(final Mutable<?, ?, ?> subStmtCtx,
-            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
-        for (final Mutable<?, ?, ?> refineSubstatementCtx : subStmtCtx.mutableDeclaredSubstatements()) {
+    private static void addOrReplaceNodes(final StmtContext<?, ?, ?> subStmtCtx,
+            final Mutable<?, ?, ?> refineTargetNodeCtx) {
+        for (StmtContext<?, ?, ?> refineSubstatementCtx : subStmtCtx.declaredSubstatements()) {
             if (isSupportedRefineSubstatement(refineSubstatementCtx)) {
                 addOrReplaceNode(refineSubstatementCtx, refineTargetNodeCtx);
             }
         }
     }
 
-    private static void addOrReplaceNode(final Mutable<?, ?, ?> refineSubstatementCtx,
-            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
+    private static void addOrReplaceNode(final StmtContext<?, ?, ?> refineSubstatementCtx,
+            final Mutable<?, ?, ?> refineTargetNodeCtx) {
 
         final StatementDefinition refineSubstatementDef = refineSubstatementCtx.publicDefinition();
 
+        // FIXME: this is quite costly, use an explicit block
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
                 refineSubstatementCtx,
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
@@ -345,6 +346,7 @@ public final class UsesStatementSupport
         if (!isAllowedToAddByRefine(refineSubstatementDef)) {
             refineTargetNodeCtx.removeStatementFromEffectiveSubstatements(refineSubstatementDef);
         }
+        // FIXME: childCopyOf() should handle this through per-statement copy policy, right?
         refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx.replicaAsChildOf(refineTargetNodeCtx));
     }
 

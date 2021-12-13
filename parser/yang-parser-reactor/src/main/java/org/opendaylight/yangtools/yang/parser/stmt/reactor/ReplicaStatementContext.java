@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -190,6 +191,27 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+            final String statementArg) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasImplicitParentSupport() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public StmtContext<?, ?, ?> wrapWithImplicit(final StmtContext<?, ?, ?> original) {
         throw new UnsupportedOperationException();
     }
 
