@@ -461,7 +461,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
+    Collection<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
         // When we have not initialized, there are no statements to catch up: we will catch up when we are copying
         // from prototype (which is already at ModelProcessingPhase.EFFECTIVE_MODEL).
         if (substatements == null) {

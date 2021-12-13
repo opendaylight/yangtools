@@ -334,17 +334,12 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         void addRequiredSource(SourceIdentifier dependency);
 
-        // YANG example: RPC/action statements always have 'input' and 'output' defined
-        @Beta
-        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            @NonNull Mutable<X, Y, Z> addEffectiveSubstatement(StatementSupport<X, Y, Z> support, @Nullable X arg);
-
         /**
          * Adds an effective statement to collection of substatements.
          *
          * @param substatement substatement
          * @throws IllegalStateException if added in declared phase
-         * @throws NullPointerException if statement parameter is null
+         * @throws NullPointerException if {@code substatement} is null
          */
         void addEffectiveSubstatement(Mutable<?, ?, ?> substatement);
 
@@ -356,6 +351,23 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @throws NullPointerException if statement parameter is null
          */
         void addEffectiveSubstatements(Collection<? extends Mutable<?, ?, ?>> statements);
+
+        /**
+         * Adds a purely-effective statement to collection of substatements. The statement will report a {@code null}
+         * {@link EffectiveStatement#getDeclared()} object. A typical example of statements which require this mechanics
+         * are {@code rpc} and {@code action} statements, which always have {@code input} and {@code output}
+         * substatements, even if those are not declared in YANG text.
+         *
+         * @param support Statement support of the statement being created
+         * @param arg Effective argument. If specified as {@code null}, statement support will be consulted for the
+         *            empty argument.
+         * @throws IllegalArgumentException if {@code support} does not implement {@link UndeclaredStatementFactory}
+         * @throws IllegalStateException if added in declared phase
+         * @throws NullPointerException if {@code support} is null
+         */
+        @Beta
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @NonNull Mutable<X, Y, Z> addUndeclaredSubstatement(StatementSupport<X, Y, Z> support, @Nullable X arg);
 
         @Beta
         void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef);

@@ -34,13 +34,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         this.argument = def.parseArgumentValue(this, rawArgument());
     }
 
-    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
-            final StatementSourceReference ref, final A argument) {
-        super(def, ref, null);
-        this.parent = requireNonNull(parent, "Parent must not be null");
-        this.argument = argument != null ? argument : def.parseArgumentValue(this, null);
-    }
-
     // FIXME: YANGTOOLS-784: this constructor is only called in contexts where a different implementation
     //                       would be more appropriate
     SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
