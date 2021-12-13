@@ -279,7 +279,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredOutputEf
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 
 /**
- * Static entry point to instantiating {@link EffectiveStatement} covered in the {@code RFC7950} metamodel.
+ * Static entry point to instantiating declared {@link EffectiveStatement} covered in the {@code RFC7950} metamodel.
  */
 @Beta
 @NonNullByDefault
@@ -374,11 +374,6 @@ public final class EffectiveStatements {
         } else {
             throw new IllegalArgumentException("Unsupported origin " + original);
         }
-    }
-
-    public static CaseEffectiveStatement createCase(final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UndeclaredCaseEffectiveStatement(substatements, argument, flags);
     }
 
     public static CaseEffectiveStatement createCase(final CaseStatement declared, final QName argument,
@@ -550,12 +545,6 @@ public final class EffectiveStatements {
         }
     }
 
-    public static InputEffectiveStatement createInput(final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
-            throws SubstatementIndexingException {
-        return new UndeclaredInputEffectiveStatement(substatements, argument, flags);
-    }
-
     public static InputEffectiveStatement createInput(final InputStatement declared, final QName argument,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
                 throws SubstatementIndexingException {
@@ -709,12 +698,6 @@ public final class EffectiveStatements {
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
-    }
-
-    public static OutputEffectiveStatement createOutput(final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
-            throws SubstatementIndexingException {
-        return new UndeclaredOutputEffectiveStatement(substatements, argument, flags);
     }
 
     public static OutputEffectiveStatement createOutput(final OutputStatement declared, final QName argument,

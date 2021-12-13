@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
-public class RegularInputStatement extends WithSubstatements implements InputStatement {
+public final class RegularInputStatement extends WithSubstatements implements InputStatement {
     public RegularInputStatement(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);
