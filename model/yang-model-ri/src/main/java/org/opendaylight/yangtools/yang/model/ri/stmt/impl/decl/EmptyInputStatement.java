@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
 
-public class EmptyInputStatement extends WithQNameArgument implements InputStatement {
+public final class EmptyInputStatement extends WithQNameArgument implements InputStatement {
     public EmptyInputStatement(final QName argument) {
         super(argument);
     }
