@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
-public class RegularCaseStatement extends WithSubstatements implements CaseStatement {
+public final class RegularCaseStatement extends WithSubstatements implements CaseStatement {
     public RegularCaseStatement(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);

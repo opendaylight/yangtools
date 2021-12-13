@@ -10,17 +10,20 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 
 /**
  * A massively-misnamed superclass for statements which are both schema tree participants and can be created as implicit
@@ -30,46 +33,22 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
  * @param <E> Effective Statement representation
  */
 abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QName>,
-        E extends SchemaTreeEffectiveStatement<D>> extends AbstractSchemaTreeStatementSupport<D, E> {
+        E extends SchemaTreeEffectiveStatement<D>> extends AbstractSchemaTreeStatementSupport<D, E>
+        implements UndeclaredStatementFactory<QName, D, E> {
     AbstractImplicitStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<QName, D> policy,
             final YangParserConfiguration config, final SubstatementValidator validator) {
         super(publicDefinition, policy, config, requireNonNull(validator));
     }
 
     @Override
-    public final E copyEffective(final Current<QName, D> stmt, final E original) {
-        final StatementOrigin source = stmt.origin();
-        switch (source) {
-            case CONTEXT:
-                return copyUndeclaredEffective(stmt, original);
-            case DECLARATION:
-                return copyDeclaredEffective(stmt, original);
-            default:
-                throw new IllegalStateException("Unhandled statement source " + source);
-        }
+    public final E createUndeclaredEffective(final UndeclaredCurrent<QName, D> stmt,
+            final @NonNull Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        return createUndeclaredEffective(stmt, buildEffectiveSubstatements(stmt,
+            statementsToBuild(stmt, effectiveSubstatements
+                .filter(StmtContext::isSupportedToBuildEffective)
+                .collect(Collectors.toUnmodifiableList()))));
     }
 
-    @Override
-    protected E createEffective(final Current<QName, D> stmt,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StatementOrigin origin = stmt.origin();
-        switch (origin) {
-            case CONTEXT:
-                return createUndeclaredEffective(stmt, substatements);
-            case DECLARATION:
-                return createDeclaredEffective(stmt, substatements);
-            default:
-                throw new IllegalStateException("Unhandled statement origin " + origin);
-        }
-    }
-
-    abstract @NonNull E copyDeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
-
-    abstract @NonNull E copyUndeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
-
-    abstract @NonNull E createDeclaredEffective(@NonNull Current<QName, D> stmt,
-            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
-
-    abstract @NonNull E createUndeclaredEffective(@NonNull Current<QName, D> stmt,
-            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
+    abstract @NonNull E createUndeclaredEffective(@NonNull UndeclaredCurrent<QName, D> stmt,
+        @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 }
