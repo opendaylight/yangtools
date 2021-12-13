@@ -298,8 +298,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("definition", definition()).add("rawArgument", rawArgument())
-            .add("refCount", refString());
+        return toStringHelper.add("definition", definition()).add("argument", argument()).add("refCount", refString());
     }
 
     private String refString() {
@@ -389,12 +388,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     private @NonNull E loadEffective() {
-        // Creating an effective statement does not strictly require a declared instance -- there are statements like
-        // 'input', which are implicitly defined.
-        // Our implementation design makes an invariant assumption that buildDeclared() has been called by the time
-        // we attempt to create effective statement:
-        declared();
-
         final E ret = createEffective();
         effectiveInstance = ret;
         // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up
