@@ -211,10 +211,15 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         // If we have not materialized we do not have a difference in effective substatements, hence we can forward
         // towards the source of the statement.
         accessSubstatements();
-        return substatements == null ? tryToReusePrototype(factory) : super.createEffective(factory);
+        return substatements == null ? tryToReusePrototype(factory) : createInferredEffective(factory, this);
     }
 
-    private @NonNull E tryToReusePrototype(final StatementFactory<A, D, E> factory) {
+    @Override
+    E createInferredEffective(final StatementFactory<A, D, E> factory, final InferredStatementContext<A, D, E> ctx) {
+        return prototype.createInferredEffective(factory, ctx);
+    }
+
+    private @NonNull E tryToReusePrototype(final @NonNull StatementFactory<A, D, E> factory) {
         final E origEffective = prototype.buildEffective();
         final Collection<? extends @NonNull EffectiveStatement<?, ?>> origSubstatements =
             origEffective.effectiveSubstatements();
@@ -276,7 +281,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return internAlongCopyAxis(factory, factory.createEffective(this, declared.stream(), effective.stream()));
     }
 
-    private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory, final @NonNull E original) {
+    private @NonNull E tryToReuseSubstatements(final @NonNull StatementFactory<A, D, E> factory,
+            final @NonNull E original) {
         if (allSubstatementsContextIndependent()) {
             LOG.debug("Reusing substatements of: {}", prototype);
             substatements = noRefs() ? REUSED_SUBSTATEMENTS : reusePrototypeReplicas();
@@ -286,7 +292,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // Fall back to full instantiation, which populates our substatements. Then check if we should be reusing
         // the substatement list, as this operation turned out to not affect them.
-        final E effective = super.createEffective(factory);
+        final E effective = createInferredEffective(factory, this);
         // Since we have forced instantiation to deal with this case, we also need to reset the 'modified' flag
         setUnmodified();
 

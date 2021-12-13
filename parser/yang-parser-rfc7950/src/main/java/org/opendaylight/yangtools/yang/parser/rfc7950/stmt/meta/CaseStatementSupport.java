@@ -24,14 +24,13 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
-import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.UndeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -91,15 +91,7 @@ public final class CaseStatementSupport
     @Override
     protected CaseStatement createDeclared(final BoundStmtCtx<QName> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        final StatementOrigin origin = ctx.origin();
-        switch (origin) {
-            case CONTEXT:
-                return ImplicitStatements.createCase(ctx.getArgument(), substatements);
-            case DECLARATION:
-                return DeclaredStatements.createCase(ctx.getArgument(), substatements);
-            default:
-                throw new IllegalStateException("Unhandled statement origin " + origin);
-        }
+        return DeclaredStatements.createCase(ctx.getArgument(), substatements);
     }
 
     @Override
@@ -108,21 +100,7 @@ public final class CaseStatementSupport
     }
 
     @Override
-    protected CaseEffectiveStatement copyDeclaredEffective(final Current<QName, CaseStatement> stmt,
-            final CaseEffectiveStatement original) {
-        return EffectiveStatements.copyCase(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()));
-    }
-
-    @Override
-    protected CaseEffectiveStatement copyUndeclaredEffective(final Current<QName, CaseStatement> stmt,
-            final CaseEffectiveStatement original) {
-        return EffectiveStatements.copyCase(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()));
-    }
-
-    @Override
-    protected CaseEffectiveStatement createDeclaredEffective(final Current<QName, CaseStatement> stmt,
+    protected CaseEffectiveStatement createEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createCase(stmt.declared(), stmt.getArgument(),
@@ -133,10 +111,18 @@ public final class CaseStatementSupport
     }
 
     @Override
-    protected CaseEffectiveStatement createUndeclaredEffective(final Current<QName, CaseStatement> stmt,
+    public CaseEffectiveStatement copyEffective(final Current<QName, CaseStatement> stmt,
+            final CaseEffectiveStatement original) {
+        return EffectiveStatements.copyCase(original, stmt.getArgument(),
+            computeFlags(stmt, original.effectiveSubstatements()));
+    }
+
+    @Override
+    protected CaseEffectiveStatement createUndeclaredEffective(final UndeclaredCurrent<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createCase(stmt.getArgument(), computeFlags(stmt, substatements), substatements);
+            return UndeclaredStatements.createCase(stmt.getArgument(), computeFlags(stmt, substatements),
+                substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
