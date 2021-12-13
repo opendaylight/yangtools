@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -48,7 +46,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 abstract class AbstractAugmentStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
@@ -129,12 +126,9 @@ abstract class AbstractAugmentStatementSupport
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
         // children through target's implicit wrapping.
-        final StatementContextBase<?, ?, ?> implicitDef = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.class,
-            Empty.value());
-        return implicitDef == null ? substatements : Lists.transform(substatements, subCtx -> {
-            verify(subCtx instanceof StatementContextBase);
-            return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx);
-        });
+        final var implicitDef = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.class, Empty.value());
+        return implicitDef == null ? substatements
+            : Lists.transform(substatements, subCtx -> implicitDef.wrapWithImplicit(subCtx));
     }
 
     @Override

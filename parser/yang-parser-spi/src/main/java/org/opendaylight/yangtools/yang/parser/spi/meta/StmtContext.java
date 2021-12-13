@@ -189,6 +189,21 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     Optional<StmtContext<A, D, E>> getPreviousCopyCtx();
 
+    /**
+     * Create a replica of this statement as a substatement of specified {@code parent}. The replica must not be
+     * modified and acts as a source of {@link EffectiveStatement} from outside of {@code parent}'s subtree.
+     *
+     * @param parent Parent of the replica statement
+     * @return replica of this statement
+     * @throws IllegalArgumentException if this statement cannot be replicated into parent, for example because it
+     *                                  comes from an alien implementation.
+     */
+    @NonNull Mutable<A, D, E> replicaAsChildOf(Mutable<?, ?, ?> parent);
+
+    @Beta
+    @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
+            @Nullable QNameModule targetModule);
+
     ModelProcessingPhase getCompletedPhase();
 
     /**
@@ -258,21 +273,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         default Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type) {
             return childCopyOf(stmt, type, null);
         }
-
-        /**
-         * Create a replica of this statement as a substatement of specified {@code parent}. The replica must not be
-         * modified and acts as a source of {@link EffectiveStatement} from outside of {@code parent}'s subtree.
-         *
-         * @param parent Parent of the replica statement
-         * @return replica of this statement
-         * @throws IllegalArgumentException if this statement cannot be replicated into parent, for example because it
-         *                                  comes from an alien implementation.
-         */
-        @NonNull Mutable<A, D, E> replicaAsChildOf(Mutable<?, ?, ?> parent);
-
-        @Beta
-        @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
-                @Nullable QNameModule targetModule);
 
         @Override
         default Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
@@ -356,6 +356,32 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @throws NullPointerException if statement parameter is null
          */
         void addEffectiveSubstatements(Collection<? extends Mutable<?, ?, ?>> statements);
+
+        @Beta
+        void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef);
+
+        /**
+         * Removes a statement context from the effective substatements based on its statement definition (i.e statement
+         * keyword) and raw (in String form) statement argument. The statement context is removed only if both statement
+         * definition and statement argument match with one of the effective substatements' statement definition
+         * and argument.
+         *
+         * <p>
+         * If the statementArg parameter is null, the statement context is removed based only on its statement
+         * definition.
+         *
+         * @param statementDef statement definition of the statement context to remove
+         * @param statementArg statement argument of the statement context to remove
+         */
+        @Beta
+        void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef, String statementArg);
+
+        @Beta
+        // FIXME: this information should be exposed as a well-known Namespace
+        boolean hasImplicitParentSupport();
+
+        @Beta
+        StmtContext<?, ?, ?> wrapWithImplicit(StmtContext<?, ?, ?> original);
 
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
 

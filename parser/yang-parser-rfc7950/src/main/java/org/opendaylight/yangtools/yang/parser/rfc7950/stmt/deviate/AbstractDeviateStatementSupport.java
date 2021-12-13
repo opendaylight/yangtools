@@ -52,7 +52,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,14 +142,12 @@ abstract class AbstractDeviateStatementSupport
         deviateAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                // FIXME once BUG-7760 gets fixed, there will be no need for these dirty casts
-                final StatementContextBase<?, ?, ?> sourceNodeStmtCtx =
-                        (StatementContextBase<?, ?, ?>) sourceCtxPrerequisite.resolve(ctx);
-                final StatementContextBase<?, ?, ?> targetNodeStmtCtx =
-                        (StatementContextBase<?, ?, ?>) targetCtxPrerequisite.resolve(ctx);
+                final var sourceNodeStmtCtx = sourceCtxPrerequisite.resolve(ctx);
+                final var targetNodeStmtCtx = targetCtxPrerequisite.resolve(ctx);
 
                 switch (deviateKind) {
                     case NOT_SUPPORTED:
+                        // FIXME: this can be short-circuited without an inference action
                         targetNodeStmtCtx.setUnsupported();
                         break;
                     case ADD:
@@ -247,21 +244,20 @@ abstract class AbstractDeviateStatementSupport
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private static void performDeviateAdd(final StatementContextBase<?, ?, ?> deviateStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
-        for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
+    private static void performDeviateAdd(final StmtContext<?, ?, ?> deviateStmtCtx,
+            final Mutable<?, ?, ?> targetCtx) {
+        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             addStatement(originalStmtCtx, targetCtx);
         }
     }
 
-    private static void addStatement(final Mutable<?, ?, ?> stmtCtxToBeAdded,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
             final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
-                for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
+                for (StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
                         stmtCtxToBeAdded,
                         "Deviation cannot add substatement %s to target node %s because it is already defined "
@@ -276,16 +272,16 @@ abstract class AbstractDeviateStatementSupport
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private static void performDeviateReplace(final StatementContextBase<?, ?, ?> deviateStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
-        for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
+    private static void performDeviateReplace(final StmtContext<?, ?, ?> deviateStmtCtx,
+            final Mutable<?, ?, ?> targetCtx) {
+        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             replaceStatement(originalStmtCtx, targetCtx);
         }
     }
 
-    private static void replaceStatement(final Mutable<?, ?, ?> stmtCtxToBeReplaced,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    private static void replaceStatement(final StmtContext<?, ?, ?> stmtCtxToBeReplaced,
+            final Mutable<?, ?, ?> targetCtx) {
         final StatementDefinition stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
         if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
@@ -296,7 +292,7 @@ abstract class AbstractDeviateStatementSupport
             return;
         }
 
-        for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
+        for (StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
             if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
@@ -304,7 +300,7 @@ abstract class AbstractDeviateStatementSupport
             }
         }
 
-        for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
+        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtxSubstatement.setUnsupported();
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
@@ -327,20 +323,20 @@ abstract class AbstractDeviateStatementSupport
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private static void performDeviateDelete(final StatementContextBase<?, ?, ?> deviateStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
-        for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
+    private static void performDeviateDelete(final StmtContext<?, ?, ?> deviateStmtCtx,
+                final Mutable<?, ?, ?> targetCtx) {
+        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             deleteStatement(originalStmtCtx, targetCtx);
         }
     }
 
     private static void deleteStatement(final StmtContext<?, ?, ?> stmtCtxToBeDeleted,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+            final Mutable<?, ?, ?> targetCtx) {
         final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.publicDefinition();
         final String stmtArgument = stmtCtxToBeDeleted.rawArgument();
 
-        for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
+        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
             if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
                     targetCtxSubstatement.rawArgument())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeDeleted, stmtArgument);
@@ -348,7 +344,7 @@ abstract class AbstractDeviateStatementSupport
             }
         }
 
-        for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
+        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
                     targetCtxSubstatement.rawArgument())) {
                 targetCtxSubstatement.setUnsupported();
@@ -361,11 +357,11 @@ abstract class AbstractDeviateStatementSupport
                 targetCtx.argument(), stmtCtxToBeDeleted.sourceReference());
     }
 
-    private static void copyStatement(final Mutable<?, ?, ?> stmtCtxToBeCopied,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    private static void copyStatement(final StmtContext<?, ?, ?> stmtCtxToBeCopied, final Mutable<?, ?, ?> targetCtx) {
         // we need to make a copy of the statement context only if it is an unknown statement, otherwise
         // we can reuse the original statement context
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeCopied)) {
+            // FIXME: I think this should be handled by the corresponding support's copy policy
             targetCtx.addEffectiveSubstatement(stmtCtxToBeCopied.replicaAsChildOf(targetCtx));
         } else {
             targetCtx.addEffectiveSubstatement(targetCtx.childCopyOf(stmtCtxToBeCopied, CopyType.ORIGINAL));
