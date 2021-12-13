@@ -49,7 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.PredicateValueAddedListener;
@@ -312,11 +312,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            Mutable<X, Y, Z> addEffectiveSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
-        // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
-        //                       StatementContextBase subclass.
-        final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
-                ImplicitSubstatement.of(sourceReference()), arg);
+            Mutable<X, Y, Z> addUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
+        requireNonNull(support);
+        checkArgument(support instanceof UndeclaredStatementFactory, "Unsupported statement support %s", support);
+
+        final var ret = new UndeclaredStmtCtx<>(this, support, arg);
         support.onStatementAdded(ret);
         addEffectiveSubstatement(ret);
         return ret;
@@ -358,7 +358,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return resized;
     }
 
-    abstract Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
+    abstract Collection<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
 
     // exposed for InferredStatementContext only
     final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
@@ -413,10 +413,17 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @NonNull E createEffective(final StatementFactory<A, D, E> factory) {
+        // Creating an effective statement does not strictly require a declared instance -- there are statements like
+        // 'input', which are implicitly defined.
+        //
+        // Nevertheless most of the times the actual implementation requires a declared statement to be present, hence
+        // we ensure that here by default.
+        declared();
+
         return createEffective(factory, this);
     }
 
-    // Creates EffectiveStatement through full materialization
+    // Creates EffectiveStatement through full materialization and assumes declared statement presence
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
             final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
         return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
@@ -792,9 +799,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         final InferredStatementContext<X, Y, Z> copy;
 
         if (implicitParent.isPresent()) {
-            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
-            result = new SubstatementContext(this, def, original.sourceReference(), original.rawArgument(),
-                original.argument(), type);
+            result = new UndeclaredStmtCtx(this, implicitParent.orElseThrow(), original, type);
 
             final CopyType childCopyType;
             switch (type) {
@@ -843,16 +848,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             return original;
         }
 
-        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.orElseThrow());
-        final CopyType type = original.history().getLastOperation();
-
         checkArgument(original instanceof StatementContextBase, "Unsupported original %s", original);
         final var origBase = (StatementContextBase<?, ?, ?>)original;
 
-        @SuppressWarnings({ "rawtypes", "unchecked"})
-        final SubstatementContext<?, ?, ?> result = new SubstatementContext(origBase.getParentContext(), def,
-            original.sourceReference(), original.rawArgument(), original.argument(), type);
-
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        final UndeclaredStmtCtx<?, ?, ?> result = new UndeclaredStmtCtx(origBase, optImplicit.orElseThrow());
         result.addEffectiveSubstatement(origBase.reparent(result));
         result.setCompletedPhase(original.getCompletedPhase());
         return result;

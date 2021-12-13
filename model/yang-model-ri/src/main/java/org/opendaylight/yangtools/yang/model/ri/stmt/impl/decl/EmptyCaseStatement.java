@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
 
-public class EmptyCaseStatement extends WithQNameArgument implements CaseStatement {
+public final class EmptyCaseStatement extends WithQNameArgument implements CaseStatement {
     public EmptyCaseStatement(final QName argument) {
         super(argument);
     }
