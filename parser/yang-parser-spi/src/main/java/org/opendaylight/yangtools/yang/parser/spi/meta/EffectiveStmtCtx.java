@@ -126,4 +126,25 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         @Deprecated
         <E extends EffectiveStatement<A, D>> @NonNull StmtContext<A, D, E> caerbannog();
     }
+
+    /**
+     * A restricted version of {@link Current}, which does not expose the raw argument or the declared statement.
+     *
+     * @param <A> Argument type
+     * @param <D> Class representing declared version of this statement
+     */
+    @Beta
+    interface UndeclaredCurrent<A, D extends DeclaredStatement<A>> extends Current<A, D> {
+        @Deprecated
+        @Override
+        default String rawArgument() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Deprecated
+        @Override
+        default D declared() {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

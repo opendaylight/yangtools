@@ -100,7 +100,7 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
 
     private static void appendImplicitSubstatement(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt,
             final QName substatementName) {
-        stmt.addEffectiveSubstatement(
+        stmt.addUndeclaredSubstatement(
             verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null);
     }
 }
