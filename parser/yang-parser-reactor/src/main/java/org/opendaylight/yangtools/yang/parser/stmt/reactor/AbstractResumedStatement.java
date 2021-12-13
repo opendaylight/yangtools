@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,13 +36,12 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> implements ResumedStatement {
+        extends AbstractEagerStmtCtx<A, D, E> implements ResumedStatement {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractResumedStatement.class);
 
     private final @NonNull StatementSourceReference statementDeclSource;
     private final String rawArgument;
 
-    private List<ReactorStmtCtx<?, ?, ?>> effective = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
     private @Nullable D declaredInstance;
 
@@ -73,16 +69,6 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public final Optional<StmtContext<A, D, E>> getOriginalCtx() {
-        return Optional.empty();
-    }
-
-    @Override
-    public final Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
-        return Optional.empty();
-    }
-
-    @Override
     public final StatementSourceReference sourceReference() {
         return statementDeclSource;
     }
@@ -95,32 +81,6 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @Override
     public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
         return substatements;
-    }
-
-    @Override
-    public final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
-        return mutableEffectiveSubstatements(effective);
-    }
-
-    @Override
-    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
-        effective = removeStatementFromEffectiveSubstatements(effective, statementDef);
-    }
-
-    @Override
-    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
-            final String statementArg) {
-        effective = removeStatementFromEffectiveSubstatements(effective, statementDef, statementArg);
-    }
-
-    @Override
-    public final void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
-        effective = addEffectiveSubstatement(effective, substatement);
-    }
-
-    @Override
-    final void addEffectiveSubstatementsImpl(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        effective = addEffectiveSubstatementsImpl(effective, statements);
     }
 
     @Override
@@ -202,18 +162,8 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    final Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
-        return effective;
-    }
-
-    @Override
     final Stream<? extends @NonNull StmtContext<?, ?, ?>> streamDeclared() {
         return declaredSubstatements().stream().filter(StmtContext::isSupportedToBuildEffective);
-    }
-
-    @Override
-    final Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective() {
-        return effective.stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 
     @Override

@@ -315,7 +315,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             Mutable<X, Y, Z> addEffectiveSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
         //                       StatementContextBase subclass.
-        final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
+        final Mutable<X, Y, Z> ret = new UndeclaredStmtCtx<>(this, new StatementDefinitionContext<>(support),
                 ImplicitSubstatement.of(sourceReference()), arg);
         support.onStatementAdded(ret);
         addEffectiveSubstatement(ret);
