@@ -24,6 +24,18 @@ import org.opendaylight.yangtools.yang.common.Empty;
  */
 public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends ModelStatement<A> {
     /**
+     * {@inheritDoc}
+     *
+     * Implementations are required to return a {@link StatementOrigin}, consistent with {@link #getDeclared()}
+     * nullness. This is what the default implementation does and hence this method should never be explicitly
+     * implemented -- unless there is significant cost to the {@link #getDeclared()} implementation.
+     */
+    @Override
+    default StatementOrigin statementOrigin() {
+        return getDeclared() != null ? StatementOrigin.DECLARATION : StatementOrigin.CONTEXT;
+    }
+
+    /**
      * Returns statement, which was explicit declaration of this effective
      * statement.
      *
