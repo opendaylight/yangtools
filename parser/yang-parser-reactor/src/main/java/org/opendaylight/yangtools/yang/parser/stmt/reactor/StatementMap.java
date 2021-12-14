@@ -197,6 +197,11 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
 
     private static final @NonNull StatementMap EMPTY = new Empty();
 
+    /**
+     * Return an empty map.
+     *
+     * @return An empty map.
+     */
     static @NonNull StatementMap empty() {
         return EMPTY;
     }
@@ -219,5 +224,11 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
      */
     abstract @NonNull StatementMap put(int index, @NonNull AbstractResumedStatement<?, ?, ?> obj);
 
+    /**
+     * Ensure storage space for at least {@code explectedLimit} substatements.
+     *
+     * @param expectedLimit Expected number of substatements
+     * @return New statement map
+     */
     abstract @NonNull StatementMap ensureCapacity(int expectedLimit);
 }
