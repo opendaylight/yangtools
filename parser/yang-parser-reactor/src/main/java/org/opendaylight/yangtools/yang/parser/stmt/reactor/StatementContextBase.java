@@ -149,6 +149,15 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      */
     private byte executionOrder;
 
+    /**
+     * This field should live in AbstractResumedStatement, but is placed here for memory efficiency to squat in the
+     * alignment shadow of {@link #bitsAight} and {@link #executionOrder}.
+     */
+    private boolean implicitDeclaredFlag;
+
+    // TODO: we a single byte of alignment shadow left, we should think how we can use it to cache information we build
+    //       during buildEffective()
+
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
@@ -860,4 +869,13 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      * @return True if {@link #allSubstatements()} and {@link #allSubstatementsStream()} would return an empty stream.
      */
     abstract boolean hasEmptySubstatements();
+
+    // Note: these two are exposed for AbstractResumedStatement only
+    final boolean getImplicitDeclaredFlag() {
+        return implicitDeclaredFlag;
+    }
+
+    final void setImplicitDeclaredFlag() {
+        implicitDeclaredFlag = true;
+    }
 }

@@ -141,8 +141,20 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     private @NonNull Stream<DeclaredStatement<?>> substatementsAsDeclared() {
-        // FIXME: YANGTOOLS-1383: this stream includes implicit case statements, but it should not
-        return substatements.stream().map(AbstractResumedStatement::declared);
+        var stream = substatements.stream();
+        if (getImplicitDeclaredFlag()) {
+            stream = stream.map(stmt -> {
+                var ret = stmt;
+                while (ret.origin() == StatementOrigin.CONTEXT) {
+                    final var stmts = ret.substatements;
+                    verify(stmts.size() == 1, "Unexpected substatements %s", stmts);
+                    ret = verifyNotNull(stmts.get(0));
+                }
+                return ret;
+            });
+        }
+
+        return stream.map(AbstractResumedStatement::declared);
     }
 
     @Override
@@ -320,6 +332,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     private AbstractResumedStatement<?, ?, ?> createImplicitParent(final int offset,
             final StatementSupport<?, ?, ?> implicitParent, final StatementSourceReference ref, final String argument) {
+        setImplicitDeclaredFlag();
         return createSubstatement(offset, new StatementDefinitionContext<>(implicitParent),
             ImplicitSubstatement.of(ref), argument);
     }
