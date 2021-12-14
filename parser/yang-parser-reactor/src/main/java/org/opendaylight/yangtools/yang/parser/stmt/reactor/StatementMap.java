@@ -12,6 +12,8 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import java.util.AbstractCollection;
 import java.util.Arrays;
@@ -20,6 +22,9 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 /**
  * Simple integer-to-StatementContextBase map optimized for size and restricted in scope of operations. It does not
@@ -74,13 +79,19 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
             return EMPTY_ITERATOR;
         }
+
+        @Override
+        Collection<? extends StatementContextBase<?, ?, ?>> effectiveView() {
+            return this;
+        }
     }
 
-    private static final class Regular extends StatementMap {
+    private static final class Regular extends AbstractNonEmpty {
         private AbstractResumedStatement<?, ?, ?>[] elements;
         private int size;
 
         Regular(final int expectedLimit) {
+            super(0);
             elements = new AbstractResumedStatement<?, ?, ?>[expectedLimit];
         }
 
@@ -161,10 +172,37 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         }
     }
 
-    private static final class Singleton extends StatementMap {
+    private abstract static class AbstractNonEmpty extends StatementMap {
+        private final int implicitCount;
+
+        AbstractNonEmpty(final int implicitCount) {
+            this.implicitCount = implicitCount;
+        }
+
+        @Override
+        Collection<? extends StatementContextBase<?, ?, ?>> effectiveView() {
+            return implicitCount == 0 ? this : Collections2.transform(this, stmt -> {
+                final var origin = stmt.origin();
+                switch (origin) {
+                case CONTEXT:
+                    // FIXME: we really mean: effective view
+                    final var sub = Iterables.getOnlyElement(stmt.declaredSubstatements());
+                    verify(sub instanceof StatementContextBase, "Unexpected context %s", sub);
+                    return (StatementContextBase<?, ?, ?>) sub;
+                case DECLARATION:
+                    return stmt;
+                default:
+                    throw new IllegalStateException("Unhandled origin " + origin);
+                }
+            });
+        }
+    }
+
+    private static final class Singleton extends AbstractNonEmpty {
         private final AbstractResumedStatement<?, ?, ?> object;
 
         Singleton(final AbstractResumedStatement<?, ?, ?> object) {
+            super(object.origin() == StatementOrigin.DECLARATION ? 0 : 1);
             this.object = requireNonNull(object);
         }
 
@@ -219,5 +257,22 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
      */
     abstract @NonNull StatementMap put(int index, @NonNull AbstractResumedStatement<?, ?, ?> obj);
 
+    /**
+     * Ensure storage space for at least {@code explectedLimit} substatements.
+     *
+     * @param expectedLimit Expected number of substatements
+     * @return New statement map
+     */
     abstract @NonNull StatementMap ensureCapacity(int expectedLimit);
+
+    /**
+     * Return the effective view of this map. Returned collection accounts for the difference in substatement structure
+     * between {@link DeclaredStatement#declaredSubstatements()} and
+     * {@link EffectiveStatement#effectiveSubstatements()}. The former, as visible via {@link #iterator()}, does not
+     * include implicit structure, such as introduced by {@code case} statements implied by {@code choice}
+     * substatements.
+     *
+     * @return Substatements including implicit parent statements
+     */
+    abstract @NonNull Collection<? extends StatementContextBase<?, ?, ?>> effectiveView();
 }
