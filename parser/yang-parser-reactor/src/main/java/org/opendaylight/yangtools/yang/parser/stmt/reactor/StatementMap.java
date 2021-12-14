@@ -176,7 +176,7 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         @Override
         StatementMap put(final int index, final AbstractResumedStatement<?, ?, ?> obj) {
             checkArgument(index != 0);
-            return new Regular(this.object, index, obj);
+            return new Regular(object, index, obj);
         }
 
         @Override
@@ -195,9 +195,9 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
         }
     }
 
-    private static final StatementMap EMPTY = new Empty();
+    private static final @NonNull StatementMap EMPTY = new Empty();
 
-    static StatementMap empty() {
+    static @NonNull StatementMap empty() {
         return EMPTY;
     }
 
