@@ -26,6 +26,18 @@ import org.opendaylight.yangtools.yang.common.Empty;
  */
 public interface DeclaredStatement<A> extends ModelStatement<A> {
     /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Implementations are required to return {@link StatementOrigin#DECLARATION}, which is what the default
+     * implementation does. This method should never be explicitly implemented.
+     */
+    @Override
+    default StatementOrigin statementOrigin() {
+        return StatementOrigin.DECLARATION;
+    }
+
+    /**
      * Returns statement argument as was present in original source.
      *
      * @return statement argument as was present in original source or null, if statement does not take argument.
