@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -175,7 +177,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         final var implicitParent = definition().getImplicitParentFor(this, def.getPublicView());
         if (implicitParent.isPresent()) {
             return createImplicitParent(offset, implicitParent.orElseThrow(), ref, argument)
-                .createSubstatement(offset, def, ref, argument);
+                .createSubstatement(0, def, ref, argument);
         }
 
         final AbstractResumedStatement<X, Y, Z> ret = new SubstatementContext<>(this, def, ref, argument);
@@ -246,7 +248,13 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
      * @return Substatement, or null if substatement does not exist.
      */
     final AbstractResumedStatement<?, ?, ?> lookupSubstatement(final int offset) {
-        return substatements.get(offset);
+        var ret = substatements.get(offset);
+        if (ret != null) {
+            while (ret.origin() == StatementOrigin.CONTEXT) {
+                ret = verifyNotNull(ret.substatements.get(0));
+            }
+        }
+        return ret;
     }
 
     final void resizeSubstatements(final int expectedSize) {
@@ -263,7 +271,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     private AbstractResumedStatement<?, ?, ?> createImplicitParent(final int offset,
             final StatementSupport<?, ?, ?> implicitParent, final StatementSourceReference ref, final String argument) {
-        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent);
-        return createSubstatement(offset, def, ImplicitSubstatement.of(ref), argument);
+        return createSubstatement(offset, new StatementDefinitionContext<>(implicitParent),
+            ImplicitSubstatement.of(ref), argument);
     }
 }

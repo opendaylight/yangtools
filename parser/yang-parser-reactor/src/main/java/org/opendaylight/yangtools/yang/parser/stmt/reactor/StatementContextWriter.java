@@ -102,16 +102,6 @@ final class StatementContextWriter implements StatementWriter {
 
     private static @Nullable AbstractResumedStatement<?, ?, ?> lookupDeclaredChild(
             final AbstractResumedStatement<?, ?, ?> current, final int childId) {
-        if (current == null) {
-            return null;
-        }
-
-        // Fast path: we are entering a statement which was emitted in previous phase
-        AbstractResumedStatement<?, ?, ?> existing = current.lookupSubstatement(childId);
-        while (existing != null && StatementOrigin.CONTEXT == existing.origin()) {
-            existing = existing.lookupSubstatement(childId);
-        }
-
-        return existing;
+        return current == null ? null : current.lookupSubstatement(childId);
     }
 }
