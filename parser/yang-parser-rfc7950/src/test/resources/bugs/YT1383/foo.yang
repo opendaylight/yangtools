@@ -1,0 +1,9 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  choice foo {
+    case bar;
+    container baz;
+  }
+}
