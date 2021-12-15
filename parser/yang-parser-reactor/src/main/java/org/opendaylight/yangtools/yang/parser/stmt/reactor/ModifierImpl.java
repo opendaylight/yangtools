@@ -165,7 +165,6 @@ final class ModifierImpl implements ModelActionBuilder {
         return requiresCtxImpl(context, phase);
     }
 
-
     @Override
     public <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
             final StmtContext<?, ?, ?> context, final Class<@NonNull N> namespace, final K key,
@@ -178,6 +177,18 @@ final class ModifierImpl implements ModelActionBuilder {
             final StmtContext<?, ?, ?> context, final Class<@NonNull N> namespace,
             final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, criterion, phase);
+    }
+
+    @Override
+    public <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
+            Prerequisite<StmtContext<?, ?, E>> requiresCtxPath(final StmtContext<?, ?, ?> context,
+                final Class<N> namespace, final Iterable<K> keys, final ModelProcessingPhase phase) {
+        checkNotRegistered();
+
+        final var ret = new PhaseRequirementInNamespacePath<StmtContext<?, ?, E>, K, N>(EFFECTIVE_MODEL, keys);
+        addReq(ret);
+        addBootstrap(() -> ret.hookOnto(context, namespace));
+        return ret;
     }
 
     @Override
@@ -247,15 +258,10 @@ final class ModifierImpl implements ModelActionBuilder {
                     final Class<N> namespace, final Iterable<K> keys) {
         checkNotRegistered();
 
-        final PhaseModificationInNamespacePath<Mutable<?, ?, E>, K, N> ret = new PhaseModificationInNamespacePath<>(
-                EFFECTIVE_MODEL, keys);
+        final var ret = new PhaseModificationInNamespacePath<Mutable<?, ?, E>, K, N>(EFFECTIVE_MODEL, keys);
         addReq(ret);
         addMutation(ret);
-
-        if (bootstraps == null) {
-            bootstraps = new ArrayList<>(1);
-        }
-        bootstraps.add(() -> ret.hookOnto(context, namespace));
+        addBootstrap(() -> ret.hookOnto(context, namespace));
         return ret;
     }
 
@@ -268,6 +274,13 @@ final class ModifierImpl implements ModelActionBuilder {
             bootstraps.forEach(Runnable::run);
             bootstraps = null;
         }
+    }
+
+    private void addBootstrap(final Runnable bootstrap) {
+        if (bootstraps == null) {
+            bootstraps = new ArrayList<>(1);
+        }
+        bootstraps.add(bootstrap);
     }
 
     private abstract class AbstractPrerequisite<T> implements Prerequisite<T> {
@@ -304,6 +317,65 @@ final class ModifierImpl implements ModelActionBuilder {
 
         ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
             return toStringHelper.add("value", value);
+        }
+    }
+
+    private abstract class AbstractPathPrerequisite<C extends StmtContext<?, ?, ?>, K,
+            N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPrerequisite<C>
+            implements OnNamespaceItemAdded {
+        private final ModelProcessingPhase modPhase;
+        private final Iterable<K> keys;
+        private final Iterator<K> it;
+
+        AbstractPathPrerequisite(final ModelProcessingPhase phase, final Iterable<K> keys) {
+            this.modPhase = requireNonNull(phase);
+            this.keys = requireNonNull(keys);
+            it = keys.iterator();
+        }
+
+        @Override
+        public final void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
+            final Object key, final Object value) {
+            LOG.debug("Action for {} got key {}", keys, key);
+
+            final StatementContextBase<?, ?, ?> target = contextImpl(value);
+            if (!target.isSupportedByFeatures()) {
+                LOG.debug("Key {} in {} is not supported", key, keys);
+                resolvePrereq(null);
+                action.prerequisiteUnavailable(this);
+                return;
+            }
+
+            nextStep(modPhase, context, target);
+
+            if (!it.hasNext()) {
+                // Last step: we are done
+                if (resolvePrereq((C) value)) {
+                    tryApply();
+                }
+                return;
+            }
+
+            // Make sure target's storage notifies us when the next step becomes available.
+            hookOnto(target, namespace, it.next());
+        }
+
+        abstract void nextStep(ModelProcessingPhase phase, StatementContextBase<?, ?, ?> current,
+            StatementContextBase<?, ?, ?> next);
+
+        @Override
+        final ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+            return super.addToStringAttributes(toStringHelper).add("phase", modPhase).add("keys", keys);
+        }
+
+        final void hookOnto(final StmtContext<?, ?, ?> context, final Class<?> namespace) {
+            checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
+            hookOnto(contextImpl(context), namespace, it.next());
+        }
+
+        @SuppressWarnings("unchecked")
+        private void hookOnto(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final K key) {
+            context.onNamespaceItemAddedAction((Class) namespace, requireNonNull(key), this);
         }
     }
 
@@ -364,6 +436,19 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
+    private final class PhaseRequirementInNamespacePath<C extends StmtContext<?, ?, ?>, K,
+            N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPathPrerequisite<C, K, N> {
+        PhaseRequirementInNamespacePath(final ModelProcessingPhase phase, final Iterable<K> keys) {
+            super(phase, keys);
+        }
+
+        @Override
+        void nextStep(final ModelProcessingPhase phase, final StatementContextBase<?, ?, ?> current,
+                final StatementContextBase<?, ?, ?> next) {
+            // No-op
+        }
+    }
+
     private final class PhaseModificationInNamespace<C extends Mutable<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, ContextMutation {
         private final ModelProcessingPhase modPhase;
@@ -394,16 +479,10 @@ final class ModifierImpl implements ModelActionBuilder {
      * give us the first step. When it does, we hook onto the first item to provide us the second step and so on.
      */
     private final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K,
-            N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPrerequisite<C>
-            implements OnNamespaceItemAdded, ContextMutation {
-        private final ModelProcessingPhase modPhase;
-        private final Iterable<K> keys;
-        private final Iterator<K> it;
-
+            N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPathPrerequisite<C, K, N>
+            implements ContextMutation {
         PhaseModificationInNamespacePath(final ModelProcessingPhase phase, final Iterable<K> keys) {
-            this.modPhase = requireNonNull(phase);
-            this.keys = requireNonNull(keys);
-            it = keys.iterator();
+            super(phase, keys);
         }
 
         @Override
@@ -412,49 +491,13 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         @Override
-        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
-                final Object key, final Object value) {
-            LOG.debug("Action for {} got key {}", keys, key);
-
-            final StatementContextBase<?, ?, ?> target = contextImpl(value);
-            if (!target.isSupportedByFeatures()) {
-                LOG.debug("Key {} in {} is not supported", key, keys);
-                resolvePrereq(null);
-                action.prerequisiteUnavailable(this);
-                return;
-            }
-
+        void nextStep(final ModelProcessingPhase phase, final StatementContextBase<?, ?, ?> current,
+                final StatementContextBase<?, ?, ?> next) {
             // Hook onto target: we either have a modification of the target itself or one of its children.
-            target.addMutation(modPhase, this);
+            next.addMutation(phase, this);
             // We have completed the context -> target step, hence we are no longer directly blocking context from
             // making forward progress.
-            context.removeMutation(modPhase, this);
-
-            if (!it.hasNext()) {
-                // Last step: we are done
-                if (resolvePrereq((C) value)) {
-                    tryApply();
-                }
-                return;
-            }
-
-            // Make sure target's storage notifies us when the next step becomes available.
-            hookOnto(target, namespace, it.next());
-        }
-
-        @Override
-        ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return super.addToStringAttributes(toStringHelper).add("phase", modPhase).add("keys", keys);
-        }
-
-        void hookOnto(final StmtContext<?, ?, ?> context, final Class<?> namespace) {
-            checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
-            hookOnto(contextImpl(context), namespace, it.next());
-        }
-
-        @SuppressWarnings("unchecked")
-        private void hookOnto(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final K key) {
-            context.onNamespaceItemAddedAction((Class) namespace, requireNonNull(key), this);
+            current.removeMutation(phase, this);
         }
     }
 }
