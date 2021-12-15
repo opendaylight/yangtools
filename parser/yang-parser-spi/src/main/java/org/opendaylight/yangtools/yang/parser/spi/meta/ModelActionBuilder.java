@@ -191,11 +191,9 @@ public interface ModelActionBuilder {
         @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace,
                 K key);
 
-    default <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
-        @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
-                final Class<N> namespace, final Iterable<K> keys) {
-        throw new UnsupportedOperationException(getClass() + " does not implement mutatesEffectiveCtxPath()");
-    }
+    <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
+        @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(StmtContext<?, ?, ?> context,
+                Class<N> namespace, Iterable<K> keys);
 
     /**
      * Action mutates the specified statement in the specified phase. Target statement cannot complete specified
