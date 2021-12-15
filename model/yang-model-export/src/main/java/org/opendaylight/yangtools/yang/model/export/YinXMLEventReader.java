@@ -42,7 +42,7 @@ final class YinXMLEventReader implements XMLEventReader {
 
         OpenElement(final Iterator<? extends DeclaredStatement<?>> children) {
             this.children = requireNonNull(children);
-            this.name = null;
+            name = null;
         }
 
         OpenElement(final QName name, final Iterator<? extends DeclaredStatement<?>> children) {
@@ -174,28 +174,15 @@ final class YinXMLEventReader implements XMLEventReader {
     }
 
     private void nextStatement() {
-        OpenElement current = stack.peek();
+        final OpenElement current = stack.peek();
         if (current == null) {
             return;
         }
 
         do {
-            while (current.children.hasNext()) {
-                // We have to mind child statement origin and not emit empty implicit children
-                final DeclaredStatement<?> child = current.children.next();
-                switch (child.statementOrigin()) {
-                    case CONTEXT:
-                        final Iterator<? extends DeclaredStatement<?>> it = child.declaredSubstatements().iterator();
-                        if (it.hasNext()) {
-                            current = new OpenElement(it);
-                        }
-                        break;
-                    case DECLARATION:
-                        addStatement(child);
-                        return;
-                    default:
-                        throw new IllegalStateException("Unhandled statement origin " + child.statementOrigin());
-                }
+            if (current.children.hasNext()) {
+                addStatement(current.children.next());
+                return;
             }
 
             if (current.name != null) {
