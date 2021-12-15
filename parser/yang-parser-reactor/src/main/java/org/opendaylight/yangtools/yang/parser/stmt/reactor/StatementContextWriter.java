@@ -14,6 +14,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 final class StatementContextWriter implements StatementWriter {
-    private final ModelProcessingPhase phase;
+    private final @NonNull ModelProcessingPhase phase;
     private final SourceSpecificContext ctx;
 
     private AbstractResumedStatement<?, ?, ?> current;
@@ -30,6 +31,11 @@ final class StatementContextWriter implements StatementWriter {
     StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
         this.ctx = requireNonNull(ctx);
         this.phase = requireNonNull(phase);
+    }
+
+    @Override
+    public ModelProcessingPhase getPhase() {
+        return phase;
     }
 
     @Override
@@ -75,11 +81,6 @@ final class StatementContextWriter implements StatementWriter {
         checkState(current != null);
         current.endDeclared(phase);
         exitStatement();
-    }
-
-    @Override
-    public ModelProcessingPhase getPhase() {
-        return phase;
     }
 
     private void exitStatement() {
