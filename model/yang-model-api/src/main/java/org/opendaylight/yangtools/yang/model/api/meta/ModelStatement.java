@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
+// FIXME: sealed interface when we have JDK17+
 public interface ModelStatement<A> {
     /**
      * Statement Definition of this statement.
@@ -40,12 +41,4 @@ public interface ModelStatement<A> {
      * @return statement argument.
      */
     @NonNull A argument();
-
-    /**
-     * Returns {@link StatementOrigin}, which denotes if statement was explicitly declared in original model or inferred
-     * during semantic processing of model.
-     *
-     * @return statement origin.
-     */
-    @NonNull StatementOrigin statementOrigin();
 }
