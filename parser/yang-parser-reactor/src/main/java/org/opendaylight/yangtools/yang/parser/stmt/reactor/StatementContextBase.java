@@ -838,7 +838,9 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     final ReplicaStatementContext<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> parent) {
-        return new ReplicaStatementContext<>(parent, this);
+        final var ret = new ReplicaStatementContext<>(parent, this);
+        definition.onStatementAdded(ret);
+        return ret;
     }
 
     private static void checkEffectiveModelCompleted(final StmtContext<?, ?, ?> stmt) {
