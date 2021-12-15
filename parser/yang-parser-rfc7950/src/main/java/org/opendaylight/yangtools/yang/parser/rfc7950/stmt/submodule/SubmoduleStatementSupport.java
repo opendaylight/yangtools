@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -152,8 +153,8 @@ public final class SubmoduleStatementSupport
     }
 
     @Override
-    protected SubmoduleStatement createDeclared(final StmtContext<Unqualified, SubmoduleStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected SubmoduleStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBelongsTo(ctx);
         }

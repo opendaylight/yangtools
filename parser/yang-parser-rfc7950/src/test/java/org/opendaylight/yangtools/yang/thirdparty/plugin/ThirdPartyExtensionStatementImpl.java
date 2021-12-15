@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
  */
 final class ThirdPartyExtensionStatementImpl extends WithSubstatements implements ThirdPartyExtensionStatement {
     ThirdPartyExtensionStatementImpl(final String rawArgument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         super(rawArgument, substatements);
     }
 }

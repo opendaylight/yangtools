@@ -35,7 +35,7 @@ public final class MandatoryStatementSupport extends
 
     @Override
     protected MandatoryStatement createDeclared(final Boolean argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createMandatory(argument, substatements);
     }
 

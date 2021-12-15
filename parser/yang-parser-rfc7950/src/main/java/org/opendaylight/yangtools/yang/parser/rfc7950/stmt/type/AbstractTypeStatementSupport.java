@@ -68,6 +68,7 @@ import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -177,8 +178,8 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     }
 
     @Override
-    protected final TypeStatement createDeclared(final StmtContext<QName, TypeStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected final TypeStatement createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             final TypeStatement builtin = BuiltinTypeStatement.lookup(ctx.getRawArgument());
             if (builtin != null) {

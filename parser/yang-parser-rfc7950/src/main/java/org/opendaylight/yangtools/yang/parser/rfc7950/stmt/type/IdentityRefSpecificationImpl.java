@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class IdentityRefSpecificationImpl extends WithSubstatements<QName> implements IdentityRefSpecification {
     IdentityRefSpecificationImpl(final String rawArgument, final QName argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

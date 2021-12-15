@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class InstanceIdentifierSpecificationSupport
@@ -33,9 +33,8 @@ final class InstanceIdentifierSpecificationSupport
     }
 
     @Override
-    protected InstanceIdentifierSpecification createDeclared(
-            final StmtContext<QName, InstanceIdentifierSpecification, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected InstanceIdentifierSpecification createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyIdentifierSpecification(ctx.getRawArgument(), ctx.getArgument())
             : new RegularInstanceIdentifierSpecification(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
