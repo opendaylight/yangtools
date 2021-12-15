@@ -52,10 +52,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final D createDeclared(final StmtContext<A, D, ?> ctx) {
-        final D stmt = createDeclared(ctx, ctx.declaredSubstatements().stream()
-            .map(StmtContext::declared)
-            .collect(ImmutableList.toImmutableList()));
+    public final D createDeclared(final StmtContext<A, D, ?> ctx, final Stream<DeclaredStatement<?>> substatements) {
+        final D stmt = createDeclared(ctx, substatements.collect(ImmutableList.toImmutableList()));
         return retainDeclarationReference ? attachDeclarationReference(stmt, ctx) : stmt;
     }
 

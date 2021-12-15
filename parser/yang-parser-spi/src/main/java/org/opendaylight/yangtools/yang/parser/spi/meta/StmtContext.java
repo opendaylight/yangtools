@@ -122,7 +122,27 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @NonNull RootStmtContext<?, ?, ?> getRoot();
 
     /**
-     * Return declared substatements. These are the statements which are explicitly written in the source model.
+     * Return declared substatements. These are the statements which are explicitly written in the source model, but
+     * reflect implicit containment statements as well. To but that statement into practical terms, this snippet:
+     * <pre>
+     *   <code>
+     *     choice foo {
+     *       container bar;
+     *     }
+     *   </code>
+     * </pre>
+     * reports the same structure as the canonical verbose equivalent:
+     * <pre>
+     *   <code>
+     *     choice foo {
+     *       case bar {
+     *         container bar;
+     *       }
+     *     }
+     *   </code>
+     * </pre>
+     * Returned collection is therefore well suited for reasoning about the schema tree. It is not appropriate for
+     * populating populating {@link DeclaredStatement#declaredSubstatements()}.
      *
      * @return Collection of declared substatements
      */

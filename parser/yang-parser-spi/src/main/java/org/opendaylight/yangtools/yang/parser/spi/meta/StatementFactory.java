@@ -28,9 +28,11 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * Create a {@link DeclaredStatement} for specified context.
      *
      * @param ctx Statement context
+     * @param substatements Declared substatements
      * @return A declared statement instance.
      */
-    @NonNull D createDeclared(@NonNull StmtContext<A, D, ?> ctx);
+    // FIXME: CommonStmtCtx should be enough here
+    @NonNull D createDeclared(@NonNull StmtContext<A, D, ?> ctx, @NonNull Stream<DeclaredStatement<?>> substatements);
 
     /**
      * Create a {@link EffectiveStatement} for specified context.

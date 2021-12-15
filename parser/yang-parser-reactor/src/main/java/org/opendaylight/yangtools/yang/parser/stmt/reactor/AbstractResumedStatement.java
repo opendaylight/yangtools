@@ -136,7 +136,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         final ModelProcessingPhase phase = getCompletedPhase();
         checkState(phase == ModelProcessingPhase.FULL_DECLARATION || phase == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Cannot build declared instance after phase %s", phase);
-        return declaredInstance = definition().getFactory().createDeclared(this);
+        return declaredInstance = definition().getFactory().createDeclared(this, substatementsAsDeclared());
+    }
+
+    private @NonNull Stream<DeclaredStatement<?>> substatementsAsDeclared() {
+        // FIXME: YANGTOOLS-1383: this stream includes implicit case statements, but it should not
+        return substatements.stream().map(AbstractResumedStatement::declared);
     }
 
     @Override
