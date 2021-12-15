@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -43,9 +43,8 @@ public final class SubscriptionStateNotificationStatementSupport
     }
 
     @Override
-    protected SubscriptionStateNotificationStatement createDeclared(
-            final StmtContext<Empty, SubscriptionStateNotificationStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected SubscriptionStateNotificationStatement createDeclared(final BoundStmtCtx<Empty> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return new SubscriptionStateNotificationStatementImpl(substatements);
     }
 

@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractHashedValueStatementSupport
@@ -29,9 +29,8 @@ abstract class AbstractHashedValueStatementSupport
     }
 
     @Override
-    protected final OpenConfigHashedValueStatement createDeclared(
-            final StmtContext<Empty, OpenConfigHashedValueStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected final OpenConfigHashedValueStatement createDeclared(final BoundStmtCtx<Empty> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return new OpenConfigHashedValueStatementImpl(getPublicView(), substatements);
     }
 

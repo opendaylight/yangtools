@@ -44,7 +44,7 @@ public final class PositionStatementSupport
 
     @Override
     protected PositionStatement createDeclared(final Uint32 argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createPosition(argument, substatements);
     }
 

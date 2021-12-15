@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -43,8 +44,8 @@ public final class OidStatementSupport
     }
 
     @Override
-    protected OidStatement createDeclared(final StmtContext<ObjectIdentifier, OidStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected OidStatement createDeclared(final BoundStmtCtx<ObjectIdentifier> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return new OidStatementImpl(ctx.getArgument(), substatements);
     }
 

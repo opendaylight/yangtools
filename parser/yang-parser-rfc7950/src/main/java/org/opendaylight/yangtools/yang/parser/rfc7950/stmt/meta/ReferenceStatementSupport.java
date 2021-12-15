@@ -32,7 +32,7 @@ public final class ReferenceStatementSupport
 
     @Override
     protected ReferenceStatement createDeclared(final String argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createReference(argument, substatements);
     }
 

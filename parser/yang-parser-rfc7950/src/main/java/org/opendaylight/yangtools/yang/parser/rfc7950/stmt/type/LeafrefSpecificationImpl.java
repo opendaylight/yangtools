@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class LeafrefSpecificationImpl extends WithSubstatements<QName> implements LeafrefSpecification {
     LeafrefSpecificationImpl(final String rawArgument, final QName argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
     }
 }
