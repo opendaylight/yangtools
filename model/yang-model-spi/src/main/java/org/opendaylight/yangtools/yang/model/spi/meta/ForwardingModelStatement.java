@@ -11,7 +11,6 @@ import com.google.common.collect.ForwardingObject;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 /**
  * Common base class for forwarding implementations of {@link ModelStatement}.
@@ -26,11 +25,6 @@ public abstract class ForwardingModelStatement<A, S extends ModelStatement<A>> e
     @Override
     public A argument() {
         return delegate().argument();
-    }
-
-    @Override
-    public StatementOrigin statementOrigin() {
-        return delegate().statementOrigin();
     }
 
     @Override
