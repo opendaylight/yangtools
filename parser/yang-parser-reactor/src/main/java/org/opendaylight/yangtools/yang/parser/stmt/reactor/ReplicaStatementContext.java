@@ -146,71 +146,84 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    @Deprecated
     public <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(final Class<@NonNull N> type,
             final T key, final U value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<@NonNull N> namespace,
             final KT key, final StmtContext<?, ?, ?> stmt) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
             final QNameModule targetModule) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     boolean doTryToCompletePhase(final byte executionOrder) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
             Mutable<X, Y, Z> addUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
             final String statementArg) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public boolean hasImplicitParentSupport() {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public StmtContext<?, ?, ?> wrapWithImplicit(final StmtContext<?, ?, ?> original) {
         throw new UnsupportedOperationException();
     }
