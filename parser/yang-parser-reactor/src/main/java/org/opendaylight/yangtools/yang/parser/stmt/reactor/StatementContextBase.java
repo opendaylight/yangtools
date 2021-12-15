@@ -358,7 +358,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return resized;
     }
 
-    abstract Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
+    abstract Iterator<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
 
     // exposed for InferredStatementContext only
     final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
@@ -455,8 +455,9 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         for (final StatementContextBase<?, ?, ?> child : mutableDeclaredSubstatements()) {
             finished &= child.tryToCompletePhase(targetOrder);
         }
-        for (final ReactorStmtCtx<?, ?, ?> child : effectiveChildrenToComplete()) {
-            finished &= child.tryToCompletePhase(targetOrder);
+        final var it = effectiveChildrenToComplete();
+        while (it.hasNext()) {
+            finished &= it.next().tryToCompletePhase(targetOrder);
         }
         return finished;
     }

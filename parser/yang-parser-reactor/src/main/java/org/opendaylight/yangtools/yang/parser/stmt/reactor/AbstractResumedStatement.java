@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -210,8 +211,8 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    final Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
-        return effective;
+    final Iterator<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
+        return effective.iterator();
     }
 
     @Override

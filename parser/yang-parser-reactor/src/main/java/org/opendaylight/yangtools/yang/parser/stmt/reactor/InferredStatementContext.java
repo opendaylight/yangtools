@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -461,17 +462,17 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
+    Iterator<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
         // When we have not initialized, there are no statements to catch up: we will catch up when we are copying
         // from prototype (which is already at ModelProcessingPhase.EFFECTIVE_MODEL).
         if (substatements == null) {
-            return ImmutableList.of();
+            return Collections.emptyIterator();
         }
         accessSubstatements();
         if (substatements instanceof HashMap) {
-            return castMaterialized(substatements).values();
+            return castMaterialized(substatements).values().iterator();
         } else {
-            return castEffective(substatements);
+            return castEffective(substatements).iterator();
         }
     }
 
