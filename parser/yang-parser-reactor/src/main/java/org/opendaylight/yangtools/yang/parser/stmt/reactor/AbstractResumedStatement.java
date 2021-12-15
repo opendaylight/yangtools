@@ -97,7 +97,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
+    public final Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
         return substatements;
     }
 
@@ -217,7 +217,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     final Stream<? extends @NonNull StmtContext<?, ?, ?>> streamDeclared() {
-        return declaredSubstatements().stream().filter(StmtContext::isSupportedToBuildEffective);
+        return substatements.stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 
     @Override
