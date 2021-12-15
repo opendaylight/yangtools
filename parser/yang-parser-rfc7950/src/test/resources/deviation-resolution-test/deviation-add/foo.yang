@@ -23,8 +23,8 @@ module foo {
 
     deviation "/bar:my-list" {
         deviate add {
-            unique "my-leaf-a my-leaf-b";
-            unique "my-leaf-c my-leaf-d";
+            unique "bar:my-leaf-a bar:my-leaf-b";
+            unique "bar:my-leaf-c bar:my-leaf-d";
         }
     }
 

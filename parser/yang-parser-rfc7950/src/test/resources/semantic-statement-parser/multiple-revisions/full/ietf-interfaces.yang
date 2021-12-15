@@ -87,7 +87,7 @@ module ietf-interfaces {
 
     list interface {
       key "name";
-      unique "type location";
+      unique "location";
 
       description
         "The list of interfaces on the device.";
