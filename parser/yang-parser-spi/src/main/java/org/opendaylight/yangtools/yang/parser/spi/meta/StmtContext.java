@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * An inference context associated with an instance of a statement.
@@ -37,64 +36,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
     @Deprecated(forRemoval = true)
-    default @NonNull StatementDefinition getPublicDefinition() {
-        return publicDefinition();
-    }
-
-    @Deprecated(forRemoval = true)
     default @NonNull StatementOrigin getStatementSource() {
         return origin();
-    }
-
-    @Deprecated(forRemoval = true)
-    default @NonNull StatementSourceReference getStatementSourceReference() {
-        return sourceReference();
-    }
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string, or null if this statement does not have an argument.
-     * @deprecated Use {@link #rawArgument()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    default @Nullable String rawStatementArgument() {
-        return rawArgument();
-    }
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string
-     * @throws VerifyException if this statement does not have an argument
-     * @deprecated Use {@link #getRawArgument()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    default @NonNull String coerceRawStatementArgument() {
-        return getRawArgument();
-    }
-
-    /**
-     * Return the statement argument.
-     *
-     * @return statement argument, or null if this statement does not have an argument
-     * @deprecated Use {@link #argument()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    default @Nullable A getStatementArgument() {
-        return argument();
-    }
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string
-     * @throws VerifyException if this statement does not have an argument
-     * @deprecated Use {@link #getArgument()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    default @NonNull A coerceStatementArgument() {
-        return getArgument();
     }
 
     /**
