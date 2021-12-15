@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -242,12 +243,13 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     /**
-     * Lookup substatement by its offset in this statement.
+     * Attempt to lookup a declared substatement by its offset in this statement, passing through any implicit
+     * statements which have been created to encapsulate it.
      *
      * @param offset Substatement offset
      * @return Substatement, or null if substatement does not exist.
      */
-    final AbstractResumedStatement<?, ?, ?> lookupSubstatement(final int offset) {
+    final @Nullable AbstractResumedStatement<?, ?, ?> enterSubstatement(final int offset) {
         var ret = substatements.get(offset);
         if (ret != null) {
             while (ret.origin() == StatementOrigin.CONTEXT) {
@@ -255,6 +257,36 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
             }
         }
         return ret;
+    }
+
+    /**
+     * End the specified phase for this statement and return this statement's declared parent statement.
+     *
+     * @param phase processing phase that ended
+     * @return Declared parent statement
+     */
+    final @Nullable AbstractResumedStatement<?, ?, ?> exitStatement(final ModelProcessingPhase phase) {
+        endDeclared(phase);
+        final var parent = getParentContext();
+        if (parent == null) {
+            return null;
+        }
+
+        var ret = verifyParent(parent);
+        // Unwind all undeclared statements
+        while (ret.origin() == StatementOrigin.CONTEXT) {
+            ret.endDeclared(phase);
+            ret = verifyParent(ret.getParentContext());
+        }
+        return ret;
+    }
+
+    // FIXME: AbstractResumedStatement should only ever have AbstractResumedStatement parents, which would remove the
+    //        need for this method. In ordered to do that we need to untangle SubstatementContext's users and do not
+    //        allow it being reparent()ed.
+    private static AbstractResumedStatement<?, ?, ?> verifyParent(final StatementContextBase<?, ?, ?> parent) {
+        verify(parent instanceof AbstractResumedStatement, "Unexpected parent context %s", parent);
+        return (AbstractResumedStatement<?, ?, ?>) parent;
     }
 
     final void resizeSubstatements(final int expectedSize) {
@@ -267,6 +299,15 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
             stmt.walkChildren(phase);
             stmt.endDeclared(phase);
         });
+    }
+
+    /**
+     * Ends declared section of current node for the specified phase.
+     *
+     * @param phase processing phase that ended
+     */
+    final void endDeclared(final ModelProcessingPhase phase) {
+        definition().onDeclarationFinished(this, phase);
     }
 
     private AbstractResumedStatement<?, ?, ?> createImplicitParent(final int offset,
