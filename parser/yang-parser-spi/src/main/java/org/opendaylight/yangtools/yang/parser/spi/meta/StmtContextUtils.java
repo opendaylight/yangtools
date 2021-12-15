@@ -146,27 +146,6 @@ public final class StmtContextUtils {
         return null;
     }
 
-    /**
-     * Searches for the first substatement of the specified type in the specified statement context.
-     * First, it tries to find the substatement in the effective substatements of the statement context.
-     * If it was not found, then it proceeds to search in the declared substatements. If it still was not found,
-     * the method returns null.
-     *
-     * @param stmtContext statement context to search in
-     * @param declaredType substatement type to search for
-     * @param <A> statement argument type
-     * @param <D> declared statement type
-     * @return statement context that was searched for or null if was not found
-     * @deprecated Use {@link BoundStmtCtx#findSubstatementArgument(Class)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
-        final StmtContext<A, ?, ?> effectiveSubstatement = findFirstEffectiveSubstatement(stmtContext, declaredType);
-        return effectiveSubstatement != null ? effectiveSubstatement : findFirstDeclaredSubstatement(stmtContext,
-                declaredType);
-    }
-
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
             final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType, int sublevel) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
