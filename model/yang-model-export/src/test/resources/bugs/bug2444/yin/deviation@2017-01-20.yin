@@ -20,8 +20,8 @@
     </deviation>
     <deviation target-node="/dev-tgt:my-list">
         <deviate value="add">
-            <unique tag="my-leaf-a my-leaf-b" />
-            <unique tag="my-leaf-c my-leaf-d" />
+            <unique tag="dev-tgt:my-leaf-a dev-tgt:my-leaf-b" />
+            <unique tag="dev-tgt:my-leaf-c dev-tgt:my-leaf-d" />
         </deviate>
     </deviation>
     <deviation target-node="/dev-tgt:my-choice">

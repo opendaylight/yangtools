@@ -23,8 +23,8 @@ module deviation {
 
     deviation "/dev-tgt:my-list" {
         deviate add {
-            unique "my-leaf-a my-leaf-b";
-            unique "my-leaf-c my-leaf-d";
+            unique "dev-tgt:my-leaf-a dev-tgt:my-leaf-b";
+            unique "dev-tgt:my-leaf-c dev-tgt:my-leaf-d";
         }
     }
 
