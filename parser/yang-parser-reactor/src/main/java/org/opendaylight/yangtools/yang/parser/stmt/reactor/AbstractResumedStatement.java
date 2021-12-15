@@ -293,12 +293,14 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         substatements = substatements.ensureCapacity(expectedSize);
     }
 
-    final void walkChildren(final ModelProcessingPhase phase) {
+    final void recursivelyEndDeclared(final ModelProcessingPhase phase) {
+        endDeclaredChildren(phase);
+        endDeclared(phase);
+    }
+
+    private void endDeclaredChildren(final ModelProcessingPhase phase) {
         checkState(isFullyDefined());
-        substatements.forEach(stmt -> {
-            stmt.walkChildren(phase);
-            stmt.endDeclared(phase);
-        });
+        substatements.forEach(stmt -> stmt.recursivelyEndDeclared(phase));
     }
 
     /**
@@ -306,7 +308,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
      *
      * @param phase processing phase that ended
      */
-    final void endDeclared(final ModelProcessingPhase phase) {
+    private void endDeclared(final ModelProcessingPhase phase) {
         definition().onDeclarationFinished(this, phase);
     }
 

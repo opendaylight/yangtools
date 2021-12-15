@@ -48,8 +48,7 @@ final class StatementContextWriter implements StatementWriter {
 
     private void resumeStatement(final AbstractResumedStatement<?, ?, ?> child) {
         if (child.isFullyDefined()) {
-            child.walkChildren(phase);
-            child.endDeclared(phase);
+            child.recursivelyEndDeclared(phase);
         } else {
             current = child;
         }
