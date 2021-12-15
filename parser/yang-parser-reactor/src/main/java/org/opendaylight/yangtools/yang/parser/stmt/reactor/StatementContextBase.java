@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -156,7 +157,16 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     private boolean implicitDeclaredFlag;
 
     // TODO: we a single byte of alignment shadow left, we should think how we can use it to cache information we build
-    //       during buildEffective()
+    //       during InferredStatementContext.tryToReusePrototype(). We usually end up being routed to
+    //       copyAsChildOfImpl() -- which performs an eager instantiation and checks for changes afterwards. We should
+    //       be able to capture how parent scope affects the copy in a few bits. If we can do that, than we can reap
+    //       the benefits by just examining new parent context and old parent context contribution to the state. If
+    //       their impact is the same, we can skip instantiation of statements and directly reuse them (individually,
+    //       or as a complete file).
+    //
+    //       Whatever we end up tracking, we need to track two views of that -- for the statement itself
+    //       (sans substatements) and a summary of substatements. I think it should be possible to get this working
+    //       with 2x5bits -- we have up to 15 mutable bits available if we share the field with implicitDeclaredFlag.
 
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
@@ -734,7 +744,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return Optional.ofNullable(copyAsChildOfImpl(parent, type, targetModule));
     }
 
-    private ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final CopyType type,
+    private @Nullable ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
         final StatementSupport<A, D, E> support = definition.support();
         final CopyPolicy policy = support.copyPolicy();
@@ -772,7 +782,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return canReuseCurrent(copy) ? this : copy;
     }
 
-    private boolean canReuseCurrent(final ReactorStmtCtx<A, D, E> copy) {
+    private boolean canReuseCurrent(final @NonNull ReactorStmtCtx<A, D, E> copy) {
         // Defer to statement factory to see if we can reuse this object. If we can and have only context-independent
         // substatements we can reuse the object. More complex cases are handled indirectly via the copy.
         return definition.getFactory().canReuseCurrent(copy, this, buildEffective().effectiveSubstatements())
