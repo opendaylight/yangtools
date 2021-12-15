@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNa
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -127,8 +128,8 @@ public final class UsesStatementSupport
     }
 
     @Override
-    protected UsesStatement createDeclared(final StmtContext<QName, UsesStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected UsesStatement createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createUses(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

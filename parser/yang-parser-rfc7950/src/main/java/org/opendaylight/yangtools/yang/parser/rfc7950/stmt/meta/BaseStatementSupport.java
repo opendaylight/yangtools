@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -75,8 +76,8 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
     }
 
     @Override
-    protected BaseStatement createDeclared(final StmtContext<QName, BaseStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected BaseStatement createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createBase(ctx.getArgument(), substatements);
     }
 

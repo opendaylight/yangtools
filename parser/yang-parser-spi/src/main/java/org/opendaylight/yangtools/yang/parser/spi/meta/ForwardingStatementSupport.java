@@ -35,7 +35,7 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public D createDeclared(final StmtContext<A, D, ?> ctx, final Stream<DeclaredStatement<?>> substatements) {
+    public D createDeclared(final BoundStmtCtx<A> ctx, final Stream<DeclaredStatement<?>> substatements) {
         return delegate.createDeclared(ctx, substatements);
     }
 

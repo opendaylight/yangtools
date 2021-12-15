@@ -35,10 +35,10 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.E
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -90,8 +90,8 @@ public final class LeafListStatementSupport
     }
 
     @Override
-    protected LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected LeafListStatement createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createLeafList(ctx.getArgument(), substatements);
     }
 

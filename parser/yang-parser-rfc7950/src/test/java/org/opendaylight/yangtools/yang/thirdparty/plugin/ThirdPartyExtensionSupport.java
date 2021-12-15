@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public final class ThirdPartyExtensionSupport
@@ -32,9 +32,8 @@ public final class ThirdPartyExtensionSupport
     }
 
     @Override
-    protected ThirdPartyExtensionStatement createDeclared(
-            final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected ThirdPartyExtensionStatement createDeclared(final BoundStmtCtx<String> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return new ThirdPartyExtensionStatementImpl(ctx.getRawArgument(), substatements);
     }
 

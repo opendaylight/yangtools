@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -72,8 +73,8 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
     }
 
     @Override
-    protected IdentityRefSpecification createDeclared(final StmtContext<QName, IdentityRefSpecification, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected IdentityRefSpecification createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBase(ctx);
         }

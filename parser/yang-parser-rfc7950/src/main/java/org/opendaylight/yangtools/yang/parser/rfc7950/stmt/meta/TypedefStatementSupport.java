@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -98,8 +99,8 @@ public final class TypedefStatementSupport extends
     }
 
     @Override
-    protected TypedefStatement createDeclared(final StmtContext<QName, TypedefStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected TypedefStatement createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createTypedef(ctx.getArgument(), substatements);
     }
 

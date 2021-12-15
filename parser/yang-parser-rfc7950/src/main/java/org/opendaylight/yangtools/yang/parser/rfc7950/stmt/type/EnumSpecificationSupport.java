@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -36,8 +36,8 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
     }
 
     @Override
-    protected EnumSpecification createDeclared(final StmtContext<QName, EnumSpecification, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected EnumSpecification createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noEnum(ctx);
         }
