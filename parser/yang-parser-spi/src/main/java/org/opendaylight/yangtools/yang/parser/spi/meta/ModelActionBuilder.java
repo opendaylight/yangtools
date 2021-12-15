@@ -176,6 +176,10 @@ public interface ModelActionBuilder {
             StmtContext<?, ?, ?> context, Class<@NonNull N> namespace, NamespaceKeyCriterion<K> criterion,
             ModelProcessingPhase phase);
 
+    <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
+        @NonNull Prerequisite<StmtContext<?, ?, E>> requiresCtxPath(StmtContext<?, ?, ?> context, Class<N> namespace,
+            Iterable<K> keys, ModelProcessingPhase phase);
+
     /**
      * Action mutates the effective model of specified statement. This is a shorthand for
      * {@code mutatesCtx(context, EFFECTIVE_MODEL}.
