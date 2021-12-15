@@ -9,15 +9,21 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -28,10 +34,17 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -61,6 +74,31 @@ public final class UniqueStatementSupport
             "Invalid argument value '%s' of unique statement. The value must contains at least one descendant schema "
                 + "node identifier.", value);
         return uniqueConstraints;
+    }
+
+    @Override
+    public void onStatementAdded(final Mutable<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> stmt) {
+        final var parent = stmt.coerceParentContext();
+        if (parent.producesEffective(ListEffectiveStatement.class)) {
+            final var action = parent.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+            final var prereqs = ImmutableBiMap.copyOf(Maps.uniqueIndex(stmt.getArgument(),
+                desc -> action.requiresCtxPath(parent, SchemaTreeNamespace.class, desc.getNodeIdentifiers(),
+                ModelProcessingPhase.EFFECTIVE_MODEL))).inverse();
+
+            action.apply(new InferenceAction() {
+                @Override
+                public void apply(final InferenceContext ctx) {
+                    // FIXME: validate all prerequisites are matched
+                }
+
+                @Override
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    final var inv = prereqs.inverse();
+                    throw new InferenceException(parent, "Failed to resolve unique components %s", failed.stream()
+                        .map(inv::get).filter(Objects::nonNull).collect(Collectors.toUnmodifiableSet()));
+                }
+            });
+        }
     }
 
     @Override
