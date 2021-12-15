@@ -266,7 +266,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
      * @return Declared parent statement
      */
     final @Nullable AbstractResumedStatement<?, ?, ?> exitStatement(final ModelProcessingPhase phase) {
-        endDeclared(phase);
+        finishDeclaration(phase);
         final var parent = getParentContext();
         if (parent == null) {
             return null;
@@ -275,7 +275,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         var ret = verifyParent(parent);
         // Unwind all undeclared statements
         while (ret.origin() == StatementOrigin.CONTEXT) {
-            ret.endDeclared(phase);
+            ret.finishDeclaration(phase);
             ret = verifyParent(ret.getParentContext());
         }
         return ret;
@@ -293,12 +293,14 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         substatements = substatements.ensureCapacity(expectedSize);
     }
 
-    final void walkChildren(final ModelProcessingPhase phase) {
+    final void declarationFinished(final ModelProcessingPhase phase) {
+        finishChildrenDeclaration(phase);
+        finishDeclaration(phase);
+    }
+
+    private void finishChildrenDeclaration(final ModelProcessingPhase phase) {
         checkState(isFullyDefined());
-        substatements.forEach(stmt -> {
-            stmt.walkChildren(phase);
-            stmt.endDeclared(phase);
-        });
+        substatements.forEach(stmt -> stmt.declarationFinished(phase));
     }
 
     /**
@@ -306,7 +308,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
      *
      * @param phase processing phase that ended
      */
-    final void endDeclared(final ModelProcessingPhase phase) {
+    private void finishDeclaration(final ModelProcessingPhase phase) {
         definition().onDeclarationFinished(this, phase);
     }
 
