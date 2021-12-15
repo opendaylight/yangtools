@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -369,9 +370,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         QNameModule targetModule);
 
     @Override
-    public final ReactorStmtCtx<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
+    public final ReplicaStatementContext<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
         checkArgument(parent instanceof StatementContextBase, "Unsupported parent %s", parent);
-        return replicaAsChildOf((StatementContextBase<?, ?, ?>) parent);
+        final var ret = replicaAsChildOf((StatementContextBase<?, ?, ?>) parent);
+        definition().onStatementAdded(ret);
+        return ret;
     }
 
     abstract @NonNull ReplicaStatementContext<A, D, E> replicaAsChildOf(@NonNull StatementContextBase<?, ?, ?> parent);
