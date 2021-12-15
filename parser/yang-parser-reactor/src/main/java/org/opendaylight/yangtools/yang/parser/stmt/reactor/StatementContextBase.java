@@ -577,13 +577,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         }
     }
 
-    /**
-     * Ends declared section of current node.
-     */
-    void endDeclared(final ModelProcessingPhase phase) {
-        definition.onDeclarationFinished(this, phase);
-    }
-
     @Override
     final StatementDefinitionContext<A, D, E> definition() {
         return definition;

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -17,7 +16,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
@@ -79,30 +77,11 @@ final class StatementContextWriter implements StatementWriter {
     @Override
     public void endStatement(final StatementSourceReference ref) {
         checkState(current != null);
-        current.endDeclared(phase);
-        exitStatement();
-    }
-
-    private void exitStatement() {
-        // TODO: AbstractResumedStatement should only ever have AbstractResumedStatement parents, which would:
-        //       - remove the StatementSource check
-        //       - allow endDeclared() to be moved to AbstractResumedStatement
-        //       - remove the need for verify()
-        StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
-        while (parentContext != null && StatementOrigin.CONTEXT == parentContext.origin()) {
-            parentContext.endDeclared(phase);
-            parentContext = parentContext.getParentContext();
-        }
-        if (parentContext != null) {
-            verify(parentContext instanceof AbstractResumedStatement, "Unexpected parent context %s", parentContext);
-            current = (AbstractResumedStatement<?, ?, ?>) parentContext;
-        } else {
-            current = null;
-        }
+        current = current.exitStatement(phase);
     }
 
     private static @Nullable AbstractResumedStatement<?, ?, ?> lookupDeclaredChild(
             final AbstractResumedStatement<?, ?, ?> current, final int childId) {
-        return current == null ? null : current.lookupSubstatement(childId);
+        return current == null ? null : current.enterSubstatement(childId);
     }
 }
