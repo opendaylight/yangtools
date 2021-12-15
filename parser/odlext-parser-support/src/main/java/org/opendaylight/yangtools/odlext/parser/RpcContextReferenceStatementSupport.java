@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -33,9 +33,8 @@ public final class RpcContextReferenceStatementSupport
     }
 
     @Override
-    protected RpcContextReferenceStatement createDeclared(
-            final StmtContext<String, RpcContextReferenceStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected RpcContextReferenceStatement createDeclared(final BoundStmtCtx<String> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return new RpcContextReferenceStatementImpl(ctx.getArgument(), substatements);
     }
 

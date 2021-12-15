@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultDenyWriteStatementSupport
@@ -31,8 +31,8 @@ public final class DefaultDenyWriteStatementSupport
     }
 
     @Override
-    protected DefaultDenyWriteStatement createDeclared(final StmtContext<Empty, DefaultDenyWriteStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected DefaultDenyWriteStatement createDeclared(final BoundStmtCtx<Empty> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? DefaultDenyWriteStatementImpl.EMPTY
             : new DefaultDenyWriteStatementImpl(substatements);
     }

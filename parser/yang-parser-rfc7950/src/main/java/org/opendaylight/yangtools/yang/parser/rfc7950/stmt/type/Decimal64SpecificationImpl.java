@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class Decimal64SpecificationImpl extends WithSubstatements<QName> implements Decimal64Specification {
     Decimal64SpecificationImpl(final String rawArgument, final QName argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

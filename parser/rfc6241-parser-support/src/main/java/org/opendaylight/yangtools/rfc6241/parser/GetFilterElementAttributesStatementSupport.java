@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -47,9 +48,8 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
     }
 
     @Override
-    protected GetFilterElementAttributesStatement createDeclared(
-            final StmtContext<Empty, GetFilterElementAttributesStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected GetFilterElementAttributesStatement createDeclared(final BoundStmtCtx<Empty> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? GetFilterElementAttributesStatementImpl.EMPTY
             : new GetFilterElementAttributesStatementImpl(substatements);
     }

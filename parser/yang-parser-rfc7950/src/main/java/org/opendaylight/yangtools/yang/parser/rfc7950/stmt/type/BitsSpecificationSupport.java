@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -36,8 +36,8 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
     }
 
     @Override
-    protected BitsSpecification createDeclared(final StmtContext<QName, BitsSpecification, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected BitsSpecification createDeclared(final BoundStmtCtx<QName> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBits(ctx);
         }

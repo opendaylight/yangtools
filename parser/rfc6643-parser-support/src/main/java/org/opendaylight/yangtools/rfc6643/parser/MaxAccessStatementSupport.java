@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -49,8 +50,8 @@ public final class MaxAccessStatementSupport
     }
 
     @Override
-    protected MaxAccessStatement createDeclared(final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    protected MaxAccessStatement createDeclared(final BoundStmtCtx<MaxAccess> ctx,
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return new MaxAccessStatementImpl(ctx.getArgument(), substatements);
     }
 

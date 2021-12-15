@@ -45,7 +45,7 @@ public final class ValueStatementSupport
 
     @Override
     protected ValueStatement createDeclared(final Integer argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createValue(argument, substatements);
     }
 

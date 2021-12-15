@@ -52,15 +52,15 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final D createDeclared(final StmtContext<A, D, ?> ctx, final Stream<DeclaredStatement<?>> substatements) {
+    public final D createDeclared(final BoundStmtCtx<A> ctx, final Stream<DeclaredStatement<?>> substatements) {
         final D stmt = createDeclared(ctx, substatements.collect(ImmutableList.toImmutableList()));
         return retainDeclarationReference ? attachDeclarationReference(stmt, ctx) : stmt;
     }
 
-    protected abstract @NonNull D createDeclared(@NonNull StmtContext<A, D, ?> ctx,
-            @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements);
+    protected abstract @NonNull D createDeclared(@NonNull BoundStmtCtx<A> ctx,
+            @NonNull ImmutableList<DeclaredStatement<?>> substatements);
 
-    private @NonNull D attachDeclarationReference(final @NonNull D stmt, final @NonNull StmtContext<A, D, ?> ctx) {
+    private @NonNull D attachDeclarationReference(final @NonNull D stmt, final @NonNull BoundStmtCtx<A> ctx) {
         final DeclarationReference ref = ctx.sourceReference().declarationReference();
         return ref == null ? stmt : attachDeclarationReference(stmt, ref);
     }
