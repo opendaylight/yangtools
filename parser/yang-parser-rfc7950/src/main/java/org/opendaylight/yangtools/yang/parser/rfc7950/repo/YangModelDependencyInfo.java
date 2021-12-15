@@ -200,28 +200,6 @@ public abstract class YangModelDependencyInfo {
     }
 
     /**
-     * Extracts {@link YangModelDependencyInfo} from input stream containing a YANG model. This parsing does not
-     * validate full YANG module, only parses header up to the revisions and imports.
-     *
-     * @param refClass Base search class
-     * @param resourceName resource name, relative to refClass
-     * @return {@link YangModelDependencyInfo}
-     * @throws YangSyntaxErrorException If the resource does not pass syntactic analysis
-     * @throws IOException When the resource cannot be read
-     * @throws IllegalArgumentException
-     *             If input stream is not valid YANG stream
-     * @deprecated This method was used by testing framework and was deemed to be potentially useful to the outside
-     *             world. With Java Platform Module System, though, the resource loading rules have changed to the point
-     *             where we no longer can guarantee it working correctly, as the results depend on the resource path.
-     *             Users are advised to use {@link #forYangText(YangTextSchemaSource)}.
-     */
-    @Deprecated(forRemoval = true)
-    public static YangModelDependencyInfo forResource(final Class<?> refClass, final String resourceName)
-            throws IOException, YangSyntaxErrorException {
-        return forYangText(YangTextSchemaSource.forResource(refClass, resourceName));
-    }
-
-    /**
      * Extracts {@link YangModelDependencyInfo} from a {@link YangTextSchemaSource}. This parsing does not
      * validate full YANG module, only parses header up to the revisions and imports.
      *
