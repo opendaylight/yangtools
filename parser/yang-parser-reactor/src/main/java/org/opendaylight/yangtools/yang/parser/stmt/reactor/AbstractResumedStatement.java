@@ -201,7 +201,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
      * @return Substatement, or null if substatement does not exist.
      */
     final @Nullable AbstractResumedStatement<?, ?, ?> enterSubstatement(final int offset) {
-        var stmt = substatements.get(offset);
+        final var stmt = substatements.get(offset);
         return stmt == null ? null : unmaskUndeclared(stmt);
     }
 
