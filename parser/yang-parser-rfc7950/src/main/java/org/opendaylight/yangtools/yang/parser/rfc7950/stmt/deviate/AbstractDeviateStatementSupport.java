@@ -16,6 +16,7 @@ import com.google.common.collect.SetMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -143,6 +144,11 @@ abstract class AbstractDeviateStatementSupport
         deviateAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
+                if (!deviateStmtCtx.isSupportedToBuildEffective()) {
+                    // We are not building effective model, hence we should not be performing any effects
+                    return;
+                }
+
                 // FIXME once BUG-7760 gets fixed, there will be no need for these dirty casts
                 final StatementContextBase<?, ?, ?> sourceNodeStmtCtx =
                         (StatementContextBase<?, ?, ?>) sourceCtxPrerequisite.resolve(ctx);
@@ -171,6 +177,15 @@ abstract class AbstractDeviateStatementSupport
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 throw new InferenceException(deviateStmtCtx.coerceParentContext(), "Deviation target '%s' not found.",
                     deviationTarget);
+            }
+
+            @Override
+            public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+                if (targetCtxPrerequisite.equals(unavail)) {
+                    deviateStmtCtx.setIsSupportedToBuildEffective(false);
+                } else {
+                    prerequisiteFailed(List.of(unavail));
+                }
             }
         });
     }
