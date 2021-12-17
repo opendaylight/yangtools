@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends StatementSupport<A, D, E> {
     private final StatementSupport<A, D, E> delegate;
 
@@ -35,7 +35,7 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public D createDeclared(final BoundStmtCtx<A> ctx, final Stream<DeclaredStatement<?>> substatements) {
+    public D createDeclared(final BoundStmtCtx<A> ctx, final Stream<DeclaredStatement> substatements) {
         return delegate.createDeclared(ctx, substatements);
     }
 

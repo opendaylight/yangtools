@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  * Note: use of this base class implies context-independence.
  */
 @Beta
-public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStatement<A>,
+public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStatement,
         E extends EffectiveStatement<A, D>> extends AbstractStatementSupport<A, D, E> {
     private final LoadingCache<A, D> declaredCache = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<A, D>() {
@@ -55,14 +55,14 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
 
     @Override
     protected final D createDeclared(final BoundStmtCtx<A> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         final A argument = ctx.getArgument();
         return substatements.isEmpty() ? declaredCache.getUnchecked(ctx.getArgument())
             : createDeclared(argument, substatements);
     }
 
     protected abstract @NonNull D createDeclared(@NonNull A argument,
-            @NonNull ImmutableList<DeclaredStatement<?>> substatements);
+            @NonNull ImmutableList<DeclaredStatement> substatements);
 
     protected abstract @NonNull D createEmptyDeclared(@NonNull A argument);
 

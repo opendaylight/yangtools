@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  */
 @Beta
 public interface MountPointStatement extends UnknownStatement<QName>, WithStatus<QName>,
-        ConfigStatementAwareDeclaredStatement<QName> {
+        ConfigStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return SchemaMountStatements.MOUNT_POINT;

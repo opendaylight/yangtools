@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Common interface for statements which contain either a description/reference or a description/reference/status combo.
  */
 @Beta
-public interface DocumentedDeclaredStatement<T> extends DeclaredStatement<T> {
+public interface DocumentedDeclaredStatement extends DeclaredStatement {
     /**
      * Return description statement, if available.
      *
@@ -35,7 +35,7 @@ public interface DocumentedDeclaredStatement<T> extends DeclaredStatement<T> {
         return findFirstDeclaredSubstatement(ReferenceStatement.class);
     }
 
-    interface WithStatus<T> extends DocumentedDeclaredStatement<T> {
+    interface WithStatus extends DocumentedDeclaredStatement {
         default @NonNull Optional<StatusStatement> getStatus() {
             return findFirstDeclaredSubstatement(StatusStatement.class);
         }

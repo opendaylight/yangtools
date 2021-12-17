@@ -24,14 +24,14 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
             ThirdPartyExtensionStatementImpl.class, ThirdPartyExtensionEffectiveStatementImpl.class,
             "third-party-extension", "argument-name", false);
 
-    private final @NonNull Class<? extends DeclaredStatement<?>> type;
+    private final @NonNull Class<? extends DeclaredStatement> type;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final @NonNull QName name;
     private final QName argument;
     private final boolean yinElement;
 
     ThirdPartyExtensionsMapping(final String namespace, final String revision,
-            final Class<? extends DeclaredStatement<?>> declared,
+            final Class<? extends DeclaredStatement> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         type = requireNonNull(declared);
@@ -41,7 +41,7 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
         this.yinElement = yinElement;
     }
 
-    ThirdPartyExtensionsMapping(final String namespace, final Class<? extends DeclaredStatement<?>> declared,
+    ThirdPartyExtensionsMapping(final String namespace, final Class<? extends DeclaredStatement> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         type = requireNonNull(declared);
@@ -70,7 +70,7 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return type;
     }
 

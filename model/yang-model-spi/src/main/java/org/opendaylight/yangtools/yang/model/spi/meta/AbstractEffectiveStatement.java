@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
+abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement>
         extends AbstractModelStatement<A> implements EffectiveStatement<A, D> {
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace,

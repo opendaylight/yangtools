@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularAugmentStatement extends WithSubstatements<SchemaNodeIdentifier> implements AugmentStatement {
     public RegularAugmentStatement(final @NonNull String rawArgument, final @NonNull SchemaNodeIdentifier argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

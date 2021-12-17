@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RefineStatementImpl extends WithSubstatements<Descendant> implements RefineStatement {
     public RefineStatementImpl(final String rawArgument, final Descendant argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

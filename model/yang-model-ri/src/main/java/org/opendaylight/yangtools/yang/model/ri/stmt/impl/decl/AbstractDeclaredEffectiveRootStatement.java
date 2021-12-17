@@ -16,11 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MetaDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionAwareDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredStatement<Unqualified>>
+abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredStatement>
         extends WithSubstatements<Unqualified> implements LinkageDeclaredStatement,
-                MetaDeclaredStatement<Unqualified>, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
+                MetaDeclaredStatement, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
     protected AbstractDeclaredEffectiveRootStatement(final String rawArgument, final Unqualified argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

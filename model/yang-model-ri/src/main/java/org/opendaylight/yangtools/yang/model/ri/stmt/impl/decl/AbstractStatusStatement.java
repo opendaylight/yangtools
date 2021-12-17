@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
-abstract class AbstractStatusStatement extends AbstractDeclaredStatement<Status> implements StatusStatement {
+abstract class AbstractStatusStatement extends AbstractDeclaredStatement implements StatusStatement {
     private final @NonNull Status argument;
 
     AbstractStatusStatement(final Status argument) {

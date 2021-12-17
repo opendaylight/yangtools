@@ -18,15 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Common base class for forwarding implementations of {@link DeclaredStatement}.
  */
 @Beta
-public abstract class ForwardingDeclaredStatement<A, D extends DeclaredStatement<A>>
-        extends ForwardingModelStatement<A, D> implements DeclaredStatement<A> {
+public abstract class ForwardingDeclaredStatement>
+        extends ForwardingModelStatement<A, D> implements DeclaredStatement {
     @Override
     public String rawArgument() {
         return delegate().rawArgument();
     }
 
     @Override
-    public List<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public List<? extends DeclaredStatement> declaredSubstatements() {
         return delegate().declaredSubstatements();
     }
 

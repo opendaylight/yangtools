@@ -101,7 +101,7 @@ public final class ContainerStatementSupport
 
     @Override
     protected ContainerStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createContainer(ctx.getArgument(), substatements);
     }
 

@@ -11,14 +11,13 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Common interface for action and rpc statements.
  */
 @Beta
-public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        IfFeatureAwareDeclaredStatement<QName> {
+public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus,
+        IfFeatureAwareDeclaredStatement {
     default @NonNull Optional<InputStatement> getInput() {
         return findFirstDeclaredSubstatement(InputStatement.class);
     }

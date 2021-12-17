@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class AbstractInternedStringStatementSupport<D extends DeclaredStatement<String>,
+public abstract class AbstractInternedStringStatementSupport<D extends DeclaredStatement,
         E extends EffectiveStatement<String, D>> extends AbstractInternedStatementSupport<String, D, E> {
     protected AbstractInternedStringStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<String, D> policy, final YangParserConfiguration config,

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularPrefixStatement extends WithSubstatements implements PrefixStatement {
     public RegularPrefixStatement(final @NonNull String rawArgument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
     }
 }

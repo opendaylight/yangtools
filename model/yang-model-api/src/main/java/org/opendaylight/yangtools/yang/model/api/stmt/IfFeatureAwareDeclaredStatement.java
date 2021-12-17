@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface IfFeatureAwareDeclaredStatement<A> extends DeclaredStatement<A> {
+public interface IfFeatureAwareDeclaredStatement extends DeclaredStatement {
     /**
      * Return attached if-feature statements. Metamodel differs here between RFC6020 and RFC7950: some nodes will be
      * returning an empty collection in YANG 1.0 mode.

@@ -50,7 +50,7 @@ public final class RevisionStatementSupport
 
     @Override
     protected RevisionStatement createDeclared(final BoundStmtCtx<Revision> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createRevision(ctx.getArgument(), substatements);
     }
 

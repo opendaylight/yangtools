@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularMaxElementsStatement extends WithSubstatements<String> implements MaxElementsStatement {
     public RegularMaxElementsStatement(final String rawArgument, final String argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

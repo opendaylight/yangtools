@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface IncludeStatement extends DocumentedDeclaredStatement<String> {
+public interface IncludeStatement extends DocumentedDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.INCLUDE;

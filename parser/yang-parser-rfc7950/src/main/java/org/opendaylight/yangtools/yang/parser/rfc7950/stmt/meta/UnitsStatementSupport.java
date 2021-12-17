@@ -34,7 +34,7 @@ public final class UnitsStatementSupport
 
     @Override
     protected UnitsStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createUnits(ctx.getRawArgument(), substatements);
     }
 

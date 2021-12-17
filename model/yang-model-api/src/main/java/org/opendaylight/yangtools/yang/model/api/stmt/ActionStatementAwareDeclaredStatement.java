@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Statement which can contain action statements.
  */
 @Beta
-public interface ActionStatementAwareDeclaredStatement<A> extends DeclaredStatement<A> {
+public interface ActionStatementAwareDeclaredStatement extends DeclaredStatement {
     /**
      * Return actions in this container. Since actions were introduced in RFC7950, hence RFC6020 semantics always
      * returns an empty collection.

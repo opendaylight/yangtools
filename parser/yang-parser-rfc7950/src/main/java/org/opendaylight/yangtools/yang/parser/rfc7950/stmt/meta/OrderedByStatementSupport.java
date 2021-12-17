@@ -72,7 +72,7 @@ public final class OrderedByStatementSupport
 
     @Override
     protected OrderedByStatement createDeclared(final BoundStmtCtx<Ordering> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             final Ordering argument = ctx.getArgument();
             switch (argument) {

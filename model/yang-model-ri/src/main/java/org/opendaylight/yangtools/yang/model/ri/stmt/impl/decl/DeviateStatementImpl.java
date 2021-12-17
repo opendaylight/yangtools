@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class DeviateStatementImpl extends WithSubstatements<DeviateKind> implements DeviateStatement {
     public DeviateStatementImpl(final DeviateKind argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument.getKeyword(), argument, substatements);
     }
 }

@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class DisplayHintStatementImpl extends WithSubstatements implements DisplayHintStatement {
     DisplayHintStatementImpl(final String rawArgument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
     }
 }

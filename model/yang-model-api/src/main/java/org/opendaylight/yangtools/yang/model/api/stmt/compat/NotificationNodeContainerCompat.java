@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveSt
  * {@link SchemaTreeAwareEffectiveStatement}.
  */
 @Beta
-public interface NotificationNodeContainerCompat<A, D extends DeclaredStatement<A>,
+public interface NotificationNodeContainerCompat<A, D extends DeclaredStatement,
         E extends SchemaTreeAwareEffectiveStatement<A, D>>
         extends SchemaTreeAwareEffectiveStatement<A, D>, NotificationNodeContainer {
 

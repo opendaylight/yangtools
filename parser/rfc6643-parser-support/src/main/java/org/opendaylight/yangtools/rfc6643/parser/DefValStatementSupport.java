@@ -33,7 +33,7 @@ public final class DefValStatementSupport
 
     @Override
     protected DefValStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new DefValStatementImpl(ctx.getRawArgument(), substatements);
     }
 

@@ -129,7 +129,7 @@ public final class UsesStatementSupport
 
     @Override
     protected UsesStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createUses(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

@@ -12,7 +12,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 
 @Beta
-public interface WhenStatementAwareDeclaredStatement<A> extends IfFeatureAwareDeclaredStatement<A> {
+public interface WhenStatementAwareDeclaredStatement extends IfFeatureAwareDeclaredStatement {
     default @NonNull Optional<WhenStatement> getWhenStatement() {
         return findFirstDeclaredSubstatement(WhenStatement.class);
     }

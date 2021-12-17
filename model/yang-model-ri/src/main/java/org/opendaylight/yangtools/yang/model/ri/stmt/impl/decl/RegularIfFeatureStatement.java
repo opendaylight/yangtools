@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularIfFeatureStatement extends WithSubstatements<IfFeatureExpr> implements IfFeatureStatement {
     public RegularIfFeatureStatement(final @NonNull String rawArgument, final @NonNull IfFeatureExpr argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

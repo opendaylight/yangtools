@@ -54,7 +54,7 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(
+    public static <A, D extends DeclaredStatement> A firstAttributeOf(
             final Iterable<? extends StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
         for (final StmtContext<?, ?, ?> ctx : contexts) {
             if (ctx.producesDeclared(declaredType)) {
@@ -65,18 +65,18 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
+    public static <A, D extends DeclaredStatement> A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
             final Class<D> declaredType) {
         return ctx.producesDeclared(declaredType) ? (A) ctx.argument() : null;
     }
 
-    public static <A, D extends DeclaredStatement<A>> A firstSubstatementAttributeOf(
+    public static <A, D extends DeclaredStatement> A firstSubstatementAttributeOf(
             final StmtContext<?, ?, ?> ctx, final Class<D> declaredType) {
         return firstAttributeOf(ctx.allSubstatements(), declaredType);
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstDeclaredSubstatement(
+    public static <A, D extends DeclaredStatement> StmtContext<A, ?, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {
@@ -89,7 +89,7 @@ public final class StmtContextUtils {
     @SafeVarargs
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
-            int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
+            int startIndex, final Class<? extends DeclaredStatement>... types) {
         if (startIndex >= types.length) {
             return null;
         }
@@ -104,7 +104,7 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllDeclaredSubstatements(
+    public static <A, D extends DeclaredStatement> Collection<StmtContext<A, D, ?>> findAllDeclaredSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
@@ -116,7 +116,7 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllEffectiveSubstatements(
+    public static <A, D extends DeclaredStatement> Collection<StmtContext<A, D, ?>> findAllEffectiveSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
         final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
@@ -127,7 +127,7 @@ public final class StmtContextUtils {
         return listBuilder.build();
     }
 
-    public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllSubstatements(
+    public static <A, D extends DeclaredStatement> Collection<StmtContext<A, D, ?>> findAllSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
         final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
         listBuilder.addAll(findAllDeclaredSubstatements(stmtContext, type));
@@ -136,7 +136,7 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstEffectiveSubstatement(
+    public static <A, D extends DeclaredStatement> StmtContext<A, ?, ?> findFirstEffectiveSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {
@@ -146,7 +146,7 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
+    public static <D extends DeclaredStatement> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
             final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType, int sublevel) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
             if (sublevel == 1 && subStmtContext.producesDeclared(declaredType)) {
@@ -164,7 +164,7 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findDeepFirstDeclaredSubstatement(
+    public static <D extends DeclaredStatement> StmtContext<?, ?, ?> findDeepFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType) {
         for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {

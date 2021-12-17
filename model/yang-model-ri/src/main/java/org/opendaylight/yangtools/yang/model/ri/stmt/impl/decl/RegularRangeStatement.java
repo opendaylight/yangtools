@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularRangeStatement extends WithSubstatements<List<ValueRange>> implements RangeStatement {
     public RegularRangeStatement(final String rawArgument, final List<ValueRange> argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

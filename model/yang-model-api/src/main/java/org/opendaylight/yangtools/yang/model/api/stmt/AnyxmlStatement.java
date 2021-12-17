@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
-        MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement,
+        MandatoryStatementAwareDeclaredStatement, MustStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ANYXML;

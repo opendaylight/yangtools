@@ -32,7 +32,7 @@ public final class DefaultDenyAllStatementSupport
 
     @Override
     protected DefaultDenyAllStatement createDeclared(final BoundStmtCtx<Empty> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return substatements.isEmpty() ? DefaultDenyAllStatementImpl.EMPTY
             : new DefaultDenyAllStatementImpl(substatements);
     }

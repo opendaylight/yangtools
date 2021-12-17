@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * backed by a declaration (and declared statements). It is backed by a prototype StatementContextBase and has only
  * effective substatements, which are either transformed from that prototype or added by inference.
  */
-final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+final class InferredStatementContext<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
     // An effective copy view, with enough information to decide what to do next
     private static final class EffectiveCopy implements Immutable {
@@ -416,7 +416,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public <Y extends DeclaredStatement<QName>, Z extends SchemaTreeEffectiveStatement<Y>>
+    public <Y extends DeclaredStatement, Z extends SchemaTreeEffectiveStatement<Y>>
             StmtContext<QName, Y, Z> requestSchemaTreeChild(final QName qname) {
         if (substatements instanceof List) {
             // We have performed materialization, hence we have triggered creation of all our schema tree child

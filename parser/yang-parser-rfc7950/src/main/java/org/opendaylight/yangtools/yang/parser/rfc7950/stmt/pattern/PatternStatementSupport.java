@@ -74,7 +74,7 @@ public final class PatternStatementSupport
 
     @Override
     protected PatternStatement createDeclared(final BoundStmtCtx<PatternExpression> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createPattern(ctx.getArgument(), substatements);
     }
 

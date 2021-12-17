@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface GroupingStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
-        NotificationStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName> {
+public interface GroupingStatement extends DocumentedDeclaredStatement.WithStatus,
+        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions,
+        NotificationStatementAwareDeclaredStatement, ActionStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.GROUPING;

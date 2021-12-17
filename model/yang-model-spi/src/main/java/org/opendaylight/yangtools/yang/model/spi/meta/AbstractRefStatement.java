@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-public abstract class AbstractRefStatement<A, D extends DeclaredStatement<A>>
-        extends ForwardingDeclaredStatement<A, D> implements Delegator<D> {
+public abstract class AbstractRefStatement<A, D extends DeclaredStatement>
+        extends ForwardingDeclaredStatement implements Delegator<D> {
     private final @NonNull DeclarationReference ref;
     private final @NonNull D delegate;
 

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Model statement. There are two base types of model statements:
@@ -23,22 +22,13 @@ import org.opendaylight.yangtools.yang.common.Empty;
  *       of other statements (for example {@code uses}, {@code augment} and others).
  *   </li>
  * </ul>
- *
- * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
 // FIXME: sealed interface when we have JDK17+
-public interface ModelStatement<A> {
+public interface ModelStatement {
     /**
      * Statement Definition of this statement.
      *
      * @return definition of this statement.
      */
     @NonNull StatementDefinition statementDefinition();
-
-    /**
-     * Returns statement argument.
-     *
-     * @return statement argument.
-     */
-    @NonNull A argument();
 }

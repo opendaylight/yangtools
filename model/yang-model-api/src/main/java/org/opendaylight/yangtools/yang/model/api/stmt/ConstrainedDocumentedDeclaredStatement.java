@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * Common interface for statements which contain either a description/reference or a description/reference/status combo.
  */
 @Beta
-public interface ConstrainedDocumentedDeclaredStatement<T> extends DocumentedDeclaredStatement<T> {
+public interface ConstrainedDocumentedDeclaredStatement extends DocumentedDeclaredStatement {
 
     default @NonNull Optional<ErrorAppTagStatement> getErrorAppTagStatement() {
         return findFirstDeclaredSubstatement(ErrorAppTagStatement.class);
@@ -25,8 +25,8 @@ public interface ConstrainedDocumentedDeclaredStatement<T> extends DocumentedDec
         return findFirstDeclaredSubstatement(ErrorMessageStatement.class);
     }
 
-    interface WithStatus<T> extends ConstrainedDocumentedDeclaredStatement<T>,
-            DocumentedDeclaredStatement.WithStatus<T> {
+    interface WithStatus extends ConstrainedDocumentedDeclaredStatement,
+            DocumentedDeclaredStatement.WithStatus {
 
     }
 }

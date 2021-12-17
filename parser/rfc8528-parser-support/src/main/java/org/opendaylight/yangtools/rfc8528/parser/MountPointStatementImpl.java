@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
 final class MountPointStatementImpl extends WithSubstatements implements MountPointStatement {
-    MountPointStatementImpl(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    MountPointStatementImpl(final QName argument, final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

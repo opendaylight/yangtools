@@ -21,7 +21,7 @@ public final class UnrecognizedStatementImpl extends WithSubstatements<Object> i
     private final @NonNull StatementDefinition definition;
 
     public UnrecognizedStatementImpl(final String rawArgument, final @NonNull StatementDefinition statementDefinition,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
         this.definition = requireNonNull(statementDefinition);
     }

@@ -34,7 +34,7 @@ public final class PrefixStatementSupport
 
     @Override
     protected PrefixStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createPrefix(ctx.getRawArgument(), substatements);
     }
 

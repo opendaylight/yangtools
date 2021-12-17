@@ -12,7 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,32 +31,21 @@ public class DeclaredStatementTest {
 
     @Before
     public void before() {
-        doReturn("one").when(stmt1).argument();
-        doReturn("two").when(stmt2).argument();
-        doReturn(ImmutableList.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
+        doReturn(List.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
         doCallRealMethod().when(stmt).declaredSubstatements(any());
         doCallRealMethod().when(stmt).findFirstDeclaredSubstatement(any());
-        doCallRealMethod().when(stmt).findFirstDeclaredSubstatementArgument(any());
         doCallRealMethod().when(stmt).streamDeclaredSubstatements(any());
     }
 
     @Test
     public void testDeclaredSubstatements() {
-        assertEquals(ImmutableList.of(stmt1), ImmutableList.copyOf(stmt.declaredSubstatements(
-            DeclaredStatement1.class)));
-        assertEquals(ImmutableList.of(stmt2), ImmutableList.copyOf(stmt.declaredSubstatements(
-            DeclaredStatement2.class)));
+        assertEquals(List.of(stmt1), List.copyOf(stmt.declaredSubstatements(DeclaredStatement1.class)));
+        assertEquals(List.of(stmt2), List.copyOf(stmt.declaredSubstatements(DeclaredStatement2.class)));
     }
 
     @Test
     public void testFindFirstDeclaredSubstatement() {
         assertEquals(Optional.of(stmt1), stmt.findFirstDeclaredSubstatement(DeclaredStatement1.class));
         assertEquals(Optional.of(stmt2), stmt.findFirstDeclaredSubstatement(DeclaredStatement2.class));
-    }
-
-    @Test
-    public void testFindFirstDeclaredSubstatementArgument() {
-        assertEquals(Optional.of("one"), stmt.findFirstDeclaredSubstatementArgument(DeclaredStatement1.class));
-        assertEquals(Optional.of("two"), stmt.findFirstDeclaredSubstatementArgument(DeclaredStatement2.class));
     }
 }

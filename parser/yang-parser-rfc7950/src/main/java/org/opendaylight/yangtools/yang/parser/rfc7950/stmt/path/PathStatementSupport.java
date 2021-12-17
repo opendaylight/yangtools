@@ -55,7 +55,7 @@ public final class PathStatementSupport
 
     @Override
     protected PathStatement createDeclared(final BoundStmtCtx<PathExpression> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createPath(ctx.getArgument(), substatements);
     }
 

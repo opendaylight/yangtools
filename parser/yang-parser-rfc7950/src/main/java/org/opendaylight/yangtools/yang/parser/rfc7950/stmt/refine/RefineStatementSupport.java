@@ -77,7 +77,7 @@ public final class RefineStatementSupport
 
     @Override
     protected RefineStatement createDeclared(final BoundStmtCtx<Descendant> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createRefine(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

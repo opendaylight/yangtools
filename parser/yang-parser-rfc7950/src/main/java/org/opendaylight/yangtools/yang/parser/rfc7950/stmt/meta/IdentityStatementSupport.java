@@ -89,7 +89,7 @@ public final class IdentityStatementSupport
 
     @Override
     protected IdentityStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createIdentity(ctx.getArgument(), substatements);
     }
 

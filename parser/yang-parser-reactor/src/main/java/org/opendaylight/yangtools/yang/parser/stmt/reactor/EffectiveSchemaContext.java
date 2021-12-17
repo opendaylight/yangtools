@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
 
 @VisibleForTesting
 public final class EffectiveSchemaContext extends SimpleSchemaContext implements EffectiveModelContext {
-    private final ImmutableList<DeclaredStatement<?>> rootDeclaredStatements;
+    private final ImmutableList<DeclaredStatement> rootDeclaredStatements;
     private final ImmutableMap<QNameModule, ModuleEffectiveStatement> rootEffectiveStatements;
 
-    private EffectiveSchemaContext(final Set<Module> modules, final List<DeclaredStatement<?>> rootDeclaredStatements,
+    private EffectiveSchemaContext(final Set<Module> modules, final List<DeclaredStatement> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
         super(modules);
         this.rootDeclaredStatements = ImmutableList.copyOf(rootDeclaredStatements);
@@ -38,7 +38,7 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext implements
                 .collect(ImmutableMap.toImmutableMap(ModuleEffectiveStatement::localQNameModule, Function.identity()));
     }
 
-    static EffectiveSchemaContext create(final List<DeclaredStatement<?>> rootDeclaredStatements,
+    static EffectiveSchemaContext create(final List<DeclaredStatement> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
         final Set<Module> modules = new HashSet<>();
         for (EffectiveStatement<?, ?> stmt : rootEffectiveStatements) {
@@ -52,7 +52,7 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext implements
     }
 
     @VisibleForTesting
-    public List<DeclaredStatement<?>> getRootDeclaredStatements() {
+    public List<DeclaredStatement> getRootDeclaredStatements() {
         return rootDeclaredStatements;
     }
 

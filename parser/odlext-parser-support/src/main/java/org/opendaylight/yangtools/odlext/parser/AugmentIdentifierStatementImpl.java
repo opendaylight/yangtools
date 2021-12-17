@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 final class AugmentIdentifierStatementImpl extends WithSubstatements<Unqualified>
         implements AugmentIdentifierStatement {
     AugmentIdentifierStatementImpl(final Unqualified argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument.getLocalName(), argument, substatements);
     }
 }

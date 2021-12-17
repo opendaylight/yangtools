@@ -21,6 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 @Beta
 // FIXME: remove this interface once UnknownSchemaNode is gone
-public interface UnknownEffectiveStatement<A, D extends UnknownStatement<A>> extends EffectiveStatement<A, D> {
+public interface UnknownEffectiveStatement<A, D extends UnknownStatement> extends EffectiveStatement<A, D> {
 
 }

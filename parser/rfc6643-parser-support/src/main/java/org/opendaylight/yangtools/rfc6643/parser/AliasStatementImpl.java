@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
 final class AliasStatementImpl extends WithSubstatements implements AliasStatement {
-    AliasStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    AliasStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
     }
 }

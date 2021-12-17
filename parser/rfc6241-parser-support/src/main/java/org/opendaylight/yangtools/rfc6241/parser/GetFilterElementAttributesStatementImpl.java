@@ -18,7 +18,7 @@ final class GetFilterElementAttributesStatementImpl extends WithSubstatements
     static final @NonNull GetFilterElementAttributesStatementImpl EMPTY =
         new GetFilterElementAttributesStatementImpl(ImmutableList.of());
 
-    GetFilterElementAttributesStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    GetFilterElementAttributesStatementImpl(final ImmutableList<? extends DeclaredStatement> substatements) {
         super(substatements);
     }
 }

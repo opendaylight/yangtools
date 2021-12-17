@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularUniqueStatement extends WithSubstatements<Set<Descendant>> implements UniqueStatement {
     public RegularUniqueStatement(final String rawArgument, final Set<Descendant> argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

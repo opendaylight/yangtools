@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
-abstract class AbstractOrderedByStatement extends AbstractDeclaredStatement<Ordering>
+abstract class AbstractOrderedByStatement extends AbstractDeclaredStatement
         implements OrderedByStatement {
     private final @NonNull Ordering argument;
 

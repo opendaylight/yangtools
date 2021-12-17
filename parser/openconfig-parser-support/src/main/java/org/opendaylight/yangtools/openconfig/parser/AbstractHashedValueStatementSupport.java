@@ -30,7 +30,7 @@ abstract class AbstractHashedValueStatementSupport
 
     @Override
     protected final OpenConfigHashedValueStatement createDeclared(final BoundStmtCtx<Empty> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new OpenConfigHashedValueStatementImpl(getPublicView(), substatements);
     }
 

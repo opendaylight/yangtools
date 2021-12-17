@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  * @author Robert Varga
  */
 @Beta
-public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
+public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatement> extends EffectiveStatement<A, D> {
     /**
      * Namespace of {@code schema node}s defined within this node.
      *

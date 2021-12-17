@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @param <E> Effective Statement representation
  */
 @Beta
-public interface RootStmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+public interface RootStmtContext<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends StmtContext<A, D, E> {
 
-    interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+    interface Mutable<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
             extends StmtContext.Mutable<A, D, E>, RootStmtContext<A, D, E> {
 
         @Override

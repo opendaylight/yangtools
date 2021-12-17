@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * stateful subclasses.
  */
 @Beta
-public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
+public abstract class AbstractDeclaredStatement extends AbstractModelStatement<A> implements DeclaredStatement {
     @Override
-    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
         // Default to reduce load on subclasses and keep the number of implementations down
         return ImmutableList.of();
     }
@@ -38,23 +38,23 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
      * @throws ClassCastException if masked object does not match DeclaredStatement
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected static final @NonNull ImmutableList<? extends DeclaredStatement<?>> unmaskList(
+    protected static final @NonNull ImmutableList<? extends DeclaredStatement> unmaskList(
             final @NonNull Object masked) {
         return (ImmutableList) unmaskList(masked, DeclaredStatement.class);
     }
 
-    public abstract static class WithRawArgument<A> extends AbstractDeclaredStatement<A> {
+    public abstract static class WithRawArgument<A> extends AbstractDeclaredStatement {
         public abstract static class WithSubstatements<A> extends WithRawArgument<A> {
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final String rawArgument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                    final ImmutableList<? extends DeclaredStatement> substatements) {
                 super(rawArgument);
                 this.substatements = maskList(substatements);
             }
 
             @Override
-            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -71,18 +71,18 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
     }
 
-    public abstract static class WithQNameArgument extends AbstractDeclaredStatement<QName> {
+    public abstract static class WithQNameArgument extends AbstractDeclaredStatement {
         public abstract static class WithSubstatements extends WithQNameArgument {
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final QName argument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                    final ImmutableList<? extends DeclaredStatement> substatements) {
                 super(argument);
                 this.substatements = maskList(substatements);
             }
 
             @Override
-            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -109,13 +109,13 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final String rawArgument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                    final ImmutableList<? extends DeclaredStatement> substatements) {
                 super(rawArgument);
                 this.substatements = maskList(substatements);
             }
 
             @Override
-            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -135,13 +135,13 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final String rawArgument, final A argument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                    final ImmutableList<? extends DeclaredStatement> substatements) {
                 super(rawArgument, argument);
                 this.substatements = maskList(substatements);
             }
 
             @Override
-            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -159,18 +159,18 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
     }
 
-    public abstract static class ArgumentToString<A> extends AbstractDeclaredStatement<A> {
+    public abstract static class ArgumentToString<A> extends AbstractDeclaredStatement {
         public abstract static class WithSubstatements<A> extends ArgumentToString<A> {
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final A argument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                    final ImmutableList<? extends DeclaredStatement> substatements) {
                 super(argument);
                 this.substatements = maskList(substatements);
             }
 
             @Override
-            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }
@@ -192,16 +192,16 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
     }
 
-    public abstract static class WithoutArgument extends AbstractDeclaredStatement<Empty> {
+    public abstract static class WithoutArgument extends AbstractDeclaredStatement {
         public abstract static class WithSubstatements extends WithoutArgument {
             private final @NonNull Object substatements;
 
-            protected WithSubstatements(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            protected WithSubstatements(final ImmutableList<? extends DeclaredStatement> substatements) {
                 this.substatements = maskList(substatements);
             }
 
             @Override
-            public final ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+            public final ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
                 return unmaskList(substatements);
             }
         }

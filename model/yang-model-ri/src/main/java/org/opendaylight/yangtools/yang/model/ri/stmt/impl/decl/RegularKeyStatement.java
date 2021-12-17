@@ -17,13 +17,13 @@ public final class RegularKeyStatement extends AbstractKeyStatement {
     private final @NonNull Object substatements;
 
     public RegularKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument);
         this.substatements = maskList(substatements);
     }
 
     @Override
-    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
         return unmaskList(substatements);
     }
 }

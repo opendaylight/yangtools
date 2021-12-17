@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularModifierStatement extends WithSubstatements<ModifierKind> implements ModifierStatement {
     public RegularModifierStatement(final ModifierKind argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument.getKeyword(), argument, substatements);
     }
 }

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 
 public final class RegularWhenStatement extends WithSubstatements<QualifiedBound> implements WhenStatement {
     public RegularWhenStatement(final String rawArgument, final QualifiedBound argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

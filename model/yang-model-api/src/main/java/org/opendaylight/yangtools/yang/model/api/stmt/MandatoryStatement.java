@@ -11,13 +11,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface MandatoryStatement extends DeclaredStatement<Boolean> {
+public interface MandatoryStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MANDATORY;
-    }
-
-    default boolean getValue() {
-        return argument();
     }
 }

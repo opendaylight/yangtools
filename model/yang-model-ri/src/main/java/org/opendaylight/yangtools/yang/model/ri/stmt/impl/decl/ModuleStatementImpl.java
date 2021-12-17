@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 public final class ModuleStatementImpl extends AbstractDeclaredEffectiveRootStatement<ModuleStatement>
         implements ModuleStatement {
     public ModuleStatementImpl(final String rawArgument, final Unqualified argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

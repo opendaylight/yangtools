@@ -73,7 +73,7 @@ public final class YangDataStatementSupport
 
     @Override
     protected YangDataStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new YangDataStatementImpl(ctx.getRawArgument(), substatements);
     }
 

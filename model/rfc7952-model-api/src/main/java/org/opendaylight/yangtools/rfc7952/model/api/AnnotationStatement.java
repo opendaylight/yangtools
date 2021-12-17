@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  */
 @Beta
 public interface AnnotationStatement extends UnknownStatement<QName>, WithStatus<QName>,
-        IfFeatureAwareDeclaredStatement<QName>, TypeAwareDeclaredStatement {
+        IfFeatureAwareDeclaredStatement, TypeAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return MetadataStatements.ANNOTATION;

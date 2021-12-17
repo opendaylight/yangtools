@@ -38,7 +38,7 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
 
     @Override
     protected Decimal64Specification createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noFracDigits(ctx);
         }

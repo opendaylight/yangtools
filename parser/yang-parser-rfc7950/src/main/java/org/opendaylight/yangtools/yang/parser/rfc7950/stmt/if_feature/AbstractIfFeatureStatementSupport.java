@@ -85,7 +85,7 @@ abstract class AbstractIfFeatureStatementSupport
 
     @Override
     protected final IfFeatureStatement createDeclared(final BoundStmtCtx<IfFeatureExpr> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createIfFeature(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

@@ -72,7 +72,7 @@ public final class InputStatementSupport
 
     @Override
     protected InputStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createInput(ctx.getArgument(), substatements);
     }
 
