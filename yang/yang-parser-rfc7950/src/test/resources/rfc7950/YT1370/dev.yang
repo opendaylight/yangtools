@@ -1,0 +1,12 @@
+module dev {
+  prefix dev;
+  namespace dev;
+
+  import foo {
+    prefix foo;
+  }
+
+  deviation /foo:foo/foo:bar {
+    deviate not-supported;
+  }
+}
