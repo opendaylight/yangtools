@@ -16,6 +16,7 @@ import com.google.common.collect.SetMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -169,6 +170,15 @@ abstract class AbstractDeviateStatementSupport
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 throw new InferenceException(deviateStmtCtx.coerceParentContext(), "Deviation target '%s' not found.",
                     deviationTarget);
+            }
+
+            @Override
+            public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+                if (targetCtxPrerequisite.equals(unavail)) {
+                    deviateStmtCtx.setUnsupported();
+                } else {
+                    prerequisiteFailed(List.of(unavail));
+                }
             }
         });
     }
