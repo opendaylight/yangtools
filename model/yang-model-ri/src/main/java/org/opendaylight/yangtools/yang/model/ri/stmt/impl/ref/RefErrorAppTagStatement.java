@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefErrorAppTagStatement extends AbstractRefStatement<String, ErrorAppTagStatement>
+public final class RefErrorAppTagStatement extends AbstractRefStatement<ErrorAppTagStatement>
         implements ErrorAppTagStatement {
     public RefErrorAppTagStatement(final ErrorAppTagStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

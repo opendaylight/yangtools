@@ -45,7 +45,7 @@ public final class OidStatementSupport
 
     @Override
     protected OidStatement createDeclared(final BoundStmtCtx<ObjectIdentifier> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new OidStatementImpl(ctx.getArgument(), substatements);
     }
 

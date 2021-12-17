@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
  * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
  */
 final class YangDataStatementImpl extends WithSubstatements implements YangDataStatement {
-    YangDataStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    YangDataStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
     }
 }

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6241.model.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -17,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * <a href="https://tools.ietf.org/html/rfc6241">RFC6241</a>.
  */
 @Beta
-public interface GetFilterElementAttributesStatement extends UnknownStatement<Empty> {
+public interface GetFilterElementAttributesStatement extends UnknownStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES;

@@ -137,7 +137,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
          * @return Requested child, if it is present.
          * @throws NullPointerException in {@code qname} is null
          */
-        <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+        <D extends DeclaredStatement, E extends SchemaTreeEffectiveStatement<D>>
             @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
     }
 

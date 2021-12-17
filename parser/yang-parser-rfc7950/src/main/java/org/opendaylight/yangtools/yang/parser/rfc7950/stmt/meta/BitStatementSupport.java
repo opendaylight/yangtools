@@ -67,7 +67,7 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
 
     @Override
     protected BitStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createBit(ctx.getArgument(), substatements);
     }
 

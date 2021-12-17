@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface FeatureStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        IfFeatureAwareDeclaredStatement<QName> {
+public interface FeatureStatement extends DocumentedDeclaredStatement.WithStatus,
+        IfFeatureAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.FEATURE;

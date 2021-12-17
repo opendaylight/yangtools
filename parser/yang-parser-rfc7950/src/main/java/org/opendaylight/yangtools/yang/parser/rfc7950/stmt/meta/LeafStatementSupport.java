@@ -69,7 +69,7 @@ public final class LeafStatementSupport
 
     @Override
     protected LeafStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createLeaf(ctx.getArgument(), substatements);
     }
 

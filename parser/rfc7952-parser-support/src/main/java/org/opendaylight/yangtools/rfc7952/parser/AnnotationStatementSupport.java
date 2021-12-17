@@ -56,7 +56,7 @@ public final class AnnotationStatementSupport
 
     @Override
     protected AnnotationStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new AnnotationStatementImpl(ctx.getArgument(), substatements);
     }
 

@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularValueStatement extends WithSubstatements<Integer> implements ValueStatement {
     public RegularValueStatement(final Integer argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

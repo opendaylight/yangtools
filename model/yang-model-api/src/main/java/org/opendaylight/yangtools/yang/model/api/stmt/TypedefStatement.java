@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus<QName>, TypeAwareDeclaredStatement,
+public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus, TypeAwareDeclaredStatement,
         DefaultStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {

@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>,
+public abstract class AbstractStatementSupport<A, D extends DeclaredStatement,
         E extends EffectiveStatement<A, D>> extends StatementSupport<A, D, E> {
     private final SubstatementValidator substatementValidator;
     private final boolean retainDeclarationReference;
@@ -52,13 +52,13 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final D createDeclared(final BoundStmtCtx<A> ctx, final Stream<DeclaredStatement<?>> substatements) {
+    public final D createDeclared(final BoundStmtCtx<A> ctx, final Stream<DeclaredStatement> substatements) {
         final D stmt = createDeclared(ctx, substatements.collect(ImmutableList.toImmutableList()));
         return retainDeclarationReference ? attachDeclarationReference(stmt, ctx) : stmt;
     }
 
     protected abstract @NonNull D createDeclared(@NonNull BoundStmtCtx<A> ctx,
-            @NonNull ImmutableList<DeclaredStatement<?>> substatements);
+            @NonNull ImmutableList<DeclaredStatement> substatements);
 
     private @NonNull D attachDeclarationReference(final @NonNull D stmt, final @NonNull BoundStmtCtx<A> ctx) {
         final DeclarationReference ref = ctx.sourceReference().declarationReference();

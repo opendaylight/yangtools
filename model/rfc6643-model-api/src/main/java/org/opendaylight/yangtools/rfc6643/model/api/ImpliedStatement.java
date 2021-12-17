@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface ImpliedStatement extends UnknownStatement<String> {
+public interface ImpliedStatement extends UnknownStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return IetfYangSmiv2ExtensionsMapping.IMPLIED;

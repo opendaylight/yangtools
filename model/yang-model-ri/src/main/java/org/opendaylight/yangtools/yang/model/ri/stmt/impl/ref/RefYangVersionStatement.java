@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefYangVersionStatement extends AbstractRefStatement<YangVersion, YangVersionStatement>
+public final class RefYangVersionStatement extends AbstractRefStatement<YangVersionStatement>
         implements YangVersionStatement {
     public RefYangVersionStatement(final YangVersionStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

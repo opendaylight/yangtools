@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 public final class RegularBaseStatement extends WithSubstatements implements BaseStatement {
-    public RegularBaseStatement(final QName argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+    public RegularBaseStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

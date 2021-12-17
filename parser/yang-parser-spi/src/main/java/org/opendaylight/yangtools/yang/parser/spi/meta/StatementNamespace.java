@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public interface StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+public interface StatementNamespace<K, D extends DeclaredStatement, E extends EffectiveStatement<?, D>>
         extends ParserNamespace<K, StmtContext<?, D, E>> {
 
-    interface TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+    interface TreeScoped<K, D extends DeclaredStatement, E extends EffectiveStatement<?, D>>
             extends StatementNamespace<K, D, E> {
 
     }

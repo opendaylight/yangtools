@@ -44,7 +44,7 @@ public final class SubscriptionStateNotificationStatementSupport
 
     @Override
     protected SubscriptionStateNotificationStatement createDeclared(final BoundStmtCtx<Empty> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new SubscriptionStateNotificationStatementImpl(substatements);
     }
 

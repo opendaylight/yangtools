@@ -44,7 +44,7 @@ public interface StatementDefinition extends Immutable {
      *
      * @return class which represents declared version of statement associated with this definition.
      */
-    @NonNull Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass();
+    @NonNull Class<? extends DeclaredStatement> getDeclaredRepresentationClass();
 
     /**
      * Returns class which represents derived behaviour from supplied statement. This class should be an interface which

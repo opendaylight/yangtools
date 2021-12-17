@@ -10,6 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 import com.google.common.annotations.VisibleForTesting;
 
 @VisibleForTesting
-public interface DeclaredStatement2 extends DeclaredStatement<String> {
+public interface DeclaredStatement2 extends DeclaredStatement {
 
 }

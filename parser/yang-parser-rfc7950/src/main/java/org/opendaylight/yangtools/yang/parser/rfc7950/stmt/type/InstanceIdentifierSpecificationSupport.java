@@ -34,7 +34,7 @@ final class InstanceIdentifierSpecificationSupport
 
     @Override
     protected InstanceIdentifierSpecification createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return substatements.isEmpty() ? new EmptyIdentifierSpecification(ctx.getRawArgument(), ctx.getArgument())
             : new RegularInstanceIdentifierSpecification(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }

@@ -16,12 +16,12 @@ import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
-final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> implements MaxAccessStatement {
+final class MaxAccessStatementImpl extends AbstractDeclaredStatement implements MaxAccessStatement {
     private final @NonNull Object substatements;
     private final MaxAccess argument;
 
     MaxAccessStatementImpl(final MaxAccess argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         this.argument = requireNonNull(argument);
         this.substatements = maskList(substatements);
     }
@@ -37,7 +37,7 @@ final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> 
     }
 
     @Override
-    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
         return unmaskList(substatements);
     }
 }

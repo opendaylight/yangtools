@@ -47,13 +47,13 @@ public final class DeclaredStatementFormatter implements Immutable {
      * @throws NullPointerException if any of the arguments is null
      */
     public YangTextSnippet toYangTextSnippet(final ModuleEffectiveStatement module,
-            final DeclaredStatement<?> statement) {
+            final DeclaredStatement statement) {
         return new YangTextSnippet(statement, StatementPrefixResolver.forModule(module), ignoredStatements,
             omitDefaultStatements);
     }
 
     public YangTextSnippet toYangTextSnippet(final SubmoduleEffectiveStatement submodule,
-            final DeclaredStatement<?> statement) {
+            final DeclaredStatement statement) {
         return new YangTextSnippet(statement, StatementPrefixResolver.forSubmodule(submodule), ignoredStatements,
             omitDefaultStatements);
     }

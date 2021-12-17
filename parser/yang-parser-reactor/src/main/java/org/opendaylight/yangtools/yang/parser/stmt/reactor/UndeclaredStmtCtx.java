@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-final class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+final class UndeclaredStmtCtx<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends OriginalStmtCtx<A, D, E> implements UndeclaredCurrent<A, D> {
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
@@ -115,7 +115,7 @@ final class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @SuppressWarnings("unchecked")
-    private static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
+    private static <A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
             final @NonNull StatementFactory<A, D, E> factory, final @NonNull UndeclaredCurrent<A, D> ctx,
             final @NonNull Stream<? extends StmtContext<?, ?, ?>> substatements) {
         verify(factory instanceof UndeclaredStatementFactory, "Unexpected factory %s", factory);

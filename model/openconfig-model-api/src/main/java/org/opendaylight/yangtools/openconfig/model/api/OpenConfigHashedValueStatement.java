@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement corresponding to config's "openconfig-hashed-value" (new name) or "openconfig-encrypted-value"
  * (old name).
- *
- * @author Robert Varga
  */
-public interface OpenConfigHashedValueStatement extends UnknownStatement<Empty> {
+public interface OpenConfigHashedValueStatement extends UnknownStatement {
 
 }

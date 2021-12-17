@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -20,11 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Abstract base class for {@link DeclaredStatement} implementations which decorate a statement with a
  * {@link DeclarationReference}.
  *
- * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-public abstract class AbstractRefStatement<A, D extends DeclaredStatement<A>>
-        extends ForwardingDeclaredStatement<A, D> implements Delegator<D> {
+public abstract class AbstractRefStatement<D extends DeclaredStatement>
+        extends ForwardingDeclaredStatement<D> implements Delegator<D> {
     private final @NonNull DeclarationReference ref;
     private final @NonNull D delegate;
 

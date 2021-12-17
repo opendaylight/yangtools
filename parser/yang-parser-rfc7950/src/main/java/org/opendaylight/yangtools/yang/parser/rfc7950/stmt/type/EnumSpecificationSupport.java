@@ -37,7 +37,7 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
 
     @Override
     protected EnumSpecification createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noEnum(ctx);
         }

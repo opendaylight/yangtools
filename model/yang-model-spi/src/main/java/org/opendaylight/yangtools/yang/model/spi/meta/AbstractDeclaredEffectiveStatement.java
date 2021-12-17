@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
  * @param <D> Class representing declared version of this statement.
  */
 @Beta
-public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>
+public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredStatement>
         extends AbstractEffectiveStatement<A, D> {
     @Override
     public abstract @NonNull D getDeclared();
@@ -55,7 +55,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>,
+    public abstract static class WithSchemaTree<A, D extends DeclaredStatement,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends AbstractDeclaredEffectiveStatement<A, D> {
         @Override
         @SuppressWarnings("unchecked")
@@ -88,7 +88,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>,
+    public abstract static class WithDataTree<A, D extends DeclaredStatement,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
         @Override
         @SuppressWarnings("unchecked")
@@ -110,7 +110,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public abstract static class Default<A, D extends DeclaredStatement<A>>
+    public abstract static class Default<A, D extends DeclaredStatement>
             extends AbstractDeclaredEffectiveStatement<A, D> {
         private final @NonNull D declared;
 
@@ -129,59 +129,14 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
     }
 
     /**
-     * An extra building block on top of {@link Default}, which is wiring {@link #argument()} to the declared statement.
-     * This is mostly useful for arguments that are not subject to inference transformation -- for example Strings in
-     * {@code description}, etc. This explicitly is not true of statements which underwent namespace binding via
-     * {@code uses} or similar.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public abstract static class DefaultArgument<A, D extends DeclaredStatement<A>> extends Default<A, D> {
-        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>>
-                extends DefaultArgument<A, D> {
-            private final @NonNull Object substatements;
-
-            protected WithSubstatements(final D declared,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(declared);
-                this.substatements = maskList(substatements);
-            }
-
-            protected WithSubstatements(final WithSubstatements<A, D> original) {
-                super(original);
-                this.substatements = original.substatements;
-            }
-
-            @Override
-            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-                return unmaskList(substatements);
-            }
-        }
-
-        protected DefaultArgument(final D declared) {
-            super(declared);
-        }
-
-        protected DefaultArgument(final DefaultArgument<A, D> original) {
-            super(original);
-        }
-
-        @Override
-        public final A argument() {
-            return getDeclared().argument();
-        }
-    }
-
-    /**
      * A building block on top of {@link Default}, which adds an explicit argument value, which is not related to the
      * context. This is mostly useful when the effective argument value reflects additional statements and similar.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public abstract static class DefaultWithArgument<A, D extends DeclaredStatement<A>> extends Default<A, D> {
-        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>>
+    public abstract static class DefaultWithArgument<A, D extends DeclaredStatement> extends Default<A, D> {
+        public abstract static class WithSubstatements<A, D extends DeclaredStatement>
                 extends DefaultWithArgument<A, D> {
             private final @NonNull Object substatements;
 
@@ -210,6 +165,47 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
     }
 
+
+    /**
+     * An extra building block on top of {@link Default}, specialized for {@link Empty} argument.
+     *
+     * @param <D> Class representing declared version of this statement.
+     */
+    public abstract static class DefaultWithoutArgument<D extends DeclaredStatement> extends Default<Empty, D> {
+        public abstract static class WithSubstatements<D extends DeclaredStatement> extends DefaultWithoutArgument<D> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final D declared,
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared);
+                this.substatements = maskList(substatements);
+            }
+
+            protected WithSubstatements(final WithSubstatements<D> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
+            @Override
+            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
+        protected DefaultWithoutArgument(final D declared) {
+            super(declared);
+        }
+
+        protected DefaultWithoutArgument(final DefaultWithoutArgument<D> original) {
+            super(original);
+        }
+
+        @Override
+        public final Empty argument() {
+            return Empty.value();
+        }
+    }
+
     /**
      * Stateful version of {@link WithSchemaTree}. Schema tree namespace is eagerly instantiated (and checked).
      *
@@ -217,7 +213,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
+    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
         private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull Object substatements;
@@ -260,9 +256,9 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
+    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
-        public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement<A>,
+        public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement,
                 E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
             protected WithTypedefNamespace(final D declared,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

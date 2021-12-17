@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class RpcContextReferenceStatementImpl extends WithSubstatements implements RpcContextReferenceStatement {
     RpcContextReferenceStatementImpl(final String argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

@@ -17,14 +17,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Represents declared statement.
- *
- * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
-public interface DeclaredStatement<A> extends ModelStatement<A> {
+public interface DeclaredStatement extends ModelStatement {
     /**
      * Returns statement argument as was present in original source.
      *
@@ -38,7 +35,7 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      *
      * @return Collection of statements, which were explicitly declared in source of model.
      */
-    @NonNull List<? extends DeclaredStatement<?>> declaredSubstatements();
+    @NonNull List<? extends DeclaredStatement> declaredSubstatements();
 
     /**
      * Returns collection of explicitly declared child statements, while preserving its original ordering from original
@@ -49,7 +46,7 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      * @return Collection of statements, which were explicitly declared in source of model.
      * @throws NullPointerException if {@code type} is null
      */
-    default <T extends DeclaredStatement<?>> @NonNull Collection<? extends T> declaredSubstatements(
+    default <T extends DeclaredStatement> @NonNull Collection<? extends T> declaredSubstatements(
             final Class<T> type) {
         requireNonNull(type);
         return Collections2.transform(Collections2.filter(declaredSubstatements(), type::isInstance), type::cast);
@@ -81,25 +78,10 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      * @throws NullPointerException if {@code type} is null
      */
     @Beta
-    default <T extends DeclaredStatement<?>> @NonNull Optional<T> findFirstDeclaredSubstatement(
+    default <T extends DeclaredStatement> @NonNull Optional<T> findFirstDeclaredSubstatement(
             @NonNull final Class<T> type) {
         requireNonNull(type);
         return streamDeclaredSubstatements(type).filter(type::isInstance).findFirst().map(type::cast);
-    }
-
-    /**
-     * Find the first declared substatement of specified type and return its value.
-     *
-     * @param <T> substatement type
-     * @param <V> substatement argument type
-     * @param type {@link DeclaredStatement} type
-     * @return First declared substatement's argument, or empty if no match is found.
-     * @throws NullPointerException if {@code type} is null
-     */
-    @Beta
-    default <V, T extends DeclaredStatement<V>> @NonNull Optional<V> findFirstDeclaredSubstatementArgument(
-            @NonNull final Class<T> type) {
-        return findFirstDeclaredSubstatement(type).map(DeclaredStatement::argument);
     }
 
     /**
@@ -111,7 +93,7 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      * @throws NullPointerException if {@code type} is null
      */
     @Beta
-    default <T extends DeclaredStatement<?>> @NonNull Stream<T> streamDeclaredSubstatements(
+    default <T extends DeclaredStatement> @NonNull Stream<T> streamDeclaredSubstatements(
             @NonNull final Class<T> type) {
         requireNonNull(type);
         return declaredSubstatements().stream().filter(type::isInstance).map(type::cast);

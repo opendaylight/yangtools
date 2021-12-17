@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class ContextReferenceStatementImpl extends WithSubstatements<QName> implements ContextReferenceStatement {
     ContextReferenceStatementImpl(final String rawArgument, final QName argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

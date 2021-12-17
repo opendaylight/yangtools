@@ -34,7 +34,7 @@ public final class RpcContextReferenceStatementSupport
 
     @Override
     protected RpcContextReferenceStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new RpcContextReferenceStatementImpl(ctx.getArgument(), substatements);
     }
 

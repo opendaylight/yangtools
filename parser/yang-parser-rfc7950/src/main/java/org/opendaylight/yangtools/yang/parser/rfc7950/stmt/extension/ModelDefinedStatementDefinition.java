@@ -31,7 +31,7 @@ final class ModelDefinedStatementDefinition extends AbstractStatementDefinition 
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return UnrecognizedStatement.class;
     }
 

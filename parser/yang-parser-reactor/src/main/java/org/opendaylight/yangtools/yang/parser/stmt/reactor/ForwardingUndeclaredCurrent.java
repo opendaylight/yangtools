@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
-final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> extends ForwardingObject
+final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement> extends ForwardingObject
         implements UndeclaredCurrent<A, D> {
     private final Current<A, D> delegate;
 

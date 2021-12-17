@@ -12,8 +12,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<String>,
-        IfFeatureAwareDeclaredStatement<String> {
+public interface BitStatement extends DocumentedDeclaredStatement.WithStatus, IfFeatureAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.BIT;

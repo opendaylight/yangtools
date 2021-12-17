@@ -213,7 +213,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private ReactorDeclaredModel transform() {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
+        final List<DeclaredStatement> rootStatements = new ArrayList<>(sources.size());
         for (final SourceSpecificContext source : sources) {
             rootStatements.add(source.getRoot().declared());
         }
@@ -251,7 +251,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     @SuppressWarnings("checkstyle:illegalCatch")
     private EffectiveSchemaContext transformEffective() throws ReactorException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
+        final List<DeclaredStatement> rootStatements = new ArrayList<>(sources.size());
         final List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
 
         for (final SourceSpecificContext source : sources) {

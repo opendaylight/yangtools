@@ -159,7 +159,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
-    public <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+    public <A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
             AbstractPrerequisite<StmtContext<A, D, E>> requiresCtx(final StmtContext<A, D, E> context,
                     final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, phase);
@@ -181,14 +181,14 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
-    public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(
+    public <D extends DeclaredStatement> Prerequisite<D> requiresDeclared(
             final StmtContext<?, ? extends D, ?> context) {
         return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContext::declared);
     }
 
     @Override
     @Deprecated
-    public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D>
+    public <K, D extends DeclaredStatement, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D>
             requiresDeclared(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, D, ?>> rawContext = requiresCtxImpl(context, namespace, key,
             FULL_DECLARATION);
@@ -197,7 +197,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     @Override
     @Deprecated
-    public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
+    public <K, D extends DeclaredStatement, N extends StatementNamespace<K, ? extends D, ?>>
             AbstractPrerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final K key) {
         return requiresCtxImpl(context, namespace, key, FULL_DECLARATION);

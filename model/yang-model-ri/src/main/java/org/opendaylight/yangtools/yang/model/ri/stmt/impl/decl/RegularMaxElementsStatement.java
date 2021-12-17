@@ -12,9 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularMaxElementsStatement extends WithSubstatements<String> implements MaxElementsStatement {
-    public RegularMaxElementsStatement(final String rawArgument, final String argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, argument, substatements);
+public final class RegularMaxElementsStatement extends WithSubstatements implements MaxElementsStatement {
+    public RegularMaxElementsStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyDefaultStatement extends WithRawStringArgument implements DefaultStatement {
+public final class EmptyDefaultStatement extends WithArgument implements DefaultStatement {
     public EmptyDefaultStatement(final @NonNull String rawArgument) {
         super(rawArgument);
     }

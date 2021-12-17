@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
 final class ImpliedStatementImpl extends WithSubstatements implements ImpliedStatement {
-    ImpliedStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    ImpliedStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
     }
 }

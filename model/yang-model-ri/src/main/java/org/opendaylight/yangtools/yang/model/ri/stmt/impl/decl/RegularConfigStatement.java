@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularConfigStatement extends WithSubstatements<Boolean> implements ConfigStatement {
-    public RegularConfigStatement(final Boolean argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+public final class RegularConfigStatement extends WithSubstatements implements ConfigStatement {
+    public RegularConfigStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

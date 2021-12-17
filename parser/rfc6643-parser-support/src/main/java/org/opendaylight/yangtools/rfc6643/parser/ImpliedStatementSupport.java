@@ -33,7 +33,7 @@ public final class ImpliedStatementSupport
 
     @Override
     protected ImpliedStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new ImpliedStatementImpl(ctx.getRawArgument(), substatements);
     }
 

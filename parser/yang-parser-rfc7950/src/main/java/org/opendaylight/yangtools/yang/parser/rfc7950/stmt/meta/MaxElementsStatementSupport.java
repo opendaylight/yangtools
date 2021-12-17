@@ -39,7 +39,7 @@ public final class MaxElementsStatementSupport
 
     @Override
     protected MaxElementsStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createMaxElements(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface ModuleStatement extends MetaDeclaredStatement<Unqualified>, ModuleHeaderGroup,
+public interface ModuleStatement extends MetaDeclaredStatement, ModuleHeaderGroup,
         LinkageDeclaredStatement, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {

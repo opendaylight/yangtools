@@ -49,7 +49,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
 
     @Override
     protected GetFilterElementAttributesStatement createDeclared(final BoundStmtCtx<Empty> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return substatements.isEmpty() ? GetFilterElementAttributesStatementImpl.EMPTY
             : new GetFilterElementAttributesStatementImpl(substatements);
     }

@@ -40,7 +40,7 @@ abstract class AbstractNotificationStatementSupport
 
     @Override
     protected final NotificationStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createNotification(ctx.getArgument(), substatements);
     }
 

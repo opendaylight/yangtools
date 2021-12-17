@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefNamespaceStatement extends AbstractRefStatement<XMLNamespace, NamespaceStatement>
+public final class RefNamespaceStatement extends AbstractRefStatement<NamespaceStatement>
         implements NamespaceStatement {
     public RefNamespaceStatement(final NamespaceStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

@@ -66,7 +66,7 @@ public final class FeatureStatementSupport
 
     @Override
     protected FeatureStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createFeature(ctx.getArgument(), substatements);
     }
 

@@ -47,7 +47,7 @@ public final class AugmentIdentifierStatementSupport
 
     @Override
     protected AugmentIdentifierStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new AugmentIdentifierStatementImpl(ctx.getArgument(), substatements);
     }
 

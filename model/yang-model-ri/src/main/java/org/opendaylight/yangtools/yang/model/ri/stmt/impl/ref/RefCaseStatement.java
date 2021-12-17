@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefCaseStatement extends AbstractRefStatement<QName, CaseStatement> implements CaseStatement {
+public final class RefCaseStatement extends AbstractRefStatement<CaseStatement> implements CaseStatement {
     public RefCaseStatement(final CaseStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

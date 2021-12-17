@@ -28,12 +28,12 @@ public enum SchemaMountStatements implements StatementDefinition {
         MountPointEffectiveStatement.class);
 
     private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
-    private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
+    private final Class<? extends DeclaredStatement> declaredRepresentation;
     private final QName statementName;
     private final ArgumentDefinition argumentDef;
 
     SchemaMountStatements(final QName statementName, final String argumentName,
-            final Class<? extends DeclaredStatement<?>> declaredRepresentation,
+            final Class<? extends DeclaredStatement> declaredRepresentation,
                     final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
         this.argumentDef = ArgumentDefinition.of(QName.create(statementName, argumentName), false);
@@ -57,7 +57,7 @@ public enum SchemaMountStatements implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return declaredRepresentation;
     }
 }

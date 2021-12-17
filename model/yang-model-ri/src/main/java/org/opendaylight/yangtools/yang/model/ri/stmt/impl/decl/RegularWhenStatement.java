@@ -11,11 +11,10 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public final class RegularWhenStatement extends WithSubstatements<QualifiedBound> implements WhenStatement {
-    public RegularWhenStatement(final String rawArgument, final QualifiedBound argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, argument, substatements);
+public final class RegularWhenStatement extends WithSubstatements implements WhenStatement {
+    public RegularWhenStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

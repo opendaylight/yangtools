@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 public final class RegularFractionDigitsStatement extends WithSubstatements<Integer>
         implements FractionDigitsStatement {
     public RegularFractionDigitsStatement(final Integer argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyBitStatement extends WithRawStringArgument implements BitStatement {
-    public EmptyBitStatement(final @NonNull String argument) {
-        super(argument);
+public final class EmptyBitStatement extends WithArgument implements BitStatement {
+    public EmptyBitStatement(final @NonNull String rawArgument) {
+        super(rawArgument);
     }
 }

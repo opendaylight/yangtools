@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefChoiceStatement extends AbstractRefStatement<QName, ChoiceStatement> implements ChoiceStatement {
+public final class RefChoiceStatement extends AbstractRefStatement<ChoiceStatement> implements ChoiceStatement {
     public RefChoiceStatement(final ChoiceStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

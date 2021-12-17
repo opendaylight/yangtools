@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
  * Utility class for implementing {@link DataNodeContainer}-type statements.
  */
 @Beta
-public abstract class AbstractDataNodeContainer<A, D extends DeclaredStatement<A>> extends Default<A, D>
+public abstract class AbstractDataNodeContainer<A, D extends DeclaredStatement> extends Default<A, D>
         implements DataNodeContainerMixin<A, D> {
     private final @NonNull ImmutableMap<QName, DataSchemaNode> dataChildren;
     private final @NonNull Object substatements;

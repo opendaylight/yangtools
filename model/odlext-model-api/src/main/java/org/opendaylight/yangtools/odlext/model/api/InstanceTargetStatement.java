@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface InstanceTargetStatement extends UnknownStatement<String> {
+public interface InstanceTargetStatement extends UnknownStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return OpenDaylightExtensionsStatements.INSTANCE_TARGET;

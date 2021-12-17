@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefBitStatement extends AbstractRefStatement<String, BitStatement> implements BitStatement {
+public final class RefBitStatement extends AbstractRefStatement<BitStatement> implements BitStatement {
     public RefBitStatement(final BitStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

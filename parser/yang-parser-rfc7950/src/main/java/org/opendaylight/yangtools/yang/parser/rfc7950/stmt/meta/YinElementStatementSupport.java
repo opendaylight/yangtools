@@ -35,7 +35,7 @@ public final class YinElementStatementSupport
 
     @Override
     protected YinElementStatement createDeclared(final Boolean argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createYinElement(argument, substatements);
     }
 

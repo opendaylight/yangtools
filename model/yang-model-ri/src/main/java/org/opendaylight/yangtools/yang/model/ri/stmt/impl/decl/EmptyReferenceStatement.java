@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyReferenceStatement extends WithRawStringArgument implements ReferenceStatement {
+public final class EmptyReferenceStatement extends WithArgument implements ReferenceStatement {
     public EmptyReferenceStatement(final @NonNull String rawArgument) {
         super(rawArgument);
     }

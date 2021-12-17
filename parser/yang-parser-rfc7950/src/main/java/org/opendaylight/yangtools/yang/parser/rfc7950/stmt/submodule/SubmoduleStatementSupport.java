@@ -154,7 +154,7 @@ public final class SubmoduleStatementSupport
 
     @Override
     protected SubmoduleStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noBelongsTo(ctx);
         }

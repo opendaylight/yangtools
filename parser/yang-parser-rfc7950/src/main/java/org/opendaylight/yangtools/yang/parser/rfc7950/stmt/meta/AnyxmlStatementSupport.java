@@ -54,7 +54,7 @@ public final class AnyxmlStatementSupport
 
     @Override
     protected AnyxmlStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createAnyxml(ctx.getArgument(), substatements);
     }
 

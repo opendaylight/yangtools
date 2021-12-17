@@ -132,7 +132,7 @@ public final class GroupingStatementSupport
 
     @Override
     protected GroupingStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createGrouping(ctx.getArgument(), substatements);
     }
 

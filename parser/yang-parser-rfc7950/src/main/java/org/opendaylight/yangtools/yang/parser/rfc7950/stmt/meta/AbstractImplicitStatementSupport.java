@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactor
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QName>,
+abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractSchemaTreeStatementSupport<D, E>
         implements UndeclaredStatementFactory<QName, D, E> {
     AbstractImplicitStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<QName, D> policy,

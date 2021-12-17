@@ -11,8 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefConfigStatement extends AbstractRefStatement<Boolean, ConfigStatement>
-        implements ConfigStatement {
+public final class RefConfigStatement extends AbstractRefStatement<ConfigStatement> implements ConfigStatement {
     public RefConfigStatement(final ConfigStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

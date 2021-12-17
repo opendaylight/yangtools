@@ -40,22 +40,22 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
  */
 final class StatementPrefixResolver {
     private static final class Conflict {
-        private final Collection<Entry<DeclaredStatement<?>, String>> statements;
+        private final Collection<Entry<DeclaredStatement, String>> statements;
 
-        Conflict(final Collection<Entry<DeclaredStatement<?>, String>> entries) {
+        Conflict(final Collection<Entry<DeclaredStatement, String>> entries) {
             statements = requireNonNull(entries);
         }
 
-        @Nullable String findPrefix(final DeclaredStatement<?> stmt) {
+        @Nullable String findPrefix(final DeclaredStatement stmt) {
             return statements.stream().filter(entry -> contains(entry.getKey(), stmt)).findFirst().map(Entry::getValue)
                     .orElse(null);
         }
 
-        private static boolean contains(final DeclaredStatement<?> haystack, final DeclaredStatement<?> needle) {
+        private static boolean contains(final DeclaredStatement haystack, final DeclaredStatement needle) {
             if (haystack == needle) {
                 return true;
             }
-            for (DeclaredStatement<?> child : haystack.declaredSubstatements()) {
+            for (DeclaredStatement child : haystack.declaredSubstatements()) {
                 if (contains(child, needle)) {
                     return true;
                 }
@@ -119,7 +119,7 @@ final class StatementPrefixResolver {
 
         // .. check for any remaining conflicts ...
         if (!prefixToNamespaces.isEmpty()) {
-            final Multimap<QNameModule, Entry<DeclaredStatement<?>, String>> conflicts = ArrayListMultimap.create();
+            final Multimap<QNameModule, Entry<DeclaredStatement, String>> conflicts = ArrayListMultimap.create();
             for (Entry<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> entry : prefixToNamespaces.entrySet()) {
                 for (Entry<QNameModule, EffectiveStatement<?, ?>> namespace : entry.getValue().entries()) {
                     conflicts.put(namespace.getKey(), new SimpleImmutableEntry<>(namespace.getValue().getDeclared(),
@@ -137,7 +137,7 @@ final class StatementPrefixResolver {
         return new StatementPrefixResolver(submodule.getAll(QNameModuleToPrefixNamespace.class));
     }
 
-    Optional<String> findPrefix(final DeclaredStatement<?> stmt) {
+    Optional<String> findPrefix(final DeclaredStatement stmt) {
         final QNameModule module = stmt.statementDefinition().getStatementName().getModule();
         if (YangConstants.RFC6020_YIN_MODULE.equals(module)) {
             return Optional.empty();
@@ -169,7 +169,7 @@ final class StatementPrefixResolver {
         return match == null ? null : decodeEntry(match.getValue(), stmt);
     }
 
-    private static Optional<String> decodeEntry(final Object entry, final DeclaredStatement<?> stmt) {
+    private static Optional<String> decodeEntry(final Object entry, final DeclaredStatement stmt) {
         if (entry instanceof String) {
             return Optional.of((String)entry);
         }

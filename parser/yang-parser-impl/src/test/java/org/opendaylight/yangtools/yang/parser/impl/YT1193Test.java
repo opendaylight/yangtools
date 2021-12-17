@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 public class YT1193Test {
     @Test
     public void testDeclarationReference() throws Exception {
-        final List<DeclaredStatement<?>> declaredRoots = new DefaultYangParserFactory()
+        final List<DeclaredStatement> declaredRoots = new DefaultYangParserFactory()
             .createParser(YangParserConfiguration.builder().retainDeclarationReferences(true).build())
             .addSource(YangTextSchemaSource.forResource(getClass(), "/yt1193/foo.yang"))
             .addSource(YangTextSchemaSource.forResource(getClass(), "/yt1193/bar.yang"))
@@ -34,7 +34,7 @@ public class YT1193Test {
             .buildDeclaredModel();
         assertEquals(3, declaredRoots.size());
 
-        for (DeclaredStatement<?> stmt : declaredRoots) {
+        for (DeclaredStatement stmt : declaredRoots) {
             switch (stmt.rawArgument()) {
                 case "foo":
                     assertFooReferences(stmt);
@@ -51,10 +51,10 @@ public class YT1193Test {
         }
     }
 
-    private static void assertFooReferences(final DeclaredStatement<?> foo) {
+    private static void assertFooReferences(final DeclaredStatement foo) {
         assertReference(foo, YangStmtMapping.MODULE, 1, 1);
 
-        final Iterator<? extends DeclaredStatement<?>> it = foo.declaredSubstatements().iterator();
+        final Iterator<? extends DeclaredStatement> it = foo.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.NAMESPACE, 2, 3);
         assertReference(it.next(), YangStmtMapping.PREFIX, 3, 3);
         assertReference(it.next(), YangStmtMapping.YANG_VERSION, 4, 3);
@@ -71,38 +71,38 @@ public class YT1193Test {
         assertFalse(it.hasNext());
     }
 
-    private static void assertFooContainerReferences(final DeclaredStatement<?> foo) {
+    private static void assertFooContainerReferences(final DeclaredStatement foo) {
         assertReference(foo, YangStmtMapping.CONTAINER, 13, 3);
 
-        final Iterator<? extends DeclaredStatement<?>> it = foo.declaredSubstatements().iterator();
+        final Iterator<? extends DeclaredStatement> it = foo.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.ACTION, 14, 5);
         assertReference(it.next(), YangStmtMapping.PRESENCE, 22, 5);
         assertFalse(it.hasNext());
     }
 
-    private static void assertDeprLeafListReferences(final DeclaredStatement<?> depr) {
+    private static void assertDeprLeafListReferences(final DeclaredStatement depr) {
         assertReference(depr, YangStmtMapping.LEAF_LIST, 28, 3);
 
-        final Iterator<? extends DeclaredStatement<?>> it = depr.declaredSubstatements().iterator();
+        final Iterator<? extends DeclaredStatement> it = depr.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.TYPE, 29, 5);
         assertReference(it.next(), YangStmtMapping.UNITS, 36, 5);
         assertReference(it.next(), YangStmtMapping.STATUS, 37, 5);
         assertFalse(it.hasNext());
     }
 
-    private static void assertObsoTypedefReferences(final DeclaredStatement<?> obso) {
+    private static void assertObsoTypedefReferences(final DeclaredStatement obso) {
         assertReference(obso, YangStmtMapping.TYPEDEF, 40, 3);
 
-        final Iterator<? extends DeclaredStatement<?>> it = obso.declaredSubstatements().iterator();
+        final Iterator<? extends DeclaredStatement> it = obso.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.TYPE, 41, 5);
         assertReference(it.next(), YangStmtMapping.STATUS, 44, 5);
         assertFalse(it.hasNext());
     }
 
-    private static void assertBarReferences(final DeclaredStatement<?> bar) {
+    private static void assertBarReferences(final DeclaredStatement bar) {
         assertReference(bar, YangStmtMapping.MODULE, 1, 1);
 
-        final Iterator<? extends DeclaredStatement<?>> it = bar.declaredSubstatements().iterator();
+        final Iterator<? extends DeclaredStatement> it = bar.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.NAMESPACE, 2, 3);
         assertReference(it.next(), YangStmtMapping.PREFIX, 3, 3);
         assertReference(it.next(), YangStmtMapping.YANG_VERSION, 4, 3);
@@ -115,17 +115,17 @@ public class YT1193Test {
         assertFalse(it.hasNext());
     }
 
-    private static void assertBazReferences(final DeclaredStatement<?> baz) {
+    private static void assertBazReferences(final DeclaredStatement baz) {
         assertReference(baz, YangStmtMapping.SUBMODULE, 1, 1);
 
-        final Iterator<? extends DeclaredStatement<?>> it = baz.declaredSubstatements().iterator();
+        final Iterator<? extends DeclaredStatement> it = baz.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.YANG_VERSION, 2, 3);
         assertReference(it.next(), YangStmtMapping.BELONGS_TO, 4, 3);
         assertReference(it.next(), YangStmtMapping.EXTENSION, 8, 3);
         assertFalse(it.hasNext());
     }
 
-    private static void assertReference(final DeclaredStatement<?> foo, final StatementDefinition def, final int line,
+    private static void assertReference(final DeclaredStatement foo, final StatementDefinition def, final int line,
             final int column) {
         assertEquals(def, foo.statementDefinition());
 

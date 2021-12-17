@@ -234,14 +234,14 @@ public enum YangStmtMapping implements StatementDefinition {
     YANG_VERSION(YangVersionStatement.class, YangVersionEffectiveStatement.class, "yang-version", "value"),
     YIN_ELEMENT(YinElementStatement.class, YinElementEffectiveStatement.class, "yin-element", "value");
 
-    private final Class<? extends DeclaredStatement<?>> declaredType;
+    private final Class<? extends DeclaredStatement> declaredType;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final QName name;
     private final @Nullable QName argument;
     private final boolean yinElement;
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
+    YangStmtMapping(final Class<? extends DeclaredStatement> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
         declaredType = requireNonNull(declared);
         effectiveType = requireNonNull(effective);
@@ -250,12 +250,12 @@ public enum YangStmtMapping implements StatementDefinition {
         yinElement = false;
     }
 
-    YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
+    YangStmtMapping(final Class<? extends DeclaredStatement> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr) {
         this(declared, effective, nameStr, argumentStr, false);
     }
 
-    YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
+    YangStmtMapping(final Class<? extends DeclaredStatement> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         declaredType = requireNonNull(declared);
@@ -280,7 +280,7 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return declaredType;
     }
 

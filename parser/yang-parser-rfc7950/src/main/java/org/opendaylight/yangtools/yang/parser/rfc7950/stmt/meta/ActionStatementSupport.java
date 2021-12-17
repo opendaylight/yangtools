@@ -91,7 +91,7 @@ public final class ActionStatementSupport extends
 
     @Override
     protected ActionStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createAction(ctx.getArgument(), substatements);
     }
 

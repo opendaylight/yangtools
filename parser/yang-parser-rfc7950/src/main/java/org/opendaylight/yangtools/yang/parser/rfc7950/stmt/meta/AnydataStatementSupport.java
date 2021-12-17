@@ -54,7 +54,7 @@ public final class AnydataStatementSupport
 
     @Override
     protected AnydataStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createAnydata(ctx.getArgument(), substatements);
     }
 

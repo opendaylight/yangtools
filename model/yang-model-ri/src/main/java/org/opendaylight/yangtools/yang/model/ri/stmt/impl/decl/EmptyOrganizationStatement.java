@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyOrganizationStatement extends WithRawStringArgument implements OrganizationStatement {
+public final class EmptyOrganizationStatement extends WithArgument implements OrganizationStatement {
     public EmptyOrganizationStatement(final @NonNull String rawArgument) {
         super(rawArgument);
     }

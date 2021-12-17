@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Rfc6020AbnfRule("argument-stmt")
-public interface ArgumentStatement extends DeclaredStatement<QName> {
+public interface ArgumentStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ARGUMENT;

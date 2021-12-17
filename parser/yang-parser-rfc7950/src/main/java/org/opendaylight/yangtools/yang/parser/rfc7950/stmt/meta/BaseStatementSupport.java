@@ -77,7 +77,7 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
 
     @Override
     protected BaseStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createBase(ctx.getArgument(), substatements);
     }
 

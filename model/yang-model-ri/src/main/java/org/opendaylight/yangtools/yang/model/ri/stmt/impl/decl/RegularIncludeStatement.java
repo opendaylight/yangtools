@@ -12,9 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularIncludeStatement extends WithSubstatements<String> implements IncludeStatement {
-    public RegularIncludeStatement(final String rawArgument, final String argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, argument, substatements);
+public final class RegularIncludeStatement extends WithSubstatements implements IncludeStatement {
+    public RegularIncludeStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

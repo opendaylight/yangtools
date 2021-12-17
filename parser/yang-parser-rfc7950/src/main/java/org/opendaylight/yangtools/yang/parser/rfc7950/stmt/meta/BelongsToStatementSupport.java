@@ -85,7 +85,7 @@ public final class BelongsToStatementSupport
 
     @Override
     protected BelongsToStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createBelongsTo(ctx.getRawArgument(), substatements);
     }
 

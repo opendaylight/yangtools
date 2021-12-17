@@ -248,7 +248,7 @@ public final class ModuleStatementSupport
 
     @Override
     protected ModuleStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noNamespace(ctx);
         }

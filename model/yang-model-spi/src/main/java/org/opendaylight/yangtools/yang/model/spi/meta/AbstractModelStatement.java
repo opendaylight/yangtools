@@ -12,16 +12,13 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 
 /**
  * Abstract base class for {@link ModelStatement} implementations. It mostly provides static methods for efficiently
  * storing lists.
- *
- * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
-abstract class AbstractModelStatement<A> implements ModelStatement<A> {
+abstract class AbstractModelStatement implements ModelStatement {
 
     @Override
     public final int hashCode() {
@@ -39,7 +36,7 @@ abstract class AbstractModelStatement<A> implements ModelStatement<A> {
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("argument", argument());
+        return helper;
     }
 
     /**

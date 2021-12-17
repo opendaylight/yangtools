@@ -122,7 +122,7 @@ public final class IncludeStatementSupport
 
     @Override
     protected IncludeStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createInclude(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

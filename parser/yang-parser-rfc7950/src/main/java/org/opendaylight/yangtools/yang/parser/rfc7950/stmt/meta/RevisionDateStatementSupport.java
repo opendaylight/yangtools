@@ -47,7 +47,7 @@ public final class RevisionDateStatementSupport
 
     @Override
     protected RevisionDateStatement createDeclared(final BoundStmtCtx<Revision> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createRevisionDate(ctx.getArgument(), substatements);
     }
 

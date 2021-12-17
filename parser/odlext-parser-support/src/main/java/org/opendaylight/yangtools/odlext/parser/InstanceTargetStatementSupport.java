@@ -34,7 +34,7 @@ public final class InstanceTargetStatementSupport
 
     @Override
     protected InstanceTargetStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new InstanceTargetStatementImpl(ctx.getArgument(), substatements);
     }
 

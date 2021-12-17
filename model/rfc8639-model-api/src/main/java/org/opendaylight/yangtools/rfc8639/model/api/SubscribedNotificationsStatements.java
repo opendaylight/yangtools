@@ -27,7 +27,7 @@ public enum SubscribedNotificationsStatements implements StatementDefinition {
         }
 
         @Override
-        public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+        public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
             return SubscriptionStateNotificationStatement.class;
         }
 

@@ -13,11 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
 
-public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
-        DataDefinitionAwareDeclaredStatement<SchemaNodeIdentifier>,
-        NotificationStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
-        ActionStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
-        WhenStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
+public interface AugmentStatement extends WithStatus, DataDefinitionAwareDeclaredStatement,
+        NotificationStatementAwareDeclaredStatement, ActionStatementAwareDeclaredStatement,
+        WhenStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.AUGMENT;

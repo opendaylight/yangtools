@@ -128,7 +128,7 @@ public final class ListStatementSupport
 
     @Override
     protected ListStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createList(ctx.getArgument(), substatements);
     }
 

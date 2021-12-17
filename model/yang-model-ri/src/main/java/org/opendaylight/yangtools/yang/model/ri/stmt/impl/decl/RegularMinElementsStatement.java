@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularMinElementsStatement extends WithSubstatements<Integer> implements MinElementsStatement {
     public RegularMinElementsStatement(final Integer argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

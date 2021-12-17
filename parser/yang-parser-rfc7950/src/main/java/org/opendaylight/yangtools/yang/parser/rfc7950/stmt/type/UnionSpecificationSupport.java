@@ -35,7 +35,7 @@ final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecifica
 
     @Override
     protected UnionSpecification createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noType(ctx);
         }

@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<QName>,
+public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
     protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy, final YangParserConfiguration config,

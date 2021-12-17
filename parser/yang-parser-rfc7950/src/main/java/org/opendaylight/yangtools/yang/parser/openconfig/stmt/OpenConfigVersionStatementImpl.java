@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 final class OpenConfigVersionStatementImpl extends WithSubstatements<SemVer>
         implements OpenConfigVersionStatement {
     OpenConfigVersionStatementImpl(final SemVer argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

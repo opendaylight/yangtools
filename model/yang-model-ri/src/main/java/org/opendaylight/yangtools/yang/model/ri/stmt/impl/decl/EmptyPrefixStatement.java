@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyPrefixStatement extends WithRawStringArgument implements PrefixStatement {
+public final class EmptyPrefixStatement extends WithArgument implements PrefixStatement {
     public EmptyPrefixStatement(final @NonNull String rawArgument) {
         super(rawArgument);
     }

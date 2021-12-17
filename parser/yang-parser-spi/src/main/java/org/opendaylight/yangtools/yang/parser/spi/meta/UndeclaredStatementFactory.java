@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Undeclar
  * @param <E> Effective Statement representation
  */
 @Beta
-public interface UndeclaredStatementFactory<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+public interface UndeclaredStatementFactory<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>> {
     /**
      * Create a {@link EffectiveStatement} for specified context. Implementations of this method must not access
      * {@link Current#declared()} or {@link Current#rawArgument()}.

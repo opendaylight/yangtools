@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @author Robert Varga
  */
 @Beta
-public interface SchemaTreeEffectiveStatement<D extends DeclaredStatement<QName>>
+public interface SchemaTreeEffectiveStatement<D extends DeclaredStatement>
     extends NamespacedEffectiveStatement<D> {
 
 }

@@ -29,11 +29,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
+public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredStatement,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractQNameStatementSupport<D, E> {
-    private static class SchemaTreeEquality<D extends DeclaredStatement<QName>>
+    private static class SchemaTreeEquality<D extends DeclaredStatement>
             implements StatementEquality<QName, D> {
-        private static final class Instantiated<D extends DeclaredStatement<QName>> extends SchemaTreeEquality<D> {
+        private static final class Instantiated<D extends DeclaredStatement> extends SchemaTreeEquality<D> {
             @Override
             public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
                     final Collection<? extends EffectiveStatement<?, ?>> substatements) {
@@ -82,7 +82,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      * @return A StatementPolicy
      */
     @SuppressWarnings("unchecked")
-    public static final <D extends DeclaredStatement<QName>> StatementPolicy<QName, D> instantiatedPolicy() {
+    public static final <D extends DeclaredStatement> StatementPolicy<QName, D> instantiatedPolicy() {
         return (StatementPolicy<QName, D>) INSTANTIATED_POLICY;
     }
 
@@ -101,7 +101,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      * @return A StatementPolicy
      */
     @SuppressWarnings("unchecked")
-    public static final <D extends DeclaredStatement<QName>> StatementPolicy<QName, D> uninstantiatedPolicy() {
+    public static final <D extends DeclaredStatement> StatementPolicy<QName, D> uninstantiatedPolicy() {
         return (StatementPolicy<QName, D>) UNINSTANTIATED_POLICY;
     }
 
