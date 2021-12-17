@@ -32,7 +32,7 @@ public final class ContactStatementSupport
 
     @Override
     protected ContactStatement createDeclared(final String argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createContact(argument, substatements);
     }
 

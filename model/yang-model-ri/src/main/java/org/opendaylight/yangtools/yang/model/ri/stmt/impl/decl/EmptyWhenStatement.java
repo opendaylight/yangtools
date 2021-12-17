@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public final class EmptyWhenStatement extends WithArgument<QualifiedBound> implements WhenStatement {
-    public EmptyWhenStatement(final String rawArgument, final QualifiedBound argument) {
-        super(rawArgument, argument);
+public final class EmptyWhenStatement extends WithArgument implements WhenStatement {
+    public EmptyWhenStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefOrderedByStatement extends AbstractRefStatement<Ordering, OrderedByStatement>
+public final class RefOrderedByStatement extends AbstractRefStatement<OrderedByStatement>
         implements OrderedByStatement {
     public RefOrderedByStatement(final OrderedByStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

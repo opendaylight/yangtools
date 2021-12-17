@@ -65,7 +65,7 @@ public final class StatusStatementSupport
 
     @Override
     protected StatusStatement createDeclared(final BoundStmtCtx<Status> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createStatus(ctx.getArgument(), substatements);
     }
 

@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyUniqueStatement extends WithArgument<Set<Descendant>> implements UniqueStatement {
-    public EmptyUniqueStatement(final String rawArgument, final Set<Descendant> argument) {
-        super(rawArgument, argument);
+public final class EmptyUniqueStatement extends WithArgument implements UniqueStatement {
+    public EmptyUniqueStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

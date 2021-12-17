@@ -16,13 +16,13 @@ public final class RegularPathStatement extends EmptyPathStatement {
     private final @NonNull Object substatements;
 
     public RegularPathStatement(final PathExpression argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument);
         this.substatements = maskList(substatements);
     }
 
     @Override
-    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+    public ImmutableList<? extends DeclaredStatement> declaredSubstatements() {
         return unmaskList(substatements);
     }
 }

@@ -11,12 +11,11 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularAugmentStatement extends WithSubstatements<SchemaNodeIdentifier> implements AugmentStatement {
-    public RegularAugmentStatement(final @NonNull String rawArgument, final @NonNull SchemaNodeIdentifier argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, argument, substatements);
+public final class RegularAugmentStatement extends WithSubstatements implements AugmentStatement {
+    public RegularAugmentStatement(final @NonNull String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

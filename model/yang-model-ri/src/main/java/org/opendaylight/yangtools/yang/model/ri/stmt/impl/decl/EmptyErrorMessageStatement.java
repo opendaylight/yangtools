@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyErrorMessageStatement extends WithRawStringArgument implements ErrorMessageStatement {
+public final class EmptyErrorMessageStatement extends WithArgument implements ErrorMessageStatement {
     public EmptyErrorMessageStatement(final @NonNull String rawArgument) {
         super(rawArgument);
     }

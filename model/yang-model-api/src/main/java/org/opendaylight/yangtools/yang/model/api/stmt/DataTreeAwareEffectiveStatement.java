@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * @author Robert Varga
  */
 @Beta
-public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<A>>
+public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement>
         extends SchemaTreeAwareEffectiveStatement<A, D> {
     /**
      * Namespace of {@code data node}s. This is a subtree of {@link SchemaTreeAwareEffectiveStatement.Namespace} in that

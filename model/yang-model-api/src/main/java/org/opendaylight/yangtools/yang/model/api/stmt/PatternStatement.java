@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternExpression> {
+public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.PATTERN;

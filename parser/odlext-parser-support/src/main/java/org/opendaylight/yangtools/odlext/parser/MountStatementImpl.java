@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 
 final class MountStatementImpl extends WithSubstatements implements MountStatement {
-    MountStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    MountStatementImpl(final ImmutableList<? extends DeclaredStatement> substatements) {
         super(substatements);
     }
 }

@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefLeafListStatement extends AbstractRefStatement<QName, LeafListStatement>
-        implements LeafListStatement {
+public final class RefLeafListStatement extends AbstractRefStatement<LeafListStatement> implements LeafListStatement {
     public RefLeafListStatement(final LeafListStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

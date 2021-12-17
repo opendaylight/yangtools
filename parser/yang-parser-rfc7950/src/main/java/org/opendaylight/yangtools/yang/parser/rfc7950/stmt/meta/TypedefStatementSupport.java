@@ -100,7 +100,7 @@ public final class TypedefStatementSupport extends
 
     @Override
     protected TypedefStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createTypedef(ctx.getArgument(), substatements);
     }
 

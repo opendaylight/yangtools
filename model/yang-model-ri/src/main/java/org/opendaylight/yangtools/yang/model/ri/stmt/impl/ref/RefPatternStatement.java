@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefPatternStatement extends AbstractRefStatement<PatternExpression, PatternStatement>
-        implements PatternStatement {
+public final class RefPatternStatement extends AbstractRefStatement<PatternStatement> implements PatternStatement {
     public RefPatternStatement(final PatternStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

@@ -125,7 +125,7 @@ public interface YangParser {
      * @return Ordered collection of declared statements from requested sources.
      * @throws YangSyntaxErrorException When a syntactic error is encountered.
      */
-    @NonNull List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException;
+    @NonNull List<DeclaredStatement> buildDeclaredModel() throws YangParserException;
 
     /**
      * Build the effective view of a combined view of effective statements. Note that this representation, unlike

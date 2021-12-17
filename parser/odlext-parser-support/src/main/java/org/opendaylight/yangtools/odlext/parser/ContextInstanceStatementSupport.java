@@ -33,7 +33,7 @@ public final class ContextInstanceStatementSupport
 
     @Override
     protected ContextInstanceStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new ContextInstanceStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

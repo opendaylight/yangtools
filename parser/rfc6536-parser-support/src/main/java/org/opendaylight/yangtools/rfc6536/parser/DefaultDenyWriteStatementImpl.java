@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 final class DefaultDenyWriteStatementImpl extends WithSubstatements implements DefaultDenyWriteStatement {
     static final @NonNull DefaultDenyWriteStatementImpl EMPTY = new DefaultDenyWriteStatementImpl(ImmutableList.of());
 
-    DefaultDenyWriteStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    DefaultDenyWriteStatementImpl(final ImmutableList<? extends DeclaredStatement> substatements) {
         super(substatements);
     }
 }

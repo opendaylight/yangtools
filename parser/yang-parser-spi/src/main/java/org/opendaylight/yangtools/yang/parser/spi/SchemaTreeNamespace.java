@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 // FIXME: 7.0.0: this contract seems to fall on the reactor side of things rather than parser-spi. Consider moving this
 //               into yang-(parser-)reactor-api.
 @Beta
-public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
+public final class SchemaTreeNamespace<D extends DeclaredStatement,
             E extends SchemaTreeEffectiveStatement<D>>
         extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>>
         implements StatementNamespace<QName, D, E> {
@@ -44,7 +44,7 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
     }
 
     @SuppressWarnings("unchecked")
-    public static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+    public static <D extends DeclaredStatement, E extends SchemaTreeEffectiveStatement<D>>
             @NonNull SchemaTreeNamespace<D, E> getInstance() {
         return (SchemaTreeNamespace<D, E>) INSTANCE;
     }
@@ -66,7 +66,7 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
         return existing != null ? existing : requestFrom(storageNode, key);
     }
 
-    private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+    private static <D extends DeclaredStatement, E extends SchemaTreeEffectiveStatement<D>>
             StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
         return storageNode instanceof OnDemandSchemaTreeStorageNode
             ? ((OnDemandSchemaTreeStorageNode) storageNode).requestSchemaTreeChild(key) : null;

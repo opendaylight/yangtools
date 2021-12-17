@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class SubscriptionStateNotificationStatementImpl extends WithSubstatements
         implements SubscriptionStateNotificationStatement {
-    SubscriptionStateNotificationStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    SubscriptionStateNotificationStatementImpl(final ImmutableList<? extends DeclaredStatement> substatements) {
         super(substatements);
     }
 }

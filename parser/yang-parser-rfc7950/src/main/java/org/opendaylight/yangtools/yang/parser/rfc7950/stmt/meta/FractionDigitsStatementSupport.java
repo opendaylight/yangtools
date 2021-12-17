@@ -65,7 +65,7 @@ public final class FractionDigitsStatementSupport
 
     @Override
     protected FractionDigitsStatement createDeclared(final BoundStmtCtx<Integer> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createFractionDigits(ctx.getArgument(), substatements);
     }
 

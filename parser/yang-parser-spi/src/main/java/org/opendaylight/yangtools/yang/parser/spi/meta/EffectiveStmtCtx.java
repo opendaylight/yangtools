@@ -106,7 +106,7 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
      * @param <D> Class representing declared version of this statement
      */
     @Beta
-    interface Current<A, D extends DeclaredStatement<A>> extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
+    interface Current<A, D extends DeclaredStatement> extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
 
         @NonNull QName moduleName();
 
@@ -134,7 +134,7 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
      * @param <D> Class representing declared version of this statement
      */
     @Beta
-    interface UndeclaredCurrent<A, D extends DeclaredStatement<A>> extends Current<A, D> {
+    interface UndeclaredCurrent<A, D extends DeclaredStatement> extends Current<A, D> {
         @Deprecated
         @Override
         default String rawArgument() {

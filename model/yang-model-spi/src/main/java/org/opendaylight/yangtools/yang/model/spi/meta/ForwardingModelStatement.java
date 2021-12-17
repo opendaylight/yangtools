@@ -15,18 +15,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Common base class for forwarding implementations of {@link ModelStatement}.
  */
-public abstract class ForwardingModelStatement<A, S extends ModelStatement<A>> extends ForwardingObject
-        implements ModelStatement<A> {
+public abstract class ForwardingModelStatement<D extends ModelStatement> extends ForwardingObject
+        implements ModelStatement {
     @Override
     public StatementDefinition statementDefinition() {
         return delegate().statementDefinition();
     }
 
     @Override
-    public A argument() {
-        return delegate().argument();
-    }
-
-    @Override
-    protected abstract @NonNull S delegate();
+    protected abstract @NonNull D delegate();
 }

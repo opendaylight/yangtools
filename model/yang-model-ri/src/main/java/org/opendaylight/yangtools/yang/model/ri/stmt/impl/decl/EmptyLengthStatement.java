@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyLengthStatement extends WithArgument<List<ValueRange>> implements LengthStatement {
-    public EmptyLengthStatement(final String rawArgument, final List<ValueRange> argument) {
-        super(rawArgument, argument);
+public final class EmptyLengthStatement extends WithArgument implements LengthStatement {
+    public EmptyLengthStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

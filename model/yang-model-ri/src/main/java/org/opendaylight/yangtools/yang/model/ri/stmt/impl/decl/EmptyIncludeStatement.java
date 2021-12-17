@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyIncludeStatement extends WithArgument<String> implements IncludeStatement {
-    public EmptyIncludeStatement(final String rawArgument, final String argument) {
-        super(rawArgument, argument);
+public final class EmptyIncludeStatement extends WithArgument implements IncludeStatement {
+    public EmptyIncludeStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

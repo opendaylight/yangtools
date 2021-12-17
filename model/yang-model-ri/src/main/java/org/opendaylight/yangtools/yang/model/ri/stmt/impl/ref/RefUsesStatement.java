@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefUsesStatement extends AbstractRefStatement<QName, UsesStatement> implements UsesStatement {
+public final class RefUsesStatement extends AbstractRefStatement<UsesStatement> implements UsesStatement {
     public RefUsesStatement(final UsesStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

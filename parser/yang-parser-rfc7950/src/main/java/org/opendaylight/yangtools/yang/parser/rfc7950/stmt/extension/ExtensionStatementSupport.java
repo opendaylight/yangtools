@@ -81,7 +81,7 @@ public final class ExtensionStatementSupport
 
     @Override
     protected ExtensionStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createExtension(ctx.getArgument(), substatements);
     }
 

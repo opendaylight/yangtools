@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  *
  * @author Martin Bobak
  */
-public interface OpenConfigPosixPatternStatement extends UnknownStatement<String> {
+public interface OpenConfigPosixPatternStatement extends UnknownStatement {
 
 }

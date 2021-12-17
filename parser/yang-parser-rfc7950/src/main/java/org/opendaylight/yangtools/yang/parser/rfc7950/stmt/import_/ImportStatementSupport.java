@@ -142,7 +142,7 @@ public final class ImportStatementSupport
 
     @Override
     protected ImportStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createImport(ctx.getRawArgument(), substatements);
     }
 

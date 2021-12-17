@@ -43,7 +43,7 @@ public final class MinElementsStatementSupport
 
     @Override
     protected MinElementsStatement createDeclared(final Integer argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createMinElements(argument, substatements);
     }
 

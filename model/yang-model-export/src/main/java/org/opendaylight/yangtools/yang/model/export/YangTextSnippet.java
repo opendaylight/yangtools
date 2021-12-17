@@ -41,10 +41,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public final class YangTextSnippet implements Immutable, Iterable<@NonNull String> {
     private final Set<@NonNull StatementDefinition> ignoredStatements;
     private final StatementPrefixResolver resolver;
-    private final DeclaredStatement<?> statement;
+    private final DeclaredStatement statement;
     private final boolean omitDefaultStatements;
 
-    YangTextSnippet(final DeclaredStatement<?> statement, final StatementPrefixResolver resolver,
+    YangTextSnippet(final DeclaredStatement statement, final StatementPrefixResolver resolver,
             final Set<@NonNull StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
         this.statement = requireNonNull(statement);
         this.resolver = requireNonNull(resolver);

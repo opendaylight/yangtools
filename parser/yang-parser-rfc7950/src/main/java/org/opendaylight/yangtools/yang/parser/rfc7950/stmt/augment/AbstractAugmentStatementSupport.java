@@ -111,7 +111,7 @@ abstract class AbstractAugmentStatementSupport
 
     @Override
     protected final AugmentStatement createDeclared(final BoundStmtCtx<SchemaNodeIdentifier> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createAugment(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

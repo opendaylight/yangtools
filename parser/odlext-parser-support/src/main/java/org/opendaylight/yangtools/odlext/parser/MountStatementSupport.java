@@ -34,7 +34,7 @@ public final class MountStatementSupport
 
     @Override
     protected MountStatement createDeclared(final BoundStmtCtx<Empty> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new MountStatementImpl(substatements);
     }
 

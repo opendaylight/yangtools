@@ -53,7 +53,7 @@ public final class MustStatementSupport
 
     @Override
     protected MustStatement createDeclared(final BoundStmtCtx<QualifiedBound> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createMust(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

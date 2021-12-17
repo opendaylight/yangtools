@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefUnitsStatement extends AbstractRefStatement<String, UnitsStatement> implements UnitsStatement {
+public final class RefUnitsStatement extends AbstractRefStatement<UnitsStatement> implements UnitsStatement {
     public RefUnitsStatement(final UnitsStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

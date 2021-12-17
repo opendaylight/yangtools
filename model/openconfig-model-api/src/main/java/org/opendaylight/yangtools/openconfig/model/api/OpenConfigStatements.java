@@ -35,13 +35,13 @@ public enum OpenConfigStatements implements StatementDefinition {
         OpenConfigVersionStatement.class, OpenConfigVersionEffectiveStatement.class);
 
     private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
-    private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
+    private final Class<? extends DeclaredStatement> declaredRepresentation;
     private final QName statementName;
     private final @Nullable QName argumentName;
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
     OpenConfigStatements(final QName statementName, @Nullable final String argumentName,
-            final Class<? extends DeclaredStatement<?>> declaredRepresentation,
+            final Class<? extends DeclaredStatement> declaredRepresentation,
             final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
         this.argumentName = argumentName != null ? QName.create(statementName, argumentName) : null;
@@ -60,7 +60,7 @@ public enum OpenConfigStatements implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return declaredRepresentation;
     }
 

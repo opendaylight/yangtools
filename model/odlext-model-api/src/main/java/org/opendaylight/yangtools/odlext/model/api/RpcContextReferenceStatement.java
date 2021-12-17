@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface RpcContextReferenceStatement extends UnknownStatement<String> {
+public interface RpcContextReferenceStatement extends UnknownStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE;

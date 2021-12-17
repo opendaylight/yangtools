@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+public abstract class StatementSupport<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         implements StatementDefinition, StatementFactory<A, D, E> {
     /**
      * A baseline class for implementing the {@link StatementFactory#canReuseCurrent(Current, Current, Collection)}
@@ -47,7 +47,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * @param <A> Argument type
      * @param <D> Declared Statement representation
      */
-    public abstract static class StatementPolicy<A, D extends DeclaredStatement<A>> implements Immutable {
+    public abstract static class StatementPolicy<A, D extends DeclaredStatement> implements Immutable {
         final @NonNull CopyPolicy copyPolicy;
 
         StatementPolicy(final CopyPolicy copyPolicy) {
@@ -62,7 +62,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * @return Context-independent policy
          */
         @SuppressWarnings("unchecked")
-        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> contextIndependent() {
+        public static final <A, D extends DeclaredStatement> @NonNull StatementPolicy<A, D> contextIndependent() {
             return (StatementPolicy<A, D>) EqualSemantics.CONTEXT_INDEPENDENT;
         }
 
@@ -74,7 +74,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * @return Exact-replica policy
          */
         @SuppressWarnings("unchecked")
-        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> exactReplica() {
+        public static final <A, D extends DeclaredStatement> @NonNull StatementPolicy<A, D> exactReplica() {
             return (StatementPolicy<A, D>) EqualSemantics.EXACT_REPLICA;
         }
 
@@ -86,7 +86,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * @return Ignoring policy
          */
         @SuppressWarnings("unchecked")
-        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> ignore() {
+        public static final <A, D extends DeclaredStatement> @NonNull StatementPolicy<A, D> ignore() {
             return (StatementPolicy<A, D>) AlwaysFail.IGNORE;
         }
 
@@ -98,7 +98,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * @return Rejecting statement policy
          */
         @SuppressWarnings("unchecked")
-        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> reject() {
+        public static final <A, D extends DeclaredStatement> @NonNull StatementPolicy<A, D> reject() {
             return (StatementPolicy<A, D>) AlwaysFail.REJECT;
         }
 
@@ -111,7 +111,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * @param equality {@link StatementEquality} to apply to effective statements
          * @return Equality-based statement policy
          */
-        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> copyDeclared(
+        public static final <A, D extends DeclaredStatement> @NonNull StatementPolicy<A, D> copyDeclared(
                 final @NonNull StatementEquality<A, D> equality) {
             return new EqualSemantics<>(equality);
         }
@@ -124,14 +124,14 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * @return Rejecting statement policy
          */
         @SuppressWarnings("unchecked")
-        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> alwaysCopyDeclared() {
+        public static final <A, D extends DeclaredStatement> @NonNull StatementPolicy<A, D> alwaysCopyDeclared() {
             return (StatementPolicy<A, D>) EqualSemantics.ALWAYS_COPY;
         }
 
         abstract boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
             @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
 
-        private static final class AlwaysFail<A, D extends DeclaredStatement<A>> extends StatementPolicy<A, D> {
+        private static final class AlwaysFail<A, D extends DeclaredStatement> extends StatementPolicy<A, D> {
             static final @NonNull AlwaysFail<?, ?> IGNORE = new AlwaysFail<>(CopyPolicy.IGNORE);
             static final @NonNull AlwaysFail<?, ?> REJECT = new AlwaysFail<>(CopyPolicy.REJECT);
 
@@ -146,7 +146,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
             }
         }
 
-        private static final class EqualSemantics<A, D extends DeclaredStatement<A>> extends StatementPolicy<A, D> {
+        private static final class EqualSemantics<A, D extends DeclaredStatement> extends StatementPolicy<A, D> {
             static final @NonNull EqualSemantics<?, ?> ALWAYS_COPY =
                 new EqualSemantics<>((copy, stmt, substatements) -> false);
             static final @NonNull EqualSemantics<?, ?> CONTEXT_INDEPENDENT =
@@ -181,7 +181,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * @param <D> Declared Statement representation
      */
     @FunctionalInterface
-    public interface StatementEquality<A, D extends DeclaredStatement<A>> {
+    public interface StatementEquality<A, D extends DeclaredStatement> {
         /**
          * Determine whether {@code current} statement has the same semantics as the provided copy. See the contract
          * specification of {@link StatementFactory#canReuseCurrent(Current, Current, Collection)}.
@@ -450,7 +450,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
     @Override
     // Non-final for compatible extensions
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return def.getDeclaredRepresentationClass();
     }
 

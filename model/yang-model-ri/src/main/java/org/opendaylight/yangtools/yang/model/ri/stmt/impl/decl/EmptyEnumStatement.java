@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyEnumStatement extends WithArgument<String> implements EnumStatement {
-    public EmptyEnumStatement(final String rawArgument, final String argument) {
-        super(rawArgument, argument);
+public final class EmptyEnumStatement extends WithArgument implements EnumStatement {
+    public EmptyEnumStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

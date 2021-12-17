@@ -63,7 +63,7 @@ public final class EnumStatementSupport
 
     @Override
     protected EnumStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createEnum(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

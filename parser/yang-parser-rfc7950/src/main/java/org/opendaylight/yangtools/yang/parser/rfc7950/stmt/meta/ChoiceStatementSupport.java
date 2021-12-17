@@ -113,7 +113,7 @@ public final class ChoiceStatementSupport
 
     @Override
     protected ChoiceStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createChoice(ctx.getArgument(), substatements);
     }
 

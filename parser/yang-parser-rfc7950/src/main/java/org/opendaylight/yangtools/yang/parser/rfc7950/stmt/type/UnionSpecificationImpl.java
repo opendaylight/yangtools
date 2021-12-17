@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 final class UnionSpecificationImpl extends WithSubstatements<QName> implements UnionSpecification {
     UnionSpecificationImpl(final String rawArgument, final QName argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         super(rawArgument, argument, substatements);
     }
 }

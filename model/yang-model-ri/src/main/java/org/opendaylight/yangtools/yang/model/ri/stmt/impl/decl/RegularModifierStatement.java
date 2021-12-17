@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
-import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularModifierStatement extends WithSubstatements<ModifierKind> implements ModifierStatement {
-    public RegularModifierStatement(final ModifierKind argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument.getKeyword(), argument, substatements);
+public final class RegularModifierStatement extends WithSubstatements implements ModifierStatement {
+    public RegularModifierStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

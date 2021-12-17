@@ -13,13 +13,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public class ReactorDeclaredModel implements Immutable {
-    private final ImmutableList<DeclaredStatement<?>> rootStatements;
+    private final ImmutableList<DeclaredStatement> rootStatements;
 
-    public ReactorDeclaredModel(final List<DeclaredStatement<?>> rootStatements) {
+    public ReactorDeclaredModel(final List<DeclaredStatement> rootStatements) {
         this.rootStatements = ImmutableList.copyOf(rootStatements);
     }
 
-    public ImmutableList<DeclaredStatement<?>> getRootStatements() {
+    public ImmutableList<DeclaredStatement> getRootStatements() {
         return rootStatements;
     }
 }

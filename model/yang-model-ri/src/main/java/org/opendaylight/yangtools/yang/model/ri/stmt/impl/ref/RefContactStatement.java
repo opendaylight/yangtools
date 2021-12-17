@@ -11,8 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefContactStatement extends AbstractRefStatement<String, ContactStatement>
-        implements ContactStatement {
+public final class RefContactStatement extends AbstractRefStatement<ContactStatement> implements ContactStatement {
     public RefContactStatement(final ContactStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

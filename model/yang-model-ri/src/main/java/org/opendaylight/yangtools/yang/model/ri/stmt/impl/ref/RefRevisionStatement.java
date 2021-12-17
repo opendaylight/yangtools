@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefRevisionStatement extends AbstractRefStatement<Revision, RevisionStatement>
-        implements RevisionStatement {
+public final class RefRevisionStatement extends AbstractRefStatement<RevisionStatement> implements RevisionStatement {
     public RefRevisionStatement(final RevisionStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

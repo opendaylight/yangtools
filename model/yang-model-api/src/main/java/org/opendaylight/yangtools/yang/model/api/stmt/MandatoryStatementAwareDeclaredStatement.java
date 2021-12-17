@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Marker interface for statements which may contain a 'mandatory' statement, as defined in RFC7950.
  */
 @Beta
-public interface MandatoryStatementAwareDeclaredStatement<T> extends DeclaredStatement<T> {
+public interface MandatoryStatementAwareDeclaredStatement extends DeclaredStatement {
     /**
      * Return a {@link MandatoryStatement} child, if present.
      *

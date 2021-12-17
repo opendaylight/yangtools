@@ -13,12 +13,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface DataDefinitionAwareDeclaredStatement<A> extends DeclaredStatement<A> {
+public interface DataDefinitionAwareDeclaredStatement extends DeclaredStatement {
     default @NonNull Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return declaredSubstatements(DataDefinitionStatement.class);
     }
 
-    interface WithReusableDefinitions<A> extends DataDefinitionAwareDeclaredStatement<A> {
+    interface WithReusableDefinitions extends DataDefinitionAwareDeclaredStatement {
         default @NonNull Collection<? extends TypedefStatement> getTypedefs() {
             return declaredSubstatements(TypedefStatement.class);
         }

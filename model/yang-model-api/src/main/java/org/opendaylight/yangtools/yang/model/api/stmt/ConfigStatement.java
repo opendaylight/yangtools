@@ -11,14 +11,10 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface ConfigStatement extends DeclaredStatement<Boolean> {
+public interface ConfigStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.CONFIG;
-    }
-
-    default boolean getValue() {
-        return argument().booleanValue();
     }
 }
 

@@ -34,7 +34,7 @@ public final class ErrorMessageStatementSupport
 
     @Override
     protected ErrorMessageStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createErrorMessage(ctx.getRawArgument(), substatements);
     }
 

@@ -35,7 +35,7 @@ public final class DefaultStatementSupport
 
     @Override
     protected DefaultStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createDefault(ctx.getRawArgument(), substatements);
     }
 

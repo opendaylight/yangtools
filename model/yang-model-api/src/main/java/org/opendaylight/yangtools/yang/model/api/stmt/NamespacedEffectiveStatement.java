@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @author Robert Varga
  */
 @Beta
-public interface NamespacedEffectiveStatement<D extends DeclaredStatement<QName>>
+public interface NamespacedEffectiveStatement<D extends DeclaredStatement>
     extends EffectiveStatement<QName, D>, Identifiable<QName> {
 
     @Override

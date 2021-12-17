@@ -83,7 +83,7 @@ public final class RangeStatementSupport
 
     @Override
     protected RangeStatement createDeclared(final BoundStmtCtx<List<ValueRange>> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createRange(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

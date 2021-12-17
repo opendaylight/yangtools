@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class DeviateStatementImpl extends WithSubstatements<DeviateKind> implements DeviateStatement {
-    public DeviateStatementImpl(final DeviateKind argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument.getKeyword(), argument, substatements);
+public final class DeviateStatementImpl extends WithSubstatements implements DeviateStatement {
+    public DeviateStatementImpl(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

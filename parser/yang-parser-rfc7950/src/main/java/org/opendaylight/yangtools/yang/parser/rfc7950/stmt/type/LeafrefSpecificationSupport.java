@@ -48,7 +48,7 @@ final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpeci
 
     @Override
     protected LeafrefSpecification createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noPath(ctx);
         }

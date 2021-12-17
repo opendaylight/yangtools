@@ -48,7 +48,7 @@ public final class ModifierStatementSupport
 
     @Override
     protected ModifierStatement createDeclared(final BoundStmtCtx<ModifierKind> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createModifier(ctx.getArgument(), substatements);
     }
 

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 @Beta
-public abstract class AbstractEmptyStatementSupport<D extends DeclaredStatement<Empty>,
+public abstract class AbstractEmptyStatementSupport<D extends DeclaredStatement,
         E extends EffectiveStatement<Empty, D>> extends AbstractStatementSupport<Empty, D, E> {
     protected AbstractEmptyStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<Empty, D> policy, final YangParserConfiguration config,

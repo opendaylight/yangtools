@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+abstract class ReactorStmtCtx<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends NamespaceStorageSupport implements Mutable<A, D, E>, Current<A, D> {
     private static final Logger LOG = LoggerFactory.getLogger(ReactorStmtCtx.class);
 

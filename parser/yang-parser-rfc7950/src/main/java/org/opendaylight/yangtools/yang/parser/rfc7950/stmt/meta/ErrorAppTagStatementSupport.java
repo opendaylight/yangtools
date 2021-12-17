@@ -34,7 +34,7 @@ public final class ErrorAppTagStatementSupport
 
     @Override
     protected ErrorAppTagStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createErrorAppTag(ctx.getRawArgument(), substatements);
     }
 
