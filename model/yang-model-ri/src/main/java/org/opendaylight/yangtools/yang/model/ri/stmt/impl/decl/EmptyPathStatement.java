@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
-public class EmptyPathStatement extends AbstractDeclaredStatement<PathExpression> implements PathStatement {
+public class EmptyPathStatement extends AbstractDeclaredStatement implements PathStatement {
     private final @NonNull PathExpression argument;
 
     public EmptyPathStatement(final PathExpression argument) {

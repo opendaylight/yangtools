@@ -147,7 +147,7 @@ public interface ModelActionBuilder {
      * @param context Statement context which needs to complete the transition.
      * @return A {@link Prerequisite} returning the declared statement of the requested context.
      */
-    <D extends DeclaredStatement<?>> @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ? extends D, ?> context);
+    <D extends DeclaredStatement> @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ? extends D, ?> context);
 
     /**
      * Create a requirement on specified statement to be declared.
@@ -155,7 +155,7 @@ public interface ModelActionBuilder {
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
-    <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
+    <K, D extends DeclaredStatement, N extends StatementNamespace<K, ? extends D, ?>>
         @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
     /**
@@ -166,7 +166,7 @@ public interface ModelActionBuilder {
      * @param phase ModelProcessingPhase which must have completed
      * @return A {@link Prerequisite} returning the requested context.
      */
-    <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull Prerequisite<StmtContext<A, D, E>>
+    <A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>> @NonNull Prerequisite<StmtContext<A, D, E>>
         requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
     <K, N extends StatementNamespace<K, ?, ?>> @NonNull Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
@@ -225,7 +225,7 @@ public interface ModelActionBuilder {
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
-    <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
+    <K, D extends DeclaredStatement, N extends StatementNamespace<K, ? extends D, ?>>
         @NonNull Prerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(StmtContext<?, ?, ?> context,
                 Class<N> namespace, K key);
 

@@ -13,12 +13,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
-public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<Descendant>,
-        DocumentedDeclaredStatement<Descendant>, IfFeatureAwareDeclaredStatement<Descendant>,
-        MandatoryStatementAwareDeclaredStatement<Descendant>,
-        MustStatementAwareDeclaredStatement<Descendant> {
+public interface RefineStatement extends ConfigStatementAwareDeclaredStatement,
+        DocumentedDeclaredStatement, IfFeatureAwareDeclaredStatement,
+        MandatoryStatementAwareDeclaredStatement,
+        MustStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.REFINE;

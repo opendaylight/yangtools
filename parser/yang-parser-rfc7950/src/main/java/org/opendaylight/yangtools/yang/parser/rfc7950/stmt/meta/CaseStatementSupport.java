@@ -90,7 +90,7 @@ public final class CaseStatementSupport
 
     @Override
     protected CaseStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createCase(ctx.getArgument(), substatements);
     }
 

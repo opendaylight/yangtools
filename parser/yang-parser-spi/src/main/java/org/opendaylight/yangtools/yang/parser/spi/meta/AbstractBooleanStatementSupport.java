@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatement<Boolean>,
+public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatement,
         E extends EffectiveStatement<Boolean, D>> extends AbstractStatementSupport<Boolean, D, E> {
     private final @NonNull E emptyEffectiveFalse;
     private final @NonNull E emptyEffectiveTrue;
@@ -70,7 +70,7 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
 
     @Override
     protected final D createDeclared(final BoundStmtCtx<Boolean> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         final Boolean argument = ctx.getArgument();
         if (substatements.isEmpty()) {
             return argument ? emptyDeclaredTrue : emptyDeclaredFalse;
@@ -79,7 +79,7 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
     }
 
     protected abstract @NonNull D createDeclared(@NonNull Boolean argument,
-        @NonNull ImmutableList<DeclaredStatement<?>> substatements);
+        @NonNull ImmutableList<DeclaredStatement> substatements);
 
     @Override
     protected final E createEffective(final Current<Boolean, D> stmt,

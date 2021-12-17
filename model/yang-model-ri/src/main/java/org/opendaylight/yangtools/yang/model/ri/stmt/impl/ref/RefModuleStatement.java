@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefModuleStatement extends AbstractRefStatement<Unqualified, ModuleStatement>
-        implements ModuleStatement {
+public final class RefModuleStatement extends AbstractRefStatement<ModuleStatement> implements ModuleStatement {
     public RefModuleStatement(final ModuleStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

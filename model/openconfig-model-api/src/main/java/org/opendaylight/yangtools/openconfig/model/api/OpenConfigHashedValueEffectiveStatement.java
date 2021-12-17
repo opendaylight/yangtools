@@ -13,8 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 /**
  * Effective statement corresponding to config's "openconfig-hashed-value" (new name) or "openconfig-encrypted-value"
  * (old name).
- *
- * @author Robert Varga
  */
 public interface OpenConfigHashedValueEffectiveStatement
     extends UnknownEffectiveStatement<Empty, OpenConfigHashedValueStatement> {

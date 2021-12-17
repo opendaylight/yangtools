@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefUnrecognizedStatement extends AbstractRefStatement<Object, UnrecognizedStatement>
+public final class RefUnrecognizedStatement extends AbstractRefStatement<UnrecognizedStatement>
         implements UnrecognizedStatement {
     public RefUnrecognizedStatement(final UnrecognizedStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

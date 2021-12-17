@@ -11,8 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefPresenceStatement extends AbstractRefStatement<String, PresenceStatement>
-        implements PresenceStatement {
+public final class RefPresenceStatement extends AbstractRefStatement<PresenceStatement> implements PresenceStatement {
     public RefPresenceStatement(final PresenceStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

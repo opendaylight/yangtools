@@ -11,11 +11,11 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 public final class RegularDescriptionStatement extends WithSubstatements implements DescriptionStatement {
     public RegularDescriptionStatement(final @NonNull String rawArgument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
     }
 }

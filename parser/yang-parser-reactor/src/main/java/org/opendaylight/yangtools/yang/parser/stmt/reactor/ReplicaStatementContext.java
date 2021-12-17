@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * A replica of a different statement. It does not allow modification, but produces an effective statement from a
  * designated source.
  */
-final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+final class ReplicaStatementContext<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends ReactorStmtCtx<A, D, E> {
     private final StatementContextBase<?, ?, ?> parent;
     private final ReactorStmtCtx<A, D, E> source;
@@ -186,7 +186,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+    public <X, Y extends DeclaredStatement, Z extends EffectiveStatement<X, Y>>
             Mutable<X, Y, Z> createUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         throw new UnsupportedOperationException();
     }

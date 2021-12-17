@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefStatusStatement extends AbstractRefStatement<Status, StatusStatement> implements StatusStatement {
+public final class RefStatusStatement extends AbstractRefStatement<StatusStatement> implements StatusStatement {
     public RefStatusStatement(final StatusStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

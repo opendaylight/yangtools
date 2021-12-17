@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
-import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyModifierStatement extends WithArgument<ModifierKind> implements ModifierStatement {
-    public EmptyModifierStatement(final ModifierKind argument) {
-        super(argument.getKeyword(), argument);
+public final class EmptyModifierStatement extends WithArgument implements ModifierStatement {
+    public EmptyModifierStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

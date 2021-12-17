@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface MaxElementsStatement extends DeclaredStatement<String> {
+public interface MaxElementsStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MAX_ELEMENTS;

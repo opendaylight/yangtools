@@ -72,7 +72,7 @@ public final class MountPointStatementSupport
 
     @Override
     protected MountPointStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new MountPointStatementImpl(ctx.getArgument(), substatements);
     }
 

@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface KeyStatement extends DeclaredStatement<Set<QName>> {
+public interface KeyStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.KEY;

@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
-final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+final class StatementDefinitionContext<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>> {
     private final @NonNull StatementSupport<A, D, E> support;
     private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
 

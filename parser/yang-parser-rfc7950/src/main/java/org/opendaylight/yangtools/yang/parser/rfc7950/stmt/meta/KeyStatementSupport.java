@@ -103,7 +103,7 @@ public final class KeyStatementSupport
 
     @Override
     protected KeyStatement createDeclared(final BoundStmtCtx<Set<QName>> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createKey(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

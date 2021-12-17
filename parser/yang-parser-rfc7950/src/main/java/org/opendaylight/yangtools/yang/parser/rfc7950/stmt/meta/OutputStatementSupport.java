@@ -72,7 +72,7 @@ public final class OutputStatementSupport
 
     @Override
     protected OutputStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createOutput(ctx.getArgument(), substatements);
     }
 

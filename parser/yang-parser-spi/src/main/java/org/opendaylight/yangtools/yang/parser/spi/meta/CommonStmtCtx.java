@@ -36,7 +36,7 @@ public interface CommonStmtCtx {
      * @param type DeclaredStatement representation
      * @return True if this context results in specified {@link DeclaredStatement} representation
      */
-    default <D extends DeclaredStatement<?>> boolean producesDeclared(final Class<? super D> type) {
+    default <D extends DeclaredStatement> boolean producesDeclared(final Class<? super D> type) {
         return type.isAssignableFrom(publicDefinition().getDeclaredRepresentationClass());
     }
 

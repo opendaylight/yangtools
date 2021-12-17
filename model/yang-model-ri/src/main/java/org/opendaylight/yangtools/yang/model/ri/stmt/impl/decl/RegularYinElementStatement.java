@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularYinElementStatement extends WithSubstatements<Boolean> implements YinElementStatement {
-    public RegularYinElementStatement(final Boolean argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+public final class RegularYinElementStatement extends WithSubstatements implements YinElementStatement {
+    public RegularYinElementStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

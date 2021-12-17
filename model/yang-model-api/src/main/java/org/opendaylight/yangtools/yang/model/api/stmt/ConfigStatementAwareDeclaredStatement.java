@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface ConfigStatementAwareDeclaredStatement<A> extends DeclaredStatement<A> {
+public interface ConfigStatementAwareDeclaredStatement extends DeclaredStatement {
     /**
      * Return a {@link ConfigStatement} child, if present.
      *

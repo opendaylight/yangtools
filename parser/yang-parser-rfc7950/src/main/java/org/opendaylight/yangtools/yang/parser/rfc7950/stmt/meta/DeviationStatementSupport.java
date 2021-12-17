@@ -63,7 +63,7 @@ public final class DeviationStatementSupport
 
     @Override
     protected DeviationStatement createDeclared(final BoundStmtCtx<Absolute> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createDeviation(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

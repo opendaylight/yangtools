@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefYinElementStatement extends AbstractRefStatement<Boolean, YinElementStatement>
+public final class RefYinElementStatement extends AbstractRefStatement<YinElementStatement>
         implements YinElementStatement {
     public RefYinElementStatement(final YinElementStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

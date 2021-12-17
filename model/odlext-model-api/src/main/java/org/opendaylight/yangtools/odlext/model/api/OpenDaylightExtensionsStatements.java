@@ -39,12 +39,12 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
         "context-type", RpcContextReferenceStatement.class, RpcContextReferenceEffectiveStatement.class);
 
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
-    private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
+    private final @NonNull Class<? extends DeclaredStatement> declaredRepresentation;
     private final @NonNull QName statementName;
     private final ArgumentDefinition argumentDef;
 
     OpenDaylightExtensionsStatements(final QName statementName, final String argumentName,
-            final Class<? extends DeclaredStatement<?>> declaredRepresentation,
+            final Class<? extends DeclaredStatement> declaredRepresentation,
             final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
         this.argumentDef = argumentName == null ? null
@@ -64,7 +64,7 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return declaredRepresentation;
     }
 

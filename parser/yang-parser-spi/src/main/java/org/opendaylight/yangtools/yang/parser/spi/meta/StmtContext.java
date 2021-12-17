@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+public interface StmtContext<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
     /**
      * Return the parent statement context, or null if this is the root statement.
@@ -170,7 +170,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @param <D> Declared Statement representation
      * @param <E> Effective Statement representation
      */
-    interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+    interface Mutable<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {
 
         @Override
@@ -327,7 +327,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @throws NullPointerException if {@code support} is null
          */
         @Beta
-        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+        <X, Y extends DeclaredStatement, Z extends EffectiveStatement<X, Y>>
             @NonNull Mutable<X, Y, Z> createUndeclaredSubstatement(StatementSupport<X, Y, Z> support, @Nullable X arg);
 
         @Beta

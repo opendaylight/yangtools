@@ -204,7 +204,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
 
     @Override
     protected final TypeStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             final TypeStatement builtin = BuiltinTypeStatement.lookup(ctx.getRawArgument());
             if (builtin != null) {

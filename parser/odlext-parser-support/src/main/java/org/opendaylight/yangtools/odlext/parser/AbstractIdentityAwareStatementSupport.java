@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement<QName>,
+abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
     AbstractIdentityAwareStatementSupport(final StatementDefinition publicDefinition,
             final YangParserConfiguration config, final SubstatementValidator validator) {

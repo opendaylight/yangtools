@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyUnitsStatement extends WithRawStringArgument implements UnitsStatement {
+public final class EmptyUnitsStatement extends WithArgument implements UnitsStatement {
     public EmptyUnitsStatement(final @NonNull String rawArgument) {
         super(rawArgument);
     }

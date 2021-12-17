@@ -46,7 +46,7 @@ public final class NamespaceStatementSupport
 
     @Override
     protected NamespaceStatement createDeclared(final BoundStmtCtx<XMLNamespace> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createNamespace(ctx.getArgument(), substatements);
     }
 

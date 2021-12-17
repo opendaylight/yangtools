@@ -68,7 +68,7 @@ final class UnrecognizedStatementSupport
 
     @Override
     protected UnrecognizedStatement createDeclared(final BoundStmtCtx<Object> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createUnrecognized(ctx.rawArgument(), ctx.publicDefinition(), substatements);
     }
 

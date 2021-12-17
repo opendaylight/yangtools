@@ -82,7 +82,7 @@ public final class LengthStatementSupport
 
     @Override
     protected LengthStatement createDeclared(final BoundStmtCtx<List<ValueRange>> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createLength(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

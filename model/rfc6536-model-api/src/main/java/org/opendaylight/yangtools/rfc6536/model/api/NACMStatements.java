@@ -30,10 +30,10 @@ public enum NACMStatements implements StatementDefinition {
         DefaultDenyWriteStatement.class, DefaultDenyWriteEffectiveStatement.class);
 
     private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
-    private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
+    private final Class<? extends DeclaredStatement> declaredRepresentation;
     private final QName statementName;
 
-    NACMStatements(final QName statementName, final Class<? extends DeclaredStatement<?>> declaredRepresentation,
+    NACMStatements(final QName statementName, final Class<? extends DeclaredStatement> declaredRepresentation,
             final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
@@ -56,7 +56,7 @@ public enum NACMStatements implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return declaredRepresentation;
     }
 }

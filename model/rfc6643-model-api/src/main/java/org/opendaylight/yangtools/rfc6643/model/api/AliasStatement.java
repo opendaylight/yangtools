@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface AliasStatement extends UnknownStatement<String>, DocumentedDeclaredStatement.WithStatus<String> {
+public interface AliasStatement extends UnknownStatement, DocumentedDeclaredStatement.WithStatus {
     @Override
     default StatementDefinition statementDefinition() {
         return IetfYangSmiv2ExtensionsMapping.ALIAS;

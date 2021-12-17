@@ -82,7 +82,7 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public @NonNull List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException {
+    public @NonNull List<DeclaredStatement> buildDeclaredModel() throws YangParserException {
         try {
             return buildAction.build().getRootStatements();
         } catch (ReactorException e) {

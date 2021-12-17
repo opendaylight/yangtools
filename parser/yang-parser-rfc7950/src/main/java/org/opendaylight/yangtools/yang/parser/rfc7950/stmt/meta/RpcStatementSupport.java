@@ -70,7 +70,7 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
 
     @Override
     protected RpcStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createRpc(ctx.getArgument(), substatements);
     }
 

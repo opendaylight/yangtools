@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefDescriptionStatement extends AbstractRefStatement<String, DescriptionStatement>
+public final class RefDescriptionStatement extends AbstractRefStatement<DescriptionStatement>
         implements DescriptionStatement {
     public RefDescriptionStatement(final DescriptionStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

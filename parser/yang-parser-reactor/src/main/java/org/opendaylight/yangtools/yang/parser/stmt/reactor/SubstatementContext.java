@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
-final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
+final class SubstatementContext<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>> extends
         AbstractResumedStatement<A, D, E> {
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;

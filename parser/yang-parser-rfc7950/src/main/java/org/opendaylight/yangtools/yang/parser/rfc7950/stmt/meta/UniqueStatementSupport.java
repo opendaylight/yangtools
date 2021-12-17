@@ -96,7 +96,7 @@ public final class UniqueStatementSupport
 
     @Override
     protected UniqueStatement createDeclared(final BoundStmtCtx<Set<Descendant>> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createUnique(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

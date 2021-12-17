@@ -36,7 +36,7 @@ public final class ConfigStatementSupport
 
     @Override
     protected ConfigStatement createDeclared(final Boolean argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createConfig(argument, substatements);
     }
 

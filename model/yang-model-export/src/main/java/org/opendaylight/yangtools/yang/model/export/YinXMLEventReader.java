@@ -37,15 +37,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 final class YinXMLEventReader implements XMLEventReader {
     private static final class OpenElement {
-        final Iterator<? extends DeclaredStatement<?>> children;
+        final Iterator<? extends DeclaredStatement> children;
         final QName name;
 
-        OpenElement(final Iterator<? extends DeclaredStatement<?>> children) {
+        OpenElement(final Iterator<? extends DeclaredStatement> children) {
             this.children = requireNonNull(children);
             name = null;
         }
 
-        OpenElement(final QName name, final Iterator<? extends DeclaredStatement<?>> children) {
+        OpenElement(final QName name, final Iterator<? extends DeclaredStatement> children) {
             this.children = requireNonNull(children);
             this.name = requireNonNull(name);
         }
@@ -57,7 +57,7 @@ final class YinXMLEventReader implements XMLEventReader {
     private final XMLEventFactory eventFactory;
 
     YinXMLEventReader(final XMLEventFactory eventFactory, final ModuleNamespaceContext namespaceContext,
-            final DeclaredStatement<?> root) {
+            final DeclaredStatement root) {
         this.eventFactory = requireNonNull(eventFactory);
         this.namespaceContext = requireNonNull(namespaceContext);
 
@@ -195,7 +195,7 @@ final class YinXMLEventReader implements XMLEventReader {
         } while (events.isEmpty());
     }
 
-    private void addStatement(final DeclaredStatement<?> statement) {
+    private void addStatement(final DeclaredStatement statement) {
         final StatementDefinition def = statement.statementDefinition();
         final QName name = def.getStatementName();
         final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();

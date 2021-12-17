@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefEnumStatement extends AbstractRefStatement<String, EnumStatement> implements EnumStatement {
+public final class RefEnumStatement extends AbstractRefStatement<EnumStatement> implements EnumStatement {
     public RefEnumStatement(final EnumStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

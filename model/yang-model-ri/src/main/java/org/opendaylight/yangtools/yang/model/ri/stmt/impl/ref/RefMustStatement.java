@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public final class RefMustStatement extends AbstractRefStatement<QualifiedBound, MustStatement>
-        implements MustStatement {
+public final class RefMustStatement extends AbstractRefStatement<MustStatement> implements MustStatement {
     public RefMustStatement(final MustStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

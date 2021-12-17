@@ -11,29 +11,22 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class UnrecognizedStatementImpl extends WithSubstatements<Object> implements UnrecognizedStatement {
+public final class UnrecognizedStatementImpl extends WithSubstatements implements UnrecognizedStatement {
     private final @NonNull StatementDefinition definition;
 
     public UnrecognizedStatementImpl(final String rawArgument, final @NonNull StatementDefinition statementDefinition,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
-        this.definition = requireNonNull(statementDefinition);
+        definition = requireNonNull(statementDefinition);
     }
 
     @Override
     public StatementDefinition statementDefinition() {
         return definition;
-    }
-
-    @Override
-    public Object argument() {
-        final String raw = rawArgument();
-        return raw != null ? raw : Empty.value();
     }
 }

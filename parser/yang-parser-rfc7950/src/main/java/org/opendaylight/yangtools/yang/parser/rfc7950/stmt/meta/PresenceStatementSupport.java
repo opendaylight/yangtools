@@ -34,7 +34,7 @@ public final class PresenceStatementSupport
 
     @Override
     protected PresenceStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createPresence(ctx.getRawArgument(), substatements);
     }
 

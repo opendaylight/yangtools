@@ -14,7 +14,7 @@ import java.util.Optional;
  * Common interface for statements which contain either a description/reference or a description/reference/status combo.
  */
 @Beta
-public interface MetaDeclaredStatement<T> extends DocumentedDeclaredStatement<T> {
+public interface MetaDeclaredStatement extends DocumentedDeclaredStatement {
     default Optional<OrganizationStatement> getOrganization() {
         return findFirstDeclaredSubstatement(OrganizationStatement.class);
     }

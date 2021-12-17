@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularBelongsToStatement extends WithSubstatements implements BelongsToStatement {
     public RegularBelongsToStatement(final @NonNull String rawArgument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(rawArgument, substatements);
     }
 }

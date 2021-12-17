@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface DefValStatement extends UnknownStatement<String> {
+public interface DefValStatement extends UnknownStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return IetfYangSmiv2ExtensionsMapping.DEFVAL;

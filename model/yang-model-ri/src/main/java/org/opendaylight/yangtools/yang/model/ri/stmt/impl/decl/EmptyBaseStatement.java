@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyBaseStatement extends WithQNameArgument implements BaseStatement {
-    public EmptyBaseStatement(final QName argument) {
-        super(argument);
+public final class EmptyBaseStatement extends WithArgument implements BaseStatement {
+    public EmptyBaseStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

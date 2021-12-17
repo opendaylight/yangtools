@@ -28,12 +28,12 @@ public enum IetfYangSmiv2ExtensionsMapping implements StatementDefinition {
     OBJECT_ID(OidStatement.class, OidEffectiveStatement.class, "oid", "value"),
     ALIAS(AliasStatement.class, AliasEffectiveStatement.class, "alias", "descriptor");
 
-    private final @NonNull Class<? extends DeclaredStatement<?>> type;
+    private final @NonNull Class<? extends DeclaredStatement> type;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final @NonNull QName name;
     private final @NonNull ArgumentDefinition argument;
 
-    IetfYangSmiv2ExtensionsMapping(final Class<? extends DeclaredStatement<?>> declared,
+    IetfYangSmiv2ExtensionsMapping(final Class<? extends DeclaredStatement> declared,
                                    final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr,
                                    final String argumentStr) {
         type = requireNonNull(declared);
@@ -57,7 +57,7 @@ public enum IetfYangSmiv2ExtensionsMapping implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return type;
     }
 

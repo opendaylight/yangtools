@@ -11,13 +11,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface RequireInstanceStatement extends DeclaredStatement<Boolean> {
+public interface RequireInstanceStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.REQUIRE_INSTANCE;
-    }
-
-    default boolean getValue() {
-        return argument().booleanValue();
     }
 }

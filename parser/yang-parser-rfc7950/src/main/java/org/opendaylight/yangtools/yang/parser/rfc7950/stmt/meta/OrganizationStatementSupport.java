@@ -32,7 +32,7 @@ public final class OrganizationStatementSupport
 
     @Override
     protected OrganizationStatement createDeclared(final String argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createOrganization(argument, substatements);
     }
 

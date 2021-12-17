@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefPositionStatement extends AbstractRefStatement<Uint32, PositionStatement>
-        implements PositionStatement {
+public final class RefPositionStatement extends AbstractRefStatement<PositionStatement> implements PositionStatement {
     public RefPositionStatement(final PositionStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

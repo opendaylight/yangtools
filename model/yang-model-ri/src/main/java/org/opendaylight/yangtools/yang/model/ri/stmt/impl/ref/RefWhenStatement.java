@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public final class RefWhenStatement extends AbstractRefStatement<QualifiedBound, WhenStatement>
-        implements WhenStatement {
+public final class RefWhenStatement extends AbstractRefStatement<WhenStatement> implements WhenStatement {
     public RefWhenStatement(final WhenStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

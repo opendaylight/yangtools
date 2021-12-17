@@ -40,7 +40,7 @@ public final class SubIdStatementSupport
 
     @Override
     protected SubIdStatement createDeclared(final BoundStmtCtx<Uint32> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new SubIdStatementImpl(ctx.getArgument(), substatements);
     }
 

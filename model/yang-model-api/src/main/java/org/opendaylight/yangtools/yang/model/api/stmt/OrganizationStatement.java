@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface OrganizationStatement extends DeclaredStatement<String> {
+public interface OrganizationStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ORGANIZATION;

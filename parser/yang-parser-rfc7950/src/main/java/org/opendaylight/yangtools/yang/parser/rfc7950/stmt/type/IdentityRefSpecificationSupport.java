@@ -74,7 +74,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
 
     @Override
     protected IdentityRefSpecification createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noBase(ctx);
         }

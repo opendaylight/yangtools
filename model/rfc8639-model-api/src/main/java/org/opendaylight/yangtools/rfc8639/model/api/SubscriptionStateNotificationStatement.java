@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface SubscriptionStateNotificationStatement extends DeclaredStatement<Empty> {
+public interface SubscriptionStateNotificationStatement extends DeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return SubscribedNotificationsStatements.SUBSCRIPTION_STATE_NOTIFICATION;

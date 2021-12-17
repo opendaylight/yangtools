@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularArgumentStatement extends WithSubstatements implements ArgumentStatement {
     public RegularArgumentStatement(final QName argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

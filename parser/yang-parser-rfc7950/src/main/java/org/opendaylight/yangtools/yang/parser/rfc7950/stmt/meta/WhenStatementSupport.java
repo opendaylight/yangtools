@@ -51,7 +51,7 @@ public final class WhenStatementSupport
 
     @Override
     protected WhenStatement createDeclared(final BoundStmtCtx<QualifiedBound> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createWhen(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 

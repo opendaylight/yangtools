@@ -34,7 +34,7 @@ public final class RequireInstanceStatementSupport
 
     @Override
     protected RequireInstanceStatement createDeclared(final Boolean argument,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createRequireInstance(argument, substatements);
     }
 

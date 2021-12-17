@@ -10,11 +10,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface LinkageDeclaredStatement extends DeclaredStatement<Unqualified> {
+public interface LinkageDeclaredStatement extends DeclaredStatement {
     default @NonNull Collection<? extends ImportStatement> getImports() {
         return declaredSubstatements(ImportStatement.class);
     }

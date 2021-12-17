@@ -20,7 +20,7 @@ final class OpenConfigHashedValueStatementImpl extends WithSubstatements impleme
     private final @NonNull StatementDefinition definition;
 
     OpenConfigHashedValueStatementImpl(final StatementDefinition definition,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(substatements);
         this.definition = requireNonNull(definition);
     }

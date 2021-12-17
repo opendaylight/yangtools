@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.openconfig.model.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface OpenConfigVersionStatement extends UnknownStatement<SemVer> {
+public interface OpenConfigVersionStatement extends UnknownStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return OpenConfigStatements.OPENCONFIG_VERSION;

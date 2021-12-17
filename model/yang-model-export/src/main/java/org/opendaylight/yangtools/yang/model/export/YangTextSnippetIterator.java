@@ -123,12 +123,12 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      */
     private final Queue<String> strings = new ArrayDeque<>(8);
     // Let's be modest, 16-level deep constructs are not exactly common.
-    private final Deque<Iterator<? extends DeclaredStatement<?>>> stack = new ArrayDeque<>(8);
+    private final Deque<Iterator<? extends DeclaredStatement>> stack = new ArrayDeque<>(8);
     private final Set<StatementDefinition> ignoredStatements;
     private final StatementPrefixResolver resolver;
     private final boolean omitDefaultStatements;
 
-    YangTextSnippetIterator(final DeclaredStatement<?> stmt, final StatementPrefixResolver resolver,
+    YangTextSnippetIterator(final DeclaredStatement stmt, final StatementPrefixResolver resolver,
         final Set<StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
         this.resolver = requireNonNull(resolver);
         this.ignoredStatements = requireNonNull(ignoredStatements);
@@ -144,7 +144,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
             return nextString;
         }
 
-        final Iterator<? extends DeclaredStatement<?>> it = stack.peek();
+        final Iterator<? extends DeclaredStatement> it = stack.peek();
         if (it == null) {
             endOfData();
             // Post-end of data, the user will never see this
@@ -171,13 +171,13 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      * @param stmt Statement to push into strings
      * @return True if the statement was pushed. False if the statement was suppressed.
      */
-    private boolean pushStatement(final DeclaredStatement<?> stmt) {
+    private boolean pushStatement(final DeclaredStatement stmt) {
         final StatementDefinition def = stmt.statementDefinition();
         if (ignoredStatements.contains(def)) {
             return false;
         }
 
-        final Collection<? extends DeclaredStatement<?>> children = stmt.declaredSubstatements();
+        final Collection<? extends DeclaredStatement> children = stmt.declaredSubstatements();
         if (omitDefaultStatements && children.isEmpty()) {
             // This statement does not have substatements, check if its value matches the declared default, like
             // "config true", "mandatory false", etc.

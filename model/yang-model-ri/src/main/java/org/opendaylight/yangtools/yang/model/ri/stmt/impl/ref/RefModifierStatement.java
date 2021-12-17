@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
-import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefModifierStatement extends AbstractRefStatement<ModifierKind, ModifierStatement>
-        implements ModifierStatement {
+public final class RefModifierStatement extends AbstractRefStatement<ModifierStatement> implements ModifierStatement {
     public RefModifierStatement(final ModifierStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+abstract class OriginalStmtCtx<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> {
     private static final Logger LOG = LoggerFactory.getLogger(OriginalStmtCtx.class);
 

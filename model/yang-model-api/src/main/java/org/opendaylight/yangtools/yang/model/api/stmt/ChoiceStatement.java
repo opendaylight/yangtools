@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
-        DefaultStatementAwareDeclaredStatement, MandatoryStatementAwareDeclaredStatement<QName> {
+public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement,
+        DefaultStatementAwareDeclaredStatement, MandatoryStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.CHOICE;

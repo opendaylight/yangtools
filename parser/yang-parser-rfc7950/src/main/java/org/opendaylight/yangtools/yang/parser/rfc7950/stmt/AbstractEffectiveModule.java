@@ -58,7 +58,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
-public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqualified>,
+public abstract class AbstractEffectiveModule<D extends DeclaredStatement,
         E extends DataTreeAwareEffectiveStatement<Unqualified, D>>
         extends WithTypedefNamespace<Unqualified, D, E>
         implements ModuleLike, DocumentedNodeMixin<Unqualified, D>, NotificationNodeContainerCompat<Unqualified, D, E> {

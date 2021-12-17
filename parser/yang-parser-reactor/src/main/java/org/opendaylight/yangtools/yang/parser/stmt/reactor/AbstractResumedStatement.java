@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+abstract class AbstractResumedStatement<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends OriginalStmtCtx<A, D, E> implements ResumedStatement {
     private final String rawArgument;
 
@@ -78,7 +78,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private @NonNull Stream<DeclaredStatement<?>> substatementsAsDeclared() {
+    private @NonNull Stream<DeclaredStatement> substatementsAsDeclared() {
         final Stream<AbstractResumedStatement<?, ?, ?>> stream;
         if (getImplicitDeclaredFlag()) {
             stream = substatements.stream().map(AbstractResumedStatement::unmaskUndeclared);
@@ -142,7 +142,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
      * @return A new substatement
      */
     @SuppressWarnings("checkstyle:methodTypeParameterName")
-    final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+    final <X, Y extends DeclaredStatement, Z extends EffectiveStatement<X, Y>>
             AbstractResumedStatement<X, Y, Z> createSubstatement(final int offset,
                     final StatementDefinitionContext<X, Y, Z> def, final StatementSourceReference ref,
                     final String argument) {
@@ -166,7 +166,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         return ret;
     }
 
-    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+    private <X, Y extends DeclaredStatement, Z extends EffectiveStatement<X, Y>>
             UndeclaredStmtCtx<X, Y, Z> createUndeclared(final int offset, final StatementSupport<X, Y, Z> support,
                 final StatementSourceReference ref, final String argument) {
         final UndeclaredStmtCtx<X, Y, Z> ret;

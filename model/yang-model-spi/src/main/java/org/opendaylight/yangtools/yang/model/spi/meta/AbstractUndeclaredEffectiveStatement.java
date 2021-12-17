@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 @Beta
-public abstract class AbstractUndeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>
+public abstract class AbstractUndeclaredEffectiveStatement<A, D extends DeclaredStatement>
         extends AbstractEffectiveStatement<A, D>  {
     @Override
     public final D getDeclared() {
@@ -44,7 +44,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>,
+    public abstract static class WithSchemaTree<A, D extends DeclaredStatement,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends AbstractUndeclaredEffectiveStatement<A, D> {
         @Override
         @SuppressWarnings("unchecked")
@@ -77,7 +77,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>,
+    public abstract static class WithDataTree<A, D extends DeclaredStatement,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
         @Override
         @SuppressWarnings("unchecked")
@@ -99,7 +99,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
+    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
         private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull Object substatements;
@@ -133,7 +133,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
+    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
         private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull Map<QName, DataTreeEffectiveStatement<?>> dataTree;

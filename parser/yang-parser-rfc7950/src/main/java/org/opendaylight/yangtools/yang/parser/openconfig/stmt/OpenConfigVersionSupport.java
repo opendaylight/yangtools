@@ -46,7 +46,7 @@ public final class OpenConfigVersionSupport
 
     @Override
     protected OpenConfigVersionStatement createDeclared(final BoundStmtCtx<SemVer> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new OpenConfigVersionStatementImpl(ctx.getArgument(), substatements);
     }
 

@@ -42,7 +42,7 @@ public final class ArgumentStatementSupport
 
     @Override
     protected ArgumentStatement createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createArgument(ctx.getArgument(), substatements);
     }
 

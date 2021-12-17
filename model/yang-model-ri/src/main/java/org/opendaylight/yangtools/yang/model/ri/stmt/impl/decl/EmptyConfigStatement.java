@@ -9,13 +9,24 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyConfigStatement extends ArgumentToString<Boolean> implements ConfigStatement {
-    public static final @NonNull EmptyConfigStatement FALSE = new EmptyConfigStatement(false);
-    public static final @NonNull EmptyConfigStatement TRUE = new EmptyConfigStatement(true);
+public final class EmptyConfigStatement extends WithArgument implements ConfigStatement {
+    private static final @NonNull EmptyConfigStatement FALSE = new EmptyConfigStatement("false");
+    private static final @NonNull EmptyConfigStatement TRUE = new EmptyConfigStatement("true");
 
-    private EmptyConfigStatement(final boolean argument) {
-        super(argument);
+    private EmptyConfigStatement(final String rawArgument) {
+        super(rawArgument);
+    }
+
+    public static @NonNull EmptyConfigStatement of(final String arg) {
+        switch (arg) {
+            case "false":
+                return FALSE;
+            case "true":
+                return TRUE;
+            default:
+                throw new IllegalArgumentException("Unrecognized config argument \"" + arg + "\"");
+        }
     }
 }

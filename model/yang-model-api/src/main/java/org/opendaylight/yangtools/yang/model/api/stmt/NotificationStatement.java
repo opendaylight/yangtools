@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>, IfFeatureAwareDeclaredStatement<QName>,
-        MustStatementAwareDeclaredStatement<QName> {
+public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus,
+        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions, IfFeatureAwareDeclaredStatement,
+        MustStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.NOTIFICATION;

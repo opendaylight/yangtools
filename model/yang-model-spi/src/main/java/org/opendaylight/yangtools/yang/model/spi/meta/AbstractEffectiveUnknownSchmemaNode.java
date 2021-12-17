@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
  * A declared {@link AbstractDeclaredEffectiveStatement} with {@link UnknownSchemaNode}.
  */
 @Beta
-public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownStatement<A>>
+public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownStatement>
         extends AbstractDeclaredEffectiveStatement<A, D>
         implements DocumentedNodeMixin<A, D>, UnknownSchemaNode {
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;

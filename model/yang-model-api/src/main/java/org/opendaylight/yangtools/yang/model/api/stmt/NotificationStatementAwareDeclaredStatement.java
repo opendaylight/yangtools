@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface NotificationStatementAwareDeclaredStatement<A> extends DeclaredStatement<A> {
+public interface NotificationStatementAwareDeclaredStatement extends DeclaredStatement {
     /**
      * Return collection of {@link NotificationStatement}. For RFC6020, this method returns an empty collection for
      * statements which do not allow for must statement children.

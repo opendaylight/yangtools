@@ -49,7 +49,7 @@ public final class YangVersionStatementSupport
 
     @Override
     protected YangVersionStatement createDeclared(final BoundStmtCtx<YangVersion> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createYangVersion(ctx.getArgument(), substatements);
     }
 

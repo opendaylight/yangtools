@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 public final class RegularYangVersionStatement extends WithSubstatements<YangVersion> implements YangVersionStatement {
     public RegularYangVersionStatement(final YangVersion argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

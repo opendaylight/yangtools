@@ -10,11 +10,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface SubmoduleStatement extends MetaDeclaredStatement<Unqualified>, LinkageDeclaredStatement,
+public interface SubmoduleStatement extends MetaDeclaredStatement, LinkageDeclaredStatement,
         RevisionAwareDeclaredStatement, BodyDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {

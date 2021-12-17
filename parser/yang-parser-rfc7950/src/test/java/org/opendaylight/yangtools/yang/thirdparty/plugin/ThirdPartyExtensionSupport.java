@@ -33,7 +33,7 @@ public final class ThirdPartyExtensionSupport
 
     @Override
     protected ThirdPartyExtensionStatement createDeclared(final BoundStmtCtx<String> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return new ThirdPartyExtensionStatementImpl(ctx.getRawArgument(), substatements);
     }
 

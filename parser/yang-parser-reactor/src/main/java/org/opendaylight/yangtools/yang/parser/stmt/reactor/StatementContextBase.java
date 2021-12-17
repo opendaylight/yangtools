@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+abstract class StatementContextBase<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends ReactorStmtCtx<A, D, E> implements CopyHistory {
     /**
      * Event listener when an item is added to model namespace.
@@ -330,7 +330,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+    public final <X, Y extends DeclaredStatement, Z extends EffectiveStatement<X, Y>>
             Mutable<X, Y, Z> createUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         requireNonNull(support);
         checkArgument(support instanceof UndeclaredStatementFactory, "Unsupported statement support %s", support);
@@ -814,7 +814,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         }
     }
 
-    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
+    private <X, Y extends DeclaredStatement, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
             final StatementContextBase<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
         final var implicitParent = definition.getImplicitParentFor(this, original.publicDefinition());
 

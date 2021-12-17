@@ -11,8 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefPrefixStatement extends AbstractRefStatement<String, PrefixStatement>
-        implements PrefixStatement {
+public final class RefPrefixStatement extends AbstractRefStatement<PrefixStatement> implements PrefixStatement {
     public RefPrefixStatement(final PrefixStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

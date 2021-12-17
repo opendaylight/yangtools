@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefFractionDigitsStatement extends AbstractRefStatement<Integer, FractionDigitsStatement>
+public final class RefFractionDigitsStatement extends AbstractRefStatement<FractionDigitsStatement>
         implements FractionDigitsStatement {
     public RefFractionDigitsStatement(final FractionDigitsStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

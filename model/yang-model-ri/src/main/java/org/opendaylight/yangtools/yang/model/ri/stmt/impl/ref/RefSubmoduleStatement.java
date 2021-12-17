@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefSubmoduleStatement extends AbstractRefStatement<Unqualified, SubmoduleStatement>
+public final class RefSubmoduleStatement extends AbstractRefStatement<SubmoduleStatement>
         implements SubmoduleStatement {
     public RefSubmoduleStatement(final SubmoduleStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

@@ -37,7 +37,7 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
 
     @Override
     protected BitsSpecification createDeclared(final BoundStmtCtx<QName> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         if (substatements.isEmpty()) {
             throw noBits(ctx);
         }

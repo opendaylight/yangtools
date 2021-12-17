@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefRequireInstanceStatement extends AbstractRefStatement<Boolean, RequireInstanceStatement>
+public final class RefRequireInstanceStatement extends AbstractRefStatement<RequireInstanceStatement>
         implements RequireInstanceStatement {
     public RefRequireInstanceStatement(final RequireInstanceStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

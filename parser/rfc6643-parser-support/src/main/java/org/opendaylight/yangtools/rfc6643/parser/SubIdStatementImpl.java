@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class SubIdStatementImpl extends WithSubstatements<Uint32> implements SubIdStatement {
-    SubIdStatementImpl(final Uint32 argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+    SubIdStatementImpl(final Uint32 argument, final ImmutableList<? extends DeclaredStatement> substatements) {
         super(argument, substatements);
     }
 }

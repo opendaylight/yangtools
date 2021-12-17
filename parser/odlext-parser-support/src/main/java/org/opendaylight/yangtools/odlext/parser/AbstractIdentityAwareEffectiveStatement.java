@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-abstract class AbstractIdentityAwareEffectiveStatement<D extends DeclaredStatement<QName>>
+abstract class AbstractIdentityAwareEffectiveStatement<D extends DeclaredStatement>
         extends WithSubstatements<QName, D> {
     private final @NonNull IdentityEffectiveStatement identity;
 

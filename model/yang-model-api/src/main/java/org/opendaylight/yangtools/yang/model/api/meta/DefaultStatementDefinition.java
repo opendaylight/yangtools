@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 @Beta
 @NonNullByDefault
-public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+public final class DefaultStatementDefinition<A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
         extends AbstractStatementDefinition {
     private final Class<E> effectiveRepresentation;
     private final Class<D> declaredRepresentation;
@@ -46,20 +46,20 @@ public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>,
             effectiveRepresentation);
     }
 
-    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+    public static <A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
             DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
                     final Class<E> effectiveRepresentation) {
         return new DefaultStatementDefinition<>(statementName, declaredRepresentation, effectiveRepresentation, false,
                 null);
     }
 
-    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+    public static <A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
             DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
                     final Class<E> effectiveRepresentation, final QName argumentName) {
         return of(statementName, declaredRepresentation, effectiveRepresentation, argumentName, false);
     }
 
-    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+    public static <A, D extends DeclaredStatement, E extends EffectiveStatement<A, D>>
             DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
                     final Class<E> effectiveRepresentation, final QName argumentName,
                     final boolean argumentYinElement) {
@@ -68,7 +68,7 @@ public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>,
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement> getDeclaredRepresentationClass() {
         return declaredRepresentation;
     }
 

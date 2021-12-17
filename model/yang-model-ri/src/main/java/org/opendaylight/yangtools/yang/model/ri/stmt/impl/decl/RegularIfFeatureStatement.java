@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularIfFeatureStatement extends WithSubstatements<IfFeatureExpr> implements IfFeatureStatement {
-    public RegularIfFeatureStatement(final @NonNull String rawArgument, final @NonNull IfFeatureExpr argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, argument, substatements);
+public final class RegularIfFeatureStatement extends WithSubstatements implements IfFeatureStatement {
+    public RegularIfFeatureStatement(final @NonNull String rawArgument,
+            final ImmutableList<? extends DeclaredStatement> substatements) {
+        super(rawArgument, substatements);
     }
 }

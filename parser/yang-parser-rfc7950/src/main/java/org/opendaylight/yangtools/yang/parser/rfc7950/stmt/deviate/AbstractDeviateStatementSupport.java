@@ -205,7 +205,7 @@ abstract class AbstractDeviateStatementSupport
 
     @Override
     protected final DeviateStatement createDeclared(final BoundStmtCtx<DeviateKind> ctx,
-            final ImmutableList<DeclaredStatement<?>> substatements) {
+            final ImmutableList<DeclaredStatement> substatements) {
         return DeclaredStatements.createDeviate(ctx.getArgument(), substatements);
     }
 
