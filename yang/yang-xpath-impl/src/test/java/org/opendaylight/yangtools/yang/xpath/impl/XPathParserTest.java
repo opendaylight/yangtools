@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableBiMap;
 import java.net.URI;
+import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
@@ -119,6 +121,21 @@ public class XPathParserTest {
         assertEquals(YangLocationPath.self(), binary.getLeftExpr());
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
             YangXPathAxis.CHILD.asStep(QName.create(DEFNS, "lower-port"))), binary.getRightExpr());
+    }
+
+    @Test
+    public void testAnd() throws XPathExpressionException {
+        assertRelative("and");
+        assertRelative("or");
+        assertRelative("div");
+        assertRelative("mod");
+        assertRelative("andor");
+    }
+
+    private void assertRelative(final String str) throws XPathExpressionException {
+        final YangExpr expr = parseExpr(str);
+        assertThat(expr, isA(Relative.class));
+        assertEquals(List.of(YangXPathAxis.CHILD.asStep(QName.create(DEFNS, str))), ((Relative) expr).getSteps());
     }
 
     private YangExpr parseExpr(final String xpath) throws XPathExpressionException {
