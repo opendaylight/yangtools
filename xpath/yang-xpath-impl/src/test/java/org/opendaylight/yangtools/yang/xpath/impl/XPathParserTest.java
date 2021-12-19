@@ -121,6 +121,12 @@ public class XPathParserTest {
             YangXPathAxis.CHILD.asStep(QName.create(DEFNS, "lower-port"))), binary.getRightExpr());
     }
 
+    @Test
+    public void testAndPredicated() throws XPathExpressionException {
+        final YangExpr expr = parseExpr("and");
+        assertThat(expr, isA(YangBinaryExpr.class));
+    }
+
     private YangExpr parseExpr(final String xpath) throws XPathExpressionException {
         return parser.parseExpression(xpath).getRootExpr();
     }
