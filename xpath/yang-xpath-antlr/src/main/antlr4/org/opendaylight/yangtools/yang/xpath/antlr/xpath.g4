@@ -44,7 +44,7 @@ step  :  axisSpecifier nodeTest predicate*
 
 axisSpecifier
   :  AxisName '::'
-  |  '@'?
+  |  AT?
   ;
 
 nodeTest:  nameTest
@@ -90,10 +90,10 @@ filterExpr
   :  primaryExpr predicate*
   ;
 
-orExpr  :  andExpr ('or' andExpr)*
+orExpr  :  andExpr (OR andExpr)*
   ;
 
-andExpr  :  equalityExpr ('and' equalityExpr)*
+andExpr  :  equalityExpr (AND equalityExpr)*
   ;
 
 equalityExpr
@@ -109,8 +109,8 @@ additiveExpr
   ;
 
 multiplicativeExpr
-  :  unaryExprNoRoot (('*'|'div'|'mod') multiplicativeExpr)?
-  |  '/' (('div'|'mod') multiplicativeExpr)?
+  :  unaryExprNoRoot (('*'|DIV|MOD) multiplicativeExpr)?
+  |  '/' ((DIV|MOD) multiplicativeExpr)?
   ;
 
 unaryExprNoRoot
@@ -123,9 +123,10 @@ qName  :  nCName (':' nCName)?
 // Does not match NodeType, as per spec.
 functionName
   :  nCName ':' nCName
-  |  NCName
+  |  (NCName | AND | OR | DIV | MOD)
   |  AxisName
   ;
+
 
 variableReference
   :  '$' qName
@@ -136,7 +137,7 @@ nameTest:  '*'
   |  qName
   ;
 
-nCName  :  NCName
+nCName  :  (NCName | AND | OR | DIV | MOD)
   |  AxisName
   |  NodeType
   ;
@@ -215,6 +216,15 @@ AxisName:  'ancestor'
        :  '\'';
   QUOT   
        :  '"';
+  AND
+       :  'and';
+  OR
+       :  'or';
+  DIV
+       :  'div';
+  MOD
+       :  'mod';
+
   
 Literal  :  '"' ~'"'* '"'
   |  '\'' ~'\''* '\''
