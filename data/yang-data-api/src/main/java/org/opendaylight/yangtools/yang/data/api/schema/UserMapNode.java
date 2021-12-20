@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Map;
+import org.opendaylight.yangtools.yang.data.api.IndexedList;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * {@link MapNode} which additionally preserves user-supplied ordering. This node represents a data instance of
@@ -28,4 +30,7 @@ public interface UserMapNode extends MapNode, OrderedNodeContainer<MapEntryNode>
      */
     @Override
     Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
+
+    @Override
+    IndexedList<PathArgument, MapEntryNode> body();
 }
