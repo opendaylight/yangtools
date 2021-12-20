@@ -49,6 +49,7 @@
         <module>model</module>
         <module>parser</module>
         <module>plugin</module>
+        <module>regex</module>
         <module>tools</module>
         <module>xpath</module>
 
