@@ -1,0 +1,14 @@
+module test-module-1 {
+  namespace "test-module-1";
+  prefix "tm1";
+
+  import test-module-2 {
+    prefix tm2;
+  }
+
+  container test-cont {
+    list test-list {
+      uses tm2:cont-1-grouping;
+    }
+  }
+}

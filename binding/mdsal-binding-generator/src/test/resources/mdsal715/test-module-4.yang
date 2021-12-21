@@ -1,0 +1,18 @@
+module test-module-4 {
+  namespace "test-module-4";
+  prefix "tm4";
+
+  import test-module-1 {
+      prefix tm1;
+  }
+
+  augment "/tm1:test-cont/tm1:test-list/tm1:used-cont-1/tm1:used-cont-2" {
+    container augmented-cont-1 {
+      list augmented-list;
+    }
+  }
+
+  augment "/tm1:test-cont/tm1:test-list/tm1:used-cont-1/tm1:used-cont-2/tm4:augmented-cont-1/tm4:augmented-list" {
+    container augmented-cont-2;
+  }
+}

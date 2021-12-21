@@ -1,0 +1,8 @@
+module test-module-3 {
+  namespace "test-module-3";
+  prefix "tm3";
+
+  grouping cont-2-grouping {
+    container used-cont-2;
+  }
+}

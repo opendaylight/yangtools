@@ -23,6 +23,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -42,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
@@ -140,21 +142,11 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
     }
 
     final void linkUsesDependencies(final GeneratorContext context) {
-        // We are establishing two linkages here:
-        // - we are resolving 'uses' statements to their corresponding 'grouping' definitions
-        // - we propagate those groupings as anchors to any augment statements
+        // We are resolving 'uses' statements to their corresponding 'grouping' definitions
         final List<GroupingGenerator> tmp = new ArrayList<>();
         for (EffectiveStatement<?, ?> stmt : statement().effectiveSubstatements()) {
             if (stmt instanceof UsesEffectiveStatement) {
-                final UsesEffectiveStatement uses = (UsesEffectiveStatement) stmt;
-                final GroupingGenerator grouping = context.resolveTreeScoped(GroupingGenerator.class, uses.argument());
-                tmp.add(grouping);
-
-                for (Generator gen : this) {
-                    if (gen instanceof UsesAugmentGenerator) {
-                        ((UsesAugmentGenerator) gen).linkGroupingDependency(uses, grouping);
-                    }
-                }
+                tmp.add(context.resolveTreeScoped(GroupingGenerator.class, ((UsesEffectiveStatement) stmt).argument()));
             }
         }
         groupings = List.copyOf(tmp);
@@ -189,7 +181,7 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
     }
 
     @Override
-    final @Nullable AbstractExplicitGenerator<?> findSchemaTreeGenerator(final QName qname) {
+    final AbstractExplicitGenerator<?> findSchemaTreeGenerator(final QName qname) {
         final AbstractExplicitGenerator<?> found = super.findSchemaTreeGenerator(qname);
         return found != null ? found : findInferredGenerator(qname);
     }
@@ -211,6 +203,56 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
             }
         }
         return null;
+    }
+
+    final @NonNull AbstractExplicitGenerator<?> resolveSchemaNode(final SchemaNodeIdentifier path) {
+        // This is not quite straightforward. 'path' works on top of schema tree, which is instantiated view. Since we
+        // do not generate duplicate instantiations along 'uses' path, findSchemaTreeGenerator() would satisfy our
+        // request by returning a child of the source 'grouping'.
+        //
+        // When that happens, our subsequent lookups need to adjust the namespace being looked up to the grouping's
+        // namespace... except for the case when the step is actually an augmentation, in which case we must not make
+        // that adjustment.
+        //
+        // Hence we deal with this lookup recursively, dropping namespace hints when we cross into groupings.
+        return resolveSchemaNode(path.getNodeIdentifiers().iterator(), null);
+    }
+
+    private @NonNull AbstractExplicitGenerator<?> resolveSchemaNode(final Iterator<QName> qnames,
+            final @Nullable QNameModule localNamespace) {
+        final QName qname = qnames.next();
+
+        // First try local augments, as those are guaranteed to match namespace exactly
+        for (AbstractAugmentGenerator augment : augments) {
+            final AbstractExplicitGenerator<?> gen = augment.findSchemaTreeGenerator(qname);
+            if (gen != null) {
+                return resolveNext(gen, qnames, null);
+            }
+        }
+
+        // Second try local groupings, as those perform their own adjustment
+        for (GroupingGenerator grouping : groupings) {
+            final QNameModule ns = grouping.statement().argument().getModule();
+            final AbstractExplicitGenerator<?> gen = grouping.findSchemaTreeGenerator(qname.bindTo(ns));
+            if (gen != null) {
+                return resolveNext(gen, qnames, ns);
+            }
+        }
+
+        // Lastly try local statements adjusted with namespace, if applicable
+        final QName lookup = localNamespace == null ? qname : qname.bindTo(localNamespace);
+        final AbstractExplicitGenerator<?> gen = verifyNotNull(super.findSchemaTreeGenerator(lookup),
+            "Failed to find %s as %s in %s", qname, lookup, this);
+        return resolveNext(gen, qnames, localNamespace);
+    }
+
+    private static @NonNull AbstractExplicitGenerator<?> resolveNext(final @NonNull AbstractExplicitGenerator<?> gen,
+            final Iterator<QName> qnames, final QNameModule localNamespace) {
+        if (qnames.hasNext()) {
+            verify(gen instanceof AbstractCompositeGenerator, "Unexpected generator %s", gen);
+            return ((AbstractCompositeGenerator<?>) gen).resolveSchemaNode(qnames, localNamespace);
+        }
+        return gen;
     }
 
     /**
@@ -338,7 +380,7 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
                 final UsesEffectiveStatement uses = (UsesEffectiveStatement) stmt;
                 for (EffectiveStatement<?, ?> usesSub : uses.effectiveSubstatements()) {
                     if (usesSub instanceof AugmentEffectiveStatement) {
-                        tmpAug.add(new UsesAugmentGenerator((AugmentEffectiveStatement) usesSub, this, uses));
+                        tmpAug.add(new UsesAugmentGenerator((AugmentEffectiveStatement) usesSub, this));
                     }
                 }
             } else {

@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -24,12 +23,10 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuil
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,27 +102,6 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
             }
         }
         return null;
-    }
-
-    final @NonNull AbstractExplicitGenerator<?> resolveSchemaNode(final @NonNull SchemaNodeIdentifier path,
-            final @Nullable QNameModule targetModule) {
-        AbstractExplicitGenerator<?> current = this;
-        QNameModule currentModule = targetModule;
-
-        for (QName next : path.getNodeIdentifiers()) {
-            final QName qname = currentModule == null ? next : next.bindTo(currentModule);
-            current = verifyNotNull(current.findSchemaTreeGenerator(qname),
-                "Failed to find %s as %s in %s", next, qname, current);
-
-            final QNameModule foundNamespace = current.getQName().getModule();
-            if (!foundNamespace.equals(qname.getModule())) {
-                // We have located a different QName than the one we were looking for. We need to make sure we adjust
-                // all subsequent QNames to this new namespace
-                currentModule = foundNamespace;
-            }
-        }
-
-        return current;
     }
 
     final @NonNull QName getQName() {

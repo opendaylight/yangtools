@@ -10,9 +10,9 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
  * Abstract view on generation tree as viewed by a particular {@link Generator}.
@@ -43,9 +43,19 @@ abstract class GeneratorContext {
     abstract <E extends EffectiveStatement<QName, ?>, G extends AbstractExplicitGenerator<E>>
         @NonNull G resolveTreeScoped(@NonNull Class<G> type, @NonNull QName argument);
 
-    abstract @NonNull AbstractExplicitGenerator<?> resolveSchemaNode(@NonNull SchemaNodeIdentifier path);
+    abstract @NonNull ModuleGenerator resolveModule(@NonNull QNameModule namespace);
 
-    abstract @NonNull IdentityGenerator resolveIdentity(@NonNull QName name);
+    final @NonNull IdentityGenerator resolveIdentity(final @NonNull QName name) {
+        for (Generator gen : resolveModule(name.getModule())) {
+            if (gen instanceof IdentityGenerator) {
+                final IdentityGenerator idgen = (IdentityGenerator) gen;
+                if (name.equals(idgen.statement().argument())) {
+                    return idgen;
+                }
+            }
+        }
+        throw new IllegalStateException("Failed to find identity " + name);
+    }
 
     final @NonNull TypedefGenerator resolveTypedef(final @NonNull QName qname) {
         return resolveTreeScoped(TypedefGenerator.class, qname);

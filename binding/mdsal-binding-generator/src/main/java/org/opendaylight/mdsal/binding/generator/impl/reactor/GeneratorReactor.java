@@ -7,8 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.VerifyException;
@@ -34,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.model.spi.ModuleDependencySort;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -214,13 +215,6 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     }
 
     @Override
-    AbstractExplicitGenerator<?> resolveSchemaNode(final SchemaNodeIdentifier path) {
-        verify(path instanceof SchemaNodeIdentifier.Absolute, "Unexpected path %s", path);
-        return verifyNotNull(generators.get(path.firstNodeIdentifier().getModule()), "Cannot find module for %s", path)
-            .resolveSchemaNode(path, null);
-    }
-
-    @Override
     <E extends EffectiveStatement<QName, ?>, G extends AbstractExplicitGenerator<E>> G resolveTreeScoped(
             final Class<G> type, final QName argument) {
         LOG.trace("Searching for tree-scoped argument {} at {}", argument, stack);
@@ -260,19 +254,10 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     }
 
     @Override
-    IdentityGenerator resolveIdentity(final QName name) {
-        final ModuleGenerator module = generators.get(name.getModule());
-        if (module != null) {
-            for (Generator gen : module) {
-                if (gen instanceof IdentityGenerator) {
-                    final IdentityGenerator idgen = (IdentityGenerator) gen;
-                    if (name.equals(idgen.statement().argument())) {
-                        return idgen;
-                    }
-                }
-            }
-        }
-        throw new IllegalStateException("Failed to find identity " + name);
+    ModuleGenerator resolveModule(final QNameModule namespace) {
+        final ModuleGenerator module = generators.get(requireNonNull(namespace));
+        checkState(module != null, "Failed to find module for %s", namespace);
+        return module;
     }
 
     @Override
