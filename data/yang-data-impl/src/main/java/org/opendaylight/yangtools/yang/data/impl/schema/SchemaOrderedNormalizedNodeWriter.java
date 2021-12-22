@@ -28,7 +28,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -50,7 +52,22 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
             final EffectiveModelContext schemaContext) {
         super(writer);
-        this.root = this.schemaContext = requireNonNull(schemaContext);
+        root = this.schemaContext = requireNonNull(schemaContext);
+    }
+
+    private SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
+            final SchemaInferenceStack stack) {
+        super(writer);
+        schemaContext = stack.getEffectiveModelContext();
+
+        if (!stack.isEmpty()) {
+            final EffectiveStatement<?, ?> current = stack.currentStatement();
+            // FIXME: this should be one of NormalizedNodeContainer/NotificationDefinition/OperationDefinition
+            checkArgument(current instanceof SchemaNode, "Instantiating at %s is not supported", current);
+            root = (SchemaNode) current;
+        } else {
+            root = schemaContext;
+        }
     }
 
     /**
@@ -61,19 +78,33 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
      * @param path root path
      */
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
-            final EffectiveModelContext schemaContext, final SchemaPath path) {
-        super(writer);
-        this.schemaContext = requireNonNull(schemaContext);
+            final EffectiveModelContext schemaContext, final Absolute path) {
+        this(writer, SchemaInferenceStack.of(schemaContext, path));
+    }
 
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofSchemaPath(schemaContext, path);
-        if (!stack.isEmpty()) {
-            final EffectiveStatement<?, ?> current = stack.currentStatement();
-            // FIXME: this should be one of NormalizedNodeContainer/NotificationDefinition/OperationDefinition
-            checkArgument(current instanceof SchemaNode, "Instantiating at %s is not supported", current);
-            root = (SchemaNode) current;
-        } else {
-            root = schemaContext;
-        }
+    /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
+     *
+     * @param writer Back-end writer
+     * @param rootInference A SchemaTreeInference pointing to the root element
+     */
+    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
+            final SchemaTreeInference rootInference) {
+        this(writer, SchemaInferenceStack.ofInference(rootInference));
+    }
+
+    /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
+     *
+     * @param writer Back-end writer
+     * @param schemaContext Associated {@link EffectiveModelContext}
+     * @param path root path
+     * @deprecated Use either one of the alternative constructors instead.
+     */
+    @Deprecated(since = "7.0.11")
+    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
+            final EffectiveModelContext schemaContext, final SchemaPath path) {
+        this(writer, SchemaInferenceStack.ofSchemaPath(schemaContext, path));
     }
 
     @Override
@@ -196,8 +227,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
          * Sets current schema node new value and store old value for later restore.
          */
         SchemaNodeSetter(final SchemaNode schemaNode) {
-            previousSchemaNode = SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode;
-            SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode = schemaNode;
+            previousSchemaNode = currentSchemaNode;
+            currentSchemaNode = schemaNode;
         }
 
         /**
@@ -205,7 +236,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
          */
         @Override
         public void close() {
-            SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode = previousSchemaNode;
+            currentSchemaNode = previousSchemaNode;
         }
     }
 }
