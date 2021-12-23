@@ -29,6 +29,7 @@
 
     <modules>
         <module>yang-data-api</module>
+        <module>yang-data-api-testing</module>
         <module>yang-data-impl</module>
         <module>yang-data-spi</module>
         <module>yang-data-transform</module>
