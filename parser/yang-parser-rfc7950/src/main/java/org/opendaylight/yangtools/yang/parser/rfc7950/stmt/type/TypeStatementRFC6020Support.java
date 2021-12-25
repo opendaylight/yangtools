@@ -27,7 +27,6 @@ public final class TypeStatementRFC6020Support extends AbstractTypeStatementSupp
         throw new SourceException("Restricted bits type is not allowed in YANG version 1", stmt);
     }
 
-
     @Override
     EnumPair addRestrictedEnum(final EffectiveStmtCtx stmt, final EnumTypeDefinition base,
             final EnumEffectiveStatement enumStmt) {

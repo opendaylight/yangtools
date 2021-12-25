@@ -91,7 +91,6 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
             baseType.getQName());
     }
 
-
     private static int getBaseTypeEnumValue(final String enumName, final EnumTypeDefinition baseType,
             final EffectiveStmtCtx ctx) {
         for (EnumPair baseTypeEnumPair : baseType.getValues()) {
@@ -103,5 +102,4 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
         throw new SourceException(ctx, "Enum '%s' is not a subset of its base enumeration type %s.", enumName,
             baseType.getQName());
     }
-
 }
