@@ -77,6 +77,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -270,7 +271,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
      * @return Resolved type
      * @throws SourceException if the target type cannot be found
      */
-    private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final Current<QName, ?> ctx) {
+    private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final NamespaceStmtCtx ctx) {
         final Object obj = verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.class, Empty.value()));
         if (obj instanceof BuiltinEffectiveStatement) {
             return (BuiltinEffectiveStatement) obj;
