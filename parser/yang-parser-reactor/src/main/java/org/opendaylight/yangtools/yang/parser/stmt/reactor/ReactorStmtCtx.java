@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -191,10 +190,10 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
     @Override
-    public abstract Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
+    public abstract Collection<? extends @NonNull StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
 
     @Override
-    public final @NonNull Registry getBehaviourRegistry() {
+    public final Registry getBehaviourRegistry() {
         return getRoot().getBehaviourRegistryImpl();
     }
 

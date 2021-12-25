@@ -83,7 +83,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return Collection of declared substatements
      */
-    @NonNull Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements();
+    @NonNull Collection<? extends @NonNull StmtContext<?, ?, ?>> declaredSubstatements();
 
     /**
      * Return effective substatements. These are the statements which are added as this statement's substatements
@@ -91,13 +91,13 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return Collection of declared substatements
      */
-    @NonNull Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements();
+    @NonNull Collection<? extends @NonNull StmtContext<?, ?, ?>> effectiveSubstatements();
 
-    default Iterable<? extends StmtContext<?, ?, ?>> allSubstatements() {
+    default Iterable<? extends @NonNull StmtContext<?, ?, ?>> allSubstatements() {
         return Iterables.concat(declaredSubstatements(), effectiveSubstatements());
     }
 
-    default Stream<? extends StmtContext<?, ?, ?>> allSubstatementsStream() {
+    default Stream<? extends @NonNull StmtContext<?, ?, ?>> allSubstatementsStream() {
         return Streams.concat(declaredSubstatements().stream(), effectiveSubstatements().stream());
     }
 
@@ -232,18 +232,18 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         }
 
         @Override
-        default Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
+        default Collection<? extends @NonNull StmtContext<?, ?, ?>> declaredSubstatements() {
             return mutableDeclaredSubstatements();
         }
 
-        @NonNull Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements();
+        @NonNull Collection<? extends @NonNull Mutable<?, ?, ?>> mutableDeclaredSubstatements();
 
         @Override
-        default Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
+        default Collection<? extends @NonNull StmtContext<?, ?, ?>> effectiveSubstatements() {
             return mutableEffectiveSubstatements();
         }
 
-        @NonNull Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements();
+        @NonNull Collection<? extends @NonNull Mutable<?, ?, ?>> mutableEffectiveSubstatements();
 
         /**
          * Create a new inference action to be executed during specified phase. The action cannot be cancelled

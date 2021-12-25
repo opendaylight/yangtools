@@ -139,13 +139,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public Iterable<? extends StmtContext<?, ?, ?>> allSubstatements() {
+    public Iterable<? extends @NonNull StmtContext<?, ?, ?>> allSubstatements() {
         // No need to concat with declared
         return effectiveSubstatements();
     }
 
     @Override
-    public Stream<? extends StmtContext<?, ?, ?>> allSubstatementsStream() {
+    public Stream<? extends @NonNull StmtContext<?, ?, ?>> allSubstatementsStream() {
         // No need to concat with declared
         return effectiveSubstatements().stream();
     }
