@@ -88,7 +88,7 @@ public interface ModelActionBuilder {
          * @param ctx Inference context in which the prerequisite was satisfied
          * @return associated prerequisite once it is resolved.
          */
-        T resolve(InferenceContext ctx);
+        @NonNull T resolve(InferenceContext ctx);
     }
 
     /**
