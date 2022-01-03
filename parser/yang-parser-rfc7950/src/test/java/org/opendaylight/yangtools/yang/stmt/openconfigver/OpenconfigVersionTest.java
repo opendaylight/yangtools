@@ -108,18 +108,18 @@ public class OpenconfigVersionTest {
     }
 
     @Test
-    public void basicImportErrTest1() throws Exception {
+    public void basicImportErrTest1() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-1", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
     }
 
     @Test
-    public void basicImportErrTest2() throws Exception {
+    public void basicImportErrTest2() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-2", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
     }
 

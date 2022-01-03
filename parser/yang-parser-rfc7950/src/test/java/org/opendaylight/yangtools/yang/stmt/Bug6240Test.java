@@ -7,29 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThrows;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class Bug6240Test {
+public class Bug6240Test extends AbstractYangTest {
     private static final String NS = "bar";
     private static final String REV = "2016-07-19";
 
     @Test
     public void testModels() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6240/correct");
-        assertNotNull(context);
+        final var context = assertEffectiveModelDir("/bugs/bug6240/correct");
 
-        final Collection<? extends Module> modules = context.getModules();
+        final var modules = context.getModules();
         assertEquals(2, modules.size());
 
         Module bar = null;
@@ -41,27 +42,28 @@ public class Bug6240Test {
         }
 
         assertNotNull(bar);
-        assertTrue(bar.getDataChildByName(QName.create(NS, REV, "foo-grp-con")) instanceof ContainerSchemaNode);
-        assertTrue(bar.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")) instanceof ContainerSchemaNode);
+        assertThat(bar.getDataChildByName(QName.create(NS, REV, "foo-grp-con")), instanceOf(ContainerSchemaNode.class));
+        assertThat(bar.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")),
+            instanceOf(ContainerSchemaNode.class));
 
         assertEquals(1, bar.getSubmodules().size());
 
         final DataSchemaNode dataChildByName = bar.getDataChildByName(QName.create(NS, REV, "sub-bar-con"));
-        assertTrue(dataChildByName instanceof ContainerSchemaNode);
+        assertThat(dataChildByName, instanceOf(ContainerSchemaNode.class));
         final ContainerSchemaNode subBarCon = (ContainerSchemaNode) dataChildByName;
 
-        assertTrue(subBarCon.getDataChildByName(QName.create(NS, REV, "foo-grp-con")) instanceof ContainerSchemaNode);
-        assertTrue(subBarCon.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con"))
-            instanceof ContainerSchemaNode);
+        assertThat(subBarCon.getDataChildByName(QName.create(NS, REV, "foo-grp-con")),
+            instanceOf(ContainerSchemaNode.class));
+        assertThat(subBarCon.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")),
+            instanceOf(ContainerSchemaNode.class));
     }
 
     @Test
-    public void testInvalidModels() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/bugs/bug6240/incorrect");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getCause().getMessage().startsWith(
-                "Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
-        }
+    public void testInvalidModels() {
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> StmtTestUtils.parseYangSources("/bugs/bug6240/incorrect"));
+        final var cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
     }
 }

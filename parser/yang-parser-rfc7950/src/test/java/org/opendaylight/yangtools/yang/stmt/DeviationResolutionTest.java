@@ -268,7 +268,7 @@ public class DeviationResolutionTest {
         final ReactorException ex = assertThrows(ReactorException.class, () -> TestUtils.parseYangSource(
             "/deviation-resolution-test/foo-invalid-deviation-path.yang",
             "/deviation-resolution-test/bar.yang"));
-        final Throwable cause = ex.getCause().getCause();
+        final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InferenceException.class));
         assertThat(cause.getMessage(), startsWith(
             "Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)invalid, path]}' not found"));

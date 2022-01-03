@@ -62,10 +62,10 @@ public class YinOpenconfigVersionTest {
     }
 
     @Test
-    public void basicImportErrTest1() throws URISyntaxException, SAXException, IOException {
+    public void basicImportErrTest1() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYinSources("/openconfig-version/yin-input/basic-import-invalid", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
     }
 }

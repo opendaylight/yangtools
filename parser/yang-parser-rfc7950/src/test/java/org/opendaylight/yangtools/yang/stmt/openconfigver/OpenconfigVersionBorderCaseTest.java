@@ -80,7 +80,7 @@ public class OpenconfigVersionBorderCaseTest {
     public void borderCaseInvalidMajorTest() throws Exception {
         final ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/border-case/border-case-invalid-major", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(5.5.5)]."));
     }
 
@@ -88,7 +88,7 @@ public class OpenconfigVersionBorderCaseTest {
     public void borderCaseInvalidMinorTest() {
         final ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/border-case/border-case-invalid-minor", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(5.5.5)]."));
     }
 
@@ -96,7 +96,7 @@ public class OpenconfigVersionBorderCaseTest {
     public void borderCaseInvalidPatchTest() throws Exception {
         final ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/border-case/border-case-invalid-patch", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(5.5.5)]."));
     }
 }

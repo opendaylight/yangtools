@@ -43,7 +43,7 @@ public class OpenconfigVersionImportTest {
     public void importInvalidDeprecatedTest1() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-deprecated-1", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+        assertThat(ex.getCause().getMessage(), startsWith(
             "Unable to find module compatible with requested import [openconfig-extensions(1.0.0)]."));
     }
 
@@ -51,7 +51,7 @@ public class OpenconfigVersionImportTest {
     public void importInvalidDeprecatedTest2() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-deprecated-2", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+        assertThat(ex.getCause().getMessage(), startsWith(
             "Unable to find module compatible with requested import [openconfig-extensions(0.9.9)]."));
     }
 
@@ -59,7 +59,7 @@ public class OpenconfigVersionImportTest {
     public void importInvalidNotsufficientTest1() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-notsufficient-1", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+        assertThat(ex.getCause().getMessage(), startsWith(
             "Unable to find module compatible with requested import [openconfig-extensions(2.0.0)]."));
     }
 
@@ -67,7 +67,7 @@ public class OpenconfigVersionImportTest {
     public void importInvalidNotsufficientTest2() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-notsufficient-2", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+        assertThat(ex.getCause().getMessage(), startsWith(
             "Unable to find module compatible with requested import [openconfig-extensions(2.0.5)]."));
     }
 }
