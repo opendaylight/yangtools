@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.stmt.openconfigver;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -30,7 +30,7 @@ public class OpenconfigVersionDefaultsTest {
 
     @Test
     public void defaultsTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/defaults/defaults", SEMVER);
+        final var context = StmtTestUtils.parseYangSources("/openconfig-version/defaults/defaults", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -42,7 +42,7 @@ public class OpenconfigVersionDefaultsTest {
 
     @Test
     public void defaultMajorValidTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/defaults/default-major-valid",
+        final var context = StmtTestUtils.parseYangSources("/openconfig-version/defaults/default-major-valid",
             SEMVER);
         assertNotNull(context);
 
@@ -55,12 +55,9 @@ public class OpenconfigVersionDefaultsTest {
 
     @Test
     public void defaultMajorInvalidTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/defaults/default-major-invalid", SEMVER);
-            fail("Test should fail due to invalid openconfig version");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage()
-                    .startsWith("Unable to find module compatible with requested import [bar(0.0.1)]."));
-        }
+        final var ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/defaults/default-major-invalid", SEMVER));
+        assertThat(ex.getCause().getMessage(),
+            startsWith("Unable to find module compatible with requested import [bar(0.0.1)]."));
     }
 }

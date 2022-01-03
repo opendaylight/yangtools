@@ -54,7 +54,7 @@ public class Bug7480Test {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
         final String message = ex.getSuppressed().length > 0
-            ? ex.getSuppressed()[0].getCause().getMessage() : ex.getCause().getCause().getMessage();
+            ? ex.getSuppressed()[0].getMessage() : ex.getCause().getMessage();
         assertThat(message, startsWith("Imported module [missing-lib] was not found."));
     }
 

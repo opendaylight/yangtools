@@ -30,18 +30,18 @@ public class OpenconfigVersionMultipleImportTest {
         .build();
 
     @Test
-    public void multipleInvalidDeprecatedTest() throws Exception {
+    public void multipleInvalidDeprecatedTest() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-invalid-deprecated", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(1.0.0)]."));
     }
 
     @Test
-    public void multipleInvalidNosufficientTest() throws Exception {
+    public void multipleInvalidNosufficientTest() {
         ReactorException ex = assertThrows(ReactorException.class,
             () -> StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-invalid-nosufficient", SEMVER));
-        assertThat(ex.getCause().getCause().getMessage(),
+        assertThat(ex.getCause().getMessage(),
             startsWith("Unable to find module compatible with requested import [bar(2.5.5)]."));
     }
 

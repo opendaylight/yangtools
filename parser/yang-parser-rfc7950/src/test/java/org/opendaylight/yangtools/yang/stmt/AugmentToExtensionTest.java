@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -18,18 +16,12 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 
 public class AugmentToExtensionTest extends AbstractYangTest {
     @Test
     public void testIncorrectPath() throws Exception {
-        // FIXME: this should not be here, or why do we need encapsulation? Add asserts for that
-        final var cause = assertInferenceExceptionDir("/augment-to-extension-test/incorrect-path",
-            startsWith("Yang model processing phase EFFECTIVE_MODEL failed [at "));
-
-        final var firstCause = cause.getCause();
-        assertThat(firstCause, instanceOf(InferenceException.class));
-        assertThat(firstCause.getMessage(), startsWith("Augment target "
+        assertInferenceExceptionDir("/augment-to-extension-test/incorrect-path",
+            startsWith("Augment target "
             + "'Descendant{qnames=[(uri:augment-module?revision=2014-10-07)my-extension-name-a, input]}'"
             + " not found [at "));
     }
