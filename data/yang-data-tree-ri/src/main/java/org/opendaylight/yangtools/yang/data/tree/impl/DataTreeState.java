@@ -47,7 +47,7 @@ final class DataTreeState {
         return root;
     }
 
-    InMemoryDataTreeSnapshot newSnapshot() {
+    @NonNull InMemoryDataTreeSnapshot newSnapshot() {
         return new InMemoryDataTreeSnapshot(schemaContext, root, holder.newSnapshot());
     }
 
