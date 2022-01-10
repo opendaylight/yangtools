@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -43,7 +44,7 @@ public class InstanceIdToNodesTest {
     private static final QName BAR = QName.create(ID, "bar");
     private static final NodeIdentifier TWO_KEY_LIST = NodeIdentifier.create(QName.create(ID, "two-key-list"));
 
-    private static SchemaContext ctx;
+    private static EffectiveModelContext ctx;
 
     private final NodeIdentifier rootContainer = new NodeIdentifier(QName.create(NS, REVISION, "test"));
     private final NodeIdentifier outerContainer = new NodeIdentifier(QName.create(NS, REVISION, "outer-container"));
@@ -71,6 +72,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
+    @Deprecated(since = "7.0.12", forRemoval = true)
     public void testInAugment() {
         final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(augmentedLeaf).withValue("").build();
         final ContainerNode expectedFilter = Builders
@@ -91,6 +93,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
+    @Deprecated(since = "7.0.12", forRemoval = true)
     public void testInAugmentLeafOverride() {
         final LeafNode<Object> lastLeaf = Builders.leafBuilder().withNodeIdentifier(augmentedLeaf)
                 .withValue("randomValue").build();
@@ -111,6 +114,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
+    @Deprecated(since = "7.0.12", forRemoval = true)
     public void testListChoice() {
         final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(leafFromCase).withValue("").build();
         final ContainerNode expectedFilter = Builders
@@ -142,6 +146,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
+    @Deprecated(since = "7.0.12", forRemoval = true)
     public void testTopContainerLastChildOverride() {
         final ContainerNode expectedStructure = Builders
                 .containerBuilder()
@@ -180,7 +185,7 @@ public class InstanceIdToNodesTest {
                 .withChild(
                         Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(ID))
                                 .withValue(1).build()).build();
-        final MapNode lastChild = Builders.mapBuilder().withNodeIdentifier(this.outerList).withChild(outerListEntry)
+        final MapNode lastChild = Builders.mapBuilder().withNodeIdentifier(outerList).withChild(outerListEntry)
                 .build();
         final ContainerNode expectedStructure = Builders.containerBuilder().withNodeIdentifier(rootContainer)
                 .withChild(lastChild).build();

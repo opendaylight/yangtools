@@ -205,7 +205,7 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id
      */
     public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
-        return fromInstanceId(ctx, id, Optional.empty());
+        return fromInstanceIdImpl(ctx, id, Optional.empty());
     }
 
     /**
@@ -216,10 +216,13 @@ public final class ImmutableNodes {
      * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided
      *                       instance identifier
      * @return serialized normalized node for provided instance Id with overridden last child.
+     * @deprecated This method is a historic hack, which has only a single downstream user. It is scheduled for removal
+     *             without a replacement.
      */
+    @Deprecated(since = "7.0.12", forRemoval = true)
     public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
             final NormalizedNode deepestElement) {
-        return fromInstanceId(ctx, id, Optional.of(deepestElement));
+        return fromInstanceIdImpl(ctx, id, Optional.of(deepestElement));
     }
 
     /**
@@ -231,8 +234,16 @@ public final class ImmutableNodes {
      *                       instance identifier
      * @return serialized normalized node for provided instance Id with (optionally) overridden last child
      *         and (optionally) marked with specific operation attribute.
+     * @deprecated This method is a historic hack, which has only a single downstream user. It is scheduled for removal
+     *             without a replacement.
      */
+    @Deprecated(since = "7.0.12", forRemoval = true)
     public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final Optional<NormalizedNode> deepestElement) {
+        return fromInstanceIdImpl(ctx, id, deepestElement);
+    }
+
+    private static @NonNull NormalizedNode fromInstanceIdImpl(final SchemaContext ctx, final YangInstanceIdentifier id,
             final Optional<NormalizedNode> deepestElement) {
         final PathArgument topLevelElement;
         final InstanceIdToNodes<?> instanceIdToNodes;
