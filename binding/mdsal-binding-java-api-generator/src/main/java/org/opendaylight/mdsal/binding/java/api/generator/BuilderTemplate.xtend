@@ -439,7 +439,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     '''
 
     private def createDescription(GeneratedType targetType) {
-        val target = type.importedName
+        val target = targetType.importedName
         return '''
         Class that builds {@link «target»} instances. Overall design of the class is that of a
         <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent interface</a>, where method chaining is used.
@@ -448,7 +448,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         In general, this class is supposed to be used like this template:
         <pre>
           <code>
-            «target» createTarget(int fooXyzzy, int barBaz) {
+            «target» create«target»(int fooXyzzy, int barBaz) {
                 return new «target»Builder()
                     .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())
                     .setBar(new BarBuilder().setBaz(barBaz).build())
@@ -469,7 +469,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               invocation, which is terminated by {@link #build()}, which is then returned from the method</li>
           <li>better understanding by humans, as the scope of mutable state (the builder) is kept to a minimum and is
               very localized</li>
-          <li>better optimization oportunities, as the object scope is minimized in terms of invocation (rather than
+          <li>better optimization opportunities, as the object scope is minimized in terms of invocation (rather than
               method) stack, making <a href="https://en.wikipedia.org/wiki/Escape_analysis">escape analysis</a> a lot
               easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely
               eliminated</li>
