@@ -13,7 +13,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Map;
 import org.junit.AfterClass;
@@ -22,12 +21,9 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -47,16 +43,9 @@ public class InstanceIdToNodesTest {
     private static EffectiveModelContext ctx;
 
     private final NodeIdentifier rootContainer = new NodeIdentifier(QName.create(NS, REVISION, "test"));
-    private final NodeIdentifier outerContainer = new NodeIdentifier(QName.create(NS, REVISION, "outer-container"));
-    private final NodeIdentifier augmentedLeaf = new NodeIdentifier(QName.create(NS, REVISION, "augmented-leaf"));
-    private final AugmentationIdentifier augmentation = new AugmentationIdentifier(
-            ImmutableSet.of(augmentedLeaf.getNodeType()));
-
     private final NodeIdentifier outerList = new NodeIdentifier(QName.create(NS, REVISION, "outer-list"));
     private final NodeIdentifierWithPredicates outerListWithKey = NodeIdentifierWithPredicates.of(
             QName.create(NS, REVISION, "outer-list"), ID, 1);
-    private final NodeIdentifier choice = new NodeIdentifier(QName.create(NS, REVISION, "outer-choice"));
-    private final NodeIdentifier leafFromCase = new NodeIdentifier(QName.create(NS, REVISION, "one"));
 
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
     private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
@@ -72,147 +61,38 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
-    @Deprecated(since = "7.0.12", forRemoval = true)
-    public void testInAugment() {
-        final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(augmentedLeaf).withValue("").build();
-        final ContainerNode expectedFilter = Builders
-                .containerBuilder()
-                .withNodeIdentifier(rootContainer)
-                .withChild(
-                        Builders.containerBuilder()
-                                .withNodeIdentifier(outerContainer)
-                                .withChild(
-                                        Builders.augmentationBuilder()
-                                                .withNodeIdentifier(augmentation)
-                                                .withChild(
-                                                        leaf).build()).build()).build();
-
-        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerContainer, augmentation, augmentedLeaf), leaf);
-        assertEquals(expectedFilter, filter);
-    }
-
-    @Test
-    @Deprecated(since = "7.0.12", forRemoval = true)
-    public void testInAugmentLeafOverride() {
-        final LeafNode<Object> lastLeaf = Builders.leafBuilder().withNodeIdentifier(augmentedLeaf)
-                .withValue("randomValue").build();
-
-        final ContainerNode expectedFilter = Builders
-                .containerBuilder()
-                .withNodeIdentifier(rootContainer)
-                .withChild(
-                        Builders.containerBuilder()
-                                .withNodeIdentifier(outerContainer)
-                                .withChild(
-                                        Builders.augmentationBuilder().withNodeIdentifier(augmentation)
-                                                .withChild(lastLeaf).build()).build()).build();
-
-        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerContainer, augmentation, augmentedLeaf), lastLeaf);
-        assertEquals(expectedFilter, filter);
-    }
-
-    @Test
-    @Deprecated(since = "7.0.12", forRemoval = true)
-    public void testListChoice() {
-        final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(leafFromCase).withValue("").build();
-        final ContainerNode expectedFilter = Builders
-                .containerBuilder()
-                .withNodeIdentifier(rootContainer)
-                .withChild(
-                        Builders.mapBuilder()
-                                .withNodeIdentifier(outerList)
-                                .withChild(
-                                        Builders.mapEntryBuilder()
-                                                .withNodeIdentifier(outerListWithKey)
-                                                .withChild(
-                                                        Builders.leafBuilder()
-                                                                .withNodeIdentifier(
-                                                                        new NodeIdentifier(ID))
-                                                                .withValue(1).build())
-                                                .withChild(
-                                                        Builders.choiceBuilder()
-                                                                .withNodeIdentifier(choice)
-                                                                .withChild(leaf)
-                                                                .build())
-                                                .build())
-                                .build())
-                .build();
-
-        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey, choice, leafFromCase), leaf);
-        assertEquals(expectedFilter, filter);
-    }
-
-    @Test
-    @Deprecated(since = "7.0.12", forRemoval = true)
-    public void testTopContainerLastChildOverride() {
-        final ContainerNode expectedStructure = Builders
-                .containerBuilder()
-                .withNodeIdentifier(rootContainer)
-                .withChild(
-                        Builders.mapBuilder()
-                                .withNodeIdentifier(outerList)
-                                .withChild(
-                                        Builders.mapEntryBuilder()
-                                                .withNodeIdentifier(outerListWithKey)
-                                                .withChild(
-                                                        Builders.leafBuilder()
-                                                                .withNodeIdentifier(
-                                                                        new NodeIdentifier(ID))
-                                                                .withValue(1).build())
-                                                .withChild(
-                                                        Builders.choiceBuilder()
-                                                                .withNodeIdentifier(choice)
-                                                                .withChild(
-                                                                        Builders.leafBuilder()
-                                                                                .withNodeIdentifier(leafFromCase)
-                                                                                .withValue("")
-                                                                                .build()).build()).build()).build())
-                .build();
-
-        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer), expectedStructure);
-        assertEquals(expectedStructure, filter);
-    }
-
-    @Test
     public void testListLastChildOverride() {
-        final MapEntryNode outerListEntry = Builders
-                .mapEntryBuilder()
-                .withNodeIdentifier(outerListWithKey)
-                .withChild(
-                        Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(ID))
-                                .withValue(1).build()).build();
-        final MapNode lastChild = Builders.mapBuilder().withNodeIdentifier(outerList).withChild(outerListEntry)
-                .build();
-        final ContainerNode expectedStructure = Builders.containerBuilder().withNodeIdentifier(rootContainer)
-                .withChild(lastChild).build();
-
-        NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey), outerListEntry);
-        assertEquals(expectedStructure, filter);
-        filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey));
-        assertEquals(expectedStructure, filter);
+        assertEquals(Builders.containerBuilder()
+            .withNodeIdentifier(rootContainer)
+            .withChild(Builders.mapBuilder()
+                .withNodeIdentifier(outerList)
+                .withChild(Builders.mapEntryBuilder()
+                    .withNodeIdentifier(outerListWithKey)
+                    .withChild(Builders.leafBuilder()
+                        .withNodeIdentifier(new NodeIdentifier(ID))
+                        .withValue(1)
+                        .build())
+                    .build())
+                .build())
+            .build(),
+            ImmutableNodes.fromInstanceId(ctx,
+                YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey)));
     }
 
     @Test
     public void testLeafList() {
-        final ContainerNode expectedFilter = Builders
-                .containerBuilder()
-                .withNodeIdentifier(rootContainer)
-                .withChild(
-                        Builders.orderedLeafSetBuilder()
-                                .withNodeIdentifier(leafList)
-                                .withChild(
-                                        Builders.leafSetEntryBuilder().withNodeIdentifier(leafListWithValue)
-                                                .withValue(leafListWithValue.getValue()).build()).build()).build();
-
-        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, leafList, leafListWithValue));
-        assertEquals(expectedFilter, filter);
+        assertEquals(Builders.containerBuilder()
+            .withNodeIdentifier(rootContainer)
+            .withChild(Builders.orderedLeafSetBuilder()
+                .withNodeIdentifier(leafList)
+                .withChild(Builders.leafSetEntryBuilder()
+                    .withNodeIdentifier(leafListWithValue)
+                    .withValue(leafListWithValue.getValue())
+                    .build())
+                .build())
+            .build(),
+            ImmutableNodes.fromInstanceId(ctx,
+                YangInstanceIdentifier.create(rootContainer, leafList, leafListWithValue)));
     }
 
     @Test

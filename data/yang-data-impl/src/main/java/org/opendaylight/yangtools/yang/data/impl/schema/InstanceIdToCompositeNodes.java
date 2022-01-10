@@ -11,17 +11,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
@@ -68,8 +65,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     @Override
     @SuppressWarnings("unchecked")
-    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode> lastChild) {
+    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others) {
         if (!isMixin()) {
             final QName type = getIdentifier().getNodeType();
             if (type != null) {
@@ -84,9 +80,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         if (others.hasNext()) {
             final PathArgument childPath = others.next();
             final InstanceIdToNodes<?> childOp = getChildOperation(childPath);
-            builder.addChild(childOp.create(childPath, others, lastChild));
-        } else if (lastChild.isPresent()) {
-            builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().body()));
+            builder.addChild(childOp.create(childPath, others));
         }
 
         return builder.build();
@@ -307,7 +301,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
         UnorderedMapMixinNormalization(final ListSchemaNode list) {
             super(NodeIdentifier.create(list.getQName()));
-            this.innerNode = new MapEntryNormalization(list);
+            innerNode = new MapEntryNormalization(list);
         }
 
         @Override
