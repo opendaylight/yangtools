@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Iterator;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -205,46 +204,6 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id
      */
     public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
-        return fromInstanceIdImpl(ctx, id, Optional.empty());
-    }
-
-    /**
-     * Convert YangInstanceIdentifier into a normalized node structure.
-     *
-     * @param ctx schema context to used during serialization
-     * @param id instance identifier to convert to node structure starting from root
-     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided
-     *                       instance identifier
-     * @return serialized normalized node for provided instance Id with overridden last child.
-     * @deprecated This method is a historic hack, which has only a single downstream user. It is scheduled for removal
-     *             without a replacement.
-     */
-    @Deprecated(since = "7.0.12", forRemoval = true)
-    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final NormalizedNode deepestElement) {
-        return fromInstanceIdImpl(ctx, id, Optional.of(deepestElement));
-    }
-
-    /**
-     * Convert YangInstanceIdentifier into a normalized node structure.
-     *
-     * @param ctx schema context to used during serialization
-     * @param id instance identifier to convert to node structure starting from root
-     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided
-     *                       instance identifier
-     * @return serialized normalized node for provided instance Id with (optionally) overridden last child
-     *         and (optionally) marked with specific operation attribute.
-     * @deprecated This method is a historic hack, which has only a single downstream user. It is scheduled for removal
-     *             without a replacement.
-     */
-    @Deprecated(since = "7.0.12", forRemoval = true)
-    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final Optional<NormalizedNode> deepestElement) {
-        return fromInstanceIdImpl(ctx, id, deepestElement);
-    }
-
-    private static @NonNull NormalizedNode fromInstanceIdImpl(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final Optional<NormalizedNode> deepestElement) {
         final PathArgument topLevelElement;
         final InstanceIdToNodes<?> instanceIdToNodes;
         final Iterator<PathArgument> it = id.getPathArguments().iterator();
@@ -259,6 +218,6 @@ public final class ImmutableNodes {
             instanceIdToNodes = InstanceIdToNodes.fromDataSchemaNode(ctx);
         }
 
-        return instanceIdToNodes.create(topLevelElement, it, deepestElement);
+        return instanceIdToNodes.create(topLevelElement, it);
     }
 }
