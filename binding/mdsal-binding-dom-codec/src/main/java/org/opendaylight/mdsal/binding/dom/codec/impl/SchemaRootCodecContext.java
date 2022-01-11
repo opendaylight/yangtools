@@ -125,7 +125,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 checkArgument(stmt instanceof NotificationDefinition, "Statement %s is not a notification", stmt);
 
                 @SuppressWarnings("unchecked")
-                final Class<? extends Notification> clz = (Class<? extends Notification>)
+                final Class<? extends Notification<?>> clz = (Class<? extends Notification<?>>)
                     factory().getRuntimeContext().getClassForSchema((NotificationDefinition) stmt);
                 return getNotification(clz);
             }
@@ -172,7 +172,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return getOrRethrow(actionsByClass, action);
     }
 
-    NotificationCodecContext<?> getNotification(final Class<? extends Notification> notification) {
+    NotificationCodecContext<?> getNotification(final Class<? extends Notification<?>> notification) {
         return (NotificationCodecContext<?>) streamChild((Class<? extends DataObject>)notification);
     }
 

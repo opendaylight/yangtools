@@ -541,12 +541,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public Notification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
+    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
         return getNotificationContext(path).deserialize(data);
     }
 
     @Override
-    public Notification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
+    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
             final Instant eventInstant) {
         return eventInstant == null ? fromNormalizedNodeNotification(path, data)
                 : getNotificationContext(path).deserialize(data, eventInstant);

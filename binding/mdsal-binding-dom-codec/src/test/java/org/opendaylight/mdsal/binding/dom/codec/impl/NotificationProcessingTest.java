@@ -58,7 +58,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNormalizedToNotification() {
-        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
+        final Notification<?> bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
             TwoLevelListChanged.QNAME), createTestDomData());
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
@@ -67,7 +67,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
     @Test
     public void testNormalizedToNotificationWithInstant() {
         final Instant instant = Instant.now();
-        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
+        final Notification<?> bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
             TwoLevelListChanged.QNAME), createTestDomData(), instant);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
@@ -77,7 +77,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNormalizedToNotificationWithNull() {
-        final Notification bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
+        final Notification<?> bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
             TwoLevelListChanged.QNAME), createTestDomData(), null);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);

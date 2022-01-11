@@ -106,9 +106,9 @@ final class NotificationCodecContext<D extends DataObject & Notification>
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    Notification deserialize(final @NonNull ContainerNode data, final @NonNull Instant eventInstant) {
+    Notification<?> deserialize(final @NonNull ContainerNode data, final @NonNull Instant eventInstant) {
         try {
-            return (Notification) eventProxy.invokeExact(this, data, eventInstant);
+            return (Notification<?>) eventProxy.invokeExact(this, data, eventInstant);
         } catch (final Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException(e);
