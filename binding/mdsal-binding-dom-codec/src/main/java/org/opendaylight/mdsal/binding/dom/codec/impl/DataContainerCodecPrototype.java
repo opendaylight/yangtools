@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +162,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
 
     static DataContainerCodecPrototype<EffectiveModelContext> rootPrototype(final CodecContextFactory factory) {
         final EffectiveModelContext schema = factory.getRuntimeContext().getEffectiveModelContext();
-        final NodeIdentifier arg = NodeIdentifier.create(schema.getQName());
+        final NodeIdentifier arg = NodeIdentifier.create(SchemaContext.NAME);
         return new DataContainerCodecPrototype<>(DataRoot.class, arg, schema, factory);
     }
 
