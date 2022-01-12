@@ -343,16 +343,16 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(final Class<?> parentClass,
-            final DataNodeContainer childSchema) {
+    public ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(final Class<?> type,
+            final DataNodeContainer schema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
-        for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
+        for (final DataSchemaNode leaf : schema.getChildNodes()) {
             if (leaf instanceof TypedDataSchemaNode || leaf instanceof AnyxmlSchemaNode
                     || leaf instanceof AnydataSchemaNode) {
                 getterToLeafSchema.put(BindingSchemaMapping.getGetterMethodName(leaf), leaf);
             }
         }
-        return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
+        return getLeafNodesUsingReflection(type, getterToLeafSchema);
     }
 
     private ImmutableMap<Method, ValueNodeCodecContext> getLeafNodesUsingReflection(
