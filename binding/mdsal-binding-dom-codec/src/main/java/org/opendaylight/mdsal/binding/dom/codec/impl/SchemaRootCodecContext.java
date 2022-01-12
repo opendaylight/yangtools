@@ -62,10 +62,37 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             @Override
             public DataContainerCodecContext<?, ?> load(final Class<? extends DataObject> key) {
                 if (Notification.class.isAssignableFrom(key)) {
-                    return createNotificationDataContext(key);
+                    checkArgument(key.isInterface(), "Supplied class must be interface.");
+                    final QName qname = BindingReflections.findQName(key);
+                    final NotificationDefinition schema = getSchema().findNotification(qname).orElseThrow(
+                        () -> new IllegalArgumentException("Supplied " + key + " is not valid notification"));
+                    return new NotificationCodecContext<>(key, schema, factory());
                 }
                 if (RpcInput.class.isAssignableFrom(key) || RpcOutput.class.isAssignableFrom(key)) {
-                    return createRpcDataContext(key);
+                    final QName qname = BindingReflections.findQName(key);
+                    final QNameModule qnameModule = qname.getModule();
+                    final Module module = getSchema().findModule(qnameModule).orElseThrow(
+                        () -> new IllegalArgumentException("Failed to find module for " + qnameModule));
+                    final String className = BindingMapping.getClassName(qname);
+
+                    for (final RpcDefinition potential : module.getRpcs()) {
+                        final QName potentialQName = potential.getQName();
+                        /*
+                         * Check if rpc and class represents data from same module and then checks if rpc local name
+                         * produces same class name as class name appended with Input/Output based on QName associated
+                         * with binding class.
+                         *
+                         * FIXME: Rework this to have more precise logic regarding Binding Specification.
+                         */
+                        if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
+                            final ContainerLike schema = getRpcDataSchema(potential, qname);
+                            checkArgument(schema != null, "Schema for %s does not define input / output.",
+                                potentialQName);
+                            return DataContainerCodecPrototype.from(key, schema, factory()).get();
+                        }
+                    }
+
+                    throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
                 }
                 return createDataTreeChildContext(key);
             }
@@ -188,7 +215,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return getOrRethrow(rpcDataByPath, containerPath);
     }
 
-    DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
+    DataContainerCodecContext<?, ?> createDataTreeChildContext(final Class<? extends DataObject> key) {
         final QName qname = BindingReflections.findQName(key);
         final DataSchemaNode childSchema = childNonNull(getSchema().dataChildByName(qname), key,
             "%s is not top-level item.", key);
@@ -223,32 +250,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
         verify(type instanceof Class, "Type %s is not a class", type);
         return ((Class<?>) type).asSubclass(target);
-    }
-
-    ContainerNodeCodecContext<?> createRpcDataContext(final Class<?> key) {
-        checkArgument(DataContainer.class.isAssignableFrom(key));
-        final QName qname = BindingReflections.findQName(key);
-        final QNameModule qnameModule = qname.getModule();
-        final Module module = getSchema().findModule(qnameModule)
-                .orElseThrow(() -> new IllegalArgumentException("Failed to find module for " + qnameModule));
-        final String className = BindingMapping.getClassName(qname);
-
-        for (final RpcDefinition potential : module.getRpcs()) {
-            final QName potentialQName = potential.getQName();
-            /*
-             * Check if rpc and class represents data from same module and then checks if rpc local name produces same
-             * class name as class name appended with Input/Output based on QName associated with binding class.
-             *
-             * FIXME: Rework this to have more precise logic regarding Binding Specification.
-             */
-            if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
-                final ContainerLike schema = getRpcDataSchema(potential, qname);
-                checkArgument(schema != null, "Schema for %s does not define input / output.", potential.getQName());
-                return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
-            }
-        }
-
-        throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
     }
 
     /**
@@ -296,15 +297,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             }
         }
         return null;
-    }
-
-    NotificationCodecContext<?> createNotificationDataContext(final Class<?> notificationType) {
-        checkArgument(Notification.class.isAssignableFrom(notificationType));
-        checkArgument(notificationType.isInterface(), "Supplied class must be interface.");
-        final QName qname = BindingReflections.findQName(notificationType);
-        final NotificationDefinition schema = getSchema().findNotification(qname).orElseThrow(
-            () -> new IllegalArgumentException("Supplied " + notificationType + " is not valid notification"));
-        return new NotificationCodecContext<>(notificationType, schema, factory());
     }
 
     ChoiceNodeCodecContext<?> createChoiceDataContext(final Class<? extends DataObject> caseType) {
