@@ -438,19 +438,24 @@ public final class BindingReflections {
     /**
      * Scans supplied class and returns an iterable of all data children classes.
      *
-     * @param type
-     *            YANG Modeled Entity derived from DataContainer
+     * @param type YANG Modeled Entity derived from DataContainer
      * @return Iterable of all data children, which have YANG modeled entity
      */
-    public static Map<Class<?>, Method> getChildrenClassToMethod(final Class<?> type) {
-        return getChildrenClassToMethod(type, BindingMapping.GETTER_PREFIX);
+    public static Map<Class<? extends DataContainer>, Method> getChildrenClassToMethod(final Class<?> type) {
+        return getChildClassToMethod(type, BindingMapping.GETTER_PREFIX);
     }
 
-    private static Map<Class<?>, Method> getChildrenClassToMethod(final Class<?> type, final String prefix) {
+    @Beta
+    public static Map<Class<? extends DataContainer>, Method> getChildrenClassToNonnullMethod(final Class<?> type) {
+        return getChildClassToMethod(type, BindingMapping.NONNULL_PREFIX);
+    }
+
+    private static Map<Class<? extends DataContainer>, Method> getChildClassToMethod(final Class<?> type,
+            final String prefix) {
         checkArgument(type != null, "Target type must not be null");
         checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type %s must be derived from DataContainer",
             type);
-        Map<Class<?>, Method> ret = new HashMap<>();
+        Map<Class<? extends DataContainer>, Method> ret = new HashMap<>();
         for (Method method : type.getMethods()) {
             Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method, prefix);
             if (entity.isPresent()) {
@@ -458,11 +463,6 @@ public final class BindingReflections {
             }
         }
         return ret;
-    }
-
-    @Beta
-    public static Map<Class<?>, Method> getChildrenClassToNonnullMethod(final Class<?> type) {
-        return getChildrenClassToMethod(type, BindingMapping.NONNULL_PREFIX);
     }
 
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,

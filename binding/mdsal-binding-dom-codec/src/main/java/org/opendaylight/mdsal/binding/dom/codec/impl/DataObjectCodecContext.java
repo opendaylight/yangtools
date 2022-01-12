@@ -32,6 +32,7 @@ import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
@@ -97,7 +98,8 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         final Class<D> bindingClass = getBindingClass();
 
         final ImmutableMap<Method, ValueNodeCodecContext> tmpLeaves = factory().getLeafNodes(bindingClass, getSchema());
-        final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(bindingClass);
+        final Map<Class<? extends DataContainer>, Method> clsToMethod =
+            BindingReflections.getChildrenClassToMethod(bindingClass);
 
         final Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> byStreamClassBuilder = new HashMap<>();
@@ -114,11 +116,11 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         this.leafChild = leafChildBuilder.build();
 
         final Map<Method, Class<?>> tmpDataObjects = new HashMap<>();
-        for (final Entry<Class<?>, Method> childDataObj : clsToMethod.entrySet()) {
+        for (final Entry<Class<? extends DataContainer>, Method> childDataObj : clsToMethod.entrySet()) {
             final Method method = childDataObj.getValue();
             verify(!method.isDefault(), "Unexpected default method %s in %s", method, bindingClass);
 
-            final Class<?> retClass = childDataObj.getKey();
+            final Class<? extends DataContainer> retClass = childDataObj.getKey();
             if (OpaqueObject.class.isAssignableFrom(retClass)) {
                 // Filter OpaqueObjects, they are not containers
                 continue;
@@ -268,7 +270,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         return value;
     }
 
-    private DataContainerCodecPrototype<?> loadChildPrototype(final Class<?> childClass) {
+    private DataContainerCodecPrototype<?> loadChildPrototype(final Class<? extends DataContainer> childClass) {
         final DataSchemaNode childSchema = childNonNull(
             factory().getRuntimeContext().findChildSchemaDefinition(getSchema(), namespace(), childClass), childClass,
             "Node %s does not have child named %s", getSchema(), childClass);
