@@ -108,8 +108,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         // Adds leaves to mapping
         final Builder<String, ValueNodeCodecContext> leafChildBuilder =
                 ImmutableMap.builderWithExpectedSize(tmpLeaves.size());
-        for (final Entry<Method, ValueNodeCodecContext> entry : tmpLeaves.entrySet()) {
-            final ValueNodeCodecContext leaf = entry.getValue();
+        for (final ValueNodeCodecContext leaf : tmpLeaves.values()) {
             leafChildBuilder.put(leaf.getSchema().getQName().getLocalName(), leaf);
             byYangBuilder.put(leaf.getDomPathArgument(), leaf);
         }
