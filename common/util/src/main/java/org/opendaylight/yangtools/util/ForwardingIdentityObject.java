@@ -63,7 +63,7 @@ public abstract class ForwardingIdentityObject<T> extends ForwardingObject imple
     protected abstract @NonNull T delegate();
 
     private static <T> ForwardingIdentityObject<T> checkedOf(final @NonNull T delegate) {
-        return new ForwardingIdentityObject<T>() {
+        return new ForwardingIdentityObject<>() {
             @Override
             protected @NonNull T delegate() {
                 return delegate;

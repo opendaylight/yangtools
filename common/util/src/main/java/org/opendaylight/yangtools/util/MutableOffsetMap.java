@@ -555,7 +555,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
         @Override
         public @NonNull Iterator<Entry<K, V>> iterator() {
-            return new AbstractSetIterator<Entry<K, V>>() {
+            return new AbstractSetIterator<>() {
                 @Override
                 public Entry<K, V> next() {
                     final K key = nextKey();
@@ -623,7 +623,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private final class KeySet extends AbstractSet<K> {
         @Override
         public @NonNull Iterator<K> iterator() {
-            return new AbstractSetIterator<K>() {
+            return new AbstractSetIterator<>() {
                 @Override
                 public K next() {
                     return nextKey();

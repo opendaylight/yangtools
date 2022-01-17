@@ -350,7 +350,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         @Override
         public @NonNull Iterator<Entry<K, V>> iterator() {
             final Iterator<Entry<K, Integer>> it = offsets.entrySet().iterator();
-            return new UnmodifiableIterator<Entry<K, V>>() {
+            return new UnmodifiableIterator<>() {
                 @Override
                 public boolean hasNext() {
                     return it.hasNext();

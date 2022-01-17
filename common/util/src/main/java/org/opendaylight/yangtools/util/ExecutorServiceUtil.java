@@ -56,7 +56,7 @@ public final class ExecutorServiceUtil {
      * @return A new blocking queue backed by the delegate
      */
     public static <E> @NonNull BlockingQueue<E> offerFailingBlockingQueue(final BlockingQueue<E> delegate) {
-        return new ForwardingBlockingQueue<E>() {
+        return new ForwardingBlockingQueue<>() {
             @Override
             @SuppressWarnings("checkstyle:parameterName")
             public boolean offer(final E o) {
