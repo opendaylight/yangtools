@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.util;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Builder;
-
 /**
  * Utility class for incrementally building object hashCode by hashing together component objects, one by one.
  *
  * @param <T> Component object type
  */
-public final class HashCodeBuilder<T> implements Builder<Integer> {
+public final class HashCodeBuilder<T> {
     /**
      * The value 31 was chosen because it is an odd prime. If it were even and the multiplication overflowed,
      * information would be lost, as multiplication by 2 is equivalent to shifting. The advantage of using a prime is
@@ -65,8 +62,12 @@ public final class HashCodeBuilder<T> implements Builder<Integer> {
         currentHash = nextHashCode(currentHash, obj);
     }
 
-    @Override
-    public @NonNull Integer build() {
+    /**
+     * Return the currently-accumulated hash code.
+     *
+     * @return Current hash code
+     */
+    public int build() {
         return currentHash;
     }
 }
