@@ -15,7 +15,7 @@ package org.opendaylight.yangtools.concepts;
  * @deprecated This is an over-arching concept whose {@link #build()} method hides caller hierarchy. Users are advised
  *             to migrate away, either without a replacement interface, or with a proper domain-specific interface.
  */
-@Deprecated(since = "8.0.0")
+@Deprecated(since = "8.0.0", forRemoval = true)
 public interface Builder<P> extends CheckedBuilder<P, IllegalArgumentException> {
     @Override
     P build();
