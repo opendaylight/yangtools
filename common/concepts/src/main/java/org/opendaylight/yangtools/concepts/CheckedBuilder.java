@@ -16,7 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @deprecated This is an over-arching concept whose {@link #build()} method hides caller hierarchy. Users are advised
  *             to migrate away, either without a replacement interface, or with a proper domain-specific interface.
  */
-@Deprecated(since = "8.0.0")
+@Deprecated(since = "8.0.0", forRemoval = true)
 public interface CheckedBuilder<P, E extends Exception> extends Mutable {
     /**
      * Returns instance of the product. Multiple calls to this method are not required to return same instance if
