@@ -15,4 +15,5 @@ module org.opendaylight.yangtools.yang.data.tree.api {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static com.github.spotbugs.annotations;
 }
