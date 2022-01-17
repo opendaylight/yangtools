@@ -41,9 +41,9 @@ import java.util.Set;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SingletonSet;
@@ -1049,7 +1049,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
     /**
      * Fluent Builder of Instance Identifier instances.
      */
-    public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
+    public interface InstanceIdentifierBuilder extends Mutable {
         /**
          * Adds a {@link PathArgument} to path arguments of resulting instance identifier.
          *
@@ -1111,7 +1111,6 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
          *
          * @return {@link YangInstanceIdentifier}
          */
-        @Override
-        YangInstanceIdentifier build();
+        @NonNull YangInstanceIdentifier build();
     }
 }
