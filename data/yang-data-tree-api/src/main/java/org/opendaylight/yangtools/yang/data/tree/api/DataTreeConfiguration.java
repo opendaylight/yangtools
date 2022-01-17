@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
@@ -91,19 +92,20 @@ public class DataTreeConfiguration implements Immutable {
         }
     }
 
-    public static Builder builder(final TreeType treeType) {
+    public static @NonNull Builder builder(final TreeType treeType) {
         return new Builder(treeType);
     }
 
-    public Builder copyBuilder() {
+    public @NonNull Builder copyBuilder() {
         return new Builder(treeType)
                 .setMandatoryNodesValidation(isMandatoryNodesValidationEnabled())
                 .setUniqueIndexes(isUniqueIndexEnabled())
                 .setRootPath(getRootPath());
     }
 
-    public static class Builder implements org.opendaylight.yangtools.concepts.Builder<DataTreeConfiguration> {
+    public static class Builder implements Mutable {
         private final TreeType treeType;
+
         private YangInstanceIdentifier rootPath;
         private boolean uniqueIndexes;
         private boolean mandatoryNodesValidation;
@@ -113,23 +115,27 @@ public class DataTreeConfiguration implements Immutable {
             rootPath = YangInstanceIdentifier.empty();
         }
 
-        public Builder setUniqueIndexes(final boolean uniqueIndexes) {
+        public @NonNull Builder setUniqueIndexes(final boolean uniqueIndexes) {
             this.uniqueIndexes = uniqueIndexes;
             return this;
         }
 
-        public Builder setMandatoryNodesValidation(final boolean mandatoryNodesValidation) {
+        public @NonNull Builder setMandatoryNodesValidation(final boolean mandatoryNodesValidation) {
             this.mandatoryNodesValidation = mandatoryNodesValidation;
             return this;
         }
 
-        public Builder setRootPath(final YangInstanceIdentifier rootPath) {
+        public @NonNull Builder setRootPath(final YangInstanceIdentifier rootPath) {
             this.rootPath = rootPath.toOptimized();
             return this;
         }
 
-        @Override
-        public DataTreeConfiguration build() {
+        /**
+         * Return {@link DataTreeConfiguration} as defined by this builder's current state.
+         *
+         * @return A DataTreeConfiguration
+         */
+        public @NonNull DataTreeConfiguration build() {
             return new DataTreeConfiguration(treeType, rootPath, uniqueIndexes, mandatoryNodesValidation);
         }
     }
