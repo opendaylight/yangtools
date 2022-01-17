@@ -12,12 +12,12 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public abstract class TypeBuilder<T extends TypeDefinition<T>> implements Builder<T> {
+public abstract class TypeBuilder<T extends TypeDefinition<T>> implements Mutable {
     private final ImmutableList.Builder<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.builder();
     private final @NonNull QName qname;
     private final T baseType;
@@ -26,6 +26,13 @@ public abstract class TypeBuilder<T extends TypeDefinition<T>> implements Builde
         this.qname = requireNonNull(qname);
         this.baseType = baseType;
     }
+
+    /**
+     * Build a {@link TypeDefinition} corresponding to this builder.
+     *
+     * @return A TypeDefinition
+     */
+    public abstract @NonNull T build();
 
     final T getBaseType() {
         return baseType;

@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -20,11 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 
 /**
  * Utility builder for {@link EnumPair} instances.
- *
- * @author Robert Varga
  */
 @Beta
-public final class EnumPairBuilder implements Builder<EnumPair>, Mutable {
+public final class EnumPairBuilder implements Mutable {
     private final String name;
     private final Integer value;
 
@@ -38,37 +36,42 @@ public final class EnumPairBuilder implements Builder<EnumPair>, Mutable {
         this.value = requireNonNull(value);
     }
 
-    public static EnumPairBuilder create(final String name, final Integer value) {
+    public static @NonNull EnumPairBuilder create(final String name, final Integer value) {
         return new EnumPairBuilder(name, value);
     }
 
-    public EnumPairBuilder setDescription(final String description) {
+    public @NonNull EnumPairBuilder setDescription(final String description) {
         this.description = description;
         return this;
     }
 
-    public EnumPairBuilder setReference(final String reference) {
+    public @NonNull EnumPairBuilder setReference(final String reference) {
         this.reference = reference;
         return this;
     }
 
-    public EnumPairBuilder setStatus(final Status status) {
+    public @NonNull EnumPairBuilder setStatus(final Status status) {
         this.status = requireNonNull(status);
         return this;
     }
 
-    public EnumPairBuilder setUnknownSchemaNodes(final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
+    public @NonNull EnumPairBuilder setUnknownSchemaNodes(
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
         return this;
     }
 
-    public EnumPairBuilder setUnknownSchemaNodes(final UnknownSchemaNode... unknownSchemaNodes) {
+    public @NonNull EnumPairBuilder setUnknownSchemaNodes(final UnknownSchemaNode... unknownSchemaNodes) {
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
         return this;
     }
 
-    @Override
-    public EnumPair build() {
+    /**
+     * Return an {@link EnumPair} representation of this builder's current state.
+     *
+     * @return An EnumPair
+     */
+    public @NonNull EnumPair build() {
         return new EnumPairImpl(name, value, description, reference, status, unknownSchemaNodes);
     }
 }

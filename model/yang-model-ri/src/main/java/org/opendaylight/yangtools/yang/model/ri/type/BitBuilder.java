@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
  * @author Robert Varga
  */
 @Beta
-public final class BitBuilder implements Builder<Bit>, Mutable {
+public final class BitBuilder implements Mutable {
     private final String name;
     private final Uint32 position;
 
@@ -39,37 +39,41 @@ public final class BitBuilder implements Builder<Bit>, Mutable {
         this.position = requireNonNull(position);
     }
 
-    public static BitBuilder create(final String name, final Uint32 position) {
+    public static @NonNull BitBuilder create(final String name, final Uint32 position) {
         return new BitBuilder(name, position);
     }
 
-    public BitBuilder setDescription(final String description) {
+    public @NonNull BitBuilder setDescription(final String description) {
         this.description = description;
         return this;
     }
 
-    public BitBuilder setReference(final String reference) {
+    public @NonNull BitBuilder setReference(final String reference) {
         this.reference = reference;
         return this;
     }
 
-    public BitBuilder setStatus(final Status status) {
+    public @NonNull BitBuilder setStatus(final Status status) {
         this.status = requireNonNull(status);
         return this;
     }
 
-    public BitBuilder setUnknownSchemaNodes(final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+    public @NonNull BitBuilder setUnknownSchemaNodes(final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
         return this;
     }
 
-    public BitBuilder setUnknownSchemaNodes(final UnknownSchemaNode... unknownSchemaNodes) {
+    public @NonNull BitBuilder setUnknownSchemaNodes(final UnknownSchemaNode... unknownSchemaNodes) {
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
         return this;
     }
 
-    @Override
-    public Bit build() {
+    /**
+     * Return the {@link Bit} corresponding to current builder state.
+     *
+     * @return A Bit
+     */
+    public @NonNull Bit build() {
         return new BitImpl(name, position, description, reference, status, unknownSchemaNodes);
     }
 }
