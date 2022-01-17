@@ -23,7 +23,6 @@ import com.google.common.collect.RangeSet;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
-import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
@@ -479,7 +478,7 @@ public class TypeTest {
         assertEquals(type1, type2);
     }
 
-    private static void restrictedBuilderTest(final Builder<?> typeBuilder1, final Builder<?> typeBuilder2) {
+    private static void restrictedBuilderTest(final TypeBuilder<?> typeBuilder1, final TypeBuilder<?> typeBuilder2) {
         final TypeDefinition<?> typeDefinition1 = ((AbstractRestrictedTypeBuilder<?>) typeBuilder1).buildType();
         final TypeDefinition<?> typeDefinition2 = ((AbstractRestrictedTypeBuilder<?>) typeBuilder2).buildType();
         hashCodeEqualsToStringTest(typeDefinition1, typeDefinition2);
