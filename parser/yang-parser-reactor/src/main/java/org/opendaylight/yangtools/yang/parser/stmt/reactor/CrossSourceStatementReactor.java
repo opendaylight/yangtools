@@ -18,6 +18,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -54,7 +55,7 @@ public final class CrossSourceStatementReactor {
         return new BuildAction(supportedTerminology, supportedValidation);
     }
 
-    public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
+    public static class Builder implements Mutable {
         private final Map<ValidationBundleType, Collection<?>> validationBundles =
                 new EnumMap<>(ValidationBundleType.class);
         private final Map<ModelProcessingPhase, StatementSupportBundle> bundles =
@@ -71,8 +72,12 @@ public final class CrossSourceStatementReactor {
             return this;
         }
 
-        @Override
-        public CrossSourceStatementReactor build() {
+        /**
+         * Return a {@link CrossSourceStatementReactor} configured with current state of this builder.
+         *
+         * @return A CrossSourceStatementReactor
+         */
+        public @NonNull CrossSourceStatementReactor build() {
             return new CrossSourceStatementReactor(bundles, validationBundles);
         }
     }
@@ -84,7 +89,7 @@ public final class CrossSourceStatementReactor {
 
         BuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
                 final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
-            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation);
+            context = new BuildGlobalContext(supportedTerminology, supportedValidation);
         }
 
         /**
