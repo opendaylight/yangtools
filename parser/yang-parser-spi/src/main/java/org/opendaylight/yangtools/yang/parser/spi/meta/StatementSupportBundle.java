@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -20,7 +19,9 @@ import com.google.common.collect.Table;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.slf4j.Logger;
@@ -44,9 +45,9 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements) {
         this.parent = parent;
         this.supportedVersions = supportedVersions;
-        this.commonDefinitions = commonStatements;
-        this.namespaceDefinitions = namespaces;
-        this.versionSpecificDefinitions = versionSpecificStatements;
+        commonDefinitions = commonStatements;
+        namespaceDefinitions = namespaces;
+        versionSpecificDefinitions = versionSpecificStatements;
     }
 
     /**
@@ -158,12 +159,12 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         return null;
     }
 
-    public static class Builder implements org.opendaylight.yangtools.concepts.Builder<StatementSupportBundle> {
+    public static final class Builder implements Mutable {
         private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
         private final Map<QName, StatementSupport<?, ?, ?>> commonStatements = new HashMap<>();
-        private final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements = HashBasedTable
-                .create();
+        private final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements =
+            HashBasedTable.create();
         private final Map<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces = new HashMap<>();
 
         private final ImmutableSet<YangVersion> supportedVersions;
@@ -174,7 +175,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             this.supportedVersions = ImmutableSet.copyOf(supportedVersions);
         }
 
-        public Builder addSupport(final StatementSupport<?, ?, ?> support) {
+        public @NonNull Builder addSupport(final StatementSupport<?, ?, ?> support) {
             final QName identifier = support.getStatementName();
             checkNoParentDefinition(identifier);
 
@@ -184,7 +185,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return this;
         }
 
-        public <K, V, N extends ParserNamespace<K, V>> Builder addSupport(
+        public <K, V, N extends ParserNamespace<K, V>> @NonNull Builder addSupport(
                 final NamespaceBehaviour<K, V, N> namespaceSupport) {
             final Class<N> identifier = namespaceSupport.getIdentifier();
             checkState(!namespaces.containsKey(identifier));
@@ -193,7 +194,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return this;
         }
 
-        public Builder addVersionSpecificSupport(final YangVersion version,
+        public @NonNull Builder addVersionSpecificSupport(final YangVersion version,
                 final StatementSupport<?, ?, ?> definition) {
             checkArgument(supportedVersions.contains(requireNonNull(version)));
 
@@ -213,12 +214,12 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return supportedVersions;
         }
 
-        public Builder setParent(final StatementSupportBundle parent) {
+        public @NonNull Builder setParent(final StatementSupportBundle parent) {
             this.parent = parent;
             return this;
         }
 
-        public Builder overrideSupport(final StatementSupport<?, ?, ?> support) {
+        public @NonNull Builder overrideSupport(final StatementSupport<?, ?, ?> support) {
             final QName identifier = support.getStatementName();
             checkNoParentDefinition(identifier);
 
@@ -228,9 +229,14 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return this;
         }
 
-        @Override
-        public StatementSupportBundle build() {
-            Preconditions.checkState(parent != null, "Parent must not be null");
+        /**
+         * Create a {@link StatementSupportBundle} from the contents of this builder.
+         *
+         * @return A StatementSupportBundle
+         * @throws IllegalStateException if parent has not been set
+         */
+        public @NonNull StatementSupportBundle build() {
+            checkState(parent != null, "Parent must not be null");
             return new StatementSupportBundle(parent, supportedVersions, ImmutableMap.copyOf(commonStatements),
                     ImmutableMap.copyOf(namespaces), ImmutableTable.copyOf(versionSpecificStatements));
         }
