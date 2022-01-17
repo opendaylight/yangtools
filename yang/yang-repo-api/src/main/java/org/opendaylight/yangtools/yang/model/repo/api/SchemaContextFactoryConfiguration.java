@@ -20,19 +20,17 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 /**
- * SchemaContextFactory configuration class.
- *
- * <p>
- * SchemaContextFactoryConfiguration supports currently the following options to be set:
+ * SchemaContextFactory configuration class. It currently supports the following options to be set:
  * <ul>
- * <li>schema source filter</li>
- * <li>statement parser mode</li>
- * <li>supported features</li>
- * <li>supported deviations</li>
+ *   <li>schema source filter</li>
+ *   <li>statement parser mode</li>
+ *   <li>supported features</li>
+ *   <li>supported deviations</li>
  * </ul>
  */
 @Beta
@@ -104,10 +102,9 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
                 .add("modulesDeviatedByModules", modulesDeviatedByModules).toString();
     }
 
-    public static class Builder
-            implements org.opendaylight.yangtools.concepts.Builder<SchemaContextFactoryConfiguration> {
-        private SchemaSourceFilter filter = SchemaSourceFilter.ALWAYS_ACCEPT;
-        private StatementParserMode statementParserMode = StatementParserMode.DEFAULT_MODE;
+    public static class Builder implements Mutable {
+        private @NonNull SchemaSourceFilter filter = SchemaSourceFilter.ALWAYS_ACCEPT;
+        private @NonNull StatementParserMode statementParserMode = StatementParserMode.DEFAULT_MODE;
         private ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
         private ImmutableSet<QName> supportedFeatures;
 
@@ -163,7 +160,11 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
             return this;
         }
 
-        @Override
+        /**
+         * Return a new {@link SchemaContextFactoryConfiguration} based on the contents of this builder
+         *
+         * @return A new {@link SchemaContextFactoryConfiguration}
+         */
         public @NonNull SchemaContextFactoryConfiguration build() {
             return new SchemaContextFactoryConfiguration(filter, statementParserMode, supportedFeatures,
                     modulesDeviatedByModules);
