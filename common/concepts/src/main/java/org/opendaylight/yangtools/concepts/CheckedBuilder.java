@@ -13,7 +13,10 @@ import org.eclipse.jdt.annotation.NonNull;
  * Builder object which produces a product.
  *
  * @param <P> Product of builder
+ * @deprecated This is an over-arching concept whose {@link #build()} method hides caller hierarchy. Users are advised
+ *             to migrate away, either without a replacement interface, or with a proper domain-specific interface.
  */
+@Deprecated(since = "8.0.0")
 public interface CheckedBuilder<P, E extends Exception> extends Mutable {
     /**
      * Returns instance of the product. Multiple calls to this method are not required to return same instance if
