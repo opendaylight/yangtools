@@ -15,6 +15,7 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * A configuration of {@link YangParser} wiring for use with {@link YangParserFactory}.
@@ -74,7 +75,7 @@ public final class YangParserConfiguration implements Immutable {
         return new Builder();
     }
 
-    public static final class Builder implements org.opendaylight.yangtools.concepts.Builder<YangParserConfiguration> {
+    public static final class Builder implements Mutable {
         private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
         private boolean retainDeclarationReferences = false;
 
@@ -82,19 +83,23 @@ public final class YangParserConfiguration implements Immutable {
             // Hidden on purpose
         }
 
-        @Override
+        /**
+         * Return a {@link YangParserConfiguration} initialized with contents of this builder.
+         *
+         * @return A YangParserConfiguration
+         */
         public YangParserConfiguration build() {
             return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences);
         }
 
         @Beta
         public Builder importResolutionMode(final ImportResolutionMode newImportResolutionMode) {
-            this.importResolutionMode = requireNonNull(newImportResolutionMode);
+            importResolutionMode = requireNonNull(newImportResolutionMode);
             return this;
         }
 
         public Builder retainDeclarationReferences(final boolean newRetainDeclarationReferences) {
-            this.retainDeclarationReferences = newRetainDeclarationReferences;
+            retainDeclarationReferences = newRetainDeclarationReferences;
             return this;
         }
     }
