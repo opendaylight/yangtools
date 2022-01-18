@@ -9,4 +9,7 @@ module org.opendaylight.yangtools.openconfig.model.api {
     exports org.opendaylight.yangtools.openconfig.model.api;
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
+
+    // Annotations
+    requires static com.github.spotbugs.annotations;
 }
