@@ -120,14 +120,9 @@ public class RpcResultBuilderTest {
             "info", null);
         rpcResultBuilder.withRpcError(rpcErrorShort);
         final RpcResult<Object> rpcResult = rpcResultBuilder.build();
-        final RpcResultBuilder<RpcResult<Object>> rpcResultRpcResultBuilder1 = RpcResultBuilder.success(
-                rpcResultBuilder);
-        final RpcResultBuilder<RpcResult<Object>> rpcResultRpcResultBuilder2 = rpcResultRpcResultBuilder1.withResult(
-                rpcResultBuilder);
 
         assertEquals(rpcErrorShort.getErrorType(), rpcErrorShortWarn.getErrorType());
         assertEquals(rpcErrorLong.getErrorType(), rpcErrorLongWarn.getErrorType());
-        assertEquals(rpcResultRpcResultBuilder1, rpcResultRpcResultBuilder2);
         assertNotNull(rpcResultBuilder.buildFuture());
         assertEquals("RpcResult [successful=true, result=null, errors=[RpcError [message=msg, severity=ERROR, "
                 + "errorType=RPC, tag=tag, applicationTag=null, info=null, cause=null]]]", rpcResult.toString());

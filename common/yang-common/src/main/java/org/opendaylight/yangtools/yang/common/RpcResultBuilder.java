@@ -15,7 +15,7 @@ import com.google.common.util.concurrent.Futures;
 import java.io.Serializable;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * A builder for creating RpcResult instances.
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.concepts.Builder;
  *
  * @param <T> the result value type
  */
-public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
+public final class RpcResultBuilder<T> implements Mutable {
 
     private static class RpcResultImpl<T> implements RpcResult<T>, Serializable {
         private static final long serialVersionUID = 1L;
@@ -153,15 +153,6 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
     }
 
     /**
-     * Returns a builder for a successful result.
-     *
-     * @param builder builder for the result value
-     */
-    public static <T> @NonNull RpcResultBuilder<T> success(final Builder<T> builder) {
-        return success(builder.build());
-    }
-
-    /**
      * Returns a builder for a failed result.
      */
     public static <T> @NonNull RpcResultBuilder<T> failed() {
@@ -264,15 +255,6 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
     public @NonNull RpcResultBuilder<T> withResult(final T result) {
         this.result = result;
         return this;
-    }
-
-    /**
-     * Sets the value of the result.
-     *
-     * @param builder builder for the result value
-     */
-    public @NonNull RpcResultBuilder<T> withResult(final Builder<T> builder) {
-        return withResult(builder.build());
     }
 
     private void addError(final ErrorSeverity severity, final ErrorType errorType, final ErrorTag tag,
@@ -401,8 +383,12 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         return this;
     }
 
-    @Override
-    public RpcResult<T> build() {
+    /**
+     * Build the resulting {@link RpcResult}.
+     *
+     * @return An RpcResult instance
+     */
+    public @NonNull RpcResult<T> build() {
         return new RpcResultImpl<>(successful, result, errors != null ? errors.build() : ImmutableList.of());
     }
 
