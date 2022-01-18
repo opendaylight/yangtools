@@ -64,9 +64,8 @@ public class Bug5446Test {
         final Writer writer = new StringWriter();
         final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, rootNode);
 
-        final JsonParser parser = new JsonParser();
-        final JsonElement serializedJson = parser.parse(jsonOutput);
-        final JsonElement expextedJson = parser.parse(new FileReader(new File(getClass().getResource(
+        final JsonElement serializedJson = JsonParser.parseString(jsonOutput);
+        final JsonElement expextedJson = JsonParser.parseReader(new FileReader(new File(getClass().getResource(
                 "/bug5446/json/foo.json").toURI()), StandardCharsets.UTF_8));
 
         assertEquals(expextedJson, serializedJson);
@@ -78,10 +77,10 @@ public class Bug5446Test {
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), SchemaPath.ROOT, null,
             JsonWriterFactory.createJsonWriter(writer, 2));
-        final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
-        nodeWriter.write(inputStructure);
+        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+            nodeWriter.write(inputStructure);
+        }
 
-        nodeWriter.close();
         return writer.toString();
     }
 

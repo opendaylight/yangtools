@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.FileReader;
@@ -38,11 +37,6 @@ public class Bug7246Test {
     public void test() throws Exception {
         final EffectiveModelContext schemaContext =
                 YangParserTestUtils.parseYangResource("/bug7246/yang/rpc-test.yang");
-        final JsonParser parser = new JsonParser();
-        final JsonElement expextedJson = parser
-                .parse(new FileReader(new File(getClass().getResource("/bug7246/json/expected-output.json").toURI()),
-                    StandardCharsets.UTF_8));
-
         final ContainerNode inputStructure = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
                 .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value")).build();
@@ -50,9 +44,10 @@ public class Bug7246Test {
         final Writer writer = new StringWriter();
         final String jsonOutput = normalizedNodeToJsonStreamTransformation(schemaContext, rootPath, writer,
                 inputStructure);
-        final JsonElement serializedJson = parser.parse(jsonOutput);
 
-        assertEquals(expextedJson, serializedJson);
+        assertEquals(JsonParser.parseReader(new FileReader(
+            new File(getClass().getResource("/bug7246/json/expected-output.json").toURI()), StandardCharsets.UTF_8)),
+            JsonParser.parseString(jsonOutput));
     }
 
     private static QName qN(final String localName) {
@@ -66,10 +61,9 @@ public class Bug7246Test {
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
                 JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), path,
                 XMLNamespace.of(NS), JsonWriterFactory.createJsonWriter(writer, 2));
-        final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
-        nodeWriter.write(inputStructure);
-
-        nodeWriter.close();
+        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+            nodeWriter.write(inputStructure);
+        }
         return writer.toString();
     }
 }

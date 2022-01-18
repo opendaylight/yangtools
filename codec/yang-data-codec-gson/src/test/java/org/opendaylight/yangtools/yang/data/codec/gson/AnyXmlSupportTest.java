@@ -14,7 +14,6 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadText
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadXmlToNormalizedNodes;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.normalizedNodesToJsonString;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import java.io.File;
@@ -77,10 +76,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final String serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext,
                 SchemaPath.ROOT);
 
-        final JsonParser parser = new JsonParser();
-        final JsonElement expected = parser.parse(inputJson);
-        final JsonElement actual = parser.parse(serializationResult);
-        assertTrue(expected.equals(actual));
+        assertEquals(JsonParser.parseString(inputJson), JsonParser.parseString(serializationResult));
     }
 
     @Test
@@ -112,11 +108,8 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final String serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext,
                 SchemaPath.ROOT);
 
-        final JsonParser parser = new JsonParser();
-        final String expectedJson = loadTextFile("/bug8927/json/composite.json");
-        final JsonElement expected = parser.parse(expectedJson);
-        final JsonElement actual = parser.parse(serializationResult);
-        assertTrue(expected.equals(actual));
+        assertEquals(JsonParser.parseString(loadTextFile("/bug8927/json/composite.json")),
+            JsonParser.parseString(serializationResult));
     }
 
     @Test
@@ -153,11 +146,9 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
                 .childByArg(new NodeIdentifier(QName.create("bug8927.test", "2017-01-01", "foo")));
         assertNotNull(data);
         final String jsonOutput = normalizedNodesToJsonString(data, schemaContext, SchemaPath.ROOT);
-        final JsonParser parser = new JsonParser();
-        final JsonElement expextedJson = parser.parse(new FileReader(
-            new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8));
-        final JsonElement serializedJson = parser.parse(jsonOutput);
-        assertEquals(expextedJson, serializedJson);
+        assertEquals(JsonParser.parseReader(new FileReader(
+            new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8)),
+            JsonParser.parseString(jsonOutput));
     }
 
     private static DOMSource getParsedAnyXmlValue(final NormalizedNode transformedInput, final QName anyxmlName) {

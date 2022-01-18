@@ -68,11 +68,10 @@ public final class TestUtils {
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
                 JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), rootPath, null,
                 JsonWriterFactory.createJsonWriter(writer, 2));
-        final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
-        nodeWriter.write(data);
-        nodeWriter.close();
-        final String serializationResult = writer.toString();
-        return serializationResult;
+        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+            nodeWriter.write(data);
+        }
+        return writer.toString();
     }
 
     static JsonObject childObject(final JsonObject jsonObject, final String... names) {
@@ -106,7 +105,7 @@ public final class TestUtils {
     }
 
     static JsonObject resolveCont1(final String jsonOutput) {
-        final JsonElement rootElement = new JsonParser().parse(jsonOutput);
+        final JsonElement rootElement = JsonParser.parseString(jsonOutput);
         assertTrue(rootElement.isJsonObject());
         final JsonObject rootObject = rootElement.getAsJsonObject();
         final JsonObject cont1 = childObject(rootObject, "complexjson:cont1", "cont1");
@@ -114,7 +113,7 @@ public final class TestUtils {
     }
 
     static JsonObject resolveCont2(final String jsonOutput) {
-        final JsonElement rootElement = new JsonParser().parse(jsonOutput);
+        final JsonElement rootElement = JsonParser.parseString(jsonOutput);
         assertTrue(rootElement.isJsonObject());
         final JsonObject rootObject = rootElement.getAsJsonObject();
         final JsonObject cont2 = childObject(rootObject, "complexjson:cont2", "cont2");
