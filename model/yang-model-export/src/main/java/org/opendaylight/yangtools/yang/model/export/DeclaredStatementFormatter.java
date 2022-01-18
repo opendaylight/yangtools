@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -81,8 +82,7 @@ public final class DeclaredStatementFormatter implements Immutable {
      * Builder class for instantiation of a customized {@link DeclaredStatementFormatter}.
      */
     @Beta
-    public static final class Builder
-            implements org.opendaylight.yangtools.concepts.Builder<DeclaredStatementFormatter> {
+    public static final class Builder implements Mutable {
         private final Set<StatementDefinition> ignoredStatements = new HashSet<>(4);
         private boolean retainDefaultStatements;
 
@@ -112,7 +112,11 @@ public final class DeclaredStatementFormatter implements Immutable {
             return this;
         }
 
-        @Override
+        /**
+         * Return a {@link DeclaredStatementFormatter} based on this builder's current state.
+         *
+         * @return A DeclaredStatementFormatter
+         */
         public DeclaredStatementFormatter build() {
             return new DeclaredStatementFormatter(ImmutableSet.copyOf(ignoredStatements), !retainDefaultStatements);
         }
