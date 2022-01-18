@@ -12,15 +12,15 @@ import static java.util.Objects.requireNonNull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-final class LeafRefContextBuilder implements Builder<LeafRefContext> {
-
+final class LeafRefContextBuilder implements Mutable {
     private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
     private final Map<QName, LeafRefContext> referencedByChildren = new HashMap<>();
     private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
@@ -43,8 +43,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
         this.schemaContext = requireNonNull(schemaContext);
     }
 
-    @Override
-    public LeafRefContext build() {
+    @NonNull LeafRefContext build() {
         final LeafRefContext leafRefContext = new LeafRefContext(this);
 
         // LeafRefContext has made a copy of these
@@ -60,7 +59,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     void setReferencedBy(final boolean referencedBy) {
-        this.isReferencedBy = referencedBy;
+        isReferencedBy = referencedBy;
     }
 
     boolean isReferencing() {
@@ -68,7 +67,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     void setReferencing(final boolean referencing) {
-        this.isReferencing = referencing;
+        isReferencing = referencing;
     }
 
     void addReferencingChild(final LeafRefContext child, final QName childQName) {
@@ -96,7 +95,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     void setLeafRefTargetPath(final LeafRefPath leafRefPath) {
-        this.leafRefTargetPath = requireNonNull(leafRefPath);
+        leafRefTargetPath = requireNonNull(leafRefPath);
     }
 
     String getLeafRefTargetPathString() {
@@ -104,7 +103,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     void setLeafRefTargetPathString(final String leafRefPathString) {
-        this.leafRefTargetPathString = requireNonNull(leafRefPathString);
+        leafRefTargetPathString = requireNonNull(leafRefPathString);
     }
 
     QName getCurrentNodeQName() {

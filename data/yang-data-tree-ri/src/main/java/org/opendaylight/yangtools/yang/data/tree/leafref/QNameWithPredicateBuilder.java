@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.data.tree.leafref;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
-class QNameWithPredicateBuilder implements Builder<QNameWithPredicate> {
-
+class QNameWithPredicateBuilder implements Mutable {
     private final List<QNamePredicate> qnamePredicates = new ArrayList<>();
     private QNameModule moduleQname;
     private String localName;
@@ -32,8 +32,7 @@ class QNameWithPredicateBuilder implements Builder<QNameWithPredicate> {
         this.localName = localName;
     }
 
-    @Override
-    public QNameWithPredicate build() {
+    public @NonNull QNameWithPredicate build() {
         if (qnamePredicates.isEmpty() && moduleQname != null && localName != null) {
             return new SimpleQNameWithPredicate(QName.create(moduleQname, localName));
         }
