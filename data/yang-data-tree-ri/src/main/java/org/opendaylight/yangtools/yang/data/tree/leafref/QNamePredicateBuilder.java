@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import org.opendaylight.yangtools.concepts.Builder;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
-class QNamePredicateBuilder implements Builder<QNamePredicate> {
-
+final class QNamePredicateBuilder implements Mutable {
     private QName identifier;
     private LeafRefPath pathKeyExpression;
 
     QNamePredicateBuilder() {
+        // Hidden on purspose
     }
 
     QNamePredicateBuilder(final QName identifier, final LeafRefPath pathKeyExpression) {
@@ -39,8 +40,7 @@ class QNamePredicateBuilder implements Builder<QNamePredicate> {
         this.pathKeyExpression = pathKeyExpression;
     }
 
-    @Override
-    public QNamePredicate build() {
+    public @NonNull QNamePredicate build() {
         return new QNamePredicateImpl(identifier, pathKeyExpression);
     }
 
