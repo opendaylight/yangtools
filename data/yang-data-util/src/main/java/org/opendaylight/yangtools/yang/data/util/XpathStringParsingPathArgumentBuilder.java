@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -34,8 +34,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * is not correctly serialized or does not represent instance identifier valid
  * for associated schema context.
  */
-final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathArgument>> {
-
+final class XpathStringParsingPathArgumentBuilder implements Mutable {
     /**
      * Matcher matching WSP YANG ABNF token.
      */
@@ -74,15 +73,20 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
     XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data) {
         this.codec = requireNonNull(codec);
         this.data = requireNonNull(data);
-        this.offset = 0;
+        offset = 0;
 
         final DataSchemaContextTree tree = codec.getDataContextTree();
-        this.stack = SchemaInferenceStack.of(tree.getEffectiveModelContext());
-        this.current = tree.getRoot();
+        stack = SchemaInferenceStack.of(tree.getEffectiveModelContext());
+        current = tree.getRoot();
     }
 
-    @Override
-    public List<PathArgument> build() {
+    /**
+     * Parse input string and return the corresponding list of {@link PathArgument}s.
+     *
+     * @return List of PathArguments
+     * @throws IllegalArgumentException if the input string is not valid
+     */
+    @NonNull List<PathArgument> build() {
         while (!allCharactersConsumed()) {
             product.add(computeNextArgument());
         }
