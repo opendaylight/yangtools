@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc7952.data.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -64,10 +65,9 @@ public class ImmutableNormalizedMetadata extends AbstractSimpleIdentifiable<Path
     }
 
     /**
-     * {@link org.opendaylight.yangtools.concepts.Builder} of {@link ImmutableNormalizedMetadata} instances.
+     * A Builder of {@link ImmutableNormalizedMetadata} instances.
      */
-    public static final class Builder
-            implements org.opendaylight.yangtools.concepts.Builder<ImmutableNormalizedMetadata> {
+    public static final class Builder implements Mutable {
         private final Map<PathArgument, ImmutableNormalizedMetadata> children = new HashMap<>();
         private final Map<QName, Object> annotations = new HashMap<>();
         private PathArgument identifier;
@@ -77,37 +77,42 @@ public class ImmutableNormalizedMetadata extends AbstractSimpleIdentifiable<Path
         }
 
         @SuppressWarnings("checkstyle:hiddenField")
-        public Builder withIdentifier(final PathArgument identifier) {
+        public @NonNull Builder withIdentifier(final PathArgument identifier) {
             this.identifier = requireNonNull(identifier);
             return this;
         }
 
-        public Builder withAnnotation(final QName type, final Object value) {
+        public @NonNull Builder withAnnotation(final QName type, final Object value) {
             annotations.put(requireNonNull(type, "type"), requireNonNull(value, "value"));
             return this;
         }
 
         @SuppressWarnings("checkstyle:hiddenField")
-        public Builder withAnnotations(final Map<QName, Object> annotations) {
+        public @NonNull Builder withAnnotations(final Map<QName, Object> annotations) {
             annotations.forEach(this::withAnnotation);
             return this;
         }
 
-        public Builder withChild(final ImmutableNormalizedMetadata child) {
+        public @NonNull Builder withChild(final ImmutableNormalizedMetadata child) {
             children.put(child.getIdentifier(), child);
             return this;
         }
 
         @SuppressWarnings("checkstyle:hiddenField")
-        public Builder withChildren(final Collection<ImmutableNormalizedMetadata> children) {
+        public @NonNull Builder withChildren(final Collection<ImmutableNormalizedMetadata> children) {
             children.forEach(this::withChild);
             return this;
         }
 
-        @Override
-        public ImmutableNormalizedMetadata build() {
+        /**
+         * Return an {@link ImmutableNormalizedMetadata} view of this builder's state.
+         *
+         * @return An ImmutableNormalizedMetadata instace
+         * @throws IllegalStateException if this builder does not have enough state
+         */
+        public @NonNull ImmutableNormalizedMetadata build() {
             final PathArgument id = identifier;
-            checkArgument(id != null, "Identifier has not been set");
+            checkState(id != null, "Identifier has not been set");
             return children.isEmpty() ? new ImmutableNormalizedMetadata(id, annotations)
                     : new Container(id, annotations, children);
         }
