@@ -11,4 +11,7 @@ module org.opendaylight.yangtools.rfc7952.data.util {
     exports org.opendaylight.yangtools.rfc7952.data.util;
 
     requires transitive org.opendaylight.yangtools.yang.data.util;
+
+    // Annotations
+    requires static transitive org.eclipse.jdt.annotation;
 }
