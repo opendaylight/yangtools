@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 @Beta
-public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSourceStatementReactor> {
+public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
     private final Map<ValidationBundleType, Collection<StatementDefinition>> reactorValidationBundles = new HashMap<>();
 
@@ -110,7 +110,11 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
         return this;
     }
 
-    @Override
+    /**
+     * Return a new {@link CrossSourceStatementReactor}.
+     *
+     * @return A CrossSourceStatementReactor
+     */
     public @NonNull CrossSourceStatementReactor build() {
         final StatementSupportBundle initBundle = reactorSupportBundles.get(ModelProcessingPhase.INIT).build();
         final StatementSupportBundle preLinkageBundle = reactorSupportBundles
@@ -132,8 +136,7 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
                 .setBundle(ModelProcessingPhase.FULL_DECLARATION, fullDeclBundle)
                 .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, effectiveBundle);
 
-        for (final Entry<ValidationBundleType, Collection<StatementDefinition>> entry : reactorValidationBundles
-                .entrySet()) {
+        for (Entry<ValidationBundleType, Collection<StatementDefinition>> entry : reactorValidationBundles.entrySet()) {
             reactorBuilder.setValidationBundle(entry.getKey(), entry.getValue());
         }
 
