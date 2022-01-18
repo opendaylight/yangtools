@@ -205,7 +205,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     }
 
     public static Decimal64 valueOf(final BigDecimal decimalVal) {
-        // XXX: we should be able to do something smarter here
+        // FIXME: we should be able to do something smarter here using BigDecimal.unscaledValue() and BigDecimal.scale()
         return valueOf(decimalVal.toPlainString());
     }
 
