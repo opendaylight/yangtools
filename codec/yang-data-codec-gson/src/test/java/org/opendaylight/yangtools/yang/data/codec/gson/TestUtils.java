@@ -36,19 +36,17 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class TestUtils {
     private TestUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     static String loadTextFile(final File file) throws IOException {
-        final FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8);
-        final BufferedReader bufReader = new BufferedReader(fileReader);
-
-        String line = null;
         final StringBuilder result = new StringBuilder();
-        while ((line = bufReader.readLine()) != null) {
-            result.append(line);
+        try (BufferedReader bufReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            String line = null;
+            while ((line = bufReader.readLine()) != null) {
+                result.append(line);
+            }
         }
-        bufReader.close();
         return result.toString();
     }
 
