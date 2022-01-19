@@ -35,4 +35,5 @@ module org.opendaylight.yangtools.yang.common {
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
+    requires static osgi.annotation;
 }

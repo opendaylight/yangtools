@@ -8,13 +8,16 @@
 /**
  * Common YANG concepts and constants expressed in terms of Java. This notably includes the concepts of
  * <ul>
- * <li>a {@link YangVersion}</li>
- * <li>a {@link Revision}</li>
- * <li>a {@link QNameModule}</li>
- * <li>a {@link QName}</li>
- * <li>a Java-native representation of a YANG string, {@link DerivedString}</li>
- * <li>a Java-native representations of numeric YANG types, like {@link Uint64}, {@link Decimal64} and
+ *   <li>a {@link YangVersion}</li>
+ *   <li>a {@link Revision}</li>
+ *   <li>a {@link QNameModule}</li>
+ *   <li>a {@link QName}</li>
+ *   <li>a Java-native representation of a YANG string, {@link DerivedString}</li>
+ *   <li>a Java-native representations of numeric YANG types, like {@link Uint64}, {@link Decimal64} and
  *     {@link Empty}</li>
  * </ul>
  */
+@Export
 package org.opendaylight.yangtools.yang.common;
+
+import org.osgi.annotation.bundle.Export;
