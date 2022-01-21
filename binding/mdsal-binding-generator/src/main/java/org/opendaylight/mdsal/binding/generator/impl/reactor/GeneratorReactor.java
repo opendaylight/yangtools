@@ -21,6 +21,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -122,33 +123,48 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         // Start measuring time...
         final Stopwatch sw = Stopwatch.createStarted();
 
-        // Step 1a: walk all composite generators and resolve 'uses' statements to the corresponding grouping node,
-        //          establishing implied inheritance ...
+        // Step 1a: Walk all composite generators and resolve 'uses' statements to the corresponding grouping generator,
+        //          establishing implied inheritance. During this walk we maintain 'stack' to aid this process.
+        //          This indirectly triggers resolution of UsesAugmentGenerators' targets by hooking a requirement
+        //          on the resolved grouping's child nodes as needed.
         linkUsesDependencies(children);
 
-        // Step 1b: ... and also link augments and their targets in a separate pass, as we need groupings fully resolved
-        //          before we attempt augmentation lookups ...
+        // Step 1b: Walk all module generators and start ModuleAugmentGenerators' target resolution by linking the first
+        //          step of each 'augment' statement to its corresponding instantiated site.
+        //          Then start all UsesAugmentGenerators' target resolution.
+        final var augments = new ArrayList<AugmentRequirement>();
         for (ModuleGenerator module : children) {
-            for (Generator child : module) {
-                if (child instanceof ModuleAugmentGenerator) {
-                    ((ModuleAugmentGenerator) child).linkAugmentationTarget(this);
+            for (Generator gen : module) {
+                if (gen instanceof ModuleAugmentGenerator) {
+                    augments.add(((ModuleAugmentGenerator) gen).startLinkage(this));
                 }
             }
         }
+        for (ModuleGenerator module : children) {
+            module.startUsesAugmentLinkage(augments);
+        }
+        LOG.trace("Processing linkage of {} augment generators", augments.size());
 
         // Step 1c: ... finally establish linkage along the reverse uses/augment axis. This is needed to route generated
         //          type manifestations (isAddedByUses/isAugmenting) to their type generation sites. Since generator
         //          tree iteration order does not match dependencies, we may need to perform multiple passes.
-        long unlinkedOriginals = Long.MAX_VALUE;
-        do {
-            long remaining = 0;
-            for (ModuleGenerator module : children) {
-                remaining += module.linkOriginalGenerator();
+        for (ModuleGenerator module : children) {
+            verify(module.linkOriginalGenerator(), "Module %s failed to link", module);
+        }
+
+        final var unlinkedModules = new ArrayList<>(children);
+        while (true) {
+            final boolean progress =
+                progressAndClean(unlinkedModules, ModuleGenerator::linkOriginalGeneratorRecursive)
+                // not '||' because we need the side-effects, which would get short-circuited
+                | progressAndClean(augments, AugmentRequirement::resolve);
+
+            if (augments.isEmpty() && unlinkedModules.isEmpty()) {
+                break;
             }
-            verify(remaining < unlinkedOriginals, "Failed to make progress on linking of remaining %s originals",
-                remaining);
-            unlinkedOriginals = remaining;
-        } while (unlinkedOriginals != 0);
+
+            verify(progress, "Failed to make progress on linking of original generators");
+        }
 
         /*
          * Step 2: link typedef statements, so that typedef's 'type' axis is fully established
@@ -341,6 +357,23 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
                 stack.pop();
             }
         }
+    }
+
+    private static <T> boolean progressAndClean(final List<T> items, final Function<T, LinkageProgress> function) {
+        boolean progress = false;
+
+        final var it = items.iterator();
+        while (it.hasNext()) {
+            final var tmp = function.apply(it.next());
+            if (tmp != LinkageProgress.NONE) {
+                progress = true;
+            }
+            if (tmp == LinkageProgress.DONE) {
+                it.remove();
+            }
+        }
+
+        return progress;
     }
 
     private void linkDependencies(final Iterable<? extends Generator> parent) {

@@ -7,26 +7,43 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 /**
  * Generator corresponding to a {@code augment} statement used as a child of a {@code uses} statement.
  */
 final class UsesAugmentGenerator extends AbstractAugmentGenerator {
-    UsesAugmentGenerator(final AugmentEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
+    private final UsesEffectiveStatement uses;
+
+    private GroupingGenerator grouping;
+
+    UsesAugmentGenerator(final AugmentEffectiveStatement statement, final UsesEffectiveStatement uses,
+            final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
+        this.uses = requireNonNull(uses);
     }
 
-    @Override
-    void loadTargetGenerator() {
+    void resolveGrouping(final UsesEffectiveStatement resolvedUses, final GroupingGenerator resolvedGrouping) {
+        if (resolvedUses == uses) {
+            verify(grouping == null, "Attempted to re-resolve grouping of %s", this);
+            grouping = requireNonNull(resolvedGrouping);
+        }
+    }
+
+    @NonNull AugmentRequirement startLinkage() {
         // Here we are going in the opposite direction of RFC7950, section 7.13:
         //
         //    The effect of a "uses" reference to a grouping is that the nodes
         //    defined by the grouping are copied into the current schema tree and
         //    are then updated according to the "refine" and "augment" statements.
         //
-        // Our parent here is *not* the uses statement, but rather the statement which contains uses -- and its
-        // getSchemaTreeGenerator() is well equipped to deal with the namespace hopping needed to perform the lookups
-        setTargetGenerator(getParent().resolveSchemaNode(statement().argument()));
+        // Our parent here is *not* the 'uses' statement, but rather the statement which contains it.
+        return new AugmentRequirement(this, verifyNotNull(grouping, "Unresolved grouping in %s", this));
     }
 }

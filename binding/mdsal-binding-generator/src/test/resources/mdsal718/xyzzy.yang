@@ -1,0 +1,11 @@
+module xyzzy {
+  namespace xyzzy;
+  prefix xyzzy;
+
+  import bar { prefix bar; }
+  import baz { prefix baz; }
+
+  augment /bar:bar/baz:foo/baz:nested/baz:baz {
+    container xyzzy;
+  }
+}

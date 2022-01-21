@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -43,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
@@ -55,19 +52,93 @@ import org.slf4j.LoggerFactory;
  * A composite generator. Composite generators may contain additional children, which end up being mapped into
  * the naming hierarchy 'under' the composite generator. To support this use case, each composite has a Java package
  * name assigned.
+ *
+ * <p>
+ * State tracking for resolution of children to their original declaration, i.e. back along the 'uses' and 'augment'
+ * axis. This is quite convoluted because we are traversing the generator tree recursively in the iteration order of
+ * children, but actual dependencies may require resolution in a different order, for example in the case of:
+ * <pre>
+ *   container foo {
+ *     uses bar {             // A
+ *       augment bar {        // B
+ *         container xyzzy;   // C
+ *       }
+ *     }
+ *
+ *     grouping bar {
+ *       container bar {      // D
+ *         uses baz;          // E
+ *       }
+ *     }
+ *
+ *     grouping baz {
+ *       leaf baz {           // F
+ *         type string;
+ *       }
+ *     }
+ *   }
+ *
+ *   augment /foo/bar/xyzzy { // G
+ *     leaf xyzzy {           // H
+ *       type string;
+ *     }
+ *   }
+ * </pre>
+ *
+ * <p>
+ * In this case we have three manifestations of 'leaf baz' -- marked A, E and F in the child iteration order. In order
+ * to perform a resolution, we first have to determine that F is the original definition, then establish that E is using
+ * the definition made by F and finally establish that A is using the definition made by F.
+ *
+ * <p>
+ * Dealing with augmentations is harder still, because we need to attach them to the original definition, hence for the
+ * /foo/bar container at A, we need to understand that its original definition is at D and we need to attach the augment
+ * at B to D. Futhermore we also need to establish that the augmentation at G attaches to container defined in C, so
+ * that the 'leaf xyzzy' existing as /foo/bar/xyzzy/xyzzy under C has its original definition at H.
+ *
+ * <p>
+ * Finally realize that the augment at G can actually exist in a different module and is shown in this example only
+ * the simplified form. That also means we could encounter G well before 'container foo' as well as we can have multiple
+ * such augments sprinkled across multiple modules having the same dependency rules as between C and G -- but they still
+ * have to form a directed acyclic graph and we partially deal with those complexities by having modules sorted by their
+ * dependencies.
+ *
+ * <p>
+ * For further details see {@link #linkOriginalGenerator()} and {@link #linkOriginalGeneratorRecursive()}, which deal
+ * with linking original instances in the tree iteration order. The part dealing with augment attachment lives mostly
+ * in {@link AugmentRequirement}.
  */
 abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> extends AbstractExplicitGenerator<T> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCompositeGenerator.class);
 
+    // FIXME: we want to allocate this lazily to lower memory footprint
     private final @NonNull CollisionDomain domain = new CollisionDomain(this);
     private final List<Generator> children;
 
+    /**
+     * List of {@code augment} statements targeting this generator. This list is maintained only for the primary
+     * incarnation. This list is an evolving entity until after we have finished linkage of original statements. It is
+     * expected to be stable at the start of {@code step 2} in {@link GeneratorReactor#execute(TypeBuilderFactory)}.
+     */
     private List<AbstractAugmentGenerator> augments = List.of();
+
+    /**
+     * List of {@code grouping} statements this statement references. This field is set once by
+     * {@link #linkUsesDependencies(GeneratorContext)}.
+     */
     private List<GroupingGenerator> groupings;
 
-    // Performance optimization: if this is true, we have ascertained our original definition as well that of all our
-    // children
-    private boolean originalsResolved;
+    /**
+     * List of composite children which have not been recursively processed. This may become a mutable list when we
+     * have some children which have not completed linking. Once we have completed linking of all children, including
+     * {@link #unlinkedChildren}, this will be set to {@code null}.
+     */
+    private List<AbstractCompositeGenerator<?>> unlinkedComposites = List.of();
+    /**
+     * List of children which have not had their original linked. This list starts of as null. When we first attempt
+     * linkage, it becomes non-null.
+     */
+    private List<Generator> unlinkedChildren;
 
     AbstractCompositeGenerator(final T statement) {
         super(statement);
@@ -146,14 +217,39 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
     }
 
     final void linkUsesDependencies(final GeneratorContext context) {
-        // We are resolving 'uses' statements to their corresponding 'grouping' definitions
+        // We are establishing two linkages here:
+        // - we are resolving 'uses' statements to their corresponding 'grouping' definitions
+        // - we propagate those groupings as anchors to any augment statements, which takes out some amount of guesswork
+        //   from augment+uses resolution case, as groupings know about their immediate augments as soon as uses linkage
+        //   is resolved
         final List<GroupingGenerator> tmp = new ArrayList<>();
         for (EffectiveStatement<?, ?> stmt : statement().effectiveSubstatements()) {
             if (stmt instanceof UsesEffectiveStatement) {
-                tmp.add(context.resolveTreeScoped(GroupingGenerator.class, ((UsesEffectiveStatement) stmt).argument()));
+                final UsesEffectiveStatement uses = (UsesEffectiveStatement) stmt;
+                final GroupingGenerator grouping = context.resolveTreeScoped(GroupingGenerator.class, uses.argument());
+                tmp.add(grouping);
+
+                // Trigger resolution of uses/augment statements. This looks like guesswork, but there may be multiple
+                // 'augment' statements in a 'uses' statement and keeping a ListMultimap here seems wasteful.
+                for (Generator gen : this) {
+                    if (gen instanceof UsesAugmentGenerator) {
+                        ((UsesAugmentGenerator) gen).resolveGrouping(uses, grouping);
+                    }
+                }
             }
         }
         groupings = List.copyOf(tmp);
+    }
+
+    final void startUsesAugmentLinkage(final List<AugmentRequirement> requirements) {
+        for (Generator child : children) {
+            if (child instanceof UsesAugmentGenerator) {
+                requirements.add(((UsesAugmentGenerator) child).startLinkage());
+            }
+            if (child instanceof AbstractCompositeGenerator) {
+                ((AbstractCompositeGenerator<?>) child).startUsesAugmentLinkage(requirements);
+            }
+        }
     }
 
     final void addAugment(final AbstractAugmentGenerator augment) {
@@ -163,24 +259,73 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
         augments.add(requireNonNull(augment));
     }
 
-    @Override
-    long linkOriginalGenerator() {
-        if (originalsResolved) {
-            return 0;
+    /**
+     * Attempt to link the generator corresponding to the original definition for this generator's statements as well as
+     * to all child generators.
+     *
+     * @return Progress indication
+     */
+    final @NonNull LinkageProgress linkOriginalGeneratorRecursive() {
+        if (unlinkedComposites == null) {
+            // We have unset this list (see below), and there is nothing left to do
+            return LinkageProgress.DONE;
         }
 
-        long remaining = super.linkOriginalGenerator();
-        if (remaining == 0) {
-            for (Generator child : children) {
+        if (unlinkedChildren == null) {
+            unlinkedChildren = children.stream()
+                .filter(AbstractExplicitGenerator.class::isInstance)
+                .map(child -> (AbstractExplicitGenerator<?>) child)
+                .collect(Collectors.toList());
+        }
+
+        var progress = LinkageProgress.NONE;
+        if (!unlinkedChildren.isEmpty()) {
+            // Attempt to make progress on child linkage
+            final var it = unlinkedChildren.iterator();
+            while (it.hasNext()) {
+                final var child = it.next();
                 if (child instanceof AbstractExplicitGenerator) {
-                    remaining += ((AbstractExplicitGenerator<?>) child).linkOriginalGenerator();
+                    if (((AbstractExplicitGenerator<?>) child).linkOriginalGenerator()) {
+                        progress = LinkageProgress.SOME;
+                        it.remove();
+
+                        // If this is a composite generator we need to process is further
+                        if (child instanceof AbstractCompositeGenerator) {
+                            if (unlinkedComposites.isEmpty()) {
+                                unlinkedComposites = new ArrayList<>();
+                            }
+                            unlinkedComposites.add((AbstractCompositeGenerator<?>) child);
+                        }
+                    }
                 }
             }
-            if (remaining == 0) {
-                originalsResolved = true;
+
+            if (unlinkedChildren.isEmpty()) {
+                // Nothing left to do, make sure any previously-allocated list can be scavenged
+                unlinkedChildren = List.of();
             }
         }
-        return remaining;
+
+        // Process children of any composite children we have.
+        final var it = unlinkedComposites.iterator();
+        while (it.hasNext()) {
+            final var tmp = it.next().linkOriginalGeneratorRecursive();
+            if (tmp != LinkageProgress.NONE) {
+                progress = LinkageProgress.SOME;
+            }
+            if (tmp == LinkageProgress.DONE) {
+                it.remove();
+            }
+        }
+
+        if (unlinkedChildren.isEmpty() && unlinkedComposites.isEmpty()) {
+            // All done, set the list to null to indicate there is nothing left to do in this generator or any of our
+            // children.
+            unlinkedComposites = null;
+            return LinkageProgress.DONE;
+        }
+
+        return progress;
     }
 
     @Override
@@ -188,20 +333,29 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
         return (AbstractCompositeGenerator<?>) super.getOriginal();
     }
 
-    final @NonNull OriginalLink getOriginalChild(final QName childQName) {
+    @Override
+    final AbstractCompositeGenerator<?> tryOriginal() {
+        return (AbstractCompositeGenerator<?>) super.tryOriginal();
+    }
+
+    final @Nullable OriginalLink originalChild(final QName childQName) {
         // First try groupings/augments ...
-        final AbstractExplicitGenerator<?> found = findInferredGenerator(childQName);
+        var found = findInferredGenerator(childQName);
         if (found != null) {
             return OriginalLink.partial(found);
         }
 
         // ... no luck, we really need to start looking at our origin
-        final AbstractExplicitGenerator<?> prev = verifyNotNull(previous(),
-            "Failed to find %s in scope of %s", childQName, this);
+        final var prev = previous();
+        if (prev != null) {
+            final QName prevQName = childQName.bindTo(prev.getQName().getModule());
+            found = prev.findSchemaTreeGenerator(prevQName);
+            if (found != null) {
+                return  found.originalLink();
+            }
+        }
 
-        final QName prevQName = childQName.bindTo(prev.getQName().getModule());
-        return verifyNotNull(prev.findSchemaTreeGenerator(prevQName),
-            "Failed to find child %s (proxy for %s) in %s", prevQName, childQName, prev).originalLink();
+        return null;
     }
 
     @Override
@@ -210,73 +364,42 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
         return found != null ? found : findInferredGenerator(qname);
     }
 
-    private @Nullable AbstractExplicitGenerator<?> findInferredGenerator(final QName qname) {
-        // First search our local groupings ...
-        for (GroupingGenerator grouping : groupings) {
-            final AbstractExplicitGenerator<?> gen = grouping.findSchemaTreeGenerator(
-                qname.bindTo(grouping.statement().argument().getModule()));
+    final @Nullable AbstractAugmentGenerator findAugmentForGenerator(final QName qname) {
+        for (var augment : augments) {
+            final var gen = augment.findSchemaTreeGenerator(qname);
             if (gen != null) {
-                return gen;
-            }
-        }
-        // ... next try local augments, which may have groupings themselves
-        for (AbstractAugmentGenerator augment : augments) {
-            final AbstractExplicitGenerator<?> gen = augment.findSchemaTreeGenerator(qname);
-            if (gen != null) {
-                return gen;
+                return augment;
             }
         }
         return null;
     }
 
-    final @NonNull AbstractExplicitGenerator<?> resolveSchemaNode(final SchemaNodeIdentifier path) {
-        // This is not quite straightforward. 'path' works on top of schema tree, which is instantiated view. Since we
-        // do not generate duplicate instantiations along 'uses' path, findSchemaTreeGenerator() would satisfy our
-        // request by returning a child of the source 'grouping'.
-        //
-        // When that happens, our subsequent lookups need to adjust the namespace being looked up to the grouping's
-        // namespace... except for the case when the step is actually an augmentation, in which case we must not make
-        // that adjustment.
-        //
-        // Hence we deal with this lookup recursively, dropping namespace hints when we cross into groupings.
-        return resolveSchemaNode(path.getNodeIdentifiers().iterator(), null);
-    }
-
-    private @NonNull AbstractExplicitGenerator<?> resolveSchemaNode(final Iterator<QName> qnames,
-            final @Nullable QNameModule localNamespace) {
-        final QName qname = qnames.next();
-
-        // First try local augments, as those are guaranteed to match namespace exactly
-        for (AbstractAugmentGenerator augment : augments) {
-            final AbstractExplicitGenerator<?> gen = augment.findSchemaTreeGenerator(qname);
-            if (gen != null) {
-                return resolveNext(gen, qnames, null);
-            }
-        }
-
-        // Second try local groupings, as those perform their own adjustment
+    final @Nullable GroupingGenerator findGroupingForGenerator(final QName qname) {
         for (GroupingGenerator grouping : groupings) {
-            final QNameModule ns = grouping.statement().argument().getModule();
-            final AbstractExplicitGenerator<?> gen = grouping.findSchemaTreeGenerator(qname.bindTo(ns));
+            final var gen = grouping.findSchemaTreeGenerator(qname.bindTo(grouping.statement().argument().getModule()));
             if (gen != null) {
-                return resolveNext(gen, qnames, ns);
+                return grouping;
             }
         }
-
-        // Lastly try local statements adjusted with namespace, if applicable
-        final QName lookup = localNamespace == null ? qname : qname.bindTo(localNamespace);
-        final AbstractExplicitGenerator<?> gen = verifyNotNull(super.findSchemaTreeGenerator(lookup),
-            "Failed to find %s as %s in %s", qname, lookup, this);
-        return resolveNext(gen, qnames, localNamespace);
+        return null;
     }
 
-    private static @NonNull AbstractExplicitGenerator<?> resolveNext(final @NonNull AbstractExplicitGenerator<?> gen,
-            final Iterator<QName> qnames, final QNameModule localNamespace) {
-        if (qnames.hasNext()) {
-            verify(gen instanceof AbstractCompositeGenerator, "Unexpected generator %s", gen);
-            return ((AbstractCompositeGenerator<?>) gen).resolveSchemaNode(qnames, localNamespace);
+    private @Nullable AbstractExplicitGenerator<?> findInferredGenerator(final QName qname) {
+        // First search our local groupings ...
+        for (var grouping : groupings) {
+            final var gen = grouping.findSchemaTreeGenerator(qname.bindTo(grouping.statement().argument().getModule()));
+            if (gen != null) {
+                return gen;
+            }
         }
-        return gen;
+        // ... next try local augments, which may have groupings themselves
+        for (var augment : augments) {
+            final var gen = augment.findSchemaTreeGenerator(qname);
+            if (gen != null) {
+                return gen;
+            }
+        }
+        return null;
     }
 
     /**
@@ -404,7 +527,7 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
                 final UsesEffectiveStatement uses = (UsesEffectiveStatement) stmt;
                 for (EffectiveStatement<?, ?> usesSub : uses.effectiveSubstatements()) {
                     if (usesSub instanceof AugmentEffectiveStatement) {
-                        tmpAug.add(new UsesAugmentGenerator((AugmentEffectiveStatement) usesSub, this));
+                        tmpAug.add(new UsesAugmentGenerator((AugmentEffectiveStatement) usesSub, uses, this));
                     }
                 }
             } else {
@@ -414,7 +537,9 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
         }
 
         // Sort augments and add them last. This ensures child iteration order always reflects potential
-        // interdependencies, hence we do not need to worry about them.
+        // interdependencies, hence we do not need to worry about them. This is extremely important, as there are a
+        // number of places where we would have to either move the logic to parent statement and explicitly filter/sort
+        // substatements to establish this order.
         tmpAug.sort(AbstractAugmentGenerator.COMPARATOR);
         tmp.addAll(tmpAug);
 

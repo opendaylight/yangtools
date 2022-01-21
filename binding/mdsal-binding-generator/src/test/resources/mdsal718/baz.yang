@@ -1,0 +1,15 @@
+module baz {
+  namespace baz;
+  prefix baz;
+
+  import foo { prefix foo; }
+  import bar { prefix bar; }
+
+  augment /bar:bar {
+    uses foo:foo {
+      augment foo/nested {
+        container baz;
+      }
+    }
+  }
+}

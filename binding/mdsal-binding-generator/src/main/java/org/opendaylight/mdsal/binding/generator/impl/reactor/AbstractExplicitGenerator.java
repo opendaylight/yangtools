@@ -85,15 +85,14 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
     }
 
     /**
-     * Attempt to link the generator corresponding to the original definition for this generator's statements as well as
-     * to all child generators.
+     * Attempt to link the generator corresponding to the original definition for this generator.
      *
-     * @return Number of generators that remain unlinked.
+     * @return {@code true} if this generator is linked
      */
-    long linkOriginalGenerator() {
+    final boolean linkOriginalGenerator() {
         if (orig != null) {
             // Original already linked
-            return 0;
+            return true;
         }
 
         if (prev == null) {
@@ -102,27 +101,32 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
             if (!isAddedByUses() && !isAugmenting()) {
                 orig = prev = this;
                 LOG.trace("Linked {} to self", this);
-                return 0;
+                return true;
             }
 
-            final var link = getParent().getOriginalChild(getQName());
+            final var link = getParent().originalChild(getQName());
+            if (link == null) {
+                LOG.trace("Cannot link {} yet", this);
+                return false;
+            }
+
             prev = link.previous();
             orig = link.original();
             if (orig != null) {
                 LOG.trace("Linked {} to {} original {}", this, prev, orig);
-                return 0;
+                return true;
             }
 
             LOG.trace("Linked {} to intermediate {}", this, prev);
-            return 1;
+            return false;
         }
 
         orig = prev.originalLink().original();
         if (orig != null) {
             LOG.trace("Linked {} to original {}", this, orig);
-            return 0;
+            return true;
         }
-        return 1;
+        return false;
     }
 
     /**
@@ -144,6 +148,10 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
         return verifyNotNull(orig, "Generator %s does not have linkage to original instance resolved", this);
     }
 
+    @Nullable AbstractExplicitGenerator<?> tryOriginal() {
+        return orig;
+    }
+
     /**
      * Return the link towards the original generator.
      *
@@ -161,6 +169,10 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
     }
 
     @Nullable AbstractExplicitGenerator<?> findSchemaTreeGenerator(final QName qname) {
+        return findLocalSchemaTreeGenerator(qname);
+    }
+
+    final @Nullable AbstractExplicitGenerator<?> findLocalSchemaTreeGenerator(final QName qname) {
         for (Generator child : this) {
             if (child instanceof AbstractExplicitGenerator) {
                 final AbstractExplicitGenerator<?> gen = (AbstractExplicitGenerator<?>) child;
