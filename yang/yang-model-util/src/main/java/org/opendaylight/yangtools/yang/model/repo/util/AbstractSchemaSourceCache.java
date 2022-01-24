@@ -68,9 +68,7 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
     @Override
     public void schemaSourceEncountered(final SchemaSourceRepresentation source) {
         if (representation.isAssignableFrom(source.getType())) {
-            @SuppressWarnings("unchecked")
-            final T src = (T)source;
-            offer(src);
+            offer(representation.cast(source));
         }
     }
 
