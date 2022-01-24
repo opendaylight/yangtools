@@ -8,15 +8,14 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.FinalizablePhantomReference;
-import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.FluentFuture;
+import java.lang.ref.Cleaner;
+import java.lang.ref.Cleaner.Cleanable;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
@@ -32,9 +31,9 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 @Beta
 public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
         implements AutoCloseable {
-    // FIXME: 7.0.0: use a java.util.Cleaner?
-    private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<>());
-    private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
+    private static final Cleaner CLEANER = Cleaner.create();
+
+    private final Set<Cleanable> refs = ConcurrentHashMap.newKeySet();
     private final Cache<SourceIdentifier, T> cache;
 
     private GuavaSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
@@ -75,27 +74,22 @@ public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> 
         if (present == null) {
             cache.put(source.getIdentifier(), source);
 
-            final SchemaSourceRegistration<T> reg = register(source.getIdentifier());
-            final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, queue) {
-                @Override
-                public void finalizeReferent() {
-                    reg.close();
-                    regs.remove(this);
-                }
-            };
-
-            regs.add(ref);
+            final var reg = register(source.getIdentifier());
+            refs.add(CLEANER.register(source, reg::close));
         }
     }
 
     @Override
     public void close() {
-        while (!regs.isEmpty()) {
-            final FinalizablePhantomReference<?> ref = regs.get(0);
-            ref.finalizeReferent();
+        while (!refs.isEmpty()) {
+            final var it = refs.iterator();
+            while (it.hasNext()) {
+                final var ref = it.next();
+                it.remove();
+                ref.clean();
+            }
         }
 
         cache.invalidateAll();
-        queue.close();
     }
 }
