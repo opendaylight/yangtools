@@ -120,6 +120,9 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
                 throw new IllegalStateException("Unhandled state" + state);
         }
 
+        // Start measuring time...
+        final Stopwatch sw = Stopwatch.createStarted();
+
         // Step 1a: walk all composite generators and resolve 'uses' statements to the corresponding grouping node,
         //          establishing implied inheritance ...
         linkUsesDependencies(children);
@@ -146,7 +149,6 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
          * Since our implementation class hierarchy captures all four statements involved in a common superclass, we can
          * perform this in a single pass.
          */
-        final Stopwatch sw = Stopwatch.createStarted();
         linkDependencies(children);
 
         // Step five: resolve all 'type leafref' and 'type identityref' statements, so they point to their
