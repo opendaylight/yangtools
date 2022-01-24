@@ -71,21 +71,25 @@ public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> 
 
     @Override
     protected void offer(final T source) {
-        final T present = cache.getIfPresent(source.getIdentifier());
-        if (present == null) {
-            cache.put(source.getIdentifier(), source);
-
-            final SchemaSourceRegistration<T> reg = register(source.getIdentifier());
-            final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, queue) {
-                @Override
-                public void finalizeReferent() {
-                    reg.close();
-                    regs.remove(this);
-                }
-            };
-
-            regs.add(ref);
+        final var srcId = source.getIdentifier();
+        if (cache.getIfPresent(srcId) != null) {
+            // We already have this source, do not track it
+            return;
         }
+
+        // Make the source available
+        cache.put(srcId, source);
+        final var reg = register(srcId);
+
+        final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, queue) {
+            @Override
+            public void finalizeReferent() {
+                reg.close();
+                regs.remove(this);
+            }
+        };
+
+        regs.add(ref);
     }
 
     @Override
