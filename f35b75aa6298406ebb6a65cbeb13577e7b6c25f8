@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b329ffb_e2249996",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-01-25T11:27:55Z",
+      "side": 1,
+      "message": "https://github.com/google/guava/issues/3086",
+      "revId": "f35b75aa6298406ebb6a65cbeb13577e7b6c25f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
