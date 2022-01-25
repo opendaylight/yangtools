@@ -67,7 +67,6 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     private final @NonNull List<ModuleGenerator> children;
     private final @NonNull SchemaInferenceStack inferenceStack;
 
-    private Map<?, AbstractTypeAwareGenerator<?>> leafGenerators;
     private State state = State.INITIALIZED;
 
     public GeneratorReactor(final EffectiveModelContext context) {
