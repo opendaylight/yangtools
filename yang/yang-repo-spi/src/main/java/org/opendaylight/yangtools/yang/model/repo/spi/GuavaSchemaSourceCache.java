@@ -32,9 +32,10 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 @Beta
 public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
         implements AutoCloseable {
-    // FIXME: 7.0.0: use a java.util.Cleaner?
+    // FIXME: YANGTOOLS-1391: use a java.lang.ref.Cleaner?
+    private static final FinalizableReferenceQueue QUEUE = new FinalizableReferenceQueue();
+
     private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<>());
-    private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
     private final Cache<SourceIdentifier, T> cache;
 
     private GuavaSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
@@ -81,7 +82,7 @@ public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> 
         cache.put(srcId, source);
         final var reg = register(srcId);
 
-        final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, queue) {
+        final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, QUEUE) {
             @Override
             public void finalizeReferent() {
                 reg.close();
@@ -100,6 +101,5 @@ public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> 
         }
 
         cache.invalidateAll();
-        queue.close();
     }
 }
