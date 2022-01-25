@@ -333,6 +333,17 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         }
     }
 
+    private static void linkOriginalGenerator(final Iterable<? extends Generator> parent) {
+        for (Generator child : parent) {
+            if (child instanceof AbstractExplicitGenerator) {
+                ((AbstractExplicitGenerator<?>) child).linkOriginalGenerator();
+            }
+            if (child instanceof AbstractCompositeGenerator) {
+                linkOriginalGenerator(child);
+            }
+        }
+    }
+
     private void linkDependencies(final Iterable<? extends Generator> parent) {
         for (Generator child : parent) {
             if (child instanceof AbstractDependentGenerator) {
@@ -340,19 +351,6 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
             } else if (child instanceof AbstractCompositeGenerator) {
                 stack.push(child);
                 linkDependencies(child);
-                stack.pop();
-            }
-        }
-    }
-
-    private void linkOriginalGenerator(final Iterable<? extends Generator> parent) {
-        for (Generator child : parent) {
-            if (child instanceof AbstractExplicitGenerator) {
-                ((AbstractExplicitGenerator<?>) child).linkOriginalGenerator(this);
-            }
-            if (child instanceof AbstractCompositeGenerator) {
-                stack.push(child);
-                linkOriginalGenerator(child);
                 stack.pop();
             }
         }

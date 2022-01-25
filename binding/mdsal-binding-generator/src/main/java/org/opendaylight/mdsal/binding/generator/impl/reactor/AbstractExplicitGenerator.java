@@ -75,7 +75,7 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
         return statement instanceof CopyableNode && ((CopyableNode) statement).isAugmenting();
     }
 
-    final void linkOriginalGenerator(final GeneratorContext context) {
+    final void linkOriginalGenerator() {
         if (isAddedByUses() || isAugmenting()) {
             LOG.trace("Linking {}", this);
             prev = getParent().getOriginalChild(getQName());
