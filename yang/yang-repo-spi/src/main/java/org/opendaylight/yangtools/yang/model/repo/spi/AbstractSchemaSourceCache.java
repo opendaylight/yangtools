@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
@@ -41,7 +42,7 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
      *
      * @param source schema source
      */
-    protected abstract void offer(T source);
+    protected abstract void offer(@NonNull T source);
 
     /**
      * Register the presence of a cached schema source with the consumer. Subclasses
