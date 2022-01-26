@@ -31,9 +31,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
-@Deprecated
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class GuavaSchemaSourceCacheTest {
+public class SoftSchemaSourceCacheTest {
     public static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
     public static final long LIFETIME = 1000L;
     public static final TimeUnit UNITS = TimeUnit.MILLISECONDS;
@@ -51,22 +50,15 @@ public class GuavaSchemaSourceCacheTest {
     }
 
     @Test
-    public void inMemorySchemaSourceCacheTest1() {
-        try (var cache = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION)) {
-            assertNotNull(cache);
-        }
-    }
-
-    @Test
-    public void inMemorySchemaSourceCacheTest2() {
-        try (var cache = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION, LIFETIME, UNITS)) {
+    public void inMemorySchemaSourceCacheTest() {
+        try (var cache = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
             assertNotNull(cache);
         }
     }
 
     @Test
     public void inMemorySchemaSourceCacheOfferAndGetSourcestest() throws Exception {
-        try (var cache = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION)) {
+        try (var cache = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
             final String content = "content";
             final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
             cache.offer(source);
@@ -81,7 +73,7 @@ public class GuavaSchemaSourceCacheTest {
 
     @Test
     public void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
-        try (var cache = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION)) {
+        try (var cache = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
             final var sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
             final var checkedSource = cache.getSource(sourceIdentifier);
             assertNotNull(checkedSource);
@@ -91,8 +83,8 @@ public class GuavaSchemaSourceCacheTest {
 
     @Test
     public void inMemorySchemaSourceCache3test() throws InterruptedException, ExecutionException {
-        try (var cache1 = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION)) {
-            try (var cache2 = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION, LIFETIME, UNITS)) {
+        try (var cache1 = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
+            try (var cache2 = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
                 final String content = "content";
                 final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
                 cache1.offer(source);

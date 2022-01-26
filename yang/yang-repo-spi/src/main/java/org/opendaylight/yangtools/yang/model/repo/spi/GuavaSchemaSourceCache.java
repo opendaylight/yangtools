@@ -28,8 +28,10 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * A simple {@link AbstractSchemaSourceCache} based on {@link Cache Guava Cache}.
  *
  * @param <T> {@link SchemaSourceRepresentation} type stored in this cache
+ * @deprecated This class has a rather complicated and ugly design. Use {@link SoftSchemaSourceCache} instead.
  */
 @Beta
+@Deprecated(since = "7.0.13", forRemoval = true)
 public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
         implements AutoCloseable {
     // FIXME: 7.0.0: use a java.util.Cleaner?
