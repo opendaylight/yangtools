@@ -137,8 +137,18 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         }
 
         // Step 1c: ... finally establish linkage along the reverse uses/augment axis. This is needed to route generated
-        //          type manifestations (isAddedByUses/isAugmenting) to their type generation sites.
-        linkOriginalGenerator(children);
+        //          type manifestations (isAddedByUses/isAugmenting) to their type generation sites. Since generator
+        //          tree iteration order does not match dependencies, we may need to perform multiple passes.
+        long unlinkedOriginals = Long.MAX_VALUE;
+        do {
+            long remaining = 0;
+            for (ModuleGenerator module : children) {
+                remaining += module.linkOriginalGenerator();
+            }
+            verify(remaining < unlinkedOriginals, "Failed to make progress on linking of remaining %s originals",
+                remaining);
+            unlinkedOriginals = remaining;
+        } while (unlinkedOriginals != 0);
 
         /*
          * Step 2: link typedef statements, so that typedef's 'type' axis is fully established
@@ -329,17 +339,6 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
                 composite.linkUsesDependencies(this);
                 linkUsesDependencies(composite);
                 stack.pop();
-            }
-        }
-    }
-
-    private static void linkOriginalGenerator(final Iterable<? extends Generator> parent) {
-        for (Generator child : parent) {
-            if (child instanceof AbstractExplicitGenerator) {
-                ((AbstractExplicitGenerator<?>) child).linkOriginalGenerator();
-            }
-            if (child instanceof AbstractCompositeGenerator) {
-                linkOriginalGenerator(child);
             }
         }
     }

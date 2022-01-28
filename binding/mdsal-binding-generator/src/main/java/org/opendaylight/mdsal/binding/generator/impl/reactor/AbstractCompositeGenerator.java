@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.generator.impl.reactor.OriginalLink.Partial;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -64,6 +65,10 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
 
     private List<AbstractAugmentGenerator> augments = List.of();
     private List<GroupingGenerator> groupings;
+
+    // Performance optimization: if this is true, we have ascertained our original definition as well that of all our
+    // children
+    private boolean originalsResolved;
 
     AbstractCompositeGenerator(final T statement) {
         super(statement);
@@ -160,15 +165,35 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
     }
 
     @Override
+    long linkOriginalGenerator() {
+        if (originalsResolved) {
+            return 0;
+        }
+
+        long remaining = super.linkOriginalGenerator();
+        if (remaining == 0) {
+            for (Generator child : children) {
+                if (child instanceof AbstractExplicitGenerator) {
+                    remaining += ((AbstractExplicitGenerator<?>) child).linkOriginalGenerator();
+                }
+            }
+            if (remaining == 0) {
+                originalsResolved = true;
+            }
+        }
+        return remaining;
+    }
+
+    @Override
     final AbstractCompositeGenerator<?> getOriginal() {
         return (AbstractCompositeGenerator<?>) super.getOriginal();
     }
 
-    final @NonNull AbstractExplicitGenerator<?> getOriginalChild(final QName childQName) {
+    final @NonNull OriginalLink getOriginalChild(final QName childQName) {
         // First try groupings/augments ...
         final AbstractExplicitGenerator<?> found = findInferredGenerator(childQName);
         if (found != null) {
-            return found;
+            return new Partial(found);
         }
 
         // ... no luck, we really need to start looking at our origin
@@ -177,7 +202,7 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
 
         final QName prevQName = childQName.bindTo(prev.getQName().getModule());
         return verifyNotNull(prev.findSchemaTreeGenerator(prevQName),
-            "Failed to find child %s (proxy for %s) in %s", prevQName, childQName, prev).getOriginal();
+            "Failed to find child %s (proxy for %s) in %s", prevQName, childQName, prev).originalLink();
     }
 
     @Override

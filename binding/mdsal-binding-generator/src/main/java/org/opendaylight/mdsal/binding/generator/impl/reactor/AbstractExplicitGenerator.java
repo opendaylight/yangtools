@@ -8,12 +8,15 @@
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
+import org.opendaylight.mdsal.binding.generator.impl.reactor.OriginalLink.Complete;
+import org.opendaylight.mdsal.binding.generator.impl.reactor.OriginalLink.Partial;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.TypeMemberComment;
@@ -40,12 +43,17 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
 
     private final @NonNull T statement;
 
-    // FIXME: this, along with AbstractTypeObjectGenerator's (and TypedefGenerator's) fields should be better-controlled
-    //        with explicit sequencing guards. It it currently stands, we are expending two (or more) additional fields
-    //        to express downstream linking. If we had the concept of resolution step (an enum), we could just get by
-    //        with a simple queue of Step/Callback pairs, which would trigger as needed. For an example see how
-    //        AbstractTypeObjectGenerator manages baseGen/inferred fields.
-    private AbstractExplicitGenerator<?> prev;
+    /**
+     * Field tracking previous incarnation (along reverse of 'uses' and 'augment' axis) of this statement. This field
+     * can either be one of:
+     * <ul>
+     *   <li>{@code null} when not resolved, i.e. access is not legal, or</li>
+     *   <li>{@code this} object if this is the original definition, or</li>
+     *   <li>an {@link AbstractExplicitGenerator} pointing to the original definition, or</li>
+     *   <li>a {@link Partial} link pointing to a generator closer to the original definition</li>
+     * </ul>
+     */
+    private Object prev;
 
     AbstractExplicitGenerator(final T statement) {
         this.statement = requireNonNull(statement);
@@ -75,20 +83,90 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
         return statement instanceof CopyableNode && ((CopyableNode) statement).isAugmenting();
     }
 
-    final void linkOriginalGenerator() {
-        if (isAddedByUses() || isAugmenting()) {
-            LOG.trace("Linking {}", this);
-            prev = getParent().getOriginalChild(getQName());
+    /**
+     * Attempt to link the generator corresponding to the original definition for this generator's statements as well as
+     * to all child generators.
+     *
+     * @return Number of generators that remain unlinked.
+     */
+    long linkOriginalGenerator() {
+        final var local = prev;
+        if (local instanceof AbstractExplicitGenerator) {
+            return 0;
+        } else if (local instanceof Partial) {
+            return ((Partial) local).original() != null ? 0 : 1;
+        }
+        verify(local == null, "Unexpected link %s", local);
+
+        if (!isAddedByUses() && !isAugmenting()) {
+            prev = this;
+            LOG.trace("Linked {} to self", this);
+            return 0;
+        }
+
+        LOG.trace("Linking {}", this);
+        final var link = getParent().getOriginalChild(getQName());
+        if (link instanceof Complete) {
+            prev = ((Complete) link).original();
             LOG.trace("Linked {} to {}", this, prev);
+            return 0;
+        }
+        prev = link;
+        LOG.trace("Linked {} to intermediate {}", this, prev);
+        return link.original() != null ? 0 : 1;
+    }
+
+    /**
+     * Return the previous incarnation of this generator, or {@code null} if this is the original generator.
+     *
+     * @return Previous incarnation or {@code null}
+     */
+    final @Nullable AbstractExplicitGenerator<?> previous() {
+        final var local = prev();
+        if (local == this) {
+            return null;
+        } else if (local instanceof Partial) {
+            return ((Partial) local).previous();
+        } else {
+            return verifyExplicit(local);
         }
     }
 
-    final @Nullable AbstractExplicitGenerator<?> previous() {
-        return prev;
+    /**
+     * Return the original incarnation of this generator, or self if this is the original generator.
+     *
+     * @return Original incarnation of this generator
+     */
+    @NonNull AbstractExplicitGenerator<?> getOriginal() {
+        final var local = prev();
+        return local == this ? this : verifyExplicit(local).getOriginal();
     }
 
-    @NonNull AbstractExplicitGenerator<?> getOriginal() {
-        return prev == null ? this : prev.getOriginal();
+    /**
+     * Return the link towards the original generator.
+     *
+     * @return Link towards the original generator.
+     */
+    final @NonNull OriginalLink originalLink() {
+        final var local = prev;
+        if (local == null) {
+            return new Partial(this);
+        } else if (local == this) {
+            return new Complete(this);
+        } else if (local instanceof Partial) {
+            return (Partial) local;
+        } else {
+            return verifyExplicit(local).originalLink();
+        }
+    }
+
+    private static @NonNull AbstractExplicitGenerator<?> verifyExplicit(final Object prev) {
+        verify(prev instanceof AbstractExplicitGenerator, "Unexpected previous %s", prev);
+        return (AbstractExplicitGenerator<?>) prev;
+    }
+
+    private @NonNull Object prev() {
+        return verifyNotNull(prev, "Generator %s does not have linkage to previous instance resolved", this);
     }
 
     @Nullable AbstractExplicitGenerator<?> findSchemaTreeGenerator(final QName qname) {

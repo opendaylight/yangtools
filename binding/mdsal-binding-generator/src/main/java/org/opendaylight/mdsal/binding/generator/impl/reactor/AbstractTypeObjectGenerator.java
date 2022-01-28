@@ -281,6 +281,11 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
 
     private final TypeEffectiveStatement<?> type;
 
+    // FIXME: these fields should be better-controlled with explicit sequencing guards. It it currently stands, we are
+    //        expending two (or more) additional fields to express downstream linking. If we had the concept of
+    //        resolution step (an enum), we could just get by with a simple queue of Step/Callback pairs, which would
+    //        trigger as needed. See how we manage baseGen/inferred fields.
+
     /**
      * The generator corresponding to our YANG base type. It produces the superclass of our encapsulated type. If it is
      * {@code null}, this generator is the root of the hierarchy.
