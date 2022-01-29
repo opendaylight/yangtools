@@ -7,17 +7,19 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -72,11 +74,10 @@ public class AugmentedTypeTest {
             }
         }
         assertNotNull("getIfcKeyMethod is null", getIfcKeyMethod);
-        assertNotNull("getIfcKeyMethod.getReturnType() is null", getIfcKeyMethod.getReturnType());
-        assertFalse("getIfcKeyMethod.getReturnType() should not be Void",
-                getIfcKeyMethod.getReturnType().equals("java.lang.Void"));
-        assertTrue("getIfcKeyMethod.getReturnType().getName() must be InterfaceKey", getIfcKeyMethod.getReturnType()
-                .getName().equals("InterfaceKey"));
+        assertThat(getIfcKeyMethod.getReturnType(), instanceOf(GeneratedTransferObject.class));
+        assertEquals(JavaTypeName.create(
+            "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
+            "InterfaceKey"), getIfcKeyMethod.getReturnType().getIdentifier());
 
         MethodSignature getHigherLayerIfMethod = null;
         for (final MethodSignature method : gtInterfaceMethods) {
@@ -86,9 +87,7 @@ public class AugmentedTypeTest {
             }
         }
         assertNotNull("getHigherLayerIf method is null", getHigherLayerIfMethod);
-        assertNotNull("getHigherLayerIf method return type is null", getHigherLayerIfMethod.getReturnType());
-        assertTrue("getHigherLayerIf method return type name must be List", getHigherLayerIfMethod.getReturnType()
-                .getName().equals("List"));
+        assertEquals(Types.listTypeFor(Types.STRING), getHigherLayerIfMethod.getReturnType());
 
         // 'InterfaceKey'
         assertNotNull("InterfaceKey is null", gtInterfaceKey);
@@ -102,9 +101,7 @@ public class AugmentedTypeTest {
             }
         }
         assertNotNull("interfaceId is null", gtInterfaceId);
-        assertNotNull("interfaceId return type is null", gtInterfaceId.getReturnType());
-        assertTrue("interfaceId return type name must be String",
-                gtInterfaceId.getReturnType().getName().equals("String"));
+        assertEquals(Types.STRING, gtInterfaceId.getReturnType());
 
         // 'Tunnel'
         assertNotNull("Tunnel is null", gtTunnel);
@@ -118,9 +115,11 @@ public class AugmentedTypeTest {
             }
         }
         assertNotNull("getKey method of Tunnel is null", getTunnelKeyMethod);
-        assertNotNull("getKey method return type is null", getTunnelKeyMethod.getReturnType());
-        assertTrue("getKey method return type name must be TunnelKey", getTunnelKeyMethod.getReturnType().getName()
-                .equals("TunnelKey"));
+
+        var retType = getTunnelKeyMethod.getReturnType();
+        assertThat(retType, instanceOf(GeneratedTransferObject.class));
+        assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503"
+            + ".topology.network.links.network.link.tunnels", "TunnelKey"), retType.getIdentifier());
 
         // 'TunnelKey'
         assertNotNull("TunnelKey is null", gtTunnelKey);
@@ -134,8 +133,7 @@ public class AugmentedTypeTest {
             }
         }
         assertNotNull("tunnelId is null", gtTunnelId);
-        assertNotNull("tunnelId return type is null", gtTunnelId.getReturnType());
-        assertTrue("tunnelId returnType name must be Integer", gtTunnelId.getReturnType().getName().equals("Integer"));
+        assertEquals(Types.typeForClass(Integer.class), gtTunnelId.getReturnType());
 
         // 'NetworkLink2'
         assertNotNull("NetworkLink2 is null", gtNetworkLink2);
@@ -152,8 +150,6 @@ public class AugmentedTypeTest {
         }
 
         assertNotNull("getInterface method is null", getIfcMethod);
-        assertNotNull("getInterface method return type is null", getIfcMethod.getReturnType());
-        assertTrue("getInterface method return type name must be String", getIfcMethod.getReturnType().getName()
-                .equals("String"));
+        assertEquals(Types.STRING, getIfcMethod.getReturnType());
     }
 }
