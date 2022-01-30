@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 // FIXME: sealed when we have JDK17+
 abstract class OriginalLink {
-    static final class Complete extends OriginalLink {
+    private static final class Complete extends OriginalLink {
         private final @NonNull AbstractExplicitGenerator<?> original;
 
         Complete(final AbstractExplicitGenerator<?> original) {
@@ -42,7 +42,7 @@ abstract class OriginalLink {
         }
     }
 
-    static final class Partial extends OriginalLink {
+    private static final class Partial extends OriginalLink {
         private final @NonNull AbstractExplicitGenerator<?> previous;
         private AbstractExplicitGenerator<?> original;
 
@@ -74,6 +74,14 @@ abstract class OriginalLink {
 
     private OriginalLink() {
         // Hidden on purpose
+    }
+
+    static @NonNull OriginalLink complete(final AbstractExplicitGenerator<?> original) {
+        return new Complete(original);
+    }
+
+    static @NonNull OriginalLink partial(final AbstractExplicitGenerator<?> previous) {
+        return new Partial(previous);
     }
 
     abstract @NonNull AbstractExplicitGenerator<?> previous();

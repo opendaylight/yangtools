@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.generator.impl.reactor.OriginalLink.Partial;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -193,7 +192,7 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
         // First try groupings/augments ...
         final AbstractExplicitGenerator<?> found = findInferredGenerator(childQName);
         if (found != null) {
-            return new Partial(found);
+            return OriginalLink.partial(found);
         }
 
         // ... no luck, we really need to start looking at our origin
