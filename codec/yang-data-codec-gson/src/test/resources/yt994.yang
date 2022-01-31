@@ -1,0 +1,8 @@
+module foo {
+  namespace foo;
+  prefix foo;
+  yang-version 1.1;
+
+  anydata foo;
+}
+
