@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Verify.verify;
 
-import java.util.Iterator;
+import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -26,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.YangInstanceIdentifierWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public final class ImmutableNodes {
@@ -202,22 +202,24 @@ public final class ImmutableNodes {
      * @param ctx schema context to used during serialization
      * @param id instance identifier to convert to node structure starting from root
      * @return serialized normalized node for provided instance Id
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if the identifier cannot be converted
      */
-    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
-        final PathArgument topLevelElement;
-        final InstanceIdToNodes<?> instanceIdToNodes;
-        final Iterator<PathArgument> it = id.getPathArguments().iterator();
-        if (it.hasNext()) {
-            topLevelElement = it.next();
-            final DataSchemaNode dataChildByName = ctx.dataChildByName(topLevelElement.getNodeType());
-            checkNotNull(dataChildByName,
-                "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
-            instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx, topLevelElement.getNodeType());
-        } else {
-            topLevelElement = SCHEMACONTEXT_NAME;
-            instanceIdToNodes = InstanceIdToNodes.fromDataSchemaNode(ctx);
+    public static @NonNull NormalizedNode fromInstanceId(final EffectiveModelContext ctx,
+            final YangInstanceIdentifier id) {
+        if (id.isEmpty()) {
+            return ImmutableNodes.containerNode(SchemaContext.NAME);
         }
 
-        return instanceIdToNodes.create(topLevelElement, it);
+        final var result = new NormalizedNodeResult();
+        try (var writer = ImmutableNormalizedNodeStreamWriter.from(result)) {
+            try (var iidWriter = YangInstanceIdentifierWriter.open(writer, ctx, id)) {
+                // No-op
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to convert " + id, e);
+        }
+        verify(result.isFinished());
+        return result.getResult();
     }
 }
