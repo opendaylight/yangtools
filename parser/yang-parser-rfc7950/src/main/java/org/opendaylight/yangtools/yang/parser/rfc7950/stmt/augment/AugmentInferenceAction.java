@@ -91,6 +91,11 @@ final class AugmentInferenceAction implements InferenceAction {
          * Do not fail, if it is an uses-augment to an unknown node.
          */
         if (YangStmtMapping.USES == augmentNode.coerceParentContext().publicDefinition()) {
+            if (!augmentNode.isSupportedToBuildEffective()) {
+                // We are not supported, hence the uses is not effective and we should bail
+                return;
+            }
+
             final SchemaNodeIdentifier augmentArg = augmentNode.getArgument();
             final Optional<StmtContext<?, ?, ?>> targetNode = SchemaTreeNamespace.findNode(
                 AbstractAugmentStatementSupport.getSearchRoot(augmentNode), augmentArg);
