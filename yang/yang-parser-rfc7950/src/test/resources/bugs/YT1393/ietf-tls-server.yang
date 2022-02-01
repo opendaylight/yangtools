@@ -1,0 +1,38 @@
+module ietf-tls-server {
+  yang-version 1.1;
+
+  namespace "urn:ietf:params:xml:ns:yang:ietf-tls-server";
+  prefix "tlss";
+
+  description
+   "This module defines a reusable grouping for a TLS server that
+    can be used as a basis for specific TLS server instances.";
+
+  revision "2018-10-22" {
+    description
+     "Initial version";
+    reference
+     "RFC XXXX: YANG Groupings for TLS Clients and TLS Servers";
+  }
+
+  // groupings
+  grouping tls-server-grouping {
+    description
+      "A reusable grouping for configuring a TLS server without
+       any consideration for how underlying TCP sessions are
+       established.";
+    uses client-auth-grouping;
+  }
+
+  grouping client-auth-grouping {
+    description
+      "A reusable grouping for configuring a TLS client
+       authentication.";
+    container client-auth {
+      description
+        "A reference to a list of pinned certificate authority (CA)
+         certificates and a reference to a list of pinned client
+         certificates.";
+    }
+  } // end client-auth-grouping
+}
