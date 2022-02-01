@@ -1,0 +1,97 @@
+module ietf-netconf-server {
+  yang-version 1.1;
+
+  namespace "urn:ietf:params:xml:ns:ietf-netconf-server";
+  prefix "ncs";
+
+  import ietf-tls-server {
+    prefix ts;
+    revision-date 2018-10-22; // stable grouping definitions
+    reference
+      "RFC ZZZZ: YANG Groupings for TLS Clients and TLS Servers";
+  }
+
+  description
+   "This module contains a collection of YANG definitions for
+    configuring NETCONF servers.";
+
+  revision "2018-10-22" {
+    description
+     "Initial version";
+    reference
+     "RFC XXXX: NETCONF Client and Server Models";
+  }
+
+  // Features
+  feature listen {
+    description
+     "The 'listen' feature indicates that the NETCONF server
+      supports opening a port to accept NETCONF client connections
+      using at least one transport (e.g., SSH, TLS, etc.).";
+  }
+
+  feature tls-listen {
+    description
+     "The 'tls-listen' feature indicates that the NETCONF server
+      supports opening a port to accept NETCONF over TLS
+      client connections.";
+    reference
+     "RFC 7589: Using the NETCONF Protocol over Transport
+                Layer Security (TLS) with Mutual X.509
+                Authentication";
+  }
+
+  // protocol accessible nodes
+  container netconf-server {
+    uses netconf-server-grouping;
+    description
+      "Top-level container for NETCONF server configuration.";
+  }
+
+  // reusable groupings
+  grouping netconf-server-grouping {
+    description
+      "Top-level grouping for NETCONF server configuration.";
+    container listen {
+      if-feature listen;
+      presence "Enables server to listen for TCP connections";
+      description "Configures listen behavior";
+      list endpoint {
+        key name;
+        min-elements 1;
+        description
+          "List of endpoints to listen for NETCONF connections.";
+        leaf name {
+          type string;
+          description
+            "An arbitrary name for the NETCONF listen endpoint.";
+        }
+        choice transport {
+          mandatory true;
+          description
+            "Selects between available transports.";
+          case tls {
+            if-feature tls-listen;
+            container tls {
+              description
+                "TLS-specific listening configuration for inbound
+                 connections.";
+              uses ts:tls-server-grouping {
+                refine "client-auth" {
+                  must 'pinned-ca-certs or pinned-client-certs';
+                  description
+                    "NETCONF/TLS servers MUST validate client
+                     certiticates.";
+                }
+                augment "client-auth" {
+                  description
+                    "Augments in the cert-to-name structure.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

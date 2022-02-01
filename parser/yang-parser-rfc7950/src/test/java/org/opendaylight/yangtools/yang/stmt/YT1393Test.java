@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 public class YT1393Test {
     @Test
@@ -36,5 +38,10 @@ public class YT1393Test {
             .findModuleStatement(QName.create("baz", "baz"))
             .orElseThrow();
         assertEquals(5, module.effectiveSubstatements().size());
+    }
+
+    @Test
+    public void testTlsListenUnsupportedByFeatures() throws Exception {
+        assertNotNull(StmtTestUtils.parseYangSources("/bugs/YT1393", Set.of(), YangParserConfiguration.DEFAULT));
     }
 }
