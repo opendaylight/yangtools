@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -133,7 +132,6 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Cast of original(), should be always safe")
     protected final AugmentEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
