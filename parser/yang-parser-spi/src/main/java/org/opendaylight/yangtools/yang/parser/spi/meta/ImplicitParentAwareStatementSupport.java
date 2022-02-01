@@ -27,5 +27,6 @@ public interface ImplicitParentAwareStatementSupport {
      * @param stmtDef statement definition of substatement
      * @return optional of implicit parent statement support
      */
+    // FIXME: not plain StatementSupport, but an opt-in
     Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(NamespaceStmtCtx parent, StatementDefinition stmtDef);
 }

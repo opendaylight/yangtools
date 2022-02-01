@@ -76,9 +76,8 @@ final class AugmentInferenceAction implements InferenceAction {
 
         // We are targeting a context which is creating implicit nodes. In order to keep things consistent,
         // we will need to circle back when creating effective statements.
-        if (augmentTargetCtx.hasImplicitParentSupport()) {
-            augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, Empty.value(), augmentTargetCtx);
-        }
+        augmentTargetCtx.implicitParentSupport().ifPresent(
+            support -> augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, Empty.value(), support));
 
         copyFromSourceToTarget(augmentNode, augmentTargetCtx);
         augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));

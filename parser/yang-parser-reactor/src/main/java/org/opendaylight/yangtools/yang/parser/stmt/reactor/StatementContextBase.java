@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
@@ -860,25 +861,27 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final boolean hasImplicitParentSupport() {
-        return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
-    }
+    public final Optional<ImplicitParentSupport> implicitParentSupport() {
+        final var factory = definition.getFactory();
+        return factory instanceof ImplicitParentAwareStatementSupport
+            ? Optional.of((parent, child) -> {
+                final var optImplicit = definition.getImplicitParentFor(parent, child.statementDefinition());
+                if (optImplicit.isEmpty()) {
+                    return child;
+                }
 
-    @Override
-    public final StmtContext<?, ?, ?> wrapWithImplicit(final StmtContext<?, ?, ?> original) {
-        final var optImplicit = definition.getImplicitParentFor(this, original.publicDefinition());
-        if (optImplicit.isEmpty()) {
-            return original;
-        }
+//                // FIXME: this is not nice: we should 'just' wrap the statement
+//                checkArgument(original instanceof StatementContextBase, "Unsupported original %s", original);
+//                final var origBase = (StatementContextBase<?, ?, ?>)original;
+//
+//                @SuppressWarnings({ "rawtypes", "unchecked" })
+//                final UndeclaredStmtCtx<?, ?, ?> result = new UndeclaredStmtCtx(origBase, optImplicit.orElseThrow());
+//                result.addEffectiveSubstatement(origBase.reparent(result));
+//                result.setCompletedPhase(ModelProcessingPhase.EFFECTIVE_MODEL);
+//                return result.buildEffective();
 
-        checkArgument(original instanceof StatementContextBase, "Unsupported original %s", original);
-        final var origBase = (StatementContextBase<?, ?, ?>)original;
-
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        final UndeclaredStmtCtx<?, ?, ?> result = new UndeclaredStmtCtx(origBase, optImplicit.orElseThrow());
-        result.addEffectiveSubstatement(origBase.reparent(result));
-        result.setCompletedPhase(original.getCompletedPhase());
-        return result;
+                return null;
+            }) : Optional.empty();
     }
 
     abstract StatementContextBase<A, D, E> reparent(StatementContextBase<?, ?, ?> newParent);

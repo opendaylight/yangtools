@@ -187,10 +187,9 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     public final TypeEffectiveStatement<TypeStatement> createUndeclaredEffective(
             final UndeclaredCurrent<QName, TypeStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
-        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements = buildEffectiveSubstatements(stmt,
-            statementsToBuild(stmt, effectiveSubstatements
-                .filter(StmtContext::isSupportedToBuildEffective)
-                .collect(Collectors.toUnmodifiableList())));
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
+            buildEffectiveSubstatements(stmt, effectiveSubstatements.filter(StmtContext::isSupportedToBuildEffective)
+                .collect(Collectors.toUnmodifiableList()));
 
         // First look up the proper base type
         final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(stmt);

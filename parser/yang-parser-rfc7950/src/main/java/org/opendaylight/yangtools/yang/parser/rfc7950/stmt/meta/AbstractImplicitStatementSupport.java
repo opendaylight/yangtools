@@ -43,10 +43,9 @@ abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QNam
     @Override
     public final E createUndeclaredEffective(final UndeclaredCurrent<QName, D> stmt,
             final @NonNull Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
-        return createUndeclaredEffective(stmt, buildEffectiveSubstatements(stmt,
-            statementsToBuild(stmt, effectiveSubstatements
-                .filter(StmtContext::isSupportedToBuildEffective)
-                .collect(Collectors.toUnmodifiableList()))));
+        return createUndeclaredEffective(stmt, buildEffectiveSubstatements(stmt, effectiveSubstatements
+            .filter(StmtContext::isSupportedToBuildEffective)
+            .collect(Collectors.toUnmodifiableList())));
     }
 
     abstract @NonNull E createUndeclaredEffective(@NonNull UndeclaredCurrent<QName, D> stmt,

@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -121,27 +119,24 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    protected final List<? extends StmtContext<?, ?, ?>> statementsToBuild(
-            final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
-        // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
-        // children through target's implicit wrapping.
-        final var implicitDef = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.class, Empty.value());
-        return implicitDef == null ? substatements
-            : Lists.transform(substatements, subCtx -> implicitDef.wrapWithImplicit(subCtx));
-    }
-
-    @Override
     protected final AugmentEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
+        // children through target's implicit wrapping.
+        final var implicitSupport = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.class, Empty.value());
+        final ImmutableList<? extends EffectiveStatement<?, ?>> wrapped = implicitSupport == null
+            ? substatements : substatements.stream()
+                .map(child -> implicitSupport.wrapChild(stmt, child))
+                    .collect(ImmutableList.toImmutableList());
+
         final int flags = new FlagsBuilder()
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+                .setStatus(findFirstArgument(wrapped, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
 
         try {
             return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags,
-                stmt.moduleName().getModule(), substatements, (AugmentationSchemaNode) stmt.original());
+                stmt.moduleName().getModule(), wrapped, (AugmentationSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

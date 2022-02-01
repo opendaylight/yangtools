@@ -350,11 +350,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef, String statementArg);
 
         @Beta
-        // FIXME: this information should be exposed as a well-known Namespace
-        boolean hasImplicitParentSupport();
-
-        @Beta
-        StmtContext<?, ?, ?> wrapWithImplicit(StmtContext<?, ?, ?> original);
+        Optional<ImplicitParentSupport> implicitParentSupport();
 
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
 
