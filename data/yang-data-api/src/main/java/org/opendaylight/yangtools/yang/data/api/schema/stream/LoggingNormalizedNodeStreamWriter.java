@@ -32,6 +32,8 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     private final Deque<String> indent = new ArrayDeque<>();
     private final String indentStr;
 
+    private final StringBuilder content = new StringBuilder();
+
     public LoggingNormalizedNodeStreamWriter() {
         this(DEFAULT_INDENT_SIZE);
     }
@@ -56,12 +58,16 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}[](no key)", ind(), name);
+        content.append(String.format("%s%s[](no key)", ind(), name));
+        content.append("\n");
         incIndent();
     }
 
     @Override
     public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(no key)", ind(), name);
+        content.append(String.format("%s%s(no key)", ind(), name));
+        content.append("\n");
         incIndent();
     }
 
@@ -73,18 +79,24 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void startMapNode(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(key)", ind(), name);
+        content.append(String.format("%s%s(key)", ind(), name));
+        content.append("\n");
         incIndent();
     }
 
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
         LOG.debug("{}{}[](key)", ind(), identifier);
+        content.append(String.format("%s%s[](key)", ind(), identifier));
+        content.append("\n");
         incIndent();
     }
 
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(leaf-list)", ind(), name);
+        content.append(String.format("%s%s(leaf-list)", ind(), name));
+        content.append("\n");
         incIndent();
     }
 
@@ -96,30 +108,40 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(container)", ind(), name);
+        content.append(String.format("%s%s(container)", ind(), name));
+        content.append("\n");
         incIndent();
     }
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(choice)", ind(), name);
+        content.append(String.format("%s%s(choice)", ind(), name));
+        content.append("\n");
         incIndent();
     }
 
     @Override
     public void startAugmentationNode(final AugmentationIdentifier identifier) {
         LOG.debug("{}{}(augmentation)", ind(), identifier);
+        content.append(String.format("%s%s(augmentation)", ind(), identifier));
+        content.append("\n");
         incIndent();
     }
 
     @Override
     public void startLeafSetEntryNode(final NodeWithValue<?> name) {
         LOG.debug("{}{}(entry}", ind(), name.getNodeType());
+        content.append(String.format("%s%s(entry)", ind(), name.getNodeType()));
+        content.append("\n");
         incIndent();
     }
 
     @Override
     public void startLeafNode(final NodeIdentifier name) {
         LOG.debug("{}{}(leaf)", ind(), name);
+        content.append(String.format("%s%s(leaf)", ind(), name));
+        content.append("\n");
         incIndent();
     }
 
@@ -127,11 +149,15 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     public void endNode() {
         decIndent();
         LOG.debug("{}(end)", ind());
+        content.append(String.format("%s(end)", ind()));
+        content.append("\n");
     }
 
     @Override
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) {
         LOG.debug("{}{}(anyxml)", ind(), name);
+        content.append(String.format("%s%s(anyxml)", ind(), name));
+        content.append("\n");
         incIndent();
         return true;
     }
@@ -139,6 +165,8 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) {
         LOG.debug("{}{}(anydata)", ind(), name);
+        content.append(String.format("%s%s(anydata)", ind(), name));
+        content.append("\n");
         incIndent();
         return true;
     }
@@ -157,10 +185,16 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     @SuppressFBWarnings("SLF4J_SIGN_ONLY_FORMAT")
     public void scalarValue(final Object value) {
         LOG.debug("{}({})={}", ind(), requireNonNull(value).getClass().getSimpleName(), value);
+        content.append(String.format("%s(%s)=%s", ind(), requireNonNull(value).getClass().getSimpleName(), value));
+        content.append("\n");
     }
 
     @Override
     public void domSourceValue(final DOMSource value) {
         scalarValue(value);
+    }
+
+    public String getContent() {
+        return content.toString();
     }
 }
