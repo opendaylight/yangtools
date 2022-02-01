@@ -37,4 +37,12 @@ public class YT1393Test {
             .orElseThrow();
         assertEquals(5, module.effectiveSubstatements().size());
     }
+
+    @Test
+    public void testUsesAugmentInUnsupportedByFeatures() throws Exception {
+        final var module = StmtTestUtils.parseYangSource("/bugs/YT1393/xyzzy.yang", Set.of())
+            .findModuleStatement(QName.create("xyzzy", "xyzzy"))
+            .orElseThrow();
+        assertEquals(3, module.effectiveSubstatements().size());
+    }
 }

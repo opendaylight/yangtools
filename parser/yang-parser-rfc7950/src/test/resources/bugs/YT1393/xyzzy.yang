@@ -1,0 +1,22 @@
+module xyzzy {
+  namespace xyzzy;
+  prefix xyzzy;
+
+  feature bar;
+
+  grouping foo {
+    container foo;
+  }
+
+  container bar {
+    if-feature bar;
+
+    uses foo {
+      augment foo {
+        leaf foo {
+          type string;
+        }
+      }
+    }
+  }
+}
