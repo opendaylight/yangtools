@@ -53,6 +53,8 @@ public class NormalizedNodeWriterTest {
 
     @Before
     public void setUp() {
+        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "DEBUG");
+
         bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
         myKeyedList = QName.create(bazModule, "my-keyed-list");
         myKeyLeaf = QName.create(bazModule, "my-key-leaf");
