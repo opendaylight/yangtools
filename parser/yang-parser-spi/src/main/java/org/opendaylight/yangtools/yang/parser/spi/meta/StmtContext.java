@@ -353,9 +353,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         // FIXME: this information should be exposed as a well-known Namespace
         boolean hasImplicitParentSupport();
 
-        @Beta
-        StmtContext<?, ?, ?> wrapWithImplicit(StmtContext<?, ?, ?> original);
-
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
 
         /**

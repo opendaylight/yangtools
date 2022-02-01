@@ -865,20 +865,21 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final StmtContext<?, ?, ?> wrapWithImplicit(final StmtContext<?, ?, ?> original) {
-        final var optImplicit = definition.getImplicitParentFor(this, original.publicDefinition());
+    public final EffectiveStatement<?, ?> wrapWithImplicit(final EffectiveStatement<?, ?> original) {
+        final var optImplicit = definition.getImplicitParentFor(this, original.statementDefinition());
         if (optImplicit.isEmpty()) {
             return original;
         }
 
+        // FIXME: this is not nice: we should 'just' wrap the statement
         checkArgument(original instanceof StatementContextBase, "Unsupported original %s", original);
         final var origBase = (StatementContextBase<?, ?, ?>)original;
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
         final UndeclaredStmtCtx<?, ?, ?> result = new UndeclaredStmtCtx(origBase, optImplicit.orElseThrow());
         result.addEffectiveSubstatement(origBase.reparent(result));
-        result.setCompletedPhase(original.getCompletedPhase());
-        return result;
+        result.setCompletedPhase(ModelProcessingPhase.EFFECTIVE_MODEL);
+        return result.buildEffective();
     }
 
     abstract StatementContextBase<A, D, E> reparent(StatementContextBase<?, ?, ?> newParent);

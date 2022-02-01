@@ -110,6 +110,9 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
 
         @NonNull QName moduleName();
 
+        @Beta
+        @NonNull EffectiveStatement<?, ?> wrapWithImplicit(EffectiveStatement<?, ?> original);
+
         @Deprecated(since = "7.0.9", forRemoval = true)
         @Nullable EffectiveStatement<?, ?> original();
 

@@ -79,10 +79,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     public final E createEffective(final Current<A, D> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
             final Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements) {
-        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
-                buildEffectiveSubstatements(stmt, statementsToBuild(stmt,
-                    declaredSubstatements(declaredSubstatements, inferredSubstatements)));
-        return createEffective(stmt, substatements);
+        return createEffective(stmt,
+            buildEffectiveSubstatements(stmt, declaredSubstatements(declaredSubstatements, inferredSubstatements)));
     }
 
     protected abstract @NonNull E createEffective(@NonNull Current<A, D> stmt,
@@ -92,19 +90,6 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     public E copyEffective(final Current<A, D> stmt, final E original) {
         // Most implementations are only interested in substatements. copyOf() here should be a no-op
         return createEffective(stmt, ImmutableList.copyOf(original.effectiveSubstatements()));
-    }
-
-    /**
-     * Give statement support a hook to transform statement contexts before they are built. Default implementation
-     * does nothing, but note {@code augment} statement performs a real transformation.
-     *
-     * @param ctx Effective capture of this statement's significant state
-     * @param substatements Substatement contexts which have been determined to be built
-     * @return Substatement context which are to be actually built
-     */
-    protected List<? extends StmtContext<?, ?, ?>> statementsToBuild(final Current<A, D> ctx,
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
-        return substatements;
     }
 
     // FIXME: add documentation

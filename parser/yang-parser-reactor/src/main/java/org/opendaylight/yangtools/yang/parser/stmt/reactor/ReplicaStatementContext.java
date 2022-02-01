@@ -224,7 +224,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public StmtContext<?, ?, ?> wrapWithImplicit(final StmtContext<?, ?, ?> original) {
+    public EffectiveStatement<?, ?> wrapWithImplicit(final EffectiveStatement<?, ?> original) {
         throw new UnsupportedOperationException();
     }
 
