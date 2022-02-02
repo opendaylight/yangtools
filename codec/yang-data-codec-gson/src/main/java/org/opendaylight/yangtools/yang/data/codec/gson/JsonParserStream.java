@@ -263,7 +263,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         parent.setValue(domSource);
     }
 
-    public void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
+    private void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
         switch (in.peek()) {
             case STRING:
             case NUMBER:
