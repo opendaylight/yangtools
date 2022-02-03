@@ -211,8 +211,8 @@ public final class BindingGeneratorUtil {
         return def.getRangeConstraint();
     }
 
-    private static <T extends Optional<?>> T currentOrEmpty(final T current, final T base) {
-        return current.equals(base) ? (T)Optional.empty() : current;
+    private static <T> Optional<T> currentOrEmpty(final Optional<T> current, final Optional<?> base) {
+        return current.equals(base) ? Optional.empty() : current;
     }
 
     private static boolean containsConstraint(final StringTypeDefinition type, final PatternConstraint constraint) {
