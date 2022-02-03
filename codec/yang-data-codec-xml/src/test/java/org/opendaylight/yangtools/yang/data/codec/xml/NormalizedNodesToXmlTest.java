@@ -31,7 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
-import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -167,7 +167,7 @@ public class NormalizedNodesToXmlTest {
         final DifferenceListener differenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
         diff.overrideDifferenceListener(differenceListener);
 
-        new XMLTestCase() {}.assertXMLEqual(diff, true);
+        XMLAssert.assertXMLEqual(diff, true);
     }
 
     private NormalizedNode buildOuterContainerNode() {
