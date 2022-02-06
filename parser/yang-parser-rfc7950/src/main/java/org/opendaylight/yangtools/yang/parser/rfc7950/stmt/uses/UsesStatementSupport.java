@@ -201,8 +201,13 @@ public final class UsesStatementSupport
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
         for (StmtContext<?, ?, ?> original : declared) {
-            if (original.isSupportedByFeatures() && shouldCopy(original)) {
-                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
+            if (shouldCopy(original)) {
+                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(copy -> {
+                    if (!original.isSupportedByFeatures() || !original.isSupportedToBuildEffective()) {
+                        copy.setUnsupported();
+                    }
+                    buffer.add(copy);
+                });
             }
         }
 
