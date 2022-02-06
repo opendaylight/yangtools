@@ -1,0 +1,20 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  feature foo;
+
+  grouping foo {
+    container foo {
+      if-feature foo;
+    }
+  }
+
+  uses foo {
+    augment foo {
+      leaf foo {
+        type string;
+      }
+    }
+  }
+}

@@ -203,9 +203,20 @@ public final class UsesStatementSupport
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
+<<<<<<< HEAD
         for (final Mutable<?, ?, ?> original : declared) {
             if (original.isSupportedByFeatures() && shouldCopy(original)) {
                 original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
+=======
+        for (StmtContext<?, ?, ?> original : declared) {
+            if (shouldCopy(original)) {
+                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(copy -> {
+                    if (!original.isSupportedByFeatures() || !original.isSupportedToBuildEffective()) {
+                        copy.setUnsupported();
+                    }
+                    buffer.add(copy);
+                });
+>>>>>>> 0e0a54e3b3 (Disable uses/augment statements of unsupported paths)
             }
         }
 
