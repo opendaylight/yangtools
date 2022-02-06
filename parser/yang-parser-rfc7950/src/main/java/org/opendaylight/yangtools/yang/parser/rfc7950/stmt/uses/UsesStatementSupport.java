@@ -203,9 +203,14 @@ public final class UsesStatementSupport
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
-        for (final Mutable<?, ?, ?> original : declared) {
-            if (original.isSupportedByFeatures() && shouldCopy(original)) {
-                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
+        for (Mutable<?, ?, ?> original : declared) {
+            if (shouldCopy(original)) {
+                original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(copy -> {
+                    if (!original.isSupportedByFeatures() || !original.isSupportedToBuildEffective()) {
+                        copy.setUnsupported();
+                    }
+                    buffer.add(copy);
+                });
             }
         }
 

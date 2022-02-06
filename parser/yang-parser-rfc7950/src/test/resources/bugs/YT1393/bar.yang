@@ -1,0 +1,27 @@
+module bar {
+  namespace bar;
+  prefix bar;
+
+  feature foo;
+
+  grouping foo {
+    container foo {
+      if-feature foo;
+      container bar;
+    }
+  }
+
+  uses foo {
+    refine foo/bar {
+      description desc;
+    }
+  }
+
+  container baz {
+    uses foo {
+      refine foo {
+        description desc;
+      }
+    }
+  }
+}
