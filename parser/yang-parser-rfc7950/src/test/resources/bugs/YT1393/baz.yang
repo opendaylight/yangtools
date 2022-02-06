@@ -1,0 +1,18 @@
+module baz {
+  namespace baz;
+  prefix baz;
+
+  feature foo;
+
+  container foo;
+
+  augment /foo {
+    container bar {
+      if-feature foo;
+    }
+  }
+
+  augment /foo/bar {
+    container baz;
+  }
+}
