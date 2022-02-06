@@ -17,4 +17,9 @@ public class YT1393Test {
     public void testUsesAugmentUnsupportedByFeatures() throws Exception {
         assertNotNull(StmtTestUtils.parseYangSource("/bugs/YT1393/foo.yang", Set.of()));
     }
+
+    @Test
+    public void testUsesRefineUnsupportedByFeatures() throws Exception {
+        assertNotNull(StmtTestUtils.parseYangSource("/bugs/YT1393/bar.yang", Set.of()));
+    }
 }
