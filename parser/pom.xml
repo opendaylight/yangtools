@@ -41,7 +41,6 @@
 
         <!-- Combined RFC6020/RFC7960 metamodel implementation. Also includes support
              for OpenConfig's semantic-version extension. -->
-        <module>yang-parser-antlr</module>
         <module>yang-parser-rfc7950</module>
 
         <!-- Support for IETF YANG extensions -->
