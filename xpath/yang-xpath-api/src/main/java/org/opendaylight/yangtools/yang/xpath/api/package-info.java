@@ -18,7 +18,9 @@
  *
  * @author Robert Varga
  */
+@Export
 @NonNullByDefault
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.osgi.annotation.bundle.Export;
