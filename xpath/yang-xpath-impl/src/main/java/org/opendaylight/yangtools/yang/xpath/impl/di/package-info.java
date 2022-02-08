@@ -7,6 +7,6 @@
  */
 /**
  * Package exposing {@link org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory} component to various
- * dependency injection frameworks, so they can locate them.
+ * dependency injection frameworks, so they can locate them. This package is not exposed to OSGi runtime.
  */
 package org.opendaylight.yangtools.yang.xpath.impl.di;
