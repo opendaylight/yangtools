@@ -9,4 +9,7 @@ module org.opendaylight.yangtools.yang.xpath.antlr {
     exports org.opendaylight.yangtools.yang.xpath.antlr;
 
     requires transitive org.antlr.antlr4.runtime;
+
+    // Annotations
+    requires static org.osgi.annotation.bundle;
 }
