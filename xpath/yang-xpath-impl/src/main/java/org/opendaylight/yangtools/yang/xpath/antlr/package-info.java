@@ -9,7 +9,7 @@
  * ANTLR grammars for parsing RFC7950 XPpath constructs. This package is considered an implementation detail and does
  * not fall under API stability contract. Use at your own risk.
  */
-@Export
+@SuppressFBWarnings
 package org.opendaylight.yangtools.yang.xpath.antlr;
 
-import org.osgi.annotation.bundle.Export;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

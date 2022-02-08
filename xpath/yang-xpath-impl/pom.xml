@@ -43,10 +43,6 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-xpath-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-xpath-antlr</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
@@ -62,4 +58,23 @@
             <artifactId>org.osgi.service.component.annotations</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <listener>false</listener>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
