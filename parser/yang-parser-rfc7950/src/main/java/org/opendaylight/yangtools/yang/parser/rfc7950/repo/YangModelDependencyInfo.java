@@ -360,6 +360,8 @@ public abstract class YangModelDependencyInfo {
 
         /**
          * Returns name of parent module.
+         *
+         * @return The module this info belongs to
          */
         public String getParentModule() {
             return belongsTo;
