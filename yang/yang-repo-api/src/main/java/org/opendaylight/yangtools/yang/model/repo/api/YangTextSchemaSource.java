@@ -38,8 +38,8 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     }
 
     public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(RFC6020_YANG_FILE_EXTENSION), "Filename %s does not end with '%s'",
-            RFC6020_YANG_FILE_EXTENSION, name);
+        checkArgument(name.endsWith(RFC6020_YANG_FILE_EXTENSION), "Filename '%s' does not end with '%s'", name,
+            RFC6020_YANG_FILE_EXTENSION);
 
         final String baseName = name.substring(0, name.length() - RFC6020_YANG_FILE_EXTENSION.length());
         final Entry<String, String> parsed = parseFilename(baseName);
