@@ -14,9 +14,9 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     provides YangXPathParserFactory with AntlrXPathParserFactory;
 
     requires java.xml;
+    requires org.antlr.antlr4.runtime;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.xpath.api;
-    requires org.opendaylight.yangtools.yang.xpath.antlr;
     requires org.slf4j;
 
     // Annotations

@@ -30,7 +30,6 @@
     <modules>
         <!-- YANG XPath API and implementation -->
         <module>yang-xpath-api</module>
-        <module>yang-xpath-antlr</module>
         <!-- FIXME: rename to yang-xpath-ri -->
         <module>yang-xpath-impl</module>
     </modules>

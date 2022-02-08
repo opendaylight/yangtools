@@ -9,6 +9,9 @@
  * XPath parsing which results in a {@link org.opendaylight.yangtools.yang.xpath.api.YangExpr}. This is based
  * on the XPath grammar from <a href="https://github.com/antlr/grammars-v4/blob/master/xpath/xpath.g4">grammars-v4</a>.
  */
-@org.eclipse.jdt.annotation.NonNullByDefault
-@org.osgi.service.component.annotations.RequireServiceComponentRuntime
+@NonNullByDefault
+@RequireServiceComponentRuntime
 package org.opendaylight.yangtools.yang.xpath.impl;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
