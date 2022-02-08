@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
+// FIXME: YANGTOOLS-1396: refactor on top of vanilla IfFeatureExpressionParser
 @NonNullByDefault
 final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisitor<IfFeatureExpr> {
     private final StmtContext<?, ?, ?> stmtCtx;

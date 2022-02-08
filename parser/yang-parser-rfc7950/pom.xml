@@ -68,10 +68,6 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-antlr</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-repo-api</artifactId>
         </dependency>
         <dependency>
@@ -101,6 +97,22 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- FIXME: YANGTOOLS-1396: disable visitors -->
+                    <visitor>true</visitor>
+                    <listener>false</listener>
+                </configuration>
+            </plugin>
             <plugin>
                 <!-- FIXME: why is this needed? -->
                 <groupId>org.codehaus.mojo</groupId>
