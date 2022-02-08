@@ -18,7 +18,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>yangtools-aggregator</artifactId>
+    <artifactId>yangtools</artifactId>
     <version>8.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>yangtools</name> <!-- Used by Sonar to set project name -->
@@ -58,6 +58,24 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.install.skip>true</maven.install.skip>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>aggregate-javadocs</id>
+                        <goals>
+                            <goal>aggregate-jar-no-fork</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>
