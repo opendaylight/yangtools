@@ -17,6 +17,9 @@ module xyzzy {
           type string;
         }
       }
+      refine foo {
+        description desc;
+      }
     }
   }
 }
