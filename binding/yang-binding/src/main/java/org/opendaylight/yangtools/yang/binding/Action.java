@@ -28,6 +28,7 @@ public interface Action<P extends InstanceIdentifier<?>, I extends RpcInput, O e
      * @param input Input argument
      * @return Future result of invocation
      * @throws NullPointerException if any of the arguments are null
+     * @throws IllegalArgumentException if {@code path} is {@link InstanceIdentifier#isWildcarded()}
      */
     @CheckReturnValue
     @NonNull ListenableFuture<@NonNull RpcResult<@NonNull O>> invoke(@NonNull P path, @NonNull I input);
