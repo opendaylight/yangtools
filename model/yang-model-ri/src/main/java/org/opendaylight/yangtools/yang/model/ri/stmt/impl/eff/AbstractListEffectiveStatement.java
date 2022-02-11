@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
 abstract class AbstractListEffectiveStatement
@@ -35,10 +34,10 @@ abstract class AbstractListEffectiveStatement
         implements ListEffectiveStatement, ListSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
-            DataSchemaNodeMixin<ListStatement>, UserOrderedMixin<QName, ListStatement>,
-            DataNodeContainerMixin<QName, ListStatement>, WhenConditionMixin<QName, ListStatement>,
-            AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
-            ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
+            DataSchemaNodeMixin<ListStatement>, DataNodeContainerMixin<QName, ListStatement>,
+            WhenConditionMixin<QName, ListStatement>, AugmentationTargetMixin<QName, ListStatement>,
+            NotificationNodeContainerMixin<QName, ListStatement>, ActionNodeContainerMixin<QName, ListStatement>,
+            MustConstraintMixin<QName, ListStatement> {
     private final int flags;
     private final @NonNull Object keyDefinition;
 
@@ -59,11 +58,6 @@ abstract class AbstractListEffectiveStatement
     @Override
     public final int flags() {
         return flags;
-    }
-
-    @Override
-    public final boolean isUserOrdered() {
-        return userOrdered();
     }
 
     @Override

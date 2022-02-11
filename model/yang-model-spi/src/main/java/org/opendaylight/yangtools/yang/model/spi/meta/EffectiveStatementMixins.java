@@ -332,18 +332,6 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@code ordered-by} statement.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface UserOrderedMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatementWithFlags<A, D> {
-        default boolean userOrdered() {
-            return (flags() & FlagsBuilder.USER_ORDERED) != 0;
-        }
-    }
-
-    /**
      * Helper used to locate the effective {@code when} statement and exposing its argument as per
      * {@link WhenConditionAware}.
      *
@@ -464,7 +452,6 @@ public final class EffectiveStatementMixins {
             static final int ADDED_BY_USES        = 0x0020;
             private static final int MASK_HISTORY = 0x0030;
 
-            static final int USER_ORDERED         = 0x0040;
             static final int PRESENCE             = 0x0080;
 
             static final int CONFIG_UNDEF         = 0x0100;
@@ -526,15 +513,6 @@ public final class EffectiveStatementMixins {
                 }
 
                 flags = flags & ~MASK_STATUS | bits;
-                return this;
-            }
-
-            public FlagsBuilder setUserOrdered(final boolean userOrdered) {
-                if (userOrdered) {
-                    flags |= USER_ORDERED;
-                } else {
-                    flags &= ~USER_ORDERED;
-                }
                 return this;
             }
 
