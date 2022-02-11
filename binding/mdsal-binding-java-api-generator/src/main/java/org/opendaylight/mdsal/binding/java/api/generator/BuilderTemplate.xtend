@@ -251,10 +251,16 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         if (Types.strictTypeEquals(getter.returnType, ownGetterType)) {
             return "this._" + propertyName + " = " + retrieveProperty
         }
-        if (Types.isListType(ownGetterType)) {
-            val itemType = (ownGetterType as ParameterizedType).actualTypeArguments.get(0)
-            return '''
-                this._«propertyName» = «CODEHELPERS.importedName».checkListFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+        if (ownGetterType instanceof ParameterizedType) {
+            val itemType = ownGetterType.actualTypeArguments.get(0)
+            if (Types.isListType(ownGetterType)) {
+                return '''
+                    this._«propertyName» = «CODEHELPERS.importedName».checkListFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+            }
+            if (Types.isSetType(ownGetterType)) {
+                return '''
+                this._«propertyName» = «CODEHELPERS.importedName».checkSetFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+            }
         }
         return '''
             this._«propertyName» = «CODEHELPERS.importedName».checkFieldCast(«ownGetter.returnType.importedName».class, "«propertyName»", «retrieveProperty»)'''
@@ -317,7 +323,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private generateSetter(GeneratedProperty field) {
         val returnType = field.returnType
         if (returnType instanceof ParameterizedType) {
-            if (Types.isListType(returnType)) {
+            if (Types.isListType(returnType) || Types.isSetType(returnType)) {
                 val arguments = returnType.actualTypeArguments
                 if (arguments.isEmpty) {
                     return generateListSetter(field, Types.objectType)

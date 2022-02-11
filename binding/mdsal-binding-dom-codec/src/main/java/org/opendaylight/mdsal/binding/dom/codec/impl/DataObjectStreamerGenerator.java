@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.method.MethodDescription;
@@ -138,7 +139,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         "streamLeaf", BindingStreamEventWriter.class, String.class, Object.class);
     private static final StackManipulation STREAM_LEAF_LIST = invokeMethod(DataObjectStreamer.class,
         "streamLeafList",
-        BindingStreamEventWriter.class, String.class, List.class);
+        BindingStreamEventWriter.class, String.class, Set.class);
     private static final StackManipulation STREAM_ORDERED_LEAF_LIST = invokeMethod(DataObjectStreamer.class,
         "streamOrderedLeafList", BindingStreamEventWriter.class, String.class, List.class);
     private static final StackManipulation STREAM_LIST = invokeMethod(DataObjectStreamer.class,

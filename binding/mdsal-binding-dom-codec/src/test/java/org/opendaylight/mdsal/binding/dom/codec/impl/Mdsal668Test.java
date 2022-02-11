@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.FooBuilder;
@@ -40,7 +40,7 @@ public class Mdsal668Test extends AbstractBindingCodecTest {
                     .build())
                 .build())
             .build(), codecContext.toNormalizedNode(FOO_IID,
-                new FooBuilder().setBar(new BarBuilder().setBar(List.of(FOO_IID)).build()).build())
+                new FooBuilder().setBar(new BarBuilder().setBar(Set.of(FOO_IID)).build()).build())
             .getValue());
     }
 }

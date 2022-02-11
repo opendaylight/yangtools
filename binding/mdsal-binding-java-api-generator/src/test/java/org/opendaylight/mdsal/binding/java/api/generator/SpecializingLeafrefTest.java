@@ -32,12 +32,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 
 public class SpecializingLeafrefTest extends BaseCompilationTest {
-    private static final Type LIST_STRING_TYPE  = Types.listTypeFor(Types.STRING);
+    private static final ParameterizedType SET_STRING_TYPE  = Types.setTypeFor(Types.STRING);
 
     public static final String BAR_CONT = "BarCont";
     public static final String BOOLEAN_CONT = "BooleanCont";
@@ -55,8 +56,8 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static final String GET_LEAF1_TYPE_OBJECT = "    Object getLeaf1();";
     private static final String GET_LEAF1_TYPE_STRING = "    String getLeaf1();";
-    private static final String GET_LEAFLIST1_WILDCARD = "    @Nullable List<?> getLeafList1();";
-    private static final String GET_LEAFLIST1_STRING = "    @Nullable List<String> getLeafList1();";
+    private static final String GET_LEAFLIST1_WILDCARD = "    @Nullable Set<?> getLeafList1();";
+    private static final String GET_LEAFLIST1_STRING = "    @Nullable Set<String> getLeafList1();";
     private static final String GET_LEAFLIST1_DECLARATION = " getLeafList1();";
     private static final String GET_LEAF1_DECLARATION = " getLeaf1();";
 
@@ -100,7 +101,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     @Test
     public void testGroupingWithUnresolvedLeafRefs() throws IOException {
         verifyReturnType(FOO_GRP, GET_LEAF1_NAME, Types.objectType());
-        verifyReturnType(FOO_GRP, GET_LEAFLIST1_NAME, Types.listTypeWildcard());
+        verifyReturnType(FOO_GRP, GET_LEAFLIST1_NAME, Types.setTypeWildcard());
 
         final String content = getFileContent(FOO_GRP);
 
@@ -128,7 +129,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     public void testLeafListLeafrefPointsLeaf() throws IOException {
-        verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAFLIST1_NAME, LIST_STRING_TYPE);
+        verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
@@ -137,7 +138,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     public void testLeafListLeafrefPointsLeafList() throws IOException {
-        verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAFLIST1_NAME, LIST_STRING_TYPE);
+        verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAFLIST_GRP);
 
@@ -220,7 +221,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
                 doubleTab("if (arg instanceof " + FOO_GRP_REF + ") {"),
                 tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", "
                     + ARG_AS_FOO_GRP + ".getLeaf1());"),
-                tripleTab("this._leafList1 = CodeHelpers.checkListFieldCast(String.class, \"leafList1\", "
+                tripleTab("this._leafList1 = CodeHelpers.checkSetFieldCast(String.class, \"leafList1\", "
                     + ARG_AS_FOO_GRP + ".getLeafList1());"),
                 tripleTab("this._leaf2 = " + ARG_AS_FOO_GRP + ".getLeaf2();"),
                 TTAB_SET_IS_VALID_ARG_TRUE,
@@ -239,7 +240,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
                 tab("public BarContBuilder(" + FOO_GRP_REF + " arg) {"),
                 doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", "
                     + "arg.getLeaf1());"),
-                doubleTab("this._leafList1 = CodeHelpers.checkListFieldCast(String.class, \"leafList1\", "
+                doubleTab("this._leafList1 = CodeHelpers.checkSetFieldCast(String.class, \"leafList1\", "
                     + "arg.getLeafList1());"),
                 doubleTab(LEAF2_ASSIGNMENT),
                 TAB_CLOSING_METHOD_BRACE);

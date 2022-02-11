@@ -16,10 +16,12 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -386,21 +388,44 @@ public final class CodeHelpers {
      * @param requiredClass Required item class
      * @param fieldName name of the field being filled
      * @param list List, which items should be checked
+     * @return Type-checked List
      * @throws IllegalArgumentException if a list item is not instance of {@code requiredItemClass}
      * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
      */
     @SuppressWarnings("unchecked")
     public static <T> @Nullable List<T> checkListFieldCast(final @NonNull Class<?> requiredClass,
             final @NonNull String fieldName, final @Nullable List<?> list) {
-        if (list != null) {
+        checkCollectionField(requiredClass, fieldName, list);
+        return (List<T>) list;
+    }
+
+    /**
+     * Utility method for checking whether the items of target list is compatible.
+     *
+     * @param requiredClass Required item class
+     * @param fieldName name of the field being filled
+     * @param set Set, which items should be checked
+     * @return Type-checked Set
+     * @throws IllegalArgumentException if a set item is not instance of {@code requiredItemClass}
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable Set<T> checkSetFieldCast(final @NonNull Class<?> requiredClass,
+            final @NonNull String fieldName, final @Nullable Set<?> set) {
+        checkCollectionField(requiredClass, fieldName, set);
+        return (Set<T>) set;
+    }
+
+    private static void checkCollectionField(final @NonNull Class<?> requiredClass,
+            final @NonNull String fieldName, final @Nullable Collection<?> collection) {
+        if (collection != null) {
             try {
-                list.forEach(item -> requiredClass.cast(requireNonNull(item)));
+                collection.forEach(item -> requiredClass.cast(requireNonNull(item)));
             } catch (ClassCastException | NullPointerException e) {
                 throw new IllegalArgumentException("Invalid input list item for property \"" + requireNonNull(fieldName)
                     + "\"", e);
             }
         }
-        return (List<T>) list;
     }
 
     /**

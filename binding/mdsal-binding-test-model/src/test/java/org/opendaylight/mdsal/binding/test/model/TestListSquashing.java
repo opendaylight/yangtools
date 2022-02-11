@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.Def;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.DefBuilder;
@@ -31,9 +32,16 @@ import org.opendaylight.yang.gen.v1.urn.test.pattern.rev170101.ContBuilder;
 public class TestListSquashing {
     @Test
     public void testEmptyLeafList() {
-        final Cont obj = new ContBuilder().setTest3(List.of()).build();
+        final Cont obj = new ContBuilder().setTest3(Set.of()).build();
+        // Eventhough return type is Set, it should be retained
+        assertEquals(Set.of(), obj.getTest3());
+    }
+
+    @Test
+    public void testEmptyUserOrderedLeafList() {
+        final Cont obj = new ContBuilder().setTest4(List.of()).build();
         // Eventhough return type is List, it should be retained
-        assertEquals(List.of(), obj.getTest3());
+        assertEquals(List.of(), obj.getTest4());
     }
 
     @Test

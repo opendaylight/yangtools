@@ -133,7 +133,7 @@ public class GeneratedTypesLeafrefTest {
         Type getHigherLayerIfType = getHigherLayerIf.getReturnType();
         assertNotNull(getHigherLayerIfType);
         assertNotSame("java.lang.Void", getHigherLayerIfType);
-        assertEquals("List", getHigherLayerIfType.getName());
+        assertEquals("Set", getHigherLayerIfType.getName());
 
         // NetworkLink
         final List<MethodSignature> gtNetworkLinkMethods = gtNetworkLink.getMethodDefinitions();

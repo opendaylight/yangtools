@@ -65,6 +65,7 @@ public final class Types {
     private static final @NonNull ConcreteType SERIALIZABLE = typeForClass(Serializable.class);
     private static final @NonNull ConcreteType SET_TYPE = typeForClass(Set.class);
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = parameterizedTypeFor(LIST_TYPE);
+    private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = parameterizedTypeFor(SET_TYPE);
 
     /**
      * It is not desirable to create instance of this class.
@@ -195,6 +196,15 @@ public final class Types {
     }
 
     /**
+     * Returns an instance of {@link ParameterizedType} describing the typed {@link Set}&lt;?&gt;.
+     *
+     * @return Description of type instance of Set
+     */
+    public static @NonNull ParameterizedType setTypeWildcard() {
+        return SET_TYPE_WILDCARD;
+    }
+
+    /**
      * Returns an instance of {@link ParameterizedType} describing the typed {@link List}&lt;V&gt; with concrete type
      * of value.
      *
@@ -212,6 +222,10 @@ public final class Types {
      */
     public static @NonNull ParameterizedType listTypeWildcard() {
         return LIST_TYPE_WILDCARD;
+    }
+
+    public static boolean isSetType(final ParameterizedType type) {
+        return SET_TYPE.equals(type.getRawType());
     }
 
     public static boolean isListType(final ParameterizedType type) {

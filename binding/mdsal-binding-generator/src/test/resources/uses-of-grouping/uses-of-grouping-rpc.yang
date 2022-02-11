@@ -1,15 +1,11 @@
 module grouping_uses_rpc {
-
     namespace "urn:grouping:uses:rpc";
     prefix "sbd";
 
     organization "OPEN DAYLIGHT";
     contact "http://www.opendaylight.org/";
 
-    revision 2013-07-18 {
-    }
-
-
+    revision 2013-07-18;
 
     grouping grouping-rpc-input-test {
         container container-grouping-rpc-input-test {
@@ -19,6 +15,7 @@ module grouping_uses_rpc {
         }
         leaf-list leaflist-grouping-rpc-input-test {
             type uint8;
+            ordered-by user;
         }
     }
 
@@ -28,7 +25,7 @@ module grouping_uses_rpc {
         }
     }
 
-//grouping in RPC
+    // grouping in RPC
     rpc rpc-test {
         input {
             uses grouping-rpc-input-test;

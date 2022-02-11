@@ -166,7 +166,7 @@ public class GeneratedTypesTest {
         }
 
         assertEquals(1, getFooMethodCounter);
-        assertEquals("List", getFooMethodReturnTypeName);
+        assertEquals("Set", getFooMethodReturnTypeName);
 
         assertEquals(1, getBarMethodCounter);
         assertEquals("String", getBarMethodReturnTypeName);
@@ -196,7 +196,7 @@ public class GeneratedTypesTest {
         assertEquals("Uint8", getFooMethodReturnTypeName);
 
         assertEquals(1, getBarMethodCounter);
-        assertEquals("List", getBarMethodReturnTypeName);
+        assertEquals("Set", getBarMethodReturnTypeName);
     }
 
     @Test

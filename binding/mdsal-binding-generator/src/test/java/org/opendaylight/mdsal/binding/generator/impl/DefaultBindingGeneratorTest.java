@@ -17,6 +17,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -86,7 +87,7 @@ public class DefaultBindingGeneratorTest {
         assertThat(bEnumsType, instanceOf(ParameterizedType.class));
         final var enumsType = (ParameterizedType) bEnumsType;
 
-        assertEquals(Types.typeForClass(List.class), enumsType.getRawType());
+        assertEquals(Types.typeForClass(Set.class), enumsType.getRawType());
         final var enumsTypeArgs = enumsType.getActualTypeArguments();
         assertEquals(1, enumsTypeArgs.length);
         assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs[0].getFullyQualifiedName());

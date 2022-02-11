@@ -22,10 +22,6 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,7 +49,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
 import org.opendaylight.yang.gen.v1.urn.test.foo4798.rev160101.Root;
@@ -167,8 +162,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         // Equals on other(lazy, reversed) with no augmentation should be false
         assertNotEquals(entryWithAugments.getValue(), entry.getValue());
 
-        final Top topWithAugments = topWithAugments(Collections.<Class<? extends Augmentation<Top>>, Augmentation<Top>>
-            singletonMap(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build()));
+        final Top topWithAugments = topWithAugments(
+            Map.of(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build()));
         // Equals other with same augment should be true
         assertEquals(topWithAugments, entryWithAugments.getValue());
         // Equals other with same augment should be true
@@ -177,8 +172,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         assertEquals(entryWithAugments.getValue(), entryWithAugments.getValue());
 
         final Top topWithAugmentsDiffValue = topWithAugments(
-            Collections.<Class<? extends Augmentation<Top>>, Augmentation<Top>>singletonMap(Top1.class,
-                new Top1Builder().setAugmentedString("differentValue").build()));
+            Map.of(Top1.class, new Top1Builder().setAugmentedString("differentValue").build()));
         assertNotEquals(topWithAugmentsDiffValue, entryWithAugments.getValue());
         assertNotEquals(entryWithAugments.getValue(), topWithAugmentsDiffValue);
     }
@@ -197,18 +191,16 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
         final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH,
             topNormalizedWithAugments);
-        Map<Class<? extends Augmentation<Top>>, Augmentation<Top>> augments = new HashMap<>();
-        augments.put(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build());
-        augments.put(Top2.class, new Top2Builder().setAugmentedInt(AUGMENT_INT_VALUE).build());
-        Top topWithAugments = topWithAugments(augments);
+        Top topWithAugments = topWithAugments(Map.of(
+            Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build(),
+            Top2.class, new Top2Builder().setAugmentedInt(AUGMENT_INT_VALUE).build()));
 
         assertEquals(topWithAugments, entryWithAugments.getValue());
         assertEquals(entryWithAugments.getValue(), topWithAugments);
 
-        augments = new HashMap<>();
-        augments.put(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build());
-        augments.put(Top2.class, new Top2Builder().setAugmentedInt(999).build());
-        topWithAugments = topWithAugments(augments);
+        topWithAugments = topWithAugments(Map.of(
+            Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build(),
+            Top2.class, new Top2Builder().setAugmentedInt(999).build()));
 
         assertNotEquals(topWithAugments, entryWithAugments.getValue());
         assertNotEquals(entryWithAugments.getValue(), topWithAugments);
@@ -261,10 +253,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public void leafOnlyAugmentationToNormalized() {
         final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             BA_TREE_LEAF_ONLY, new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build());
-        final Set<QName> augmentationChildren = new HashSet<>();
-        augmentationChildren.add(SIMPLE_VALUE_QNAME);
         final AugmentationNode augmentationNode = ImmutableAugmentationNodeBuilder.create()
-                .withNodeIdentifier(new AugmentationIdentifier(augmentationChildren))
+                .withNodeIdentifier(new AugmentationIdentifier(Set.of(SIMPLE_VALUE_QNAME)))
                 .withChild(leafNode(SIMPLE_VALUE_QNAME, "simpleValue"))
                 .build();
         assertEquals(augmentationNode, entry.getValue());
@@ -272,23 +262,19 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void leafOnlyAugmentationFromNormalized() {
-        final Set<QName> augmentationChildren = new HashSet<>();
-        augmentationChildren.add(SIMPLE_VALUE_QNAME);
+        final AugmentationIdentifier augmentationId = new AugmentationIdentifier(Set.of(SIMPLE_VALUE_QNAME));
         final AugmentationNode augmentationNode = ImmutableAugmentationNodeBuilder.create()
-                .withNodeIdentifier(new AugmentationIdentifier(augmentationChildren))
+                .withNodeIdentifier(augmentationId)
                 .withChild(leafNode(SIMPLE_VALUE_QNAME, "simpleValue"))
                 .build();
         final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
-            BI_TOP_LEVEL_LIST_FOO_PATH.node(new AugmentationIdentifier(augmentationChildren)),
-            augmentationNode);
+            BI_TOP_LEVEL_LIST_FOO_PATH.node(augmentationId), augmentationNode);
         assertEquals(new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build(), entry.getValue());
     }
 
     @Test
     public void orderedleafListToNormalized() {
-        List<String> topLevelLeafList = new ArrayList<>();
-        topLevelLeafList.add("foo");
-        Top top = new TopBuilder().setTopLevelOrderedLeafList(topLevelLeafList).build();
+        Top top = new TopBuilder().setTopLevelOrderedLeafList(List.of("foo")).build();
 
         Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
@@ -309,9 +295,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void leafListToNormalized() {
-        final List<String> topLevelLeafList = new ArrayList<>();
-        topLevelLeafList.add("foo");
-        final Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
+        final Top top = new TopBuilder().setTopLevelLeafList(Set.of("foo")).build();
 
         final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
@@ -341,9 +325,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                 .build();
         final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_TOP_PATH,
             topWithLeafList);
-        final List<String> topLevelLeafList = new ArrayList<>();
-        topLevelLeafList.add("foo");
-        final Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
+        final Top top = new TopBuilder().setTopLevelLeafList(Set.of("foo")).build();
         assertEquals(top, entry.getValue());
     }
 
@@ -358,9 +340,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                     .build())
                 .build();
         Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_TOP_PATH, topWithLeafList);
-        List<String> topLevelLeafList = new ArrayList<>();
-        topLevelLeafList.add("foo");
-        Top top = new TopBuilder().setTopLevelOrderedLeafList(topLevelLeafList).build();
+        Top top = new TopBuilder().setTopLevelOrderedLeafList(List.of("foo")).build();
         assertEquals(top, entry.getValue());
     }
 
@@ -479,13 +459,13 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void orderedLisToNormalized() {
-        final InstanceIdentifier<TopLevelList> ii = BA_TOP_LEVEL_LIST;
-        final List<NestedList> nestedLists = new ArrayList<>();
-        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("foo")).build());
-        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("bar")).build());
-        final TopLevelList topLevelList = new TopLevelListBuilder().withKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
-            nestedLists).build();
-        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(ii,
+        final TopLevelList topLevelList = new TopLevelListBuilder()
+            .withKey(TOP_LEVEL_LIST_FOO_KEY)
+            .setNestedList(List.of(
+                new NestedListBuilder().withKey(new NestedListKey("foo")).build(),
+                new NestedListBuilder().withKey(new NestedListKey("bar")).build()))
+            .build();
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
             topLevelList);
         final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
@@ -508,11 +488,12 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                     .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar")).build()).build();
         final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
             BI_TOP_LEVEL_LIST_FOO_PATH, foo);
-        final List<NestedList> nestedLists = new ArrayList<>();
-        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("foo")).build());
-        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("bar")).build());
-        final TopLevelList topLevelList = new TopLevelListBuilder().withKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
-            nestedLists).build();
+        final TopLevelList topLevelList = new TopLevelListBuilder()
+            .withKey(TOP_LEVEL_LIST_FOO_KEY)
+            .setNestedList(List.of(
+                new NestedListBuilder().withKey(new NestedListKey("foo")).build(),
+                new NestedListBuilder().withKey(new NestedListKey("bar")).build()))
+            .build();
         assertEquals(topLevelList, entry.getValue());
     }
 
@@ -523,8 +504,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(Collections.singleton(augmentChoice1QName));
-        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(Collections.singleton(augmentChoice2QName));
+        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(Set.of(augmentChoice1QName));
+        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(Set.of(augmentChoice2QName));
         final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
         final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
         final NodeIdentifier containerId = new NodeIdentifier(containerQName);

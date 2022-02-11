@@ -282,8 +282,8 @@ public class UsesTest {
             new NameTypePattern("getContainerGroupingListTest", "ContainerGroupingListTest"),
             new NameTypePattern("getLeafGroupingListTest", "String"),
             new NameTypePattern("requireLeafGroupingListTest", "String"),
-            new NameTypePattern("getLeaffllistGroupingListTest", "List<String>"),
-            new NameTypePattern("requireLeaffllistGroupingListTest", "List<String>"),
+            new NameTypePattern("getLeaffllistGroupingListTest", "Set<String>"),
+            new NameTypePattern("requireLeaffllistGroupingListTest", "Set<String>"),
             new NameTypePattern("getListGroupingListTest", "List<ListGroupingListTest>"));
         containsMethods(listTest.getMethodDefinitions(), new NameTypePattern("getListLeafTest", "String"));
         containsMethods(containerGroupingListTest.getMethodDefinitions(), new NameTypePattern(
@@ -539,8 +539,8 @@ public class UsesTest {
             new NameTypePattern("getLeafNotificationTest",  "String"));
         containsMethods(groupingNotificationTest.getMethodDefinitions(),
             new NameTypePattern("getContainerGroupingNotificationTest", "ContainerGroupingNotificationTest"),
-            new NameTypePattern("getLeaffllistGroupingNotificationTest", "List<String>"),
-            new NameTypePattern("requireLeaffllistGroupingNotificationTest", "List<String>"));
+            new NameTypePattern("getLeaffllistGroupingNotificationTest", "Set<String>"),
+            new NameTypePattern("requireLeaffllistGroupingNotificationTest", "Set<String>"));
         containsMethods(containerGroupingNotificationTest.getMethodDefinitions(),
             new NameTypePattern("getLeafContainerGroupingNotificationTest", "Uint32"),
             new NameTypePattern("requireLeafContainerGroupingNotificationTest", "Uint32"));

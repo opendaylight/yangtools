@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -99,7 +100,7 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
     }
 
     protected static final void streamLeafList(final BindingStreamEventWriter writer, final String localName,
-            final List<?> value) throws IOException {
+            final Set<?> value) throws IOException {
         if (value != null) {
             writer.startLeafSet(localName, value.size());
             commonStreamLeafset(writer, value);
@@ -156,7 +157,7 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         writer.endNode();
     }
 
-    private static void commonStreamLeafset(final BindingStreamEventWriter writer, final List<?> value)
+    private static void commonStreamLeafset(final BindingStreamEventWriter writer, final Collection<?> value)
             throws IOException {
         for (Object entry : value) {
             writer.leafSetEntryNode(entry);
@@ -186,7 +187,7 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         return !(writer instanceof BindingSerializer) || ((BindingSerializer<?, T>) writer).serialize(value) == null;
     }
 
-    private static int nullSize(final List<?> list) {
+    private static int nullSize(final Collection<?> list) {
         return list == null ? 0 : list.size();
     }
 

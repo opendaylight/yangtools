@@ -10,9 +10,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarContBuilder;
@@ -57,8 +56,8 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
 
     @Test
     public void specifiedLeafListTest() {
-        final List<String> testList = ImmutableList.of("test");
-        final BarCont barCont  = new BarContBuilder().setLeafList1(testList).build();
+        final Set<String> testSet = Set.of("test");
+        final BarCont barCont  = new BarContBuilder().setLeafList1(testSet).build();
 
         final Map.Entry<YangInstanceIdentifier, NormalizedNode> res = codecContext
                 .toNormalizedNode(BAR_CONT_II, barCont);
@@ -66,6 +65,6 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
         final BarCont barContAfterConverting = (BarCont)codecContext
                 .fromNormalizedNode(res.getKey(), res.getValue()).getValue();
 
-        assertEquals(barContAfterConverting.getLeafList1(), testList);
+        assertEquals(barContAfterConverting.getLeafList1(), testSet);
     }
 }

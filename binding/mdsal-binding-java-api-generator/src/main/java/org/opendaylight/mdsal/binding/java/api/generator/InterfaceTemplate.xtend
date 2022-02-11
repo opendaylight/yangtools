@@ -34,6 +34,7 @@ import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.Types
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
@@ -378,8 +379,11 @@ class InterfaceTemplate extends BaseTemplate {
     '''
 
     def private String nullableType(Type type) {
-        if (type.isObject && (Types.isMapType(type) || Types.isListType(type))) {
-            return type.importedNullable
+        if (type.isObject && type instanceof ParameterizedType) {
+            val param = type as ParameterizedType
+            if (Types.isMapType(param) || Types.isListType(param) || Types.isSetType(param)) {
+                return type.importedNullable
+            }
         }
         return type.importedName
     }
