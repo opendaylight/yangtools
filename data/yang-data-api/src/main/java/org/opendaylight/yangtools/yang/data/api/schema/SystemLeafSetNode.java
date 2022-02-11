@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 /**
- * Node representing set of simple leaf nodes. Node containing instances of {@link LeafSetEntryNode}.
+ * {@link LeafSetNode} which does not preserve user-supplied ordering. This node represents a data instance of
+ * a {@code leaf-list} without a {@code ordered-by user;} substatement, i.e. when the {@code leaf-list} is effectively
+ * {@code ordered-by system;}.
  *
- * <p>
- * Schema and semantics of this node are described by instance of
- * {@link org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode}.
- *
- * @param <T> Type of leaf node values.
+ * @param <T> Value type of Leaf entries
  */
 public interface SystemLeafSetNode<T> extends LeafSetNode<T>, OrderingAware.System {
     @Override
