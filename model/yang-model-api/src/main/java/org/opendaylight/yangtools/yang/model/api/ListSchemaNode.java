@@ -23,21 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
  */
 public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode, ActionNodeContainer,
         NotificationNodeContainer, ElementCountConstraintAware, MustConstraintAware,
-        EffectiveStatementEquivalent<ListEffectiveStatement> {
+        UserOrderedAware<ListEffectiveStatement> {
     /**
      * Returns the list of leaf identifiers.
      *
      * @return List of QNames of leaf identifiers of this list, empty if the list has no keys.
      */
     @NonNull List<@NonNull QName> getKeyDefinition();
-
-    /**
-     * YANG 'ordered-by' statement. It defines whether the order of entries within a list are determined by the user
-     * or the system. If not present, default is false.
-     *
-     * @return true if ordered-by argument is "user", false otherwise
-     */
-    boolean isUserOrdered();
 
     /**
      * Returns unique constraints.
