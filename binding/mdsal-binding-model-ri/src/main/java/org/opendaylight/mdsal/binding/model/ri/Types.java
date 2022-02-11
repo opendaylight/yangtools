@@ -180,10 +180,6 @@ public final class Types {
         return MAP_TYPE.equals(type.getRawType());
     }
 
-    public static boolean isMapType(final Type type) {
-        return type instanceof ParameterizedType && isMapType((ParameterizedType) type);
-    }
-
     /**
      * Returns an instance of {@link ParameterizedType} describing the typed {@link Set}&lt;V&gt; with concrete type
      * of value.
@@ -202,6 +198,10 @@ public final class Types {
      */
     public static @NonNull ParameterizedType setTypeWildcard() {
         return SET_TYPE_WILDCARD;
+    }
+
+    public static boolean isSetType(final ParameterizedType type) {
+        return SET_TYPE.equals(type.getRawType());
     }
 
     /**
@@ -224,16 +224,8 @@ public final class Types {
         return LIST_TYPE_WILDCARD;
     }
 
-    public static boolean isSetType(final ParameterizedType type) {
-        return SET_TYPE.equals(type.getRawType());
-    }
-
     public static boolean isListType(final ParameterizedType type) {
         return LIST_TYPE.equals(type.getRawType());
-    }
-
-    public static boolean isListType(final Type type) {
-        return type instanceof ParameterizedType && isListType((ParameterizedType) type);
     }
 
     /**
