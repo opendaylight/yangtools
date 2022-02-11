@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UserOrderedAware;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.WhenConditionAware;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -51,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -336,9 +338,15 @@ public final class EffectiveStatementMixins {
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
+     * @param <E> Class representing effective version of this statement.
      */
-    public interface UserOrderedMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatementWithFlags<A, D> {
-        default boolean userOrdered() {
+    // FIXME: 9.0.0: remove this mixin once we have a properly-cached DataTree and JSON/XML codec tree and the speed
+    //               of isUserOrdered() is not really critical.
+    public interface UserOrderedAwareMixin<A, D extends DeclaredStatement<A>,
+            E extends OrderedByAwareEffectiveStatement<A, D>>
+            extends EffectiveStatementWithFlags<A, D>, UserOrderedAware<E> {
+        @Override
+        default boolean isUserOrdered() {
             return (flags() & FlagsBuilder.USER_ORDERED) != 0;
         }
     }

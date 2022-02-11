@@ -21,11 +21,12 @@ import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 
 abstract class AbstractLeafListEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, LeafListStatement>
-        implements LeafListEffectiveStatement, LeafListSchemaNode, UserOrderedMixin<QName, LeafListStatement>,
+        implements LeafListEffectiveStatement, LeafListSchemaNode,
+            UserOrderedAwareMixin<QName, LeafListStatement, LeafListEffectiveStatement>,
             DataSchemaNodeMixin<LeafListStatement>, MustConstraintMixin<QName, LeafListStatement> {
     private static final VarHandle TYPE;
 
@@ -65,11 +66,6 @@ abstract class AbstractLeafListEffectiveStatement
     @Override
     public final int flags() {
         return flags;
-    }
-
-    @Override
-    public final boolean isUserOrdered() {
-        return userOrdered();
     }
 
     @Override
