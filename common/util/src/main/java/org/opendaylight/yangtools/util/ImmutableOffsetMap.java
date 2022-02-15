@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -135,13 +136,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
 
         final ImmutableMap<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
-        @SuppressWarnings("unchecked")
-        final V[] array = (V[]) new Object[offsets.size()];
-        for (Entry<K, V> e : map.entrySet()) {
-            array[offsets.get(e.getKey())] = e.getValue();
-        }
-
-        return new Ordered<>(offsets, array);
+        return new Ordered<>(offsets, createArray(offsets, map));
     }
 
     /**
@@ -169,13 +164,16 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
 
         final ImmutableMap<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
+        return new Unordered<>(offsets, createArray(offsets, map));
+    }
+
+    private static <K, V> V[] createArray(final ImmutableMap<K, Integer> offsets, final Map<K, V> map) {
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : map.entrySet()) {
-            array[offsets.get(e.getKey())] = e.getValue();
+            array[verifyNotNull(offsets.get(e.getKey()))] = e.getValue();
         }
-
-        return new Unordered<>(offsets, array);
+        return array;
     }
 
     private static <K, V> @Nullable Map<K, V> commonCopy(final @NonNull Map<K, V> map) {
