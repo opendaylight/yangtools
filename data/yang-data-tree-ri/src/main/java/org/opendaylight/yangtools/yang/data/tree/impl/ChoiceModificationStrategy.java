@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.base.Predicates;
-import com.google.common.base.Verify;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -115,20 +117,19 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     private void enforceCases(final NormalizedNode normalizedNode) {
-        Verify.verify(normalizedNode instanceof ChoiceNode);
-        final Collection<DataContainerChild> children = ((ChoiceNode) normalizedNode).body();
+        verify(normalizedNode instanceof ChoiceNode);
+        final var children = ((ChoiceNode) normalizedNode).body();
         if (!children.isEmpty()) {
             final DataContainerChild firstChild = children.iterator().next();
-            final CaseEnforcer enforcer = Verify.verifyNotNull(caseEnforcers.get(firstChild.getIdentifier()),
+            final CaseEnforcer enforcer = verifyNotNull(caseEnforcers.get(firstChild.getIdentifier()),
                 "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong "
                 + "in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
 
             // Make sure no leaves from other cases are present
-            for (final CaseEnforcer other : exclusions.get(enforcer)) {
+            for (final CaseEnforcer other : verifyNotNull(exclusions.get(enforcer))) {
                 for (final PathArgument id : other.getAllChildIdentifiers()) {
-                    final Optional<NormalizedNode> maybeChild = NormalizedNodes.getDirectChild(normalizedNode,
-                        id);
-                    Preconditions.checkArgument(!maybeChild.isPresent(),
+                    final Optional<NormalizedNode> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
+                    checkArgument(!maybeChild.isPresent(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
                         firstChild.getIdentifier(), enforcer, id, other, maybeChild.orElse(null));
                 }
