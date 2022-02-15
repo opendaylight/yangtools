@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
@@ -52,19 +54,19 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addStatementSupport(final ModelProcessingPhase phase,
             final StatementSupport<?, ?, ?> stmtSupport) {
-        reactorSupportBundles.get(phase).addSupport(stmtSupport);
+        getBuilder(phase).addSupport(stmtSupport);
         return this;
     }
 
     public @NonNull CustomCrossSourceStatementReactorBuilder overrideStatementSupport(final ModelProcessingPhase phase,
             final StatementSupport<?, ?, ?> stmtSupport) {
-        reactorSupportBundles.get(phase).overrideSupport(stmtSupport);
+        getBuilder(phase).overrideSupport(stmtSupport);
         return this;
     }
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
             final NamespaceBehaviour<?, ?, ?> namespaceSupport) {
-        reactorSupportBundles.get(phase).addSupport(namespaceSupport);
+        getBuilder(phase).addSupport(namespaceSupport);
         return this;
     }
 
@@ -116,17 +118,17 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
      * @return A CrossSourceStatementReactor
      */
     public @NonNull CrossSourceStatementReactor build() {
-        final StatementSupportBundle initBundle = reactorSupportBundles.get(ModelProcessingPhase.INIT).build();
-        final StatementSupportBundle preLinkageBundle = reactorSupportBundles
-                .get(ModelProcessingPhase.SOURCE_PRE_LINKAGE).setParent(initBundle).build();
-        final StatementSupportBundle linkageBundle = reactorSupportBundles.get(ModelProcessingPhase.SOURCE_LINKAGE)
-                .setParent(preLinkageBundle).build();
-        final StatementSupportBundle stmtDefBundle = reactorSupportBundles
-                .get(ModelProcessingPhase.STATEMENT_DEFINITION).setParent(linkageBundle).build();
-        final StatementSupportBundle fullDeclBundle = reactorSupportBundles.get(ModelProcessingPhase.FULL_DECLARATION)
-                .setParent(stmtDefBundle).build();
-        final StatementSupportBundle effectiveBundle = reactorSupportBundles.get(ModelProcessingPhase.EFFECTIVE_MODEL)
-                .setParent(fullDeclBundle).build();
+        final StatementSupportBundle initBundle = getBuilder(ModelProcessingPhase.INIT).build();
+        final StatementSupportBundle preLinkageBundle = getBuilder(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
+            .setParent(initBundle).build();
+        final StatementSupportBundle linkageBundle = getBuilder(ModelProcessingPhase.SOURCE_LINKAGE)
+            .setParent(preLinkageBundle).build();
+        final StatementSupportBundle stmtDefBundle = getBuilder(ModelProcessingPhase.STATEMENT_DEFINITION)
+            .setParent(linkageBundle).build();
+        final StatementSupportBundle fullDeclBundle = getBuilder(ModelProcessingPhase.FULL_DECLARATION)
+            .setParent(stmtDefBundle).build();
+        final StatementSupportBundle effectiveBundle = getBuilder(ModelProcessingPhase.EFFECTIVE_MODEL)
+            .setParent(fullDeclBundle).build();
 
         final CrossSourceStatementReactor.Builder reactorBuilder = CrossSourceStatementReactor.builder()
                 .setBundle(ModelProcessingPhase.INIT, initBundle)
@@ -141,5 +143,9 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
         }
 
         return reactorBuilder.build();
+    }
+
+    private StatementSupportBundle.@NonNull Builder getBuilder(final ModelProcessingPhase phase) {
+        return verifyNotNull(reactorSupportBundles.get(phase));
     }
 }

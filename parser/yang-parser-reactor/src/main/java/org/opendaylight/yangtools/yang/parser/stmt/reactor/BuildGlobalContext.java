@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Verify;
@@ -50,7 +51,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableExce
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -94,7 +94,8 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
         addToNamespace(ValidationBundlesNamespace.class, supportedValidation);
 
-        this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
+        supportedVersions = ImmutableSet.copyOf(
+            verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
@@ -140,7 +141,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
             final Class<N> type) {
         NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
-            final NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(type);
+            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).getNamespaceBehaviour(type);
             if (potentialRaw != null) {
                 potential = createNamespaceContext(potentialRaw);
                 supportedNamespaces.put(type, potential);
@@ -174,8 +175,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
         StatementDefinitionContext<?, ?, ?> potential = definitions.get(version, name);
         if (potential == null) {
-            final StatementSupport<?, ?, ?> potentialRaw = supports.get(currentPhase).getStatementDefinition(version,
-                    name);
+            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).getStatementDefinition(version, name);
             if (potentialRaw != null) {
                 potential = new StatementDefinitionContext<>(potentialRaw);
                 definitions.put(version, name, potential);
