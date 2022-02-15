@@ -182,7 +182,7 @@ abstract class DependencyResolver {
 
         @Override
         public String getPrefix() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override

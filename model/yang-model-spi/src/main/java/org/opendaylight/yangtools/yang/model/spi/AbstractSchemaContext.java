@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.spi;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -228,7 +227,9 @@ public abstract class AbstractSchemaContext implements SchemaContext {
             local = loadDerivedIdentities();
         }
         final ImmutableSet<IdentitySchemaNode> result = local.get(requireNonNull(identity));
-        checkArgument(result != null, "Identity %s not found", identity);
+        if (result == null) {
+            throw new IllegalArgumentException("Identity " + identity + " not found");
+        }
         return result;
     }
 
