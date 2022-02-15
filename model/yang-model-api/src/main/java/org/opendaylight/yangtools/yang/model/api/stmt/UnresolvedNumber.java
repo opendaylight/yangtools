@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -97,8 +96,6 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static <T extends Number> T resolve(final T number) {
         checkArgument(!(number instanceof UnresolvedNumber));
         return number;
