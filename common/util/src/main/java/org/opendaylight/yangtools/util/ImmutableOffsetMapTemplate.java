@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -105,13 +106,18 @@ public abstract class ImmutableOffsetMapTemplate<K> extends ImmutableMapTemplate
         final V[] objects = (V[]) new Object[size];
         for (Entry<K, T> entry : fromMap.entrySet()) {
             final K key = requireNonNull(entry.getKey());
-            final Integer offset = offsets.get(key);
-            checkArgument(offset != null, "Key %s present in input, but not in offsets %s", key, offsets);
-
-            objects[offset.intValue()] = transformValue(key, entry.getValue(), valueTransformer);
+            objects[offsetOf(key)] = transformValue(key, entry.getValue(), valueTransformer);
         }
 
         return createMap(offsets, objects);
+    }
+
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+        justification = "SpotBugs does not grok checkArgument()")
+    private int offsetOf(final K key) {
+        final Integer offset = offsets.get(key);
+        checkArgument(offset != null, "Key %s present in input, but not in offsets %s", key, offsets);
+        return offset;
     }
 
     @Override
