@@ -15,6 +15,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
@@ -111,16 +112,18 @@ public enum JSONCodecFactorySupplier {
     private final LoadingCache<EffectiveModelContext, JSONCodecFactory> precomputed;
 
     // Weak keys to retire the entry when SchemaContext goes away and to force identity-based lookup
-    private final LoadingCache<EffectiveModelContext, JSONCodecFactory> shared;
-
-    JSONCodecFactorySupplier() {
-        precomputed = CacheBuilder.newBuilder().weakKeys().build(new EagerCacheLoader(this::createFactory));
-        shared = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<EffectiveModelContext, JSONCodecFactory>() {
+    private final LoadingCache<EffectiveModelContext, JSONCodecFactory> shared = CacheBuilder.newBuilder()
+        .weakKeys().build(new CacheLoader<EffectiveModelContext, JSONCodecFactory>() {
             @Override
             public JSONCodecFactory load(final EffectiveModelContext key) {
                 return createFactory(key, new SharedCodecCache<>());
             }
         });
+
+    @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
+        justification = "https://github.com/spotbugs/spotbugs/issues/1867")
+    JSONCodecFactorySupplier() {
+        precomputed = CacheBuilder.newBuilder().weakKeys().build(new EagerCacheLoader(this::createFactory));
     }
 
     /**

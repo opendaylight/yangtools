@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -137,13 +137,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
 
         final ImmutableMap<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
-        @SuppressWarnings("unchecked")
-        final V[] array = (V[]) new Object[offsets.size()];
-        for (Entry<K, V> e : map.entrySet()) {
-            array[offsets.get(e.getKey())] = e.getValue();
-        }
-
-        return new Ordered<>(offsets, array);
+        return new Ordered<>(offsets, createArray(offsets, map));
     }
 
     /**
@@ -173,13 +167,16 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
 
         final ImmutableMap<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
+        return new Unordered<>(offsets, createArray(offsets, map));
+    }
+
+    private static <K, V> V[] createArray(final ImmutableMap<K, Integer> offsets, final Map<K, V> map) {
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : map.entrySet()) {
-            array[offsets.get(e.getKey())] = e.getValue();
+            array[verifyNotNull(offsets.get(e.getKey()))] = e.getValue();
         }
-
-        return new Unordered<>(offsets, array);
+        return array;
     }
 
     private static <K, V> @Nullable Map<K, V> commonCopy(final @NonNull Map<K, V> map) {
@@ -397,8 +394,6 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return f;
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static void setField(final @NonNull ImmutableOffsetMap<?, ?> map, final @NonNull Field field,
             final Object value) throws IOException {
         try {
