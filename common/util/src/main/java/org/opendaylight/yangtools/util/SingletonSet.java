@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Iterators;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -168,6 +169,8 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         return s.size() == 1 && otherContains(s);
     }
 
+    @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
+        justification = "https://github.com/spotbugs/spotbugs/issues/1954")
     private boolean otherContains(final @NonNull Collection<?> other) {
         try {
             return other.contains(getElement());

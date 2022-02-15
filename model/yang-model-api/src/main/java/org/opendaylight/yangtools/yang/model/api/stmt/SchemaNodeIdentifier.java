@@ -14,7 +14,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -293,8 +292,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return ids.size() < 2 ? ids : simplifyQNames(ids);
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static ImmutableList<QName> checkQNames(final Collection<QName> qnames) {
         final ImmutableList<QName> ret = ImmutableList.copyOf(qnames);
         checkArgument(!ret.isEmpty(), "SchemaNodeIdentifier has to have at least one node identifier");
