@@ -316,7 +316,10 @@ public abstract class YangModelDependencyInfo {
     static String safeStringArgument(final SourceIdentifier source, final IRStatement stmt, final String desc) {
         final StatementSourceReference ref = getReference(source, stmt);
         final IRArgument arg = stmt.argument();
-        checkArgument(arg != null, "Missing %s at %s", desc, ref);
+        if (arg == null) {
+            throw new IllegalArgumentException("Missing " + desc + " at " + ref);
+        }
+
         // TODO: we probably need to understand yang version first....
         return ArgumentContextUtils.rfc6020().stringFromStringContext(arg, ref);
     }
@@ -410,7 +413,7 @@ public abstract class YangModelDependencyInfo {
 
         @Override
         public String getPrefix() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override

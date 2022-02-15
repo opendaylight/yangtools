@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -150,7 +151,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         this(offsets, new Object[offsets.size()]);
 
         for (Entry<K, V> e : source.entrySet()) {
-            objects[offsets.get(e.getKey())] = requireNonNull(e.getValue());
+            objects[verifyNotNull(offsets.get(e.getKey()))] = requireNonNull(e.getValue());
         }
 
         this.needClone = false;

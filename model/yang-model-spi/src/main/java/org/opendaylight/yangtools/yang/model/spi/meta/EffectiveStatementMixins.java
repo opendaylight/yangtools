@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
@@ -329,7 +331,7 @@ public final class EffectiveStatementMixins {
             extends DocumentedNodeMixin.WithStatus<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
         @Override
         default String getNodeParameter() {
-            return Strings.nullToEmpty(getDeclared().rawArgument());
+            return Strings.nullToEmpty(verifyNotNull(getDeclared()).rawArgument());
         }
     }
 

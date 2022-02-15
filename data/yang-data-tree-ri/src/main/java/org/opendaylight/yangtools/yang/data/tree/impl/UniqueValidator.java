@@ -16,7 +16,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -122,8 +121,6 @@ abstract class UniqueValidator<T> implements Immutable {
      * @param path Path to encode
      * @return Encoded path.
      */
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-        justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static Object encodePath(final List<NodeIdentifier> path) {
         return path.size() == 1 ? path.get(0) : ImmutableList.copyOf(path);
     }
@@ -139,8 +136,6 @@ abstract class UniqueValidator<T> implements Immutable {
             : (ImmutableList<NodeIdentifier>) obj;
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-        justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static @NonNull Descendant decodeDescendant(final Object obj) {
         return Descendant.of(Collections2.transform(decodePath(obj), NodeIdentifier::getNodeType));
     }
@@ -153,8 +148,6 @@ abstract class UniqueValidator<T> implements Immutable {
      * @param path Descendant path
      * @return Value for the descendant
      */
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-        justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static @Nullable Object extractValue(final Map<List<NodeIdentifier>, Object> valueCache,
             final DataContainerNode data, final List<NodeIdentifier> path) {
         return valueCache.computeIfAbsent(path, key -> extractValue(data, key));
