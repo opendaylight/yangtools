@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.Iterables;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -163,8 +162,6 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
             return children.equals(((ImmutableUserLeafSetNode<?>) other).children);
         }
 
-        @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
         private Map<NodeWithValue, LeafSetEntryNode<T>> getChildren() {
             return Collections.unmodifiableMap(children);
         }
