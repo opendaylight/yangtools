@@ -18,7 +18,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,8 +136,6 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         }
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private synchronized <T extends SchemaSourceRepresentation> void removeSource(final PotentialSchemaSource<?> source,
             final SchemaSourceRegistration<?> reg) {
         final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m =
