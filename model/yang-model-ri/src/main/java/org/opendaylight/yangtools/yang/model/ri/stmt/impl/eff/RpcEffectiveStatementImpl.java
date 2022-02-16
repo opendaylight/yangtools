@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationDefinitionMixin;
 
-public final class RpcEffectiveStatementImpl extends WithTypedefNamespace<QName, RpcStatement, RpcEffectiveStatement>
+public final class RpcEffectiveStatementImpl extends WithTypedefNamespace<QName, RpcStatement>
         implements RpcDefinition, RpcEffectiveStatement, OperationDefinitionMixin<RpcStatement> {
     private final @NonNull QName argument;
     private final int flags;

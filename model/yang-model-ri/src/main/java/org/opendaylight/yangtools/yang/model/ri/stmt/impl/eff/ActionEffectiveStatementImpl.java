@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.CopyableMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationDefinitionMixin;
 
-public final class ActionEffectiveStatementImpl
-        extends WithTypedefNamespace<QName, ActionStatement, ActionEffectiveStatement>
+public final class ActionEffectiveStatementImpl extends WithTypedefNamespace<QName, ActionStatement>
         implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<ActionStatement>,
                    CopyableMixin<QName, ActionStatement> {
     private final @NonNull QName argument;

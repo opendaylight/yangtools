@@ -53,10 +53,9 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>,
-            E extends SchemaTreeAwareEffectiveStatement<A, D>> extends AbstractDeclaredEffectiveStatement<A, D> {
+    public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>>
+            extends AbstractDeclaredEffectiveStatement<A, D> {
         @Override
         @SuppressWarnings("unchecked")
         protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
@@ -86,10 +85,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>,
-            E extends DataTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
+    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>> extends WithSchemaTree<A, D> {
         @Override
         @SuppressWarnings("unchecked")
         protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
@@ -215,10 +212,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
-            E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
+    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>> extends WithSchemaTree<A, D> {
         private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull Object substatements;
         private final @NonNull D declared;
@@ -230,7 +225,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             this.schemaTree = immutableNamespaceOf(createSchemaTreeNamespace(substatements));
         }
 
-        protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D, E> original) {
+        protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D> original) {
             this.declared = original.declared;
             this.schemaTree = original.schemaTree;
             this.substatements = original.substatements;
@@ -258,12 +253,10 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
-            E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
-        public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement<A>,
-                E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
+    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>> extends WithDataTree<A, D> {
+        public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement<A>>
+                extends DefaultWithDataTree<A, D> {
             protected WithTypedefNamespace(final D declared,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
                 super(declared, substatements);
@@ -271,7 +264,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 createTypedefNamespace(substatements);
             }
 
-            protected WithTypedefNamespace(final WithTypedefNamespace<A, D, E> original) {
+            protected WithTypedefNamespace(final WithTypedefNamespace<A, D> original) {
                 super(original);
             }
 
@@ -302,7 +295,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
         }
 
-        protected DefaultWithDataTree(final DefaultWithDataTree<A, D, E> original) {
+        protected DefaultWithDataTree(final DefaultWithDataTree<A, D> original) {
             this.declared = original.declared;
             this.schemaTree = original.schemaTree;
             this.dataTree = original.dataTree;

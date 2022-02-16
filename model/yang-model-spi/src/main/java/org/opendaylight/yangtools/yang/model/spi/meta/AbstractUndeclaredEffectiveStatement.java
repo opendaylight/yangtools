@@ -42,10 +42,9 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>,
-            E extends SchemaTreeAwareEffectiveStatement<A, D>> extends AbstractUndeclaredEffectiveStatement<A, D> {
+    public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>>
+            extends AbstractUndeclaredEffectiveStatement<A, D> {
         @Override
         @SuppressWarnings("unchecked")
         protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
@@ -75,10 +74,8 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>,
-            E extends DataTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
+    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>> extends WithSchemaTree<A, D> {
         @Override
         @SuppressWarnings("unchecked")
         protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
@@ -97,10 +94,8 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
-            E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
+    public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>> extends WithSchemaTree<A, D> {
         private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull Object substatements;
 
@@ -109,7 +104,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
             this.schemaTree = immutableNamespaceOf(createSchemaTreeNamespace(substatements));
         }
 
-        protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D, E> original) {
+        protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D> original) {
             this.schemaTree = original.schemaTree;
             this.substatements = original.substatements;
         }
@@ -131,10 +126,8 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
-     * @param <E> Class representing effective version of this statement.
      */
-    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
-            E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
+    public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>> extends WithDataTree<A, D> {
         private final @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull Map<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull Object substatements;
@@ -146,7 +139,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
             this.substatements = maskList(substatements);
         }
 
-        protected DefaultWithDataTree(final DefaultWithDataTree<A, D, E> original) {
+        protected DefaultWithDataTree(final DefaultWithDataTree<A, D> original) {
             this.schemaTree = original.schemaTree;
             this.dataTree = original.dataTree;
             this.substatements = original.substatements;
