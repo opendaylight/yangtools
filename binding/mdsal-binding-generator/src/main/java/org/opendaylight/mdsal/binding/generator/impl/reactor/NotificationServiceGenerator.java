@@ -22,6 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
+/**
+ * Aggregate service for top-level {@code notification} statements for a particular module. It does not handle nested
+ * (YANG 1.1) notifications.
+ */
+// FIXME: eventually remove this generator
 final class NotificationServiceGenerator extends AbstractImplicitGenerator {
     private final List<NotificationGenerator> notifs;
 
@@ -38,6 +43,7 @@ final class NotificationServiceGenerator extends AbstractImplicitGenerator {
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        // FIXME: MDSAL-496: mark this interface as deprecated
         builder.addImplementsType(BindingTypes.NOTIFICATION_LISTENER);
 
         for (NotificationGenerator gen : notifs) {

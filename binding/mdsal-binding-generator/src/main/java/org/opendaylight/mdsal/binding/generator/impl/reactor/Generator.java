@@ -52,6 +52,14 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * A single node in generator tree. Each node will eventually resolve to a generated Java class. Each node also can have
  * a number of children, which are generators corresponding to the YANG subtree of this node.
+ *
+ * <p>
+ * Each tree is rooted in a {@link ModuleGenerator} and its organization follows roughly YANG {@code schema tree}
+ * layout, but with a twist coming from the reuse of generated interfaces from a {@code grouping} in the location of
+ * every {@code uses} encountered and also the corresponding backwards propagation of {@code augment} effects.
+ *
+ * <p>
+ * Overall the tree layout guides the allocation of Java package and top-level class namespaces.
  */
 public abstract class Generator implements Iterable<Generator> {
     private static final JavaTypeName DEPRECATED_ANNOTATION = JavaTypeName.create(Deprecated.class);

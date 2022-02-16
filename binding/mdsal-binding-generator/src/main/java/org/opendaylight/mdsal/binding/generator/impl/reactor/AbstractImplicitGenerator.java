@@ -12,8 +12,10 @@ import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Mem
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
- * An implicit {@link Generator}, not associated with any particular statement.
+ * An implicit {@link Generator}, not associated with any particular statement. We use these only for aggregate services
+ * harking back to the original specification for Java 7. As such we want to eventually get rid of it.
  */
+// FIXME: eventually remove this subclass and unify Generator and AbstractExplicitGenerator
 abstract class AbstractImplicitGenerator extends Generator {
     AbstractImplicitGenerator(final ModuleGenerator parent) {
         super(parent);
