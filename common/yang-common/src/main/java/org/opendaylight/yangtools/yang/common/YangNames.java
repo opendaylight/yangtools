@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -20,19 +20,18 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Robert Varga
  */
 @Beta
-@NonNullByDefault
 public final class YangNames {
     /**
      * A {@link CharMatcher} matching the first character of a YANG {@code identifier} ABNF production,
      * {@code (ALPHA / "_")}.
      */
-    public static final CharMatcher IDENTIFIER_START =
+    public static final @NonNull CharMatcher IDENTIFIER_START =
         CharMatcher.inRange('A', 'Z').or(CharMatcher.inRange('a', 'z').or(CharMatcher.is('_'))).precomputed();
     /**
      * A {@link CharMatcher} NOT matching second and later characters of a YANG {@code identifier} ABNF production,
      * {@code (ALPHA / DIGIT / "_" / "-" / ".")}.
      */
-    public static final CharMatcher NOT_IDENTIFIER_PART =
+    public static final @NonNull CharMatcher NOT_IDENTIFIER_PART =
         IDENTIFIER_START.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("-.")).negate().precomputed();
 
     private YangNames() {
@@ -47,7 +46,7 @@ public final class YangNames {
      * @return A tuple containing the module name and parsed revision, if present.
      * @throws NullPointerException if {@code baseName} is null
      */
-    public static Entry<String, @Nullable String> parseFilename(final String baseName) {
+    public static @NonNull Entry<@NonNull String, @Nullable String> parseFilename(final String baseName) {
         final int zavinac = baseName.lastIndexOf('@');
         if (zavinac < 0) {
             return new SimpleEntry<>(baseName, null);
