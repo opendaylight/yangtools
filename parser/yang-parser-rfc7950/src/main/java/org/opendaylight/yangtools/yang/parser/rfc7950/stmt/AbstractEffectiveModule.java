@@ -60,7 +60,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqualified>,
         E extends DataTreeAwareEffectiveStatement<Unqualified, D>>
-        extends WithTypedefNamespace<Unqualified, D, E>
+        extends WithTypedefNamespace<Unqualified, D>
         implements ModuleLike, DocumentedNodeMixin<Unqualified, D>, NotificationNodeContainerCompat<Unqualified, D, E> {
     private final String prefix;
     private final ImmutableSet<GroupingDefinition> groupings;

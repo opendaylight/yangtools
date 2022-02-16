@@ -30,8 +30,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.N
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
-abstract class AbstractListEffectiveStatement
-        extends WithTypedefNamespace<QName, ListStatement, ListEffectiveStatement>
+abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName, ListStatement>
         implements ListEffectiveStatement, ListSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,

@@ -25,8 +25,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.PresenceMixin;
 
-public abstract class AbstractContainerEffectiveStatement
-        extends WithTypedefNamespace<QName, ContainerStatement, ContainerEffectiveStatement>
+public abstract class AbstractContainerEffectiveStatement extends WithTypedefNamespace<QName, ContainerStatement>
         implements ContainerEffectiveStatement, ContainerSchemaNode, DataSchemaNodeMixin<ContainerStatement>,
             DataNodeContainerMixin<QName, ContainerStatement>, ActionNodeContainerMixin<QName, ContainerStatement>,
             ActionNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,

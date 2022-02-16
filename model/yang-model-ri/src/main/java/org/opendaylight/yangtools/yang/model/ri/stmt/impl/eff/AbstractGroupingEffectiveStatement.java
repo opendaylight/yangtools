@@ -21,8 +21,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
-public abstract class AbstractGroupingEffectiveStatement
-        extends WithTypedefNamespace<QName, GroupingStatement, GroupingEffectiveStatement>
+public abstract class AbstractGroupingEffectiveStatement extends WithTypedefNamespace<QName, GroupingStatement>
         implements GroupingDefinition, GroupingEffectiveStatement,
             DataNodeContainerMixin<QName, GroupingStatement>, SchemaNodeMixin<GroupingStatement>,
             ActionNodeContainerMixin<QName, GroupingStatement>,

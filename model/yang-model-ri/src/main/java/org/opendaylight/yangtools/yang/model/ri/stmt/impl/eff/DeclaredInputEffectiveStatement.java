@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationContainerMixin;
 
-public final class DeclaredInputEffectiveStatement
-        extends WithTypedefNamespace<QName, InputStatement, InputEffectiveStatement>
+public final class DeclaredInputEffectiveStatement extends WithTypedefNamespace<QName, InputStatement>
         implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement> {
     private final @NonNull QName argument;
     private final int flags;

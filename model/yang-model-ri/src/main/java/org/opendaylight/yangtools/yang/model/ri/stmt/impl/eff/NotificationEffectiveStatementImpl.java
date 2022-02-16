@@ -24,8 +24,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
-public final class NotificationEffectiveStatementImpl
-        extends WithTypedefNamespace<QName, NotificationStatement, NotificationEffectiveStatement>
+public final class NotificationEffectiveStatementImpl extends WithTypedefNamespace<QName, NotificationStatement>
         implements NotificationDefinition, NotificationEffectiveStatement,
                    SchemaNodeMixin<NotificationStatement>, DataNodeContainerMixin<QName, NotificationStatement>,
                    AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
