@@ -13,22 +13,27 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.QNameModuleAware;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithSchemaTree;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ActionNodeContainerMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
 public final class AugmentEffectiveStatementImpl
-        extends AbstractDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
+        extends DefaultWithSchemaTree<SchemaNodeIdentifier, AugmentStatement>
         implements AugmentEffectiveStatement, AugmentationSchemaNode, QNameModuleAware,
             DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, AugmentStatement>,
+            DataNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             WhenConditionMixin<SchemaNodeIdentifier, AugmentStatement> {
@@ -62,6 +67,11 @@ public final class AugmentEffectiveStatementImpl
     @Override
     public int flags() {
         return flags;
+    }
+
+    @Override
+    public DataSchemaNode dataChildByName(final QName name) {
+        return dataSchemaNode(name);
     }
 
     @Override
