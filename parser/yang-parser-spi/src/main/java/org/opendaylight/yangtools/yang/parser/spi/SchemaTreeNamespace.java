@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Iterator;
@@ -141,9 +144,9 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
     }
 
     private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
-        NamespaceStorageNode current = storage;
+        NamespaceStorageNode current = requireNonNull(storage);
         while (!isLocalOrGlobal(current.getStorageNodeType())) {
-            current = current.getParentNamespaceStorage();
+            current = verifyNotNull(current.getParentNamespaceStorage());
         }
         return current;
     }

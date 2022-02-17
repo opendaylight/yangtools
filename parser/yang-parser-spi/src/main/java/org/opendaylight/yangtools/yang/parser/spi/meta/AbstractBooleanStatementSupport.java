@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -41,8 +42,8 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
         super(publicDefinition, policy, config, validator);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
         this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
-        emptyDeclaredFalse = requireNonNull(emptyEffectiveFalse.getDeclared());
-        emptyDeclaredTrue = requireNonNull(emptyEffectiveTrue.getDeclared());
+        emptyDeclaredFalse = verifyNotNull(emptyEffectiveFalse.getDeclared());
+        emptyDeclaredTrue = verifyNotNull(emptyEffectiveTrue.getDeclared());
     }
 
     @Override
