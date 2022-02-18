@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatemen
 /**
  * Generator corresponding to a {@code leaf-list} statement.
  */
-final class LeafListGenerator extends AbstractTypeAwareGenerator<LeafListEffectiveStatement> {
+final class LeafListGenerator extends AbstractTypeAwareGenerator<LeafListEffectiveStatement, LeafListGenerator> {
     LeafListGenerator(final LeafListEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
     }

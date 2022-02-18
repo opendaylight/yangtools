@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code rpc} statement.
  */
-final class RpcGenerator extends AbstractCompositeGenerator<RpcEffectiveStatement> {
+final class RpcGenerator extends CompositeSchemaTreeGenerator<RpcEffectiveStatement, RpcGenerator> {
     RpcGenerator(final RpcEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
     }

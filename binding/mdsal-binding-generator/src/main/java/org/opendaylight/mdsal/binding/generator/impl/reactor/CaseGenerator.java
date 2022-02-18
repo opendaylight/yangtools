@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code case} statement.
  */
-final class CaseGenerator extends AbstractCompositeGenerator<CaseEffectiveStatement> {
+final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStatement, CaseGenerator> {
     CaseGenerator(final CaseEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
     }

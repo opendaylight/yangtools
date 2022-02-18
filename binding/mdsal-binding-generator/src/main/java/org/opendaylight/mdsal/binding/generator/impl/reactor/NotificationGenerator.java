@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code notification} statement.
  */
-final class NotificationGenerator extends AbstractCompositeGenerator<NotificationEffectiveStatement> {
+final class NotificationGenerator
+        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationGenerator> {
     NotificationGenerator(final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
     }

@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code choice} statement.
  */
-final class ChoiceGenerator extends AbstractCompositeGenerator<ChoiceEffectiveStatement> {
+final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffectiveStatement, ChoiceGenerator> {
     ChoiceGenerator(final ChoiceEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
     }

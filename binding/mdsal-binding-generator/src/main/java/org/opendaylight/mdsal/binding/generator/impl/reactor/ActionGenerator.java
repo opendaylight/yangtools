@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code action} statement.
  */
-final class ActionGenerator extends AbstractCompositeGenerator<ActionEffectiveStatement> {
+final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffectiveStatement, ActionGenerator> {
     ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
     }

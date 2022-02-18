@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to an {@code input} or an {@code output} statement.
  */
-class OperationContainerGenerator extends AbstractCompositeGenerator<SchemaTreeEffectiveStatement<?>> {
+class OperationContainerGenerator
+        extends CompositeSchemaTreeGenerator<SchemaTreeEffectiveStatement<?>, OperationContainerGenerator> {
     private final ConcreteType baseInterface;
 
     OperationContainerGenerator(final InputEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {

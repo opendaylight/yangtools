@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import org.opendaylight.mdsal.binding.generator.impl.tree.SchemaTreeChild;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -18,9 +19,15 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Common generator for {@code anydata} and {@code anyxml}.
  */
-final class OpaqueObjectGenerator<T extends DataTreeEffectiveStatement<?>> extends AbstractExplicitGenerator<T> {
+final class OpaqueObjectGenerator<T extends DataTreeEffectiveStatement<?>> extends AbstractExplicitGenerator<T>
+        implements SchemaTreeChild<T, OpaqueObjectGenerator<T>> {
     OpaqueObjectGenerator(final T statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
+    }
+
+    @Override
+    public OpaqueObjectGenerator<T> generator() {
+        return this;
     }
 
     @Override

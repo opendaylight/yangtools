@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
 
+import org.opendaylight.mdsal.binding.generator.impl.tree.SchemaTreeChild;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -21,21 +22,24 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Common base class for {@link LeafGenerator} and {@link LeafListGenerator}.
  */
-abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?>>
-        extends AbstractTypeObjectGenerator<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeAwareGenerator.class);
-
+abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?>,
+        G extends AbstractTypeAwareGenerator<T, G>>
+        extends AbstractTypeObjectGenerator<T> implements SchemaTreeChild<T, G> {
     private IdentityGenerator contextType;
 
     AbstractTypeAwareGenerator(final T statement, final AbstractCompositeGenerator<?> parent) {
         super(statement, parent);
         verify(statement instanceof TypeAware, "Unexpected statement %s", statement);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public final G generator() {
+        return (G) this;
     }
 
     @Override

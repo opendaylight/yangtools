@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code list} statement.
  */
-final class ListGenerator extends AbstractCompositeGenerator<ListEffectiveStatement> {
+final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStatement, ListGenerator> {
     private final @Nullable KeyGenerator keyGen;
 
     ListGenerator(final ListEffectiveStatement statement, final AbstractCompositeGenerator<?> parent) {
