@@ -532,7 +532,6 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
                 }
             } else {
                 LOG.trace("Ignoring statement {}", stmt);
-                continue;
             }
         }
 
