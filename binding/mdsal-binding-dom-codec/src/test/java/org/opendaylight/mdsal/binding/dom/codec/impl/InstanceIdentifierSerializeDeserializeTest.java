@@ -7,13 +7,21 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Iterables;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.Lst;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lst.Foo;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test.bi.ba.notification.rev150205.OutOfPixieDustNotification;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock.rev180723.KnockKnockInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
@@ -177,5 +185,40 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
             YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
                 NodeIdentifier.create(GrpCont.QNAME.bindTo(RootAug.QNAME.getModule()))));
         assertEquals(InstanceIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);
+    }
+
+    @Test
+    public void testRejectNotificationQName() {
+        // A purposely-wrong YangInstanceIdentifier
+        final var yiid = YangInstanceIdentifier.create(NodeIdentifier.create(OutOfPixieDustNotification.QNAME));
+        final var ex = assertThrows(IncorrectNestingException.class,
+            () -> codecContext.fromYangInstanceIdentifier(yiid));
+        assertThat(ex.getMessage(),
+            startsWith("Argument (urn:opendaylight:params:xml:ns:yang:controller:md:sal:test:bi:ba:notification"
+                + "?revision=2015-02-05)out-of-pixie-dust-notification is not valid child of "));
+    }
+
+    @Test
+    public void testRejectRpcQName() {
+        // A purposely-wrong YangInstanceIdentifier
+        final var yiid = YangInstanceIdentifier.create(NodeIdentifier.create(
+            // TODO: use the RPC interface once we are generating it
+            QName.create(KnockKnockInput.QNAME, "knock-knock")));
+        final var ex = assertThrows(IncorrectNestingException.class,
+            () -> codecContext.fromYangInstanceIdentifier(yiid));
+        assertThat(ex.getMessage(), startsWith("Argument (urn:opendaylight:params:xml:ns:yang:md:sal:knock-knock"
+            + "?revision=2018-07-23)knock-knock is not valid child of "));
+    }
+
+    @Test
+    public void testRejectActionQName() {
+        // A purposely-wrong YangInstanceIdentifier
+        final var yiid = YangInstanceIdentifier.create(
+            NodeIdentifier.create(Lst.QNAME),
+            NodeIdentifierWithPredicates.of(Lst.QNAME, QName.create(Lst.QNAME, "key"), "foo"),
+            NodeIdentifier.create(Foo.QNAME));
+        final var ex = assertThrows(IncorrectNestingException.class,
+            () -> codecContext.fromYangInstanceIdentifier(yiid));
+        assertEquals("Argument (urn:odl:actions)foo is not valid child of list lst", ex.getMessage());
     }
 }
