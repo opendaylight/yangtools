@@ -126,9 +126,13 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             }
 
             final DataContainerCodecPrototype<?> childProto = loadChildPrototype(retClass);
-            tmpDataObjects.put(method, childProto.getBindingClass());
-            byStreamClassBuilder.put(childProto.getBindingClass(), childProto);
+            final Class<?> childClass = childProto.getBindingClass();
+            tmpDataObjects.put(method, childClass);
+            byStreamClassBuilder.put(childClass, childProto);
             byYangBuilder.put(childProto.getYangArg(), childProto);
+
+            // FIXME: It really feels like we should be specializing DataContainerCodecPrototype so as to ditch
+            //        createInstance() and then we could do an instanceof check instead.
             if (childProto.isChoice()) {
                 final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) childProto.get();
                 for (final Class<?> cazeChild : choice.getCaseChildrenClasses()) {

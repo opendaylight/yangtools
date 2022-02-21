@@ -247,6 +247,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         throw new IllegalArgumentException("Unsupported type " + getBindingClass() + " " + schema);
     }
 
+    // FIXME: eliminate with above createInstance() item
     boolean isChoice() {
         return schema instanceof ChoiceSchemaNode;
     }
