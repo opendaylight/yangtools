@@ -34,6 +34,7 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -87,6 +88,8 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         checkArgument(!Augmentation.class.isAssignableFrom(cls), "Supplied class must not be an augmentation (%s is)",
             cls);
         checkArgument(!Action.class.isAssignableFrom(cls), "Supplied class must not be an action (%s is)", cls);
+        checkArgument(!Notification.class.isAssignableFrom(cls), "Supplied class must not be a notification (%s is)",
+            cls);
         return (DataSchemaNode) getTypes().findSchema(Type.of(cls)).orElse(null);
     }
 

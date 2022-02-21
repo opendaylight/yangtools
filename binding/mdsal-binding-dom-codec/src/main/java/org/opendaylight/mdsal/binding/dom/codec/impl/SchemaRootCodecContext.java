@@ -61,13 +61,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public DataContainerCodecContext<?, ?> load(final Class<? extends DataObject> key) {
-                if (Notification.class.isAssignableFrom(key)) {
-                    checkArgument(key.isInterface(), "Supplied class must be interface.");
-                    final QName qname = BindingReflections.findQName(key);
-                    final NotificationDefinition schema = getSchema().findNotification(qname).orElseThrow(
-                        () -> new IllegalArgumentException("Supplied " + key + " is not valid notification"));
-                    return new NotificationCodecContext<>(key, schema, factory());
-                }
                 return createDataTreeChildContext(key);
             }
         });
@@ -85,6 +78,18 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             @Override
             public ChoiceNodeCodecContext<?> load(final Class<? extends DataObject> key) {
                 return createChoiceDataContext(key);
+            }
+        });
+
+    private final LoadingCache<Class<?>, NotificationCodecContext<?>> notificationsByClass = CacheBuilder.newBuilder()
+        .build(new CacheLoader<Class<?>, NotificationCodecContext<?>>() {
+            @Override
+            public NotificationCodecContext<?> load(final Class<?> key) {
+                checkArgument(key.isInterface(), "Supplied class must be interface.");
+                final QName qname = BindingReflections.findQName(key);
+                final NotificationDefinition schema = getSchema().findNotification(qname).orElseThrow(
+                    () -> new IllegalArgumentException("Supplied " + key + " is not valid notification"));
+                return new NotificationCodecContext<>(key, schema, factory());
             }
         });
 
@@ -205,7 +210,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     NotificationCodecContext<?> getNotification(final Class<? extends Notification<?>> notification) {
-        return (NotificationCodecContext<?>) streamChild((Class<? extends DataObject>)notification);
+        return getOrRethrow(notificationsByClass, notification);
     }
 
     NotificationCodecContext<?> getNotification(final Absolute notification) {
