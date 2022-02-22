@@ -68,32 +68,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                         () -> new IllegalArgumentException("Supplied " + key + " is not valid notification"));
                     return new NotificationCodecContext<>(key, schema, factory());
                 }
-                if (RpcInput.class.isAssignableFrom(key) || RpcOutput.class.isAssignableFrom(key)) {
-                    final QName qname = BindingReflections.findQName(key);
-                    final QNameModule qnameModule = qname.getModule();
-                    final Module module = getSchema().findModule(qnameModule).orElseThrow(
-                        () -> new IllegalArgumentException("Failed to find module for " + qnameModule));
-                    final String className = BindingMapping.getClassName(qname);
-
-                    for (final RpcDefinition potential : module.getRpcs()) {
-                        final QName potentialQName = potential.getQName();
-                        /*
-                         * Check if rpc and class represents data from same module and then checks if rpc local name
-                         * produces same class name as class name appended with Input/Output based on QName associated
-                         * with binding class.
-                         *
-                         * FIXME: Rework this to have more precise logic regarding Binding Specification.
-                         */
-                        if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
-                            final ContainerLike schema = getRpcDataSchema(potential, qname);
-                            checkArgument(schema != null, "Schema for %s does not define input / output.",
-                                potentialQName);
-                            return DataContainerCodecPrototype.from(key, schema, factory()).get();
-                        }
-                    }
-
-                    throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
-                }
                 return createDataTreeChildContext(key);
             }
         });
@@ -111,6 +85,37 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             @Override
             public ChoiceNodeCodecContext<?> load(final Class<? extends DataObject> key) {
                 return createChoiceDataContext(key);
+            }
+        });
+
+    private final LoadingCache<Class<?>, ContainerNodeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder()
+        .build(new CacheLoader<Class<?>, ContainerNodeCodecContext<?>>() {
+            @Override
+            public ContainerNodeCodecContext<?> load(final Class<?> key) {
+                final QName qname = BindingReflections.findQName(key);
+                final QNameModule qnameModule = qname.getModule();
+                final Module module = getSchema().findModule(qnameModule).orElseThrow(
+                    () -> new IllegalArgumentException("Failed to find module for " + qnameModule));
+                final String className = BindingMapping.getClassName(qname);
+
+                for (final RpcDefinition potential : module.getRpcs()) {
+                    final QName potentialQName = potential.getQName();
+                    /*
+                     * Check if rpc and class represents data from same module and then checks if rpc local name
+                     * produces same class name as class name appended with Input/Output based on QName associated
+                     * with binding class.
+                     *
+                     * FIXME: Rework this to have more precise logic regarding Binding Specification.
+                     */
+                    if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
+                        final ContainerLike schema = getRpcDataSchema(potential, qname);
+                        checkArgument(schema != null, "Schema for %s does not define input / output.", potentialQName);
+                        return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory())
+                            .get();
+                    }
+                }
+
+                throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
             }
         });
 
@@ -208,7 +213,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     ContainerNodeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
-        return (ContainerNodeCodecContext<?>) streamChild((Class<? extends DataObject>)rpcInputOrOutput);
+        return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
     }
 
     RpcInputCodec<?> getRpc(final Absolute containerPath) {
