@@ -7,15 +7,19 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenEnumerationBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
@@ -25,6 +29,11 @@ import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.RuntimeGen
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeGeneratedUnion;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
 
 /**
@@ -32,7 +41,7 @@ import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
  */
 @Beta
 public abstract class TypeBuilderFactory implements Immutable {
-    static final class Codegen extends TypeBuilderFactory {
+    private static final class Codegen extends TypeBuilderFactory {
         private static final @NonNull Codegen INSTANCE = new Codegen();
 
         private Codegen() {
@@ -59,6 +68,46 @@ public abstract class TypeBuilderFactory implements Immutable {
             return new UnionBuilder(identifier);
         }
 
+        @Override
+        void addCodegenInformation(final EffectiveStatement<?, ?> stmt,
+                final GeneratedTypeBuilderBase<?> builder) {
+            if (stmt instanceof DocumentedNode) {
+                addCodegenInformation((DocumentedNode) stmt, builder);
+            }
+        }
+
+        @Override
+        void addCodegenInformation(final ModuleEffectiveStatement stmt, final GeneratedTypeBuilderBase<?> builder) {
+            verify(stmt instanceof Module, "Unexpected module %s", stmt);
+            final Module module = (Module) stmt;
+
+            YangSourceDefinition.of(module).ifPresent(builder::setYangSourceDefinition);
+            TypeComments.description(module).ifPresent(builder::addComment);
+            module.getDescription().ifPresent(builder::setDescription);
+            module.getReference().ifPresent(builder::setReference);
+        }
+
+        @Override
+        void addCodegenInformation(final DocumentedNode node, final GeneratedTypeBuilderBase<?> builder) {
+            node.getDescription().map(BindingGeneratorUtil::encodeAngleBrackets).ifPresent(builder::setDescription);
+            node.getReference().ifPresent(builder::setReference);
+        }
+
+        @Override
+        void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
+                final GeneratedTypeBuilderBase<?> builder) {
+            if (stmt instanceof DocumentedNode) {
+                final DocumentedNode node = (DocumentedNode) stmt;
+                TypeComments.description(node).ifPresent(builder::addComment);
+                node.getDescription().ifPresent(builder::setDescription);
+                node.getReference().ifPresent(builder::setReference);
+            }
+            if (stmt instanceof SchemaNode) {
+                YangSourceDefinition.of(module.statement(), (SchemaNode) stmt)
+                    .ifPresent(builder::setYangSourceDefinition);
+            }
+        }
+
         private static final class UnionBuilder extends CodegenGeneratedTOBuilder implements GeneratedUnionBuilder {
             UnionBuilder(final JavaTypeName identifier) {
                 super(identifier);
@@ -73,7 +122,7 @@ public abstract class TypeBuilderFactory implements Immutable {
         }
     }
 
-    static final class Runtime extends TypeBuilderFactory {
+    private static final class Runtime extends TypeBuilderFactory {
         private static final @NonNull Runtime INSTANCE = new Runtime();
 
         private Runtime() {
@@ -100,6 +149,27 @@ public abstract class TypeBuilderFactory implements Immutable {
             return new UnionBuilder(identifier);
         }
 
+        @Override
+        void addCodegenInformation(final EffectiveStatement<?, ?> stmt, final GeneratedTypeBuilderBase<?> builder) {
+            // No-op
+        }
+
+        @Override
+        void addCodegenInformation(final ModuleEffectiveStatement stmt, final GeneratedTypeBuilderBase<?> builder) {
+            // No-op
+        }
+
+        @Override
+        void addCodegenInformation(final DocumentedNode node, final GeneratedTypeBuilderBase<?> builder) {
+            // No-op
+        }
+
+        @Override
+        void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
+                final GeneratedTypeBuilderBase<?> builder) {
+            // No-op
+        }
+
         private static final class UnionBuilder extends RuntimeGeneratedTOBuilder implements GeneratedUnionBuilder {
             private List<String> typePropertyNames;
 
@@ -110,7 +180,7 @@ public abstract class TypeBuilderFactory implements Immutable {
 
             @Override
             public void setTypePropertyNames(final List<String> propertyNames) {
-                this.typePropertyNames = List.copyOf(propertyNames);
+                typePropertyNames = List.copyOf(propertyNames);
             }
 
             @Override
@@ -155,4 +225,12 @@ public abstract class TypeBuilderFactory implements Immutable {
 
     abstract @NonNull GeneratedUnionBuilder newGeneratedUnionBuilder(JavaTypeName identifier);
 
+    abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
+
+    abstract void addCodegenInformation(ModuleEffectiveStatement stmt, GeneratedTypeBuilderBase<?> builder);
+
+    abstract void addCodegenInformation(DocumentedNode node, GeneratedTypeBuilderBase<?> builder);
+
+    abstract void addCodegenInformation(ModuleGenerator module, EffectiveStatement<?, ?> stmt,
+        GeneratedTypeBuilderBase<?> builder);
 }

@@ -23,27 +23,22 @@ import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.model.api.AccessModifier;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
@@ -325,31 +320,6 @@ public abstract class Generator implements Iterable<Generator> {
                 break;
             default:
                 throw new IllegalStateException("Unhandled status in " + node);
-        }
-    }
-
-    static final void addCodegenInformation(final EffectiveStatement<?, ?> stmt,
-            final GeneratedTypeBuilderBase<?> builder) {
-        if (stmt instanceof DocumentedNode) {
-            addCodegenInformation((DocumentedNode) stmt, builder);
-        }
-    }
-
-    static final void addCodegenInformation(final DocumentedNode node, final GeneratedTypeBuilderBase<?> builder) {
-        node.getDescription().map(BindingGeneratorUtil::encodeAngleBrackets).ifPresent(builder::setDescription);
-        node.getReference().ifPresent(builder::setReference);
-    }
-
-    static final void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
-            final GeneratedTypeBuilderBase<?> builder) {
-        if (stmt instanceof DocumentedNode) {
-            final DocumentedNode node = (DocumentedNode) stmt;
-            TypeComments.description(node).ifPresent(builder::addComment);
-            node.getDescription().ifPresent(builder::setDescription);
-            node.getReference().ifPresent(builder::setReference);
-        }
-        if (stmt instanceof SchemaNode) {
-            YangSourceDefinition.of(module.statement(), (SchemaNode) stmt).ifPresent(builder::setYangSourceDefinition);
         }
     }
 

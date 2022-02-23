@@ -44,7 +44,7 @@ final class NotificationGenerator extends AbstractCompositeGenerator<Notificatio
         final ModuleGenerator module = currentModule();
         module.addQNameConstant(builder, localName());
 
-        addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(module, statement(), builder);
         annotateDeprecatedIfNecessary(builder);
 
         return builder.build();

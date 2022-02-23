@@ -36,9 +36,7 @@ final class ChoiceGenerator extends AbstractCompositeGenerator<ChoiceEffectiveSt
         module.addQNameConstant(builder, localName());
 
         annotateDeprecatedIfNecessary(builder);
-        if (builderFactory instanceof TypeBuilderFactory.Codegen) {
-            addCodegenInformation(module, statement(), builder);
-        }
+        builderFactory.addCodegenInformation(module, statement(), builder);
 //      newType.setSchemaPath(schemaNode.getPath());
         builder.setModuleName(module.statement().argument().getLocalName());
 

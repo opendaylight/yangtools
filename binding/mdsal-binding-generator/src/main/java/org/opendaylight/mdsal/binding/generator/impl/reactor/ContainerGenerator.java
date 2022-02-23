@@ -39,9 +39,7 @@ final class ContainerGenerator extends AbstractCompositeGenerator<ContainerEffec
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        if (builderFactory instanceof TypeBuilderFactory.Codegen) {
-            addCodegenInformation(module, statement(), builder);
-        }
+        builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 //      builder.setSchemaPath(node.getPath());
 

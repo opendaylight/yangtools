@@ -50,9 +50,7 @@ final class ActionGenerator extends AbstractCompositeGenerator<ActionEffectiveSt
 //        addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        if (builderFactory instanceof TypeBuilderFactory.Codegen) {
-            addCodegenInformation(module, statement(), builder);
-        }
+        builderFactory.addCodegenInformation(module, statement(), builder);
 
         return builder.build();
     }

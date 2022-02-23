@@ -61,9 +61,7 @@ final class CaseGenerator extends AbstractCompositeGenerator<CaseEffectiveStatem
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        if (builderFactory instanceof TypeBuilderFactory.Codegen) {
-            addCodegenInformation(module, statement(), builder);
-        }
+        builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();

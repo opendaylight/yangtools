@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.Map;
@@ -15,14 +14,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -117,17 +114,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
         }
 
         addGetterMethods(builder, builderFactory);
-
-        if (builderFactory instanceof TypeBuilderFactory.Codegen) {
-            final ModuleEffectiveStatement stmt = statement();
-            verify(stmt instanceof Module, "Unexpected module %s", stmt);
-            final Module module = (Module) stmt;
-
-            YangSourceDefinition.of(module).ifPresent(builder::setYangSourceDefinition);
-            TypeComments.description(module).ifPresent(builder::addComment);
-            module.getDescription().ifPresent(builder::setDescription);
-            module.getReference().ifPresent(builder::setReference);
-        }
+        builderFactory.addCodegenInformation(statement(), builder);
 
         return builder.build();
     }

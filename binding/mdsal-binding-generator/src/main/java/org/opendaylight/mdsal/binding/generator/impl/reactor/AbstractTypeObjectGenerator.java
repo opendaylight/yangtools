@@ -598,7 +598,7 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
 
         // builder.setSchemaPath(typedef.getPath());
         builder.setModuleName(module.statement().argument().getLocalName());
-        addCodegenInformation(typedef, builder);
+        builderFactory.addCodegenInformation(typedef, builder);
         annotateDeprecatedIfNecessary(typedef, builder);
         makeSerializable(builder);
         return builder.build();
@@ -636,7 +636,7 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
 
 //        builder.setSchemaPath(typedef.getPath());
         builder.setModuleName(moduleName);
-        addCodegenInformation(typedef, builder);
+        builderFactory.addCodegenInformation(typedef, builder);
 
         annotateDeprecatedIfNecessary(typedef, builder);
 
@@ -661,7 +661,7 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
 
 //        builder.setSchemaPath(typedef.getPath());
         builder.setModuleName(module.statement().argument().getLocalName());
-        addCodegenInformation(definingStatement, builder);
+        builderFactory.addCodegenInformation(definingStatement, builder);
 
         annotateDeprecatedIfNecessary(definingStatement, builder);
 

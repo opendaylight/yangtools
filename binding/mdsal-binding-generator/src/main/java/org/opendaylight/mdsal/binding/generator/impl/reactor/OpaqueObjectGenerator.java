@@ -39,7 +39,7 @@ final class OpaqueObjectGenerator<T extends DataTreeEffectiveStatement<?>> exten
         final ModuleGenerator module = currentModule();
         module.addQNameConstant(builder, localName());
 
-        addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 //        newType.setSchemaPath(schemaNode.getPath());
 
