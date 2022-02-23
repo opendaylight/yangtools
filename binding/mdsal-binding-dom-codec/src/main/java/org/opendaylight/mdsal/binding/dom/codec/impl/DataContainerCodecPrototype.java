@@ -222,9 +222,9 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     }
 
     private @NonNull DataContainerCodecContext<?, T> loadInstance() {
-        final DataContainerCodecContext<?, T> tmp = createInstance();
-        final Object witness = INSTANCE.compareAndExchangeRelease(this, null, tmp);
-        return witness == null ? tmp : (DataContainerCodecContext<?, T>) witness;
+        final var tmp = createInstance();
+        final var witness = (DataContainerCodecContext<?, T>) INSTANCE.compareAndExchangeRelease(this, null, tmp);
+        return witness == null ? tmp : witness;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
