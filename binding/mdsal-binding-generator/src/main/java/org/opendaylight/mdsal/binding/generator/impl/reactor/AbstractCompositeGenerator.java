@@ -329,20 +329,20 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
     }
 
     @Override
-    final AbstractCompositeGenerator<?> getOriginal() {
-        return (AbstractCompositeGenerator<?>) super.getOriginal();
+    final AbstractCompositeGenerator<T> getOriginal() {
+        return (AbstractCompositeGenerator<T>) super.getOriginal();
     }
 
     @Override
-    final AbstractCompositeGenerator<?> tryOriginal() {
-        return (AbstractCompositeGenerator<?>) super.tryOriginal();
+    final AbstractCompositeGenerator<T> tryOriginal() {
+        return (AbstractCompositeGenerator<T>) super.tryOriginal();
     }
 
-    final @Nullable OriginalLink originalChild(final QName childQName) {
+    final <S extends EffectiveStatement<?, ?>> @Nullable OriginalLink<S> originalChild(final QName childQName) {
         // First try groupings/augments ...
         var found = findInferredGenerator(childQName);
         if (found != null) {
-            return OriginalLink.partial(found);
+            return (OriginalLink<S>) OriginalLink.partial(found);
         }
 
         // ... no luck, we really need to start looking at our origin
@@ -351,7 +351,7 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
             final QName prevQName = childQName.bindTo(prev.getQName().getModule());
             found = prev.findSchemaTreeGenerator(prevQName);
             if (found != null) {
-                return  found.originalLink();
+                return (OriginalLink<S>) found.originalLink();
             }
         }
 

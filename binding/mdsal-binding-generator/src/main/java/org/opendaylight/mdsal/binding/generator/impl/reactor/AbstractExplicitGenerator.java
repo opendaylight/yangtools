@@ -50,11 +50,11 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
      *   <li>a generator which is one step closer to the original definition</li>
      * </ul>
      */
-    private AbstractExplicitGenerator<?> prev;
+    private AbstractExplicitGenerator<T> prev;
     /**
      * Field holding the original incarnation, i.e. the terminal node along {@link #prev} links.
      */
-    private AbstractExplicitGenerator<?> orig;
+    private AbstractExplicitGenerator<T> orig;
 
     AbstractExplicitGenerator(final T statement) {
         this.statement = requireNonNull(statement);
@@ -104,7 +104,7 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
                 return true;
             }
 
-            final var link = getParent().originalChild(getQName());
+            final var link = getParent().<T>originalChild(getQName());
             if (link == null) {
                 LOG.trace("Cannot link {} yet", this);
                 return false;
@@ -134,7 +134,7 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
      *
      * @return Previous incarnation or {@code null}
      */
-    final @Nullable AbstractExplicitGenerator<?> previous() {
+    final @Nullable AbstractExplicitGenerator<T> previous() {
         final var local = verifyNotNull(prev, "Generator %s does not have linkage to previous instance resolved", this);
         return local == this ? null : local;
     }
@@ -144,11 +144,11 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
      *
      * @return Original incarnation of this generator
      */
-    @NonNull AbstractExplicitGenerator<?> getOriginal() {
+    @NonNull AbstractExplicitGenerator<T> getOriginal() {
         return verifyNotNull(orig, "Generator %s does not have linkage to original instance resolved", this);
     }
 
-    @Nullable AbstractExplicitGenerator<?> tryOriginal() {
+    @Nullable AbstractExplicitGenerator<T> tryOriginal() {
         return orig;
     }
 
@@ -157,7 +157,7 @@ public abstract class AbstractExplicitGenerator<T extends EffectiveStatement<?, 
      *
      * @return Link towards the original generator.
      */
-    final @NonNull OriginalLink originalLink() {
+    final @NonNull OriginalLink<T> originalLink() {
         final var local = prev;
         if (local == null) {
             return OriginalLink.partial(this);
