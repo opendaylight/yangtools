@@ -117,6 +117,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * {@link #toModifiableMap()}) and makes an efficient copy of its contents. All other maps are converted to an
      * {@link ImmutableOffsetMap} with the same iteration order as input.
      *
+     * @param <K> the type of keys maintained by the map
+     * @param <V> the type of mapped values
      * @param map Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      * @throws NullPointerException if {@code map} or any of its elements is null.
@@ -152,6 +154,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * {@link #toModifiableMap()}) and makes an efficient copy of its contents. All other maps are converted to an
      * {@link ImmutableOffsetMap}. Iterator order is not guaranteed to be retained.
      *
+     * @param <K> the type of keys maintained by the map
+     * @param <V> the type of mapped values
      * @param map Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      * @throws NullPointerException if {@code map} or any of its elements is null.
