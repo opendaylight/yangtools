@@ -47,11 +47,11 @@ public final class ExecutorServiceUtil {
     }
 
     /**
-     * Creates a {@link BlockingQueue} which does not allow for non-blocking addition to the queue.
-     * This is useful with {@link #waitInQueueExecutionHandler()} to turn force a
-     * {@link ThreadPoolExecutor} to create as many threads as it is configured to before starting
-     * to fill the queue.
+     * Creates a {@link BlockingQueue} which does not allow for non-blocking addition to the queue. This is useful with
+     * {@link #waitInQueueExecutionHandler()} to turn force a {@link ThreadPoolExecutor} to create as many threads as it
+     * is configured to before starting to fill the queue.
      *
+     * @param <E> type of elements
      * @param delegate Backing blocking queue.
      * @return A new blocking queue backed by the delegate
      */
@@ -71,8 +71,8 @@ public final class ExecutorServiceUtil {
     }
 
     /**
-     * Returns a {@link RejectedExecutionHandler} which blocks on the {@link ThreadPoolExecutor}'s
-     * backing queue if a new thread cannot be spawned.
+     * Returns a {@link RejectedExecutionHandler} which blocks on the {@link ThreadPoolExecutor}'s backing queue if a
+     * new thread cannot be spawned.
      *
      * @return A shared RejectedExecutionHandler instance.
      */
@@ -81,9 +81,12 @@ public final class ExecutorServiceUtil {
     }
 
     /**
-     * Tries to shutdown the given executor gracefully by awaiting termination for the given
-     * timeout period. If the timeout elapses before termination, the executor is forcefully
-     * shutdown.
+     * Tries to shutdown the given executor gracefully by awaiting termination for the given timeout period. If the
+     * timeout elapses before termination, the executor is forcefully shutdown.
+     *
+     * @param executor Executor to shut down
+     * @param timeout timeout period
+     * @param unit timeout unit
      */
     public static void tryGracefulShutdown(final @NonNull ExecutorService executor, final long timeout,
             final @NonNull TimeUnit unit) {
