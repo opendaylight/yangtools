@@ -61,7 +61,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
         factory.indexTypes(moduleGens);
         LOG.debug("Indexed {} generators in {}", moduleGens.size(), sw);
 
-        return new BindingRuntimeTypes(context, factory.augmentationToSchema, factory.typeToSchema,
+        return new DefaultBindingRuntimeTypes(context, factory.augmentationToSchema, factory.typeToSchema,
             factory.schemaToType, factory.identities);
     }
 
