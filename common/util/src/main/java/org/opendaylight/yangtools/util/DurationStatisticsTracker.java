@@ -38,8 +38,7 @@ public abstract class DurationStatisticsTracker {
     }
 
     /**
-     * Create a concurrent {@link DurationStatisticsTracker}, which performs well
-     * in very contended environments.
+     * Create a concurrent {@link DurationStatisticsTracker}, which performs well in very contended environments.
      *
      * @return A new instance.
      */
@@ -48,8 +47,7 @@ public abstract class DurationStatisticsTracker {
     }
 
     /**
-     * Create a synchronized {@link DurationStatisticsTracker}, which performs well
-     * in non-contended environments.
+     * Create a synchronized {@link DurationStatisticsTracker}, which performs well in non-contended environments.
      *
      * @return A new instance.
      */
@@ -60,21 +58,21 @@ public abstract class DurationStatisticsTracker {
     /**
      * Add a duration to track.
      *
-     * @param duration
-     *            non-negative duration in nanoseconds.
+     * @param duration non-negative duration in nanoseconds.
      */
     public abstract void addDuration(long duration);
 
     /**
      * Returns the average duration in nanoseconds.
+     *
+     * @return average duration in nanoseconds.
      */
     public abstract double getAverageDuration();
 
     /**
      * Returns the total number of tracked durations.
      *
-     * @return Total number of measurements accumulated since last
-     *         {@link #reset()}.
+     * @return Total number of measurements accumulated since last {@link #reset()}.
      */
     public abstract long getTotalDurations();
 
@@ -85,6 +83,8 @@ public abstract class DurationStatisticsTracker {
 
     /**
      * Returns the longest duration in nanoseconds.
+     *
+     * @return the longest duration in nanoseconds.
      */
     public final long getLongestDuration() {
         return getDuration(getLongest());
@@ -92,30 +92,37 @@ public abstract class DurationStatisticsTracker {
 
     /**
      * Returns the shortest duration in nanoseconds.
+     *
+     * @return the shortest duration in nanoseconds.
      */
     public final long getShortestDuration() {
         return getDuration(getShortest());
     }
 
     /**
-     * Returns the average duration as a displayable String with units, e.g.
-     * "12.34 ms".
+     * Returns the average duration as a displayable String with units, e.g. {@code 12.34 ms}.
+     *
+     * @return the average duration in human-readable form.
      */
     public final String getDisplayableAverageDuration() {
         return formatDuration(getAverageDuration(), null);
     }
 
     /**
-     * Returns the longest duration as a displayable String with units and the
-     * date/time at which it occurred, e.g. "12.34 ms at 08/02/2014 12:30:24".
+     * Returns the longest duration as a displayable String with units and the date/time at which it occurred, e.g.
+     * {@code 12.34 ms at 08/02/2014 12:30:24}.
+     *
+     * @return The longest duration and when it has occurred in human-readable form.
      */
     public final String getDisplayableLongestDuration() {
         return formatDuration(getLongest());
     }
 
     /**
-     * Returns the shortest duration as a displayable String with units and the
-     * date/time at which it occurred, e.g. "12.34 ms at 08/02/2014 12:30:24".
+     * Returns the shortest duration as a displayable String with units and the date/time at which it occurred, e.g.
+     * {@code 12.34 ms at 08/02/2014 12:30:24}.
+     *
+     * @return The shortest duration and when it has occurred in human-readable form.
      */
     public final String getDisplayableShortestDuration() {
         return formatDuration(getShortest());
@@ -123,6 +130,8 @@ public abstract class DurationStatisticsTracker {
 
     /**
      * Returns the time stamp of the longest duration.
+     *
+     * @return the time stamp of the longest duration.
      */
     public final long getTimeOfLongestDuration() {
         return getTimeMillis(getLongest());
@@ -130,6 +139,8 @@ public abstract class DurationStatisticsTracker {
 
     /**
      * Returns the time stamp of the shortest duration.
+     *
+     * @return the time stamp of the shortest duration.
      */
     public final long getTimeOfShortestDuration() {
         return getTimeMillis(getShortest());
@@ -150,8 +161,7 @@ public abstract class DurationStatisticsTracker {
     abstract DurationWithTime getLongest();
 
     /**
-     * Returns formatted value of number, e.g. "12.34". Always is used dot as
-     * decimal separator.
+     * Returns formatted value of number, e.g. "12.34". Always is used dot as decimal separator.
      */
     private static synchronized String formatDecimalValue(final double value) {
         return DECIMAL_FORMAT.format(value);
@@ -170,9 +180,7 @@ public abstract class DurationStatisticsTracker {
         final double value = duration / NANOSECONDS.convert(1, unit);
 
         final StringBuilder sb = new StringBuilder();
-        sb.append(formatDecimalValue(value));
-        sb.append(' ');
-        sb.append(abbreviate(unit));
+        sb.append(formatDecimalValue(value)).append(' ').append(abbreviate(unit));
 
         if (timeStamp != null) {
             sb.append(String.format(" at %1$tD %1$tT", new Date(timeStamp)));
