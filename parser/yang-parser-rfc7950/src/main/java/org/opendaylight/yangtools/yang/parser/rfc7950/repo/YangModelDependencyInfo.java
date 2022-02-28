@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
@@ -64,8 +63,6 @@ public abstract class YangModelDependencyInfo {
 
     private static final String OPENCONFIG_VERSION = OpenConfigStatements.OPENCONFIG_VERSION.getStatementName()
             .getLocalName();
-    @Deprecated
-    private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
 
     private final String name;
     private final Revision revision;
@@ -85,10 +82,10 @@ public abstract class YangModelDependencyInfo {
             final ImmutableSet<ModuleImport> includes,
             final Optional<SemVer> semVer) {
         this.name = name;
-        this.revision = Revision.ofNullable(formattedRevision).orElse(null);
-        this.moduleImports = imports;
-        this.submoduleIncludes = includes;
-        this.dependencies = ImmutableSet.<ModuleImport>builder()
+        revision = Revision.ofNullable(formattedRevision).orElse(null);
+        moduleImports = imports;
+        submoduleIncludes = includes;
+        dependencies = ImmutableSet.<ModuleImport>builder()
                 .addAll(moduleImports).addAll(submoduleIncludes).build();
         this.semVer = semVer.orElse(null);
     }
@@ -391,7 +388,7 @@ public abstract class YangModelDependencyInfo {
 
         ModuleImportImpl(final @NonNull String moduleName, final @Nullable Revision revision,
                 final @Nullable SemVer semVer) {
-            this.name = requireNonNull(moduleName, "Module name must not be null.");
+            name = requireNonNull(moduleName, "Module name must not be null.");
             this.revision = revision;
             this.semVer = semVer;
         }
