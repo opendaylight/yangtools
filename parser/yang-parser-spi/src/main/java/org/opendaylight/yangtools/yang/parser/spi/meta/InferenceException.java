@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -77,4 +78,24 @@ public class InferenceException extends SourceException {
             throw new InferenceException(stmt.sourceReference(), format, args);
         }
     }
+
+    /**
+     * Throw an instance of this exception if an object is null. If the object is non-null, it will
+     * be returned as the result of this method.
+     *
+     * @param obj Object reference to be checked
+     * @param source Statement source reference
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @return Object if it is not null
+     * @throws InferenceException if object is null
+     */
+    public static <T> @NonNull T throwIfNull(final @Nullable T obj, final @NonNull StatementSourceReference source,
+            final @NonNull String format, final Object... args) {
+        if (obj == null) {
+            throw new InferenceException(source, format, args);
+        }
+        return obj;
+    }
+
 }

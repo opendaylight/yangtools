@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -32,6 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -48,7 +50,7 @@ final class AugmentInferenceAction implements InferenceAction {
     private static final ImmutableSet<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES,
         YangStmtMapping.WHEN, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
 
-    private final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
+    private final @NonNull Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
     private final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
     private final AbstractAugmentStatementSupport statementSupport;
 
@@ -81,7 +83,45 @@ final class AugmentInferenceAction implements InferenceAction {
         }
 
         copyFromSourceToTarget(augmentNode, augmentTargetCtx);
+
+        // FIXME: A replica is perhaps not the correct thing to do here. We probably want to differentiate the
+        //        difference in children between declared and effective view, as documented in AugmentEffectiveStatement
+        //        in such a way that 'augmentNode' retains the declared view and the copy we are creating here contains
+        //        the target view (and thus references target's child nodes). Users then have the choice -- they either
+        //        see the augment as top-level or as a child of 'uses', in which case they see the declared model, or
+        //        they see the augment at its place of effect, in which case the schema tree reflects parent's nodes.
+        //
+        //        To do that, though, we need to track each copied statement's effective model and only add this
+        //        manifestation when their effective model has resolved.
+        //
+        //        As for downstream users, they seem to also be struggling around this part -- we support two views
+        //        of a particular augment (below) and that facility is used by yang.data things to correctly arrive at
+        //        the augmentation, which they see as this manifestation. In MD-SAL things are a bit more complicated,
+        //        because codegen works on the declared view only (i.e. it ignores augments anywhere but under 'module'
+        //        and 'uses' statements. The runtime part of MD-SAL then again resorts to effective view to map things
+        //        to NormalizedNode.
+        //
+        //        It would seem that if the manifestation we create here would be the one exposed by
+        //        AugmentEffectiveStatement.withTargetSchemaTree(), then yang.data users would just use it, as would
+        //        MD-SAL's runtime -- except mdsal-binding-generator's AbstractCompositeGenerator would need to know
+        //        would use the interchangeable views to connect the two manifestations. Now that part is tricky, but
+        //        if MD-SAL can correlate the two (for example, based on child QName overlap), then...
+        //
+        //        We could document the manifestation in AugmentationSchemaNode and AugmentEffectiveStatement and its
+        //        relationship (in terms of child QNames or whatever) -- I cannot currently find any documentation
+        //        supporting this call, so this already would be an improvement in and of itself.
+        //
+        //        Historic note: here we used to directly add 'augmentNode', but reactor lifecycle rules are forcing
+        //                       some kind of transformation here. The old (pre-2015) YANG parser could not have pulled
+        //                       this trick off -- it's 1:1 builder-based design for forcing our hand. That deficiency
+        //                       is no longer relevant and we can do whatever we need.
         augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
+
+        // Require augment target to provide EffectiveStatement representation
+        final var action = augmentNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var effectiveTarget = action.requiresEffective(augmentTargetCtx);
+        action.mutatesEffectiveCtx(augmentNode);
+        action.apply(new AugmentTargetRequirement(augmentNode, effectiveTarget));
     }
 
     @Override

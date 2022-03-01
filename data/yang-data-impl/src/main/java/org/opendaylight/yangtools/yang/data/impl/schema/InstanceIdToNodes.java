@@ -161,7 +161,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
         for (final AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
             final Optional<DataSchemaNode> potential = aug.findDataChildByName(child.getQName());
             if (potential.isPresent()) {
-                return new InstanceIdToCompositeNodes.AugmentationNormalization(aug, parent);
+                return new InstanceIdToCompositeNodes.AugmentationNormalization(aug);
             }
         }
         return fromDataSchemaNode(child);
