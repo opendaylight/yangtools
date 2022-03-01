@@ -18,7 +18,6 @@ import com.google.common.io.Resources;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -52,7 +51,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
             throw new IllegalArgumentException("Filename " + name + " does not have a .yin or .xml extension");
         }
 
-        final Entry<String, String> parsed = YangNames.parseFilename(baseName);
+        final var parsed = YangNames.parseFilename(baseName);
         return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
     }
 

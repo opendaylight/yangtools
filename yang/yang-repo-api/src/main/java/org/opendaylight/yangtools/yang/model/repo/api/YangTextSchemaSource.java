@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 
@@ -42,7 +41,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
             RFC6020_YANG_FILE_EXTENSION);
 
         final String baseName = name.substring(0, name.length() - RFC6020_YANG_FILE_EXTENSION.length());
-        final Entry<String, String> parsed = parseFilename(baseName);
+        final var parsed = parseFilename(baseName);
         return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
     }
 
