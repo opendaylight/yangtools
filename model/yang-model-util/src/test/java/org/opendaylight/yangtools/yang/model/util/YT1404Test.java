@@ -42,7 +42,7 @@ public class YT1404Test {
         final var fooAugment = Iterables.getOnlyElement(fooCont.getAvailableAugmentations());
         assertSame(augment, fooAugment);
 
-        final var effectiveAug = new EffectiveAugmentationSchema(augment, fooCont);
+        final var effectiveAug = augment.targetView();
         assertEquals(1, effectiveAug.getChildNodes().size());
         assertSame(fooBar, effectiveAug.getDataChildByName(BAR));
     }

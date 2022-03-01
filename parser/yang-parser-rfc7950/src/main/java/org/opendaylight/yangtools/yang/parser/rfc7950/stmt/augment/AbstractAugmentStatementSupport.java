@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -26,6 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.Namespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -133,17 +137,31 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Cast of original(), should be always safe")
     protected final AugmentEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final var target = verifyNotNull(stmt.getFromNamespace(AugmentTargetNamespace.class, Empty.value()),
+            "Inference of %s failed to provide target effective statement", stmt.sourceReference());
+
         final int flags = new FlagsBuilder()
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
 
+        final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(substatements.size());
+        for (var sub : substatements) {
+            if (sub instanceof SchemaTreeEffectiveStatement) {
+                final var qname = ((SchemaTreeEffectiveStatement<?>) sub).getIdentifier();
+                target.get(Namespace.class, qname).ifPresent(builder::add);
+            } else {
+                builder.add(sub);
+            }
+        }
+
+        @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Cast of original(), should be always safe")
+        final var original = (AugmentationSchemaNode) stmt.original();
         try {
             return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags,
-                stmt.moduleName().getModule(), substatements, (AugmentationSchemaNode) stmt.original());
+                stmt.moduleName().getModule(), substatements, builder.build(), original);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
