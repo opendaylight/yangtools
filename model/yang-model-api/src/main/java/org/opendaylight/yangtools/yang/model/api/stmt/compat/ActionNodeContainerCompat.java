@@ -29,6 +29,7 @@ public interface ActionNodeContainerCompat<A, D extends DeclaredStatement<A>,
         // 'action' identifier must never collide with another element, hence if we look it up and it ends up being
         // an ActionDefinition, we have found a match.
         return get(Namespace.class, qname)
-                .flatMap(child -> child instanceof ActionDefinition ? Optional.of(child) : Optional.empty());
+            .flatMap(child -> child instanceof ActionDefinition ? Optional.of((ActionDefinition) child)
+                : Optional.empty());
     }
 }
