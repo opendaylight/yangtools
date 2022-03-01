@@ -54,7 +54,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
@@ -297,11 +296,9 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         }
         checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
         final AugmentationSchemaNode schema = findSchemaForAugment((AugmentationTarget) parent,
-            identifier.getPossibleChildNames());
-        final AugmentationSchemaNode resolvedSchema = new EffectiveAugmentationSchema(schema,
-            (DataNodeContainer) parent);
-        schemaStack.push(resolvedSchema);
-        return resolvedSchema;
+            identifier.getPossibleChildNames()).targetView();
+        schemaStack.push(schema);
+        return schema;
     }
 
     // FIXME: 7.0.0: can we get rid of this?

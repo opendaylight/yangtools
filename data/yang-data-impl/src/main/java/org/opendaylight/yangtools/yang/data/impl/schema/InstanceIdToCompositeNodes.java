@@ -49,7 +49,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -279,9 +278,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     static final class AugmentationNormalization
             extends DataContainerNormalizationOperation<AugmentationIdentifier, AugmentationSchemaNode> {
-        AugmentationNormalization(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
-            super(DataSchemaContextNode.augmentationIdentifierFrom(augmentation),
-                new EffectiveAugmentationSchema(augmentation, schema));
+        AugmentationNormalization(final AugmentationSchemaNode augmentation) {
+            super(DataSchemaContextNode.augmentationIdentifierFrom(augmentation), augmentation.targetView());
         }
 
         @Override
