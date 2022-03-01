@@ -157,7 +157,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractChoiceEffe
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ActionEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AugmentEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredAugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredInputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredOutputEffectiveStatement;
@@ -345,7 +345,7 @@ public final class EffectiveStatements {
             final SchemaNodeIdentifier argument, final int flags, final QNameModule rootModuleQName,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable AugmentationSchemaNode original) throws SubstatementIndexingException {
-        return new AugmentEffectiveStatementImpl(declared, argument, flags, rootModuleQName, substatements, original);
+        return new DeclaredAugmentEffectiveStatement(declared, argument, flags, rootModuleQName, substatements, original);
     }
 
     public static BaseEffectiveStatement createBase(final BaseStatement declared,
