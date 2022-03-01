@@ -15,11 +15,9 @@ import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.NoopCodecCache;
@@ -28,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement.Namespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
@@ -93,11 +91,10 @@ public enum JSONCodecFactorySupplier {
         private static int codecsForChildren(final JSONCodecFactory lazy, final SchemaInferenceStack stack,
                 final DataTreeAwareEffectiveStatement<?, ?> parent) {
             int ret = 0;
-            final Map<QName, DataTreeEffectiveStatement<?>> dataTree =
-                parent.getAll(DataTreeAwareEffectiveStatement.Namespace.class);
-            for (DataTreeEffectiveStatement<?> child : dataTree.values()) {
+            for (var entry : parent.getAll(Namespace.class).entrySet()) {
+                final var child = entry.getValue();
                 if (child instanceof DataTreeAwareEffectiveStatement) {
-                    stack.enterDataTree(child.argument());
+                    stack.enterDataTree(entry.getKey());
                     ret += codecsForChildren(lazy, stack, (DataTreeAwareEffectiveStatement<?, ?>) child);
                     stack.exit();
                 } else if (child instanceof TypedDataSchemaNode) {

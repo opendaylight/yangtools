@@ -30,18 +30,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  *
  * @param <A> Argument type
  * @param <D> Class representing declared version of this statement.
- * @author Robert Varga
  */
 @Beta
 public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
     /**
      * Namespace of {@code schema node}s defined within this node.
-     *
-     * @param <T> Child statement type
-     * @author Robert Varga
      */
     @NonNullByDefault
-    abstract class Namespace<T extends SchemaTreeEffectiveStatement<?>> extends EffectiveStatementNamespace<T> {
+    abstract class Namespace extends EffectiveStatementNamespace<SchemaTreeEffectiveStatement<?>> {
         private Namespace() {
             // Should never be instantiated
         }

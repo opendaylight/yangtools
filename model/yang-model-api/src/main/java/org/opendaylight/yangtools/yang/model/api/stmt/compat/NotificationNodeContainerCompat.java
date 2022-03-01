@@ -29,6 +29,7 @@ public interface NotificationNodeContainerCompat<A, D extends DeclaredStatement<
         // 'notification' identifier must never collide with another element, hence if we look it up and it ends up
         // being an NotificationDefinition, we have found a match.
         return get(Namespace.class, qname)
-                .flatMap(child -> child instanceof NotificationDefinition ? Optional.of(child) : Optional.empty());
+            .flatMap(child -> child instanceof NotificationDefinition ? Optional.of((NotificationDefinition) child)
+                : Optional.empty());
     }
 }
