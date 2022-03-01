@@ -154,7 +154,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
             final AugmentationTarget parentAug, final DataSchemaNode child) {
         for (AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
             if (aug.findDataChildByName(child.getQName()).isPresent()) {
-                return new AugmentationContextNode(aug, parent);
+                return new AugmentationContextNode(aug);
             }
         }
         return fromDataSchemaNode(child);
