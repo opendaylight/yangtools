@@ -35,11 +35,9 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
      *
      * <p>
      * This corresponds to the {@code data tree} view of a YANG-defined data.
-     *
-     * @param <T> Child statement type
      */
     @NonNullByDefault
-    abstract class Namespace<T extends DataTreeEffectiveStatement<?>> extends EffectiveStatementNamespace<T> {
+    abstract class Namespace extends EffectiveStatementNamespace<DataTreeEffectiveStatement<?>> {
         private Namespace() {
             // Should never be instantiated
         }

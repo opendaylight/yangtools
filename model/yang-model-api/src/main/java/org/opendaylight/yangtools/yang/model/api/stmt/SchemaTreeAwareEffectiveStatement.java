@@ -41,7 +41,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * @author Robert Varga
      */
     @NonNullByDefault
-    abstract class Namespace<T extends SchemaTreeEffectiveStatement<?>> extends EffectiveStatementNamespace<T> {
+    abstract class Namespace extends EffectiveStatementNamespace<SchemaTreeEffectiveStatement<?>> {
         private Namespace() {
             // Should never be instantiated
         }
