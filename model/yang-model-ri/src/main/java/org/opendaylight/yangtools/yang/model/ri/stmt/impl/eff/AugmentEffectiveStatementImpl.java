@@ -83,4 +83,26 @@ public final class AugmentEffectiveStatementImpl
     public AugmentEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public AugmentationSchemaNode declaredView() {
+        return this;
+    }
+
+    @Override
+    public AugmentationSchemaNode targetView() {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public AugmentEffectiveStatement withDeclaredSchemaTree() {
+        return this;
+    }
+
+    @Override
+    public AugmentEffectiveStatement withTargetSchemaTree() {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
 }
