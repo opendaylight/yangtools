@@ -37,8 +37,8 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * Namespace of {@code schema node}s defined within this node.
      */
     @NonNullByDefault
-    abstract class Namespace extends EffectiveStatementNamespace<SchemaTreeEffectiveStatement<?>> {
-        private Namespace() {
+    abstract class SchemaTreeNamespace extends EffectiveStatementNamespace<SchemaTreeEffectiveStatement<?>> {
+        private SchemaTreeNamespace() {
             // Should never be instantiated
         }
     }
@@ -51,7 +51,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * @throws NullPointerException if {@code qname} is null
      */
     default @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final @NonNull QName qname) {
-        return get(Namespace.class, requireNonNull(qname));
+        return get(SchemaTreeNamespace.class, requireNonNull(qname));
     }
 
     /**

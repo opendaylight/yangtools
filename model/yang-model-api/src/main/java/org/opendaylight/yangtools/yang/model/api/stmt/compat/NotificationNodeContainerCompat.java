@@ -28,7 +28,7 @@ public interface NotificationNodeContainerCompat<A, D extends DeclaredStatement<
     default Optional<NotificationDefinition> findNotification(final QName qname) {
         // 'notification' identifier must never collide with another element, hence if we look it up and it ends up
         // being an NotificationDefinition, we have found a match.
-        return get(Namespace.class, qname)
+        return get(SchemaTreeNamespace.class, qname)
             .flatMap(child -> child instanceof NotificationDefinition ? Optional.of((NotificationDefinition) child)
                 : Optional.empty());
     }
