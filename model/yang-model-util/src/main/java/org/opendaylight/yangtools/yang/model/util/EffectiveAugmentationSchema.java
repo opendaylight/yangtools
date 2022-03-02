@@ -32,9 +32,29 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
- * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
+ * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent. This is needed to
+ * correctly interpret constructs like this:
+ * <pre>
+ *   <code>
+ *     container foo;
+ *
+ *     augment /foo {
+ *       container bar;
+ *     }
+ *
+ *     augment /foo/bar {
+ *       container baz;
+ *     }
+ *   </code>
+ * </pre>
+ * The {@link AugmentationSchemaNode} returned for {@code augment /foo} contains bare {@code container bar}, e.g. it
+ * does not show {@code augment /foo/bar} as an available augmentation -- this is only visible in {@code foo}'s schema
+ * nodes.
+ *
+ * <p>
+ * Note this class only handles {@link DataSchemaNode}s, not all {@code schema tree} statements, as it strictly should.
  */
-// FIXME: 7.0.0: re-evaluate the need for this class and potentially its effective statement replacement
+// FIXME: YANGTOOLS-1403: this functionality should be integrated into EffectiveAugmentStatement/AugmentationSchemaNode
 public final class EffectiveAugmentationSchema implements AugmentationSchemaNode {
     private final AugmentationSchemaNode delegate;
     private final ImmutableSet<DataSchemaNode> realChildSchemas;
@@ -42,7 +62,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
 
     public EffectiveAugmentationSchema(final AugmentationSchemaNode augmentSchema,
             final Collection<? extends DataSchemaNode> realChildSchemas) {
-        this.delegate = requireNonNull(augmentSchema);
+        delegate = requireNonNull(augmentSchema);
         this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
 
         final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
@@ -50,7 +70,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
             m.put(realChildSchema.getQName(), realChildSchema);
         }
 
-        this.mappedChildSchemas = ImmutableMap.copyOf(m);
+        mappedChildSchemas = ImmutableMap.copyOf(m);
     }
 
     /**
@@ -61,10 +81,16 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
      * @return Adjusted Augmentation schema
      * @throws NullPointerException if any of the arguments is null
      */
+    // FIXME: 8.0.0: integrate this method into the constructor
     public static AugmentationSchemaNode create(final AugmentationSchemaNode schema, final DataNodeContainer parent) {
-        Set<DataSchemaNode> children = new HashSet<>();
+        final Set<DataSchemaNode> children = new HashSet<>();
         for (DataSchemaNode augNode : schema.getChildNodes()) {
-            children.add(parent.getDataChildByName(augNode.getQName()));
+            // parent may have the corresponding child removed via 'deviate unsupported', i.e. the child is effectively
+            // not present at the target site
+            final DataSchemaNode child = parent.dataChildByName(augNode.getQName());
+            if (child != null) {
+                children.add(child);
+            }
         }
         return new EffectiveAugmentationSchema(schema, children);
     }
