@@ -42,7 +42,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
 
     public EffectiveAugmentationSchema(final AugmentationSchemaNode augmentSchema,
             final Collection<? extends DataSchemaNode> realChildSchemas) {
-        this.delegate = requireNonNull(augmentSchema);
+        delegate = requireNonNull(augmentSchema);
         this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
 
         final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
@@ -50,7 +50,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
             m.put(realChildSchema.getQName(), realChildSchema);
         }
 
-        this.mappedChildSchemas = ImmutableMap.copyOf(m);
+        mappedChildSchemas = ImmutableMap.copyOf(m);
     }
 
     /**
@@ -62,9 +62,14 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
      * @throws NullPointerException if any of the arguments is null
      */
     public static AugmentationSchemaNode create(final AugmentationSchemaNode schema, final DataNodeContainer parent) {
-        Set<DataSchemaNode> children = new HashSet<>();
+        final Set<DataSchemaNode> children = new HashSet<>();
         for (DataSchemaNode augNode : schema.getChildNodes()) {
-            children.add(parent.getDataChildByName(augNode.getQName()));
+            // parent may have the corresponding child removed via 'deviate unsupported', i.e. the child is effectively
+            // not present at the target site
+            final DataSchemaNode child = parent.dataChildByName(augNode.getQName());
+            if (child != null) {
+                children.add(child);
+            }
         }
         return new EffectiveAugmentationSchema(schema, children);
     }
