@@ -24,8 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement.DataTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 @Beta
@@ -49,7 +51,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
         @SuppressWarnings("unchecked")
         protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
                 final Class<N> namespace) {
-            if (SchemaTreeAwareEffectiveStatement.Namespace.class.equals(namespace)) {
+            if (SchemaTreeNamespace.class.equals(namespace)) {
                 return Optional.of((Map<K, V>) schemaTreeNamespace());
             }
             return super.getNamespaceContents(namespace);
@@ -80,7 +82,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
         @SuppressWarnings("unchecked")
         protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
                 final Class<N> namespace) {
-            if (DataTreeAwareEffectiveStatement.Namespace.class.equals(namespace)) {
+            if (DataTreeNamespace.class.equals(namespace)) {
                 return Optional.of((Map<K, V>) dataTreeNamespace());
             }
             return super.getNamespaceContents(namespace);
