@@ -30,7 +30,7 @@ final class AugmentationModificationStrategy
 
     AugmentationModificationStrategy(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
             final DataTreeConfiguration treeConfig) {
-        super(SUPPORT, EffectiveAugmentationSchema.create(schema, resolved), treeConfig);
+        super(SUPPORT, new EffectiveAugmentationSchema(schema, resolved), treeConfig);
         emptyNode = Builders.augmentationBuilder()
                 .withNodeIdentifier(DataSchemaContextNode.augmentationIdentifierFrom(schema))
                 .build();

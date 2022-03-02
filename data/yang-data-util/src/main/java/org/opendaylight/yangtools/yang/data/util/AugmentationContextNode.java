@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationContextNode extends DataContainerContextNode<AugmentationIdentifier> {
     AugmentationContextNode(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
-        super(augmentationIdentifierFrom(augmentation), EffectiveAugmentationSchema.create(augmentation, schema), null);
+        super(augmentationIdentifierFrom(augmentation), new EffectiveAugmentationSchema(augmentation, schema), null);
     }
 
     @Override

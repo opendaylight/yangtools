@@ -281,7 +281,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             extends DataContainerNormalizationOperation<AugmentationIdentifier, AugmentationSchemaNode> {
         AugmentationNormalization(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
             super(DataSchemaContextNode.augmentationIdentifierFrom(augmentation),
-                    EffectiveAugmentationSchema.create(augmentation, schema));
+                new EffectiveAugmentationSchema(augmentation, schema));
         }
 
         @Override

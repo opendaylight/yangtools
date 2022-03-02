@@ -298,7 +298,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
         final AugmentationSchemaNode schema = findSchemaForAugment((AugmentationTarget) parent,
             identifier.getPossibleChildNames());
-        final AugmentationSchemaNode resolvedSchema = EffectiveAugmentationSchema.create(schema,
+        final AugmentationSchemaNode resolvedSchema = new EffectiveAugmentationSchema(schema,
             (DataNodeContainer) parent);
         schemaStack.push(resolvedSchema);
         return resolvedSchema;
