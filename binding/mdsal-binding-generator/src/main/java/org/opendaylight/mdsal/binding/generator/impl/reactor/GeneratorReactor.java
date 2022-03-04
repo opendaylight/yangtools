@@ -163,7 +163,16 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
                 break;
             }
 
-            verify(progress, "Failed to make progress on linking of original generators");
+            if (!progress) {
+                final var ex = new VerifyException("Failed to make progress on linking of original generators");
+                for (var augment : augments) {
+                    ex.addSuppressed(new IllegalStateException(augment + " is incomplete"));
+                }
+                for (var module : unlinkedModules) {
+                    ex.addSuppressed(new IllegalStateException(module + " remains unlinked"));
+                }
+                throw ex;
+            }
         }
 
         /*
@@ -364,12 +373,19 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
         final var it = items.iterator();
         while (it.hasNext()) {
-            final var tmp = function.apply(it.next());
-            if (tmp != LinkageProgress.NONE) {
-                progress = true;
+            final var item = it.next();
+            final var tmp = function.apply(item);
+            if (tmp == LinkageProgress.NONE) {
+                LOG.debug("No progress made linking {}", item);
+                continue;
             }
+
+            progress = true;
             if (tmp == LinkageProgress.DONE) {
+                LOG.debug("Finished linking {}", item);
                 it.remove();
+            } else {
+                LOG.debug("Progress made linking {}", item);
             }
         }
 

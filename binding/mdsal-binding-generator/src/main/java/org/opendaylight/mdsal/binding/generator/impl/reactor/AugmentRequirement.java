@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -66,6 +67,15 @@ final class AugmentRequirement implements Mutable {
 
     @NonNull LinkageProgress resolve() {
         return qname == null ? resolveAsTarget() : resolveAsChild();
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).omitNullValues()
+            .add("augment", augment)
+            .add("target", target)
+            .add("qname", qname)
+            .toString();
     }
 
     private @NonNull LinkageProgress resolveAsTarget() {
