@@ -600,19 +600,6 @@ public final class BindingReflections {
     }
 
     /**
-     * Extracts augmentation from Binding DTO field using reflection.
-     *
-     * @param input Instance of DataObject which is augmentable and may contain augmentation
-     * @return Map of augmentations if read was successful, otherwise empty map.
-     * @deprecated Use {@link Augmentable#augmentations()} instead.
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated(forRemoval = true)
-    public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
-        return (Map) input.augmentations();
-    }
-
-    /**
      * Determines if two augmentation classes or case classes represents same
      * data.
      *

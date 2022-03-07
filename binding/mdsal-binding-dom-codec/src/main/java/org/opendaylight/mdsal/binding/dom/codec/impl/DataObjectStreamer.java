@@ -14,10 +14,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -58,9 +56,7 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
 
     protected static final void streamAugmentations(final DataObjectSerializerRegistry registry,
             final BindingStreamEventWriter writer, final Augmentable<?> obj) throws IOException {
-        final Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations =
-                BindingReflections.getAugmentations(obj);
-        for (final Entry<Class<? extends Augmentation<?>>, Augmentation<?>> aug : augmentations.entrySet()) {
+        for (final var aug : obj.augmentations().entrySet()) {
             emitAugmentation(aug.getKey(), aug.getValue(), writer, registry);
         }
     }
