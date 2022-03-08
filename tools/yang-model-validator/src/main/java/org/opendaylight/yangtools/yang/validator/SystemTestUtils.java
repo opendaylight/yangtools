@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 
@@ -61,7 +62,8 @@ final class SystemTestUtils {
     };
 
     static EffectiveModelContext parseYangSources(final List<String> yangLibDirs, final List<String> yangTestFiles,
-            final Set<QName> supportedFeatures, final boolean recursiveSearch) throws IOException, YangParserException {
+            final Set<QName> supportedFeatures, final boolean recursiveSearch,
+            final boolean warnForUnkeyedLists) throws IOException, YangParserException {
         /*
          * Current dir "." should be always present implicitly in the list of
          * directories where dependencies are searched for
@@ -84,14 +86,16 @@ final class SystemTestUtils {
             }
         }
 
-        return parseYangSources(supportedFeatures, testFiles, libFiles);
+        return parseYangSources(supportedFeatures, testFiles, libFiles, warnForUnkeyedLists);
     }
 
     static EffectiveModelContext parseYangSources(final Set<QName> supportedFeatures, final List<File> testFiles,
-            final List<File> libFiles) throws IOException, YangParserException {
+            final List<File> libFiles,  final boolean warnForUnkeyedLists) throws IOException, YangParserException {
         checkArgument(!testFiles.isEmpty(), "No yang sources");
 
-        final YangParser parser = PARSER_FACTORY.createParser();
+        final YangParserConfiguration configuration = YangParserConfiguration.builder()
+                .warnForUnkeyedLists(warnForUnkeyedLists).build();
+        final YangParser parser = PARSER_FACTORY.createParser(configuration);
         if (supportedFeatures != null) {
             parser.setSupportedFeatures(supportedFeatures);
         }
