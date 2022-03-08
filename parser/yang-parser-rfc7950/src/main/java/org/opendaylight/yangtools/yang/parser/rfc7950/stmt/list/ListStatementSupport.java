@@ -114,8 +114,11 @@ public final class ListStatementSupport
         .addOptional(YangStmtMapping.WHEN)
         .build();
 
+    private final boolean showWarningAboutUnkeyedLists;
+
     ListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.LIST, instantiatedPolicy(), config, validator);
+        this.showWarningAboutUnkeyedLists = config.showWarningAboutUnkeyedLists();
     }
 
     public static @NonNull ListStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -171,7 +174,8 @@ public final class ListStatementSupport
         }
 
         final int flags = computeFlags(stmt, substatements);
-        if (stmt.effectiveConfig() == EffectiveConfig.TRUE && keyDefinition.isEmpty() && isInstantied(stmt)) {
+        if (showWarningAboutUnkeyedLists && stmt.effectiveConfig() == EffectiveConfig.TRUE
+                && keyDefinition.isEmpty() && isInstantied(stmt)) {
             warnConfigList(stmt);
         }
 
