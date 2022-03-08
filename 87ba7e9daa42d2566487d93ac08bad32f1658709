@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "838e98aa_cc5e0790",
+        "filename": "parser/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/parser/api/YangParserConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-08T15:56:09Z",
+      "side": 1,
+      "message": "`false` value is the default for Boolean fields.",
+      "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cfe3c52a_8fee077c",
+        "filename": "parser/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/parser/api/YangParserConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-08T15:56:09Z",
+      "side": 1,
+      "message": "We have `this` keyword for situations like this.",
+      "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
