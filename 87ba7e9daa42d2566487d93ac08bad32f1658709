@@ -33,6 +33,23 @@
       "message": "We have `this` keyword for situations like this.",
       "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7d7b2f5_47ee6d1b",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/list/ListStatementSupport.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-08T16:18:36Z",
+      "side": 1,
+      "message": "This results in shorter code:\n\n```\nif (warnForUnkeyedLists) {\n            if (stmt.effectiveConfig() \u003d\u003d EffectiveConfig.TRUE \u0026\u0026 keyDefinition.isEmpty() \u0026\u0026 isInstantied(stmt)) {\n                warnConfigList(stmt);\n            }\n        }\n```",
+      "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
