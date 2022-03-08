@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
  *  -v, --verbose         shows details about the results of test running.
  *  -o, --output          path to output file for logs. Output file will be overwritten.
  *  -m, --module-name     validate yang by module name.
+ *  -wul, --warning-for-unkeyed-lists
+ *                        add warnings about unkeyed lists with config true.
  */
 @SuppressWarnings({"checkstyle:LoggerMustBeSlf4j", "checkstyle:LoggerFactoryClassParameter"})
 public final class Main {
@@ -76,27 +78,25 @@ public final class Main {
     private static final Option QUIET = new Option("q", "quiet", false, "completely suppress output.");
     private static final Option VERBOSE = new Option("v", "verbose", false,
         "shows details about the results of test running.");
+    private static final Option LIST_WARNING_ON = new Option("wul", "warning-for-unkeyed-lists", false,
+        "add warnings about unkeyed lists with config true");
+    private static final Option LIST_WARNING_OFF = new Option("no-wul", "no-warning-for-unkeyed-lists", false,
+        "do not add warnings about unkeyed lists with config true");
 
     private Main() {
         // Hidden on purpose
     }
 
     private static Options createOptions() {
-        final Options options = new Options();
-        options.addOption(HELP);
-        options.addOption(PATH);
-        options.addOption(RECURSIVE);
-
-        final OptionGroup verbosity = new OptionGroup();
-        verbosity.addOption(DEBUG);
-        verbosity.addOption(QUIET);
-        verbosity.addOption(VERBOSE);
-        options.addOptionGroup(verbosity);
-
-        options.addOption(OUTPUT);
-        options.addOption(MODULE_NAME);
-        options.addOption(FEATURE);
-        return options;
+        return new Options()
+            .addOption(HELP)
+            .addOption(PATH)
+            .addOption(RECURSIVE)
+            .addOptionGroup(new OptionGroup().addOption(DEBUG).addOption(QUIET).addOption(VERBOSE))
+            .addOptionGroup(new OptionGroup().addOption(LIST_WARNING_ON).addOption(LIST_WARNING_OFF))
+            .addOption(OUTPUT)
+            .addOption(MODULE_NAME)
+            .addOption(FEATURE);
     }
 
     public static void main(final String[] args) {
@@ -123,6 +123,13 @@ public final class Main {
             LOG_ROOT.detachAndStopAllAppenders();
         }
 
+        final boolean warnForUnkeyedLists;
+        if (arguments.hasOption(LIST_WARNING_ON.getLongOpt()) || !arguments.hasOption(LIST_WARNING_OFF.getLongOpt())) {
+            warnForUnkeyedLists = true;
+        } else {
+            warnForUnkeyedLists = false;
+        }
+
         final List<String> yangLibDirs = initYangDirsPath(arguments);
         final List<String> yangFiles = new ArrayList<>();
         final String[] moduleNameValues = arguments.getOptionValues(MODULE_NAME.getLongOpt());
@@ -133,7 +140,8 @@ public final class Main {
 
         final Set<QName> supportedFeatures = initSupportedFeatures(arguments);
 
-        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
+        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption(RECURSIVE.getLongOpt()),
+            warnForUnkeyedLists);
 
         LOG_ROOT.getLoggerContext().reset();
     }
@@ -163,7 +171,7 @@ public final class Main {
     @SuppressFBWarnings({ "DM_EXIT", "DM_GC" })
     @SuppressWarnings("checkstyle:illegalCatch")
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
-            final Set<QName> supportedFeatures, final boolean recursiveSearch) {
+            final Set<QName> supportedFeatures, final boolean recursiveSearch, final boolean warnForUnkeyedLists) {
         LOG.info("Yang model dirs: {} ", yangLibDirs);
         LOG.info("Yang model files: {} ", yangFiles);
         LOG.info("Supported features: {} ", supportedFeatures);
@@ -174,7 +182,8 @@ public final class Main {
         final Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
-            context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures, recursiveSearch);
+            context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures,
+                    recursiveSearch, warnForUnkeyedLists);
         } catch (final Exception e) {
             LOG.error("Failed to create SchemaContext.", e);
             System.exit(1);
