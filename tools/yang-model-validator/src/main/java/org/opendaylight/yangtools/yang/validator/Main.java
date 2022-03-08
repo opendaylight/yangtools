@@ -76,6 +76,8 @@ public final class Main {
     private static final Option QUIET = new Option("q", "quiet", false, "completely suppress output.");
     private static final Option VERBOSE = new Option("v", "verbose", false,
         "shows details about the results of test running.");
+    private static final Option LIST_WARNING = new Option("w", "warning", false,
+            "add warnings about unkeyed lists with config true");
 
     private Main() {
         // Hidden on purpose
@@ -96,6 +98,7 @@ public final class Main {
         options.addOption(OUTPUT);
         options.addOption(MODULE_NAME);
         options.addOption(FEATURE);
+        options.addOption(LIST_WARNING);
         return options;
     }
 
@@ -133,7 +136,8 @@ public final class Main {
 
         final Set<QName> supportedFeatures = initSupportedFeatures(arguments);
 
-        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
+        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"),
+                arguments.hasOption(LIST_WARNING.getLongOpt()));
 
         LOG_ROOT.getLoggerContext().reset();
     }
@@ -163,7 +167,7 @@ public final class Main {
     @SuppressFBWarnings({ "DM_EXIT", "DM_GC" })
     @SuppressWarnings("checkstyle:illegalCatch")
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
-            final Set<QName> supportedFeatures, final boolean recursiveSearch) {
+            final Set<QName> supportedFeatures, final boolean recursiveSearch, final boolean warnForUnkeyedLists) {
         LOG.info("Yang model dirs: {} ", yangLibDirs);
         LOG.info("Yang model files: {} ", yangFiles);
         LOG.info("Supported features: {} ", supportedFeatures);
@@ -174,7 +178,8 @@ public final class Main {
         final Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
-            context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures, recursiveSearch);
+            context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures,
+                    recursiveSearch, warnForUnkeyedLists);
         } catch (final Exception e) {
             LOG.error("Failed to create SchemaContext.", e);
             System.exit(1);
