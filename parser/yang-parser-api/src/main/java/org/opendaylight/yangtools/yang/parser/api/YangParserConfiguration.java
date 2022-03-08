@@ -29,11 +29,13 @@ public final class YangParserConfiguration implements Immutable {
 
     private final ImportResolutionMode importResolutionMode;
     private final boolean retainDeclarationReferences;
+    private final boolean warnForUnkeyedLists;
 
     private YangParserConfiguration(final ImportResolutionMode importResolutionMode,
-            final boolean retainDeclarationReferences) {
+            final boolean retainDeclarationReferences, final boolean warnForUnkeyedLists) {
         this.importResolutionMode = requireNonNull(importResolutionMode);
         this.retainDeclarationReferences = retainDeclarationReferences;
+        this.warnForUnkeyedLists = warnForUnkeyedLists;
     }
 
     @Beta
@@ -43,6 +45,10 @@ public final class YangParserConfiguration implements Immutable {
 
     public boolean retainDeclarationReferences() {
         return retainDeclarationReferences;
+    }
+
+    public boolean warnForUnkeyedLists() {
+        return warnForUnkeyedLists;
     }
 
     @Override
@@ -77,7 +83,8 @@ public final class YangParserConfiguration implements Immutable {
 
     public static final class Builder implements Mutable {
         private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
-        private boolean retainDeclarationReferences = false;
+        private boolean retainDeclarationReferences;
+        private boolean warnForUnkeyedLists;
 
         private Builder() {
             // Hidden on purpose
@@ -89,7 +96,7 @@ public final class YangParserConfiguration implements Immutable {
          * @return A YangParserConfiguration
          */
         public YangParserConfiguration build() {
-            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences);
+            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences, warnForUnkeyedLists);
         }
 
         @Beta
@@ -100,6 +107,11 @@ public final class YangParserConfiguration implements Immutable {
 
         public Builder retainDeclarationReferences(final boolean newRetainDeclarationReferences) {
             retainDeclarationReferences = newRetainDeclarationReferences;
+            return this;
+        }
+
+        public Builder warnForUnkeyedLists(final boolean newWarnForUnkeyedLists) {
+            warnForUnkeyedLists = newWarnForUnkeyedLists;
             return this;
         }
     }
