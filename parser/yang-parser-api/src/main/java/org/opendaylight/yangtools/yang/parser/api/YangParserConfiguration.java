@@ -29,11 +29,14 @@ public final class YangParserConfiguration implements Immutable {
 
     private final ImportResolutionMode importResolutionMode;
     private final boolean retainDeclarationReferences;
+    private final boolean showWarningAboutUnkeyedLists;
 
     private YangParserConfiguration(final ImportResolutionMode importResolutionMode,
-            final boolean retainDeclarationReferences) {
+                                    final boolean retainDeclarationReferences,
+                                    final boolean showWarningAboutUnkeyedLists) {
         this.importResolutionMode = requireNonNull(importResolutionMode);
         this.retainDeclarationReferences = retainDeclarationReferences;
+        this.showWarningAboutUnkeyedLists = showWarningAboutUnkeyedLists;
     }
 
     @Beta
@@ -43,6 +46,10 @@ public final class YangParserConfiguration implements Immutable {
 
     public boolean retainDeclarationReferences() {
         return retainDeclarationReferences;
+    }
+
+    public boolean showWarningAboutUnkeyedLists() {
+        return showWarningAboutUnkeyedLists;
     }
 
     @Override
@@ -78,6 +85,7 @@ public final class YangParserConfiguration implements Immutable {
     public static final class Builder implements Mutable {
         private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
         private boolean retainDeclarationReferences = false;
+        private boolean showWarningAboutUnkeyedLists = false;
 
         private Builder() {
             // Hidden on purpose
@@ -89,7 +97,8 @@ public final class YangParserConfiguration implements Immutable {
          * @return A YangParserConfiguration
          */
         public YangParserConfiguration build() {
-            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences);
+            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences,
+                    showWarningAboutUnkeyedLists);
         }
 
         @Beta
@@ -100,6 +109,11 @@ public final class YangParserConfiguration implements Immutable {
 
         public Builder retainDeclarationReferences(final boolean newRetainDeclarationReferences) {
             retainDeclarationReferences = newRetainDeclarationReferences;
+            return this;
+        }
+
+        public Builder showWarningAboutUnkeyedLists(final boolean newShowWarningAboutUnkeyedLists) {
+            showWarningAboutUnkeyedLists = newShowWarningAboutUnkeyedLists;
             return this;
         }
     }
