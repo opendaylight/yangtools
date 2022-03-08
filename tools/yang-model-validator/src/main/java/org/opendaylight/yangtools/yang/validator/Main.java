@@ -76,6 +76,8 @@ public final class Main {
     private static final Option QUIET = new Option("q", "quiet", false, "completely suppress output.");
     private static final Option VERBOSE = new Option("v", "verbose", false,
         "shows details about the results of test running.");
+    private static final Option LIST_WARNING = new Option("w", "warning", false,
+            "warnings about unkeyed lists with config = true");
 
     private Main() {
         // Hidden on purpose
@@ -96,6 +98,7 @@ public final class Main {
         options.addOption(OUTPUT);
         options.addOption(MODULE_NAME);
         options.addOption(FEATURE);
+        options.addOption(LIST_WARNING);
         return options;
     }
 
