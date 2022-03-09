@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8763e3b9_70ec2812",
+        "filename": "parser/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/parser/api/YangParserConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-03-09T09:57:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "838e98aa_cc5e0790",
+      "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cfe3c52a_8fee077c",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "96fdc032_8fad1fec",
+        "filename": "parser/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/parser/api/YangParserConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-03-09T09:57:46Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cfe3c52a_8fee077c",
+      "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b7d7b2f5_47ee6d1b",
@@ -48,6 +84,24 @@
       "writtenOn": "2022-03-08T16:18:36Z",
       "side": 1,
       "message": "This results in shorter code:\n\n```\nif (warnForUnkeyedLists) {\n            if (stmt.effectiveConfig() \u003d\u003d EffectiveConfig.TRUE \u0026\u0026 keyDefinition.isEmpty() \u0026\u0026 isInstantied(stmt)) {\n                warnConfigList(stmt);\n            }\n        }\n```",
+      "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df5f29c2_4605fb43",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/list/ListStatementSupport.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-03-09T09:57:46Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b7d7b2f5_47ee6d1b",
       "revId": "87ba7e9daa42d2566487d93ac08bad32f1658709",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
