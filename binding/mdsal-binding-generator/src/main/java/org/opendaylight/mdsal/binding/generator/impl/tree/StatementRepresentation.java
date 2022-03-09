@@ -8,15 +8,12 @@
 package org.opendaylight.mdsal.binding.generator.impl.tree;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * An object representing a view on a particular {@link EffectiveStatement} with a potential to have a
- * {@link RuntimeType} representation as well.
+ * An object representing a view on a particular {@link EffectiveStatement}.
  *
  * @param <S> Statement type
- * @param <R> Runtime type
  */
 public interface StatementRepresentation<S extends EffectiveStatement<?, ?>> {
     /**
