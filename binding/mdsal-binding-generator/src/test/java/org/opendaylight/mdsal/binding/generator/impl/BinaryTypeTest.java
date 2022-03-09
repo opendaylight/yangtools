@@ -19,6 +19,6 @@ public class BinaryTypeTest {
     public void binaryTypeTest() {
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResourceDirectory("/binary-type-test-models"));
-        assertEquals(9, genTypes.size());
+        assertEquals(10, genTypes.size());
     }
 }

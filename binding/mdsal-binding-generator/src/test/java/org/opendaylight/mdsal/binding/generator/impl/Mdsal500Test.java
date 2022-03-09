@@ -22,9 +22,9 @@ public class Mdsal500Test {
         final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
                 YangParserTestUtils.parseYangResource("/mdsal500.yang"));
         assertNotNull(types);
-        assertEquals(3, types.size());
+        assertEquals(4, types.size());
 
-        final GeneratedType rpcService = types.get(2);
+        final GeneratedType rpcService = types.get(3);
         assertEquals("Mdsal500Service", rpcService.getName());
         final List<MethodSignature> methods = rpcService.getMethodDefinitions();
         assertEquals(1, methods.size());

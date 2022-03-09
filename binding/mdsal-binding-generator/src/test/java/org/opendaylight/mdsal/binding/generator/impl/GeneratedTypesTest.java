@@ -28,7 +28,7 @@ public class GeneratedTypesTest {
                 "/abstract-topology.yang", "/ietf-models/ietf-inet-types.yang"));
 
         assertNotNull(genTypes);
-        assertEquals(29, genTypes.size());
+        assertEquals(30, genTypes.size());
     }
 
     @Test
@@ -376,6 +376,6 @@ public class GeneratedTypesTest {
     public void testAugmentRpcInput() {
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/augment-rpc-input.yang"));
-        assertEquals(5, genTypes.size());
+        assertEquals(6, genTypes.size());
     }
 }

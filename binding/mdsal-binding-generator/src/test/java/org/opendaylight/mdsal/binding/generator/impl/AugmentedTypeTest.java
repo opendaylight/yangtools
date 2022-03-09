@@ -36,7 +36,7 @@ public class AugmentedTypeTest {
         assertNotNull("Schema Context is null", context);
 
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(context);
-        assertEquals(28, genTypes.size());
+        assertEquals(31, genTypes.size());
 
         GeneratedTransferObject gtInterfaceKey = null;
         GeneratedType gtInterface = null;

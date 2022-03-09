@@ -73,9 +73,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
             final var modGen = entry.getValue();
 
             // index the module's runtime type
-            modGen.runtimeType().ifPresent(type -> {
-                safePut(modules, "modules", entry.getKey(), type);
-            });
+            safePut(modules, "modules", entry.getKey(), modGen.runtimeType().orElseThrow());
 
             // index module's identities and RPC input/outputs
             for (var gen : modGen) {

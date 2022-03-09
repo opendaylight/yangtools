@@ -45,7 +45,7 @@ public class GenTypesSubSetTest {
                 "/leafref-test-models/abstract-topology@2013-02-08.yang", "/ietf-models/ietf-interfaces.yang",
                 "/ietf-models/ietf-inet-types.yang", "/ietf-models/ietf-yang-types.yang",
                 "/ietf-models/iana-if-type.yang");
-        assertNotNull("Schema Context is null", context);
+        assertNotNull(context);
 
         final Set<Module> toGenModules = new HashSet<>();
         for (final Module module : context.getModules()) {
@@ -58,6 +58,6 @@ public class GenTypesSubSetTest {
 
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
-        assertEquals(24, genTypes.size());
+        assertEquals(25, genTypes.size());
     }
 }

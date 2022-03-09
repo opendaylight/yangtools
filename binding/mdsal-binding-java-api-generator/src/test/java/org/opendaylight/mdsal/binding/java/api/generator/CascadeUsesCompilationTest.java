@@ -37,29 +37,24 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated from module foo
         File parent = new File(sourcesOutputDir, NS_FOO);
+        assertTrue(new File(parent, "FooData.java").exists());
+        assertTrue(new File(parent, "FooGr1.java").exists());
+        assertTrue(new File(parent, "Nodes.java").exists());
+        assertTrue(new File(parent, "NodesBuilder.java").exists());
         assertFilesCount(parent, 6);
-        final File fooData = new File(parent, "FooData.java");
-        final File fooGr1 = new File(parent, "FooGr1.java");
-        final File nodes = new File(parent, "Nodes.java");
-        final File nodesBuilder = new File(parent, "NodesBuilder.java");
-        assertTrue(fooData.exists());
-        assertTrue(fooGr1.exists());
-        assertTrue(nodes.exists());
-        assertTrue(nodesBuilder.exists());
 
         // Test if all sources are generated from module bar
         parent = new File(sourcesOutputDir, NS_BAR);
-        assertFilesCount(parent, 3);
-        File barGr1 = new File(parent, "BarGr1.java");
-        File barGr2 = new File(parent, "BarGr2.java");
-        assertTrue(barGr1.exists());
-        assertTrue(barGr2.exists());
+        assertTrue(new File(parent, "BarData.java").exists());
+        assertTrue(new File(parent, "BarGr1.java").exists());
+        assertTrue(new File(parent, "BarGr2.java").exists());
+        assertFilesCount(parent, 4);
 
         // Test if all sources are generated from module baz
         parent = new File(sourcesOutputDir, NS_BAZ);
-        assertFilesCount(parent, 2);
-        File bazGr1 = new File(parent, "BazGr1.java");
-        assertTrue(bazGr1.exists());
+        assertTrue(new File(parent, "BazData.java").exists());
+        assertTrue(new File(parent, "BazGr1.java").exists());
+        assertFilesCount(parent, 3);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);

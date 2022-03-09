@@ -25,13 +25,14 @@ public class Mdsal459Test {
         final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResourceDirectory("/mdsal-459/"));
         assertNotNull(types);
-        assertEquals(6, types.size());
+        assertEquals(7, types.size());
 
         final Set<JavaTypeName> typeNames = types.stream().map(GeneratedType::getIdentifier)
             .collect(Collectors.toSet());
         assertEquals(ImmutableSet.of(
             JavaTypeName.create("org.opendaylight.yang.gen.v1.base.norev", "Foo"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.base.norev", "BaseData"),
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev", "AugData"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev", "Foo1"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev.foo", "Bar"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev.foo.bar", "Output"),

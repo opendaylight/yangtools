@@ -21,6 +21,6 @@ public class ControllerTest {
             ControllerTest.class,
             "/controller-models/controller-network.yang", "/controller-models/controller-openflow.yang",
             "/ietf-models/ietf-inet-types.yang"));
-        assertEquals(54, genTypes.size());
+        assertEquals(56, genTypes.size());
     }
 }

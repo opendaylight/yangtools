@@ -21,7 +21,7 @@ public class Mdsal335Test {
         final List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal335.yang"));
         assertNotNull(generateTypes);
-        assertEquals(2, generateTypes.size());
+        assertEquals(3, generateTypes.size());
 
         final GeneratedType gen = generateTypes.stream()
             .filter(type -> type.getFullyQualifiedName()

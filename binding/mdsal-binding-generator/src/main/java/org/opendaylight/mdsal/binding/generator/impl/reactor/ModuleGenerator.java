@@ -25,8 +25,6 @@ import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -36,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffectiveStatement, ModuleRuntimeType> {
     private final @NonNull JavaTypeName yangModuleInfo;
-    private final @NonNull ClassPlacement placement;
 
     /**
      * Note that for sake of simplicity of lookup and child mapping, this instance serves as the root for all child
@@ -50,24 +47,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     ModuleGenerator(final ModuleEffectiveStatement statement) {
         super(statement);
         yangModuleInfo = JavaTypeName.create(javaPackage(), BindingMapping.MODULE_INFO_CLASS_NAME);
-        placement = computePlacement();
-        prefixMember = placement != ClassPlacement.NONE || haveSecondary()
-            ? domain().addPrefix(this, new ModuleNamingStrategy(statement.argument())) : null;
-    }
-
-    private @NonNull ClassPlacement computePlacement() {
-        return statement().findFirstEffectiveSubstatement(DataTreeEffectiveStatement.class).isPresent()
-            || statement().findFirstEffectiveSubstatement(ChoiceEffectiveStatement.class).isPresent()
-            ? ClassPlacement.TOP_LEVEL : ClassPlacement.NONE;
-    }
-
-    private boolean haveSecondary() {
-        for (Generator child : this) {
-            if (child instanceof AbstractImplicitGenerator) {
-                return true;
-            }
-        }
-        return false;
+        prefixMember = domain().addPrefix(this, new ModuleNamingStrategy(statement.argument()));
     }
 
     @Override
@@ -93,11 +73,6 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     @Override
     CollisionDomain parentDomain() {
         return domain();
-    }
-
-    @Override
-    ClassPlacement classPlacement() {
-        return placement;
     }
 
     @Override

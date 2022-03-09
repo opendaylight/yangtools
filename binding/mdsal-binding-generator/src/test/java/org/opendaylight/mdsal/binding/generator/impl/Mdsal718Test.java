@@ -17,6 +17,6 @@ public class Mdsal718Test {
     public void testModuleUsesAugmentLinking() {
         final var generatedTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResourceDirectory("/mdsal718"));
-        assertEquals(10, generatedTypes.size());
+        assertEquals(13, generatedTypes.size());
     }
 }

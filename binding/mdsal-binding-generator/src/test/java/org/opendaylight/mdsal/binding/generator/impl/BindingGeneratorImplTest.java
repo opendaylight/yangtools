@@ -25,7 +25,7 @@ public class BindingGeneratorImplTest {
             BindingGeneratorImplTest.class,
             "/isis-topology/network-topology@2013-10-21.yang", "/isis-topology/isis-topology@2013-10-21.yang",
             "/isis-topology/l3-unicast-igp-topology@2013-10-21.yang"));
-        assertEquals(9, generateTypes.size());
+        assertEquals(11, generateTypes.size());
     }
 
     @Test
@@ -149,6 +149,6 @@ public class BindingGeneratorImplTest {
     public void testBaseYangTypes() {
         final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/base-yang-types.yang"));
-        assertEquals(19, types.size());
+        assertEquals(20, types.size());
     }
 }

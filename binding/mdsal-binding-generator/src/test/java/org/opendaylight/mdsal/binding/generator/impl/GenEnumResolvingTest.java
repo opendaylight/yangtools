@@ -28,7 +28,7 @@ public class GenEnumResolvingTest {
             "/enum-test-models/ietf-interfaces@2012-11-15.yang", "/ietf-models/iana-if-type.yang"));
         assertNotNull(genTypes);
 
-        assertEquals("Expected count of all Generated Types", 6, genTypes.size());
+        assertEquals(7, genTypes.size());
 
         GeneratedType genInterface = null;
         for (final GeneratedType type : genTypes) {
@@ -84,9 +84,9 @@ public class GenEnumResolvingTest {
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/ietf-models/iana-if-type.yang"));
         assertNotNull(genTypes);
-        assertEquals(1, genTypes.size());
+        assertEquals(2, genTypes.size());
 
-        final GeneratedType type = genTypes.get(0);
+        final GeneratedType type = genTypes.get(1);
         assertThat(type, instanceOf(Enumeration.class));
 
         final Enumeration enumer = (Enumeration) type;
@@ -100,7 +100,7 @@ public class GenEnumResolvingTest {
             "/enum-test-models/abstract-topology@2013-02-08.yang", "/enum-test-models/ietf-interfaces@2012-11-15.yang",
             "/ietf-models/iana-if-type.yang"));
         assertNotNull(genTypes);
-        assertEquals(24, genTypes.size());
+        assertEquals(25, genTypes.size());
 
         GeneratedType genInterface = null;
         for (final GeneratedType type : genTypes) {

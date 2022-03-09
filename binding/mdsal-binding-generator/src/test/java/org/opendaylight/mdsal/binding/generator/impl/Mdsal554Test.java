@@ -25,9 +25,9 @@ public class Mdsal554Test {
     public void builderTemplateGenerateListenerMethodsTest() {
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal554.yang"));
-        assertEquals(4, genTypes.size());
+        assertEquals(5, genTypes.size());
 
-        final List<MethodSignature> methods = genTypes.get(3).getMethodDefinitions();
+        final List<MethodSignature> methods = genTypes.get(4).getMethodDefinitions();
         assertEquals(3, methods.size());
 
         // status deprecated

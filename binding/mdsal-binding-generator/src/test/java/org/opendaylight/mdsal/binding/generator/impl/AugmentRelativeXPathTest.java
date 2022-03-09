@@ -28,7 +28,7 @@ public class AugmentRelativeXPathTest {
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResourceDirectory("/augment-relative-xpath-models"));
         assertNotNull("genTypes is null", genTypes);
-        assertEquals(26, genTypes.size());
+        assertEquals(27, genTypes.size());
 
         GeneratedTransferObject gtInterfaceKey = null;
         GeneratedType gtInterface = null;

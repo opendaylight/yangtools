@@ -29,7 +29,7 @@ public class Bug1862Test {
         final EffectiveModelContext context = YangParserTestUtils.parseYangResources(Bug1862Test.class,
             "/base-yang-types.yang", "/test-type-provider.yang");
         final List<GeneratedType> types = DefaultBindingGenerator.generateFor(context);
-        assertEquals(41, types.size());
+        assertEquals(42, types.size());
         final MethodSignature fooGetter = types.stream()
             .filter(type -> type.getFullyQualifiedName().equals(
                 "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.model.rev140912.Foo"))

@@ -26,7 +26,7 @@ public class Mdsal269Test {
         final List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal269.yang"));
         assertNotNull(generateTypes);
-        assertEquals(4, generateTypes.size());
+        assertEquals(5, generateTypes.size());
 
         final GeneratedType mplsLabelType = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
             .equals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabel")).findFirst().get();

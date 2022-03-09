@@ -147,7 +147,8 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "OpenObject.java").exists());
         assertTrue(new File(parent, "ExplicitRouteObject.java").exists());
         assertTrue(new File(parent, "PathKeySubobject.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 10);
+        assertTrue(new File(parent, "FooData.java").exists());
+        CompilationTestUtils.assertFilesCount(parent, 11);
 
         parent = new File(parent, "object");
         assertTrue(new File(parent, "Nodes.java").exists());
@@ -202,10 +203,11 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources were generated from 'module bar'
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
+        assertTrue(new File(parent, "BarData.java").exists());
         assertTrue(new File(parent, "BasicExplicitRouteSubobjects.java").exists());
         assertTrue(new File(parent, "ExplicitRouteSubobjects.java").exists());
         assertTrue(new File(parent, "RouteSubobjects.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 6);
+        CompilationTestUtils.assertFilesCount(parent, 7);
 
         parent = new File(parent, "route");
         CompilationTestUtils.assertFilesCount(parent, 1);
@@ -244,15 +246,12 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
-        final File fooListener = new File(parent, "FooListener.java");
-        File pathAttributes = new File(parent, "PathAttributes.java");
-        final File update = new File(parent, "Update.java");
-        final File updateBuilder = new File(parent, "UpdateBuilder.java");
-        assertTrue(fooListener.exists());
-        assertTrue(pathAttributes.exists());
-        assertTrue(update.exists());
-        assertTrue(updateBuilder.exists());
-        CompilationTestUtils.assertFilesCount(parent, 7);
+        assertTrue(new File(parent, "FooData.java").exists());
+        assertTrue(new File(parent, "FooListener.java").exists());
+        assertTrue(new File(parent, "PathAttributes.java").exists());
+        assertTrue(new File(parent, "Update.java").exists());
+        assertTrue(new File(parent, "UpdateBuilder.java").exists());
+        CompilationTestUtils.assertFilesCount(parent, 8);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "path");
         CompilationTestUtils.assertFilesCount(parent, 1);
@@ -265,20 +264,16 @@ public class CompilationTest extends BaseCompilationTest {
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "update");
         CompilationTestUtils.assertFilesCount(parent, 2);
-        pathAttributes = new File(parent, "PathAttributes.java");
-        final File pathAttributesBuilder = new File(parent, "PathAttributesBuilder.java");
-        assertTrue(pathAttributes.exists());
-        assertTrue(pathAttributesBuilder.exists());
+        assertTrue(new File(parent, "PathAttributes.java").exists());
+        assertTrue(new File(parent, "PathAttributesBuilder.java").exists());
 
         // Test if all sources were generated from 'module bar'
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
-        final File destination = new File(parent, "Destination.java");
-        final File pathAttributes1 = new File(parent, "PathAttributes1.java");
-        final File pathAttributes1Builder = new File(parent, "PathAttributes1Builder.java");
-        assertTrue(destination.exists());
-        assertTrue(pathAttributes1.exists());
-        assertTrue(pathAttributes1Builder.exists());
-        CompilationTestUtils.assertFilesCount(parent, 6);
+        assertTrue(new File(parent, "BarData.java").exists());
+        assertTrue(new File(parent, "Destination.java").exists());
+        assertTrue(new File(parent, "PathAttributes1.java").exists());
+        assertTrue(new File(parent, "PathAttributes1Builder.java").exists());
+        CompilationTestUtils.assertFilesCount(parent, 7);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR + CompilationTestUtils.FS + "destination");
         CompilationTestUtils.assertFilesCount(parent, 2);
@@ -310,17 +305,15 @@ public class CompilationTest extends BaseCompilationTest {
         parent = new File(parent, "unreach");
         CompilationTestUtils.assertFilesCount(parent, 1);
         parent = new File(parent, "nlri");
-        final File withdrawnRoutes = new File(parent, "WithdrawnRoutes.java");
-        final File withdrawnRoutesBuilder = new File(parent, "WithdrawnRoutesBuilder.java");
-        assertTrue(withdrawnRoutes.exists());
-        assertTrue(withdrawnRoutesBuilder.exists());
+        assertTrue(new File(parent, "WithdrawnRoutes.java").exists());
+        assertTrue(new File(parent, "WithdrawnRoutesBuilder.java").exists());
         CompilationTestUtils.assertFilesCount(parent, 2);
 
         // Test if all sources were generated from 'module baz'
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAZ);
-        CompilationTestUtils.assertFilesCount(parent, 3);
-        final File linkstateDestination = new File(parent, "LinkstateDestination.java");
-        assertTrue(linkstateDestination.exists());
+        assertTrue(new File(parent, "BazData.java").exists());
+        assertTrue(new File(parent, "LinkstateDestination.java").exists());
+        CompilationTestUtils.assertFilesCount(parent, 4);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAZ + CompilationTestUtils.FS + "update");
         CompilationTestUtils.assertFilesCount(parent, 1);
@@ -454,7 +447,8 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(fooParent, "NodesBuilder.java").exists());
 
         final File barParent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
-        CompilationTestUtils.assertFilesCount(barParent, 2);
+        CompilationTestUtils.assertFilesCount(barParent, 3);
+        assertTrue(new File(barParent, "BarData.java").exists());
         assertTrue(new File(barParent, "IdentityClass.java").exists());
 
         // Test if sources are compilable

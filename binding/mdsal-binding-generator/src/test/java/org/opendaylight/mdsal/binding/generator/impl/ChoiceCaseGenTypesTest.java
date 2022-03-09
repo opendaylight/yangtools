@@ -25,7 +25,7 @@ public class ChoiceCaseGenTypesTest {
             YangParserTestUtils.parseYangResourceDirectory("/choice-case-type-test-models"));
 
         assertNotNull("genTypes is null", genTypes);
-        assertEquals(40, genTypes.size());
+        assertEquals(41, genTypes.size());
 
         // test for file choice-monitoring
         String pcgPref = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.choice.monitoring.rev130701."

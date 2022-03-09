@@ -24,7 +24,7 @@ public class UnionTypeDefTest {
             UnionTypeDefTest.class, "/union-test-models/abstract-topology.yang", "/ietf-models/ietf-inet-types.yang"));
 
         assertNotNull("genTypes is null", genTypes);
-        assertEquals(33, genTypes.size());
+        assertEquals(34, genTypes.size());
 
         // TODO: implement test
     }
