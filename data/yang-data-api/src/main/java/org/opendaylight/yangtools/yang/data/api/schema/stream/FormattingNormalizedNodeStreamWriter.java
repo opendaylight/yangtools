@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2022 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,108 +7,121 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.annotations.Beta;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A {@link NormalizedNodeStreamWriter} which logs the events into a {@link Logger}.
+ * A {@link NormalizedNodeStreamWriter} which formats events into a String, available via #result().
  */
 @Beta
-public final class LoggingNormalizedNodeStreamWriter extends AbstractIndentingNormalizedNodeStreamWriter {
-    private static final Logger LOG = LoggerFactory.getLogger(LoggingNormalizedNodeStreamWriter.class);
+public final class FormattingNormalizedNodeStreamWriter extends AbstractIndentingNormalizedNodeStreamWriter {
+    private final StringBuilder sb = new StringBuilder();
 
-    public LoggingNormalizedNodeStreamWriter() {
+    private boolean closed;
+
+    public FormattingNormalizedNodeStreamWriter() {
         // Default constructor
     }
 
-    public LoggingNormalizedNodeStreamWriter(final int indentSize) {
+    public FormattingNormalizedNodeStreamWriter(final int indentSize) {
         super(indentSize);
+    }
+
+    /**
+     * Return the formatted String result capturing the events which have been streamed into this writer.
+     *
+     * @return Formatted string
+     * @throws IllegalStateException if this writer was not {@link #close()}d
+     */
+    public @NonNull String result() {
+        checkState(closed, "Attempted to access the result of unclosed writer");
+        return sb.toString();
     }
 
     @Override
     public void flush() {
-        LOG.trace("<<FLUSH>>");
+        // No-op
     }
 
     @Override
     public void close() {
-        LOG.debug("<<END-OF-STREAM>>");
+        closed = true;
     }
 
     @Override
     void enterUnkeyedListItem(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}[](no key)", indent, name);
+        sb.append(indent).append(name).append("[](no key)\n");
     }
 
     @Override
     void enterUnkeyedList(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(no key)", indent, name);
+        sb.append(indent).append(name).append("(no key)\n");
     }
 
     @Override
     void enterMapNode(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(key)", indent, name);
+        sb.append(indent).append(name).append("(key)\n");
     }
 
     @Override
     void enterMapEntryNode(final NodeIdentifierWithPredicates identifier, final String indent) {
-        LOG.debug("{}{}[](key)", indent, identifier);
+        sb.append(indent).append(identifier).append("[](key)\n");
     }
 
     @Override
     void enterLeafSet(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(leaf-list)", indent, name);
+        sb.append(indent).append(name).append("(leaf-list)\n");
     }
 
     @Override
     void enterContainerNode(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(container)", indent, name);
+        sb.append(indent).append(name).append("(container)\n");
     }
 
     @Override
     void enterChoiceNode(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(choice)", indent, name);
+        sb.append(indent).append(name).append("(choice)\n");
     }
 
     @Override
     void enterAugmentationNode(final AugmentationIdentifier identifier, final String indent) {
-        LOG.debug("{}{}(augmentation)", indent, identifier);
+        sb.append(indent).append(identifier).append("(augmentation)\n");
     }
 
     @Override
     void enterLeafSetEntryNode(final NodeWithValue<?> name, final String indent) {
-        LOG.debug("{}{}(entry}", indent, name.getNodeType());
+        sb.append(indent).append(name.getNodeType()).append("(entry)\n");
     }
 
     @Override
     void enterLeafNode(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(leaf)", indent, name);
+        sb.append(indent).append(name).append("(leaf)\n");
     }
 
     @Override
     void enterAnyxmlNode(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(anyxml)", indent, name);
+        sb.append(indent).append(name).append("(anyxml)\n");
     }
 
     @Override
     void enterAnydataNode(final NodeIdentifier name, final String indent) {
-        LOG.debug("{}{}(anydata)", indent, name);
+        sb.append(indent).append(name).append("(anydata)\n");
     }
 
     @Override
     void exitNode(final String indent) {
-        LOG.debug("{}(end)", indent);
+        sb.append(indent).append("(end)\n");
     }
 
     @Override
-    @SuppressFBWarnings("SLF4J_SIGN_ONLY_FORMAT")
     void scalarValue(final Object value, final String indent) {
-        LOG.debug("{}({})={}", indent, value.getClass().getSimpleName(), value);
+        sb.append(indent).append('(').append(value.getClass().getSimpleName()).append(')').append('=').append(value)
+            .append('\n');
     }
 }
