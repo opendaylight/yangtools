@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Effective statement corresponding to config's "regexp-posix" .
  */
 public interface OpenConfigRegexpPosixEffectiveStatement
-        extends EffectiveStatement<Void, OpenConfigRegexpPosixStatement> {
+        extends EffectiveStatement<Empty, OpenConfigRegexpPosixStatement> {
 
 }
