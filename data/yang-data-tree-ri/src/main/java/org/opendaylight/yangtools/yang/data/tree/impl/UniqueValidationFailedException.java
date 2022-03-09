@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
+import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.UniqueConstraintException;
 
 /**

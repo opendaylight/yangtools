@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.tree.api.RequiredElementCountException;
+import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 
 /**
  * Exception thrown when unique constraints would be violated and we cannot throw a

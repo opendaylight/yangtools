@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
+import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 
 final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDataTreeModification>
         implements DataTreeModificationCursor {

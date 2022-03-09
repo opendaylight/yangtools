@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.ModifiedNodeDoesNotExistException;
+import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;

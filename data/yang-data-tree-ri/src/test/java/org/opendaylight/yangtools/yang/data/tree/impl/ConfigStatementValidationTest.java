@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 // TODO: expand these tests to catch some more obscure cases
