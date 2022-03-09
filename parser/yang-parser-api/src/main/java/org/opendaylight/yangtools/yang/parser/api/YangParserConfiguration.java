@@ -84,7 +84,7 @@ public final class YangParserConfiguration implements Immutable {
 
     public static final class Builder implements Mutable {
         private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
-        private boolean retainDeclarationReferences = false;
+        private boolean retainDeclarationReferences;
         private boolean warnForUnkeyedLists;
 
         private Builder() {
