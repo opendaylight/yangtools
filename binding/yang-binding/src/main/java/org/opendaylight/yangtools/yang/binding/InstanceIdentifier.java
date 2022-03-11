@@ -537,9 +537,9 @@ public class InstanceIdentifier<T extends DataObject>
      *         contains a null element.
      */
     public static @NonNull InstanceIdentifier<?> create(final Iterable<? extends PathArgument> pathArguments) {
-        if (pathArguments instanceof ImmutableCollection<?>) {
+        if (pathArguments instanceof ImmutableCollection) {
             @SuppressWarnings("unchecked")
-            final Iterable<PathArgument> immutableArguments = (Iterable<PathArgument>) pathArguments;
+            final var immutableArguments = (ImmutableCollection<PathArgument>) pathArguments;
             return internalCreate(immutableArguments);
         }
 
