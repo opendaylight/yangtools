@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09b92c26_d4453731",
+        "filename": "parser/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/parser/api/YangParserConfiguration.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-11T15:42:53Z",
+      "side": 1,
+      "message": "Can be written in 2 lines instead of 3.",
+      "revId": "48759c52ea360f1880672942f60efaf813c58479",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b1b6ba5_edb88e23",
+        "filename": "parser/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/parser/api/YangParserConfiguration.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-11T15:42:53Z",
+      "side": 1,
+      "message": "Can be in one line - the limit is 120 chars.",
+      "revId": "48759c52ea360f1880672942f60efaf813c58479",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93a84ec6_8289efd4",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-11T15:42:53Z",
+      "side": 1,
+      "message": "It needs to be documented here too.",
+      "revId": "48759c52ea360f1880672942f60efaf813c58479",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad3d30d9_52048abf",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-11T15:42:53Z",
+      "side": 1,
+      "message": "\"w\" and \"warning\" probably does not exactly tells which warnings are enabled/disabled.\n\nMaybe something like \"wul\" and \"warning-for-unkeyed-lists\" would be better.",
+      "revId": "48759c52ea360f1880672942f60efaf813c58479",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b5b36a8_3838c483",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-11T15:42:53Z",
+      "side": 1,
+      "message": "When at place we can change \"recursive\" too.",
+      "revId": "48759c52ea360f1880672942f60efaf813c58479",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "969237a7_5ca40ca1",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/SystemTestUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-11T15:42:53Z",
+      "side": 1,
+      "message": "IMO\n\n```\nfinal YangParserConfiguration configuration \u003d YangParserConfiguration.builder()\n        .warnForUnkeyedLists(warnForUnkeyedLists).build();\nfinal YangParser parser \u003d PARSER_FACTORY.createParser(configuration);\n```\n\nwould be better that using this method..",
+      "revId": "48759c52ea360f1880672942f60efaf813c58479",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
