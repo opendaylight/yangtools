@@ -384,6 +384,31 @@ public final class CodeHelpers {
     }
 
     /**
+     * Utility method for checking whether a target object is compatible with a particular identity class.
+     *
+     * @param requiredClass Required class
+     * @param fieldName name of the field being filled
+     * @param obj Object to check, may be null
+     * @return Object cast to required class, if it class matches requirement, or null
+     * @throws IllegalArgumentException if {@code obj} is not an Class representing {@code requiredClass}
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     */
+    public static <T extends BaseIdentity> @Nullable Class<? extends T> checkFieldCastIdentity(
+            final @NonNull Class<T> requiredClass, final @NonNull String fieldName, final @Nullable Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        checkArgument(obj instanceof Class, "Invalid input value \"%s\" for property \"%s\"", obj, fieldName);
+
+        try {
+            return ((Class<?>) obj).asSubclass(requiredClass);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Invalid input value \"" + obj + "\" for property \"" + fieldName + "\"",
+                e);
+        }
+    }
+
+    /**
      * Utility method for checking whether the items of target list is compatible.
      *
      * @param requiredClass Required item class
@@ -401,7 +426,24 @@ public final class CodeHelpers {
     }
 
     /**
-     * Utility method for checking whether the items of target list is compatible.
+     * Utility method for checking whether the items of a target list are compatible with a particular identity class.
+     *
+     * @param requiredClass Required class
+     * @param fieldName name of the field being filled
+     * @param list List, which items should be checked
+     * @return Type-checked List
+     * @throws IllegalArgumentException if a list item is not a Class representing {@code requiredClass}
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends BaseIdentity> @Nullable List<Class<? extends T>> checkListFieldCastIdentity(
+            final @NonNull Class<T> requiredClass, final @NonNull String fieldName, final @Nullable List<?> list) {
+        checkCollectionFieldIdentity(requiredClass, fieldName, list);
+        return (List<Class<? extends T>>) list;
+    }
+
+    /**
+     * Utility method for checking whether the items of target set is compatible.
      *
      * @param requiredClass Required item class
      * @param fieldName name of the field being filled
@@ -417,6 +459,23 @@ public final class CodeHelpers {
         return (Set<T>) set;
     }
 
+    /**
+     * Utility method for checking whether the items of a target set are compatible with a particular identity class.
+     *
+     * @param requiredClass Required class
+     * @param fieldName name of the field being filled
+     * @param set Set, which items should be checked
+     * @return Type-checked Set
+     * @throws IllegalArgumentException if a set item is not a Class representing {@code requiredClass}
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends BaseIdentity> @Nullable Set<Class<? extends T>> checkSetFieldCastIdentity(
+            final @NonNull Class<T> requiredClass, final @NonNull String fieldName, final @Nullable Set<?> set) {
+        checkCollectionFieldIdentity(requiredClass, fieldName, set);
+        return (Set<Class<? extends T>>) set;
+    }
+
     @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
         justification = "Internal NPE->IAE conversion")
     private static void checkCollectionField(final @NonNull Class<?> requiredClass,
@@ -424,6 +483,20 @@ public final class CodeHelpers {
         if (collection != null) {
             try {
                 collection.forEach(item -> requiredClass.cast(requireNonNull(item)));
+            } catch (ClassCastException | NullPointerException e) {
+                throw new IllegalArgumentException("Invalid input item for property \"" + requireNonNull(fieldName)
+                    + "\"", e);
+            }
+        }
+    }
+
+    @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
+        justification = "Internal NPE->IAE conversion")
+    private static void checkCollectionFieldIdentity(final @NonNull Class<?> requiredClass,
+            final @NonNull String fieldName, final @Nullable Collection<?> collection) {
+        if (collection != null) {
+            try {
+                collection.forEach(item -> ((Class<?>) item).asSubclass(requiredClass));
             } catch (ClassCastException | NullPointerException e) {
                 throw new IllegalArgumentException("Invalid input item for property \"" + requireNonNull(fieldName)
                     + "\"", e);

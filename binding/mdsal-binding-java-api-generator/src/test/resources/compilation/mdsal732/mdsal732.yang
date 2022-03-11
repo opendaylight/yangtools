@@ -1,0 +1,38 @@
+module mdsal732 {
+  namespace mdsal732;
+  prefix mdsal732;
+
+  grouping grp {
+    leaf foo {
+      type leafref {
+        path ../xyzzy;
+      }
+    }
+
+    leaf-list bar {
+      type leafref {
+        path ../xyzzy;
+      }
+    }
+
+    leaf-list baz {
+      type leafref {
+        path ../xyzzy;
+      }
+      ordered-by user;
+    }
+  }
+
+  identity foo;
+
+  container xyzzy {
+    leaf xyzzy {
+      type identityref {
+        base foo;
+      }
+    }
+
+    uses grp;
+  }
+}
+

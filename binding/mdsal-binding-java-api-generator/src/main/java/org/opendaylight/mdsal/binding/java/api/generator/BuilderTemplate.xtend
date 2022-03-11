@@ -254,16 +254,36 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         if (ownGetterType instanceof ParameterizedType) {
             val itemType = ownGetterType.actualTypeArguments.get(0)
             if (Types.isListType(ownGetterType)) {
-                return '''
-                    this._«propertyName» = «CODEHELPERS.importedName».checkListFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+                val importedClass = importedClass(itemType)
+                if (importedClass !== null) {
+                    return printPropertySetter(retrieveProperty, propertyName, "checkListFieldCastIdentity", importedClass)
+                }
+                return printPropertySetter(retrieveProperty, propertyName, "checkListFieldCast", itemType.importedName)
             }
             if (Types.isSetType(ownGetterType)) {
-                return '''
-                    this._«propertyName» = «CODEHELPERS.importedName».checkSetFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+                val importedClass = importedClass(itemType)
+                if (importedClass !== null) {
+                    return printPropertySetter(retrieveProperty, propertyName, "checkSetFieldCastIdentity", importedClass)
+                }
+                return printPropertySetter(retrieveProperty, propertyName, "checkSetFieldCast", itemType.importedName)
+            }
+            if (Types.CLASS.equals(ownGetterType)) {
+                return printPropertySetter(retrieveProperty, propertyName, "checkFieldCastIdentity", itemType.identifier.importedName)
             }
         }
-        return '''
-            this._«propertyName» = «CODEHELPERS.importedName».checkFieldCast(«ownGetterType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+        return printPropertySetter(retrieveProperty, propertyName, "checkFieldCast", ownGetterType.importedName)
+    }
+
+    def private printPropertySetter(String retrieveProperty, String propertyName, String checkerName, String className) '''
+            this._«propertyName» = «CODEHELPERS.importedName».«checkerName»(«className».class, "«propertyName»", «retrieveProperty»)'''
+
+    private def importedClass(Type type) {
+        if (type instanceof ParameterizedType) {
+            if (Types.CLASS.equals(type.rawType)) {
+                return type.actualTypeArguments.get(0).identifier.importedName
+            }
+        }
+        return null
     }
 
     private def List<Type> getBaseIfcs(GeneratedType type) {
