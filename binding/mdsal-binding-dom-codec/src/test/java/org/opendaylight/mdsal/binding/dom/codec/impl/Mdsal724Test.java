@@ -11,31 +11,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test.bi.ba.notification.rev150205.OutOfPixieDustNotification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock.rev180723.KnockKnockInput;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class Mdsal724Test extends AbstractBindingCodecTest {
+public class Mdsal724Test {
     @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testNotificationInstanceIdentifier() {
         // An InstanceIdentifier pointing at a notification, unsafe to create
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        final var iid = InstanceIdentifier.create((Class) OutOfPixieDustNotification.class);
-
-        final var ex = assertThrows(IllegalArgumentException.class, () -> codecContext.toYangInstanceIdentifier(iid));
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> InstanceIdentifier.create((Class) OutOfPixieDustNotification.class));
         assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test"
-            + ".bi.ba.notification.rev150205.OutOfPixieDustNotification is not a valid data tree child of "
-            + "SchemaRootCodecContext [interface org.opendaylight.yangtools.yang.binding.DataRoot]", ex.getMessage());
+            + ".bi.ba.notification.rev150205.OutOfPixieDustNotification is not a valid path argument", ex.getMessage());
     }
 
     @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testRpcInputInstanceIdentifier() {
         // An InstanceIdentifier pointing at a notification, unsafe to create
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        final var iid = InstanceIdentifier.create((Class) KnockKnockInput.class);
-        final var ex = assertThrows(IncorrectNestingException.class, () -> codecContext.toYangInstanceIdentifier(iid));
-        assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock."
-            + "rev180723.KnockKnockInput is not top-level item.", ex.getMessage());
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> InstanceIdentifier.create((Class) KnockKnockInput.class));
+        assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock"
+            + ".rev180723.KnockKnockInput is not a valid path argument", ex.getMessage());
     }
 }

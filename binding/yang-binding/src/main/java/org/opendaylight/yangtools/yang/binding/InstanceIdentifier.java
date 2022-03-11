@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -419,6 +420,7 @@ public class InstanceIdentifier<T extends DataObject>
      *
      * @return A builder instance
      */
+    // FIXME: rename this method to 'toBuilder()'
     public @NonNull InstanceIdentifierBuilder<T> builder() {
         return new InstanceIdentifierBuilderImpl<>(Item.of(targetType), pathArguments, hash, isWildcarded());
     }
@@ -489,6 +491,36 @@ public class InstanceIdentifier<T extends DataObject>
         return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(caze, listItem, listKey));
     }
 
+    public static <R extends DataRoot & DataObject, T extends ChildOf<? super R>>
+            @NonNull InstanceIdentifierBuilder<T> builderOfInherited(final Class<R> root, final Class<T> container) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new InstanceIdentifierBuilderImpl<T>().addWildNode(Item.of(container));
+    }
+
+    public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
+            T extends ChildOf<? super C>>
+            @NonNull InstanceIdentifierBuilder<T> builderOfInherited(final Class<R> root,
+                final Class<C> caze, final Class<T> container) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new InstanceIdentifierBuilderImpl<T>().addWildNode(Item.of(caze, container));
+    }
+
+    public static <R extends DataRoot & DataObject, N extends Identifiable<K> & ChildOf<? super R>,
+            K extends Identifier<N>>
+            @NonNull InstanceIdentifierBuilder<N> builderOfInherited(final Class<R> root,
+                final Class<N> listItem, final K listKey) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(listItem, listKey));
+    }
+
+    public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
+            N extends Identifiable<K> & ChildOf<? super C>, K extends Identifier<N>>
+            @NonNull InstanceIdentifierBuilder<N> builderOfInherited(final Class<R> root,
+                final Class<C> caze, final Class<N> listItem, final K listKey) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(caze, listItem, listKey));
+    }
+
     /**
      * Create an instance identifier for a very specific object type. This method implements {@link #create(Iterable)}
      * semantics, except it is used by internal callers, which have assured that the argument is an immutable Iterable.
@@ -499,24 +531,26 @@ public class InstanceIdentifier<T extends DataObject>
      * @throws NullPointerException if {@code pathArguments} is null
      */
     private static @NonNull InstanceIdentifier<?> internalCreate(final Iterable<PathArgument> pathArguments) {
-        final Iterator<? extends PathArgument> it = requireNonNull(pathArguments, "pathArguments may not be null")
-                .iterator();
+        final var it = requireNonNull(pathArguments, "pathArguments may not be null").iterator();
+        checkArgument(it.hasNext(), "pathArguments may not be empty");
+
         final HashCodeBuilder<PathArgument> hashBuilder = new HashCodeBuilder<>();
         boolean wildcard = false;
-        PathArgument arg = null;
+        PathArgument arg;
 
-        while (it.hasNext()) {
+        do {
             arg = it.next();
-            checkArgument(arg != null, "pathArguments may not contain null elements");
+            // Non-null is implied by our callers
+            final var type = verifyNotNull(arg).getType();
+            checkArgument(ChildOf.class.isAssignableFrom(type) || Augmentation.class.isAssignableFrom(type),
+                "%s is not a valid path argument", type);
 
-            // TODO: sanity check ChildOf<>;
             hashBuilder.addArgument(arg);
 
-            if (Identifiable.class.isAssignableFrom(arg.getType()) && !(arg instanceof IdentifiableItem<?, ?>)) {
+            if (Identifiable.class.isAssignableFrom(type) && !(arg instanceof IdentifiableItem)) {
                 wildcard = true;
             }
-        }
-        checkArgument(arg != null, "pathArguments may not be empty");
+        } while (it.hasNext());
 
         return trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
     }
@@ -536,6 +570,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @throws IllegalArgumentException if pathArguments is empty or
      *         contains a null element.
      */
+    // FIXME: rename to 'unsafeOf()'
     public static @NonNull InstanceIdentifier<?> create(final Iterable<? extends PathArgument> pathArguments) {
         if (pathArguments instanceof ImmutableCollection) {
             @SuppressWarnings("unchecked")
@@ -559,9 +594,11 @@ public class InstanceIdentifier<T extends DataObject>
      * @param type The type of the object which this instance identifier represents
      * @return InstanceIdentifier instance
      */
+    // FIXME: considering removing in favor of always going through a builder
     @SuppressWarnings("unchecked")
-    public static <T extends DataObject> @NonNull InstanceIdentifier<T> create(final Class<@NonNull T> type) {
-        return (InstanceIdentifier<T>) create(ImmutableList.of(Item.of(type)));
+    public static <T extends ChildOf<? extends DataRoot>> @NonNull InstanceIdentifier<T> create(
+            final Class<@NonNull T> type) {
+        return (InstanceIdentifier<T>) internalCreate(ImmutableList.of(Item.of(type)));
     }
 
     /**
@@ -572,6 +609,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @throws IllegalArgumentException if the supplied identifier type cannot have a key.
      * @throws NullPointerException if id is null.
      */
+    // FIXME: reconsider naming and design of this method
     public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K keyOf(
             final InstanceIdentifier<N> id) {
         requireNonNull(id);
@@ -826,6 +864,8 @@ public class InstanceIdentifier<T extends DataObject>
         }
     }
 
+    // FIXME: rename to 'Builder'
+    // FIXME: introduce KeyedBuilder with specialized build() method
     public interface InstanceIdentifierBuilder<T extends DataObject> {
         /**
          * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This

@@ -64,7 +64,8 @@ public class ExceptionReportingTest {
 
     @Test
     public void testBindingSkippedRoot() {
-        final var iid = InstanceIdentifier.create(TopLevelList.class);
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        final var iid = InstanceIdentifier.create((Class) TopLevelList.class);
         assertThrows(IncorrectNestingException.class, () -> FULL_CODEC.toYangInstanceIdentifier(iid));
     }
 

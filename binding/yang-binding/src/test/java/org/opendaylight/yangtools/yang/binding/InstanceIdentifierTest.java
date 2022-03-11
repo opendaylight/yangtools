@@ -20,11 +20,13 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.InstanceIdentifierBuilder;
 import org.opendaylight.yangtools.yang.binding.test.mock.FooChild;
+import org.opendaylight.yangtools.yang.binding.test.mock.FooRoot;
 import org.opendaylight.yangtools.yang.binding.test.mock.InstantiatedFoo;
 import org.opendaylight.yangtools.yang.binding.test.mock.Node;
 import org.opendaylight.yangtools.yang.binding.test.mock.NodeAugmentation;
@@ -123,10 +125,10 @@ public class InstanceIdentifierTest {
     }
 
     @Test
-    public void basicTests() throws Exception {
-        final InstanceIdentifier<DataObject> instanceIdentifier1 = InstanceIdentifier.create(DataObject.class);
-        final InstanceIdentifier<DataObject> instanceIdentifier2 = InstanceIdentifier.create(DataObject.class);
-        final InstanceIdentifier<DataObject> instanceIdentifier4 = InstanceIdentifier.create(DataObject.class);
+    public void basicTests() {
+        final InstanceIdentifier<FooRoot> instanceIdentifier1 = InstanceIdentifier.create(FooRoot.class);
+        final InstanceIdentifier<FooRoot> instanceIdentifier2 = InstanceIdentifier.create(FooRoot.class);
+        final InstanceIdentifier<FooRoot> instanceIdentifier4 = InstanceIdentifier.create(FooRoot.class);
         final InstanceIdentifier<NodeChild> instanceIdentifier3 = InstanceIdentifier.builder(Nodes.class)
                 .child(Node.class, new NodeKey(10)).child(NodeChild.class).build();
         final Object object = new Object();
@@ -143,7 +145,7 @@ public class InstanceIdentifierTest {
         assertFalse(instanceIdentifier1.equals(instanceIdentifier3));
         assertFalse(instanceIdentifier1.equals(instanceIdentifier4));
 
-        final InstanceIdentifier<Node> instanceIdentifier5 = InstanceIdentifier.create(Node.class);
+        final InstanceIdentifier<Node> instanceIdentifier5 = InstanceIdentifier.create(Nodes.class).child(Node.class);
         Whitebox.setInternalState(instanceIdentifier5, "hash", instanceIdentifier1.hashCode());
         Whitebox.setInternalState(instanceIdentifier5, "wildcarded", false);
 
@@ -175,24 +177,24 @@ public class InstanceIdentifierTest {
     public void firstKeyOfTest() {
         final InstanceIdentifier<Node> instanceIdentifier =
                 InstanceIdentifier.builder(Nodes.class).child(Node.class, new NodeKey(10)).build();
-        final InstanceIdentifier<DataObject> instanceIdentifier1 = InstanceIdentifier.create(DataObject.class);
+        final InstanceIdentifier<FooRoot> instanceIdentifier1 = InstanceIdentifier.create(FooRoot.class);
         assertNotNull(instanceIdentifier.firstKeyOf(Node.class));
         assertNull(instanceIdentifier1.firstKeyOf(Node.class));
     }
 
     @Test
-    public void keyOfTest() throws Exception {
+    public void keyOfTest() {
         final Identifier<?> identifier = mock(Identifier.class);
         assertEquals(identifier, InstanceIdentifier.keyOf(
                 new KeyedInstanceIdentifier(Identifiable.class, ImmutableList.of(), false, 0, identifier)));
     }
 
     @Test
-    public void serializationTest() throws Exception {
+    public void serializationTest() throws IOException, ClassNotFoundException {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
 
-        final InstanceIdentifier<DataObject> instanceIdentifier = InstanceIdentifier.create(DataObject.class);
+        final InstanceIdentifier<FooRoot> instanceIdentifier = InstanceIdentifier.create(FooRoot.class);
         outputStream.writeObject(instanceIdentifier);
         outputStream.flush();
         outputStream.close();
@@ -206,8 +208,8 @@ public class InstanceIdentifierTest {
 
     @Test
     public void equalsTest() {
-        final InstanceIdentifierBuilder<DataObject> builder1 =  InstanceIdentifier.create(DataObject.class).builder();
-        final InstanceIdentifierBuilder<DataObject> builder2 =  InstanceIdentifier.create(DataObject.class).builder();
+        final InstanceIdentifierBuilder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
+        final InstanceIdentifierBuilder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
         final InstanceIdentifierBuilder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
         final InstanceIdentifierBuilder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
         final Object obj = new Object();
@@ -241,8 +243,8 @@ public class InstanceIdentifierTest {
 
     @Test
     public void hashCodeTest() {
-        final InstanceIdentifierBuilder<DataObject> builder1 =  InstanceIdentifier.create(DataObject.class).builder();
-        final InstanceIdentifierBuilder<DataObject> builder2 =  InstanceIdentifier.create(DataObject.class).builder();
+        final InstanceIdentifierBuilder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
+        final InstanceIdentifierBuilder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
         final InstanceIdentifierBuilder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
         final InstanceIdentifierBuilder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
         final Object obj = new Object();

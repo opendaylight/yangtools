@@ -11,6 +11,6 @@ import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 
-public interface Nodes extends ChildOf<DataRoot>, DataObject {
+public interface FooRoot extends ChildOf<DataRoot>, DataObject {
 
 }
