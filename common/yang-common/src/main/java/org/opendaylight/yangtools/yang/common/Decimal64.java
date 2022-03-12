@@ -88,9 +88,9 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
                     // Fractions are next
                     break;
                 }
-                if (intLen == MAX_FRACTION_DIGITS) {
+                if (intLen == MAX_SCALE) {
                     return CanonicalValueViolation.variantOf(
-                        "Integer part is longer than " + MAX_FRACTION_DIGITS + " digits");
+                        "Integer part is longer than " + MAX_SCALE + " digits");
                 }
 
                 intPart = 10 * intPart + toInt(ch, idx);
@@ -112,7 +112,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
                 limit--;
             }
 
-            final int fracLimit = MAX_FRACTION_DIGITS - intLen + 1;
+            final int fracLimit = MAX_SCALE - intLen + 1;
             byte fracLen = 0;
             long fracPart = 0;
             for (; idx <= limit; idx++, fracLen++) {
@@ -138,7 +138,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     private static final CanonicalValueSupport<Decimal64> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
 
-    private static final int MAX_FRACTION_DIGITS = 18;
+    private static final int MAX_SCALE = 18;
 
     private static final long[] SCALE = {
         10,
@@ -162,26 +162,42 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     };
 
     static {
-        verify(SCALE.length == MAX_FRACTION_DIGITS);
+        verify(SCALE.length == MAX_SCALE);
     }
 
     private final byte scaleOffset;
     private final long value;
 
     @VisibleForTesting
-    Decimal64(final int fractionDigits, final long intPart, final long fracPart, final boolean negative) {
-        checkArgument(fractionDigits >= 1 && fractionDigits <= MAX_FRACTION_DIGITS);
-        this.scaleOffset = (byte) (fractionDigits - 1);
+    Decimal64(final int scale, final long intPart, final long fracPart, final boolean negative) {
+        scaleOffset = offsetOf(scale);
 
-        final long bits = intPart * SCALE[this.scaleOffset] + fracPart;
-        this.value = negative ? -bits : bits;
+        final long bits = intPart * SCALE[scaleOffset] + fracPart;
+        value = negative ? -bits : bits;
+    }
+
+    private Decimal64(final byte scaleOffset, final long value) {
+        this.scaleOffset = scaleOffset;
+        this.value = value;
     }
 
     protected Decimal64(final Decimal64 other) {
-        this.scaleOffset = other.scaleOffset;
-        this.value = other.value;
+        this(other.scaleOffset, other.value);
     }
 
+    /**
+     * Return a {@link Decimal64} with specified scale and unscaled value.
+     *
+     * @param scale scale to use
+     * @param unscaledValue unscaled value to use
+     * @return A Decimal64 instance
+     * @throws IllegalArgumentException if {@code scale} is not in range {@code [1..18]}
+     */
+    public static Decimal64 of(final int scale, final long unscaledValue) {
+        return new Decimal64(offsetOf(scale), unscaledValue);
+    }
+
+    // >>> FIXME: these need to take a scale value and perform a range check. we also need truncating counterparts
     public static Decimal64 valueOf(final byte byteVal) {
         return byteVal < 0 ? new Decimal64(1, -byteVal, 0, true) : new Decimal64(1, byteVal, 0, false);
     }
@@ -198,7 +214,11 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // XXX: we should be able to do something smarter here
         return valueOf(Long.toString(longVal));
     }
+    // <<< FIXME
 
+    // FIXME: this should take a RoundingMode and perform rounding
+    // FIXME: this should have a float counterpart
+    // FIXME: this should have a truncating
     public static Decimal64 valueOf(final double doubleVal) {
         // XXX: we should be able to do something smarter here
         return valueOf(Double.toString(doubleVal));
@@ -228,8 +248,26 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         throw message.isPresent() ? new NumberFormatException(message.get()) : new NumberFormatException();
     }
 
+    /**
+     * Return the scale of this decimal. This is the number of fraction digits, in range {@code [1..18]}.
+     *
+     * @return This decimal's scale
+     */
+    public final int scale() {
+        return scaleOffset + 1;
+    }
+
+    /**
+     * Return the unscaled value of this decimal.
+     *
+     * @return This decimal's unscaled value
+     */
+    public final long unscaledValue() {
+        return value;
+    }
+
     public final BigDecimal decimalValue() {
-        return BigDecimal.valueOf(value, scaleOffset + 1);
+        return BigDecimal.valueOf(value, scale());
     }
 
     @Override
@@ -344,7 +382,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         final long fracPart = fracPart();
         if (fracPart != 0) {
             // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(fracPart), scaleOffset + 1, '0'));
+            sb.append(Strings.padStart(Long.toString(fracPart), scale(), '0'));
         } else {
             sb.append('0');
         }
@@ -395,5 +433,10 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     private long fracPart() {
         return Math.abs(value % SCALE[scaleOffset]);
+    }
+
+    private static byte offsetOf(final int scale) {
+        checkArgument(scale >= 1 && scale <= MAX_SCALE);
+        return (byte) (scale - 1);
     }
 }
