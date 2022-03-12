@@ -15,6 +15,7 @@ import static org.junit.Assert.assertThrows;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 
 public class CodeHelpersTest {
@@ -41,6 +42,22 @@ public class CodeHelpersTest {
 
         iae = assertThrows(IllegalArgumentException.class,
             () -> CodeHelpers.checkListFieldCast(CodeHelpersTest.class, "foo", List.of(new Object())));
+        assertThat(iae.getCause(), instanceOf(ClassCastException.class));
+    }
+
+    @Test
+    public void testCheckSetFieldCast() {
+        assertNull(CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", null));
+        assertSame(Set.of(), CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Set.of()));
+        final var list = Set.of(this);
+        assertSame(list, CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", list));
+
+        IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
+            () -> CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Collections.singleton(null)));
+        assertThat(iae.getCause(), instanceOf(NullPointerException.class));
+
+        iae = assertThrows(IllegalArgumentException.class,
+            () -> CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Set.of(new Object())));
         assertThat(iae.getCause(), instanceOf(ClassCastException.class));
     }
 }

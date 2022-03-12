@@ -390,7 +390,7 @@ public final class CodeHelpers {
      * @param fieldName name of the field being filled
      * @param list List, which items should be checked
      * @return Type-checked List
-     * @throws IllegalArgumentException if a list item is not instance of {@code requiredItemClass}
+     * @throws IllegalArgumentException if a list item is not instance of {@code requiredClass}
      * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
      */
     @SuppressWarnings("unchecked")
@@ -425,7 +425,7 @@ public final class CodeHelpers {
             try {
                 collection.forEach(item -> requiredClass.cast(requireNonNull(item)));
             } catch (ClassCastException | NullPointerException e) {
-                throw new IllegalArgumentException("Invalid input list item for property \"" + requireNonNull(fieldName)
+                throw new IllegalArgumentException("Invalid input item for property \"" + requireNonNull(fieldName)
                     + "\"", e);
             }
         }
