@@ -75,6 +75,8 @@ final class AugmentRequirement implements Mutable {
             .add("augment", augment)
             .add("target", target)
             .add("qname", qname)
+            .add("squash", squashNamespaces)
+            .add("local", localNamespace)
             .toString();
     }
 
