@@ -15,13 +15,13 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -556,29 +556,26 @@ public class InstanceIdentifier<T extends DataObject>
     }
 
     /**
-     * Create an instance identifier for a very specific object type.
+     * Create an instance identifier for a sequence of {@link PathArgument} steps. The steps are required to be formed
+     * of classes extending either {@link ChildOf} or {@link Augmentation} contracts. This method does not check whether
+     * or not the sequence is structurally sound, for example that an {@link Augmentation} follows an
+     * {@link Augmentable} step. Furthermore the compile-time indicated generic type of the returned object does not
+     * necessarily match the contained state.
      *
      * <p>
-     * Example:
-     * <pre>
-     *  List&lt;PathArgument&gt; path = Arrays.asList(new Item(Nodes.class))
-     *  new InstanceIdentifier(path);
-     * </pre>
+     * Failure to observe precautions to validate the list's contents may yield an object which mey be rejected at
+     * run-time or lead to undefined behaviour.
      *
      * @param pathArguments The path to a specific node in the data tree
      * @return InstanceIdentifier instance
-     * @throws IllegalArgumentException if pathArguments is empty or
-     *         contains a null element.
+     * @throws NullPointerException if {@code pathArguments} is, or contains an item which is, {@code null}
+     * @throws IllegalArgumentException if {@code pathArguments} is empty or contains an item which does not represent
+     *                                  a valid addressing step.
      */
-    // FIXME: rename to 'unsafeOf()'
-    public static @NonNull InstanceIdentifier<?> create(final Iterable<? extends PathArgument> pathArguments) {
-        if (pathArguments instanceof ImmutableCollection) {
-            @SuppressWarnings("unchecked")
-            final var immutableArguments = (ImmutableCollection<PathArgument>) pathArguments;
-            return internalCreate(immutableArguments);
-        }
-
-        return internalCreate(ImmutableList.copyOf(pathArguments));
+    @SuppressWarnings("unchecked")
+    public static <T extends DataObject> @NonNull InstanceIdentifier<T> unsafeOf(
+            final List<? extends PathArgument> pathArguments) {
+        return (InstanceIdentifier<T>) internalCreate(ImmutableList.copyOf(pathArguments));
     }
 
     /**

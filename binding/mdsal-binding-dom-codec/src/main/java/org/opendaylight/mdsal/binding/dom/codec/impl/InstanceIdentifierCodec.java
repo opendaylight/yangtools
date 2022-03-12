@@ -42,9 +42,8 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
             // which is not binding representable.
             return null;
         }
-        @SuppressWarnings("unchecked")
-        final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.create(builder);
-        return ret;
+
+        return InstanceIdentifier.unsafeOf(builder);
     }
 
     @Override

@@ -550,7 +550,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         }
 
         final DataObject lazyObj = codec.deserialize(data);
-        final InstanceIdentifier<?> bindingPath = InstanceIdentifier.create(builder);
+        final InstanceIdentifier<?> bindingPath = InstanceIdentifier.unsafeOf(builder);
         return Map.entry(bindingPath, lazyObj);
     }
 
