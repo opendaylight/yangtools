@@ -259,11 +259,11 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             }
             if (Types.isSetType(ownGetterType)) {
                 return '''
-                this._«propertyName» = «CODEHELPERS.importedName».checkSetFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+                    this._«propertyName» = «CODEHELPERS.importedName».checkSetFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
             }
         }
         return '''
-            this._«propertyName» = «CODEHELPERS.importedName».checkFieldCast(«ownGetter.returnType.importedName».class, "«propertyName»", «retrieveProperty»)'''
+            this._«propertyName» = «CODEHELPERS.importedName».checkFieldCast(«ownGetterType.importedName».class, "«propertyName»", «retrieveProperty»)'''
     }
 
     private def List<Type> getBaseIfcs(GeneratedType type) {
