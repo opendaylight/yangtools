@@ -484,8 +484,13 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return IdentifiableItemCodec.of(type.statement(), identifier, listClz, valueCtx);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    public <E extends DataObject> BindingDataObjectCodecTreeNode<E> streamChild(final Class<E> childClass) {
+        return root.streamChild(childClass);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
         // TODO Do we need defensive check here?
         return (BindingDataObjectCodecTreeNode<T>) getCodecContextNode(path, null);

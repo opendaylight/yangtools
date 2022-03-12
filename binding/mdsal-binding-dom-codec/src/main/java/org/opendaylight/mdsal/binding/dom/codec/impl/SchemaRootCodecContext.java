@@ -225,10 +225,12 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return getType().getEffectiveModelContext();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
-        return (DataContainerCodecContext<C, ?>) getOrRethrow(childrenByClass, childClass);
+        final DataContainerCodecContext<?, ?> result = Notification.class.isAssignableFrom(childClass)
+            ? getNotificationImpl(childClass) : getOrRethrow(childrenByClass, childClass);
+        return (DataContainerCodecContext<C, ?>) result;
     }
 
     @Override

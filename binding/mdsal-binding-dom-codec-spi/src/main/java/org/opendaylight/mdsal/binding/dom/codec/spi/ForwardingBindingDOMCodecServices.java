@@ -187,4 +187,9 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     public BindingRuntimeContext getRuntimeContext() {
         return delegate().getRuntimeContext();
     }
+
+    @Override
+    public <E extends DataObject> BindingDataObjectCodecTreeNode<E> streamChild(final Class<E> childClass) {
+        return delegate().streamChild(childClass);
+    }
 }
