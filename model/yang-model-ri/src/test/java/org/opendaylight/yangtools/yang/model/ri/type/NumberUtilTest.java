@@ -44,10 +44,10 @@ public class NumberUtilTest {
 
     @Test
     public void testRangeCoveredForDecimal64() {
-        final Decimal64 min = Decimal64.valueOf(100.0);
-        final Decimal64 superMin = Decimal64.valueOf(50.0);
-        final Decimal64 max = Decimal64.valueOf(200.0);
-        final Decimal64 superMax = Decimal64.valueOf(300.0);
+        final Decimal64 min = Decimal64.valueOf("100.0");
+        final Decimal64 superMin = Decimal64.valueOf("50.0");
+        final Decimal64 max = Decimal64.valueOf("200.0");
+        final Decimal64 superMax = Decimal64.valueOf("300.0");
 
         assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
     }
@@ -138,7 +138,7 @@ public class NumberUtilTest {
 
     @Test
     public void testConverterToBigDecimal() {
-        Decimal64 bigDecNum = Decimal64.valueOf(20.0);
+        final Decimal64 bigDecNum = Decimal64.valueOf("20.0");
         final Function<Number, Decimal64> numberFunction = NumberUtil.converterTo(Decimal64.class);
         assertEquals(bigDecNum, numberFunction.apply(bigDecNum));
 
@@ -146,7 +146,6 @@ public class NumberUtilTest {
         assertEquals(bigDecNum, numberFunction.apply(intNum));
 
         double doubleNum = 20.0;
-        bigDecNum = Decimal64.valueOf("20.0");
         assertEquals(bigDecNum, numberFunction.apply(doubleNum));
     }
 

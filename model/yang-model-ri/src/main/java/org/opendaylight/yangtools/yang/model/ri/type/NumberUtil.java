@@ -92,7 +92,8 @@ final class NumberUtil {
                 return input;
             }
             if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long) {
-                return Decimal64.valueOf(input.longValue());
+                // FIXME: this is not right, as we need to know fraction-digits
+                return Decimal64.valueOf(1, input.longValue());
             }
 
             return Decimal64.valueOf(input.toString());

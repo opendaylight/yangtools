@@ -13,6 +13,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.junit.Test;
 
 public class Decimal64Test {
@@ -192,25 +193,29 @@ public class Decimal64Test {
 
     @Test
     public void testFactories() {
-        assertEquals("0.0", Decimal64.valueOf((byte) 0).toString());
-        assertEquals("1.0", Decimal64.valueOf((byte) 1).toString());
-        assertEquals("-1.0", Decimal64.valueOf((byte) -1).toString());
+        assertEquals("0.0", Decimal64.valueOf(1, (byte) 0).toString());
+        assertEquals("1.0", Decimal64.valueOf(1, (byte) 1).toString());
+        assertEquals("-1.0", Decimal64.valueOf(1, (byte) -1).toString());
 
-        assertEquals("0.0", Decimal64.valueOf((short) 0).toString());
-        assertEquals("1.0", Decimal64.valueOf((short) 1).toString());
-        assertEquals("-1.0", Decimal64.valueOf((short) -1).toString());
+        assertEquals("0.0", Decimal64.valueOf(1, (short) 0).toString());
+        assertEquals("1.0", Decimal64.valueOf(1, (short) 1).toString());
+        assertEquals("-1.0", Decimal64.valueOf(1, (short) -1).toString());
 
-        assertEquals("0.0", Decimal64.valueOf(0).toString());
-        assertEquals("1.0", Decimal64.valueOf(1).toString());
-        assertEquals("-1.0", Decimal64.valueOf(-1).toString());
+        assertEquals("0.0", Decimal64.valueOf(1, 0).toString());
+        assertEquals("1.0", Decimal64.valueOf(1, 1).toString());
+        assertEquals("-1.0", Decimal64.valueOf(1, -1).toString());
 
-        assertEquals("0.0", Decimal64.valueOf(0L).toString());
-        assertEquals("1.0", Decimal64.valueOf(1L).toString());
-        assertEquals("-1.0", Decimal64.valueOf(-1L).toString());
+        assertEquals("0.0", Decimal64.valueOf(1, 0L).toString());
+        assertEquals("1.0", Decimal64.valueOf(1, 1L).toString());
+        assertEquals("-1.0", Decimal64.valueOf(1, -1L).toString());
 
-        assertEquals("0.0", Decimal64.valueOf(0.0).toString());
-        assertEquals("1.0", Decimal64.valueOf(1.0).toString());
-        assertEquals("-1.0", Decimal64.valueOf(-1.0).toString());
+        assertEquals("0.0", Decimal64.valueOf(0.0F, RoundingMode.UNNECESSARY).toString());
+        assertEquals("1.0", Decimal64.valueOf(1.0F, RoundingMode.UNNECESSARY).toString());
+        assertEquals("-1.0", Decimal64.valueOf(-1.0F, RoundingMode.UNNECESSARY).toString());
+
+        assertEquals("0.0", Decimal64.valueOf(0.0D, RoundingMode.UNNECESSARY).toString());
+        assertEquals("1.0", Decimal64.valueOf(1.0D, RoundingMode.UNNECESSARY).toString());
+        assertEquals("-1.0", Decimal64.valueOf(-1.0D, RoundingMode.UNNECESSARY).toString());
 
         assertEquals("0.0", Decimal64.valueOf(BigDecimal.ZERO).toString());
         assertEquals("1.0", Decimal64.valueOf(BigDecimal.ONE).toString());
@@ -219,18 +224,18 @@ public class Decimal64Test {
 
     @Test
     public void testBoundaries() {
-        assertEquals(-128L, Decimal64.valueOf(Byte.MIN_VALUE).longValue());
-        assertEquals(127L, Decimal64.valueOf(Byte.MAX_VALUE).longValue());
-        assertEquals(-32768L, Decimal64.valueOf(Short.MIN_VALUE).longValue());
-        assertEquals(32767L, Decimal64.valueOf(Short.MAX_VALUE).longValue());
-        assertEquals(-2147483648L, Decimal64.valueOf(Integer.MIN_VALUE).longValue());
-        assertEquals(2147483647L, Decimal64.valueOf(Integer.MAX_VALUE).longValue());
+        assertEquals(-128L, Decimal64.valueOf(1, Byte.MIN_VALUE).longValue());
+        assertEquals(127L, Decimal64.valueOf(1, Byte.MAX_VALUE).longValue());
+        assertEquals(-32768L, Decimal64.valueOf(2, Short.MIN_VALUE).longValue());
+        assertEquals(32767L, Decimal64.valueOf(2, Short.MAX_VALUE).longValue());
+        assertEquals(-2147483648L, Decimal64.valueOf(3, Integer.MIN_VALUE).longValue());
+        assertEquals(2147483647L, Decimal64.valueOf(3, Integer.MAX_VALUE).longValue());
     }
 
     @Test
     public void testByteValueExact() {
-        assertEquals(Byte.MIN_VALUE, Decimal64.valueOf(Byte.MIN_VALUE).byteValueExact());
-        assertEquals(Byte.MAX_VALUE, Decimal64.valueOf(Byte.MAX_VALUE).byteValueExact());
+        assertEquals(Byte.MIN_VALUE, Decimal64.valueOf(1, Byte.MIN_VALUE).byteValueExact());
+        assertEquals(Byte.MAX_VALUE, Decimal64.valueOf(1, Byte.MAX_VALUE).byteValueExact());
     }
 
     @Test
@@ -241,14 +246,14 @@ public class Decimal64Test {
 
     @Test
     public void testByteValueExactRange() {
-        final Decimal64 dec = Decimal64.valueOf(Byte.MAX_VALUE + 1);
+        final Decimal64 dec = Decimal64.valueOf(1, Byte.MAX_VALUE + 1);
         assertThrows(ArithmeticException.class, () -> dec.byteValueExact());
     }
 
     @Test
     public void testShortValueExact() {
-        assertEquals(Short.MIN_VALUE, Decimal64.valueOf(Short.MIN_VALUE).shortValueExact());
-        assertEquals(Short.MAX_VALUE, Decimal64.valueOf(Short.MAX_VALUE).shortValueExact());
+        assertEquals(Short.MIN_VALUE, Decimal64.valueOf(1, Short.MIN_VALUE).shortValueExact());
+        assertEquals(Short.MAX_VALUE, Decimal64.valueOf(1, Short.MAX_VALUE).shortValueExact());
     }
 
     @Test
@@ -259,14 +264,14 @@ public class Decimal64Test {
 
     @Test
     public void testShortValueExactRange() {
-        final Decimal64 dec = Decimal64.valueOf(Short.MAX_VALUE + 1);
+        final Decimal64 dec = Decimal64.valueOf(1, Short.MAX_VALUE + 1);
         assertThrows(ArithmeticException.class, () -> dec.shortValueExact());
     }
 
     @Test
     public void testIntValueExact() {
-        assertEquals(Integer.MIN_VALUE, Decimal64.valueOf(Integer.MIN_VALUE).intValueExact());
-        assertEquals(Integer.MAX_VALUE, Decimal64.valueOf(Integer.MAX_VALUE).intValueExact());
+        assertEquals(Integer.MIN_VALUE, Decimal64.valueOf(1, Integer.MIN_VALUE).intValueExact());
+        assertEquals(Integer.MAX_VALUE, Decimal64.valueOf(1, Integer.MAX_VALUE).intValueExact());
     }
 
     @Test
@@ -277,7 +282,7 @@ public class Decimal64Test {
 
     @Test
     public void testIntValueExactRange() {
-        final Decimal64 dec = Decimal64.valueOf(Integer.MAX_VALUE + 1L);
+        final Decimal64 dec = Decimal64.valueOf(1, Integer.MAX_VALUE + 1L);
         assertThrows(ArithmeticException.class, () -> dec.intValueExact());
     }
 
@@ -285,6 +290,68 @@ public class Decimal64Test {
     public void testLongValueExactFrac() {
         final Decimal64 dec = Decimal64.valueOf("1.1");
         assertThrows(ArithmeticException.class, () -> dec.longValueExact());
+    }
+
+    @Test
+    public void testLongValueOfBits() {
+        final Decimal64 dec = Decimal64.valueOf(2, 25552555555L);
+        assertEquals(2, dec.scale());
+        assertEquals(2555255555500L, dec.unscaledValue());
+    }
+
+    @Test
+    public void testLongValueOfNegativeBits() {
+        final Decimal64 dec = Decimal64.valueOf(2, -25552555555L);
+        assertEquals(2, dec.scale());
+        assertEquals(-2555255555500L, dec.unscaledValue());
+    }
+
+    @Test
+    public void testByteRange() {
+        for (int i = 1; i <= 16; ++i) {
+            assertEquals(Byte.MIN_VALUE, Decimal64.valueOf(i, Byte.MIN_VALUE).byteValueExact());
+            assertEquals(Byte.MAX_VALUE, Decimal64.valueOf(i, Byte.MAX_VALUE).byteValueExact());
+        }
+        for (int i = 17; i <= 18; ++i) {
+            int scale = i;
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Byte.MIN_VALUE));
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Byte.MAX_VALUE));
+        }
+    }
+
+    @Test
+    public void testShortRange() {
+        for (int i = 1; i <= 14; ++i) {
+            assertEquals(Short.MIN_VALUE, Decimal64.valueOf(i, Short.MIN_VALUE).shortValueExact());
+            assertEquals(Short.MAX_VALUE, Decimal64.valueOf(i, Short.MAX_VALUE).shortValueExact());
+        }
+        for (int i = 15; i <= 18; ++i) {
+            int scale = i;
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Short.MIN_VALUE));
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Short.MAX_VALUE));
+        }
+    }
+
+    @Test
+    public void testIntRange() {
+        for (int i = 1; i <= 9; ++i) {
+            assertEquals(Integer.MIN_VALUE, Decimal64.valueOf(i, Integer.MIN_VALUE).intValueExact());
+            assertEquals(Integer.MAX_VALUE, Decimal64.valueOf(i, Integer.MAX_VALUE).intValueExact());
+        }
+        for (int i = 10; i <= 18; ++i) {
+            int scale = i;
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Integer.MIN_VALUE));
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Integer.MAX_VALUE));
+        }
+    }
+
+    @Test
+    public void testLongRange() {
+        for (int i = 1; i <= 18; ++i) {
+            int scale = i;
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Long.MIN_VALUE));
+            assertThrows(IllegalArgumentException.class, () -> Decimal64.valueOf(scale, Long.MAX_VALUE));
+        }
     }
 
     private static void assertCanonicalVariants(final String str, final long intPart, final long fracPart,

@@ -14,6 +14,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -140,7 +141,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     private static final int MAX_SCALE = 18;
 
-    private static final long[] SCALE = {
+    private static final long[] FACTOR = {
         10,
         100,
         1000,
@@ -161,11 +162,13 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         1000000000000000000L
     };
 
+    private static final Decimal64Conversion[] CONVERSION = Decimal64Conversion.values();
     private static final Decimal64[] MIN_VALUE;
     private static final Decimal64[] MAX_VALUE;
 
     static {
-        verify(SCALE.length == MAX_SCALE);
+        verify(CONVERSION.length == MAX_SCALE);
+        verify(FACTOR.length == MAX_SCALE);
 
         MIN_VALUE = new Decimal64[MAX_SCALE];
         MAX_VALUE = new Decimal64[MAX_SCALE];
@@ -175,24 +178,30 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         }
     }
 
-    private final byte scaleOffset;
+    private final byte offset;
     private final long value;
 
     @VisibleForTesting
     Decimal64(final int scale, final long intPart, final long fracPart, final boolean negative) {
-        scaleOffset = offsetOf(scale);
+        offset = offsetOf(scale);
 
-        final long bits = intPart * SCALE[scaleOffset] + fracPart;
+        final long bits = intPart * FACTOR[offset] + fracPart;
         value = negative ? -bits : bits;
     }
 
-    private Decimal64(final byte scaleOffset, final long value) {
-        this.scaleOffset = scaleOffset;
+    private Decimal64(final byte offset, final long intPart, final boolean negative) {
+        this.offset = offset;
+        final long bits = intPart * FACTOR[offset];
+        value = negative ? -bits : bits;
+    }
+
+    private Decimal64(final byte offset, final long value) {
+        this.offset = offset;
         this.value = value;
     }
 
     protected Decimal64(final Decimal64 other) {
-        this(other.scaleOffset, other.value);
+        this(other.offset, other.value);
     }
 
     /**
@@ -229,29 +238,58 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         return MAX_VALUE[offsetOf(scale)];
     }
 
-    // >>> FIXME: these need to take a scale value and perform a range check. we also need truncating counterparts
-    public static Decimal64 valueOf(final byte byteVal) {
-        return byteVal < 0 ? new Decimal64(1, -byteVal, 0, true) : new Decimal64(1, byteVal, 0, false);
+    // >>> FIXME: these need truncating counterparts
+    public static Decimal64 valueOf(final int scale, final byte byteVal) {
+        final byte offset = offsetOf(scale);
+        final var conv = CONVERSION[offset];
+        if (byteVal < conv.minByte || byteVal > conv.maxByte) {
+            throw new IllegalArgumentException("Value " + byteVal + " is not in range ["
+                + conv.minByte + ".." + conv.maxByte + "] to fit scale " + scale);
+        }
+        return byteVal < 0 ? new Decimal64(offset, -byteVal, true) : new Decimal64(offset, byteVal, false);
     }
 
-    public static Decimal64 valueOf(final short shortVal) {
-        return shortVal < 0 ? new Decimal64(1, -shortVal, 0, true) : new Decimal64(1, shortVal, 0, false);
+    public static Decimal64 valueOf(final int scale, final short shortVal) {
+        final byte offset = offsetOf(scale);
+        final var conv = CONVERSION[offset];
+        if (shortVal < conv.minShort || shortVal > conv.maxShort) {
+            throw new IllegalArgumentException("Value " + shortVal + " is not in range ["
+                + conv.minShort + ".." + conv.maxShort + "] to fit scale " + scale);
+        }
+        return shortVal < 0 ? new Decimal64(offset, -shortVal, true) : new Decimal64(offset, shortVal, false);
     }
 
-    public static Decimal64 valueOf(final int intVal) {
-        return intVal < 0 ? new Decimal64(1, - (long)intVal, 0, true) : new Decimal64(1, intVal, 0, false);
+    public static Decimal64 valueOf(final int scale, final int intVal) {
+        final byte offset = offsetOf(scale);
+        final var conv = CONVERSION[offset];
+        if (intVal < conv.minInt || intVal > conv.maxInt) {
+            throw new IllegalArgumentException("Value " + intVal + " is not in range ["
+                + conv.minInt + ".." + conv.maxInt + "] to fit scale " + scale);
+        }
+        return intVal < 0 ? new Decimal64(offset, - (long)intVal, true) : new Decimal64(offset, intVal, false);
     }
 
-    public static Decimal64 valueOf(final long longVal) {
-        // XXX: we should be able to do something smarter here
-        return valueOf(Long.toString(longVal));
+    public static Decimal64 valueOf(final int scale, final long longVal) {
+        final byte offset = offsetOf(scale);
+        final var conv = CONVERSION[offset];
+        if (longVal < conv.minLong || longVal > conv.maxLong) {
+            throw new IllegalArgumentException("Value " + longVal + " is not in range ["
+                + conv.minLong + ".." + conv.maxLong + "] to fit scale " + scale);
+        }
+        return longVal < 0 ? new Decimal64(offset, -longVal, true) : new Decimal64(offset, longVal, false);
     }
     // <<< FIXME
 
     // FIXME: this should take a RoundingMode and perform rounding
-    // FIXME: this should have a float counterpart
-    // FIXME: this should have a truncating
-    public static Decimal64 valueOf(final double doubleVal) {
+    // FIXME: this should have a truncating counterpart
+    public static Decimal64 valueOf(final float floatVal, final RoundingMode rounding) {
+        // XXX: we should be able to do something smarter here
+        return valueOf(Float.toString(floatVal));
+    }
+
+    // FIXME: this should take a RoundingMode and perform rounding
+    // FIXME: this should have a truncating counterpart
+    public static Decimal64 valueOf(final double doubleVal, final RoundingMode rounding) {
         // XXX: we should be able to do something smarter here
         return valueOf(Double.toString(doubleVal));
     }
@@ -286,7 +324,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      * @return This decimal's scale
      */
     public final int scale() {
-        return scaleOffset + 1;
+        return offset + 1;
     }
 
     /**
@@ -319,7 +357,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     @Override
     public final double doubleValue() {
-        return 1.0 * value / SCALE[scaleOffset];
+        return 1.0 * value / FACTOR[offset];
     }
 
     /**
@@ -393,7 +431,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         if (this == o) {
             return 0;
         }
-        if (scaleOffset == o.scaleOffset) {
+        if (offset == o.offset) {
             return Long.compare(value, o.value);
         }
 
@@ -454,17 +492,17 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     }
 
     private boolean equalsImpl(final Decimal64 other) {
-        return scaleOffset == other.scaleOffset ? value == other.value
+        return offset == other.offset ? value == other.value
                 // We need to normalize both
                 : intPart() == other.intPart() && fracPart() == other.fracPart();
     }
 
     private long intPart() {
-        return value / SCALE[scaleOffset];
+        return value / FACTOR[offset];
     }
 
     private long fracPart() {
-        return Math.abs(value % SCALE[scaleOffset]);
+        return Math.abs(value % FACTOR[offset]);
     }
 
     private static byte offsetOf(final int scale) {

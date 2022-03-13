@@ -64,8 +64,8 @@ public class TypedefConstraintsTest {
         assertEquals(1, decRangeConstraints.size());
 
         final Range<?> range = decRangeConstraints.iterator().next();
-        assertEquals(Decimal64.valueOf(1.5), range.lowerEndpoint());
-        assertEquals(Decimal64.valueOf(5.5), range.upperEndpoint());
+        assertEquals(Decimal64.valueOf("1.5"), range.lowerEndpoint());
+        assertEquals(Decimal64.valueOf("5.5"), range.upperEndpoint());
 
         assertEquals(TypeDefinitions.DECIMAL64.bindTo(leafDecimal.getQName().getModule()), decType.getQName());
         assertNull(decType.getBaseType());
