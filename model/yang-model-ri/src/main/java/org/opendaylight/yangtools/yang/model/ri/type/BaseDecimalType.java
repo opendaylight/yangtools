@@ -46,29 +46,15 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         }
     };
 
-    private static final ImmutableList<RangeConstraint<Decimal64>> IMPLICIT_RANGE_STATEMENTS = ImmutableList.of(
-        createRangeConstraint("-922337203685477580.8", "922337203685477580.7"),
-        createRangeConstraint("-92233720368547758.08", "92233720368547758.07"),
-        createRangeConstraint("-9223372036854775.808", "9223372036854775.807"),
-        createRangeConstraint("-922337203685477.5808", "922337203685477.5807"),
-        createRangeConstraint("-92233720368547.75808", "92233720368547.75807"),
-        createRangeConstraint("-9223372036854.775808", "9223372036854.775807"),
-        createRangeConstraint("-922337203685.4775808", "922337203685.4775807"),
-        createRangeConstraint("-92233720368.54775808", "92233720368.54775807"),
-        createRangeConstraint("-9223372036.854775808", "9223372036.854775807"),
-        createRangeConstraint("-922337203.6854775808", "922337203.6854775807"),
-        createRangeConstraint("-92233720.36854775808", "92233720.36854775807"),
-        createRangeConstraint("-9223372.036854775808", "9223372.036854775807"),
-        createRangeConstraint("-922337.2036854775808", "922337.2036854775807"),
-        createRangeConstraint("-92233.72036854775808", "92233.72036854775807"),
-        createRangeConstraint("-9223.372036854775808", "9223.372036854775807"),
-        createRangeConstraint("-922.3372036854775808", "922.3372036854775807"),
-        createRangeConstraint("-92.23372036854775808", "92.23372036854775807"),
-        createRangeConstraint("-9.223372036854775808", "9.223372036854775807"));
+    private static final ImmutableList<RangeConstraint<Decimal64>> IMPLICIT_RANGE_STATEMENTS;
 
-    private static RangeConstraint<Decimal64> createRangeConstraint(final String min, final String max) {
-        return new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(
-            Range.closed(Decimal64.valueOf(min), Decimal64.valueOf(max))));
+    static {
+        final var builder = ImmutableList.<RangeConstraint<Decimal64>>builderWithExpectedSize(18);
+        for (int scale = 1; scale < 18; ++scale) {
+            builder.add(new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(Range.closed(
+                Decimal64.minValueIn(scale), Decimal64.maxValueIn(scale)))));
+        }
+        IMPLICIT_RANGE_STATEMENTS = builder.build();
     }
 
     static RangeConstraint<Decimal64> constraintsForDigits(final int fractionDigits) {
