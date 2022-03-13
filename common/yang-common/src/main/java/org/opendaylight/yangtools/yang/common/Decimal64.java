@@ -161,8 +161,18 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         1000000000000000000L
     };
 
+    private static final Decimal64[] MIN_VALUE;
+    private static final Decimal64[] MAX_VALUE;
+
     static {
         verify(SCALE.length == MAX_SCALE);
+
+        MIN_VALUE = new Decimal64[MAX_SCALE];
+        MAX_VALUE = new Decimal64[MAX_SCALE];
+        for (byte i = 0; i < MAX_SCALE; ++i) {
+            MIN_VALUE[i] = new Decimal64(i, -9223372036854775808L);
+            MAX_VALUE[i] = new Decimal64(i, 9223372036854775807L);
+        }
     }
 
     private final byte scaleOffset;
@@ -195,6 +205,28 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      */
     public static Decimal64 of(final int scale, final long unscaledValue) {
         return new Decimal64(offsetOf(scale), unscaledValue);
+    }
+
+    /**
+     * Return the minimum value supported in specified scale.
+     *
+     * @param scale scale to use
+     * @return Minimum value in that scale
+     * @throws IllegalArgumentException if {@code scale} is not in range {@code [1..18]}
+     */
+    public static Decimal64 minValueIn(final int scale) {
+        return MIN_VALUE[offsetOf(scale)];
+    }
+
+    /**
+     * Return the maximum value supported in specified scale.
+     *
+     * @param scale scale to use
+     * @return Maximum value in that scale
+     * @throws IllegalArgumentException if {@code scale} is not in range {@code [1..18]}
+     */
+    public static Decimal64 maxValueIn(final int scale) {
+        return MAX_VALUE[offsetOf(scale)];
     }
 
     // >>> FIXME: these need to take a scale value and perform a range check. we also need truncating counterparts
