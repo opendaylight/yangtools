@@ -50,7 +50,7 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
 
     static {
         final var builder = ImmutableList.<RangeConstraint<Decimal64>>builderWithExpectedSize(18);
-        for (int scale = 1; scale < 18; ++scale) {
+        for (int scale = 1; scale <= 18; ++scale) {
             builder.add(new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(Range.closed(
                 Decimal64.minValueIn(scale), Decimal64.maxValueIn(scale)))));
         }
