@@ -26,9 +26,11 @@ final class Decimal64RangeGenerator extends AbstractBigRangeGenerator<Decimal64>
     protected Decimal64 convert(final Number value) {
         if (value instanceof Byte || value instanceof Short || value instanceof Integer
             || value instanceof Uint8 || value instanceof Uint16) {
-            return Decimal64.valueOf(value.intValue());
+            // FIXME: this is not quite right
+            return Decimal64.valueOf(1, value.intValue());
         } else {
-            return Decimal64.valueOf(value.longValue());
+            // FIXME: this is not quite right
+            return Decimal64.valueOf(1, value.longValue());
         }
     }
 }

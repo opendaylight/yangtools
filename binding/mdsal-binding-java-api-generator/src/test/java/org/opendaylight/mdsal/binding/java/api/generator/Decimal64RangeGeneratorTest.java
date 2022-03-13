@@ -19,7 +19,7 @@ public class Decimal64RangeGeneratorTest {
     @Deprecated
     public void convertTest() {
         Decimal64RangeGenerator generator = new Decimal64RangeGenerator();
-        Decimal64 one = Decimal64.valueOf(1);
+        Decimal64 one = Decimal64.valueOf(1, 1);
         assertEquals(one, generator.convert(1L));
         assertEquals(one, generator.convert(new BigInteger("1")));
         assertEquals(one, generator.convert(Byte.valueOf("1")));
