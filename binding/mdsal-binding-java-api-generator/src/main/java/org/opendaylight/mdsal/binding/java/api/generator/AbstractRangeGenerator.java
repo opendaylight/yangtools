@@ -106,15 +106,6 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     protected abstract T convert(Number value);
 
     /**
-     * Format a value into a Java-compilable expression which results in the appropriate
-     * type.
-     *
-     * @param value Number value
-     * @return Java language string representation
-     */
-    protected abstract @NonNull String format(T value);
-
-    /**
      * Generate the checker method source code.
      * @param checkerName Name of the checker method.
      * @param constraints Restrictions which need to be applied.

@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.math.BigInteger;
 import org.junit.Test;
@@ -25,6 +24,5 @@ public class Decimal64RangeGeneratorTest {
         assertEquals(one, generator.convert(Byte.valueOf("1")));
         assertEquals(one, generator.convert(Short.valueOf("1")));
         assertEquals(one, generator.convert(Integer.valueOf("1")));
-        assertNotNull(generator.format(Decimal64.valueOf("10")));
     }
 }

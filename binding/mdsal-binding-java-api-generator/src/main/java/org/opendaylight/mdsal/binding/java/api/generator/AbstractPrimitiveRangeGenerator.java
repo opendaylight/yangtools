@@ -27,7 +27,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     private final @NonNull T minValue;
     private final @NonNull T maxValue;
 
-    protected AbstractPrimitiveRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue,
+    AbstractPrimitiveRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue,
             final T maxValue) {
         super(typeClass);
         this.primitiveName = requireNonNull(primitiveName);
@@ -93,6 +93,15 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     void appendMinCheck(final StringBuilder sb, final T min, final Function<Class<?>, String> classImporter) {
         sb.append("value >= ").append(format(min));
     }
+
+    /**
+     * Format a value into a Java-compilable expression which results in the appropriate
+     * type.
+     *
+     * @param value Number value
+     * @return Java language string representation
+     */
+    protected abstract @NonNull String format(T value);
 
     String codeHelpersThrow() {
         return "throwInvalidRange";

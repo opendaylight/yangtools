@@ -8,8 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 final class LongRangeGenerator extends AbstractPrimitiveRangeGenerator<Long> {
-
-    protected LongRangeGenerator() {
+    LongRangeGenerator() {
         super(Long.class, long.class.getName(), Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
