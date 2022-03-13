@@ -92,15 +92,11 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     final Optional<R> runtimeTypeOf(final @NonNull S stmt) {
-        return recursiveRuntimeType().map(childType -> rebaseRuntimeType(childType, stmt));
-    }
-
-    public final Optional<R> recursiveRuntimeType() {
-        AbstractExplicitGenerator<S, R> gen = this;
+        var gen = this;
         do {
             final var ret = gen.runtimeType();
             if (ret.isPresent()) {
-                return ret;
+                return Optional.of(rebaseRuntimeType(ret.orElseThrow(), stmt));
             }
 
             gen = gen.previous();
