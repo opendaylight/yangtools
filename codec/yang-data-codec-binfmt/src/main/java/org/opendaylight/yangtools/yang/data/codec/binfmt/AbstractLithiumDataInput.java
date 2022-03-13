@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -369,7 +369,7 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
                 return readStringBytes();
 
             case LithiumValue.BIG_DECIMAL_TYPE:
-                return new BigDecimal(input.readUTF());
+                return Decimal64.valueOf(input.readUTF());
 
             case LithiumValue.BIG_INTEGER_TYPE:
                 return new BigInteger(input.readUTF());

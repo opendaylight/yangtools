@@ -19,7 +19,6 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -746,7 +746,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
                 return Uint64.fromLongBits(input.readInt() & 0xFFFFFFFFL);
             case MagnesiumValue.BIGDECIMAL:
                 // FIXME: use string -> BigDecimal cache
-                return new BigDecimal(input.readUTF());
+                return Decimal64.valueOf(input.readUTF());
             case MagnesiumValue.BIGINTEGER:
                 return readBigInteger();
             case MagnesiumValue.STRING_EMPTY:

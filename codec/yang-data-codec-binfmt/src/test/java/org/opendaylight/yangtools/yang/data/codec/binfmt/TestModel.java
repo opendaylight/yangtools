@@ -13,12 +13,12 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -209,7 +209,7 @@ public final class TestModel {
                 .withChild(ImmutableNodes.leafNode(SHORT_LEAF_QNAME, SHORT_ID))
                 .withChild(ImmutableNodes.leafNode(BYTE_LEAF_QNAME, BYTE_ID))
                 .withChild(ImmutableNodes.leafNode(TestModel.BIGINTEGER_LEAF_QNAME, uint64.apply("100")))
-                .withChild(ImmutableNodes.leafNode(TestModel.BIGDECIMAL_LEAF_QNAME, BigDecimal.valueOf(1.2)))
+                .withChild(ImmutableNodes.leafNode(TestModel.BIGDECIMAL_LEAF_QNAME, Decimal64.valueOf("1.2")))
                 .withChild(ImmutableNodes.leafNode(SOME_REF_QNAME, instanceID))
                 .withChild(ImmutableNodes.leafNode(MYIDENTITY_QNAME, DESC_QNAME))
                 .withChild(Builders.unkeyedListBuilder()

@@ -32,6 +32,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -67,6 +68,7 @@ abstract class AbstractLithiumDataOutput extends AbstractNormalizedNodeDataOutpu
             .put(Short.class, LithiumValue.SHORT_TYPE)
             .put(BigInteger.class, LithiumValue.BIG_INTEGER_TYPE)
             .put(BigDecimal.class, LithiumValue.BIG_DECIMAL_TYPE)
+            .put(Decimal64.class, LithiumValue.BIG_DECIMAL_TYPE)
             .put(byte[].class, LithiumValue.BINARY_TYPE)
             .put(Empty.class, LithiumValue.EMPTY_TYPE)
             .build();

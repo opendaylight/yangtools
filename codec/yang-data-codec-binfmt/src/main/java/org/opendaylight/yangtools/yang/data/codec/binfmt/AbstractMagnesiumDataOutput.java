@@ -29,6 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -365,8 +366,9 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
             output.writeByte(MagnesiumValue.EMPTY);
         } else if (value instanceof Set) {
             writeValue((Set<?>) value);
-        } else if (value instanceof BigDecimal) {
-            writeValue((BigDecimal) value);
+        } else if (value instanceof BigDecimal || value instanceof Decimal64) {
+            output.writeByte(MagnesiumValue.BIGDECIMAL);
+            output.writeUTF(value.toString());
         } else if (value instanceof BigInteger) {
             writeValue((BigInteger) value);
         } else {
@@ -464,11 +466,6 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
         } else {
             output.writeByte(MagnesiumValue.UINT64_0);
         }
-    }
-
-    private void writeValue(final BigDecimal value) throws IOException {
-        output.writeByte(MagnesiumValue.BIGDECIMAL);
-        output.writeUTF(value.toString());
     }
 
     abstract void writeValue(BigInteger value) throws IOException;
