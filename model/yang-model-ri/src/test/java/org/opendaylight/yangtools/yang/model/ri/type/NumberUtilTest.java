@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.function.Function;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
@@ -44,10 +45,10 @@ public class NumberUtilTest {
 
     @Test
     public void testRangeCoveredForDecimal64() {
-        final Decimal64 min = Decimal64.valueOf(100.0);
-        final Decimal64 superMin = Decimal64.valueOf(50.0);
-        final Decimal64 max = Decimal64.valueOf(200.0);
-        final Decimal64 superMax = Decimal64.valueOf(300.0);
+        final Decimal64 min = Decimal64.valueOf(100.0, RoundingMode.UNNECESSARY);
+        final Decimal64 superMin = Decimal64.valueOf(50.0, RoundingMode.UNNECESSARY);
+        final Decimal64 max = Decimal64.valueOf(200.0, RoundingMode.UNNECESSARY);
+        final Decimal64 superMax = Decimal64.valueOf(300.0, RoundingMode.UNNECESSARY);
 
         assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
     }
@@ -138,7 +139,7 @@ public class NumberUtilTest {
 
     @Test
     public void testConverterToBigDecimal() {
-        Decimal64 bigDecNum = Decimal64.valueOf(20.0);
+        Decimal64 bigDecNum = Decimal64.valueOf(20.0, RoundingMode.UNNECESSARY);
         final Function<Number, Decimal64> numberFunction = NumberUtil.converterTo(Decimal64.class);
         assertEquals(bigDecNum, numberFunction.apply(bigDecNum));
 

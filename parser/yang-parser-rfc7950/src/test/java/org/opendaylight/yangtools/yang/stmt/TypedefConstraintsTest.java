@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Range;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
@@ -64,8 +65,8 @@ public class TypedefConstraintsTest {
         assertEquals(1, decRangeConstraints.size());
 
         final Range<?> range = decRangeConstraints.iterator().next();
-        assertEquals(Decimal64.valueOf(1.5), range.lowerEndpoint());
-        assertEquals(Decimal64.valueOf(5.5), range.upperEndpoint());
+        assertEquals(Decimal64.valueOf(1.5, RoundingMode.UNNECESSARY), range.lowerEndpoint());
+        assertEquals(Decimal64.valueOf(5.5, RoundingMode.UNNECESSARY), range.upperEndpoint());
 
         assertEquals(TypeDefinitions.DECIMAL64.bindTo(leafDecimal.getQName().getModule()), decType.getQName());
         assertNull(decType.getBaseType());
