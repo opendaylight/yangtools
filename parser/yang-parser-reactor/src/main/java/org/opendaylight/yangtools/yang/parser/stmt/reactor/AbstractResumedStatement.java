@@ -106,27 +106,29 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     final E createEffective(final StatementFactory<A, D, E> factory) {
-        return createEffective(factory, this);
+        return createEffective(factory, this, streamDeclared(), streamEffective());
     }
 
     // Creates EffectiveStatement through full materialization and assumes declared statement presence
     private @NonNull E createEffective(final StatementFactory<A, D, E> factory,
-            final StatementContextBase<A, D, E> ctx) {
+            final StatementContextBase<A, D, E> ctx, final Stream<? extends StmtContext<?, ?, ?>> declared,
+            final Stream<? extends StmtContext<?, ?, ?>> effective) {
         // Statement reference count infrastructure makes an assumption that effective statement is only built after
         // the declared statement is already done. Statements tracked by this class always have a declared view, and
         // we need to ensure that is built before we touch effective substatements.
         //
         // Once the effective substatement stream has been exhausted, reference counting will triggers a sweep, hence
         // the substatements may be gone by the time the factory attempts to acquire the declared statement.
-        declared();
+        ctx.declared();
 
-        return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
+        return factory.createEffective(ctx, declared, effective);
     }
 
     @Override
     final E createInferredEffective(final StatementFactory<A, D, E> factory,
-            final InferredStatementContext<A, D, E> ctx) {
-        return createEffective(factory, ctx);
+            final InferredStatementContext<A, D, E> ctx, final Stream<? extends StmtContext<?, ?, ?>> declared,
+            final Stream<? extends StmtContext<?, ?, ?>> effective) {
+        return createEffective(factory, ctx, declared, effective);
     }
 
     /**
