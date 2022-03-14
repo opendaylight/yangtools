@@ -66,8 +66,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         BaseYangTypes.UINT32_TYPE,
         BaseYangTypes.UINT64_TYPE,
         BaseYangTypes.BOOLEAN_TYPE,
-        BaseYangTypes.EMPTY_TYPE,
-        Types.CLASS);
+        BaseYangTypes.EMPTY_TYPE);
 
     /**
      * Singleton instance.
@@ -136,7 +135,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
     }
 
     private static int rankOf(final Type type) {
-        if (FIXED_TYPES.contains(type)) {
+        if (FIXED_TYPES.contains(type) || BindingTypes.isIdentityType(type)) {
             return RANK_FIXED_SIZE;
         }
         if (type.equals(BaseYangTypes.STRING_TYPE) || type.equals(Types.BYTE_ARRAY)) {

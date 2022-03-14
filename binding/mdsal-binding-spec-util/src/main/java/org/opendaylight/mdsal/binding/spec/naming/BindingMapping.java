@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
-import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.BindingContract;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -64,6 +64,7 @@ public final class BindingMapping {
     public static final @NonNull String BUILDER_SUFFIX = "Builder";
     public static final @NonNull String KEY_SUFFIX = "Key";
     public static final @NonNull String QNAME_STATIC_FIELD_NAME = "QNAME";
+    public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
     public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
     public static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
@@ -88,9 +89,9 @@ public final class BindingMapping {
     public static final @NonNull String IDENTIFIABLE_KEY_NAME = "key";
 
     /**
-     * Name of {@link DataContainer#implementedInterface()}.
+     * Name of {@link BindingContract#implementedInterface()}.
      */
-    public static final @NonNull String DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
+    public static final @NonNull String BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
 
     /**
      * Name of default {@link Object#hashCode()} implementation for instantiated DataObjects. Each such generated

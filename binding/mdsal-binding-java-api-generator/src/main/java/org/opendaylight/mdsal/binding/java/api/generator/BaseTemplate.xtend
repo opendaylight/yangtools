@@ -8,6 +8,8 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
+import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
+import static org.opendaylight.mdsal.binding.model.ri.Types.objectType;
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
@@ -31,6 +33,7 @@ import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.TypeMemberComment
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
+import org.opendaylight.yangtools.yang.binding.BaseIdentity
 
 @SuppressModernizer
 abstract class BaseTemplate extends JavaFileTemplate {
@@ -293,6 +296,34 @@ abstract class BaseTemplate extends JavaFileTemplate {
         «IF BindingMapping.QNAME_STATIC_FIELD_NAME.equals(c.name)»
             «val entry = c.value as Entry<JavaTypeName, String>»
             public static final «c.type.importedNonNull» «c.name» = «entry.key.importedName».«BindingMapping.MODULE_INFO_QNAMEOF_METHOD_NAME»("«entry.value»");
+        «ELSEIF BindingMapping.VALUE_STATIC_FIELD_NAME.equals(c.name) && BaseIdentity.equals(c.value)»
+            «val typeName = c.type.importedName»
+            «val override = OVERRIDE.importedName»
+            /**
+             * Singleton value representing the {@link «typeName»} identity.
+             */
+            public static final «c.type.importedNonNull» «c.name» = new «typeName»() {
+                @«override»
+                public «CLASS.importedName»<«typeName»> «BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»() {
+                    return «typeName».class;
+                }
+
+                @«override»
+                public int hashCode() {
+                    return «typeName».class.hashCode();
+                }
+
+                @«override»
+                public boolean equals(final «objectType.importedName» obj) {
+                    return obj == this || obj instanceof «typeName»
+                        && «typeName».class.equals(((«typeName») obj).«BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»());
+                }
+
+                @«override»
+                public «STRING.importedName» toString() {
+                    return «MOREOBJECTS.importedName».toStringHelper("«c.type.name»").add("qname", QNAME).toString();
+                }
+            };
         «ELSE»
             public static final «c.type.importedName» «c.name» = «c.value»;
         «ENDIF»

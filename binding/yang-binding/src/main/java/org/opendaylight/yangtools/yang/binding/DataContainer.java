@@ -7,26 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 /**
  * Data Container - object contains structured data. Marker interface which must be implemented by all interfaces
  * generated for YANG:
  * <ul>
- * <li>Rpc Input
- * <li>Output
- * <li>Notification
- * <li>Container
- * <li>List
- * <li>Case
+ *   <li>Rpc Input</li>
+ *   <li>Output</li>
+ *   <li>Notification</li>
+ *   <li>Container</li>
+ *   <li>List</li>
+ *   <li>Case</li>
  * </ul>
  */
-public interface DataContainer {
-    /**
-     * Return the interface implemented by this object. This method differs from {@link Object#getClass()} in that it
-     * returns the interface contract, not a concrete implementation class.
-     *
-     * @return Implemented contract
-     */
-    @NonNull Class<? extends DataContainer> implementedInterface();
+public interface DataContainer extends BindingContract<DataContainer> {
+
 }

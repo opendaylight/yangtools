@@ -11,7 +11,7 @@ import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.DATA_OBJECT
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
@@ -254,21 +254,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         if (ownGetterType instanceof ParameterizedType) {
             val itemType = ownGetterType.actualTypeArguments.get(0)
             if (Types.isListType(ownGetterType)) {
-                val importedClass = importedClass(itemType)
-                if (importedClass !== null) {
-                    return printPropertySetter(retrieveProperty, propertyName, "checkListFieldCastIdentity", importedClass)
-                }
                 return printPropertySetter(retrieveProperty, propertyName, "checkListFieldCast", itemType.importedName)
             }
             if (Types.isSetType(ownGetterType)) {
-                val importedClass = importedClass(itemType)
-                if (importedClass !== null) {
-                    return printPropertySetter(retrieveProperty, propertyName, "checkSetFieldCastIdentity", importedClass)
-                }
                 return printPropertySetter(retrieveProperty, propertyName, "checkSetFieldCast", itemType.importedName)
-            }
-            if (Types.CLASS.equals(ownGetterType)) {
-                return printPropertySetter(retrieveProperty, propertyName, "checkFieldCastIdentity", itemType.identifier.importedName)
             }
         }
         return printPropertySetter(retrieveProperty, propertyName, "checkFieldCast", ownGetterType.importedName)
@@ -276,15 +265,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
     def private printPropertySetter(String retrieveProperty, String propertyName, String checkerName, String className) '''
             this._«propertyName» = «CODEHELPERS.importedName».«checkerName»(«className».class, "«propertyName»", «retrieveProperty»)'''
-
-    private def importedClass(Type type) {
-        if (type instanceof ParameterizedType) {
-            if (Types.CLASS.equals(type.rawType)) {
-                return type.actualTypeArguments.get(0).identifier.importedName
-            }
-        }
-        return null
-    }
 
     private def List<Type> getBaseIfcs(GeneratedType type) {
         val List<Type> baseIfcs = new ArrayList();
@@ -440,7 +420,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               * @throws NullPointerException if {@code augmentation} is null
               */
             public «type.name» addAugmentation(«augmentTypeRef» augmentation) {
-                «jlClassRef»<? extends «augmentTypeRef»> augmentationType = augmentation.«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»();
+                «jlClassRef»<? extends «augmentTypeRef»> augmentationType = augmentation.«BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»();
                 if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
                     this.«AUGMENTATION_FIELD» = new «hashMapRef»<>();
                 }

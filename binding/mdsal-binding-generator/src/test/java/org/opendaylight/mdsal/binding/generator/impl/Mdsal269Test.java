@@ -40,6 +40,7 @@ public class Mdsal269Test {
             general.getReturnType().getFullyQualifiedName());
 
         assertEquals("mplsLabelSpecialPurpose", special.getName());
-        assertEquals("java.lang.Class", special.getReturnType().getFullyQualifiedName());
+        assertEquals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabelSpecialPurposeValue",
+            special.getReturnType().getFullyQualifiedName());
     }
 }

@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * Base Identity.
+ * Base Identity. Interface generated for {@code identity} statements extend this interface.
  */
-public interface BaseIdentity {
+public interface BaseIdentity extends BindingObject, BindingContract<BaseIdentity> {
 
 }

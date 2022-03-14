@@ -21,19 +21,21 @@ public interface BindingIdentityCodec extends Immutable {
     /**
      * Convert a QNname to its corresponding Binding class.
      *
+     * @param <T> Expected identity type
      * @param qname Identity QName
-     * @return A binding Class corresponding to the QName
+     * @return A binding value corresponding to the QName
      * @throws IllegalArgumentException if the qname does not map to an identity
-     * @throws NullPointerException if qname is null
+     * @throws NullPointerException if {@code qname} is null
      */
-    @NonNull Class<? extends BaseIdentity> toBinding(@NonNull QName qname);
+    <T extends BaseIdentity> @NonNull T toBinding(@NonNull QName qname);
 
     /**
-     * Concert a Binding class to its QName equivalent.
+     * Convert a Binding value to its QName equivalent.
      *
-     * @param bindingClass Binding class to convert
-     * @return QName corresponding to the binding class
+     * @param bindingValue Binding value to convert
+     * @return QName corresponding to the binding value
+     * @throws IllegalArgumentException if the supplied value does not map to a known identity
      * @throws NullPointerException if bindingClass is null
      */
-    @NonNull QName fromBinding(Class<? extends BaseIdentity> bindingClass);
+    @NonNull QName fromBinding(@NonNull BaseIdentity bindingValue);
 }

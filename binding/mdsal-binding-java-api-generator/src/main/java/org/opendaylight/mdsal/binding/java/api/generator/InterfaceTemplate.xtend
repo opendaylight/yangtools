@@ -16,10 +16,10 @@ import static org.opendaylight.mdsal.binding.model.ri.Types.BOOLEAN
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.REQUIRE_PREFIX
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List
@@ -208,7 +208,7 @@ class InterfaceTemplate extends BaseTemplate {
             generateRequireMethod(method)
         } else {
             switch method.name {
-                case DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME : generateDefaultImplementedInterface
+                case BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME : generateDefaultImplementedInterface
                 default :
                     if (VOID == method.returnType.identifier) {
                         generateNoopVoidInterfaceMethod(method)
@@ -269,7 +269,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     def private generateDefaultImplementedInterface() '''
         @«OVERRIDE.importedName»
-        default «CLASS.importedName»<«type.fullyQualifiedName»> «DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»() {
+        default «CLASS.importedName»<«type.fullyQualifiedName»> «BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»() {
             return «type.fullyQualifiedName».class;
         }
     '''

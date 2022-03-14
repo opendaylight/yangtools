@@ -15,6 +15,7 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -100,5 +101,5 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
     // FIXME: 9.0.0: this needs to accept an EffectiveStatementInference
     @NonNull Class<?> getClassForSchema(Absolute schema);
 
-    @NonNull Class<?> getIdentityClass(QName input);
+    @NonNull Class<? extends BaseIdentity> getIdentityClass(QName input);
 }

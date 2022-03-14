@@ -32,8 +32,8 @@ public class LeafReferenceTest extends AbstractBindingCodecTest {
     @Test
     public void testCaseWithLeafReferencesType() {
         final TreeComplexLeaves binding = new TreeComplexLeavesBuilder()
-            .setIdentity(ThirdParty.class)
-            .setIdentityRef(ThirdParty.class)
+            .setIdentity(ThirdParty.VALUE)
+            .setIdentityRef(ThirdParty.VALUE)
             .setSimpleType(10)
             .setSimpleTypeRef(10)
             .setSchemaUnawareUnion(new Int32StringUnion("foo"))

@@ -95,7 +95,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     public void generatedTypeForExtendedDefinitionTypeWithIdentityrefBaseTypeTest() {
-        assertEquals(Types.parameterizedTypeFor(Types.CLASS, Type.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "Aes"))),
+        assertEquals(Type.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "Aes")),
             assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getAesIdentityrefType").getReturnType());
     }
 
@@ -188,8 +188,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     public void javaTypeForSchemaDefinitionIdentityrefExtTypeTest() {
-        assertEquals(Types.parameterizedTypeFor(Types.CLASS,
-            Types.wildcardTypeFor(JavaTypeName.create(TEST_TYPE_PROVIDER, "CryptoAlg"))),
+        assertEquals(Type.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "CryptoAlg")),
             assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getCrypto").getReturnType());
     }
 

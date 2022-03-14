@@ -26,6 +26,7 @@ import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.SCALAR_TYPE_O
 import static org.opendaylight.mdsal.binding.model.ri.Types.BOOLEAN
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
+import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isBitsType
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
@@ -51,7 +52,6 @@ import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.common.Empty
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 
 /**
  * Template for generating JAVA class.
@@ -177,7 +177,7 @@ class ClassTemplate extends BaseTemplate {
 
             «propertyMethods»
 
-            «IF (genTO.isTypedef() && genTO.getBaseType instanceof BitsTypeDefinition)»
+            «IF genTO.isBitsType»
                 «generateGetValueForBitsTypeDef»
             «ENDIF»
 

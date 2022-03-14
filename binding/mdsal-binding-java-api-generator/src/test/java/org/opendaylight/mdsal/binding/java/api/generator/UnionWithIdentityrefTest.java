@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 
 /**
  * Union constructor with indentityref. Previously identityref was ignored so that there is no constructor for
@@ -40,10 +41,12 @@ public class UnionWithIdentityrefTest extends BaseCompilationTest {
         Class<?> unionTypeClass = Class.forName(CompilationTestUtils.BASE_PKG
             + ".urn.opendaylight.yang.union.test.rev160509.UnionType", true, loader);
 
+        Object identOneValue = identOneClass.getDeclaredField(BindingMapping.VALUE_STATIC_FIELD_NAME).get(null);
+
         // test UnionType with IdentOne argument
         Constructor<?> unionTypeIdentBaseConstructor = CompilationTestUtils.assertContainsConstructor(unionTypeClass,
-            Class.class);
-        Object unionType = unionTypeIdentBaseConstructor.newInstance(identOneClass);
+            identBaseClass);
+        Object unionType = unionTypeIdentBaseConstructor.newInstance(identOneValue);
 
         Method getUint8 = unionTypeClass.getDeclaredMethod("getUint8");
         Object actualUint8 = getUint8.invoke(unionType);
@@ -51,7 +54,7 @@ public class UnionWithIdentityrefTest extends BaseCompilationTest {
 
         Method getIdentityref = unionTypeClass.getDeclaredMethod("getIdentityref");
         Object actualIdentityref = getIdentityref.invoke(unionType);
-        assertEquals(identOneClass, actualIdentityref);
+        assertEquals(identOneValue, actualIdentityref);
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

@@ -18,6 +18,8 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.runtime.api.IdentityRuntimeType;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -62,8 +64,13 @@ public final class IdentityGenerator
             builder.addImplementsType(BASE_IDENTITY);
         }
 
+        narrowImplementedInterface(builder);
+
         final ModuleGenerator module = currentModule();
         module.addQNameConstant(builder, localName());
+
+        // Constant implementation
+        builder.addConstant(Type.of(builder), BindingMapping.VALUE_STATIC_FIELD_NAME, BaseIdentity.class);
 
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());

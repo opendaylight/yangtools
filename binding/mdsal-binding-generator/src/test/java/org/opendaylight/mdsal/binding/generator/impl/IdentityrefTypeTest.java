@@ -7,8 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -20,9 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class IdentityrefTypeTest {
@@ -68,15 +63,7 @@ public class IdentityrefTypeTest {
         assertEquals("getLf", methodSignature.getName());
         assertEquals("requireLf", methodSignatures.get(1).getName());
 
-        Type returnType = methodSignature.getReturnType();
-        assertThat(returnType, instanceOf(ParameterizedType.class));
-        ParameterizedType parameterized = (ParameterizedType) returnType;
-        assertEquals(Types.CLASS, parameterized.getRawType());
-
-        Type[] actualTypes = parameterized.getActualTypeArguments();
-        assertEquals("Incorrect number of type parameters", 1, actualTypes.length);
-        assertEquals("Return type has incorrect actual parameter",
-            "org.opendaylight.yang.gen.v1.urn.identityref.module.rev131109.SomeIdentity",
-            actualTypes[0].getFullyQualifiedName());
+        assertEquals("org.opendaylight.yang.gen.v1.urn.identityref.module.rev131109.SomeIdentity",
+            methodSignature.getReturnType().getFullyQualifiedName());
     }
 }

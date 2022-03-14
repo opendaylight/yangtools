@@ -29,14 +29,8 @@ abstract class CompositeValueCodec extends AbstractIllegalArgumentCodec<Object, 
 
         @Override
         Object bindingToDom(final Object bindingValue) {
-            checkArgument(bindingValue instanceof Class, "Unexpected Binding value %s", bindingValue);
-            final Class<? extends BaseIdentity> identity;
-            try {
-                identity = ((Class<?>) bindingValue).asSubclass(BaseIdentity.class);
-            } catch (ClassCastException e) {
-                throw new IllegalArgumentException("Unexpected Binding value " + bindingValue, e);
-            }
-            return valueCodec.fromBinding(identity);
+            checkArgument(bindingValue instanceof BaseIdentity, "Unexpected Binding value %s", bindingValue);
+            return valueCodec.fromBinding((BaseIdentity) bindingValue);
         }
 
         @Override

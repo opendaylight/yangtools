@@ -386,7 +386,7 @@ public abstract class Generator implements Iterable<Generator> {
     private static MethodSignatureBuilder defineImplementedInterfaceMethod(final GeneratedTypeBuilder typeBuilder,
             final Type classType) {
         final MethodSignatureBuilder ret = typeBuilder
-                .addMethod(BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME)
+                .addMethod(BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
                 .setAccessModifier(AccessModifier.PUBLIC)
                 .setReturnType(classType(classType));
         ret.addAnnotation(OVERRIDE_ANNOTATION);

@@ -751,17 +751,9 @@ public class CompilationTest extends BaseCompilationTest {
 
     private static void testReturnTypeIdentityref(final Class<?> clazz, final String methodName,
             final String returnTypeStr) throws NoSuchMethodException {
-        Method method = clazz.getMethod(methodName);
-        assertEquals(java.lang.Class.class, method.getReturnType());
-        Type returnType = method.getGenericReturnType();
-        assertTrue(returnType instanceof ParameterizedType);
-        final ParameterizedType pt = (ParameterizedType) returnType;
-        final Type[] parameters = pt.getActualTypeArguments();
-        assertEquals(1, parameters.length);
-        final Type parameter = parameters[0];
-        assertTrue(parameter instanceof WildcardType);
-        final WildcardType wildcardType = (WildcardType) parameter;
-        assertEquals("? extends " + returnTypeStr, wildcardType.toString());
+        Class<?> returnType = clazz.getMethod(methodName).getReturnType();
+        assertTrue(returnType.isInterface());
+        assertEquals(returnTypeStr, returnType.getName());
     }
 
     private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz,

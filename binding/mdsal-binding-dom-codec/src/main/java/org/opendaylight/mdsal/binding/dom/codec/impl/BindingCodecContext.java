@@ -58,6 +58,7 @@ import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
+import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -421,7 +422,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     // FIXME: this is probably not right w.r.t. nulls
     IllegalArgumentCodec<Object, Object> getCodec(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {
-        if (Class.class.equals(valueType)) {
+        if (BaseIdentity.class.isAssignableFrom(valueType)) {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final IllegalArgumentCodec<Object, Object> casted = (IllegalArgumentCodec) identityCodec;
             return casted;

@@ -9,10 +9,13 @@ package org.opendaylight.mdsal.binding.model.ri;
 
 import static org.opendaylight.mdsal.binding.model.ri.Types.parameterizedTypeFor;
 import static org.opendaylight.mdsal.binding.model.ri.Types.typeForClass;
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.VALUE_STATIC_FIELD_NAME;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
+import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -43,6 +46,7 @@ import org.opendaylight.yangtools.yang.binding.TypeObject;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 public final class BindingTypes {
 
@@ -271,5 +275,43 @@ public final class BindingTypes {
      */
     public static ParameterizedType scalarTypeObject(final Type type) {
         return parameterizedTypeFor(SCALAR_TYPE_OBJECT, type);
+    }
+
+    /**
+     * Check if specified type is generated for a {@code type bits}.
+     *
+     * @param type Type to examine
+     * @return {@code true} if the type is generated for a {@code type bits}
+     */
+    public static boolean isBitsType(final Type type) {
+        return type instanceof GeneratedTransferObject && isBitsType((GeneratedTransferObject) type);
+    }
+
+    /**
+     * Check if specified type is generated for a {@code type bits}.
+     *
+     * @param gto Type to examine
+     * @return {@code true} if the type is generated for a {@code type bits}
+     */
+    public static boolean isBitsType(final GeneratedTransferObject gto) {
+        return gto.isTypedef() && gto.getBaseType() instanceof BitsTypeDefinition;
+    }
+
+    /**
+     * Check if specified type is generated for an identity.
+     *
+     * @param type Type to examine
+     * @return {@code true} if the type is generated for an identity
+     */
+    public static boolean isIdentityType(final Type type) {
+        if (type instanceof GeneratedType) {
+            for (var constant : ((GeneratedType) type).getConstantDefinitions()) {
+                if (VALUE_STATIC_FIELD_NAME.equals(constant.getName())
+                    && BaseIdentity.class.equals(constant.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
