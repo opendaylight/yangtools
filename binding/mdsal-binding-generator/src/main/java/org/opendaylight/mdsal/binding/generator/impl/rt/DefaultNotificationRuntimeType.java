@@ -16,7 +16,7 @@ import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 @Beta
-public final class DefaultNotificationRuntimeType extends AbstractCompositeRuntimeType<NotificationEffectiveStatement>
+public final class DefaultNotificationRuntimeType extends AbstractAugmentableRuntimeType<NotificationEffectiveStatement>
         implements NotificationRuntimeType {
     public DefaultNotificationRuntimeType(final GeneratedType bindingType,
             final NotificationEffectiveStatement statement, final List<RuntimeType> children,

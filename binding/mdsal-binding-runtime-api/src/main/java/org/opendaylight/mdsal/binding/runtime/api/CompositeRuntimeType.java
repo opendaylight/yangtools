@@ -8,25 +8,12 @@
 package org.opendaylight.mdsal.binding.runtime.api;
 
 import com.google.common.annotations.Beta;
-import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 
 /**
- * A {@link RuntimeType} which is also a {@link RuntimeTypeContainer}.
+ * A {@link RuntimeType} which is also a {@link RuntimeTypeContainer}. This is a pure composition interface and does not
+ * imply further contract.
  */
 @Beta
 public interface CompositeRuntimeType extends GeneratedRuntimeType, RuntimeTypeContainer {
-    /**
-     * Return the {@link AugmentRuntimeType}s extending this type, matching the underlying {@link #statement()}.
-     *
-     * @return {@link AugmentRuntimeType}s extending this type.
-     */
-    @NonNull List<AugmentRuntimeType> augments();
-
-    /**
-     * Return the {@link AugmentRuntimeType}s extending extending a namesake of this type.
-     *
-     * @return {@link AugmentRuntimeType}s extending a namesake of this type.
-     */
-    @NonNull List<AugmentRuntimeType> mismatchedAugments();
+    // Pure contract composition
 }

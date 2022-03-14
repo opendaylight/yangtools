@@ -7,31 +7,32 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
-abstract class AbstractChoiceRuntimeType extends AbstractCompositeRuntimeType<ChoiceEffectiveStatement>
+@Beta
+public final class DefaultChoiceRuntimeType extends AbstractCompositeRuntimeType<ChoiceEffectiveStatement>
         implements ChoiceRuntimeType {
-    AbstractChoiceRuntimeType(final GeneratedType bindingType, final ChoiceEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        super(bindingType, statement, children, augments);
+    public DefaultChoiceRuntimeType(final GeneratedType bindingType, final ChoiceEffectiveStatement statement,
+            final List<RuntimeType> children) {
+        super(bindingType, statement, children);
     }
 
     @Override
-    public final Collection<CaseRuntimeType> validCaseChildren() {
+    public Collection<CaseRuntimeType> validCaseChildren() {
         return (Collection) Collections2.filter(schemaTreeChildren(), CaseRuntimeType.class::isInstance);
     }
 
     @Override
-    public final CaseRuntimeType bindingCaseChild(final JavaTypeName typeName) {
+    public CaseRuntimeType bindingCaseChild(final JavaTypeName typeName) {
         final var child = bindingChild(typeName);
         return child instanceof CaseRuntimeType ? (CaseRuntimeType) child : null;
     }

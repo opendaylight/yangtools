@@ -37,12 +37,13 @@ final class LeafListGenerator
     }
 
     @Override
-    LeafListRuntimeType createRuntimeType(final Type type) {
+    LeafListRuntimeType createExternalRuntimeType(final Type type) {
         return new DefaultLeafListRuntimeType(type, statement());
     }
 
     @Override
-    LeafListRuntimeType rebaseRuntimeType(final LeafListRuntimeType type, final LeafListEffectiveStatement statement) {
-        return new DefaultLeafListRuntimeType(type.javaType(), statement);
+    LeafListRuntimeType createInternalRuntimeType(final ChildLookup lookup, final LeafListEffectiveStatement statement,
+            final Type type) {
+        return new DefaultLeafListRuntimeType(type, statement);
     }
 }

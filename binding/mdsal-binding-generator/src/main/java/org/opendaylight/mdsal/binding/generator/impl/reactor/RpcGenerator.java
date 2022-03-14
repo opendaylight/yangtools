@@ -7,12 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RpcRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -42,13 +39,14 @@ public final class RpcGenerator extends CompositeSchemaTreeGenerator<RpcEffectiv
     }
 
     @Override
-    RpcRuntimeType createRuntimeType(final GeneratedType type, final RpcEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        throw new UnsupportedOperationException();
+    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+        // RPCs are a separate concept
     }
 
     @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
-        // RPCs are a separate concept
+    CompositeRuntimeTypeBuilder<RpcEffectiveStatement, RpcRuntimeType> createBuilder(
+            final RpcEffectiveStatement statement) {
+        // RPCs do not have a dedicated interface
+        throw new UnsupportedOperationException("Should never be called");
     }
 }

@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
@@ -25,8 +24,8 @@ public final class DefaultActionRuntimeType extends AbstractCompositeRuntimeType
     private final @NonNull OutputRuntimeType output;
 
     public DefaultActionRuntimeType(final GeneratedType bindingType, final ActionEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        super(bindingType, statement, children, augments);
+            final List<RuntimeType> children) {
+        super(bindingType, statement, children);
         input = child(children, InputRuntimeType.class);
         output = child(children, OutputRuntimeType.class);
     }

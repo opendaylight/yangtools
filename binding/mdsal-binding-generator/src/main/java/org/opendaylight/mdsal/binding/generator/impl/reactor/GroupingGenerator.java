@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verify;
+
 import java.util.List;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultGroupingRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -55,13 +57,22 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    GroupingRuntimeType createRuntimeType(final GeneratedType type, final GroupingEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        return new DefaultGroupingRuntimeType(type, statement, children, augments);
-    }
-
-    @Override
     void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
         // groupings are a separate concept
     }
+
+    @Override
+    CompositeRuntimeTypeBuilder<GroupingEffectiveStatement, GroupingRuntimeType> createBuilder(
+            final GroupingEffectiveStatement statement) {
+        return new CompositeRuntimeTypeBuilder<>(statement) {
+            @Override
+            GroupingRuntimeType build(final GeneratedType type, final GroupingEffectiveStatement statement,
+                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+                // Groupings cannot be targeted by 'augment'
+                verify(augments.isEmpty(), "Unexpected augments %s", augments);
+                return new DefaultGroupingRuntimeType(type, statement, children);
+            }
+        };
+    }
+
 }

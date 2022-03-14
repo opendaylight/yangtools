@@ -16,7 +16,7 @@ import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 
 @Beta
-public final class DefaultInputRuntimeType extends AbstractCompositeRuntimeType<InputEffectiveStatement>
+public class DefaultInputRuntimeType extends AbstractAugmentableRuntimeType<InputEffectiveStatement>
         implements InputRuntimeType {
     public DefaultInputRuntimeType(final GeneratedType bindingType, final InputEffectiveStatement statement,
             final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {

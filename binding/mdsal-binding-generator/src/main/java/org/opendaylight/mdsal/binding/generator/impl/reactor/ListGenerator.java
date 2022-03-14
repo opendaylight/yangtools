@@ -20,6 +20,7 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilde
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
@@ -80,11 +81,9 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         return builder.build();
     }
 
-    @Override
-    ListRuntimeType createRuntimeType(final GeneratedType type, final ListEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        return new DefaultListRuntimeType(type, statement, children, augments,
-            keyGen != null ? keyGen.runtimeType().orElseThrow() : null);
+    private @Nullable KeyRuntimeType keyRuntimeType() {
+        final var gen = keyGen;
+        return gen != null ? gen.runtimeType().orElseThrow() : null;
     }
 
     @Override
@@ -110,5 +109,18 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         annotateDeprecatedIfNecessary(nonnull);
 
         return ret;
+    }
+
+    @Override
+    CompositeRuntimeTypeBuilder<ListEffectiveStatement, ListRuntimeType> createBuilder(
+            final ListEffectiveStatement statement) {
+        return new CompositeRuntimeTypeBuilder<>(statement) {
+            @Override
+            ListRuntimeType build(final GeneratedType type, final ListEffectiveStatement statement,
+                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+                // FIXME: the key here is not rebased correctly :(
+                return new DefaultListRuntimeType(type, statement, children, augments, keyRuntimeType());
+            }
+        };
     }
 }

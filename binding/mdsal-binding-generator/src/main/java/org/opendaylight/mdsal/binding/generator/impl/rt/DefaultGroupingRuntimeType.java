@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.generator.impl.rt;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -19,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeType<GroupingEffectiveStatement>
         implements GroupingRuntimeType {
     public DefaultGroupingRuntimeType(final GeneratedType bindingType, final GroupingEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        super(bindingType, statement, children, augments);
+            final List<RuntimeType> children) {
+        super(bindingType, statement, children);
     }
 }

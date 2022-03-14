@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 @Beta
 public interface ContainerLikeRuntimeType<D extends DeclaredStatement<QName>,
         E extends DataTreeEffectiveStatement<D> & DataTreeAwareEffectiveStatement<QName, D>>
-        extends CompositeRuntimeType, DataRuntimeType {
+        extends AugmentableRuntimeType, DataRuntimeType {
     @Override
     E statement();
 }

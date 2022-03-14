@@ -11,13 +11,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.GeneratedRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
@@ -29,25 +27,9 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
         extends AbstractRuntimeType<S, GeneratedType> implements CompositeRuntimeType {
     private final ImmutableMap<JavaTypeName, GeneratedRuntimeType> byClass;
     private final ImmutableMap<QName, RuntimeType> bySchemaTree;
-    private final @NonNull ImmutableList<AugmentRuntimeType> augments;
-    private final @NonNull ImmutableList<AugmentRuntimeType> mismatchedAugments;
 
-    AbstractCompositeRuntimeType(final GeneratedType bindingType, final S statement, final List<RuntimeType> children,
-            final List<AugmentRuntimeType> augments) {
+    AbstractCompositeRuntimeType(final GeneratedType bindingType, final S statement, final List<RuntimeType> children) {
         super(bindingType, statement);
-
-        final var substatements = statement.effectiveSubstatements();
-        final var correctBuilder = ImmutableList.<AugmentRuntimeType>builder();
-        final var mismatchedBuilder = ImmutableList.<AugmentRuntimeType>builder();
-        for (var aug : augments) {
-            if (substatements.contains(aug.statement())) {
-                correctBuilder.add(aug);
-            } else {
-                mismatchedBuilder.add(aug);
-            }
-        }
-        this.augments = correctBuilder.build();
-        this.mismatchedAugments = mismatchedBuilder.build();
 
         byClass = children.stream()
             .filter(GeneratedRuntimeType.class::isInstance)
@@ -63,16 +45,6 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
             }
         }
         bySchemaTree = builder.build();
-    }
-
-    @Override
-    public final List<AugmentRuntimeType> augments() {
-        return augments;
-    }
-
-    @Override
-    public final List<AugmentRuntimeType> mismatchedAugments() {
-        return mismatchedAugments;
     }
 
     @Override

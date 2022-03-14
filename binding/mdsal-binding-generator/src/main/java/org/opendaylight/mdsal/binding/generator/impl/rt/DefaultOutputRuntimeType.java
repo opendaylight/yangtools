@@ -16,7 +16,7 @@ import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 @Beta
-public final class DefaultOutputRuntimeType extends AbstractCompositeRuntimeType<OutputEffectiveStatement>
+public class DefaultOutputRuntimeType extends AbstractAugmentableRuntimeType<OutputEffectiveStatement>
         implements OutputRuntimeType {
     public DefaultOutputRuntimeType(final GeneratedType bindingType, final OutputEffectiveStatement statement,
             final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {

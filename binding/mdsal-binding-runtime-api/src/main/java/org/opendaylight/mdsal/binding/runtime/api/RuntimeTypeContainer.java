@@ -28,7 +28,7 @@ public interface RuntimeTypeContainer extends Immutable {
      * <p>
      * One important omission is this method <b>does not</b> resolve nodes which have been added via {@code augment}
      * statement. Those are exposed indirectly as children of {@link AugmentRuntimeType}s returned via
-     * {@link CompositeRuntimeType#augments()}, if applicable.
+     * {@link AugmentableRuntimeType#augments()}, if applicable.
      *
      * @param qname {@code schema node} identifier
      * @return Corresponding {@link RuntimeType}, or null if not found

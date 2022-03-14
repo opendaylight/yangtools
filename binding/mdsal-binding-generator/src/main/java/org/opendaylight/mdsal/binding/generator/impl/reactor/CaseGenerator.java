@@ -10,8 +10,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import static com.google.common.base.Verify.verify;
 
 import java.util.List;
-import org.opendaylight.mdsal.binding.generator.impl.rt.DerivedCaseRuntimeType;
-import org.opendaylight.mdsal.binding.generator.impl.rt.OriginalCaseRuntimeType;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultCaseRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
@@ -36,8 +35,6 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
-        builder.addImplementsType(BindingTypes.DATA_OBJECT);
 
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)
@@ -55,8 +52,13 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
 
         // Most generators have a parent->child dependency due to parent methods' return types and therefore children
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
-        // go through DefaultType here.
+        // go through DefaultType here
+        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        // Note: this needs to be the first type we mention as we are relying on that fact for global runtime type
+        //       choice/case indexing.
         builder.addImplementsType(choice.getGeneratedType(builderFactory));
+
+        builder.addImplementsType(BindingTypes.DATA_OBJECT);
         addAugmentable(builder);
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
@@ -74,11 +76,14 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
-    CaseRuntimeType createRuntimeType(final GeneratedType type, final CaseEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        final var original = getOriginal();
-        return statement.equals(original.statement())
-            ? new OriginalCaseRuntimeType(type, statement, children, augments)
-                : new DerivedCaseRuntimeType(type, statement, children, augments, original.runtimeType().orElseThrow());
+    CompositeRuntimeTypeBuilder<CaseEffectiveStatement, CaseRuntimeType> createBuilder(
+            final CaseEffectiveStatement statement) {
+        return new CompositeRuntimeTypeBuilder<>(statement) {
+            @Override
+            CaseRuntimeType build(final GeneratedType generatedType, final CaseEffectiveStatement statement,
+                    final List<RuntimeType> childTypes, final List<AugmentRuntimeType> augmentTypes) {
+                return new DefaultCaseRuntimeType(generatedType, statement, childTypes, augmentTypes);
+            }
+        };
     }
 }

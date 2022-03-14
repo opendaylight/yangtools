@@ -14,6 +14,7 @@ import java.util.Set;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultKeyRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -77,16 +78,21 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
-    KeyRuntimeType createRuntimeType() {
-        return generatedType().map(type -> {
-            verify(type instanceof GeneratedTransferObject, "Unexpected type %s", type);
-            return new DefaultKeyRuntimeType((GeneratedTransferObject) type, statement());
-        }).orElse(null);
+    GeneratedType runtimeJavaType() {
+        return generatedType().orElse(null);
     }
 
     @Override
-    KeyRuntimeType rebaseRuntimeType(final KeyRuntimeType type, final KeyEffectiveStatement statement) {
-        return new DefaultKeyRuntimeType(type.javaType(), statement);
+    KeyRuntimeType createExternalRuntimeType(final Type type) {
+        verify(type instanceof GeneratedTransferObject, "Unexpected type %s", type);
+        return new DefaultKeyRuntimeType((GeneratedTransferObject) type, statement());
+    }
+
+    @Override
+    KeyRuntimeType createInternalRuntimeType(final ChildLookup lookup,final KeyEffectiveStatement statement,
+            final Type type) {
+        // The only reference to this runtime type is from ListGenerator which is always referencing the external type
+        throw new UnsupportedOperationException("Should never be called");
     }
 
     @Override

@@ -627,6 +627,11 @@ public final class BindingReflections {
      *            Class which should be used at particular subtree
      * @return true if and only if classes represents same data.
      */
+    // FIXME: this really should live in BindingRuntimeTypes and should not be based on reflection. The only user is
+    //        binding-dom-codec and the logic could easily be performed on GeneratedType instead. For a particular
+    //        world this boils down to a matrix, which can be calculated either on-demand or when we create
+    //        BindingRuntimeTypes. Achieving that will bring us one step closer to being able to have a pre-compiled
+    //        Binding Runtime.
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static boolean isSubstitutionFor(final Class potential, final Class target) {
         Set<Class> subImplemented = new HashSet<>(Arrays.asList(potential.getInterfaces()));

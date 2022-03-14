@@ -8,22 +8,13 @@
 package org.opendaylight.mdsal.binding.runtime.api;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with a {@code case} statement.
  */
 @Beta
-public interface CaseRuntimeType extends CompositeRuntimeType, DataRuntimeType {
+public interface CaseRuntimeType extends AugmentableRuntimeType, DataRuntimeType {
     @Override
     CaseEffectiveStatement statement();
-
-    /**
-     * Return the runtime type for the original manifestation of this type's {@code case} statement. Returns
-     * {@code null} if this type is the original.
-     *
-     * @return Original manifestatation, or {@code null} if this is the original manifestation.
-     */
-    @Nullable CaseRuntimeType originalType();
 }

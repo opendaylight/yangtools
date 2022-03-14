@@ -15,7 +15,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -33,6 +32,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
@@ -158,10 +158,13 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         this.byBindingArgClass = byStreamClassBuilder.equals(byBindingArgClassBuilder) ? this.byStreamClass
                 : ImmutableMap.copyOf(byBindingArgClassBuilder);
 
-        final Iterable<AugmentRuntimeType> possibleAugmentations;
+        final List<AugmentRuntimeType> possibleAugmentations;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
+            // Verify we have the appropriate backing runtimeType
             final var type = getType();
-            possibleAugmentations = Iterables.concat(type.augments(), type.mismatchedAugments());
+            verify(type instanceof AugmentableRuntimeType, "Unexpected type %s backing augmenable %s", type,
+                bindingClass);
+            possibleAugmentations = ((AugmentableRuntimeType) type).augments();
             generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
                 bindingClass, tmpLeaves, tmpDataObjects, keyMethod);
         } else {
@@ -433,7 +436,8 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
             final var augClass = value.getBindingClass();
             // Do not perform duplicate deserialization if we have already created the corresponding augmentation
             // and validate whether the proposed augmentation is valid ion this instantiation context.
-            if (!map.containsKey(augClass) && getType().augments().contains(value.getType())) {
+            if (!map.containsKey(augClass)
+                && ((AugmentableRuntimeType) getType()).augments().contains(value.getType())) {
                 final NormalizedNode augData = data.childByArg(value.getYangArg());
                 if (augData != null) {
                     // ... make sure we do not replace an e

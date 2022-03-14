@@ -16,7 +16,7 @@ import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 @Beta
-public final class DefaultContainerRuntimeType extends AbstractCompositeRuntimeType<ContainerEffectiveStatement>
+public final class DefaultContainerRuntimeType extends AbstractAugmentableRuntimeType<ContainerEffectiveStatement>
         implements ContainerRuntimeType {
     public DefaultContainerRuntimeType(final GeneratedType bindingType, final ContainerEffectiveStatement statement,
             final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {

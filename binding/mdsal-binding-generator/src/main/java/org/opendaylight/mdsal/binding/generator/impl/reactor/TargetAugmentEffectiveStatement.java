@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement, AugmentationSchemaNode {
@@ -42,23 +42,12 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     private final @NonNull AugmentationSchemaNode schemaDelegate;
 
     TargetAugmentEffectiveStatement(final AugmentEffectiveStatement augment,
-            final SchemaTreeAwareEffectiveStatement<?, ?> target) {
+            final SchemaTreeAwareEffectiveStatement<?, ?> target,
+            final ImmutableList<EffectiveStatement<?, ?>> substatements) {
         delegate = requireNonNull(augment);
         verify(augment instanceof AugmentationSchemaNode, "Unsupported augment implementation %s", augment);
         schemaDelegate = (AugmentationSchemaNode) augment;
-
-        final var stmts = augment.effectiveSubstatements();
-        final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
-        for (var stmt : stmts) {
-            if (stmt instanceof SchemaTreeEffectiveStatement) {
-                final var qname = ((SchemaTreeEffectiveStatement<?>) stmt).getIdentifier();
-                target.get(SchemaTreeNamespace.class, qname).ifPresent(builder::add);
-            } else {
-                builder.add(stmt);
-            }
-        }
-
-        substatements = builder.build();
+        this.substatements = requireNonNull(substatements);
     }
 
     @NonNull AugmentEffectiveStatement delegate() {
@@ -156,5 +145,13 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     @Override
     public AugmentEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("delegate", delegate)
+            .add("substatements", substatements.size())
+            .toString();
     }
 }

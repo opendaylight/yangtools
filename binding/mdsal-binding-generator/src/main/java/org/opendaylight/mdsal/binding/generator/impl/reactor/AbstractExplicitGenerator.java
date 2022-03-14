@@ -79,35 +79,81 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     /**
-     * Return the {@link RuntimeType} associated with this object, of applicable.
+     * Return the {@link RuntimeType} associated with this object, if applicable. This represents the
+     * externally-accessible view of this object when considered outside the schema tree or binding tree hierarchy.
      *
      * @return Associated run-time type, or empty
      */
     public final Optional<R> runtimeType() {
         if (!runtimeTypeInitialized) {
-            runtimeType = createRuntimeType();
+            final var type = runtimeJavaType();
+            if (type != null) {
+                runtimeType = createExternalRuntimeType(type);
+            }
             runtimeTypeInitialized = true;
         }
         return Optional.ofNullable(runtimeType);
     }
 
-    final Optional<R> runtimeTypeOf(final @NonNull S stmt) {
+    /**
+     * Return the {@link Type} associated with this object at run-time, if applicable. This method often synonymous
+     * with {@code generatedType().orElseNull()}, but not always. For example
+     * <pre>
+     *   <code>
+     *     leaf foo {
+     *       type string;
+     *     }
+     *   </code>
+     * </pre>
+     * Results in an empty {@link #generatedType()}, but still produces a {@code java.lang.String}-based
+     * {@link RuntimeType}.
+     *
+     * @return Associated {@link Type}
+     */
+    // FIXME: this should be a generic class argument
+    // FIXME: this needs a better name, but 'runtimeType' is already taken.
+    abstract @Nullable Type runtimeJavaType();
+
+    /**
+     * Create the externally-accessible {@link RuntimeType} view of this object. The difference between
+     * this method and {@link #createInternalRuntimeType(EffectiveStatement)} is that this method represents the view
+     * attached to {@link #statement()} and contains a separate global view of all available augmentations attached to
+     * the GeneratedType.
+     *
+     * @param type {@link Type} associated with this object, as returned by {@link #runtimeJavaType()}
+     * @return Externally-accessible RuntimeType
+     */
+    abstract @NonNull R createExternalRuntimeType(@NonNull Type type);
+
+    /**
+     * Create the internally-accessible {@link RuntimeType} view of this object, if applicable. The difference between
+     * this method and {@link #createExternalRuntimeType()} is that this represents the view attached to the specified
+     * {@code stmt}, which is supplied by the parent statement. The returned {@link RuntimeType} always reports the
+     * global view of attached augmentations as empty.
+     *
+     * @param lookup context to use when looking up child statements
+     * @param stmt Statement for which to create the view
+     * @return Internally-accessible RuntimeType, or {@code null} if not applicable
+     */
+    final @Nullable R createInternalRuntimeType(final @NonNull ChildLookup lookup, final @NonNull S stmt) {
+        // FIXME: cache requests: if we visited this statement, we obviously know what it entails. Note that we walk
+        //        towards the original definition. As such, the cache may have to live in the generator we look up,
+        //        but should operate on this statement to reflect lookups. This needs a bit of figuring out.
         var gen = this;
         do {
-            final var ret = gen.runtimeType();
-            if (ret.isPresent()) {
-                return Optional.of(rebaseRuntimeType(ret.orElseThrow(), stmt));
+            final var type = gen.runtimeJavaType();
+            if (type != null) {
+                return createInternalRuntimeType(lookup, stmt, type);
             }
 
             gen = gen.previous();
         } while (gen != null);
 
-        return Optional.empty();
+        return null;
     }
 
-    abstract @Nullable R createRuntimeType();
-
-    abstract @NonNull R rebaseRuntimeType(@NonNull R type, @NonNull S statement);
+    abstract @NonNull R createInternalRuntimeType(@NonNull ChildLookup lookup, @NonNull S statement,
+        @NonNull Type type);
 
     @Override
     public final boolean isAddedByUses() {

@@ -29,10 +29,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
@@ -113,46 +112,38 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         final Map<Class<?>, DataContainerCodecPrototype<?>> byClassBuilder = new HashMap<>();
         final SetMultimap<Class<?>, DataContainerCodecPrototype<?>> childToCase =
             SetMultimapBuilder.hashKeys().hashSetValues().build();
-        final Set<Class<?>> potentialSubstitutions = new HashSet<>();
-        // Walks all cases for supplied choice in current runtime context
-        // FIXME: 9.0.0: factory short-circuits to prototype, just as getBindingClass() does
-        for (final Class<?> caze : loadCaseClasses()) {
-            // We try to load case using exact match thus name
-            // and original schema must equals
-            final DataContainerCodecPrototype<CaseRuntimeType> cazeDef = loadCase(caze);
-            // If we have case definition, this case is instantiated
-            // at current location and thus is valid in context of parent choice
-            if (cazeDef != null) {
-                byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
-                // Updates collection of case children
-                @SuppressWarnings("unchecked")
-                final Class<? extends DataObject> cazeCls = (Class<? extends DataObject>) caze;
-                for (final Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses(cazeCls)) {
-                    childToCase.put(cazeChild, cazeDef);
-                }
-                // Updates collection of YANG instance identifier to case
-                for (var stmt : cazeDef.getType().statement().effectiveSubstatements()) {
-                    if (stmt instanceof DataSchemaNode) {
-                        final DataSchemaNode cazeChild = (DataSchemaNode) stmt;
-                        if (cazeChild.isAugmenting()) {
-                            final AugmentationSchemaNode augment = NormalizedNodeSchemaUtils.findCorrespondingAugment(
-                                // FIXME: bad cast
-                                (DataSchemaNode) cazeDef.getType().statement(), cazeChild);
-                            if (augment != null) {
-                                byYangCaseChildBuilder.put(DataSchemaContextNode.augmentationIdentifierFrom(augment),
-                                    cazeDef);
-                                continue;
-                            }
+
+        // Load case statements valid in this choice and keep track of their names
+        final var choiceType = prototype.getType();
+        final var factory = prototype.getFactory();
+        final var localCases = new HashSet<JavaTypeName>();
+        for (var caseType : choiceType.validCaseChildren()) {
+            final var cazeDef = loadCase(factory, caseType);
+            localCases.add(caseType.getIdentifier());
+            byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
+
+            // Updates collection of case children
+            @SuppressWarnings("unchecked")
+            final Class<? extends DataObject> cazeCls = (Class<? extends DataObject>) cazeDef.getBindingClass();
+            for (final Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses(cazeCls)) {
+                childToCase.put(cazeChild, cazeDef);
+            }
+            // Updates collection of YANG instance identifier to case
+            for (var stmt : cazeDef.getType().statement().effectiveSubstatements()) {
+                if (stmt instanceof DataSchemaNode) {
+                    final DataSchemaNode cazeChild = (DataSchemaNode) stmt;
+                    if (cazeChild.isAugmenting()) {
+                        final AugmentationSchemaNode augment = NormalizedNodeSchemaUtils.findCorrespondingAugment(
+                            // FIXME: bad cast
+                            (DataSchemaNode) cazeDef.getType().statement(), cazeChild);
+                        if (augment != null) {
+                            byYangCaseChildBuilder.put(DataSchemaContextNode.augmentationIdentifierFrom(augment),
+                                cazeDef);
+                            continue;
                         }
-                        byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), cazeDef);
                     }
+                    byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), cazeDef);
                 }
-            } else {
-                /*
-                 * If case definition is not available, we store it for
-                 * later check if it could be used as substitution of existing one.
-                 */
-                potentialSubstitutions.add(caze);
             }
         }
         byYangCaseChild = ImmutableMap.copyOf(byYangCaseChildBuilder);
@@ -179,40 +170,49 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         ambiguousByCaseChildWarnings = ambiguousByCaseChildClass.isEmpty() ? ImmutableSet.of()
                 : ConcurrentHashMap.newKeySet();
 
-        final Map<Class<?>, DataContainerCodecPrototype<?>> bySubstitutionBuilder = new HashMap<>();
         /*
-         * Walks all cases which are not directly instantiated and
-         * tries to match them to instantiated cases - represent same data as instantiated case,
-         * only case name or schema path is different. This is required due property of
-         * binding specification, that if choice is in grouping schema path location is lost,
-         * and users may use incorrect case class using copy builders.
+         * Choice/Case mapping across groupings is compile-time unsafe and we therefore need to also track any
+         * CaseRuntimeTypes added to the choice in other contexts. This is necessary to discover when a case represents
+         * equivalent data in a different instantiation context.
+         *
+         * This is required due property of binding specification, that if choice is in grouping schema path location is
+         * lost, and users may use incorrect case class using copy builders.
          */
-        for (final Class<?> substitution : potentialSubstitutions) {
-            search: for (final Entry<Class<?>, DataContainerCodecPrototype<?>> real : byClassBuilder.entrySet()) {
-                if (BindingReflections.isSubstitutionFor(substitution, real.getKey())) {
-                    bySubstitutionBuilder.put(substitution, real.getValue());
-                    break search;
+        final Map<Class<?>, DataContainerCodecPrototype<?>> bySubstitutionBuilder = new HashMap<>();
+        final var context = factory.getRuntimeContext();
+        for (var caseType : context.getTypes().allCaseChildren(choiceType)) {
+            final var caseName = caseType.getIdentifier();
+            if (!localCases.contains(caseName)) {
+                // FIXME: do not rely on class loading here, the check we are performing should be possible on
+                //        GeneratedType only -- or it can be provided by BindingRuntimeTypes -- i.e. rather than
+                //        'allCaseChildren()' it would calculate additional mappings we can use off-the-bat.
+                final Class<?> substitution = loadCase(context, caseType);
+
+                search: for (final Entry<Class<?>, DataContainerCodecPrototype<?>> real : byClassBuilder.entrySet()) {
+                    if (BindingReflections.isSubstitutionFor(substitution, real.getKey())) {
+                        bySubstitutionBuilder.put(substitution, real.getValue());
+                        break search;
+                    }
                 }
             }
         }
+
         byClassBuilder.putAll(bySubstitutionBuilder);
         byClass = ImmutableMap.copyOf(byClassBuilder);
     }
 
-    private List<Class<?>> loadCaseClasses() {
-        final var context = factory().getRuntimeContext();
-        final var type = getType();
+    private static DataContainerCodecPrototype<CaseRuntimeType> loadCase(final CodecContextFactory factory,
+            final CaseRuntimeType caseType) {
+        return DataContainerCodecPrototype.from(loadCase(factory.getRuntimeContext(), caseType), caseType, factory);
+    }
 
-        return Stream.concat(type.validCaseChildren().stream(), type.additionalCaseChildren().stream())
-            .map(caseChild -> {
-                final var caseName = caseChild.getIdentifier();
-                try {
-                    return context.loadClass(caseName);
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException("Failed to load class for " + caseName, e);
-                }
-            })
-            .collect(Collectors.toUnmodifiableList());
+    private static Class<?> loadCase(final BindingRuntimeContext context, final CaseRuntimeType caseType) {
+        final var className = caseType.getIdentifier();
+        try {
+            return context.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new LinkageError("Failed to load class for " + className, e);
+        }
     }
 
     @Override
@@ -242,16 +242,6 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
     Iterable<Class<?>> getCaseChildrenClasses() {
         return Iterables.concat(byCaseChildClass.keySet(), ambiguousByCaseChildClass.keySet());
-    }
-
-    protected DataContainerCodecPrototype<CaseRuntimeType> loadCase(final Class<?> childClass) {
-        final var child = getType().bindingCaseChild(JavaTypeName.create(childClass));
-        if (child == null) {
-            LOG.debug("Supplied class {} is not valid case in schema {}", childClass, getSchema());
-            return null;
-        }
-
-        return DataContainerCodecPrototype.from(childClass, child, factory());
     }
 
     @Override

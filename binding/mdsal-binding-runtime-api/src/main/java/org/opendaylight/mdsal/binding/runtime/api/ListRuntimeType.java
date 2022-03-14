@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * A {@link RuntimeType} associated with a {@code list} statement.
  */
 @Beta
-public interface ListRuntimeType extends CompositeRuntimeType, DataRuntimeType {
+public interface ListRuntimeType extends AugmentableRuntimeType, DataRuntimeType {
     @Override
     ListEffectiveStatement statement();
 

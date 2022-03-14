@@ -25,8 +25,14 @@ class OutputGenerator extends OperationContainerGenerator<OutputEffectiveStateme
     }
 
     @Override
-    final OutputRuntimeType createRuntimeType(final GeneratedType type, final OutputEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        return new DefaultOutputRuntimeType(type, statement, children, augments);
+    final CompositeRuntimeTypeBuilder<OutputEffectiveStatement, OutputRuntimeType> createBuilder(
+            final OutputEffectiveStatement statement) {
+        return new CompositeRuntimeTypeBuilder<>(statement) {
+            @Override
+            OutputRuntimeType build(final GeneratedType type, final OutputEffectiveStatement statement,
+                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+                return new DefaultOutputRuntimeType(type, statement, children, augments);
+            }
+        };
     }
 }

@@ -11,20 +11,18 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -162,77 +160,38 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         return childGenerators.iterator();
     }
 
-    @NonNull S effectiveStatement() {
-        return statement();
-    }
-
     @Override
-    public final R createRuntimeType() {
-        return generatedType()
-            .map(type -> {
-                final var stmt = effectiveStatement();
-                return createRuntimeType(type, stmt, indexChildren(stmt), augmentRuntimeTypes());
-            })
-            .orElse(null);
-    }
-
-    abstract @NonNull R createRuntimeType(@NonNull GeneratedType type, @NonNull S statement,
-        @NonNull List<RuntimeType> children, @NonNull List<AugmentRuntimeType> augments);
-
-    @Override
-    final R rebaseRuntimeType(final R type, final S statement) {
-        return createRuntimeType(type.javaType(), statement, indexChildren(statement), augmentRuntimeTypes());
-    }
-
-    private @NonNull List<RuntimeType> indexChildren(final @NonNull S statement) {
-        final var childMap = new ArrayList<RuntimeType>();
-
-        for (var stmt : statement.effectiveSubstatements()) {
-            if (stmt instanceof SchemaTreeEffectiveStatement) {
-                final var child = (SchemaTreeEffectiveStatement<?>) stmt;
-                final var qname = child.getIdentifier();
-
-                // Note: getOriginal() is needed for augments of cases
-                @SuppressWarnings("rawtypes")
-                final AbstractExplicitGenerator childGen = getOriginal().resolveRuntimeChild(statement.argument(),
-                    qname);
-                @SuppressWarnings("unchecked")
-                final Optional<RuntimeType> rt = childGen.runtimeTypeOf(child);
-                rt.ifPresent(childMap::add);
-            }
-        }
-
-        return childMap;
-    }
-
-    private @NonNull AbstractExplicitGenerator<?, ?> resolveRuntimeChild(final Object parentArg, final QName qname) {
-        final var exact = findSchemaTreeGenerator(qname);
-        if (exact != null) {
-            return exact;
-        }
-
-        // TODO: this is quite hacky: what we are trying to do is rebase the lookup QName to parent QName, as the only
-        //       way we should be arriving here is through uses -> grouping squash
-        verify(parentArg instanceof QName, "Cannot deal with parent argument %s", parentArg);
-        final var namespace = ((QName) parentArg).getModule();
-
-        verify(namespace.equals(qname.getModule()), "Cannot deal with %s in namespace %s", qname, namespace);
-        final var local = qname.bindTo(getQName().getModule());
-        return verifyNotNull(findSchemaTreeGenerator(local), "Failed to find %s as %s in %s", qname, local, this);
+    final GeneratedType runtimeJavaType() {
+        return generatedType().orElse(null);
     }
 
     final @NonNull List<AbstractAugmentGenerator> augments() {
         return augments;
     }
 
-    private @NonNull List<AugmentRuntimeType> augmentRuntimeTypes() {
-        // Augments are attached to original instance: at least CaseGenerator is instantiated in non-original place
-        // and thus we need to go back to original
-        return getOriginal().augments.stream()
-            .map(AbstractAugmentGenerator::runtimeType)
-            .filter(Optional::isPresent)
-            .map(Optional::orElseThrow)
-            .collect(ImmutableList.toImmutableList());
+    final @NonNull List<GroupingGenerator> groupings() {
+        return verifyNotNull(groupings, "Groupings not initialized in %s", this);
+    }
+
+    @Override
+    final R createExternalRuntimeType(final Type type) {
+        verify(type instanceof GeneratedType, "Unexpected type %s", type);
+
+        // FIXME: we should be able to use internal cache IFF when all augments end up being local to our statement
+        final var statement = statement();
+        return createBuilder(statement)
+            .fillTypes(ChildLookup.of(statement), this)
+            .build((GeneratedType) type);
+    }
+
+    abstract @NonNull CompositeRuntimeTypeBuilder<S, R> createBuilder(S statement);
+
+    @Override
+    final R createInternalRuntimeType(final ChildLookup lookup, final S statement, final Type type) {
+        verify(type instanceof GeneratedType, "Unexpected type %s", type);
+        return createBuilder(statement)
+            .fillTypes(lookup.inStatement(statement), this)
+            .build((GeneratedType) type);
     }
 
     @Override

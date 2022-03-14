@@ -7,12 +7,14 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verify;
 import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.BASE_IDENTITY;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultIdentityRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.runtime.api.IdentityRuntimeType;
@@ -71,13 +73,21 @@ public final class IdentityGenerator
     }
 
     @Override
-    IdentityRuntimeType createRuntimeType() {
-        return generatedType().map(type -> new DefaultIdentityRuntimeType(type, statement())).orElse(null);
+    GeneratedType runtimeJavaType() {
+        return generatedType().orElse(null);
     }
 
     @Override
-    IdentityRuntimeType rebaseRuntimeType(final IdentityRuntimeType type, final IdentityEffectiveStatement statement) {
-        return new DefaultIdentityRuntimeType(type.javaType(), statement);
+    IdentityRuntimeType createExternalRuntimeType(final Type type) {
+        verify(type instanceof GeneratedType, "Unexpected type %s", type);
+        return new DefaultIdentityRuntimeType((GeneratedType) type, statement());
+    }
+
+    @Override
+    IdentityRuntimeType createInternalRuntimeType(final ChildLookup lookup, final IdentityEffectiveStatement statement,
+            final Type type) {
+        // 'identity' statements are not part of schema tree and hence should never an internal reference
+        throw new UnsupportedOperationException("Should never be called");
     }
 
     @Override

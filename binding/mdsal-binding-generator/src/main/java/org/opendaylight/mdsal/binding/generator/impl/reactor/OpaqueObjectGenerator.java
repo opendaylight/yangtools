@@ -7,6 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verify;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -33,13 +36,14 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
         }
 
         @Override
-        AnydataRuntimeType createRuntimeType() {
-            return generatedType().map(type -> new DefaultAnydataRuntimeType(type, statement())).orElse(null);
+        AnydataRuntimeType createExternalRuntimeType(final GeneratedType type) {
+            return new DefaultAnydataRuntimeType(type, statement());
         }
 
         @Override
-        AnydataRuntimeType rebaseRuntimeType(final AnydataRuntimeType type, final AnydataEffectiveStatement statement) {
-            return new DefaultAnydataRuntimeType(type.javaType(), statement);
+        AnydataRuntimeType createInternalRuntimeType(final AnydataEffectiveStatement statement,
+                final GeneratedType type) {
+            return new DefaultAnydataRuntimeType(type, statement);
         }
     }
 
@@ -49,13 +53,14 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
         }
 
         @Override
-        AnyxmlRuntimeType createRuntimeType() {
-            return generatedType().map(type -> new DefaultAnyxmlRuntimeType(type, statement())).orElse(null);
+        AnyxmlRuntimeType createExternalRuntimeType(final GeneratedType type) {
+            return new DefaultAnyxmlRuntimeType(type, statement());
         }
 
         @Override
-        AnyxmlRuntimeType rebaseRuntimeType(final AnyxmlRuntimeType type, final AnyxmlEffectiveStatement statement) {
-            return new DefaultAnyxmlRuntimeType(type.javaType(), statement);
+        AnyxmlRuntimeType createInternalRuntimeType(final AnyxmlEffectiveStatement statement,
+                final GeneratedType type) {
+            return new DefaultAnyxmlRuntimeType(type, statement);
         }
     }
 
@@ -90,4 +95,25 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
     void constructRequire(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
     }
+
+    @Override
+    final GeneratedType runtimeJavaType() {
+        return generatedType().orElse(null);
+    }
+
+    @Override
+    final @NonNull R createExternalRuntimeType(final Type type) {
+        verify(type instanceof GeneratedType, "Unexpected type %s", type);
+        return createExternalRuntimeType((GeneratedType) type);
+    }
+
+    abstract @NonNull R createExternalRuntimeType(@NonNull GeneratedType type);
+
+    @Override
+    final R createInternalRuntimeType(final ChildLookup lookup, final S statement, final Type type) {
+        verify(type instanceof GeneratedType, "Unexpected type %s", type);
+        return createInternalRuntimeType(statement, (GeneratedType) type);
+    }
+
+    abstract @NonNull R createInternalRuntimeType(@NonNull S statement, @NonNull GeneratedType type);
 }

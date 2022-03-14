@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.List;
@@ -99,12 +100,6 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
         return builder.build();
     }
 
-    @Override
-    ModuleRuntimeType createRuntimeType(final GeneratedType type, final ModuleEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        return new DefaultModuleRuntimeType(type, statement, children, augments);
-    }
-
     @NonNull Member getPrefixMember() {
         return verifyNotNull(prefixMember);
     }
@@ -112,5 +107,18 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     void addQNameConstant(final GeneratedTypeBuilderBase<?> builder, final AbstractQName localName) {
         builder.addConstant(BindingTypes.QNAME, BindingMapping.QNAME_STATIC_FIELD_NAME,
             Map.entry(yangModuleInfo, localName.getLocalName()));
+    }
+
+    @Override
+    CompositeRuntimeTypeBuilder<ModuleEffectiveStatement, ModuleRuntimeType> createBuilder(
+            final ModuleEffectiveStatement statement) {
+        return new CompositeRuntimeTypeBuilder<>(statement) {
+            @Override
+            ModuleRuntimeType build(final GeneratedType type, final ModuleEffectiveStatement statement,
+                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+                verify(augments.isEmpty(), "Unexpected augments %s", augments);
+                return new DefaultModuleRuntimeType(type, statement, children);
+            }
+        };
     }
 }

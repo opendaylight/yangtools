@@ -11,13 +11,18 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
+import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.GeneratedRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.IdentityRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.InputRuntimeType;
@@ -33,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  */
 public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     private final @NonNull EffectiveModelContext context;
+    private final ImmutableSetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases;
     private final ImmutableMap<QNameModule, ModuleRuntimeType> modulesByNamespace;
     private final ImmutableSortedMap<String, ModuleRuntimeType> modulesByPackage;
     private final ImmutableMap<QName, IdentityRuntimeType> identities;
@@ -43,12 +49,14 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     public DefaultBindingRuntimeTypes(final EffectiveModelContext context,
             final Map<QNameModule, ModuleRuntimeType> modules, final Map<JavaTypeName, RuntimeType> types,
             final Map<QName, IdentityRuntimeType> identities, final Map<QName, InputRuntimeType> rpcInputs,
-            final Map<QName, OutputRuntimeType> rpcOutputs) {
+            final Map<QName, OutputRuntimeType> rpcOutputs,
+            final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases) {
         this.context = requireNonNull(context);
         this.identities = ImmutableMap.copyOf(identities);
         this.types = ImmutableMap.copyOf(types);
         this.rpcInputs = ImmutableMap.copyOf(rpcInputs);
         this.rpcOutputs = ImmutableMap.copyOf(rpcOutputs);
+        this.choiceToCases = ImmutableSetMultimap.copyOf(choiceToCases);
 
         modulesByNamespace = ImmutableMap.copyOf(modules);
         modulesByPackage = ImmutableSortedMap.copyOf(Maps.uniqueIndex(modules.values(),
@@ -91,6 +99,11 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     @Override
     public Optional<OutputRuntimeType> findRpcOutput(final QName rpcName) {
         return Optional.ofNullable(rpcOutputs.get(requireNonNull(rpcName)));
+    }
+
+    @Override
+    public Set<CaseRuntimeType> allCaseChildren(final ChoiceRuntimeType choiceType) {
+        return choiceToCases.get(choiceType.getIdentifier());
     }
 
     @Override

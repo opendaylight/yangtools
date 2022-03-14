@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 public final class DefaultAugmentRuntimeType extends AbstractCompositeRuntimeType<AugmentEffectiveStatement>
         implements AugmentRuntimeType {
     public DefaultAugmentRuntimeType(final GeneratedType bindingType, final AugmentEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-        super(bindingType, statement, children, augments);
+            final List<RuntimeType> children) {
+        super(bindingType, statement, children);
     }
 }

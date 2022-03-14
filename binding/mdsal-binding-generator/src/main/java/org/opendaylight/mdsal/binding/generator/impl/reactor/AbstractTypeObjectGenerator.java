@@ -457,19 +457,17 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     @Override
-    final R createRuntimeType() {
+    final Type runtimeJavaType() {
         if (methodReturnTypeElement != null) {
-            return createRuntimeType(methodReturnTypeElement);
+            return methodReturnTypeElement;
         }
         final var genType = generatedType();
         if (genType.isPresent()) {
-            return createRuntimeType(genType.orElseThrow());
+            return genType.orElseThrow();
         }
         final var prev = verifyNotNull(previous(), "No previous generator for %s", this);
-        return prev.runtimeType().orElse(null);
+        return prev.runtimeJavaType();
     }
-
-    abstract @NonNull R createRuntimeType(Type type);
 
     final @NonNull Type methodReturnElementType(final @NonNull TypeBuilderFactory builderFactory) {
         var local = methodReturnTypeElement;

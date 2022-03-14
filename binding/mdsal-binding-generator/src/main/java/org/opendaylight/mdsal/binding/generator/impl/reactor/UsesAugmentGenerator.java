@@ -11,8 +11,16 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
@@ -57,5 +65,59 @@ final class UsesAugmentGenerator extends AbstractAugmentGenerator {
         //
         // Our parent here is *not* the 'uses' statement, but rather the statement which contains it.
         return new AugmentRequirement(this, verifyNotNull(grouping, "Unresolved grouping in %s", this));
+    }
+
+    @Override
+    List<CaseRuntimeType> augmentedCasesIn(final ChildLookup lookup, final ChoiceEffectiveStatement stmt) {
+        final var result = super.augmentedCasesIn(lookup, stmt);
+        if (result != null) {
+            return result;
+        }
+        final var augment = statement();
+        if (!lookup.contains(augment)) {
+            return List.of();
+        }
+
+        final var effectiveStatement = effectiveStatement(augment, stmt);
+        return createBuilder(effectiveStatement)
+            .fillTypes(lookup.inStatement(effectiveStatement), this)
+            .getCaseChilden();
+    }
+
+    @Override
+    AugmentRuntimeType runtimeTypeIn(final ChildLookup lookup, final EffectiveStatement<?, ?> target) {
+        final var result = super.runtimeTypeIn(lookup, target);
+        if (result != null) {
+            return result;
+        }
+        final var augment = statement();
+        if (!lookup.contains(augment)) {
+            return null;
+        }
+
+        verify(target instanceof SchemaTreeAwareEffectiveStatement && target instanceof SchemaTreeEffectiveStatement,
+            "Unexpected statement %s", target);
+        final var effectiveStatement = effectiveStatement(augment, (SchemaTreeAwareEffectiveStatement<?, ?>) target);
+        return verifyNotNull(createInternalRuntimeType(lookup.inStatement(effectiveStatement), effectiveStatement));
+    }
+
+    private static @NonNull AugmentEffectiveStatement effectiveStatement(final AugmentEffectiveStatement augment,
+            final SchemaTreeAwareEffectiveStatement<?, ?> target) {
+        verify(target instanceof SchemaTreeEffectiveStatement, "Unexpected statement %s", target);
+        // 'uses'/'augment': our children are binding to target's namespace
+        final var targetNamespace = ((SchemaTreeEffectiveStatement<?>) target).argument().getModule();
+
+        final var stmts = augment.effectiveSubstatements();
+        final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
+        for (var stmt : stmts) {
+            if (stmt instanceof SchemaTreeEffectiveStatement) {
+                final var qname = ((SchemaTreeEffectiveStatement<?>) stmt).getIdentifier().bindTo(targetNamespace);
+                target.get(SchemaTreeNamespace.class, qname).ifPresent(builder::add);
+            } else {
+                builder.add(stmt);
+            }
+        }
+
+        return new TargetAugmentEffectiveStatement(augment, target, builder.build());
     }
 }
