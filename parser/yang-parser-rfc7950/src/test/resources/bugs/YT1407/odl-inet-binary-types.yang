@@ -1,0 +1,10 @@
+module odl-inet-binary-types {
+    namespace "urn:opendaylight:lfm:inet-binary-types";
+    prefix "inet-binary";
+
+    typedef ipv4-address-binary {
+        type binary {
+            length "4";
+        }
+    }
+}

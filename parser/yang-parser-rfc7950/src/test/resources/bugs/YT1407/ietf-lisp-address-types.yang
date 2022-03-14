@@ -1,0 +1,14 @@
+module ietf-lisp-address-types {
+  namespace "urn:ietf:params:xml:ns:yang:ietf-lisp-address-types";
+  prefix laddr;
+
+  grouping lisp-address {
+    choice address {
+      container null-address {
+        leaf address {
+          type empty;
+        }
+      }
+    }
+  }
+}

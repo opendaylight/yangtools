@@ -1,0 +1,22 @@
+module odl-lisp-proto {
+    namespace "urn:opendaylight:lfm:lisp-proto";
+    prefix "lisp-proto";
+
+    import odl-lisp-address-types { prefix odl-lisp-address; }
+
+    grouping eid-container {
+        container eid {
+            uses odl-lisp-address:augmented-lisp-address;
+        }
+    }
+
+    grouping eid-list {
+        list eid-item {
+            key "eid-item-id";
+            leaf eid-item-id {
+                type string;
+            }
+            uses eid-container;
+        }
+    }
+}

@@ -87,7 +87,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private final @NonNull StatementContextBase<A, D, E> prototype;
     private final @NonNull StatementContextBase<?, ?, ?> parent;
-    private final @NonNull StmtContext<A, D, E> originalCtx;
+    private final @NonNull ReactorStmtCtx<A, D, E> originalCtx;
     private final QNameModule targetModule;
     private final A argument;
 
@@ -122,7 +122,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.argument = targetModule == null ? prototype.argument()
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.targetModule = targetModule;
-        this.originalCtx = prototype.getOriginalCtx().orElse(prototype);
+
+        final var origCtx = prototype.getOriginalCtx().orElse(prototype);
+        verify(origCtx instanceof ReactorStmtCtx, "Unexpected original %s", origCtx);
+        this.originalCtx = (ReactorStmtCtx<A, D, E>) origCtx;
 
         // Mark prototype as blocking statement cleanup
         prototype.incRef();
@@ -212,12 +215,18 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         // If we have not materialized we do not have a difference in effective substatements, hence we can forward
         // towards the source of the statement.
         accessSubstatements();
-        return substatements == null ? tryToReusePrototype(factory) : createInferredEffective(factory, this);
+        return substatements == null ? tryToReusePrototype(factory) : createInferredEffective(factory);
+    }
+
+    private @NonNull E createInferredEffective(final @NonNull StatementFactory<A, D, E> factory) {
+        return createInferredEffective(factory, this, streamDeclared(), streamEffective());
     }
 
     @Override
-    E createInferredEffective(final StatementFactory<A, D, E> factory, final InferredStatementContext<A, D, E> ctx) {
-        return prototype.createInferredEffective(factory, ctx);
+    E createInferredEffective(final StatementFactory<A, D, E> factory, final InferredStatementContext<A, D, E> ctx,
+            final Stream<? extends StmtContext<?, ?, ?>> declared,
+            final Stream<? extends StmtContext<?, ?, ?>> effective) {
+        return originalCtx.createInferredEffective(factory, ctx, declared, effective);
     }
 
     private @NonNull E tryToReusePrototype(final @NonNull StatementFactory<A, D, E> factory) {
@@ -279,7 +288,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         prototype.decRef();
 
         // Values are the effective copies, hence this efficiently deals with recursion.
-        return internAlongCopyAxis(factory, factory.createEffective(this, declared.stream(), effective.stream()));
+        return internAlongCopyAxis(factory,
+            originalCtx.createInferredEffective(factory, this, declared.stream(), effective.stream()));
     }
 
     private @NonNull E tryToReuseSubstatements(final @NonNull StatementFactory<A, D, E> factory,
@@ -293,7 +303,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // Fall back to full instantiation, which populates our substatements. Then check if we should be reusing
         // the substatement list, as this operation turned out to not affect them.
-        final E effective = createInferredEffective(factory, this);
+        final E effective = createInferredEffective(factory);
         // Since we have forced instantiation to deal with this case, we also need to reset the 'modified' flag
         setUnmodified();
 

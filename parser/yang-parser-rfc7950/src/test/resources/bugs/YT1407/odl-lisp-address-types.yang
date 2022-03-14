@@ -1,0 +1,19 @@
+module odl-lisp-address-types {
+    namespace "urn:opendaylight:lfm:lisp-binary-address-types";
+    prefix "lisp-binary";
+
+    import ietf-lisp-address-types { prefix laddr; }
+    import odl-inet-binary-types { prefix bin; }
+
+    grouping augmented-lisp-address {
+        uses laddr:lisp-address {
+            augment "address" {
+                case ipv4-binary {
+                    leaf ipv4-binary {
+                        type bin:ipv4-address-binary;
+                    }
+                }
+            }
+        }
+    }
+}
