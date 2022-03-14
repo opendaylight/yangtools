@@ -446,19 +446,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     abstract @NonNull E createEffective(@NonNull StatementFactory<A, D, E> factory);
 
     /**
-     * Routing of the request to build an effective statement from {@link InferredStatementContext} towards the original
-     * definition site. This is needed to pick the correct instantiation method: for declared statements we will
-     * eventually land in {@link AbstractResumedStatement}, for underclared statements that will be
-     * {@link UndeclaredStmtCtx}.
-     *
-     * @param factory Statement factory
-     * @param ctx Inferred statement context, i.e. where the effective statement is instantiated
-     * @return Built effective stateue
-     */
-    abstract @NonNull E createInferredEffective(@NonNull StatementFactory<A, D, E> factory,
-        @NonNull InferredStatementContext<A, D, E> ctx);
-
-    /**
      * Return a stream of declared statements which can be built into an {@link EffectiveStatement}, as per
      * {@link StmtContext#buildEffective()} contract.
      *

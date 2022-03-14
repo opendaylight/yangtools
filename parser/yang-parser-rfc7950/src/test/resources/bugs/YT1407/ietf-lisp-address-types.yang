@@ -1,0 +1,81 @@
+module ietf-lisp-address-types {
+  namespace "urn:ietf:params:xml:ns:yang:ietf-lisp-address-types";
+  prefix laddr;
+
+  identity lisp-address-family {
+    description
+      "Base identity from which identities describing LISP address
+       families are derived.";
+  }
+
+  identity no-address-afi {
+    base lisp-address-family;
+    description
+      "IANA Reserved.";
+  }
+
+  identity null-address-lcaf {
+    base lcaf;
+    description
+      "Null body LCAF type.";
+  }
+
+  typedef instance-id-type {
+    type uint32 {
+      range "0..16777215";
+    }
+    description
+      "Defines the range of values for an Instance ID.";
+  }
+
+  typedef lisp-address-family-ref {
+    type identityref {
+      base lisp-address-family;
+    }
+    description
+      "LISP address family reference.";
+  }
+
+  grouping lisp-address {
+    description
+      "Generic LISP address.";
+    leaf address-type {
+      type lisp-address-family-ref;
+      mandatory true;
+      description
+        "Type of the LISP address.";
+    }
+    leaf virtual-network-id {
+      type instance-id-type;
+      description
+        "Virtual Network Identifier (instance-id) of the address.";
+    }
+    choice address {
+      description
+        "Various LISP address types, including IP, MAC, and LCAF.";
+
+      leaf no-address {
+        when "../address-type = 'laddr:no-addr-afi'" {
+          description
+            "When AFI is 0.";
+        }
+        type empty;
+        description
+          "No address.";
+      }
+      container null-address {
+        when "../address-type = 'laddr:null-address-lcaf'" {
+          description
+            "When LCAF type is null.";
+        }
+        description
+          "Null body LCAF type";
+        leaf address {
+          type empty;
+          description
+            "AFI address.";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+module odl-lisp-address-types {
+    namespace "urn:opendaylight:lfm:lisp-binary-address-types";
+    prefix "lisp-binary";
+
+    import ietf-lisp-address-types { prefix laddr; }
+    import odl-inet-binary-types { prefix bin; }
+
+    identity ipv4-binary-afi {
+        base laddr:lisp-address-family;
+        description
+            "IANA IPv4 address family (binary representation).";
+    }
+
+    grouping augmented-lisp-address {
+        uses laddr:lisp-address {
+            augment "address" {
+                case ipv4-binary {
+                    leaf ipv4-binary {
+                        when "../address-type = 'ipv4-binary-afi'" {
+                            description
+                                "When AFI is IPv4 (binary).";
+                        }
+                        type bin:ipv4-address-binary;
+                        description
+                            "IPv4 (binary) address.";
+                    }
+                }
+            }
+        }
+    }
+}

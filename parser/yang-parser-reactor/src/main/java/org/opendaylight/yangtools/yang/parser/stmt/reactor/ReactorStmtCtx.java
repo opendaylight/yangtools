@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -42,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -395,6 +397,20 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
+
+    /**
+     * Routing of the request to build an effective statement from {@link InferredStatementContext} towards the original
+     * definition site. This is needed to pick the correct instantiation method: for declared statements we will
+     * eventually land in {@link AbstractResumedStatement}, for underclared statements that will be
+     * {@link UndeclaredStmtCtx}.
+     *
+     * @param factory Statement factory
+     * @param ctx Inferred statement context, i.e. where the effective statement is instantiated
+     * @return Built effective stateue
+     */
+    abstract @NonNull E createInferredEffective(@NonNull StatementFactory<A, D, E> factory,
+        @NonNull InferredStatementContext<A, D, E> ctx, Stream<? extends StmtContext<?, ?, ?>> declared,
+        Stream<? extends StmtContext<?, ?, ?>> effective);
 
     /**
      * Attach an effective copy of this statement. This essentially acts as a map, where we make a few assumptions:
