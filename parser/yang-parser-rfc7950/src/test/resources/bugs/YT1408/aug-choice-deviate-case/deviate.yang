@@ -1,0 +1,12 @@
+module deviate {
+    namespace "urn:deviate";
+    prefix dev;
+
+    import orig {
+        prefix orig;
+    }
+
+    deviation /orig:foo/orig:bar/orig:bar2 {
+        deviate not-supported;
+    }
+}
