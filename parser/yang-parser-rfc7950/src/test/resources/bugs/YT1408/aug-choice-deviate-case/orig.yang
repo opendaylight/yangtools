@@ -1,0 +1,18 @@
+module orig {
+    namespace "urn:orig";
+    prefix orig;
+
+    container foo {
+        choice bar {
+            leaf bar1 {
+                type string;
+            }
+        }
+    }
+
+    augment /foo/bar {
+        leaf bar2 {
+            type string;
+        }
+    }
+}
