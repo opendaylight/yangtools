@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import org.junit.Test;
@@ -18,20 +17,17 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class LeafrefStatementTest {
+public class LeafrefStatementTest extends AbstractYangTest {
 
     @Test
-    public void testRequireInstanceInLeafrefs() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/leafref-stmt/foo.yang");
-        assertNotNull(schemaContext);
+    public void testRequireInstanceInLeafrefs() {
+        final var context = assertEffectiveModel("/rfc7950/leafref-stmt/foo.yang");
 
-        final Module foo = schemaContext.findModule("foo", Revision.of("2016-12-20")).get();
+        final Module foo = context.findModule("foo", Revision.of("2016-12-20")).get();
         final Collection<? extends TypeDefinition<?>> typeDefinitions = foo.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
 
@@ -58,12 +54,8 @@ public class LeafrefStatementTest {
     }
 
     @Test
-    public void testInvalidYang10() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/leafref-stmt/foo10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("REQUIRE_INSTANCE is not valid for TYPE"));
-        }
+    public void testInvalidYang10() {
+        assertInvalidSubstatementException(startsWith("REQUIRE_INSTANCE is not valid for TYPE"),
+                "/rfc7950/leafref-stmt/foo10.yang");
     }
 }

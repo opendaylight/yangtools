@@ -7,17 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class YT838Test {
+public class YT838Test extends AbstractYangTest {
     @Test
     public void testGroupingShadowing() {
         testGrouping("grouping.yang");
@@ -39,21 +33,12 @@ public class YT838Test {
     }
 
     private static void testGrouping(final String model) {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSource("/bugs/YT838/" + model));
-
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(),
-            startsWith("Duplicate name for grouping (grouping?revision=2017-12-20)foo [at "));
+        assertSourceException(startsWith("Duplicate name for grouping (grouping?revision=2017-12-20)foo [at "),
+                "/bugs/YT838/" + model);
     }
 
     private static void testTypedef(final String model) {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSource("/bugs/YT838/" + model));
-        final Throwable cause = ex.getCause();
-        assertTrue(cause instanceof SourceException);
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("Duplicate name for typedef (typedef?revision=2017-12-20)foo [at "));
+        assertSourceException(startsWith("Duplicate name for typedef (typedef?revision=2017-12-20)foo [at "),
+                "/bugs/YT838/" + model);
     }
 }
