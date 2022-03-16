@@ -1,0 +1,15 @@
+module orig {
+    namespace "urn:orig";
+    prefix orig;
+
+    container foo {
+        choice bar {
+            leaf bar1 {
+                type string;
+            }
+            leaf bar2 {
+                type string;
+            }
+        }
+    }
+}
