@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.Set;
@@ -24,15 +22,13 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class IdentityrefStatementTest {
+public class IdentityrefStatementTest extends AbstractYangTest {
 
     @Test
-    public void testIdentityrefWithMultipleBaseIdentities() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/identityref-stmt/foo.yang");
-        assertNotNull(schemaContext);
+    public void testIdentityrefWithMultipleBaseIdentities() {
+        final SchemaContext schemaContext = assertEffectiveModel("/rfc7950/identityref-stmt/foo.yang");
 
         final Module foo = schemaContext.findModule("foo", Revision.of("2017-01-11")).get();
         final Collection<? extends IdentitySchemaNode> identities = foo.getIdentities();
@@ -48,12 +44,8 @@ public class IdentityrefStatementTest {
     }
 
     @Test
-    public void testInvalidYang10() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/identityref-stmt/foo10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Maximal count of BASE for TYPE is 1, detected 3."));
-        }
+    public void testInvalidYang10() {
+        assertInvalidSubstatementException(startsWith("Maximal count of BASE for TYPE is 1, detected 3."),
+                "/rfc7950/identityref-stmt/foo10.yang");
     }
 }

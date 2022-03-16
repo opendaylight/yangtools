@@ -8,10 +8,9 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,18 +24,16 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class ActionStatementTest {
+public class ActionStatementTest extends AbstractYangTest {
 
     private static final String FOO_NS = "foo-namespace";
     private static final String FOO_REV = "2016-12-13";
 
     @Test
     public void testActionStatementInDataContainers() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foo.yang");
-        assertNotNull(schemaContext);
+        final SchemaContext schemaContext = assertEffectiveModel("/rfc7950/action-stmt/foo.yang");
 
         assertContainsActions(schemaContext, "root", "grp-action", "aug-action");
         assertContainsActions(schemaContext, "top-list", "top-list-action");
@@ -76,58 +73,32 @@ public class ActionStatementTest {
     }
 
     @Test
-    public void testActionUnsupportedInYang10() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foo10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("action is not a YANG statement or use of extension"));
-        }
+    public void testActionUnsupportedInYang10() {
+        assertSourceException(startsWith("action is not a YANG statement or use of extension"),
+                "/rfc7950/action-stmt/foo10.yang");
     }
 
     @Test
-    public void testActionWithinIllegalAncestor() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foo-invalid.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Action (foo-namespace?revision=2016-12-13)"
-                    + "action-in-grouping is defined within a notification, rpc or another action"));
-        }
+    public void testActionWithinIllegalAncestor() {
+        assertSourceException(startsWith("Action (foo-namespace?revision=2016-12-13)action-in-grouping is defined"
+                + " within a notification, rpc or another action"), "/rfc7950/action-stmt/foo-invalid.yang");
     }
 
     @Test
-    public void testActionWithinListWithoutKey() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/action-stmt/bar-invalid.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Action (bar-namespace?revision=2016-12-13)my-action is defined within a list"
-                            + " that has no key statement"));
-        }
+    public void testActionWithinListWithoutKey() {
+        assertSourceException(startsWith("Action (bar-namespace?revision=2016-12-13)my-action is defined within a list"
+                + " that has no key statement"), "/rfc7950/action-stmt/bar-invalid.yang");
     }
 
     @Test
-    public void testActionInUsedGroupingWithinCase() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/action-stmt/baz-invalid.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Action (baz-namespace?revision=2016-12-13)action-in-grouping is defined within a "
-                            + "case statement"));
-        }
+    public void testActionInUsedGroupingWithinCase() {
+        assertSourceException(startsWith("Action (baz-namespace?revision=2016-12-13)action-in-grouping"
+                + " is defined within a case statement"), "/rfc7950/action-stmt/baz-invalid.yang");
     }
 
     @Test
-    public void testActionInUsedGroupingAtTopLevelOfModule() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foobar-invalid.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Action (foobar-namespace?revision=2016-12-13)my-action is defined at the top level of a module"));
-        }
+    public void testActionInUsedGroupingAtTopLevelOfModule() {
+        assertSourceException(startsWith("Action (foobar-namespace?revision=2016-12-13)my-action is defined"
+                + " at the top level of a module"), "/rfc7950/action-stmt/foobar-invalid.yang");
     }
 }

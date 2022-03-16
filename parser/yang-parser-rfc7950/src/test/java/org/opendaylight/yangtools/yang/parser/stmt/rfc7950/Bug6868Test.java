@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -24,10 +23,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-public class Bug6868Test {
+public class Bug6868Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
     private static final String IMP_NS = "imp";
     private static final String IMP_REV = "2017-01-09";
@@ -86,8 +85,7 @@ public class Bug6868Test {
 
     @Test
     public void invalidYang10Test() {
-        SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6868/invalid10.yang"));
-        assertThat(ex.getCause().getMessage(), startsWith("Invalid identifier '(not foo) or (bar and baz)' [at "));
+        assertSourceException(startsWith("Invalid identifier '(not foo) or (bar and baz)' [at "),
+                "/rfc7950/bug6868/invalid10.yang");
     }
 }

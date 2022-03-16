@@ -7,33 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class YT1189Test {
+public class YT1189Test extends AbstractYangTest {
     @Test
     public void testDescendantAugment() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSource("/bugs/YT1189/foo.yang"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(),
-            startsWith("Descendant schema node identifier is not allowed when used outside of a uses statement [at "));
+        assertSourceException(startsWith("Descendant schema node identifier is not allowed when used outside"
+                + " of a uses statement [at "), "/bugs/YT1189/foo.yang");
     }
 
     @Test
     public void testAbsoluteUsesAugment() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSource("/bugs/YT1189/bar.yang"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(),
-            startsWith("Absolute schema node identifier is not allowed when used within a uses statement [at "));
+        assertSourceException(startsWith("Absolute schema node identifier is not allowed when used within a"
+                + " uses statement [at "), "/bugs/YT1189/bar.yang");
     }
 }
