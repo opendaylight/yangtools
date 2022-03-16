@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
@@ -15,7 +17,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Throwables;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -142,9 +143,12 @@ public class YangParserNegativeTest {
             () -> TestUtils.parseYangSource(
                 "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang"));
         final Throwable rootCause = Throwables.getRootCause(ex);
-        assertThat(rootCause, isA(SubstatementIndexingException.class));
-        assertThat(rootCause.getMessage(), containsString("Cannot add schema tree child with name "
-            + "(urn:simple.augment2.demo?revision=2014-06-02)delta, a conflicting child already exists"));
+        assertThat(rootCause, isA(SourceException.class));
+        assertThat(rootCause.getMessage(), allOf(
+            startsWith("Error in module 'augment0': cannot add "
+                + "'(urn:simple.augment2.demo?revision=2014-06-02)delta'. Node name collision: "
+                + "'(urn:simple.augment2.demo?revision=2014-06-02)delta' already declared at "),
+            endsWith("duplicity/augment2.yang:17:9]")));
     }
 
     @Test
