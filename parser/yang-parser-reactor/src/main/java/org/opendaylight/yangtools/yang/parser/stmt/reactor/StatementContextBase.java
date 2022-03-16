@@ -848,6 +848,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
             copy = new InferredStatementContext<>(result, original, childCopyType, type, targetModule);
             result.addEffectiveSubstatement(copy);
+            result.definition.onStatementAdded(result);
         } else {
             result = copy = new InferredStatementContext<>(this, original, type, type, targetModule);
         }
