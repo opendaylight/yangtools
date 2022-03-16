@@ -21,14 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug9241Test {
+public class Bug9241Test extends AbstractYangTest {
 
     @Test
-    public void testImplicitInputAndOutputInAction() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug9241/foo.yang");
-        assertNotNull(schemaContext);
+    public void testImplicitInputAndOutputInAction() {
+        final SchemaContext schemaContext = assertEffectiveModel("/rfc7950/bug9241/foo.yang");
 
         final Module fooModule = schemaContext.findModule("foo", Revision.of("2017-10-13")).get();
 

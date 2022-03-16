@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Optional;
 import org.junit.Test;
@@ -25,13 +24,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 
-public class YT971Test {
+public class YT971Test extends AbstractYangTest {
     private static final QNameModule NAMESPACE = QNameModule.create(XMLNamespace.of("test"), Revision.of("2019-03-25"));
 
     @Test
-    public void testEscapeLexer() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/bugs/YT971/test.yang");
-        assertNotNull(schemaContext);
+    public void testEscapeLexer() {
+        final SchemaContext schemaContext = assertEffectiveModel("/bugs/YT971/test.yang");
 
         final DataSchemaNode someContainer = schemaContext.getDataChildByName(
             QName.create(NAMESPACE, "some-container"));

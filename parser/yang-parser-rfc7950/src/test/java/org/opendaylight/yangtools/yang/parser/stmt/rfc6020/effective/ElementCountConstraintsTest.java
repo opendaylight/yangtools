@@ -9,26 +9,19 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class ElementCountConstraintsTest {
+public class ElementCountConstraintsTest extends AbstractYangTest {
     @Test
-    public void testElementCountConstraints()
-            throws YangSyntaxErrorException, ReactorException, URISyntaxException, IOException {
-        final var schemaContext = StmtTestUtils.parseYangSource("/constraint-definitions-test/foo.yang");
-        assertNotNull(schemaContext);
+    public void testElementCountConstraints() {
+        final var schemaContext = assertEffectiveModel("/constraint-definitions-test/foo.yang");
 
         final Module testModule = schemaContext.findModule("foo", Revision.of("2016-09-20")).get();
         final LeafListSchemaNode constrainedLeafList1 = (LeafListSchemaNode) testModule.getDataChildByName(
