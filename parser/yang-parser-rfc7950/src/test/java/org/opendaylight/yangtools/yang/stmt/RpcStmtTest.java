@@ -25,13 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class RpcStmtTest {
+public class RpcStmtTest extends AbstractYangTest {
     @Test
     public void rpcTest() throws ReactorException {
         final EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
@@ -99,11 +98,10 @@ public class RpcStmtTest {
     }
 
     @Test
-    public void testImplicitInputAndOutput() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rpc-stmt-test/bar.yang");
-        assertNotNull(schemaContext);
+    public void testImplicitInputAndOutput() {
+        final var context = assertEffectiveModel("/rpc-stmt-test/bar.yang");
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2016-11-25")).get();
+        final Module barModule = context.findModule("bar", Revision.of("2016-11-25")).get();
         final Collection<? extends RpcDefinition> rpcs = barModule.getRpcs();
         assertEquals(1, rpcs.size());
 

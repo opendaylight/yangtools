@@ -7,54 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
-public class Bug7424Test {
+public class Bug7424Test extends AbstractYangTest {
     @Test
-    public void testRpc() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/bugs/bug7424/foo-rpc.yang");
-            fail("Test should fail due to invalid yang model.");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
-        }
+    public void testRpc()throws Exception {
+        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
+                + " '(foo)name' already declared"), "/bugs/bug7424/foo-rpc.yang");
     }
 
     @Test
-    public void testNotification() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/bugs/bug7424/foo-notification.yang");
-            fail("Test should fail due to invalid yang model.");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
-        }
+    public void testNotification() {
+        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
+                + " '(foo)name' already declared"), "/bugs/bug7424/foo-notification.yang");
     }
 
     @Test
-    public void testData() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/bugs/bug7424/foo-data.yang");
-            fail("Test should fail due to invalid yang model.");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
-        }
+    public void testData() {
+        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
+                + " '(foo)name' already declared"), "/bugs/bug7424/foo-data.yang");
     }
 
     @Test
-    public void testRpcUses() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/bugs/bug7424/foo-rpc-uses.yang");
-            fail("Test should fail due to invalid yang model.");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
-        }
+    public void testRpcUses() {
+        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
+                + " '(foo)name' already declared"), "/bugs/bug7424/foo-rpc-uses.yang");
     }
 }
