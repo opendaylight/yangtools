@@ -8,8 +8,6 @@
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Collections2;
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
@@ -27,8 +25,8 @@ public final class DefaultChoiceRuntimeType extends AbstractCompositeRuntimeType
     }
 
     @Override
-    public Collection<CaseRuntimeType> validCaseChildren() {
-        return (Collection) Collections2.filter(schemaTreeChildren(), CaseRuntimeType.class::isInstance);
+    public List<CaseRuntimeType> validCaseChildren() {
+        return schemaTree(CaseRuntimeType.class);
     }
 
     @Override

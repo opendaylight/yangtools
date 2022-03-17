@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.runtime.api;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
@@ -38,5 +38,5 @@ public interface ChoiceRuntimeType extends CompositeRuntimeType, DataRuntimeType
      *
      * @return Valid {@link CaseRuntimeType}s
      */
-    @NonNull Collection<CaseRuntimeType> validCaseChildren();
+    @NonNull List<CaseRuntimeType> validCaseChildren();
 }
