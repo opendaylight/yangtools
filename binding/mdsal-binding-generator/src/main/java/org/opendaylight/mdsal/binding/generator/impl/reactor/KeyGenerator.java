@@ -89,7 +89,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
-    KeyRuntimeType createInternalRuntimeType(final ChildLookup lookup,final KeyEffectiveStatement statement,
+    KeyRuntimeType createInternalRuntimeType(final AugmentResolver resolver, final KeyEffectiveStatement statement,
             final Type type) {
         // The only reference to this runtime type is from ListGenerator which is always referencing the external type
         throw new UnsupportedOperationException("Should never be called");

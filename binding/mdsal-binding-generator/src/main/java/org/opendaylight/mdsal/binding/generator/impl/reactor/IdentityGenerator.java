@@ -84,8 +84,8 @@ public final class IdentityGenerator
     }
 
     @Override
-    IdentityRuntimeType createInternalRuntimeType(final ChildLookup lookup, final IdentityEffectiveStatement statement,
-            final Type type) {
+    IdentityRuntimeType createInternalRuntimeType(final AugmentResolver resolver,
+            final IdentityEffectiveStatement statement, final Type type) {
         // 'identity' statements are not part of schema tree and hence should never an internal reference
         throw new UnsupportedOperationException("Should never be called");
     }

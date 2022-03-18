@@ -101,8 +101,8 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     }
 
     @Override
-    TypedefRuntimeType createInternalRuntimeType(final ChildLookup lookup, final TypedefEffectiveStatement statement,
-            final Type type) {
+    TypedefRuntimeType createInternalRuntimeType(final AugmentResolver resolver,
+            final TypedefEffectiveStatement statement, final Type type) {
         // 'typedef' statements are not schema tree statements, they should not have internal references
         throw new UnsupportedOperationException("Should never be called");
     }

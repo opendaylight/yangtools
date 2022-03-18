@@ -135,7 +135,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
      * @param stmt Statement for which to create the view
      * @return Internally-accessible RuntimeType, or {@code null} if not applicable
      */
-    final @Nullable R createInternalRuntimeType(final @NonNull ChildLookup lookup, final @NonNull S stmt) {
+    final @Nullable R createInternalRuntimeType(final @NonNull AugmentResolver resolver, final @NonNull S stmt) {
         // FIXME: cache requests: if we visited this statement, we obviously know what it entails. Note that we walk
         //        towards the original definition. As such, the cache may have to live in the generator we look up,
         //        but should operate on this statement to reflect lookups. This needs a bit of figuring out.
@@ -143,7 +143,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         do {
             final var type = gen.runtimeJavaType();
             if (type != null) {
-                return createInternalRuntimeType(lookup, stmt, type);
+                return createInternalRuntimeType(resolver, stmt, type);
             }
 
             gen = gen.previous();
@@ -152,7 +152,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return null;
     }
 
-    abstract @NonNull R createInternalRuntimeType(@NonNull ChildLookup lookup, @NonNull S statement,
+    abstract @NonNull R createInternalRuntimeType(@NonNull AugmentResolver resolver, @NonNull S statement,
         @NonNull Type type);
 
     @Override

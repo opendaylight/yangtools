@@ -12,13 +12,10 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -36,17 +33,6 @@ final class UsesAugmentGenerator extends AbstractAugmentGenerator {
             final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         this.uses = requireNonNull(uses);
-
-        // FIXME: use SchemaTreeAwareEffectiveStatement
-        var stmt = parent.statement();
-        for (var qname : statement.argument().getNodeIdentifiers()) {
-            final var tmp = stmt;
-            stmt = stmt.streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class)
-                .filter(child -> qname.equals(child.argument()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Failed to find " + qname + " in " + tmp));
-        }
-        setTargetStatement(stmt);
     }
 
     void resolveGrouping(final UsesEffectiveStatement resolvedUses, final GroupingGenerator resolvedGrouping) {
@@ -68,50 +54,28 @@ final class UsesAugmentGenerator extends AbstractAugmentGenerator {
     }
 
     @Override
-    List<CaseRuntimeType> augmentedCasesIn(final ChildLookup lookup, final ChoiceEffectiveStatement stmt) {
-        final var result = super.augmentedCasesIn(lookup, stmt);
-        if (result != null) {
-            return result;
-        }
-        final var augment = statement();
-        if (!lookup.contains(augment)) {
-            return List.of();
-        }
+    boolean matchesInstantiated(final AugmentEffectiveStatement statement) {
+        return super.matchesInstantiated(statement) || declared(statement()).equals(declared(statement));
+    }
 
-        final var effectiveStatement = effectiveStatement(augment, stmt);
-        return createBuilder(effectiveStatement)
-            .fillTypes(lookup.inStatement(effectiveStatement), this)
-            .getCaseChilden();
+    private static AugmentStatement declared(final AugmentEffectiveStatement statement) {
+        // We are generating Augmentation interfaces on declared model, hence this is accurate
+        return verifyNotNull(statement.getDeclared(), " %s does not have a declared view", statement);
     }
 
     @Override
-    AugmentRuntimeType runtimeTypeIn(final ChildLookup lookup, final EffectiveStatement<?, ?> target) {
-        final var result = super.runtimeTypeIn(lookup, target);
-        if (result != null) {
-            return result;
-        }
-        final var augment = statement();
-        if (!lookup.contains(augment)) {
-            return null;
-        }
-
-        verify(target instanceof SchemaTreeAwareEffectiveStatement && target instanceof SchemaTreeEffectiveStatement,
-            "Unexpected statement %s", target);
-        final var effectiveStatement = effectiveStatement(augment, (SchemaTreeAwareEffectiveStatement<?, ?>) target);
-        return verifyNotNull(createInternalRuntimeType(lookup.inStatement(effectiveStatement), effectiveStatement));
-    }
-
-    private static @NonNull AugmentEffectiveStatement effectiveStatement(final AugmentEffectiveStatement augment,
-            final SchemaTreeAwareEffectiveStatement<?, ?> target) {
+    TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target) {
         verify(target instanceof SchemaTreeEffectiveStatement, "Unexpected statement %s", target);
         // 'uses'/'augment': our children are binding to target's namespace
         final var targetNamespace = ((SchemaTreeEffectiveStatement<?>) target).argument().getModule();
 
+        final var augment = statement();
         final var stmts = augment.effectiveSubstatements();
         final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
         for (var stmt : stmts) {
             if (stmt instanceof SchemaTreeEffectiveStatement) {
                 final var qname = ((SchemaTreeEffectiveStatement<?>) stmt).getIdentifier().bindTo(targetNamespace);
+                // FIXME: orElseThrow()?
                 target.get(SchemaTreeNamespace.class, qname).ifPresent(builder::add);
             } else {
                 builder.add(stmt);

@@ -42,8 +42,8 @@ final class LeafListGenerator
     }
 
     @Override
-    LeafListRuntimeType createInternalRuntimeType(final ChildLookup lookup, final LeafListEffectiveStatement statement,
-            final Type type) {
+    LeafListRuntimeType createInternalRuntimeType(final AugmentResolver resolver,
+            final LeafListEffectiveStatement statement, final Type type) {
         return new DefaultLeafListRuntimeType(type, statement);
     }
 }

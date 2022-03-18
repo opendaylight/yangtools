@@ -110,7 +110,7 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
     abstract @NonNull R createExternalRuntimeType(@NonNull GeneratedType type);
 
     @Override
-    final R createInternalRuntimeType(final ChildLookup lookup, final S statement, final Type type) {
+    final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {
         verify(type instanceof GeneratedType, "Unexpected type %s", type);
         return createInternalRuntimeType(statement, (GeneratedType) type);
     }

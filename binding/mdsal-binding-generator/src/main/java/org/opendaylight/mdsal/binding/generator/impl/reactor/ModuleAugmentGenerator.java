@@ -7,9 +7,13 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * Generator corresponding to a {@code augment} statement used as a child of a {@code module} statement.
@@ -19,10 +23,24 @@ final class ModuleAugmentGenerator extends AbstractAugmentGenerator {
         super(statement, parent);
     }
 
-    @NonNull AugmentRequirement startLinkage(final GeneratorContext context) {
-        setTargetStatement(SchemaInferenceStack.of(context.getEffectiveModelContext())
-            .enterSchemaTree(statement().argument()));
+    @Override
+    TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target) {
+        final var augment = statement();
+        final var stmts = augment.effectiveSubstatements();
+        final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
+        for (var child : stmts) {
+            if (child instanceof SchemaTreeEffectiveStatement) {
+                final var qname = ((SchemaTreeEffectiveStatement<?>) child).getIdentifier();
+                // FIXME: orElseThrow()?
+                target.get(SchemaTreeNamespace.class, qname).ifPresent(builder::add);
+            } else {
+                builder.add(child);
+            }
+        }
+        return new TargetAugmentEffectiveStatement(augment, target, builder.build());
+    }
 
+    @NonNull AugmentRequirement startLinkage(final GeneratorContext context) {
         return new AugmentRequirement(this,
             context.resolveModule(statement().argument().firstNodeIdentifier().getModule()));
     }

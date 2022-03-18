@@ -26,7 +26,7 @@ final class LeafGenerator extends AbstractTypeAwareGenerator<LeafEffectiveStatem
     }
 
     @Override
-    LeafRuntimeType createInternalRuntimeType(final ChildLookup lookup, final LeafEffectiveStatement statement,
+    LeafRuntimeType createInternalRuntimeType(final AugmentResolver resolver, final LeafEffectiveStatement statement,
             final Type type) {
         return new DefaultLeafRuntimeType(type, statement);
     }

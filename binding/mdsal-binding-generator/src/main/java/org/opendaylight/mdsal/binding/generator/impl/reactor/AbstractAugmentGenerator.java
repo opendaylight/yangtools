@@ -11,13 +11,10 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAugmentRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -34,8 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -92,9 +87,7 @@ abstract class AbstractAugmentGenerator
         return otherIt.hasNext() ? -1 : 0;
     };
 
-    private SchemaTreeAwareEffectiveStatement<?, ?> targetStatement;
     private AbstractCompositeGenerator<?, ?> targetGen;
-    private Optional<AugmentRuntimeType> internalRuntimeType;
 
     AbstractAugmentGenerator(final AugmentEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
@@ -155,53 +148,23 @@ abstract class AbstractAugmentGenerator
         return builder.build();
     }
 
-    @NonNull List<CaseRuntimeType> augmentedCasesIn(final ChildLookup lookup, final ChoiceEffectiveStatement stmt) {
-        final var target = verifyNotNull(targetStatement);
-        if (!stmt.equals(target)) {
-            return List.of();
-        }
-
-        final var result = createBuilder(effectiveStatement(statement(), target))
-            .fillTypes(ChildLookup.of(target), this)
-            .getCaseChilden();
-        internalRuntimeType = Optional.empty();
-        return result;
+    boolean matchesInstantiated(final AugmentEffectiveStatement statement) {
+        return statement().equals(statement);
     }
 
-    @Nullable AugmentRuntimeType runtimeTypeIn(final ChildLookup lookup, final EffectiveStatement<?, ?> stmt) {
-        final var target = verifyNotNull(targetStatement);
-        if (!stmt.equals(target)) {
-            return null;
-        }
-        if (internalRuntimeType != null) {
-            return internalRuntimeType.orElseThrow();
-        }
-
-        final var result = verifyNotNull(createInternalRuntimeType(ChildLookup.of(target),
-            effectiveStatement(statement(), target)));
-        internalRuntimeType = Optional.of(result);
-        return result;
+    final void fillRuntimeCasesIn(final AugmentResolver resolver, final ChoiceEffectiveStatement stmt,
+            final List<CaseRuntimeType> toList) {
+        toList.addAll(createBuilder(effectiveIn(stmt)).populate(resolver, this).getCaseChilden());
     }
 
-    private static @NonNull AugmentEffectiveStatement effectiveStatement(final AugmentEffectiveStatement augment,
-            final SchemaTreeAwareEffectiveStatement<?, ?> target) {
-        final var stmts = augment.effectiveSubstatements();
-        final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
-        for (var child : stmts) {
-            if (child instanceof SchemaTreeEffectiveStatement) {
-                final var qname = ((SchemaTreeEffectiveStatement<?>) child).getIdentifier();
-                // FIXME: orElseThrow()?
-                target.get(SchemaTreeNamespace.class, qname).ifPresent(builder::add);
-            } else {
-                builder.add(child);
-            }
-        }
-        return new TargetAugmentEffectiveStatement(augment, target, builder.build());
+    final @NonNull AugmentRuntimeType runtimeTypeIn(final AugmentResolver resolver,
+            final EffectiveStatement<?, ?> stmt) {
+        verify(stmt instanceof SchemaTreeAwareEffectiveStatement, "Unexpected target statement %s", stmt);
+        return verifyNotNull(createInternalRuntimeType(resolver,
+            effectiveIn((SchemaTreeAwareEffectiveStatement<?, ?>) stmt)));
     }
 
-    final @Nullable AugmentRuntimeType getInternalRuntimeType() {
-        return verifyNotNull(internalRuntimeType, "Internal runtime not resolved in %s", this).orElse(null);
-    }
+    abstract @NonNull TargetAugmentEffectiveStatement effectiveIn(SchemaTreeAwareEffectiveStatement<?, ?> target);
 
     @Override
     final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
@@ -229,11 +192,5 @@ abstract class AbstractAugmentGenerator
 
     final @NonNull AbstractCompositeGenerator<?, ?> targetGenerator() {
         return verifyNotNull(targetGen, "No target for %s", this);
-    }
-
-    final void setTargetStatement(final EffectiveStatement<?, ?> targetStatement) {
-        verify(targetStatement instanceof SchemaTreeAwareEffectiveStatement, "Unexpected target statement %s",
-            targetStatement);
-        this.targetStatement = (SchemaTreeAwareEffectiveStatement<?, ?>) targetStatement;
     }
 }

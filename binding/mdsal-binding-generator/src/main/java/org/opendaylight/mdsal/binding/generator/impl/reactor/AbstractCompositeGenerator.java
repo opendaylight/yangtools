@@ -176,22 +176,15 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     @Override
     final R createExternalRuntimeType(final Type type) {
         verify(type instanceof GeneratedType, "Unexpected type %s", type);
-
-        // FIXME: we should be able to use internal cache IFF when all augments end up being local to our statement
-        final var statement = statement();
-        return createBuilder(statement)
-            .fillTypes(ChildLookup.of(statement), this)
-            .build((GeneratedType) type);
+        return createBuilder(statement()).populate(new AugmentResolver(), this).build((GeneratedType) type);
     }
 
     abstract @NonNull CompositeRuntimeTypeBuilder<S, R> createBuilder(S statement);
 
     @Override
-    final R createInternalRuntimeType(final ChildLookup lookup, final S statement, final Type type) {
+    final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {
         verify(type instanceof GeneratedType, "Unexpected type %s", type);
-        return createBuilder(statement)
-            .fillTypes(lookup.inStatement(statement), this)
-            .build((GeneratedType) type);
+        return createBuilder(statement).populate(resolver, this).build((GeneratedType) type);
     }
 
     @Override

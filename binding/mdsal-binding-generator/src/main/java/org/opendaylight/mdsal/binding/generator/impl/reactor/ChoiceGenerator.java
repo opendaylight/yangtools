@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
 
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -29,28 +29,25 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffectiveStatement, ChoiceRuntimeType> {
     static final class ChoiceBuilder extends CompositeRuntimeTypeBuilder<ChoiceEffectiveStatement, ChoiceRuntimeType> {
-        private ImmutableList<CaseRuntimeType> augmentedCases;
+        private final List<CaseRuntimeType> augmentedCases = new ArrayList<>();
 
         ChoiceBuilder(final ChoiceEffectiveStatement statement) {
             super(statement);
         }
 
         @Override
-        CompositeRuntimeTypeBuilder<ChoiceEffectiveStatement, ChoiceRuntimeType> fillTypes(
-                final ChildLookup lookup,
-                final AbstractCompositeGenerator<ChoiceEffectiveStatement, ChoiceRuntimeType> generator) {
-            fillAugmentedCases(lookup, generator.augments());
-            return super.fillTypes(lookup, generator);
+        void processAugment(final AugmentResolver resolver, final AbstractAugmentGenerator augment) {
+            augment.fillRuntimeCasesIn(resolver, statement(), augmentedCases);
         }
 
         @Override
-        boolean isAugmentedChild(final ChildLookup lookup, final QName qname) {
+        boolean isAugmentedChild(final QName qname) {
             for (var augmented : augmentedCases) {
                 if (qname.equals(augmented.statement().argument())) {
                     return true;
                 }
             }
-            return super.isAugmentedChild(lookup, qname);
+            return false;
         }
 
         @Override
@@ -59,14 +56,6 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
             verify(augments.isEmpty(), "Unexpected augments %s", augments);
             children.addAll(augmentedCases);
             return new DefaultChoiceRuntimeType(type, statement, children);
-        }
-
-        private void fillAugmentedCases(final ChildLookup lookup, final List<AbstractAugmentGenerator> augments) {
-            final var builder = ImmutableList.<CaseRuntimeType>builder();
-            for (var augment : augments) {
-                builder.addAll(augment.augmentedCasesIn(lookup, statement()));
-            }
-            augmentedCases = builder.build();
         }
     }
 
