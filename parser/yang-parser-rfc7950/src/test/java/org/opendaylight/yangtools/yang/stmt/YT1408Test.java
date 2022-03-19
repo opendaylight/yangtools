@@ -11,22 +11,22 @@ import org.junit.Test;
 
 public class YT1408Test extends AbstractYangTest {
     @Test
-    public void testChoiceCaseDeviateCase() throws AssertionError {
+    public void testChoiceCaseDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/choice-case-deviate-case");
     }
 
     @Test
-    public void testChoiceDeviateCase() throws AssertionError {
+    public void testChoiceDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/choice-deviate-case");
     }
 
     @Test
-    public void testAugmentChoiceCaseDeviateCase() throws AssertionError {
+    public void testAugmentChoiceCaseDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/aug-choice-case-deviate-case");
     }
 
     @Test
-    public void testAugmentChoiceDeviateCase() throws AssertionError {
+    public void testAugmentChoiceDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/aug-choice-deviate-case");
     }
 }
