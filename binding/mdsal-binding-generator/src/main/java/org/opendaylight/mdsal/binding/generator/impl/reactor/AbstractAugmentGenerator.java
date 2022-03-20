@@ -11,9 +11,11 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAugmentRuntimeType;
@@ -31,6 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -165,6 +169,23 @@ abstract class AbstractAugmentGenerator
     }
 
     abstract @NonNull TargetAugmentEffectiveStatement effectiveIn(SchemaTreeAwareEffectiveStatement<?, ?> target);
+
+    final @NonNull TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target,
+            final Function<QName, QName> transform) {
+        final var augment = statement();
+        final var stmts = augment.effectiveSubstatements();
+        final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
+        for (var child : stmts) {
+            if (child instanceof SchemaTreeEffectiveStatement) {
+                final var qname = ((SchemaTreeEffectiveStatement<?>) child).getIdentifier();
+                // Note: a match in target may be missing -- for example if it was 'deviate unsupported'
+                target.get(SchemaTreeNamespace.class, transform.apply(qname)).ifPresent(builder::add);
+            } else {
+                builder.add(child);
+            }
+        }
+        return new TargetAugmentEffectiveStatement(augment, target, builder.build());
+    }
 
     @Override
     final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {

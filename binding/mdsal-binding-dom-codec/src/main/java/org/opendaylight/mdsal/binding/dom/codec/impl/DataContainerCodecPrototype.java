@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Verify.verify;
 
-import com.google.common.collect.Iterables;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
@@ -87,8 +86,9 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
         this.factory = factory;
 
         if (arg instanceof AugmentationIdentifier) {
-            this.namespace = Iterables.getFirst(((AugmentationIdentifier) arg).getPossibleChildNames(), null)
-                    .getModule();
+            final var childNames = ((AugmentationIdentifier) arg).getPossibleChildNames();
+            verify(!childNames.isEmpty(), "Unexpected empty identifier for %s", type);
+            this.namespace = childNames.iterator().next().getModule();
         } else {
             this.namespace = arg.getNodeType().getModule();
         }

@@ -177,14 +177,16 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         final Map<PathArgument, DataContainerCodecPrototype<?>> augByYang = new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> augByStream = new HashMap<>();
         for (final AugmentRuntimeType augment : possibleAugmentations) {
-            final DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment);
-            final PathArgument augYangArg = augProto.getYangArg();
-            if (augByYang.putIfAbsent(augYangArg, augProto) == null) {
-                LOG.trace("Discovered new YANG mapping {} -> {} in {}", augYangArg, augProto, this);
-            }
-            final Class<?> augBindingClass = augProto.getBindingClass();
-            if (augByStream.putIfAbsent(augBindingClass, augProto) == null) {
-                LOG.trace("Discovered new class mapping {} -> {} in {}", augBindingClass, augProto, this);
+            final DataContainerCodecPrototype<?> augProto = loadAugmentPrototype(augment);
+            if (augProto != null) {
+                final PathArgument augYangArg = augProto.getYangArg();
+                if (augByYang.putIfAbsent(augYangArg, augProto) == null) {
+                    LOG.trace("Discovered new YANG mapping {} -> {} in {}", augYangArg, augProto, this);
+                }
+                final Class<?> augBindingClass = augProto.getBindingClass();
+                if (augByStream.putIfAbsent(augBindingClass, augProto) == null) {
+                    LOG.trace("Discovered new class mapping {} -> {} in {}", augBindingClass, augProto, this);
+                }
             }
         }
         augmentationByYang = ImmutableMap.copyOf(augByYang);
@@ -386,23 +388,29 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         return cls.equals(loaded);
     }
 
-    private @NonNull DataContainerCodecPrototype<?> getAugmentationPrototype(final AugmentRuntimeType augment) {
-        final BindingRuntimeContext ctx = factory().getRuntimeContext();
+    private @Nullable DataContainerCodecPrototype<?> loadAugmentPrototype(final AugmentRuntimeType augment) {
+        // FIXME: in face of deviations this code should be looking at declared view, i.e. all possibilities at augment
+        //        declaration site
+        final var possibleChildren = augment.statement()
+            .streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class)
+            .map(SchemaTreeEffectiveStatement::getIdentifier)
+            .collect(ImmutableSet.toImmutableSet());
+        if (possibleChildren.isEmpty()) {
+            return null;
+        }
 
+        final var factory = factory();
         final GeneratedType javaType = augment.javaType();
         final Class<? extends Augmentation<?>> augClass;
         try {
-            augClass = ctx.loadClass(javaType);
+            augClass = factory.getRuntimeContext().loadClass(javaType);
         } catch (final ClassNotFoundException e) {
             throw new IllegalStateException(
                 "RuntimeContext references type " + javaType + " but failed to load its class", e);
         }
 
-        // TODO: at some point we need the effective children
-        return DataContainerCodecPrototype.from(augClass, new AugmentationIdentifier(augment.statement()
-            .streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class)
-            .map(SchemaTreeEffectiveStatement::getIdentifier)
-            .collect(ImmutableSet.toImmutableSet())), augment, factory());
+        return DataContainerCodecPrototype.from(augClass, new AugmentationIdentifier(possibleChildren), augment,
+            factory);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
