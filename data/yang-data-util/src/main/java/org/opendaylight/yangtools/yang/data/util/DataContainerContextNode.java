@@ -7,27 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import java.util.Map;
+import static java.util.Objects.requireNonNull;
+
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-class DataContainerContextNode<T extends PathArgument> extends
-        AbstractInteriorContextNode<T> {
-
+abstract class DataContainerContextNode<T extends PathArgument> extends AbstractInteriorContextNode<T> {
+    private final ConcurrentMap<PathArgument, DataSchemaContextNode<?>> byArg = new ConcurrentHashMap<>();
+    private final ConcurrentMap<QName, DataSchemaContextNode<?>> byQName = new ConcurrentHashMap<>();
     private final DataNodeContainer schema;
-    private final Map<QName, DataSchemaContextNode<?>> byQName;
-    private final Map<PathArgument, DataSchemaContextNode<?>> byArg;
 
-    protected DataContainerContextNode(final T identifier, final DataNodeContainer schema,
-            final DataSchemaNode node) {
+    DataContainerContextNode(final T identifier, final DataNodeContainer schema, final DataSchemaNode node) {
         super(identifier, node);
-        this.schema = schema;
-        this.byArg = new ConcurrentHashMap<>();
-        this.byQName = new ConcurrentHashMap<>();
+        this.schema = requireNonNull(schema);
     }
 
     @Override
@@ -64,6 +61,7 @@ class DataContainerContextNode<T extends PathArgument> extends
 
     private DataSchemaContextNode<?> register(final DataSchemaContextNode<?> potential) {
         if (potential != null) {
+            // FIXME: use putIfAbsent() to make sure we do not perform accidental overrwrites
             byArg.put(potential.getIdentifier(), potential);
             for (QName qname : potential.getQNameIdentifiers()) {
                 byQName.put(qname, potential);

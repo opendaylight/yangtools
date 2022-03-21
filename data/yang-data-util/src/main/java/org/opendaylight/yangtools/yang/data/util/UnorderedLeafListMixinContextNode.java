@@ -14,27 +14,22 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 class UnorderedLeafListMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
+    private final LeafListEntryContextNode innerOp;
 
-    private final DataSchemaContextNode<?> innerOp;
-
-    UnorderedLeafListMixinContextNode(final LeafListSchemaNode potential) {
-        super(NodeIdentifier.create(potential.getQName()), potential);
-        innerOp = new LeafListEntryContextNode(potential);
+    UnorderedLeafListMixinContextNode(final LeafListSchemaNode schema) {
+        super(NodeIdentifier.create(schema.getQName()), schema);
+        innerOp = new LeafListEntryContextNode(schema);
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final PathArgument child) {
-        if (child instanceof NodeWithValue) {
-            return innerOp;
-        }
-        return null;
+    public final DataSchemaContextNode<?> getChild(final PathArgument child) {
+        // FIXME: 10.0.0: reject null and invalid
+        return child instanceof NodeWithValue ? innerOp : null;
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final QName child) {
-        if (getIdentifier().getNodeType().equals(child)) {
-            return innerOp;
-        }
-        return null;
+    public final DataSchemaContextNode<?> getChild(final QName child) {
+        // FIXME: requireNonNull, common code with UnkeyedListMixinNode
+        return getIdentifier().getNodeType().equals(child) ? innerOp : null;
     }
 }

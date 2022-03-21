@@ -7,14 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 abstract class AbstractLeafContextNode<T extends PathArgument, S extends DataSchemaNode>
         extends DataSchemaContextNode<T> {
-    AbstractLeafContextNode(T identifier, S schema) {
-        super(identifier, schema);
+    AbstractLeafContextNode(final T identifier, final S schema) {
+        // non-null asserted by subclass constructor's access
+        // FIXME: move this down to superclass
+        super(identifier, requireNonNull(schema));
     }
 
     @Override

@@ -12,8 +12,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 final class LeafListEntryContextNode extends AbstractLeafNodeContext<NodeWithValue<?>, LeafListSchemaNode> {
-    LeafListEntryContextNode(final LeafListSchemaNode potential) {
-        super(new NodeWithValue<>(potential.getQName(), Empty.value()), potential);
+    LeafListEntryContextNode(final LeafListSchemaNode schema) {
+        // FIXME: Empty() here is NOT NICE -- it assumes the list is of such entries...
+        super(new NodeWithValue<>(schema.getQName(), Empty.value()), schema);
     }
 
     @Override
