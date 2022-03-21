@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -18,22 +19,23 @@ class UnorderedMapMixinContextNode extends AbstractMixinContextNode<NodeIdentifi
 
     UnorderedMapMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
-        this.innerNode = new ListItemContextNode(NodeIdentifierWithPredicates.of(list.getQName()), list);
+        innerNode = new ListItemContextNode(NodeIdentifierWithPredicates.of(list.getQName()), list);
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final PathArgument child) {
-        if (child.getNodeType().equals(getIdentifier().getNodeType())) {
-            return innerNode;
-        }
-        return null;
+    public final DataSchemaContextNode<?> getChild(final PathArgument child) {
+        // FIXME: validate PathArgument type
+        return innerNodeIfMatch(child.getNodeType());
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final QName child) {
-        if (getIdentifier().getNodeType().equals(child)) {
-            return innerNode;
-        }
-        return null;
+    public final DataSchemaContextNode<?> getChild(final QName child) {
+        return innerNodeIfMatch(child);
+    }
+
+    // FIXME: dead ringers in other AbstractMixinContextNode subclasses
+    private @Nullable DataSchemaContextNode<?> innerNodeIfMatch(final QName qname) {
+        // FIXME: 10.0.0: requireNonNull(qname)
+        return getIdentifier().getNodeType().equals(qname) ? innerNode : null;
     }
 }

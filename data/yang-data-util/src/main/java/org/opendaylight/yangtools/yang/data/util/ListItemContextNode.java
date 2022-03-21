@@ -10,11 +10,8 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class ListItemContextNode extends
-        DataContainerContextNode<NodeIdentifierWithPredicates> {
-
-
-    protected ListItemContextNode(final NodeIdentifierWithPredicates identifier, final ListSchemaNode schema) {
+final class ListItemContextNode extends DataContainerContextNode<NodeIdentifierWithPredicates> {
+    ListItemContextNode(final NodeIdentifierWithPredicates identifier, final ListSchemaNode schema) {
         super(identifier, schema, schema);
     }
 

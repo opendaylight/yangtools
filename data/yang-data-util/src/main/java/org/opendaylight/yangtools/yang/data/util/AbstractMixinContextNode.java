@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractMixinContextNode<T extends PathArgument> extends
-        AbstractInteriorContextNode<T> {
-
-    protected AbstractMixinContextNode(final T identifier, final DataSchemaNode schema) {
+abstract class AbstractMixinContextNode<T extends PathArgument> extends AbstractInteriorContextNode<T> {
+    AbstractMixinContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier, schema);
     }
 
@@ -21,5 +19,4 @@ abstract class AbstractMixinContextNode<T extends PathArgument> extends
     public final boolean isMixin() {
         return true;
     }
-
 }

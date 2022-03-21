@@ -43,25 +43,33 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  * @param <T> Path Argument type
  */
 public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractSimpleIdentifiable<T> {
+    // FIXME: this can be null only for AugmentationContextNode and in that case the interior part is handled by a
+    //        separate field in DataContainerContextNode. We need to re-examine our base interface class hierarchy
+    //        so that the underlying (effective in augment's case) SchemaNode is always available.
     private final DataSchemaNode dataSchemaNode;
 
-    protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
+    DataSchemaContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier);
-        if (schema instanceof DataSchemaNode) {
-            this.dataSchemaNode = (DataSchemaNode) schema;
-        } else {
-            this.dataSchemaNode = null;
-        }
+        this.dataSchemaNode = schema;
     }
 
+    @Deprecated(forRemoval = true, since = "8.0.2")
+    protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
+        this(identifier, schema instanceof DataSchemaNode ? (DataSchemaNode) schema : null);
+    }
+
+    // FIXME: document this method
     public boolean isMixin() {
         return false;
     }
 
+    // FIXME: document this method
     public boolean isKeyedEntry() {
         return false;
     }
 
+    // FIXME: this is counter-intuitive: anydata/anyxml are considered non-leaf. This method needs a better name and
+    //        a proper description.
     public abstract boolean isLeaf();
 
     protected Set<QName> getQNameIdentifiers() {
@@ -74,10 +82,13 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
      * @param child Child path argument
      * @return A child node, or null if not found
      */
+    // FIXME: document PathArgument type mismatch
     public abstract @Nullable DataSchemaContextNode<?> getChild(PathArgument child);
 
+    // FIXME: document child == null
     public abstract @Nullable DataSchemaContextNode<?> getChild(QName child);
 
+    // FIXME: final
     public @Nullable DataSchemaNode getDataSchemaNode() {
         return dataSchemaNode;
     }
@@ -160,6 +171,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         return fromDataSchemaNode(child);
     }
 
+    // FIXME: hide this method: the proper approach is to go through DataSchemaContextTree
     public static @Nullable DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
         if (potential instanceof ContainerLike) {
             return new ContainerContextNode((ContainerLike) potential);
@@ -176,6 +188,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         } else if (potential instanceof AnyxmlSchemaNode) {
             return new AnyXmlContextNode((AnyxmlSchemaNode) potential);
         }
+        // FIXME: not handled: throw an exception?
         return null;
     }
 
@@ -197,6 +210,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         return new UnorderedLeafListMixinContextNode(potential);
     }
 
+    // FIXME: remove this method
     public static DataSchemaContextNode<?> from(final EffectiveModelContext ctx) {
         return new ContainerContextNode(ctx);
     }
