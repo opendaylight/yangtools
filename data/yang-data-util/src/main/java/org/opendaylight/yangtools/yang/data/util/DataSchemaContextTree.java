@@ -24,19 +24,19 @@ import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextPr
  * @author Robert Varga
  */
 public final class DataSchemaContextTree extends AbstractEffectiveModelContextProvider {
-    private static final LoadingCache<EffectiveModelContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
-            .weakKeys().weakValues().build(new CacheLoader<EffectiveModelContext, DataSchemaContextTree>() {
-                @Override
-                public DataSchemaContextTree load(final EffectiveModelContext key) {
-                    return new DataSchemaContextTree(key);
-                }
-            });
+    private static final LoadingCache<EffectiveModelContext, @NonNull DataSchemaContextTree> TREES =
+        CacheBuilder.newBuilder().weakKeys().weakValues().build(new CacheLoader<>() {
+            @Override
+            public DataSchemaContextTree load(final EffectiveModelContext key) {
+                return new DataSchemaContextTree(key);
+            }
+        });
 
-    private final DataSchemaContextNode<?> root;
+    private final @NonNull ContainerContextNode root;
 
     private DataSchemaContextTree(final EffectiveModelContext ctx) {
         super(ctx);
-        root = DataSchemaContextNode.from(ctx);
+        root = new ContainerContextNode(ctx);
     }
 
     public static @NonNull DataSchemaContextTree from(final @NonNull EffectiveModelContext ctx) {
@@ -51,7 +51,7 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
      * @throws NullPointerException if {@code path} is null
      */
     public @NonNull Optional<@NonNull DataSchemaContextNode<?>> findChild(final @NonNull YangInstanceIdentifier path) {
-        return getRoot().findChild(path);
+        return root.findChild(path);
     }
 
     public @NonNull DataSchemaContextNode<?> getRoot() {

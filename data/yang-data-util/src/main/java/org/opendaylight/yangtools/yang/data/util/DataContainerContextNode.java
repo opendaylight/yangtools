@@ -7,27 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import java.util.Map;
+import static java.util.Objects.requireNonNull;
+
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-class DataContainerContextNode<T extends PathArgument> extends
-        AbstractInteriorContextNode<T> {
+abstract class DataContainerContextNode<T extends PathArgument> extends AbstractInteriorContextNode<T> {
+    private final ConcurrentMap<PathArgument, DataSchemaContextNode<?>> byArg = new ConcurrentHashMap<>();
+    private final ConcurrentMap<QName, DataSchemaContextNode<?>> byQName = new ConcurrentHashMap<>();
+    private final DataNodeContainer container;
 
-    private final DataNodeContainer schema;
-    private final Map<QName, DataSchemaContextNode<?>> byQName;
-    private final Map<PathArgument, DataSchemaContextNode<?>> byArg;
-
-    protected DataContainerContextNode(final T identifier, final DataNodeContainer schema,
-            final DataSchemaNode node) {
-        super(identifier, node);
-        this.schema = schema;
-        this.byArg = new ConcurrentHashMap<>();
-        this.byQName = new ConcurrentHashMap<>();
+    DataContainerContextNode(final T identifier, final DataNodeContainer container, final DataSchemaNode schema) {
+        super(identifier, schema);
+        this.container = requireNonNull(container);
     }
 
     @Override
@@ -46,16 +43,16 @@ class DataContainerContextNode<T extends PathArgument> extends
         if (potential != null) {
             return potential;
         }
-        potential = fromLocalSchemaAndQName(schema, child);
+        potential = fromLocalSchemaAndQName(container, child);
         return register(potential);
     }
 
     private DataSchemaContextNode<?> fromLocalSchema(final PathArgument child) {
         if (child instanceof AugmentationIdentifier) {
-            return fromSchemaAndQNameChecked(schema, ((AugmentationIdentifier) child).getPossibleChildNames()
+            return fromSchemaAndQNameChecked(container, ((AugmentationIdentifier) child).getPossibleChildNames()
                     .iterator().next());
         }
-        return fromSchemaAndQNameChecked(schema, child.getNodeType());
+        return fromSchemaAndQNameChecked(container, child.getNodeType());
     }
 
     protected DataSchemaContextNode<?> fromLocalSchemaAndQName(final DataNodeContainer schema2, final QName child) {
@@ -64,6 +61,7 @@ class DataContainerContextNode<T extends PathArgument> extends
 
     private DataSchemaContextNode<?> register(final DataSchemaContextNode<?> potential) {
         if (potential != null) {
+            // FIXME: use putIfAbsent() to make sure we do not perform accidental overrwrites
             byArg.put(potential.getIdentifier(), potential);
             for (QName qname : potential.getQNameIdentifiers()) {
                 byQName.put(qname, potential);
