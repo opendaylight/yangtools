@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 final class LeafContextNode extends AbstractLeafNodeContext<NodeIdentifier, LeafSchemaNode> {
-    LeafContextNode(final LeafSchemaNode potential) {
-        super(NodeIdentifier.create(potential.getQName()), potential);
+    LeafContextNode(final LeafSchemaNode schema) {
+        super(NodeIdentifier.create(schema.getQName()), schema);
     }
 }

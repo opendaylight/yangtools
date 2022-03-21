@@ -15,12 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
-
+final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
     private final ImmutableMap<QName, DataSchemaContextNode<?>> byQName;
     private final ImmutableMap<PathArgument, DataSchemaContextNode<?>> byArg;
 
-    protected ChoiceNodeContextNode(final ChoiceSchemaNode schema) {
+    ChoiceNodeContextNode(final ChoiceSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
         ImmutableMap.Builder<QName, DataSchemaContextNode<?>> byQNameBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<PathArgument, DataSchemaContextNode<?>> byArgBuilder = ImmutableMap.builder();
