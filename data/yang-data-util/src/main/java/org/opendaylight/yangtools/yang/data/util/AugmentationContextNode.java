@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationContextNode extends DataContainerContextNode<AugmentationIdentifier> {
-    AugmentationContextNode(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
-        super(augmentationIdentifierFrom(augmentation), EffectiveAugmentationSchema.create(augmentation, schema), null);
+    AugmentationContextNode(final AugmentationSchemaNode augmentation, final DataNodeContainer target) {
+        super(augmentationIdentifierFrom(augmentation), EffectiveAugmentationSchema.create(augmentation, target), null);
     }
 
     @Override
@@ -33,7 +33,7 @@ final class AugmentationContextNode extends DataContainerContextNode<Augmentatio
         if (schema instanceof DataSchemaNode && result.isAugmenting()) {
             return fromAugmentation(schema, (AugmentationTarget) schema, result);
         }
-        return fromDataSchemaNode(result);
+        return lenientOf(result);
     }
 
     @Override

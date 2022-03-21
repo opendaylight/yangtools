@@ -10,16 +10,13 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractInteriorContextNode<T extends PathArgument> extends
-        DataSchemaContextNode<T> {
-
-    protected AbstractInteriorContextNode(final T identifier, final DataSchemaNode schema) {
+abstract class AbstractInteriorContextNode<T extends PathArgument> extends DataSchemaContextNode<T> {
+    AbstractInteriorContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier, schema);
     }
 
     @Override
-    public boolean isLeaf() {
+    public final boolean isLeaf() {
         return false;
     }
-
 }

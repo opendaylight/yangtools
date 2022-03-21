@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,25 +42,33 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  * @param <T> Path Argument type
  */
 public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractSimpleIdentifiable<T> {
+    // FIXME: this can be null only for AugmentationContextNode and in that case the interior part is handled by a
+    //        separate field in DataContainerContextNode. We need to re-examine our base interface class hierarchy
+    //        so that the underlying (effective in augment's case) SchemaNode is always available.
     private final DataSchemaNode dataSchemaNode;
 
-    protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
+    DataSchemaContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier);
-        if (schema instanceof DataSchemaNode) {
-            this.dataSchemaNode = (DataSchemaNode) schema;
-        } else {
-            this.dataSchemaNode = null;
-        }
+        this.dataSchemaNode = schema;
     }
 
+    @Deprecated(forRemoval = true, since = "8.0.2")
+    protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
+        this(identifier, schema instanceof DataSchemaNode ? (DataSchemaNode) schema : null);
+    }
+
+    // FIXME: document this method
     public boolean isMixin() {
         return false;
     }
 
+    // FIXME: document this method
     public boolean isKeyedEntry() {
         return false;
     }
 
+    // FIXME: this is counter-intuitive: anydata/anyxml are considered non-leaf. This method needs a better name and
+    //        a proper description.
     public abstract boolean isLeaf();
 
     protected Set<QName> getQNameIdentifiers() {
@@ -74,10 +81,13 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
      * @param child Child path argument
      * @return A child node, or null if not found
      */
+    // FIXME: document PathArgument type mismatch
     public abstract @Nullable DataSchemaContextNode<?> getChild(PathArgument child);
 
+    // FIXME: document child == null
     public abstract @Nullable DataSchemaContextNode<?> getChild(QName child);
 
+    // FIXME: final
     public @Nullable DataSchemaNode getDataSchemaNode() {
         return dataSchemaNode;
     }
@@ -113,7 +123,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         if (result != null && schema instanceof DataSchemaNode && result.isAugmenting()) {
             return fromAugmentation(schema, (AugmentationTarget) schema, result);
         }
-        return fromDataSchemaNode(result);
+        return lenientOf(result);
     }
 
     // FIXME: this looks like it should be a Predicate on a stream with findFirst()
@@ -141,14 +151,53 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
             .collect(Collectors.toSet()));
     }
 
+    static @NonNull DataSchemaContextNode<?> of(final @NonNull DataSchemaNode schema) {
+        if (schema instanceof ContainerLike) {
+            return new ContainerContextNode((ContainerLike) schema);
+        } else if (schema instanceof ListSchemaNode) {
+            return fromListSchemaNode((ListSchemaNode) schema);
+        } else if (schema instanceof LeafSchemaNode) {
+            return new LeafContextNode((LeafSchemaNode) schema);
+        } else if (schema instanceof ChoiceSchemaNode) {
+            return new ChoiceNodeContextNode((ChoiceSchemaNode) schema);
+        } else if (schema instanceof LeafListSchemaNode) {
+            return fromLeafListSchemaNode((LeafListSchemaNode) schema);
+        } else if (schema instanceof AnydataSchemaNode) {
+            return new AnydataContextNode((AnydataSchemaNode) schema);
+        } else if (schema instanceof AnyxmlSchemaNode) {
+            return new AnyXmlContextNode((AnyxmlSchemaNode) schema);
+        } else {
+            throw new IllegalStateException("Unhandled schema " + schema);
+        }
+    }
+
+    // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
+    static @Nullable DataSchemaContextNode<?> lenientOf(final @Nullable DataSchemaNode schema) {
+        if (schema instanceof ContainerLike) {
+            return new ContainerContextNode((ContainerLike) schema);
+        } else if (schema instanceof ListSchemaNode) {
+            return fromListSchemaNode((ListSchemaNode) schema);
+        } else if (schema instanceof LeafSchemaNode) {
+            return new LeafContextNode((LeafSchemaNode) schema);
+        } else if (schema instanceof ChoiceSchemaNode) {
+            return new ChoiceNodeContextNode((ChoiceSchemaNode) schema);
+        } else if (schema instanceof LeafListSchemaNode) {
+            return fromLeafListSchemaNode((LeafListSchemaNode) schema);
+        } else if (schema instanceof AnydataSchemaNode) {
+            return new AnydataContextNode((AnydataSchemaNode) schema);
+        } else if (schema instanceof AnyxmlSchemaNode) {
+            return new AnyXmlContextNode((AnyxmlSchemaNode) schema);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Returns a DataContextNodeOperation for provided child node
      *
      * <p>
-     * If supplied child is added by Augmentation this operation returns a
-     * DataContextNodeOperation for augmentation, otherwise returns a
-     * DataContextNodeOperation for child as call for
-     * {@link #fromDataSchemaNode(DataSchemaNode)}.
+     * If supplied child is added by Augmentation this operation returns a DataSchemaContextNode for augmentation,
+     * otherwise returns a DataSchemaContextNode for child as call for {@link #lenientOf(DataSchemaNode)}.
      */
     static @Nullable DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
@@ -157,47 +206,49 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
                 return new AugmentationContextNode(aug, parent);
             }
         }
-        return fromDataSchemaNode(child);
+        return lenientOf(child);
     }
 
+    /**
+     * Get a {@link DataSchemaContextNode} for a particular {@link DataSchemaNode}.
+     *
+     * @param potential Backing DataSchemaNode
+     * @return A {@link DataSchemaContextNode}, or null if the input is {@code null} or of unhandled type
+     */
+    @Deprecated(forRemoval = true, since = "8.0.2")
     public static @Nullable DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
-        if (potential instanceof ContainerLike) {
-            return new ContainerContextNode((ContainerLike) potential);
-        } else if (potential instanceof ListSchemaNode) {
-            return fromListSchemaNode((ListSchemaNode) potential);
-        } else if (potential instanceof LeafSchemaNode) {
-            return new LeafContextNode((LeafSchemaNode) potential);
-        } else if (potential instanceof ChoiceSchemaNode) {
-            return new ChoiceNodeContextNode((ChoiceSchemaNode) potential);
-        } else if (potential instanceof LeafListSchemaNode) {
-            return fromLeafListSchemaNode((LeafListSchemaNode) potential);
-        } else if (potential instanceof AnydataSchemaNode) {
-            return new AnydataContextNode((AnydataSchemaNode) potential);
-        } else if (potential instanceof AnyxmlSchemaNode) {
-            return new AnyXmlContextNode((AnyxmlSchemaNode) potential);
-        }
-        return null;
+        return lenientOf(potential);
     }
 
-    private static DataSchemaContextNode<?> fromListSchemaNode(final ListSchemaNode potential) {
-        List<QName> keyDefinition = potential.getKeyDefinition();
-        if (keyDefinition == null || keyDefinition.isEmpty()) {
+    private static @NonNull DataSchemaContextNode<?> fromListSchemaNode(final ListSchemaNode potential) {
+        var keyDefinition = potential.getKeyDefinition();
+        if (keyDefinition.isEmpty()) {
             return new UnkeyedListMixinContextNode(potential);
-        }
-        if (potential.isUserOrdered()) {
+        } else if (potential.isUserOrdered()) {
             return new OrderedMapMixinContextNode(potential);
+        } else {
+            return new UnorderedMapMixinContextNode(potential);
         }
-        return new UnorderedMapMixinContextNode(potential);
     }
 
-    private static DataSchemaContextNode<?> fromLeafListSchemaNode(final LeafListSchemaNode potential) {
+    private static @NonNull DataSchemaContextNode<?> fromLeafListSchemaNode(final LeafListSchemaNode potential) {
         if (potential.isUserOrdered()) {
             return new OrderedLeafListMixinContextNode(potential);
         }
         return new UnorderedLeafListMixinContextNode(potential);
     }
 
-    public static DataSchemaContextNode<?> from(final EffectiveModelContext ctx) {
+    /**
+     * Return a DataSchemaContextNode corresponding to specified {@link EffectiveModelContext}.
+     *
+     * @param ctx EffectiveModelContext
+     * @return A DataSchemaContextNode
+     * @throws NullPointerException if {@code ctx} is null
+     * @deprecated Use {@link DataSchemaContextTree#from(EffectiveModelContext)} and
+     *             {@link DataSchemaContextTree#getRoot()} instead.
+     */
+    @Deprecated(forRemoval = true, since = "8.0.2")
+    public static @NonNull DataSchemaContextNode<?> from(final EffectiveModelContext ctx) {
         return new ContainerContextNode(ctx);
     }
 }
