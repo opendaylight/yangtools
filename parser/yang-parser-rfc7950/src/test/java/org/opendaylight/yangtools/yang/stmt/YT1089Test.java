@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
-public class YT1089Test {
+public class YT1089Test extends AbstractYangTest {
     @Test
-    public void testPlusLexing() throws Exception {
-        final EffectiveModelContext ctx = StmtTestUtils.parseYangSource("/bugs/YT1089/foo.yang");
+    public void testPlusLexing() {
+        final EffectiveModelContext ctx = assertEffectiveModel("/bugs/YT1089/foo.yang");
         assertEquals(1, ctx.getModuleStatements().size());
 
         final Iterator<? extends EffectiveStatement<?, ?>> it =
