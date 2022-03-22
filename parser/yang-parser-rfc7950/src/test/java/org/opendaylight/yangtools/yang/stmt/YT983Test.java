@@ -13,14 +13,13 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class YT983Test {
+public class YT983Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "2019-04-30", "foo");
 
     @Test
-    public void testAugmentationConfig() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSource("/bugs/YT983/foo.yang");
+    public void testAugmentationConfig() {
+        final var context = assertEffectiveModel("/bugs/YT983/foo.yang");
         final DataSchemaNode foo = context.findDataChildByName(FOO).get();
         assertTrue(foo instanceof LeafSchemaNode);
     }

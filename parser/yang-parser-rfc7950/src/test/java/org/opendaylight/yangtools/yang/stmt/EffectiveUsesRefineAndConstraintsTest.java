@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class EffectiveUsesRefineAndConstraintsTest {
+public class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
     @Test
     public void refineTest() throws Exception {
-        final EffectiveModelContext result = StmtTestUtils.parseYangSource("/stmt-test/uses/refine-test.yang");
+        final EffectiveModelContext result = assertEffectiveModel("/stmt-test/uses/refine-test.yang");
 
         final ModuleEffectiveStatement module = Iterables.getOnlyElement(result.getModuleStatements().values());
         final QNameModule qnameModule = module.localQNameModule();
