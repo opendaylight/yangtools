@@ -7,29 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
-public class YT893Test {
-    @Test(expected = SomeModifiersUnresolvedException.class)
-    public void testCR() throws Exception {
-        StmtTestUtils.parseYangSource("/bugs/YT893/cr.yang");
+public class YT893Test extends AbstractYangTest {
+    @Test
+    public void testCR() {
+        assertSourceException(startsWith("Failed to parse node"), "/bugs/YT893/cr.yang");
     }
 
     @Test
-    public void testCRLF() throws Exception {
-        assertNotNull(StmtTestUtils.parseYangSource("/bugs/YT893/crlf.yang"));
+    public void testCRLF() {
+        assertEffectiveModel("/bugs/YT893/crlf.yang");
     }
 
     @Test
-    public void testHTAB() throws Exception {
-        assertNotNull(StmtTestUtils.parseYangSource("/bugs/YT893/ht.yang"));
+    public void testHTAB() {
+        assertEffectiveModel("/bugs/YT893/ht.yang");
     }
 
     @Test
-    public void testLF() throws Exception {
-        assertNotNull(StmtTestUtils.parseYangSource("/bugs/YT893/lf.yang"));
+    public void testLF() {
+        assertEffectiveModel("/bugs/YT893/lf.yang");
     }
 }

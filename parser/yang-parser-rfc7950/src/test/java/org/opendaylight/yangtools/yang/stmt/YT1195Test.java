@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class YT1195Test {
+public class YT1195Test extends AbstractYangTest {
     @Test
-    public void testKeyStatementReuse() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1195/key.yang")
+    public void testKeyStatementReuse() {
+        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1195/key.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final ListEffectiveStatement grpFoo = module

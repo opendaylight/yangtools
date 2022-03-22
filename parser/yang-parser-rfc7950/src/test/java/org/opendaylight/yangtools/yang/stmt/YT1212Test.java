@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
-public class YT1212Test {
+public class YT1212Test extends AbstractYangTest {
     @Test
-    public void testActiontatementReuse() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/anyxml.yang")
+    public void testActiontatementReuse() {
+        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/anyxml.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final AnyxmlEffectiveStatement grpFoo = module
@@ -44,8 +44,8 @@ public class YT1212Test {
     }
 
     @Test
-    public void testLeafStatementReuse() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/leaf.yang")
+    public void testLeafStatementReuse() {
+        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/leaf.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final LeafEffectiveStatement grpFoo = module
@@ -63,8 +63,8 @@ public class YT1212Test {
     }
 
     @Test
-    public void testContainerStatementReuse() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/container.yang")
+    public void testContainerStatementReuse() {
+        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/container.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif =
