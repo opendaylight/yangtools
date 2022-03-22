@@ -8,92 +8,58 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.startsWith;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6885Test {
+public class Bug6885Test extends AbstractYangTest {
 
     @Test
-    public void validYang10Test() throws Exception {
+    public void validYang10Test() {
         // Yang 1.0 allows "if-feature" and "when" on list keys
-        final SchemaContext schemaContext =
-                StmtTestUtils.parseYangSource("/rfc7950/list-keys-test/correct-list-keys-test.yang");
-        assertNotNull(schemaContext);
+        assertEffectiveModel("/rfc7950/list-keys-test/correct-list-keys-test.yang");
     }
 
     @Test
-    public void invalidListLeafKeyTest1() throws Exception {
+    public void invalidListLeafKeyTest1() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)when statement is not allowed in "
                 + "(incorrect-list-keys-test?revision=2017-02-06)a2 leaf statement which is specified as a list key.";
-        testForWhen("/rfc7950/list-keys-test/incorrect-list-keys-test.yang", exceptionMessage);
+        assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test.yang");
     }
 
     @Test
-    public void invalidListLeafKeyTest2() throws Exception {
+    public void invalidListLeafKeyTest2() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
                 + "(incorrect-list-keys-test1?revision=2017-02-06)b leaf statement which is specified as a list key.";
-        testForIfFeature("/rfc7950/list-keys-test/incorrect-list-keys-test1.yang", exceptionMessage);
+        assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test1.yang");
     }
 
     @Test
-    public void invalidListUsesLeafKeyTest() throws Exception {
+    public void invalidListUsesLeafKeyTest() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
                 + "(incorrect-list-keys-test2?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
-        testForIfFeature("/rfc7950/list-keys-test/incorrect-list-keys-test2.yang", exceptionMessage);
+        assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test2.yang");
     }
 
     @Test
-    public void invalidListUsesLeafKeyTest1() throws Exception {
+    public void invalidListUsesLeafKeyTest1() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)when statement is not allowed in "
                 + "(incorrect-list-keys-test3?revision=2017-02-06)a2 leaf statement which is specified as a list key.";
-        testForWhen("/rfc7950/list-keys-test/incorrect-list-keys-test3.yang", exceptionMessage);
+        assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test3.yang");
     }
 
     @Test
-    public void invalidListUsesLeafKeyTest2() throws Exception {
+    public void invalidListUsesLeafKeyTest2() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
                 + "(incorrect-list-keys-test4?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
-        testForIfFeature("/rfc7950/list-keys-test/incorrect-list-keys-test4.yang", exceptionMessage);
+        assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test4.yang");
     }
 
     @Test
-    public void invalidListUsesRefineLeafKeyTest() throws Exception {
+    public void invalidListUsesRefineLeafKeyTest() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
                 + "(incorrect-list-keys-test5?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
-        testForIfFeature("/rfc7950/list-keys-test/incorrect-list-keys-test5.yang", exceptionMessage);
-    }
-
-    private static void testForIfFeature(final String yangSrcPath, final String exMsg) throws URISyntaxException,
-            SourceException, IOException, YangSyntaxErrorException {
-        try {
-            StmtTestUtils.parseYangSource(yangSrcPath);
-            fail("Test must fail: IF-FEATURE substatement is not allowed in LIST keys");
-        } catch (final ReactorException e) {
-            final Throwable cause = e.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith(exMsg));
-        }
-    }
-
-    private static void testForWhen(final String yangSrcPath, final String exMsg) throws URISyntaxException,
-            SourceException, IOException, YangSyntaxErrorException {
-        try {
-            StmtTestUtils.parseYangSource(yangSrcPath);
-            fail("Test must fail: WHEN substatement is not allowed in LIST keys");
-        } catch (final ReactorException e) {
-            final Throwable cause = e.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith(exMsg));
-        }
+        assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test5.yang");
     }
 }

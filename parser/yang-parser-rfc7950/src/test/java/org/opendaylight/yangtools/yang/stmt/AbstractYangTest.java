@@ -17,6 +17,8 @@ import com.google.common.base.Throwables;
 import org.eclipse.jdt.annotation.NonNull;
 import org.hamcrest.Matcher;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.ri.type.InvalidBitDefinitionException;
+import org.opendaylight.yangtools.yang.model.ri.type.InvalidEnumDefinitionException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -52,7 +54,7 @@ public abstract class AbstractYangTest {
         return ret;
     }
 
-    public static <E extends SourceException> @NonNull E assertException(final Class<E> cause,
+    public static <E extends RuntimeException> @NonNull E assertException(final Class<E> cause,
             final String... yangResourceName) {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(yangResourceName));
@@ -62,6 +64,13 @@ public abstract class AbstractYangTest {
     }
 
     public static <E extends SourceException> @NonNull E assertException(final Class<E> cause,
+            final Matcher<String> matcher, final String... yangResourceName) {
+        final var ret = assertException(cause, yangResourceName);
+        assertThat(ret.getMessage(), matcher);
+        return ret;
+    }
+
+    public static <E extends IllegalArgumentException> @NonNull E assertArgumentException(final Class<E> cause,
             final Matcher<String> matcher, final String... yangResourceName) {
         final var ret = assertException(cause, yangResourceName);
         assertThat(ret.getMessage(), matcher);
@@ -102,6 +111,16 @@ public abstract class AbstractYangTest {
     public static @NonNull InvalidSubstatementException assertInvalidSubstatementExceptionDir(
             final String yangResourceName, final Matcher<String> matcher) {
         return assertExceptionDir(yangResourceName, InvalidSubstatementException.class, matcher);
+    }
+
+    public static @NonNull InvalidEnumDefinitionException assertInvalidEnumDefinitionException(
+            final Matcher<String> matcher, final String... yangResourceName) {
+        return assertArgumentException(InvalidEnumDefinitionException.class, matcher, yangResourceName);
+    }
+
+    public static @NonNull InvalidBitDefinitionException assertInvalidBitDefinitionException(
+            final Matcher<String> matcher, final String... yangResourceName) {
+        return assertArgumentException(InvalidBitDefinitionException.class, matcher, yangResourceName);
     }
 
     public static @NonNull SourceException assertSourceException(final Matcher<String> matcher,

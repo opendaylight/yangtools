@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class YT1312Test {
+public class YT1312Test extends AbstractYangTest {
     @Test
-    public void testRefineDefault() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1312/foo.yang")
+    public void testRefineDefault() {
+        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1312/foo.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final LeafListEffectiveStatement grpFoo = module
