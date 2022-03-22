@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -14,30 +15,21 @@ import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
-public class YangParserIdentityTest {
+public class YangParserIdentityTest extends AbstractYangTest {
 
     // base identity name equals identity name
-    @Test(expected = SomeModifiersUnresolvedException.class)
-    public void testParsingIdentityTestModule() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/identity/identitytest.yang");
-        } catch (SomeModifiersUnresolvedException e) {
-            StmtTestUtils.log(e, "      ");
-            throw e;
-        }
+    @Test
+    public void testParsingIdentityTestModule() {
+        assertInferenceException(startsWith("Unable to resolve identity (urn:test.identitytest?revision="
+                + "2014-09-17)test and base identity"), "/identity/identitytest.yang");
     }
 
     // same module prefixed base identity name equals identity name
-    @Test(expected = SomeModifiersUnresolvedException.class)
-    public void testParsingPrefixIdentityTestModule() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/identity/prefixidentitytest.yang");
-        } catch (SomeModifiersUnresolvedException e) {
-            StmtTestUtils.log(e, "      ");
-            throw e;
-        }
+    @Test
+    public void testParsingPrefixIdentityTestModule() {
+        assertInferenceException(startsWith("Unable to resolve identity (urn:test.prefixidentitytest?revision="
+                + "2014-09-24)prefixtest and base identity"), "/identity/prefixidentitytest.yang");
     }
 
     // imported module prefixed base identity name equals identity name, but
