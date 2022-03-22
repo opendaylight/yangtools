@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class YT826Test {
+public class YT826Test extends AbstractYangTest {
     @Test
-    public void testWhenExpressionWhitespace() throws Exception {
-        StmtTestUtils.parseYangSource("/bugs/yangtools826/example.yang");
+    public void testWhenExpressionWhitespace() {
+        assertEffectiveModel("/bugs/yangtools826/example.yang");
     }
 }
