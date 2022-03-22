@@ -18,13 +18,13 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class YT911Test {
+public class YT911Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "2018-10-22", "foo");
     private static final QName BAR = QName.create(FOO, "bar");
 
     @Test
-    public void testAugmentationConfig() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSource("/bugs/YT911/foo.yang");
+    public void testAugmentationConfig() {
+        final SchemaContext context = assertEffectiveModel("/bugs/YT911/foo.yang");
         final DataSchemaNode foo = context.findDataChildByName(FOO).get();
         assertEquals(Optional.of(Boolean.FALSE), foo.effectiveConfig());
         assertTrue(foo instanceof ContainerSchemaNode);

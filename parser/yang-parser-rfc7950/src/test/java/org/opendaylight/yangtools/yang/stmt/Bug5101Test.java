@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class Bug5101Test {
+public class Bug5101Test extends AbstractYangTest {
     @Test
     public void test() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/bug5101.yang")
+        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/bug5101.yang")
             .getModuleStatement(QName.create("foo", "2016-01-29", "foo"));
 
         final ContainerEffectiveStatement myContainerInGrouping = module

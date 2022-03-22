@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public class OrderingTest extends AbstractModelTest {
     @Test
-    public void testOrderingTypedef() throws Exception {
+    public void testOrderingTypedef() {
         final Collection<? extends TypeDefinition<?>> typedefs = BAR.getTypeDefinitions();
         final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
             "string-ext4", "multiple-pattern-string", "my-decimal-type", "my-union", "my-union-ext", "nested-union2"
@@ -39,7 +39,7 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingChildNodes() throws Exception {
+    public void testOrderingChildNodes() {
         AugmentationSchemaNode augment1 = null;
         for (final AugmentationSchemaNode as : FOO.getAugmentations()) {
             if (as.getChildNodes().size() == 5) {
@@ -62,7 +62,7 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes1() throws Exception {
+    public void testOrderingNestedChildNodes1() {
         final Collection<? extends DataSchemaNode> childNodes = FOO.getChildNodes();
         final String[] expectedOrder = { "int32-leaf", "string-leaf", "multiple-pattern-string-leaf",
             "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
@@ -80,7 +80,7 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes2() throws Exception {
+    public void testOrderingNestedChildNodes2() {
         final Collection<? extends GroupingDefinition> groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition target = groupings.iterator().next();
@@ -98,8 +98,8 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes3() throws Exception {
-        final Module justFoo = StmtTestUtils.parseYangSource("/ordering/foo.yang").getModules().iterator().next();
+    public void testOrderingNestedChildNodes3() {
+        final Module justFoo = assertEffectiveModel("/ordering/foo.yang").getModules().iterator().next();
         final ContainerSchemaNode x = (ContainerSchemaNode) justFoo
                 .getDataChildByName(QName.create(justFoo.getQNameModule(), "x"));
         final Collection<? extends DataSchemaNode> childNodes = x.getChildNodes();
