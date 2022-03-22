@@ -17,12 +17,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-public class YT1200Test {
+public class YT1200Test extends AbstractYangTest {
     private static final QName FOO = QName.create("urn:foo", "foo");
 
     @Test
-    public void testKeyParsing() throws Exception {
-        final DataSchemaNode foo = StmtTestUtils.parseYangSource("/bugs/YT1200/foo.yang").getDataChildByName(FOO);
+    public void testKeyParsing() {
+        final DataSchemaNode foo = assertEffectiveModel("/bugs/YT1200/foo.yang").getDataChildByName(FOO);
         assertThat(foo, instanceOf(ListSchemaNode.class));
         assertEquals(List.of(FOO, QName.create(FOO, "bar"), QName.create(FOO, "baz")),
             ((ListSchemaNode) foo).getKeyDefinition());

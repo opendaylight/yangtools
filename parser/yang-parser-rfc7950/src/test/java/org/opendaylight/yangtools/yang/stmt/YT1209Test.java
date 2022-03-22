@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 
-public class YT1209Test {
+public class YT1209Test extends AbstractYangTest {
     @Test
-    public void testWhenStatementReuse() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1209/when.yang")
+    public void testWhenStatementReuse() {
+        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1209/when.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final LeafEffectiveStatement grpFoo = module

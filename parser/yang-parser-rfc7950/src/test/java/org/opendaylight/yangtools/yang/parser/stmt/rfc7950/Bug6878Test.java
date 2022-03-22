@@ -15,36 +15,36 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6878Test {
+public class Bug6878Test extends AbstractYangTest {
 
     @Test
-    public void testParsingXPathWithYang11Functions() throws Exception {
+    public void testParsingXPathWithYang11Functions() {
         final String testLog = parseAndcaptureLog("/rfc7950/bug6878/foo.yang");
         assertFalse(testLog.contains("Could not find function: "));
     }
 
     @Test
-    public void shouldLogInvalidYang10XPath() throws Exception {
+    public void shouldLogInvalidYang10XPath() {
         final String testLog = parseAndcaptureLog("/rfc7950/bug6878/foo10-invalid.yang");
         assertThat(testLog, containsString("RFC7950 features required in RFC6020 context to parse expression "));
     }
 
     @Test
-    public void shouldLogInvalidYang10XPath2() throws Exception {
+    public void shouldLogInvalidYang10XPath2() {
         final String testLog = parseAndcaptureLog("/rfc7950/bug6878/foo10-invalid-2.yang");
         assertThat(testLog, containsString("RFC7950 features required in RFC6020 context to parse expression "));
     }
 
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
-    private static String parseAndcaptureLog(final String yangFile) throws Exception {
+    private static String parseAndcaptureLog(final String yangFile) {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         try (PrintStream out = new PrintStream(output, true, StandardCharsets.UTF_8)) {
             System.setOut(out);
-            StmtTestUtils.parseYangSource(yangFile);
+            assertEffectiveModel(yangFile);
         } finally {
             System.setOut(stdout);
         }
