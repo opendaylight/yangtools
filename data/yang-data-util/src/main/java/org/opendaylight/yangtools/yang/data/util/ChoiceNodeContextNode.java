@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
     private final ImmutableMap<QName, DataSchemaContextNode<?>> byQName;
@@ -45,5 +46,15 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
     @Override
     public DataSchemaContextNode<?> getChild(final QName child) {
         return byQName.get(child);
+    }
+
+    @Override
+    protected DataSchemaContextNode<?> enterChild(final QName qname, final SchemaInferenceStack stack) {
+        final var result = getChild(qname);
+        if (result != null) {
+            // FIXME: implement this
+            throw new UnsupportedOperationException();
+        }
+        return result;
     }
 }

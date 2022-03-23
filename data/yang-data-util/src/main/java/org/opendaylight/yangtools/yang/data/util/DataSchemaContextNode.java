@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Optional;
@@ -33,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Schema derived data providing necessary information for mapping between
@@ -52,6 +55,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         this.dataSchemaNode = schema;
     }
 
+    // FIXME: remove this constructor. Once we do, adjust 'enterChild' visibility to package-private
     @Deprecated(forRemoval = true, since = "8.0.2")
     protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
         this(identifier, schema instanceof DataSchemaNode ? (DataSchemaNode) schema : null);
@@ -86,6 +90,36 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
 
     // FIXME: document child == null
     public abstract @Nullable DataSchemaContextNode<?> getChild(QName child);
+
+    /**
+     * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
+     * specified {@code qname}, adjusting provided {@code stack} with inference steps corresponding to the transition to
+     * the returned node. The stack is expected to be correctly pointing at this node's schema, otherwise the results of
+     * this method are undefined.
+     *
+     * @param stack {@link SchemaInferenceStack} to update
+     * @param qname Child QName
+     * @return A DataSchemaContextNode on the path towards the specified child
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public final @Nullable DataSchemaContextNode<?> enterChild(final SchemaInferenceStack stack, final QName qname) {
+        return enterChild(requireNonNull(qname), requireNonNull(stack));
+    }
+
+    // FIXME: make this method package-private once the protected constructor is done
+    protected abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull QName qname,
+        @NonNull SchemaInferenceStack stack);
+
+    /**
+     * Push this node into specified {@link SchemaInferenceStack}.
+     *
+     * @param stack {@link SchemaInferenceStack}
+     */
+    // FIXME: make this method package-private once the protected constructor is done
+    protected void pushToStack(final @NonNull SchemaInferenceStack stack) {
+        // Accurate for most subclasses
+        stack.enterSchemaTree(getIdentifier().getNodeType());
+    }
 
     // FIXME: final
     public @Nullable DataSchemaNode getDataSchemaNode() {

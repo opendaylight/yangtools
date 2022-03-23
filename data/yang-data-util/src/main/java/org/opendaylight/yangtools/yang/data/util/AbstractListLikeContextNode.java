@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2022 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -12,24 +12,19 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-abstract class AbstractLeafContextNode<T extends PathArgument, S extends DataSchemaNode>
-        extends DataSchemaContextNode<T> {
-    AbstractLeafContextNode(final T identifier, final S schema) {
+/**
+ * An {@link AbstractMixinContextNode} which corresponding to a {@code list} or {@code leaf-list} node. NormalizedNode
+ * representation of these nodes is similar to JSON encoding and therefore we have two {@link DataSchemaContextNode}
+ * levels backed by a single {@link DataSchemaNode}.
+ */
+abstract class AbstractListLikeContextNode<T extends PathArgument> extends AbstractMixinContextNode<T> {
+    AbstractListLikeContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier, schema);
     }
 
     @Override
-    public final DataSchemaContextNode<?> getChild(final PathArgument child) {
-        return null;
-    }
-
-    @Override
-    public final DataSchemaContextNode<?> getChild(final QName child) {
-        return null;
-    }
-
-    @Override
     protected final DataSchemaContextNode<?> enterChild(final QName qname, final SchemaInferenceStack stack) {
-        return null;
+        // Stack is already pointing to the corresponding statement, now we are just working with the child
+        return getChild(qname);
     }
 }
