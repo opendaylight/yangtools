@@ -1,0 +1,11 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  choice one {
+    // RFC6020: not allowed
+    choice two;
+  }
+}
+
+    
