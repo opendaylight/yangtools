@@ -16,6 +16,24 @@
       "message": "```\n    @Test\n    public void testInvalidRestrictedBits2() {\n        final var ex \u003d assertException(SourceException.class, \"/rfc7950/bug6887/bar-invalid-2.yang\");\n        final var cause \u003d ex.getCause();\n        assertThat(cause, instanceOf(InvalidEnumDefinitionException.class));\n        assertThat(cause.getMessage(), startsWith(\"Enum \u0027magenta\u0027 is not a subset of its base enumeration type \"\n                + \"(foo?revision\u003d2017-02-02)my-base-enumeration-type.\"));\n    }\n```\n\nThis way we do not need to alter `AbstractYangTest` class with `RuntimeException` methods - we can stay with `SourceException` methods which should define everything we need when parsing sources.",
       "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9aa1838d_387dcd97",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/Bug6887Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-03-23T18:33:51Z",
+      "side": 1,
+      "message": "well, given that assertSourceException() returns the SourceException we have also the option of:\n\n    final var ex \u003d assertSourceException(message match for SourceException);\n    final var cause \u003d ex.getCause();\n    assertThat(cause, instanceOf(InvalidEnumDefinitionException.class))\n    // If that is really the case, not sure\n    assertEquals(ex.getMessage(), cause.getMessage());",
+      "parentUuid": "a8e49552_ad7b31c1",
+      "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
