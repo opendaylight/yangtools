@@ -20,10 +20,12 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public abstract class AbstractComplexJsonTest {
     static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
+    static final NodeIdentifier CONT_1_NODEID = new NodeIdentifier(CONT_1);
+
     private static final QName EMPTY_LEAF = QName.create(CONT_1, "empty");
 
     static final ContainerNode CONT1_WITH_EMPTYLEAF = Builders.containerBuilder()
-            .withNodeIdentifier(new NodeIdentifier(CONT_1))
+            .withNodeIdentifier(CONT_1_NODEID)
             .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.value()))
             .build();
 

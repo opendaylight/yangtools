@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -45,5 +46,10 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
     @Override
     public DataSchemaContextNode<?> getChild(final QName child) {
         return byQName.get(child);
+    }
+
+    @Override
+    protected Set<QName> getQNameIdentifiers() {
+        return byQName.keySet();
     }
 }
