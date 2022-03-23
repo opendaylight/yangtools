@@ -14,12 +14,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class UnorderedMapMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
+class UnorderedMapMixinContextNode extends AbstractListLikeContextNode<NodeIdentifier> {
     private final ListItemContextNode innerNode;
 
     UnorderedMapMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
-        innerNode = new ListItemContextNode(NodeIdentifierWithPredicates.of(list.getQName()), list);
+        innerNode = new ListItemContextNode(list);
     }
 
     @Override

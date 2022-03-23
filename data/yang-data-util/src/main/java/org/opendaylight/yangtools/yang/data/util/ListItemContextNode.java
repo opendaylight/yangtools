@@ -10,9 +10,10 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class ListItemContextNode extends DataContainerContextNode<NodeIdentifierWithPredicates> {
-    ListItemContextNode(final NodeIdentifierWithPredicates identifier, final ListSchemaNode schema) {
-        super(identifier, schema, schema);
+final class ListItemContextNode extends AbstractListItemContextNode<NodeIdentifierWithPredicates> {
+    ListItemContextNode(final ListSchemaNode schema) {
+        // FIXME: this is wrong: we have no predicates at all!
+        super(NodeIdentifierWithPredicates.of(schema.getQName()), schema, schema);
     }
 
     @Override

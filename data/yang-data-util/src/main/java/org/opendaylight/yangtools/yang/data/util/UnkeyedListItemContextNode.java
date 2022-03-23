@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnkeyedListItemContextNode extends DataContainerContextNode<NodeIdentifier> {
+final class UnkeyedListItemContextNode extends AbstractListItemContextNode<NodeIdentifier> {
     UnkeyedListItemContextNode(final ListSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }

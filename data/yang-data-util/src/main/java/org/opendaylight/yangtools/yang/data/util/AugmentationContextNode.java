@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class AugmentationContextNode extends DataContainerContextNode<AugmentationIdentifier> {
     AugmentationContextNode(final AugmentationSchemaNode augmentation, final DataNodeContainer target) {
@@ -39,5 +40,10 @@ final class AugmentationContextNode extends DataContainerContextNode<Augmentatio
     @Override
     protected Set<QName> getQNameIdentifiers() {
         return getIdentifier().getPossibleChildNames();
+    }
+
+    @Override
+    protected void pushToStack(final SchemaInferenceStack stack) {
+        // No-op
     }
 }

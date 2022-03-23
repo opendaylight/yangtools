@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 abstract class DataContainerContextNode<T extends PathArgument> extends AbstractInteriorContextNode<T> {
     private final ConcurrentMap<PathArgument, DataSchemaContextNode<?>> byArg = new ConcurrentHashMap<>();
@@ -47,6 +48,15 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
         return register(potential);
     }
 
+    @Override
+    protected final DataSchemaContextNode<?> enterChild(final QName qname, final SchemaInferenceStack stack) {
+        final var result = getChild(qname);
+        if (result != null) {
+            result.pushToStack(stack);
+        }
+        return result;
+    }
+
     private DataSchemaContextNode<?> fromLocalSchema(final PathArgument child) {
         if (child instanceof AugmentationIdentifier) {
             return fromSchemaAndQNameChecked(container, ((AugmentationIdentifier) child).getPossibleChildNames()
@@ -55,8 +65,8 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
         return fromSchemaAndQNameChecked(container, child.getNodeType());
     }
 
-    protected DataSchemaContextNode<?> fromLocalSchemaAndQName(final DataNodeContainer schema2, final QName child) {
-        return fromSchemaAndQNameChecked(schema2, child);
+    protected DataSchemaContextNode<?> fromLocalSchemaAndQName(final DataNodeContainer schema, final QName child) {
+        return fromSchemaAndQNameChecked(schema, child);
     }
 
     private DataSchemaContextNode<?> register(final DataSchemaContextNode<?> potential) {
@@ -69,5 +79,4 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
         }
         return potential;
     }
-
 }
