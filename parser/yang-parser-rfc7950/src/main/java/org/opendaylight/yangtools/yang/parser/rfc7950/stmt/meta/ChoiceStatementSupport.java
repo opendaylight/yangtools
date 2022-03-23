@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -34,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
@@ -64,11 +64,15 @@ public final class ChoiceStatementSupport
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.WHEN)
             .build();
+    private static final ImmutableSet<StatementDefinition> RFC6020_CASE_SHORTHANDS = ImmutableSet.of(
+            YangStmtMapping.ANYXML, YangStmtMapping.CONTAINER, YangStmtMapping.LEAF, YangStmtMapping.LIST,
+            YangStmtMapping.LEAF_LIST);
 
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CASE)
+            .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(YangStmtMapping.DEFAULT)
@@ -82,29 +86,33 @@ public final class ChoiceStatementSupport
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.WHEN)
             .build();
+    private static final ImmutableSet<StatementDefinition> RFC7950_CASE_SHORTHANDS = ImmutableSet.of(
+        YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML, YangStmtMapping.CHOICE, YangStmtMapping.CONTAINER,
+        YangStmtMapping.LEAF, YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST);
 
+    private final ImmutableSet<StatementDefinition> caseShorthands;
     private final CaseStatementSupport implicitCase;
 
     private ChoiceStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
-            final CaseStatementSupport implicitCase) {
+            final ImmutableSet<StatementDefinition> caseShorthands, final CaseStatementSupport implicitCase) {
         super(YangStmtMapping.CHOICE, instantiatedPolicy(), config, requireNonNull(validator));
+        this.caseShorthands = requireNonNull(caseShorthands);
         this.implicitCase = requireNonNull(implicitCase);
     }
 
     public static @NonNull ChoiceStatementSupport rfc6020Instance(final YangParserConfiguration config,
             final CaseStatementSupport implicitCase) {
-        return new ChoiceStatementSupport(config, RFC6020_VALIDATOR, implicitCase);
+        return new ChoiceStatementSupport(config, RFC6020_VALIDATOR, RFC6020_CASE_SHORTHANDS, implicitCase);
     }
 
     public static @NonNull ChoiceStatementSupport rfc7950Instance(final YangParserConfiguration config,
             final CaseStatementSupport implicitCase) {
-        return new ChoiceStatementSupport(config, RFC7950_VALIDATOR, implicitCase);
+        return new ChoiceStatementSupport(config, RFC7950_VALIDATOR, RFC7950_CASE_SHORTHANDS, implicitCase);
     }
 
     @Override
     public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        return YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef) ? Optional.of(implicitCase)
-            : Optional.empty();
+        return caseShorthands.contains(stmtDef) ? Optional.of(implicitCase) : Optional.empty();
     }
 
     @Override

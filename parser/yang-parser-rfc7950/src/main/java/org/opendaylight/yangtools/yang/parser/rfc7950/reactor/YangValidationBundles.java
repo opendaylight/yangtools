@@ -84,6 +84,7 @@ public final class YangValidationBundles {
     // FIXME: 7.0.0: consider hiding this list, as choice nodes are handling creation of implied shorthands themselves.
     //               This has implications on other members of this class, as they really seem like something which
     //               should live in corresponding StatementSupport classes.
+    @Deprecated(forRemoval = true, since = "7.0.15")
     public static final Set<StatementDefinition> SUPPORTED_CASE_SHORTHANDS = ImmutableSet.of(
         YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
         YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA);
