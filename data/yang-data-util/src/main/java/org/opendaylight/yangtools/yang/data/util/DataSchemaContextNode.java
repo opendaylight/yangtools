@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Optional;
@@ -19,6 +21,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -33,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Schema derived data providing necessary information for mapping between
@@ -41,6 +50,15 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  *
  * @param <T> Path Argument type
  */
+// FIXME: YANGTOOLS-1413: this really should be an interface, as there is a ton of non-trivial composition going on:
+//        - getDataSchemaNode() cannot return AugmentationSchemaNode, which is guarded by isMixinNode() and users should
+//          not be touching mixin details anyway
+//        - the idea of getIdentifier() is wrong -- if does the wrong thing for items of leaf-list and keyed list
+//          because those identifiers need a value. We also do not expect users to store the results in a Map, which
+//          defeats the idea of Identifiable
+//        - the generic argument is really an implementation detail and we really would like to also make dataSchemaNode
+//          (or rather: underlying SchemaNode) an argument. Both of these are not something users can influence and
+//          therefore we should not burden them with <?> on each reference to this class
 public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractSimpleIdentifiable<T> {
     // FIXME: this can be null only for AugmentationContextNode and in that case the interior part is handled by a
     //        separate field in DataContainerContextNode. We need to re-examine our base interface class hierarchy
@@ -52,12 +70,27 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         this.dataSchemaNode = schema;
     }
 
+    // FIXME: remove this constructor. Once we do, adjust 'enterChild' visibility to package-private
     @Deprecated(forRemoval = true, since = "8.0.2")
     protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
         this(identifier, schema instanceof DataSchemaNode ? (DataSchemaNode) schema : null);
     }
 
-    // FIXME: document this method
+    /**
+     * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
+     * one of
+     * <ul>
+     *   <li>{@link AugmentationNode} backed by an {@link AugmentationSchemaNode}, or</li>
+     *   <li>{@link ChoiceNode} backed by a {@link ChoiceSchemaNode}, or</li>
+     *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}, or</li>
+     *   <li>{@link MapNode} backed by a {@link ListSchemaNode} with a non-empty
+     *       {@link ListSchemaNode#getKeyDefinition()}, or</li>
+     *   <li>{@link UnkeyedListNode} backed by a {@link ListSchemaNode} with an empty
+     *       {@link ListSchemaNode#getKeyDefinition()}</li>
+     * </ul>
+     *
+     * @return {@code} false if this node corresponds to an XML element, or {@code true} if it is an encapsulation node.
+     */
     public boolean isMixin() {
         return false;
     }
@@ -84,8 +117,68 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     // FIXME: document PathArgument type mismatch
     public abstract @Nullable DataSchemaContextNode<?> getChild(PathArgument child);
 
+    /**
+     * Find a child node identifier by its {code data tree} {@link QName}. This method returns intermediate nodes
+     * significant from {@link YangInstanceIdentifier} hierarchy of {@link PathArgument}s. If the returned node
+     * indicates {@code true} via {@link #isMixin()}, it represents a {@link NormalizedNode} encapsulation which is
+     * not visible in RFC7950 XML encoding, and a further call to this method with the same {@code child} argument will
+     * provide the next step.
+     *
+     * @param child Child data tree QName
+     * @return A child node, or null if not found
+     */
     // FIXME: document child == null
     public abstract @Nullable DataSchemaContextNode<?> getChild(QName child);
+
+    /**
+     * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
+     * specified {@code data tree} {@link QName}, adjusting provided {@code stack} with inference steps corresponding to
+     * the transition to the returned node. The stack is expected to be correctly pointing at this node's schema,
+     * otherwise the results of this method are undefined.
+     *
+     * @param stack {@link SchemaInferenceStack} to update
+     * @param child Child QName
+     * @return A DataSchemaContextNode on the path towards the specified child
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public final @Nullable DataSchemaContextNode<?> enterChild(final SchemaInferenceStack stack, final QName child) {
+        return enterChild(requireNonNull(child), requireNonNull(stack));
+    }
+
+    // FIXME: make this method package-private once the protected constructor is gone
+    protected abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull QName child,
+        @NonNull SchemaInferenceStack stack);
+
+    /**
+     * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
+     * specified {@link PathArgument}, adjusting provided {@code stack} with inference steps corresponding to
+     * the transition to the returned node. The stack is expected to be correctly pointing at this node's schema,
+     * otherwise the results of this method are undefined.
+     *
+     * @param stack {@link SchemaInferenceStack} to update
+     * @param child Child path argument
+     * @return A DataSchemaContextNode for the specified child
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public final @Nullable DataSchemaContextNode<?> enterChild(final SchemaInferenceStack stack,
+            final PathArgument child) {
+        return enterChild(requireNonNull(child), requireNonNull(stack));
+    }
+
+    // FIXME: make this method package-private once the protected constructor is gone
+    protected abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull PathArgument child,
+        @NonNull SchemaInferenceStack stack);
+
+    /**
+     * Push this node into specified {@link SchemaInferenceStack}.
+     *
+     * @param stack {@link SchemaInferenceStack}
+     */
+    // FIXME: make this method package-private once the protected constructor is gone
+    protected void pushToStack(final @NonNull SchemaInferenceStack stack) {
+        // Accurate for most subclasses
+        stack.enterSchemaTree(getIdentifier().getNodeType());
+    }
 
     // FIXME: final
     public @Nullable DataSchemaNode getDataSchemaNode() {
