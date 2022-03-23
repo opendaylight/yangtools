@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
     private final ImmutableMap<QName, DataSchemaContextNode<?>> byQName;
@@ -27,6 +28,20 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
 
         for (CaseSchemaNode caze : schema.getCases()) {
             for (DataSchemaNode cazeChild : caze.getChildNodes()) {
+                // FIXME: this seems to be wrong, as it does not handle:
+                //
+                // choice one {
+                //   case two {
+                //     choice three {
+                //       leaf four {
+                //         type string;
+                //       }
+                //     }
+                //   }
+                // }
+                //
+                // The problem is that 'byQName' will point to 'choice three' -- hence the 'byQName' lookup is not
+                // correct from either 'schema tree' nor 'data tree' perspective.
                 DataSchemaContextNode<?> childOp = DataSchemaContextNode.of(cazeChild);
                 byArgBuilder.put(childOp.getIdentifier(), childOp);
                 for (QName qname : childOp.getQNameIdentifiers()) {
@@ -51,5 +66,15 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
     @Override
     protected Set<QName> getQNameIdentifiers() {
         return byQName.keySet();
+    }
+
+    @Override
+    protected DataSchemaContextNode<?> enterChild(final QName qname, final SchemaInferenceStack stack) {
+        final var result = getChild(qname);
+        if (result != null) {
+            // FIXME: implement this
+            throw new UnsupportedOperationException();
+        }
+        return result;
     }
 }
