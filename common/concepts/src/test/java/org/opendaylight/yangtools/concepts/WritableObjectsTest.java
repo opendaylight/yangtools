@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class WritableObjectsTest {
 

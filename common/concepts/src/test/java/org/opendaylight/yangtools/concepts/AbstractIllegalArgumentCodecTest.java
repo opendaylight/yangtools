@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Deprecated(since = "8.0.0", forRemoval = true)
 public class AbstractIllegalArgumentCodecTest {
