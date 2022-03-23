@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnkeyedListMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
+final class UnkeyedListMixinContextNode extends AbstractListLikeContextNode<NodeIdentifier> {
     private final UnkeyedListItemContextNode innerNode;
 
     UnkeyedListMixinContextNode(final ListSchemaNode list) {

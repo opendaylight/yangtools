@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-class UnorderedLeafListMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
+class UnorderedLeafListMixinContextNode extends AbstractListLikeContextNode<NodeIdentifier> {
     private final LeafListEntryContextNode innerOp;
 
     UnorderedLeafListMixinContextNode(final LeafListSchemaNode schema) {

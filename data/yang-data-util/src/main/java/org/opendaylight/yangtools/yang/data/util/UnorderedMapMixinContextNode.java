@@ -10,16 +10,15 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class UnorderedMapMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
+class UnorderedMapMixinContextNode extends AbstractListLikeContextNode<NodeIdentifier> {
     private final ListItemContextNode innerNode;
 
     UnorderedMapMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
-        innerNode = new ListItemContextNode(NodeIdentifierWithPredicates.of(list.getQName()), list);
+        innerNode = new ListItemContextNode(list);
     }
 
     @Override
