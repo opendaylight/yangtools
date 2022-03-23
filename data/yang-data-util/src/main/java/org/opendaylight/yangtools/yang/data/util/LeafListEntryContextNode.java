@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class LeafListEntryContextNode extends AbstractLeafNodeContext<NodeWithValue<?>, LeafListSchemaNode> {
     LeafListEntryContextNode(final LeafListSchemaNode schema) {
@@ -20,5 +21,10 @@ final class LeafListEntryContextNode extends AbstractLeafNodeContext<NodeWithVal
     @Override
     public boolean isKeyedEntry() {
         return true;
+    }
+
+    @Override
+    protected void pushToStack(final SchemaInferenceStack stack) {
+        // No-op
     }
 }
