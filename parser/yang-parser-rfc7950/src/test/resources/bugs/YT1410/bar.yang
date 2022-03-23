@@ -1,0 +1,11 @@
+module bar {
+  namespace bar;
+  prefix bar;
+  yang-version 1.1;
+
+  choice one {
+    // RFC7950: completely fine
+    choice two;
+  }
+}
+
