@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -134,6 +135,23 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context,
             final Absolute path) {
         return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.of(context, path));
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified {@link YangInstanceIdentifier}..
+     *
+     * @param context Associated {@link EffectiveModelContext}
+     * @param path Normalized path
+     * @return A new {@link NormalizedNodeStreamWriterStack}
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if {@code path} does not point to a valid root
+     */
+    public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context,
+            final YangInstanceIdentifier path) {
+        return new NormalizedNodeStreamWriterStack(DataSchemaContextTree.from(context)
+            .enterPath(path)
+            .orElseThrow()
+            .stack());
     }
 
     /**
