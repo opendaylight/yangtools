@@ -70,6 +70,24 @@
       "parentUuid": "7fffe0e0_d20f1420",
       "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6818982b_37c3e97a",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/Bug6887Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-03-24T12:07:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39a668d8_b0437744",
+      "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
