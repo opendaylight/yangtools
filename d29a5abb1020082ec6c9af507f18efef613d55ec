@@ -52,6 +52,24 @@
       "parentUuid": "9aa1838d_387dcd97",
       "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39a668d8_b0437744",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/Bug6887Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-03-24T09:52:28Z",
+      "side": 1,
+      "message": "Then I would go with changes in AbstractYangTest. It even more reduces duplicity - and that is what we want.",
+      "parentUuid": "7fffe0e0_d20f1420",
+      "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
