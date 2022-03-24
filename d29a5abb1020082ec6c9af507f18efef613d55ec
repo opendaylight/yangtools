@@ -34,6 +34,24 @@
       "parentUuid": "a8e49552_ad7b31c1",
       "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7fffe0e0_d20f1420",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/Bug6887Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-03-24T07:59:30Z",
+      "side": 1,
+      "message": "With both suggestions there is problem that the test throws InvalidEnumDefinitionException which does not extends SourceException so first assert will fail. It is reason for changes in AbstractYangTest.",
+      "parentUuid": "9aa1838d_387dcd97",
+      "revId": "d29a5abb1020082ec6c9af507f18efef613d55ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
