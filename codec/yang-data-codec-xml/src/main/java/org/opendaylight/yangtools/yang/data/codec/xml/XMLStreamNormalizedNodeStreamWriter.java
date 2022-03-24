@@ -23,6 +23,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -112,6 +113,20 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context, final Absolute path) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
+            NormalizedNodeStreamWriterStack.of(context, path));
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified {@link YangInstanceIdentifier}.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param path path
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final YangInstanceIdentifier path) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
             NormalizedNodeStreamWriterStack.of(context, path));
     }
