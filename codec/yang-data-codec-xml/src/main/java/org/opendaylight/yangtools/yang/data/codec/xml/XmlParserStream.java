@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractMountPointDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
@@ -60,6 +61,7 @@ import org.opendaylight.yangtools.yang.data.util.AnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
 import org.opendaylight.yangtools.yang.data.util.ContainerNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
@@ -86,6 +88,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,6 +261,46 @@ public final class XmlParserStream implements Closeable, Flushable {
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
             final EffectiveStatementInference parentNode) {
         return create(writer, mountCtx, parentNode, true);
+    }
+
+    @Beta
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
+            final Absolute parentNode) {
+        return create(writer, mountCtx, parentNode, true);
+    }
+
+    @Beta
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
+            final Absolute parentNode, final boolean strictParsing) {
+        return create(writer, XmlCodecFactory.create(mountCtx), parentNode, strictParsing);
+    }
+
+    @Beta
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
+            final Absolute parentNode) {
+        return create(writer, codecs, parentNode, true);
+    }
+
+    @Beta
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
+            final Absolute parentNode, final boolean strictParsing) {
+        return new XmlParserStream(writer, codecs,
+            SchemaInferenceStack.of(codecs.getEffectiveModelContext(), parentNode), strictParsing);
+    }
+
+    @Beta
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
+            final YangInstanceIdentifier parentNode) {
+        return create(writer, mountCtx, parentNode, true);
+    }
+
+    @Beta
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
+            final YangInstanceIdentifier parentNode, final boolean strictParsing) {
+        final var init = DataSchemaContextTree.from(mountCtx.getEffectiveModelContext())
+            .enterPath(parentNode)
+            .orElseThrow(() -> new IllegalArgumentException("Cannot find schema for " + parentNode));
+        return new XmlParserStream(writer, XmlCodecFactory.create(mountCtx), init.stack(), strictParsing);
     }
 
     /**
