@@ -212,7 +212,9 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @return Contained value
      * @throws NullPointerException if {@code exceptionMapper} is null
      * @throws X When there is no contained value
+     * @deprecated This method is losing the underlying failure cause. Use {@link #orElseThrow(Function)} instead.
      */
+    @Deprecated(forRemoval = true, since = "8.0.2")
     public final <X extends Throwable> T orElseThrow(final Supplier<X> supplier) throws X {
         requireNonNull(supplier);
         if (isFirst()) {
