@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for RpcResultBuilder.
@@ -30,8 +31,7 @@ public class RpcResultBuilderTest {
     public void testSuccess() {
         RpcResult<String> result = RpcResultBuilder.<String>success().withResult("foo").build();
         verifyRpcResult(result, true, "foo");
-        assertNotNull("getErrors returned null", result.getErrors());
-        assertEquals("getErrors size", 0, result.getErrors().size());
+        assertEquals(List.of(), result.getErrors());
 
         result = RpcResultBuilder.success("bar").build();
         verifyRpcResult(result, true, "bar");
@@ -56,7 +56,7 @@ public class RpcResultBuilderTest {
                         "my-info", cause);
         verifyRpcError(result, 3, ErrorSeverity.ERROR, ErrorType.TRANSPORT, ErrorTag.OPERATION_FAILED,
                         "error message 4", null, null, cause2);
-        assertEquals("getErrors size", 4, result.getErrors().size());
+        assertEquals(4, result.getErrors().size());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class RpcResultBuilderTest {
                         null, null);
         verifyRpcError(result, 1, ErrorSeverity.WARNING, ErrorType.RPC, ErrorTag.IN_USE, "message 2", "my-app-tag",
                         "my-info", cause);
-        assertEquals("getErrors size", 2, result.getErrors().size());
+        assertEquals(2, result.getErrors().size());
     }
 
     @Test
@@ -164,19 +164,20 @@ public class RpcResultBuilderTest {
             final String expInfo, final Throwable expCause) {
 
         List<RpcError> errors = result.getErrors();
-        assertTrue("Expected error at index " + errorIndex + " not found", errorIndex < errors.size());
+        assertThat(errors.size(), greaterThanOrEqualTo(errorIndex));
+
         RpcError error = errors.get(errorIndex);
-        assertEquals("getSeverity", expSeverity, error.getSeverity());
-        assertEquals("getErrorType", expErrorType, error.getErrorType());
-        assertEquals("getTag", expTag, error.getTag());
-        assertEquals("getMessage", expMessage, error.getMessage());
-        assertEquals("getApplicationTag", expAppTag, error.getApplicationTag());
-        assertEquals("getInfo", expInfo, error.getInfo());
-        assertEquals("getCause", expCause, error.getCause());
+        assertEquals(expSeverity, error.getSeverity());
+        assertEquals(expErrorType, error.getErrorType());
+        assertEquals(expTag, error.getTag());
+        assertEquals(expMessage, error.getMessage());
+        assertEquals(expAppTag, error.getApplicationTag());
+        assertEquals(expInfo, error.getInfo());
+        assertEquals(expCause, error.getCause());
     }
 
     void verifyRpcResult(final RpcResult<?> result, final boolean expSuccess, final Object expValue) {
-        assertEquals("isSuccessful", expSuccess, result.isSuccessful());
-        assertEquals("getResult", expValue, result.getResult());
+        assertEquals(expSuccess, result.isSuccessful());
+        assertEquals(expValue, result.getResult());
     }
 }
