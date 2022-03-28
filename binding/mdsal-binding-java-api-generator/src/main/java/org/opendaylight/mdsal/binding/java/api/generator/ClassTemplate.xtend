@@ -594,13 +594,13 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def private generateToString(Collection<? extends GeneratedProperty> properties) '''
+    def private generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @«OVERRIDE.importedName»
             public «STRING.importedName» toString() {
                 final var helper = «MOREOBJECTS.importedName».toStringHelper(«type.importedName».class);
                 «FOR property : properties»
-                    «CODEHELPERS.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
+                    «CODEHELPERS.importedName».appendValue(helper, "«property.name»", «property.fieldName»);
                 «ENDFOR»
                 return helper.toString();
             }
