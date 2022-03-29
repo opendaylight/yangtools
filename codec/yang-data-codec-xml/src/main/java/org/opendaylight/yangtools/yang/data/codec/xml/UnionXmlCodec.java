@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.namespace.NamespaceContext;
@@ -74,19 +75,24 @@ abstract class UnionXmlCodec<T> implements XmlCodec<T> {
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
     public final T parseValue(final NamespaceContext ctx, final String str) {
+        final var suppressed = new ArrayList<RuntimeException>();
+
         for (XmlCodec<?> codec : codecs) {
             final Object ret;
             try {
                 ret = codec.parseValue(ctx, str);
             } catch (RuntimeException e) {
                 LOG.debug("Codec {} did not accept input '{}'", codec, str, e);
+                suppressed.add(e);
                 continue;
             }
 
             return getDataType().cast(ret);
         }
 
-        throw new IllegalArgumentException("Invalid value \"" + str + "\" for union type.");
+        final var ex = new IllegalArgumentException("Invalid value \"" + str + "\" for union type.");
+        suppressed.forEach(ex::addSuppressed);
+        throw ex;
     }
 
     @Override
