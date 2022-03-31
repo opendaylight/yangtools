@@ -34,7 +34,9 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
 
         for (CaseSchemaNode caze : schema.getCases()) {
             for (DataSchemaNode cazeChild : caze.getChildNodes()) {
-                DataSchemaContextNode<?> childOp = DataSchemaContextNode.of(cazeChild);
+                final DataSchemaContextNode<?> childOp = cazeChild.isAugmenting()
+                    ? DataSchemaContextNode.ofAugmenting(caze, caze, cazeChild)
+                        : DataSchemaContextNode.of(cazeChild);
                 byArgBuilder.put(childOp.getIdentifier(), childOp);
                 childToCaseBuilder.put(childOp, caze.getQName());
                 for (QName qname : childOp.getQNameIdentifiers()) {
