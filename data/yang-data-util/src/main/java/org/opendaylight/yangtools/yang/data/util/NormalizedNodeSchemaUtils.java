@@ -84,8 +84,7 @@ public final class NormalizedNodeSchemaUtils {
         }
 
         for (final AugmentationSchemaNode augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
-            final Optional<DataSchemaNode> childInAugmentation = augmentation.findDataChildByName(child.getQName());
-            if (childInAugmentation.isPresent()) {
+            if (augmentation.dataChildByName(child.getQName()) != null) {
                 return augmentation;
             }
         }

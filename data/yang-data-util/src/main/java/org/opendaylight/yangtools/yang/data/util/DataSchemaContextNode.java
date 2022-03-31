@@ -295,7 +295,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     static @Nullable DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
         for (AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
-            if (aug.findDataChildByName(child.getQName()).isPresent()) {
+            if (aug.dataChildByName(child.getQName()) != null) {
                 return new AugmentationContextNode(aug, parent);
             }
         }
