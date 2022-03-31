@@ -17,7 +17,6 @@ import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -340,8 +339,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     // FIXME: 7.0.0: can we get rid of this?
     private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
         for (final CaseSchemaNode caze : parent.getCases()) {
-            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
-            if (potential.isPresent()) {
+            if (caze.dataChildByName(qname) != null) {
                 return caze;
             }
         }
