@@ -264,6 +264,23 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         }
     }
 
+    /**
+     * Returns a DataContextNodeOperation for provided child node
+     *
+     * <p>
+     * If supplied child is added by Augmentation this operation returns a DataSchemaContextNode for augmentation,
+     * otherwise returns a DataSchemaContextNode for child as call for {@link #lenientOf(DataSchemaNode)}.
+     */
+    static @NonNull DataSchemaContextNode<?> ofAugmenting(final DataNodeContainer parent,
+            final AugmentationTarget parentAug, final DataSchemaNode child) {
+        for (AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
+            if (aug.dataChildByName(child.getQName()) != null) {
+                return new AugmentationContextNode(aug, parent);
+            }
+        }
+        return of(child);
+    }
+
     // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
     static @Nullable DataSchemaContextNode<?> lenientOf(final @Nullable DataSchemaNode schema) {
         if (schema instanceof ContainerLike) {

@@ -55,7 +55,6 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
         return pushToStack(getChild(child), stack);
     }
 
-
     @Override
     protected final DataSchemaContextNode<?> enterChild(final PathArgument child, final SchemaInferenceStack stack) {
         return pushToStack(getChild(child), stack);

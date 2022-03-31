@@ -1,0 +1,22 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  container foo;
+
+  augment /foo {
+    choice bar {
+      leaf baz {
+        type string;
+      }
+    }
+  }
+
+  augment /foo/bar/baz {
+    choice xyzzy {
+      leaf uint {
+        type uint8;
+      }
+    }
+  }
+}
