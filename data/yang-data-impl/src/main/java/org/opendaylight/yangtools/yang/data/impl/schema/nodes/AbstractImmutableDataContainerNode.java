@@ -59,7 +59,17 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument,
 
     @Override
     protected boolean valueEquals(final N other) {
-        return other instanceof AbstractImmutableDataContainerNode<?, ?> && children.equals(
-                ((AbstractImmutableDataContainerNode<?, ?>) other).children);
+        if (other instanceof AbstractImmutableDataContainerNode) {
+            return children.equals(((AbstractImmutableDataContainerNode<?, ?>) other).children);
+        }
+        if (size() != other.size()) {
+            return false;
+        }
+        for (var child : body()) {
+            if (!child.equals(other.childByArg(child.getIdentifier()))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
