@@ -149,8 +149,7 @@ class UnionTemplate extends ClassTemplate {
                 «ENDIF»
             }
             «ENDFOR»
-
-            throw new IllegalStateException("No value assinged");
+            throw new IllegalStateException("No value assigned");
         }
     '''
 
