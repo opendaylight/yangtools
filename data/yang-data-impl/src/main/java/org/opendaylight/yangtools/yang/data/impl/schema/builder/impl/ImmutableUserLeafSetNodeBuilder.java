@@ -160,7 +160,11 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
 
         @Override
         protected boolean valueEquals(final UserLeafSetNode<?> other) {
-            return children.equals(((ImmutableUserLeafSetNode<?>) other).children);
+            if (other instanceof ImmutableUserLeafSetNode) {
+                return children.equals(((ImmutableUserLeafSetNode<?>) other).children);
+            }
+            // Note: performs a size() check first
+            return Iterables.elementsEqual(children.values(), other.body());
         }
 
         @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
