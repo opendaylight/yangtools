@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
@@ -28,7 +29,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
     private final QNameModule parentModule;
 
     IdentityrefXmlCodec(final EffectiveModelContext context, final QNameModule parentModule) {
-        this.schemaContext = requireNonNull(context);
+        schemaContext = requireNonNull(context);
         this.parentModule = requireNonNull(parentModule);
     }
 
@@ -45,6 +46,8 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             }
 
             final String prefixedNS = ctx.getNamespaceURI(prefix);
+            checkArgument(prefixedNS != null, "Failed to resolve prefix %s", prefix);
+
             final Iterator<? extends Module> modules =
                 schemaContext.findModules(XMLNamespace.of(prefixedNS)).iterator();
             checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
@@ -61,5 +64,10 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             ctx.writeNamespace(e.getValue(), e.getKey().toString());
         }
         ctx.writeCharacters(str);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("module", parentModule).toString();
     }
 }
