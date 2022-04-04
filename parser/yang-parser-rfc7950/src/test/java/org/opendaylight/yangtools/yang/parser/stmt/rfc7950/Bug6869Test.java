@@ -16,9 +16,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -71,12 +72,9 @@ public class Bug6869Test extends AbstractYangTest {
     }
 
     private static Set<QName> createFeaturesSet(final String... featureNames) {
-        final Set<QName> supportedFeatures = new HashSet<>();
-        for (final String featureName : featureNames) {
-            supportedFeatures.add(QName.create("foo", featureName));
-        }
-
-        return ImmutableSet.copyOf(supportedFeatures);
+        return Arrays.stream(featureNames)
+            .map(featureName -> QName.create("foo", featureName))
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     @Test
