@@ -122,16 +122,6 @@ public final class StmtTestUtils {
         return parseYangSources(config, supportedFeatures, sources);
     }
 
-    public static EffectiveModelContext parseYangSources(final Collection<File> files) throws ReactorException,
-            IOException, YangSyntaxErrorException {
-        return parseYangSources(files, YangParserConfiguration.DEFAULT);
-    }
-
-    public static EffectiveModelContext parseYangSources(final Collection<File> files,
-            final YangParserConfiguration config) throws ReactorException, IOException, YangSyntaxErrorException {
-        return parseYangSources(config, null, files.toArray(new File[0]));
-    }
-
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
             throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSources(yangSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
