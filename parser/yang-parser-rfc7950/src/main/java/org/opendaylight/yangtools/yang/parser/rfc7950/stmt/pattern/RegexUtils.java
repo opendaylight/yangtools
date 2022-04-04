@@ -324,6 +324,9 @@ final class RegexUtils {
             if (capturedGroup.startsWith("In/Is")) {
                 // Java 9 changed the reporting string
                 capturedGroup = capturedGroup.substring(5);
+            } else if (capturedGroup.startsWith("Is")) {
+                // Java 14 changed the reporting string (https://bugs.openjdk.java.net/browse/JDK-8230338)
+                capturedGroup = capturedGroup.substring(2);
             }
 
             if (JAVA_UNICODE_BLOCKS.contains(capturedGroup)) {
