@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -63,16 +62,6 @@ public final class StmtTestUtils {
         for (final Throwable throwable : suppressed) {
             log(throwable, indent + "        ");
         }
-    }
-
-    public static List<Module> findModules(final Collection<? extends Module> modules, final String moduleName) {
-        final List<Module> result = new ArrayList<>();
-        for (final Module module : modules) {
-            if (module.getName().equals(moduleName)) {
-                result.add(module);
-            }
-        }
-        return result;
     }
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {

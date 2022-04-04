@@ -78,13 +78,12 @@ public class MoreRevisionsTest {
 
     @Test
     public void twoRevisionsTest2() throws ReactorException {
-        Collection<? extends Module> modules = RFC7950Reactors.defaultReactor().newBuild()
+        final var context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021, IETF_TYPES)
-                .buildEffective()
-                .getModules();
+                .buildEffective();
 
-        assertEquals(3, modules.size());
-        assertEquals(2, StmtTestUtils.findModules(modules, "network-topology").size());
+        assertEquals(3, context.getModuleStatements().size());
+        assertEquals(2, context.findModules("network-topology").size());
     }
 
     @Test
