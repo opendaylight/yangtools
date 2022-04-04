@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -19,24 +18,23 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class Bug6183Test {
+public class Bug6183Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void testYang10() throws Exception {
-        assertSchemaContext(StmtTestUtils.parseYangSources("/bugs/bug6183/yang10"));
+    public void testYang10() {
+        assertSchemaContext(assertEffectiveModelDir("/bugs/bug6183/yang10"));
     }
 
     @Test
-    public void testYang11() throws Exception {
-        assertSchemaContext(StmtTestUtils.parseYangSources("/bugs/bug6183/yang11"));
+    public void testYang11() {
+        assertSchemaContext(assertEffectiveModelDir("/bugs/bug6183/yang11"));
     }
 
-    public void assertSchemaContext(final SchemaContext context) throws Exception {
-        assertNotNull(context);
+    public void assertSchemaContext(final EffectiveModelContext context) {
         assertEquals(3, context.getChildNodes().size());
         assertEquals(1, context.getModules().size());
         assertEquals(4, context.getModules().iterator().next().getAugmentations().size());

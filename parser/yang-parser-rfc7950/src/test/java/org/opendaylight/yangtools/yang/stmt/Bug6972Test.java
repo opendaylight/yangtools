@@ -17,16 +17,14 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 
-public class Bug6972Test {
+public class Bug6972Test extends AbstractYangTest {
     @Test
-    public void allUnitsShouldBeTheSameInstance() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug6972");
-        assertNotNull(schemaContext);
+    public void allUnitsShouldBeTheSameInstance() {
+        final var schemaContext = assertEffectiveModelDir("/bugs/bug6972");
         assertEquals(3, schemaContext.getModules().size());
 
         final Revision revision = Revision.of("2016-10-20");

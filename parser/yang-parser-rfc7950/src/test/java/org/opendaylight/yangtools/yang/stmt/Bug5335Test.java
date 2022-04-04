@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class Bug5335Test {
+public class Bug5335Test extends AbstractYangTest {
     private static final String FOO = "foo";
     private static final String BAR = "bar";
     private static final String REV = "2016-03-04";
@@ -63,32 +63,32 @@ public class Bug5335Test {
     }
 
     @Test
-    public void correctTest1() throws Exception {
-        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-1");
+    public void correctTest1() {
+        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-1");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B)
             .orElse(null);
         assertThat(mandatoryLeaf, instanceOf(LeafSchemaNode.class));
     }
 
     @Test
-    public void correctTest2() throws Exception {
-        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-2");
+    public void correctTest2() {
+        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-2");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
             NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null);
         assertThat(mandatoryLeaf, instanceOf(LeafSchemaNode.class));
     }
 
     @Test
-    public void correctTest3() throws Exception {
-        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-3");
+    public void correctTest3() {
+        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-3");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
             NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null);
         assertThat(mandatoryLeaf, instanceOf(LeafSchemaNode.class));
     }
 
     @Test
-    public void correctTest4() throws Exception {
-        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
+    public void correctTest4() {
+        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-4");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F)
             .orElse(null);
         assertThat(mandatoryLeaf, instanceOf(LeafSchemaNode.class));

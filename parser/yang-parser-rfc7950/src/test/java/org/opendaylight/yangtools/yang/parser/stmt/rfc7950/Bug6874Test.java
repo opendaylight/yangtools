@@ -61,7 +61,7 @@ public class Bug6874Test {
     }
 
     @Test
-    public void invalid10IncludeStmtTest() throws Exception {
+    public void invalid10IncludeStmtTest() {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-include-10")).getCause();
         assertThat(ex, instanceOf(InvalidSubstatementException.class));

@@ -7,21 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 /**
  * Tests for {@code MUST NOT} statements around include/import interop of RFC6020 and RFC7950, as per
  * <a href="https://datatracker.ietf.org/doc/html/rfc7950#section-12">RFC7950 section 12</a>.
  */
-public class YT1339Test {
+public class YT1339Test extends AbstractYangTest {
     @Test
     public void testInclude() {
         // A YANG version 1.1 module MUST NOT include a YANG version 1 submodule,
@@ -31,22 +28,22 @@ public class YT1339Test {
     }
 
     @Test
-    public void testImportNewByRev() throws Exception {
+    public void testImportNewByRev() {
         // A YANG version 1 module or submodule MUST NOT import a YANG version 1.1 module by revision.
         assertFailedImport("import-rev");
         assertFailedImport("import-rev-sub");
     }
 
     @Test
-    public void testImportOldByRev() throws Exception {
+    public void testImportOldByRev() {
         // A YANG version 1.1 module or submodule MAY import a YANG version 1 module by revision.
-        compile("import");
+        assertEffectiveModelDir("/bugs/YT1339/import");
     }
 
     @Test
-    public void testImportNoRev() throws Exception {
+    public void testImportNoRev() {
         // no language forbidding imports without revision
-        compile("import-norev");
+        assertEffectiveModelDir("/bugs/YT1339/import-norev");
     }
 
     private static void assertFailedImport(final String subdir) {
@@ -60,12 +57,6 @@ public class YT1339Test {
     }
 
     private static String assertYangVersionLinkageException(final String subdir) {
-        final var cause = assertThrows(ReactorException.class, () -> compile(subdir)).getCause();
-        assertThat(cause, instanceOf(YangVersionLinkageException.class));
-        return cause.getMessage();
-    }
-
-    private static void compile(final String subdir) throws Exception {
-        StmtTestUtils.parseYangSources("/bugs/YT1339/" + subdir);
+        return assertExceptionDir("/bugs/YT1339/" + subdir, YangVersionLinkageException.class).getMessage();
     }
 }

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Collection;
 import org.junit.Test;
@@ -17,14 +16,12 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public class Bug7440Test {
+public class Bug7440Test extends AbstractYangTest {
     @Test
-    public void testRestrictedTypeParentSchemaPathInDeviate() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug7440");
-        assertNotNull(schemaContext);
+    public void testRestrictedTypeParentSchemaPathInDeviate() {
+        final var schemaContext = assertEffectiveModelDir("/bugs/bug7440");
 
         final Revision revision = Revision.of("2016-12-23");
         final Module foo = schemaContext.findModule("foo", revision).get();

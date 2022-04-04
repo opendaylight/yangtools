@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6867BasicTest extends AbstractYangTest {
     @Test
@@ -50,8 +48,8 @@ public class Bug6867BasicTest extends AbstractYangTest {
     }
 
     @Test
-    public void yangModelTest() throws Exception {
-        assertNotNull(StmtTestUtils.parseYangSources("/rfc7950/model"));
+    public void yangModelTest() {
+        assertEffectiveModelDir("/rfc7950/model");
     }
 
     @Test

@@ -14,21 +14,19 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6884Test {
+public class Bug6884Test extends AbstractYangTest {
     @Test
-    public void testYang11() throws Exception {
-        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6884/yang1-1");
+    public void testYang11() {
+        final var schemaContext = assertEffectiveModelDir("/rfc7950/bug6884/yang1-1");
         final DataSchemaNode node = schemaContext.findDataTreeChild(foo("sub-root"), foo("sub-foo-2-con")).orElse(null);
         assertThat(node, instanceOf(ContainerSchemaNode.class));
     }
 
     @Test
-    public void testCircularIncludesYang10() throws Exception {
-        final EffectiveModelContext schemaContext =
-            StmtTestUtils.parseYangSources("/rfc7950/bug6884/circular-includes");
+    public void testCircularIncludesYang10() {
+        final var schemaContext = assertEffectiveModelDir("/rfc7950/bug6884/circular-includes");
         DataSchemaNode node = schemaContext.findDataTreeChild(foo("sub-root"), foo("sub-foo-2-con")).orElse(null);
         assertThat(node, instanceOf(ContainerSchemaNode.class));
 

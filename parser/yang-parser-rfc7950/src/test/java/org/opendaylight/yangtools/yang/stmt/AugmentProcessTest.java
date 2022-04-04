@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class AugmentProcessTest {
+public class AugmentProcessTest extends AbstractYangTest {
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
@@ -99,7 +99,7 @@ public class AugmentProcessTest {
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathTest() throws  ReactorException {
+    public void multipleAugmentIncorrectPathTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(MULTIPLE_AUGMENT_INCORRECT)
                 .buildEffective();
@@ -107,7 +107,7 @@ public class AugmentProcessTest {
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathAndGrpTest() throws  ReactorException {
+    public void multipleAugmentIncorrectPathAndGrpTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(MULTIPLE_AUGMENT_INCORRECT2)
                 .buildEffective();
@@ -146,8 +146,8 @@ public class AugmentProcessTest {
     }
 
     @Test
-    public void caseShortHandAugmentingTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/choice-case-type-test-models");
+    public void caseShortHandAugmentingTest() {
+        final SchemaContext context = assertEffectiveModelDir("/choice-case-type-test-models");
 
         assertNotNull(context);
 

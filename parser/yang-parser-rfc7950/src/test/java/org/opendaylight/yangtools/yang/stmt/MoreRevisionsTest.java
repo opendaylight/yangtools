@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
@@ -32,8 +31,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class MoreRevisionsTest {
-
+public class MoreRevisionsTest extends AbstractYangTest {
     private static final StatementStreamSource REVFILE = sourceForResource(
             "/semantic-statement-parser/revisions/more-revisions-test.yang");
 
@@ -95,17 +93,16 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsTest() throws Exception {
+    public void multipleRevisionsTest() {
         for (int i = 0; i < 100; i++) {
-            assertNotNull(StmtTestUtils.parseYangSources("/semantic-statement-parser/multiple-revisions"));
+            assertEffectiveModelDir("/semantic-statement-parser/multiple-revisions");
         }
     }
 
     @Test
-    public void multipleRevisionsFullTest() throws Exception {
+    public void multipleRevisionsFullTest() {
         for (int i = 0; i < 100; i++) {
-            EffectiveModelContext context =
-                StmtTestUtils.parseYangSources("/semantic-statement-parser/multiple-revisions/full");
+            var context = assertEffectiveModelDir("/semantic-statement-parser/multiple-revisions/full");
             assertEquals(6, context.getModules().size());
             checkContentFullTest(context);
         }
@@ -164,10 +161,9 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsSimpleTest() throws Exception {
+    public void multipleRevisionsSimpleTest() {
         for (int i = 0; i < 1000; i++) {
-            EffectiveModelContext context = StmtTestUtils.parseYangSources(
-                "/semantic-statement-parser/multiple-revisions/simple");
+            var context = assertEffectiveModelDir("/semantic-statement-parser/multiple-revisions/simple");
             assertEquals(5, context.getModules().size());
             checkContentSimpleTest(context);
         }
@@ -248,9 +244,8 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void nodeTest() throws Exception {
-        EffectiveModelContext context = StmtTestUtils.parseYangSources(
-            "/semantic-statement-parser/multiple-revisions/node-test");
+    public void nodeTest() {
+        final var context = assertEffectiveModelDir("/semantic-statement-parser/multiple-revisions/node-test");
 
         QName root = QName.create("foo", "2016-04-06", "foo-root");
         QName container20160404 = QName.create("foo", "2016-04-06", "con20160404");

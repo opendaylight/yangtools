@@ -20,15 +20,14 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
-public class TypedefConstraintsTest {
+public class TypedefConstraintsTest extends AbstractYangTest {
     @Test
-    public void decimalRangeConstraintsTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/stmt-test/constraints");
+    public void decimalRangeConstraintsTest() {
+        final var context = assertEffectiveModelDir("/stmt-test/constraints");
 
         assertNotNull(context);
 

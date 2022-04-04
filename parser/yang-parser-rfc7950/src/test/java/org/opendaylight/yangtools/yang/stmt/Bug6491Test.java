@@ -18,11 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class Bug6491Test {
+public class Bug6491Test extends AbstractYangTest {
     private static final Revision DATE = Revision.of("2016-01-01");
 
     @Test
-    public void tetststs() throws Exception {
+    public void tetststs() {
         testRevision("withoutRevision", null, Optional.empty());
         testRevision("withRevision", DATE, Optional.of(DATE));
         testRevision("importedModuleRevisionOnly", null, Optional.of(DATE));
@@ -30,9 +30,8 @@ public class Bug6491Test {
     }
 
     private static void testRevision(final String path, final Revision moduleRevision,
-            final Optional<Revision> importedRevision) throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6491/".concat(path));
-        assertNotNull(context);
+            final Optional<Revision> importedRevision) {
+        final SchemaContext context = assertEffectiveModelDir("/bugs/bug6491/" + path);
         final Module module = context.findModule("bar", moduleRevision).get();
         final Collection<? extends ModuleImport> imports = module.getImports();
         assertNotNull(imports);

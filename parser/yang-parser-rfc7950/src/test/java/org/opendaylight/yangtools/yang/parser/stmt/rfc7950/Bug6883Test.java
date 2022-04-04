@@ -23,16 +23,16 @@ import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6883Test {
+public class Bug6883Test extends AbstractYangTest {
     private static final XMLNamespace FOO = XMLNamespace.of("foo");
 
     private ModuleEffectiveStatement foo;
 
     @Before
-    public void before() throws Exception {
-        foo = StmtTestUtils.parseYangSources("/bugs/bug6883").getModuleStatement(QName.create(FOO, "foo"));
+    public void before() {
+        foo = assertEffectiveModelDir("/bugs/bug6883").getModuleStatement(QName.create(FOO, "foo"));
     }
 
     @Test
