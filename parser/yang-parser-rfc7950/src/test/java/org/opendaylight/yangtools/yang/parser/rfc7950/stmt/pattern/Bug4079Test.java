@@ -19,94 +19,35 @@ import java.util.regex.PatternSyntaxException;
 import org.junit.Test;
 
 public class Bug4079Test {
-
     @Test
     public void testValidPatternFix() {
-        String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsArrows})*+");
-        assertEquals("^(?:(\\p{InArrows})*+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsDingbats})++");
-        assertEquals("^(?:(\\p{InDingbats})++)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsSpecials})?+");
-        assertEquals("^(?:(\\p{InSpecials})?+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsBatak}){4}+");
-        assertEquals("^(?:(\\p{IsBatak}){4}+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsLatin}){4,6}+");
-        assertEquals("^(?:(\\p{IsLatin}){4,6}+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsTibetan}){4,}+");
-        assertEquals("^(?:(\\p{IsTibetan}){4,}+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsAlphabetic}){4}?");
-        assertEquals("^(?:(\\p{IsAlphabetic}){4}?)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsLowercase}){4,6}?");
-        assertEquals("^(?:(\\p{IsLowercase}){4,6}?)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsUppercase}){4,}?");
-        assertEquals("^(?:(\\p{IsUppercase}){4,}?)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsBasicLatin}|\\p{IsLatin-1Supplement})*");
-        assertEquals("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement})*)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{InBasicLatin}|\\p{InLatin-1Supplement})+");
-        assertEquals("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement})+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsBasicLatin}|\\p{InLatin-1Supplement})?");
-        assertEquals("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement})?)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{InBasicLatin}|\\p{IsLatin-1Supplement}){4}");
-        assertEquals("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}){4})$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsLatin}|\\p{IsArmenian}){2,4}");
-        assertEquals("^(?:(\\p{IsLatin}|\\p{IsArmenian}){2,4})$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsLatin}|\\p{IsBasicLatin}){2,}");
-        assertEquals("^(?:(\\p{IsLatin}|\\p{InBasicLatin}){2,})$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsBasicLatin}|\\p{IsLatin})*?");
-        assertEquals("^(?:(\\p{InBasicLatin}|\\p{IsLatin})*?)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
+        assertJavaRegex("^(?:(\\p{InArrows})*+)$", "(\\p{IsArrows})*+");
+        assertJavaRegex("^(?:(\\p{InDingbats})++)$", "(\\p{IsDingbats})++");
+        assertJavaRegex("^(?:(\\p{InSpecials})?+)$", "(\\p{IsSpecials})?+");
+        assertJavaRegex("^(?:(\\p{IsBatak}){4}+)$", "(\\p{IsBatak}){4}+");
+        assertJavaRegex("^(?:(\\p{IsLatin}){4,6}+)$", "(\\p{IsLatin}){4,6}+");
+        assertJavaRegex("^(?:(\\p{IsTibetan}){4,}+)$", "(\\p{IsTibetan}){4,}+");
+        assertJavaRegex("^(?:(\\p{IsAlphabetic}){4}?)$", "(\\p{IsAlphabetic}){4}?");
+        assertJavaRegex("^(?:(\\p{IsLowercase}){4,6}?)$", "(\\p{IsLowercase}){4,6}?");
+        assertJavaRegex("^(?:(\\p{IsUppercase}){4,}?)$", "(\\p{IsUppercase}){4,}?");
+        assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement})*)$",
+            "(\\p{IsBasicLatin}|\\p{IsLatin-1Supplement})*");
+        assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement})+)$",
+            "(\\p{InBasicLatin}|\\p{InLatin-1Supplement})+");
+        assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement})?)$",
+            "(\\p{IsBasicLatin}|\\p{InLatin-1Supplement})?");
+        assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}){4})$",
+            "(\\p{InBasicLatin}|\\p{IsLatin-1Supplement}){4}");
+        assertJavaRegex("^(?:(\\p{IsLatin}|\\p{IsArmenian}){2,4})$", "(\\p{IsLatin}|\\p{IsArmenian}){2,4}");
+        assertJavaRegex("^(?:(\\p{IsLatin}|\\p{InBasicLatin}){2,})$", "(\\p{IsLatin}|\\p{IsBasicLatin}){2,}");
+        assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{IsLatin})*?)$", "(\\p{IsBasicLatin}|\\p{IsLatin})*?");
+        assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}|\\p{InArrows})+?)$",
                 "(\\p{IsBasicLatin}|\\p{IsLatin-1Supplement}|\\p{IsArrows})+?");
-        assertEquals("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}|\\p{InArrows})+?)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
+        assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}|\\p{IsLatin})??)$",
                 "(\\p{InBasicLatin}|\\p{IsLatin-1Supplement}|\\p{IsLatin})??");
-        assertEquals("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}|\\p{IsLatin})??)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\\\\\p{IsBasicLatin})*+");
-        assertEquals("^(?:(\\\\\\p{InBasicLatin})*+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\\\\\\\\\p{IsBasicLatin})*+");
-        assertEquals("^(?:(\\\\\\\\\\p{InBasicLatin})*+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
-
-        fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\\\\\\\\\\\\\p{IsBasicLatin})*+");
-        assertEquals("^(?:(\\\\\\\\\\\\\\p{InBasicLatin})*+)$", fixedUnicodeScriptPattern);
-        assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
+        assertJavaRegex("^(?:(\\\\\\p{InBasicLatin})*+)$", "(\\\\\\p{IsBasicLatin})*+");
+        assertJavaRegex("^(?:(\\\\\\\\\\p{InBasicLatin})*+)$", "(\\\\\\\\\\p{IsBasicLatin})*+");
+        assertJavaRegex("^(?:(\\\\\\\\\\\\\\p{InBasicLatin})*+)$", "(\\\\\\\\\\\\\\p{IsBasicLatin})*+");
     }
 
     @Test
@@ -146,5 +87,11 @@ public class Bug4079Test {
         assertFalse(pred.test("ab"));
         assertFalse(pred.test("abb"));
         assertFalse(pred.test("ac"));
+    }
+
+    private static void assertJavaRegex(final String expected, final String xsdRegex) {
+        final var actual = RegexUtils.getJavaRegexFromXSD(xsdRegex);
+        assertEquals(expected, actual);
+        assertNotNull(Pattern.compile(actual));
     }
 }
