@@ -322,30 +322,28 @@ final class RegexUtils {
         .add("ZanabazarSquare")
 
         // Java 12
-        // FIXME: enable these once we require Java 17+
-        // .add("ChessSymbols")
-        // .add("Dogra")
-        // .add("GeorgianExtended")
-        // .add("GunjalaGondi")
-        // .add("HanifiRohingya")
-        // .add("IndicSiyaqNumbers")
-        // .add("Makasar")
-        // .add("MayanNumerals")
-        // .add("Medefaidrin")
-        // .add("OldSogdian")
-        // .add("Sogdian")
+        .add("ChessSymbols")
+        .add("Dogra")
+        .add("GeorgianExtended")
+        .add("GunjalaGondi")
+        .add("HanifiRohingya")
+        .add("IndicSiyaqNumbers")
+        .add("Makasar")
+        .add("MayanNumerals")
+        .add("Medefaidrin")
+        .add("OldSogdian")
+        .add("Sogdian")
 
         // Java 13
-        // FIXME: enable these once we require Java 17+
-        // .add("EgyptianHieroglyphFormatControls")
-        // .add("Elymaic")
-        // .add("Nandinagari")
-        // .add("NyiakengPuachueHmong")
-        // .add("OttomanSiyaqNumbers")
-        // .add("SmallKanaExtension")
-        // .add("SymbolsandPictographsExtended-A")
-        // .add("TamilSupplement")
-        // .add("Wancho")
+        .add("EgyptianHieroglyphFormatControls")
+        .add("Elymaic")
+        .add("Nandinagari")
+        .add("NyiakengPuachueHmong")
+        .add("OttomanSiyaqNumbers")
+        .add("SmallKanaExtension")
+        .add("SymbolsandPictographsExtended-A")
+        .add("TamilSupplement")
+        .add("Wancho")
         .build();
 
     private static final int UNICODE_SCRIPT_FIX_COUNTER = 30;
