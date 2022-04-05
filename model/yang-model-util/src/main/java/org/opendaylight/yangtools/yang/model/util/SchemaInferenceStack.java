@@ -14,6 +14,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
@@ -67,6 +68,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
+import org.slf4j.LoggerFactory;
 
 /**
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
@@ -127,6 +129,18 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
          */
         public @NonNull SchemaInferenceStack toSchemaInferenceStack() {
             return new SchemaInferenceStack(getEffectiveModelContext(), deque, currentModule, groupingDepth, clean);
+        }
+    }
+
+    private static final String VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE_PROP =
+        "org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.verifyDefaultSchemaTreeInference";
+    private static final boolean VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE =
+        Boolean.getBoolean(VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE_PROP);
+
+    static {
+        if (VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE) {
+            LoggerFactory.getLogger(SchemaInferenceStack.class)
+                .info("SchemaTreeStack.ofInference(DefaultSchemaTreeInference) argument is being verified");
         }
     }
 
@@ -225,7 +239,44 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code inference} cannot be resolved to a valid stack
      */
     public static @NonNull SchemaInferenceStack ofInference(final SchemaTreeInference inference) {
-        return of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
+        return inference instanceof DefaultSchemaTreeInference ? ofInference((DefaultSchemaTreeInference) inference)
+            : of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
+    }
+
+    /**
+     * Create a new stack from an {@link DefaultSchemaTreeInference}. The argument is nominally trusted to be an
+     * accurate representation of the schema tree.
+     *
+     * <p>
+     * Run-time verification of {@code inference} can be enabled by setting the
+     * {@value #VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE_PROP} system property to {@code true}.
+     *
+     * @param inference DefaultSchemaTreeInference to use for initialization
+     * @return A new stack
+     * @throws NullPointerException if {@code inference} is null
+     * @throws IllegalArgumentException if {@code inference} refers to a missing module or when verification is enabled
+     *                                  and it does not match its context's scheam tree
+     */
+    public static @NonNull SchemaInferenceStack ofInference(final DefaultSchemaTreeInference inference) {
+        return VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE ? ofUntrusted(inference) : ofTrusted(inference);
+    }
+
+    private static @NonNull SchemaInferenceStack ofTrusted(final DefaultSchemaTreeInference inference) {
+        final var path = inference.statementPath();
+        final var ret = new SchemaInferenceStack(inference.getEffectiveModelContext(), path.size());
+        ret.currentModule = ret.getModule(path.get(0).argument());
+        path.forEach(ret.deque::push);
+        return ret;
+    }
+
+    @VisibleForTesting
+    static @NonNull SchemaInferenceStack ofUntrusted(final DefaultSchemaTreeInference inference) {
+        final var ret = of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
+        if (!Iterators.elementsEqual(ret.deque.descendingIterator(), inference.statementPath().iterator())) {
+            throw new IllegalArgumentException("Provided " + inference + " is not consistent with resolved path "
+                + ret.toSchemaTreeInference());
+        }
+        return ret;
     }
 
     /**
@@ -559,7 +610,6 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return (DataTreeEffectiveStatement<?>) child;
     }
 
-
     @Override
     public TypeDefinition<?> resolveLeafref(final LeafrefTypeDefinition type) {
         final SchemaInferenceStack tmp = copy();
@@ -690,7 +740,13 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalStateException if current state cannot be converted to a {@link SchemaTreeInference}
      */
     public @NonNull SchemaTreeInference toSchemaTreeInference() {
-        return DefaultSchemaTreeInference.of(getEffectiveModelContext(), toSchemaNodeIdentifier());
+        checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
+        final var cleanDeque = clean ? deque : reconstructSchemaInferenceStack().deque;
+        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(),
+            ImmutableList.<SchemaTreeEffectiveStatement<?>>builderWithExpectedSize(cleanDeque.size())
+                .addAll(Iterators.transform(cleanDeque.descendingIterator(),
+                    stmt -> (SchemaTreeEffectiveStatement<?>) stmt))
+                .build());
     }
 
     /**
@@ -859,6 +915,10 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     // of schema tree items. This means at least N searches, but after they are done, we get an opportunity to set the
     // clean flag.
     private Iterator<QName> reconstructQNames() {
+        return reconstructSchemaInferenceStack().iterateQNames();
+    }
+
+    private SchemaInferenceStack reconstructSchemaInferenceStack() {
         // Let's walk all statements and decipher them into a temporary stack
         final SchemaInferenceStack tmp = new SchemaInferenceStack(effectiveModel, deque.size());
         final Iterator<EffectiveStatement<?, ?>> it = deque.descendingIterator();
@@ -882,7 +942,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
         // if the sizes match, we did not jump through hoops. let's remember that for future.
         clean = deque.size() == tmp.deque.size();
-        return tmp.iterateQNames();
+        return clean ? this : tmp;
     }
 
     private void resolveChoiceSteps(final @NonNull QName nodeIdentifier) {
