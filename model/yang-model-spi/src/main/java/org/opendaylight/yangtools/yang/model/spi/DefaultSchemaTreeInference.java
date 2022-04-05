@@ -11,12 +11,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
+import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
@@ -67,7 +69,18 @@ public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffecti
                 break;
             }
         }
-
         return new DefaultSchemaTreeInference(modelContext, builder.build());
+    }
+
+    public static DefaultSchemaTreeInference unsafeOf(final EffectiveModelContext modelContext,
+            final ImmutableList<SchemaTreeEffectiveStatement<?>> path) {
+        final String prop = System.getProperty("org.opendaylight.yangtools.yang.model.spi.validation", "unsafe");
+        if (prop.equals("safe")) {
+            final Absolute absolute = Absolute.of(ImmutableList.<QName>builderWithExpectedSize(path.size())
+                    .addAll(Iterators.transform(path.stream().iterator(), ModelStatement::argument))
+                    .build());
+            return of(modelContext, absolute);
+        }
+        return new DefaultSchemaTreeInference(modelContext, path);
     }
 }
