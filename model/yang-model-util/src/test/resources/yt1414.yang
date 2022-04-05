@@ -1,0 +1,10 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  container foo;
+
+  container bar {
+    list foo;
+  }
+}
