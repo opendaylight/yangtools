@@ -17,6 +17,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Collections;
@@ -68,6 +69,7 @@ public class InstanceIdentifier<T extends DataObject>
      * Protected to differentiate internal and external access. Internal access is required never to modify
      * the contents. References passed to outside entities have to be wrapped in an unmodifiable view.
      */
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Handled through Externalizable proxy")
     final Iterable<PathArgument> pathArguments;
 
     private final @NonNull Class<T> targetType;
