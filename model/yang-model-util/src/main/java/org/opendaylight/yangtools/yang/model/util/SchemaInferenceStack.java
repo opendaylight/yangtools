@@ -225,7 +225,11 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code inference} cannot be resolved to a valid stack
      */
     public static @NonNull SchemaInferenceStack ofInference(final SchemaTreeInference inference) {
-        return of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
+        var ret = new SchemaInferenceStack(inference.getEffectiveModelContext());
+        var path = inference.statementPath();
+        ret.currentModule = ret.getModule(path.get(0).argument());
+        path.forEach(ret.deque::push);
+        return ret;
     }
 
     /**
@@ -690,7 +694,13 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalStateException if current state cannot be converted to a {@link SchemaTreeInference}
      */
     public @NonNull SchemaTreeInference toSchemaTreeInference() {
-        return DefaultSchemaTreeInference.of(getEffectiveModelContext(), toSchemaNodeIdentifier());
+        checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
+        var cleanDeque = clean ? deque : reconstructSchemaInferenceStack().deque;
+        var path = ImmutableList.<SchemaTreeEffectiveStatement<?>>builderWithExpectedSize(cleanDeque.size())
+                .addAll(Iterators.transform(cleanDeque.descendingIterator(),
+                        stmt -> (SchemaTreeEffectiveStatement<?>) stmt))
+                .build();
+        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(), path);
     }
 
     /**
@@ -859,6 +869,10 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     // of schema tree items. This means at least N searches, but after they are done, we get an opportunity to set the
     // clean flag.
     private Iterator<QName> reconstructQNames() {
+        return reconstructSchemaInferenceStack().iterateQNames();
+    }
+
+    private SchemaInferenceStack reconstructSchemaInferenceStack() {
         // Let's walk all statements and decipher them into a temporary stack
         final SchemaInferenceStack tmp = new SchemaInferenceStack(effectiveModel, deque.size());
         final Iterator<EffectiveStatement<?, ?>> it = deque.descendingIterator();
@@ -882,7 +896,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
         // if the sizes match, we did not jump through hoops. let's remember that for future.
         clean = deque.size() == tmp.deque.size();
-        return tmp.iterateQNames();
+        return tmp;
     }
 
     private void resolveChoiceSteps(final @NonNull QName nodeIdentifier) {
