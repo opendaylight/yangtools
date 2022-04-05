@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b2f26b1_ed3119c0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-05T13:24:30Z",
+      "side": 1,
+      "message": "IMO: maybe there are better words for this..",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ede7454_e4be5b77",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-05T13:24:30Z",
+      "side": 1,
+      "message": "Can you describe how? When its enabled/disabled?",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "480b83e2_24a563ff",
+        "filename": "model/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/YT1414Test.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-05T13:24:30Z",
+      "side": 1,
+      "message": "We can create and intern QNames here.. We have namespace and local name..",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66a6570d_b84376da",
+        "filename": "model/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/YT1414Test.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-05T13:24:30Z",
+      "side": 1,
+      "message": "In new class we can safely use:\n\n`final var context \u003d `",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
