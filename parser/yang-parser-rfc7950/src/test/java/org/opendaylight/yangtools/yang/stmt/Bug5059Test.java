@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class Bug5059Test {
+public class Bug5059Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5059");
-        assertNotNull(context);
+    public void test() {
+        assertEffectiveModelDir("/bugs/bug5059");
     }
 }

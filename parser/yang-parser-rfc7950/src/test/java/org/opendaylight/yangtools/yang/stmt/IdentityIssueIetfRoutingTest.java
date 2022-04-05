@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class IdentityIssueIetfRoutingTest {
+public class IdentityIssueIetfRoutingTest extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/identity-ietf-routing-test/");
-        assertNotNull(context);
+    public void test() {
+        assertEffectiveModelDir("/bugs/identity-ietf-routing-test/");
     }
 }

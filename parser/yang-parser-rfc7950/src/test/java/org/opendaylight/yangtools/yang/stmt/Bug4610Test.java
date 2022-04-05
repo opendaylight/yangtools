@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-public class Bug4610Test {
+public class Bug4610Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug4610");
+    public void test() {
+        final var context = assertEffectiveModelDir("/bugs/bug4610");
         final Revision revision = Revision.of("2015-12-12");
 
         // Original

@@ -20,14 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class Bug9244Test {
-
+public class Bug9244Test extends AbstractYangTest {
     @Test
-    public void testDeviateReplaceOfImplicitSubstatements() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9244/");
-        assertNotNull(schemaContext);
+    public void testDeviateReplaceOfImplicitSubstatements() {
+        final var schemaContext = assertEffectiveModelDir("/bugs/bug9244/");
 
         final Module barModule = schemaContext.findModule("bar", Revision.of("2017-10-13")).get();
         final ContainerSchemaNode barCont = (ContainerSchemaNode) barModule.getDataChildByName(

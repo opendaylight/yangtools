@@ -11,7 +11,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
 import java.util.Optional;
 import org.junit.Test;
@@ -19,17 +18,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class Bug8126Test {
+public class Bug8126Test extends AbstractYangTest {
     private static final XMLNamespace FOO_NS = XMLNamespace.of("foo");
     private static final XMLNamespace BAR_NS = XMLNamespace.of("bar");
 
     @Test
-    public void testValidAugments() throws Exception {
-        final ModuleEffectiveStatement fooModule = StmtTestUtils.parseYangSources("/bugs/bug8126/valid")
+    public void testValidAugments() {
+        final var fooModule = assertEffectiveModelDir("/bugs/bug8126/valid")
             .getModuleStatement(QNameModule.create(FOO_NS));
         assertThat(fooModule.findSchemaTreeNode(
             foo("root"), bar("my-container"), bar("my-choice"), bar("one"), bar("one"), bar("mandatory-leaf"))
@@ -45,31 +41,19 @@ public class Bug8126Test {
 
     @Test
     public void testAugmentMandatoryChoice() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/bugs/bug8126/inv-choice"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith(
+        assertInferenceExceptionDir("/bugs/bug8126/inv-choice", startsWith(
             "An augment cannot add node 'mandatory-choice' because it is mandatory and in module different than "));
     }
 
     @Test
     public void testAugmentMandatoryList() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/bugs/bug8126/inv-list"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith(
+        assertInferenceExceptionDir("/bugs/bug8126/inv-list", startsWith(
             "An augment cannot add node 'mandatory-list' because it is mandatory and in module different than "));
     }
 
     @Test
     public void testAugmentMandatoryContainer() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/bugs/bug8126/inv-cont"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith(
+        assertInferenceExceptionDir("/bugs/bug8126/inv-cont", startsWith(
             "An augment cannot add node 'mandatory-leaf-3' because it is mandatory and in module different than "));
     }
 

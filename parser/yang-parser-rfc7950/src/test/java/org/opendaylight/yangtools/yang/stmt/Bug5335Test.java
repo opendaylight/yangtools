@@ -10,15 +10,12 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug5335Test extends AbstractYangTest {
     private static final String FOO = "foo";
@@ -34,31 +31,19 @@ public class Bug5335Test extends AbstractYangTest {
 
     @Test
     public void incorrectTest1() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-1"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith(
+        assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-1", startsWith(
             "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
     public void incorrectTest2() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith(
+        assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-2", startsWith(
             "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
     public void incorrectTest3() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith(
+        assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-3", startsWith(
             "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 

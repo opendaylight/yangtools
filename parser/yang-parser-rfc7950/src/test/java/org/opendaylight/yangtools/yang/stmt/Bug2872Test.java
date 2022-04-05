@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -20,16 +19,13 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
-public class Bug2872Test {
-
+public class Bug2872Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug2872");
-        assertNotNull(schema);
+    public void test() {
+        final var schema = assertEffectiveModelDir("/bugs/bug2872");
 
         final QNameModule bug2872module = QNameModule.create(XMLNamespace.of("bug2872"), Revision.of("2016-06-08"));
         final QName foo = QName.create(bug2872module, "bar");

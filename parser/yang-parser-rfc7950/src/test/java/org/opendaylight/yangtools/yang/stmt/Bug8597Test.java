@@ -8,24 +8,18 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class Bug8597Test {
+public class Bug8597Test extends AbstractYangTest {
     @Test
     public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8597");
-        assertNotNull(context);
-
-        final Module foo = context.findModule("foo").get();
-        for (final ModuleImport moduleImport : foo.getImports()) {
+        final var foo = assertEffectiveModelDir("/bugs/bug8597").findModule("foo").orElseThrow();
+        for (ModuleImport moduleImport : foo.getImports()) {
             switch (moduleImport.getModuleName()) {
                 case "bar":
                     assertEquals(Revision.ofNullable("1970-01-01"), moduleImport.getRevision());

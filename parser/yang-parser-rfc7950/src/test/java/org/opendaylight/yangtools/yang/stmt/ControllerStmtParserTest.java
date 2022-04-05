@@ -29,13 +29,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
-public class ControllerStmtParserTest {
-
+public class ControllerStmtParserTest extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/sal-broker-impl");
-        assertNotNull(context);
-
+    public void test() {
+        final var context = assertEffectiveModelDir("/sal-broker-impl");
         salDomBrokerImplModuleTest(context);
         configModuleTest(context);
     }

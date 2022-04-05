@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import org.junit.Test;
@@ -17,16 +17,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class Bug5518Test {
+public class Bug5518Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5518");
-        assertNotNull(context);
-
+    public void test() {
+        final var context = assertEffectiveModelDir("/bugs/bug5518");
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "root"));
-        assertTrue(dataChildByName instanceof ContainerSchemaNode);
+        assertThat(dataChildByName, instanceOf(ContainerSchemaNode.class));
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
         final Collection<? extends MustDefinition> mustConstraints = root.getMustConstraints();
         assertEquals(1, mustConstraints.size());

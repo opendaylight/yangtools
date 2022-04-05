@@ -14,17 +14,12 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public class Bug5712Test {
-
+public class Bug5712Test extends AbstractYangTest {
     @Test
-    public void testTypedefWithNewStatementParser() throws Exception {
-        SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug5712");
-        assertNotNull(schemaContext);
-
-        Module badModule = schemaContext.findModules("bad").iterator().next();
+    public void testTypedefWithNewStatementParser() {
+        final var badModule = assertEffectiveModelDir("/bugs/bug5712").findModules("bad").iterator().next();
         assertNotNull(badModule);
         checkThing2TypeDef(badModule);
     }

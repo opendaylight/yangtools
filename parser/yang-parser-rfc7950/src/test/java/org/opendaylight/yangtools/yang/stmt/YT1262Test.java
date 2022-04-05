@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
 
-public class YT1262Test {
+public class YT1262Test extends AbstractYangTest {
     @Test
-    public void testTypedefNamespaces() throws Exception {
-        final var modelContext = StmtTestUtils.parseYangSources("/bugs/YT1262");
+    public void testTypedefNamespaces() {
+        final var modelContext = assertEffectiveModelDir("/bugs/YT1262");
         final var module = modelContext.getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
         assertTypedef(module, "fdef");
         assertTypedef(module, "sdef");

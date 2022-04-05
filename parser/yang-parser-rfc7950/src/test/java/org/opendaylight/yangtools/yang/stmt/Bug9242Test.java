@@ -17,18 +17,16 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public class Bug9242Test {
+public class Bug9242Test extends AbstractYangTest {
     @Test
-    public void testDeviateReplaceWithUserDefinedTypes() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9242/");
-        assertNotNull(schemaContext);
+    public void testDeviateReplaceWithUserDefinedTypes() {
+        final var schemaContext = assertEffectiveModelDir("/bugs/bug9242/");
 
         final Revision revision = Revision.of("2017-10-13");
-        final Module rootModule = schemaContext.findModule("root-module", revision).get();
-        final Module impModule = schemaContext.findModule("imp-module", revision).get();
+        final Module rootModule = schemaContext.findModule("root-module", revision).orElseThrow();
+        final Module impModule = schemaContext.findModule("imp-module", revision).orElseThrow();
 
         TypeDefinition<?> deviatedMyLeafType = null;
         TypeDefinition<?> deviatedMyLeaf2Type = null;

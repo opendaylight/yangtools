@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
-public class YT1133Test {
+public class YT1133Test extends AbstractYangTest {
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public void testAugmentKeys() throws Exception {
@@ -28,7 +28,7 @@ public class YT1133Test {
 
         try (PrintStream out = new PrintStream(output, true, StandardCharsets.UTF_8)) {
             System.setOut(out);
-            ctx = StmtTestUtils.parseYangSources("/bugs/YT1133");
+            ctx = assertEffectiveModelDir("/bugs/YT1133");
         } finally {
             System.setOut(stdout);
         }

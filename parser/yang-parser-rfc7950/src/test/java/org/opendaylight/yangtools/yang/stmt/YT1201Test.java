@@ -20,13 +20,13 @@ import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
-public class YT1201Test {
+public class YT1201Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
 
     @Test
-    public void testWhenPrefixes() throws Exception {
-        final DataSchemaNode bar = StmtTestUtils.parseYangSources("/bugs/YT1201/").getDataChildByName(BAR);
+    public void testWhenPrefixes() {
+        final DataSchemaNode bar = assertEffectiveModelDir("/bugs/YT1201/").getDataChildByName(BAR);
         assertThat(bar, instanceOf(ContainerSchemaNode.class));
         final YangExpr when = ((ContainerSchemaNode) bar).getWhenCondition().get().getRootExpr();
         assertThat(when, instanceOf(Relative.class));

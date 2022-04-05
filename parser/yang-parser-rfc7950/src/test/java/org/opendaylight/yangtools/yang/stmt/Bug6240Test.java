@@ -12,15 +12,12 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug6240Test extends AbstractYangTest {
     private static final String NS = "bar";
@@ -60,10 +57,7 @@ public class Bug6240Test extends AbstractYangTest {
 
     @Test
     public void testInvalidModels() {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> StmtTestUtils.parseYangSources("/bugs/bug6240/incorrect"));
-        final var cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
+        assertInferenceExceptionDir("/bugs/bug6240/incorrect",
+            startsWith("Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
     }
 }

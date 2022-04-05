@@ -44,12 +44,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class DeviationResolutionTest {
-
+public class DeviationResolutionTest extends AbstractYangTest {
     @Test
     public void testDeviateNotSupported() throws Exception {
-        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSources(
-                "/deviation-resolution-test/deviation-not-supported");
+        final var schemaContext = assertEffectiveModelDir("/deviation-resolution-test/deviation-not-supported");
         assertNotNull(schemaContext);
 
         final Module importedModule = schemaContext.findModule("imported", Revision.of("2017-01-20")).get();

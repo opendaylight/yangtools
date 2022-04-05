@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -25,11 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-public class Bug6316Test {
+public class Bug6316Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6316");
-        assertNotNull(context);
+    public void test() {
+        final var context = assertEffectiveModelDir("/bugs/bug6316");
         verifyEnumTypedefinition(context);
         verifyBitsTypedefinition(context);
     }

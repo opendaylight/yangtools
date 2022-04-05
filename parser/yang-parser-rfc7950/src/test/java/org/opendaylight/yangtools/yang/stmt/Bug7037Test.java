@@ -19,20 +19,18 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug7037Test {
+public class Bug7037Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
 
     @Test
-    public void test() throws Exception {
-        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug7037");
-        assertNotNull(context);
+    public void test() {
+        final var context = assertEffectiveModelDir("/bugs/bug7037");
 
-        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = context.getModuleStatement(foo("foo"))
-            .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+        final var unknownSchemaNodes = context.getModuleStatement(foo("foo")) .getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnrecognizedStatement first = unknownSchemaNodes.iterator().next();

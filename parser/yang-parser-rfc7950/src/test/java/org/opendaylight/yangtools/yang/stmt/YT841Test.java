@@ -15,12 +15,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-public class YT841Test {
+public class YT841Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "2018-01-02", "foo");
 
     @Test
     public void testFindDataSchemaNode() throws Exception {
-        final SchemaTreeEffectiveStatement<?> input = StmtTestUtils.parseYangSources("/bugs/YT841/")
+        final SchemaTreeEffectiveStatement<?> input = assertEffectiveModelDir("/bugs/YT841/")
             .getModuleStatement(FOO)
             .findSchemaTreeNode(FOO, FOO, FOO, QName.create(FOO, "input"))
             .orElse(null);

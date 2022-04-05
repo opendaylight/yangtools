@@ -11,9 +11,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.Collection;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
 public class YangParserIdentityTest extends AbstractYangTest {
@@ -35,10 +33,10 @@ public class YangParserIdentityTest extends AbstractYangTest {
     // imported module prefixed base identity name equals identity name, but
     // prefix differs
     @Test
-    public void testParsingImportPrefixIdentityTestModule() throws Exception {
-        Module module = StmtTestUtils.parseYangSources("/identity/import").findModules("prefiximportidentitytest")
+    public void testParsingImportPrefixIdentityTestModule() {
+        final var module = assertEffectiveModelDir("/identity/import").findModules("prefiximportidentitytest")
             .iterator().next();
-        Collection<? extends ModuleImport> imports = module.getImports();
+        final var imports = module.getImports();
         assertEquals(imports.size(), 1);
         ModuleImport dummy = TestUtils.findImport(imports, "dummy");
         assertNotEquals(dummy.getPrefix(), module.getPrefix());

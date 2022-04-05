@@ -17,15 +17,12 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 
-public class Bug3799Test {
-
+public class Bug3799Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug3799");
-        assertNotNull(schema);
+    public void test() {
+        final var schema = assertEffectiveModelDir("/bugs/bug3799");
 
         Collection<? extends Module> modules = schema.getModules();
         assertNotNull(modules);

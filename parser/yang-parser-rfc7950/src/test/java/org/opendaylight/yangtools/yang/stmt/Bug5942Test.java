@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -17,16 +16,14 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug5942Test {
+public class Bug5942Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug5942");
-        assertNotNull(schemaContext);
+    public void test() {
+        final var schemaContext = assertEffectiveModelDir("/bugs/bug5942");
 
         final DataSchemaNode root = schemaContext.getDataChildByName(QName.create("foo", "2016-06-02", "root"));
         assertTrue(root instanceof ContainerSchemaNode);

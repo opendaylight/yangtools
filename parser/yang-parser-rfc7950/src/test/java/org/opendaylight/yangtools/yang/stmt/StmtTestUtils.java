@@ -122,11 +122,6 @@ public final class StmtTestUtils {
         return parseYangSources(config, supportedFeatures, sources);
     }
 
-    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
-            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
-        return parseYangSources(yangSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
-    }
-
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
             final YangParserConfiguration config) throws ReactorException, URISyntaxException, IOException,
             YangSyntaxErrorException {

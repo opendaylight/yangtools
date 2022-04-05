@@ -8,17 +8,13 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import static org.junit.Assert.assertThrows;
 
-public class Bug6131Test {
-    @Test(expected = NullPointerException.class)
-    public void test() throws ReactorException, URISyntaxException, SourceException, IOException,
-            YangSyntaxErrorException {
-        StmtTestUtils.parseYangSources("/bugs/bug6131");
+import org.junit.Test;
+
+public class Bug6131Test extends AbstractYangTest {
+    @Test
+    public void test() {
+        assertThrows(NullPointerException.class, () -> TestUtils.loadModules("/bugs/bug6131"));
     }
 }

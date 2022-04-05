@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
@@ -17,14 +16,12 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug4456Test {
+public class Bug4456Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4456");
-        assertNotNull(schema);
+    public void test() {
+        final var schema = assertEffectiveModelDir("/bugs/bug4456");
 
         Set<Module> modules = (Set<Module>) schema.findModules(XMLNamespace.of("foo"));
         assertEquals(1, modules.size());

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
@@ -22,15 +21,14 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug5410Test {
+public class Bug5410Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void testYangPattern() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5410");
-        assertNotNull(context);
+    public void testYangPattern() {
+        final var context = assertEffectiveModelDir("/bugs/bug5410");
 
         final PatternConstraint pattern = getPatternConstraintOf(context, "leaf-with-pattern");
 

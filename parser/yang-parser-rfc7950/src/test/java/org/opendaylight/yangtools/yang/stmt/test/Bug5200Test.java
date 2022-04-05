@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
@@ -25,16 +23,15 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug5200Test {
+public class Bug5200Test extends AbstractYangTest {
     private static final String NS = "foo";
     private static final String REV = "2016-05-05";
 
     @Test
-    public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5200");
-        assertNotNull(context);
+    public void test() {
+        final var context = assertEffectiveModelDir("/bugs/bug5200");
 
         QName root = QName.create(NS, REV, "root");
         QName myLeaf = QName.create(NS, REV, "my-leaf");

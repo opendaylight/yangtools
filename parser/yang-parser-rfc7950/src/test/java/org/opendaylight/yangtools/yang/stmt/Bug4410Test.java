@@ -7,27 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import com.google.common.base.Throwables;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
-public class Bug4410Test {
-
+public class Bug4410Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/bugs/bug4410");
-            fail("SomeModifiersUnresolvedException should be thrown.");
-        } catch (SomeModifiersUnresolvedException e) {
-            Throwable rootCause = Throwables.getRootCause(e);
-            assertTrue(rootCause instanceof InferenceException);
-            final String message = rootCause.getMessage();
-            assertTrue(message.startsWith("Type [(foo)"));
-            assertTrue(message.contains("was not found"));
-        }
+    public void test() {
+        final var cause = assertInferenceExceptionDir("/bugs/bug4410",
+            startsWith("Yang model processing phase EFFECTIVE_MODEL failed [at ")).getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), allOf(startsWith("Type [(foo)"), containsString("was not found")));
     }
 }

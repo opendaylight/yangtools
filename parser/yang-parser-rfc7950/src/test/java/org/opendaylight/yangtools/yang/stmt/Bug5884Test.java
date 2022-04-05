@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Iterator;
 import org.junit.Test;
@@ -21,16 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class Bug5884Test {
+public class Bug5884Test extends AbstractYangTest {
     private static final String NS = "urn:yang.foo";
     private static final String REV = "2016-01-01";
 
     @Test
-    public void testBug5884() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5884");
-        assertNotNull(context);
+    public void testBug5884() {
+        final var context = assertEffectiveModelDir("/bugs/bug5884");
 
         final QName root = QName.create(NS, REV, "main-container");
         final QName choice = QName.create(NS, REV, "test-choice");

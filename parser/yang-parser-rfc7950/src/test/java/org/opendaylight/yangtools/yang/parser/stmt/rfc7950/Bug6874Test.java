@@ -8,12 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Optional;
@@ -26,14 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6874Test {
-
+public class Bug6874Test extends AbstractYangTest {
     private static final StatementStreamSource ROOT_MODULE = sourceForResource(
         "/rfc7950/include-import-stmt-test/valid-11/root-module.yang");
     private static final StatementStreamSource CHILD_MODULE = sourceForResource(
@@ -44,9 +38,8 @@ public class Bug6874Test {
         "/rfc7950/include-import-stmt-test/valid-11/imported-module.yang");
 
     @Test
-    public void valid11Test() throws Exception {
-        final var schemaContext = StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/valid-11");
-        assertNotNull(schemaContext);
+    public void valid11Test() {
+        final var schemaContext = assertEffectiveModelDir("/rfc7950/include-import-stmt-test/valid-11");
 
         // Test for valid include statement
         final Module testModule = schemaContext.findModules("root-module").iterator().next();
@@ -62,20 +55,14 @@ public class Bug6874Test {
 
     @Test
     public void invalid10IncludeStmtTest() {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-include-10")).getCause();
-        assertThat(ex, instanceOf(InvalidSubstatementException.class));
-        assertThat(ex.getMessage(), anyOf(
+        assertInvalidSubstatementExceptionDir("/rfc7950/include-import-stmt-test/invalid-include-10", anyOf(
             startsWith("DESCRIPTION is not valid for INCLUDE"),
             startsWith("REFERENCE is not valid for INCLUDE")));
     }
 
     @Test
-    public void invalid10ImportStmtTest() throws Exception {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-import-10")).getCause();
-        assertThat(ex, instanceOf(InvalidSubstatementException.class));
-        assertThat(ex.getMessage(), anyOf(
+    public void invalid10ImportStmtTest() {
+        assertInvalidSubstatementExceptionDir("/rfc7950/include-import-stmt-test/invalid-import-10", anyOf(
             startsWith("DESCRIPTION is not valid for IMPORT"),
             startsWith("REFERENCE is not valid for IMPORT")));
     }
@@ -95,8 +82,7 @@ public class Bug6874Test {
             });
     }
 
-    @SuppressWarnings("rawtypes")
-    private static void verifyDescAndRef(final DeclaredStatement stmt) {
+    private static void verifyDescAndRef(final DeclaredStatement<?> stmt) {
         if (stmt instanceof DescriptionStatement) {
             assertEquals("Yang 1.1: Allow description and reference in include and import.",
                 ((DescriptionStatement) stmt).argument());

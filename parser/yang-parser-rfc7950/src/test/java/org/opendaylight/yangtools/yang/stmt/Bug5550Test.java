@@ -9,22 +9,19 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
-public class Bug5550Test {
+public class Bug5550Test extends AbstractYangTest {
     private static final String NS = "foo";
     private static final String REV = "2016-03-18";
 
     @Test
-    public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5550");
-        assertNotNull(context);
+    public void test() {
+        final var context = assertEffectiveModelDir("/bugs/bug5550");
 
         QName root = QName.create(NS, REV, "root");
         QName containerInGrouping = QName.create(NS, REV, "container-in-grouping");

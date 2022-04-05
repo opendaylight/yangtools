@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 
 import java.util.Optional;
 import org.junit.Before;
@@ -22,15 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class CaseStmtTest {
+public class CaseStmtTest extends AbstractYangTest {
     private static final Optional<Boolean> OPT_FALSE = Optional.of(Boolean.FALSE);
     private static final Optional<Boolean> OPT_TRUE = Optional.of(Boolean.TRUE);
 
-    private SchemaContext schema;
+    private EffectiveModelContext schema;
     private Module rootFoo;
     private Module rootBar;
     private QNameModule qnameFoo;
@@ -41,8 +40,8 @@ public class CaseStmtTest {
     private CaseSchemaNode tempChoice;
 
     @Before
-    public void setup() throws Exception {
-        schema = StmtTestUtils.parseYangSources("/case-test");
+    public void setup() {
+        schema = assertEffectiveModelDir("/case-test");
         Revision rev = Revision.of("2015-09-09");
         rootFoo = schema.findModule("foo", rev).get();
         rootBar = schema.findModule("bar", rev).get();
@@ -530,13 +529,13 @@ public class CaseStmtTest {
 
     @Test
     public void testInferenceExceptionChoice() {
-        assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/choice"));
+        assertInferenceExceptionDir("/case-test/case-test-exceptions/choice",
+            startsWith("Parent node has config=false, this node must not be specifed as config=true [at "));
     }
 
     @Test
-    public void testInferenceExceptionCase() throws Exception {
-        assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/case"));
+    public void testInferenceExceptionCase() {
+        assertInferenceExceptionDir("/case-test/case-test-exceptions/case",
+            startsWith("Parent node has config=false, this node must not be specifed as config=true [at "));
     }
 }

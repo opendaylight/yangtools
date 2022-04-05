@@ -10,16 +10,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6876Test extends AbstractYangTest {
     @Test
@@ -33,11 +29,7 @@ public class Bug6876Test extends AbstractYangTest {
 
     @Test
     public void yang10Test() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSources("/rfc7950/bug6876/yang10"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith(
+        assertInferenceExceptionDir("/rfc7950/bug6876/yang10", startsWith(
             "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 

@@ -11,9 +11,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class YT1039Test {
+public class YT1039Test extends AbstractYangTest {
     @Test
-    public void testUsesRefineAnyxml() throws Exception {
-        assertEquals(2, StmtTestUtils.parseYangSources("/bugs/YT1039").getModuleStatements().size());
+    public void testUsesRefineAnyxml() {
+        assertEquals(2, assertEffectiveModelDir("/bugs/YT1039").getModuleStatements().size());
     }
 }
