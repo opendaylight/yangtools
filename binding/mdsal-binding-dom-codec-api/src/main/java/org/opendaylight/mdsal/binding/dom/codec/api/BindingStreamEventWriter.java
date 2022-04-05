@@ -20,54 +20,47 @@ import org.opendaylight.yangtools.yang.binding.Identifier;
 /**
  * Event Stream Writer for Binding Representation.
  *
- * <h3>Emmiting Event Stream</h3>
- *
+ * <h2>Emitting Event Stream</h2>
  * <ul>
- * <li><code>container</code> - Container node representation, start event is
- * emitted using {@link #startContainerNode(Class, int)} and node end event is
- * emitted using {@link #endNode()}. Container node is implementing
- * {@link DataObject} interface.
- *
- * <li><code>list</code> - YANG list statement has two representation in event
- * stream - unkeyed list and map. Unkeyed list is YANG list which did not
- * specify key.
- *
- * <ul>
- * <li><code>Map</code> - Map start event is emitted using
- * {@link #startMapNode(Class, int)} and is ended using {@link #endNode()}. Each map
- * entry start is emitted using {@link #startMapEntryNode(Identifier, int)} with Map of keys
- * and finished using {@link #endNode()}.</li>
- * <li><code>UnkeyedList</code> - Unkeyed list represent list without keys,
- * unkeyed list start is emitted using {@link #startUnkeyedList(Class, int)} list
- * end is emitted using {@link #endNode()}. Each list item is emitted using
- * {@link #startUnkeyedListItem(int)} and ended using {@link #endNode()}.</li>
- * </ul></li>
- * <li><code>leaf</code> - Leaf node event is emitted using
- * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emitted for
- * leaf node.</li>
- * <li><code>leaf-list</code> - Leaf list start is emitted using
- * {@link #startLeafSet(String, int)}. Leaf list end is emitted using
- * {@link #endNode()}. Leaf list entries are emitted using
- * {@link #leafSetEntryNode(Object)}.
- * <li><code>anyxml - Anyxml node event is emitted using
- * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emitted
- * for anyxml node.</code></li>
- * <li><code>choice</code> Choice node event is emitted by
- * {@link #startChoiceNode(Class, int)} event and must be immediately followed by
- * {@link #startCase(Class, int)} event. Choice node is finished by emitting an
- * {@link #endNode()} event.</li>
- * <li>
- * <code>case</code> - Case node may be emitted only inside choice node by
- * invoking {@link #startCase(Class, int)}. Case node is finished be emitting an
- * {@link #endNode()} event.</li>
- * <li>
- * <code>augment</code> - Represents augmentation, augmentation node is started
- * by invoking {@link #startAugmentationNode(Class)} and
- * finished by invoking {@link #endNode()}.</li>
+ *   <li>{@code container} - Container node representation, start event is emitted using
+ *       {@link #startContainerNode(Class, int)} and node end event is emitted using {@link #endNode()}. Container node
+ *       is implementing {@link DataObject} interface.
+ *   </li>
+ *   <li>{@code list} - YANG list statement has two representation in event stream - unkeyed list and map. Unkeyed list
+ *       is YANG list which did not specify key.
+ *   </li>
+ *   <li>{@code Map} - Map start event is emitted using {@link #startMapNode(Class, int)} and is ended using
+ *       {@link #endNode()}. Each map entry start is emitted using {@link #startMapEntryNode(Identifier, int)} with Map
+ *       of keys and finished using {@link #endNode()}.
+ *   </li>
+ *   <li>{@code UnkeyedList} - Unkeyed list represent list without keys, unkeyed list start is emitted using
+ *       {@link #startUnkeyedList(Class, int)} list end is emitted using {@link #endNode()}. Each list item is emitted
+ *       using {@link #startUnkeyedListItem(int)} and ended using {@link #endNode()}.
+ *   </li>
+ *   <li>{@code leaf} - Leaf node event is emitted using {@link #leafNode(String, Object)}. {@link #endNode()} MUST be
+ *       not emitted for leaf node.
+ *   </li>
+ *   <li>{@code leaf-list} - Leaf list start is emitted using {@link #startLeafSet(String, int)}. Leaf list end is
+ *       emitted using {@link #endNode()}. Leaf list entries are emitted using {@link #leafSetEntryNode(Object)}.
+ *   </li>
+ *   <li>{@code anyxml} - Anyxml node event is emitted using {@link #leafNode(String, Object)}. {@link #endNode()} MUST
+ *       be not emitted for anyxml node.
+ *   </li>
+ *   <li>{@code choice} Choice node event is emitted by {@link #startChoiceNode(Class, int)} event and must be
+ *       immediately followed by {@link #startCase(Class, int)} event. Choice node is finished by emitting an
+ *       {@link #endNode()} event.
+ *   </li>
+ *   <li>{@code case} - Case node may be emitted only inside choice node by invoking {@link #startCase(Class, int)}.
+ *       Case node is finished be emitting an {@link #endNode()} event.
+ *   </li>
+ *   <li>{@code augment} - Represents augmentation, augmentation node is started by invoking
+ *       {@link #startAugmentationNode(Class)} and finished by invoking {@link #endNode()}.
+ *   </li>
  * </ul>
  *
- * <h3>Implementation notes</h3> This interface is not intended to be implemented by users of generated Binding DTOs
- * but to be used by utilities, which needs to emit NormalizedNode model from Binding DTOs.
+ * <h3>Implementation notes</h3>
+ * This interface is not intended to be implemented by users of generated Binding DTOs but to be used by utilities,
+ * which needs to emit NormalizedNode model from Binding DTOs.
  *
  * <p>
  * This interface is intended as API definition of facade for real Event / Stream Writer, without explicitly requiring
