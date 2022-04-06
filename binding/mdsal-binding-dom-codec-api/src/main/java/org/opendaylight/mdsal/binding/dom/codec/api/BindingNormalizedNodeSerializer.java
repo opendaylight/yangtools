@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Action;
+import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -80,7 +81,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing data
      * @return Binding representation of Notification
      */
-    @Nullable Notification<?> fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data);
+    @NonNull BaseNotification fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data);
 
     /**
      * Translates supplied NormalizedNode Notification into Binding data, optionally taking an instant
@@ -92,7 +93,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return Binding representation of Notification
      */
     @Beta
-    @Nullable Notification<?> fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data,
+    @NonNull BaseNotification fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data,
             @Nullable Instant eventInstant);
 
     /**
@@ -131,10 +132,19 @@ public interface BindingNormalizedNodeSerializer {
     /**
      * Translates supplied Binding Notification or output into NormalizedNode notification.
      *
-     * @param data NormalizedNode representing notification data
+     * @param data {@link Notification} representing notification data
      * @return NormalizedNode representation of notification
      */
     @NonNull ContainerNode toNormalizedNodeNotification(@NonNull Notification<?> data);
+
+    /**
+     * Translates supplied Binding Notification or output into NormalizedNode notification.
+     *
+     * @param path schema node identifier of the notification
+     * @param data {@link BaseNotification} representing notification data
+     * @return NormalizedNode representation of notification
+     */
+    @NonNull ContainerNode toNormalizedNodeNotification(@NonNull Absolute path, @NonNull BaseNotification data);
 
     /**
      * Translates supplied Binding RPC input or output into NormalizedNode data.

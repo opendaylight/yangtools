@@ -37,14 +37,14 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.GeneratorResult;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
+import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.EventInstantAware;
-import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class NotificationCodecContext<D extends DataObject & Notification<D>>
+final class NotificationCodecContext<D extends DataObject & BaseNotification>
         extends DataObjectCodecContext<D, NotificationRuntimeType> {
     private static final Generic EVENT_INSTANT_AWARE = TypeDefinition.Sort.describe(EventInstantAware.class);
 
@@ -63,7 +63,7 @@ final class NotificationCodecContext<D extends DataObject & Notification<D>>
 
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, DataObjectCodecContext.class,
         DistinctNodeContainer.class, Instant.class);
-    private static final MethodType NOTIFICATION_TYPE = MethodType.methodType(Notification.class,
+    private static final MethodType NOTIFICATION_TYPE = MethodType.methodType(BaseNotification.class,
         NotificationCodecContext.class, ContainerNode.class, Instant.class);
     private static final String INSTANT_FIELD = "instant";
 
@@ -107,13 +107,15 @@ final class NotificationCodecContext<D extends DataObject & Notification<D>>
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    Notification<?> deserialize(final @NonNull ContainerNode data, final @NonNull Instant eventInstant) {
+    @NonNull BaseNotification deserialize(final @NonNull ContainerNode data, final @NonNull Instant eventInstant) {
+        final BaseNotification ret;
         try {
-            return (Notification<?>) eventProxy.invokeExact(this, data, eventInstant);
+            ret = (BaseNotification) eventProxy.invokeExact(this, data, eventInstant);
         } catch (final Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new IllegalStateException(e);
+            throw new LinkageError("Failed to instantiate notification", e);
         }
+        return verifyNotNull(ret);
     }
 
     @Override

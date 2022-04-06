@@ -59,6 +59,7 @@ import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
+import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -560,16 +561,15 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
+    public BaseNotification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
         return getNotificationContext(path).deserialize(data);
     }
 
     @Override
-    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
+    public BaseNotification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
             final Instant eventInstant) {
         return eventInstant == null ? fromNormalizedNodeNotification(path, data)
                 : getNotificationContext(path).deserialize(data, eventInstant);
-
     }
 
     @Override
@@ -596,6 +596,17 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return serializeDataObject((DataObject) data,
             (ctx, iface, domWriter) -> ctx.newNotificationWriter(
                 (Class<? extends Notification<?>>) iface.asSubclass(Notification.class), domWriter));
+    }
+
+    @Override
+    public ContainerNode toNormalizedNodeNotification(final Absolute path, final BaseNotification data) {
+        checkArgument(data instanceof DataObject, "Unexpected data %s", data);
+        @SuppressWarnings("rawtypes")
+        final NotificationCodecContext notifContext = getNotificationContext(path);
+        @SuppressWarnings("unchecked")
+        final var result = notifContext.serialize((DataObject) data);
+        verify(result instanceof ContainerNode, "Unexpected result %s from %s", result, data);
+        return (ContainerNode) result;
     }
 
     @Override

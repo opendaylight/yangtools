@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
@@ -19,7 +20,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.yang.binding.EventInstantAware;
-import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -58,8 +58,8 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNormalizedToNotification() {
-        final Notification<?> bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
-            TwoLevelListChanged.QNAME), createTestDomData());
+        final var bindingDeserialized = codecContext.fromNormalizedNodeNotification(
+            Absolute.of(TwoLevelListChanged.QNAME), createTestDomData());
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
     }
@@ -67,18 +67,18 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
     @Test
     public void testNormalizedToNotificationWithInstant() {
         final Instant instant = Instant.now();
-        final Notification<?> bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
-            TwoLevelListChanged.QNAME), createTestDomData(), instant);
+        final var bindingDeserialized = codecContext.fromNormalizedNodeNotification(
+            Absolute.of(TwoLevelListChanged.QNAME), createTestDomData(), instant);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
         assertTrue(bindingDeserialized instanceof EventInstantAware);
-        assertEquals(instant, ((EventInstantAware) bindingDeserialized).eventInstant());
+        assertSame(instant, ((EventInstantAware) bindingDeserialized).eventInstant());
     }
 
     @Test
     public void testNormalizedToNotificationWithNull() {
-        final Notification<?> bindingDeserialized = codecContext.fromNormalizedNodeNotification(Absolute.of(
-            TwoLevelListChanged.QNAME), createTestDomData(), null);
+        final var bindingDeserialized = codecContext.fromNormalizedNodeNotification(
+            Absolute.of(TwoLevelListChanged.QNAME), createTestDomData(), null);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(createTestBindingData(), bindingDeserialized);
     }

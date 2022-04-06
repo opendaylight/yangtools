@@ -20,6 +20,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Action;
+import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -72,6 +73,11 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
+    public ContainerNode toNormalizedNodeNotification(final Absolute path, final BaseNotification data) {
+        return delegate().toNormalizedNodeNotification(path, data);
+    }
+
+    @Override
     public ContainerNode toNormalizedNodeRpcData(final DataContainer data) {
         return delegate().toNormalizedNodeRpcData(data);
     }
@@ -95,12 +101,12 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
+    public BaseNotification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
         return delegate().fromNormalizedNodeNotification(path, data);
     }
 
     @Override
-    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
+    public BaseNotification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
             final Instant eventInstant) {
         return delegate().fromNormalizedNodeNotification(path, data, eventInstant);
     }
