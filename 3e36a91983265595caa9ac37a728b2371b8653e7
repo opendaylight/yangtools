@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bd397bc_9c4c0b3d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-04-06T09:36:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b2f26b1_ed3119c0",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5ede7454_e4be5b77",
@@ -31,6 +49,24 @@
       "writtenOn": "2022-04-05T13:24:30Z",
       "side": 1,
       "message": "Can you describe how? When its enabled/disabled?",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac218dfe_bf2c6103",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-04-06T09:36:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ede7454_e4be5b77",
       "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2c17dce_72fd5e24",
+        "filename": "model/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/YT1414Test.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-04-06T09:36:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "480b83e2_24a563ff",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66a6570d_b84376da",
@@ -65,6 +119,24 @@
       "writtenOn": "2022-04-05T13:24:30Z",
       "side": 1,
       "message": "In new class we can safely use:\n\n`final var context \u003d `",
+      "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af95dc4b_e1455217",
+        "filename": "model/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/YT1414Test.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-04-06T09:36:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "66a6570d_b84376da",
       "revId": "3e36a91983265595caa9ac37a728b2371b8653e7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }

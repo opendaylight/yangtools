@@ -16,6 +16,24 @@
       "message": "Unnecessary change.",
       "revId": "ad338ff278f137696478df3d27675f1d1e78a8eb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28f4eb62_5f9eb0ad",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/DefaultSchemaTreeInference.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-04-06T09:36:00Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "224170ea_feee7f3b",
+      "revId": "ad338ff278f137696478df3d27675f1d1e78a8eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
