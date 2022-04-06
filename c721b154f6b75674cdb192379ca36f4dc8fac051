@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ab5fc53_fe62af23",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/DefaultSchemaTreeInference.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-04-06T20:40:28Z",
+      "side": 1,
+      "message": "Make this a runtime constant, otherwise this is sloooow",
+      "revId": "c721b154f6b75674cdb192379ca36f4dc8fac051",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
