@@ -16,6 +16,24 @@
       "message": "Make this a runtime constant, otherwise this is sloooow",
       "revId": "c721b154f6b75674cdb192379ca36f4dc8fac051",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3681fbe_a3733993",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/DefaultSchemaTreeInference.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-04-07T10:04:26Z",
+      "side": 1,
+      "message": "I am not sure what you mean by runtime constant.\nShould I make it static final?",
+      "parentUuid": "2ab5fc53_fe62af23",
+      "revId": "c721b154f6b75674cdb192379ca36f4dc8fac051",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
