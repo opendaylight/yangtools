@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -753,12 +754,12 @@ public class CompilationTest extends BaseCompilationTest {
             final String returnTypeStr) throws NoSuchMethodException {
         Method method = clazz.getMethod(methodName);
         assertEquals(java.lang.Class.class, method.getReturnType());
-        java.lang.reflect.Type returnType = method.getGenericReturnType();
+        Type returnType = method.getGenericReturnType();
         assertTrue(returnType instanceof ParameterizedType);
         final ParameterizedType pt = (ParameterizedType) returnType;
-        final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+        final Type[] parameters = pt.getActualTypeArguments();
         assertEquals(1, parameters.length);
-        final java.lang.reflect.Type parameter = parameters[0];
+        final Type parameter = parameters[0];
         assertTrue(parameter instanceof WildcardType);
         final WildcardType wildcardType = (WildcardType) parameter;
         assertEquals("? extends " + returnTypeStr, wildcardType.toString());
@@ -770,12 +771,12 @@ public class CompilationTest extends BaseCompilationTest {
         final Class<?> rawReturnType = Class.forName("org.opendaylight.yangtools.yang.binding.InstanceIdentifier", true,
             loader);
         assertEquals(rawReturnType, method.getReturnType());
-        final java.lang.reflect.Type returnType = method.getGenericReturnType();
+        final Type returnType = method.getGenericReturnType();
         assertTrue(returnType instanceof ParameterizedType);
         final ParameterizedType pt = (ParameterizedType) returnType;
-        final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+        final Type[] parameters = pt.getActualTypeArguments();
         assertEquals(1, parameters.length);
-        final java.lang.reflect.Type parameter = parameters[0];
+        final Type parameter = parameters[0];
         assertTrue(parameter instanceof WildcardType);
         final WildcardType wildcardType = (WildcardType) parameter;
         assertEquals("?", wildcardType.toString());
