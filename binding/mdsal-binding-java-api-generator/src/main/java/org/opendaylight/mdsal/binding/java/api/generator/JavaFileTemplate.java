@@ -14,6 +14,7 @@ import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.enco
 import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
 import java.lang.reflect.Method;
 import java.util.AbstractMap;
@@ -138,6 +139,11 @@ class JavaFileTemplate {
      * {@code org.opendaylight.yangtools.yang.binding.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
+
+    /**
+     * {@code com.google.common.base.MoreObjects} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName MOREOBJECTS = JavaTypeName.create(MoreObjects.class);
 
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');

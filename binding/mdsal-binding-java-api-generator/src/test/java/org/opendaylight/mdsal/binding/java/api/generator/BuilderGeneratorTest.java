@@ -167,7 +167,7 @@ public class BuilderGeneratorTest {
                 + " * @throws NullPointerException if {@code obj} is null\n"
                 + " */\n"
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
-                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    final var helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    CodeHelpers.appendValue(helper, \"test\", obj.gettest());\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(genType).toString());
@@ -185,7 +185,7 @@ public class BuilderGeneratorTest {
                 + " * @throws NullPointerException if {@code obj} is null\n"
                 + " */\n"
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
-                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    final var helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockGenType(TEST)).toString());
     }
@@ -202,7 +202,7 @@ public class BuilderGeneratorTest {
                 + " * @throws NullPointerException if {@code obj} is null\n"
                 + " */\n"
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
-                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    final var helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    CodeHelpers.appendValue(helper, \"test1\", obj.gettest1());\n"
                 + "    CodeHelpers.appendValue(helper, \"test2\", obj.gettest2());\n"
                 + "    return helper.toString();\n"
@@ -221,7 +221,7 @@ public class BuilderGeneratorTest {
                 + " * @throws NullPointerException if {@code obj} is null\n"
                 + " */\n"
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
-                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    final var helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    CodeHelpers.appendAugmentations(helper, \"augmentation\", obj);\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenType(TEST))).toString());
@@ -239,7 +239,7 @@ public class BuilderGeneratorTest {
                 + " * @throws NullPointerException if {@code obj} is null\n"
                 + " */\n"
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
-                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    final var helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    CodeHelpers.appendValue(helper, \"test\", obj.gettest());\n"
                 + "    CodeHelpers.appendAugmentations(helper, \"augmentation\", obj);\n"
                 + "    return helper.toString();\n"
@@ -258,7 +258,7 @@ public class BuilderGeneratorTest {
                 + " * @throws NullPointerException if {@code obj} is null\n"
                 + " */\n"
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
-                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    final var helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    CodeHelpers.appendValue(helper, \"test1\", obj.gettest1());\n"
                 + "    CodeHelpers.appendValue(helper, \"test2\", obj.gettest2());\n"
                 + "    CodeHelpers.appendAugmentations(helper, \"augmentation\", obj);\n"

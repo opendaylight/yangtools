@@ -27,7 +27,6 @@ import static org.opendaylight.mdsal.binding.model.ri.Types.BOOLEAN
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
-import com.google.common.base.MoreObjects
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
@@ -601,7 +600,7 @@ class ClassTemplate extends BaseTemplate {
         «IF !properties.empty»
             @«OVERRIDE.importedName»
             public «STRING.importedName» toString() {
-                final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper(«type.importedName».class);
+                final var helper = «MOREOBJECTS.importedName».toStringHelper(«type.importedName».class);
                 «FOR property : properties»
                     «CODEHELPERS.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
                 «ENDFOR»

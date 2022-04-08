@@ -22,7 +22,6 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.MoreObjects
 import java.util.List
 import java.util.Locale
 import java.util.Map.Entry
@@ -347,7 +346,7 @@ class InterfaceTemplate extends BaseTemplate {
          * @throws «NPE.importedName» if {@code obj} is null
          */
         static «STRING.importedName» «BINDING_TO_STRING_NAME»(final «type.fullyQualifiedNonNull» obj) {
-            final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper("«type.name»");
+            final var helper = «MOREOBJECTS.importedName».toStringHelper("«type.name»");
             «FOR property : typeAnalysis.value»
                 «CODEHELPERS.importedName».appendValue(helper, "«property.name»", obj.«property.getterName»());
             «ENDFOR»
