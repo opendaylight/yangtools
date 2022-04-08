@@ -22,7 +22,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import org.opendaylight.mdsal.binding.generator.BindingGenerator;
 import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
@@ -109,9 +108,6 @@ final class JavaFileGenerator implements FileGenerator {
                     continue;
                 }
 
-                final GeneratedFileLifecycle kind = type instanceof GeneratedTransferObject
-                        && ((GeneratedTransferObject) type).isUnionTypeBuilder()
-                        ? GeneratedFileLifecycle.PERSISTENT : GeneratedFileLifecycle.TRANSIENT;
                 final GeneratedFilePath file =  GeneratedFilePath.ofFilePath(
                     type.getPackageName().replace('.', File.separatorChar)
                     + File.separator + generator.getUnitName(type) + ".java");
@@ -122,11 +118,12 @@ final class JavaFileGenerator implements FileGenerator {
                                 + "generated.", type.getFullyQualifiedName());
                         continue;
                     }
-                    throw new IllegalStateException("Duplicate " + kind + " file '" + file.getPath() + "' for "
-                            + type.getFullyQualifiedName());
+                    throw new IllegalStateException("Duplicate file '" + file.getPath() + "' for "
+                        + type.getFullyQualifiedName());
                 }
 
-                result.put(GeneratedFileType.SOURCE, file, new CodeGeneratorGeneratedFile(kind, generator, type));
+                result.put(GeneratedFileType.SOURCE, file,
+                    new CodeGeneratorGeneratedFile(GeneratedFileLifecycle.TRANSIENT, generator, type));
             }
         }
 

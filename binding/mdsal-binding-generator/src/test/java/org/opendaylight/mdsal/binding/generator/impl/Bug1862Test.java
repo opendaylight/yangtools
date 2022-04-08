@@ -14,22 +14,18 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
-import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug1862Test {
     @Test
     public void restrictedTypedefTransformationTest() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResources(Bug1862Test.class,
-            "/base-yang-types.yang", "/test-type-provider.yang");
-        final List<GeneratedType> types = DefaultBindingGenerator.generateFor(context);
-        assertEquals(42, types.size());
+        final var types = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(Bug1862Test.class,
+            "/base-yang-types.yang", "/test-type-provider.yang"));
+        assertEquals(35, types.size());
         final MethodSignature fooGetter = types.stream()
             .filter(type -> type.getFullyQualifiedName().equals(
                 "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.model.rev140912.Foo"))

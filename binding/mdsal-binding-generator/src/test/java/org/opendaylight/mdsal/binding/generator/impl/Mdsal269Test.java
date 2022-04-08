@@ -9,11 +9,9 @@ package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
-import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
@@ -23,10 +21,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Mdsal269Test {
     @Test
     public void mdsal269Test() {
-        final List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(
+        final var generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal269.yang"));
-        assertNotNull(generateTypes);
-        assertEquals(5, generateTypes.size());
+        assertEquals(4, generateTypes.size());
 
         final GeneratedType mplsLabelType = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
             .equals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabel")).findFirst().get();

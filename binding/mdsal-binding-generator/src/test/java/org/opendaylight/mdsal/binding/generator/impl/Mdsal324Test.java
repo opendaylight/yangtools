@@ -8,19 +8,15 @@
 package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Mdsal324Test {
     @Test
     public void mdsal324Test() {
-        final List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(
+        final var generatedTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal324.yang"));
-        assertNotNull(generateTypes);
-        assertEquals(6, generateTypes.size());
+        assertEquals(2, generatedTypes.size());
     }
 }

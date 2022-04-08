@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -23,10 +22,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class GenerateInnerClassForBitsAndUnionInLeavesTest {
     @Test
     public void testInnerClassCreationForBitsAndUnionsInLeafes() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/bit_and_union_in_leaf.yang"));
-        assertNotNull(genTypes);
-        assertEquals(7, genTypes.size());
+        assertEquals(4, genTypes.size());
 
         boolean parentContainerFound = false;
         boolean bitLeafTOFound = false;

@@ -23,7 +23,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
-import org.opendaylight.mdsal.binding.model.api.AccessModifier;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
@@ -819,29 +818,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         addUnits(builder, typedef);
 
         makeSerializable(builder);
-        final GeneratedTransferObject ret = builder.build();
-
-        // Define a corresponding union builder. Typedefs are always anchored at a Java package root,
-        // so we are placing the builder alongside the union.
-        final GeneratedTOBuilder unionBuilder = builderFactory.newGeneratedTOBuilder(unionBuilderName(typeName));
-        unionBuilder.setIsUnionBuilder(true);
-        unionBuilder.addMethod("getDefaultInstance")
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setStatic(true)
-            .setReturnType(ret)
-            .addParameter(Types.STRING, "defaultValue");
-        auxiliaryGeneratedTypes.add(unionBuilder.build());
-
-        return ret;
-    }
-
-    // FIXME: this can be a source of conflicts as we are not guarding against nesting
-    private static @NonNull JavaTypeName unionBuilderName(final JavaTypeName unionName) {
-        final StringBuilder sb = new StringBuilder();
-        for (String part : unionName.localNameComponents()) {
-            sb.append(part);
-        }
-        return JavaTypeName.create(unionName.packageName(), sb.append(BindingMapping.BUILDER_SUFFIX).toString());
+        return builder.build();
     }
 
     // FIXME: we should not rely on TypeDefinition

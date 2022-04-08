@@ -32,7 +32,6 @@ abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<G
     private GeneratedTransferObject extendsType;
     private boolean isTypedef = false;
     private boolean isUnionType = false;
-    private boolean isUnionTypeBuilder = false;
     private TypeDefinition<?> baseType = null;
 
     AbstractGeneratedTOBuilder(final JavaTypeName identifier) {
@@ -43,7 +42,7 @@ abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<G
     @Override
     public final GeneratedTOBuilder setExtendsType(final GeneratedTransferObject genTransObj) {
         Preconditions.checkArgument(genTransObj != null, "Generated Transfer Object cannot be null!");
-        this.extendsType = genTransObj;
+        extendsType = genTransObj;
         return this;
     }
 
@@ -70,19 +69,19 @@ abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<G
 
     @Override
     public final GeneratedTOBuilder addEqualsIdentity(final GeneratedPropertyBuilder property) {
-        this.equalsProperties = LazyCollections.lazyAdd(this.equalsProperties, property);
+        equalsProperties = LazyCollections.lazyAdd(equalsProperties, property);
         return this;
     }
 
     @Override
     public final GeneratedTOBuilder addHashIdentity(final GeneratedPropertyBuilder property) {
-        this.hashProperties = LazyCollections.lazyAdd(this.hashProperties, property);
+        hashProperties = LazyCollections.lazyAdd(hashProperties, property);
         return this;
     }
 
     @Override
     public final GeneratedTOBuilder addToStringProperty(final GeneratedPropertyBuilder property) {
-        this.toStringProperties = LazyCollections.lazyAdd(this.toStringProperties, property);
+        toStringProperties = LazyCollections.lazyAdd(toStringProperties, property);
         return this;
     }
 
@@ -101,27 +100,22 @@ abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<G
 
     @Override
     public final void setTypedef(final boolean newIsTypedef) {
-        this.isTypedef = newIsTypedef;
+        isTypedef = newIsTypedef;
     }
 
     @Override
     public final void setBaseType(final TypeDefinition<?> typeDef) {
-        this.baseType = typeDef;
+        baseType = typeDef;
     }
 
     @Override
     public final void setIsUnion(final boolean newIsUnion) {
-        this.isUnionType = newIsUnion;
+        isUnionType = newIsUnion;
     }
 
     @Override
     public final boolean isUnion() {
         return isUnionType;
-    }
-
-    @Override
-    public final void setIsUnionBuilder(final boolean newIsUnionTypeBuilder) {
-        this.isUnionTypeBuilder = newIsUnionTypeBuilder;
     }
 
     abstract static class AbstractGeneratedTransferObject extends AbstractGeneratedType implements
@@ -134,62 +128,55 @@ abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<G
         private final boolean isTypedef;
         private final TypeDefinition<?> baseType;
         private final boolean isUnionType;
-        private final boolean isUnionTypeBuilder;
 
         AbstractGeneratedTransferObject(final AbstractGeneratedTOBuilder builder) {
             super(builder);
-            this.extendsType = builder.extendsType;
+            extendsType = builder.extendsType;
 
             // FIXME: if these fields were guaranteed to be constant, we could perhaps
             //        cache and reuse them between instances...
-            this.equalsProperties = toUnmodifiableProperties(builder.equalsProperties);
-            this.hashCodeProperties = toUnmodifiableProperties(builder.hashProperties);
-            this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
+            equalsProperties = toUnmodifiableProperties(builder.equalsProperties);
+            hashCodeProperties = toUnmodifiableProperties(builder.hashProperties);
+            stringProperties = toUnmodifiableProperties(builder.toStringProperties);
 
-            this.isTypedef = builder.isTypedef;
-            this.baseType = builder.baseType;
-            this.isUnionType = builder.isUnionType;
-            this.isUnionTypeBuilder = builder.isUnionTypeBuilder;
+            isTypedef = builder.isTypedef;
+            baseType = builder.baseType;
+            isUnionType = builder.isUnionType;
         }
 
         @Override
         public final boolean isTypedef() {
-            return this.isTypedef;
+            return isTypedef;
         }
 
         @Override
         public final TypeDefinition<?> getBaseType() {
-            return this.baseType;
+            return baseType;
         }
 
         @Override
         public final boolean isUnionType() {
-            return this.isUnionType;
-        }
-
-        @Override
-        public final boolean isUnionTypeBuilder() {
-            return this.isUnionTypeBuilder;
+            return isUnionType;
         }
 
         @Override
         public final GeneratedTransferObject getSuperType() {
-            return this.extendsType;
+            return extendsType;
         }
 
         @Override
         public final List<GeneratedProperty> getEqualsIdentifiers() {
-            return this.equalsProperties;
+            return equalsProperties;
         }
 
         @Override
         public final List<GeneratedProperty> getHashCodeIdentifiers() {
-            return this.hashCodeProperties;
+            return hashCodeProperties;
         }
 
         @Override
         public final List<GeneratedProperty> getToStringIdentifiers() {
-            return this.stringProperties;
+            return stringProperties;
         }
 
         @Override

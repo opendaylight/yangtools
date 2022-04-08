@@ -24,7 +24,6 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderGeneratorTest {
@@ -268,10 +267,9 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateToEqualsComparingOrderTest() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResource(
-                "/test-types.yang");
-        final List<GeneratedType> types = new DefaultBindingGenerator().generateTypes(context);
-        assertEquals(29, types.size());
+        final var context = YangParserTestUtils.parseYangResource("/test-types.yang");
+        final var types = new DefaultBindingGenerator().generateTypes(context);
+        assertEquals(27, types.size());
 
         final BuilderTemplate bt = BuilderGenerator.templateForType(
             types.stream().filter(t -> t.getName().equals("Nodes")).findFirst().orElseThrow());

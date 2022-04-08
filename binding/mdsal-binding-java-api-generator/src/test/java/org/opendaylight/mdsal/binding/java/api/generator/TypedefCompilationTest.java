@@ -39,31 +39,19 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         generateTestSources("/compilation/typedef", sourcesOutputDir);
 
         final File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
-        final File bitsExt = new File(parent, "BitsExt.java");
-        final File int32Ext0 = new File(parent, "Int32Ext0.java");
-        final File int32Ext1 = new File(parent, "Int32Ext1.java");
-        final File int32Ext2 = new File(parent, "Int32Ext2.java");
-        final File myDecimalType = new File(parent, "MyDecimalType.java");
-        final File stringExt1 = new File(parent, "StringExt1.java");
-        final File stringExt2 = new File(parent, "StringExt2.java");
-        final File stringExt3 = new File(parent, "StringExt3.java");
-        final File unionExt1 = new File(parent, "UnionExt1.java");
-        final File unionExt2 = new File(parent, "UnionExt2.java");
-        final File unionExt3 = new File(parent, "UnionExt3.java");
-        final File unionExt4 = new File(parent, "UnionExt4.java");
-        assertTrue(bitsExt.exists());
-        assertTrue(int32Ext0.exists());
-        assertTrue(int32Ext1.exists());
-        assertTrue(int32Ext2.exists());
-        assertTrue(myDecimalType.exists());
-        assertTrue(stringExt1.exists());
-        assertTrue(stringExt2.exists());
-        assertTrue(stringExt3.exists());
-        assertTrue(unionExt1.exists());
-        assertTrue(unionExt2.exists());
-        assertTrue(unionExt3.exists());
-        assertTrue(unionExt4.exists());
-        CompilationTestUtils.assertFilesCount(parent, 34);
+        assertTrue(new File(parent, "BitsExt.java").exists());
+        assertTrue(new File(parent, "Int32Ext0.java").exists());
+        assertTrue(new File(parent, "Int32Ext1.java").exists());
+        assertTrue(new File(parent, "Int32Ext2.java").exists());
+        assertTrue(new File(parent, "MyDecimalType.java").exists());
+        assertTrue(new File(parent, "StringExt1.java").exists());
+        assertTrue(new File(parent, "StringExt2.java").exists());
+        assertTrue(new File(parent, "StringExt3.java").exists());
+        assertTrue(new File(parent, "UnionExt1.java").exists());
+        assertTrue(new File(parent, "UnionExt2.java").exists());
+        assertTrue(new File(parent, "UnionExt3.java").exists());
+        assertTrue(new File(parent, "UnionExt4.java").exists());
+        CompilationTestUtils.assertFilesCount(parent, 31);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);

@@ -9,18 +9,16 @@ package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class ControllerTest {
     @Test
     public void controllerAugmentationTest() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             ControllerTest.class,
             "/controller-models/controller-network.yang", "/controller-models/controller-openflow.yang",
             "/ietf-models/ietf-inet-types.yang"));
-        assertEquals(56, genTypes.size());
+        assertEquals(53, genTypes.size());
     }
 }

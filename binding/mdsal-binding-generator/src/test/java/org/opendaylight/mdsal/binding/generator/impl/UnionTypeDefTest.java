@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 import org.junit.Test;
@@ -20,21 +19,18 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class UnionTypeDefTest {
     @Test
     public void unionTypeResolvingTest() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             UnionTypeDefTest.class, "/union-test-models/abstract-topology.yang", "/ietf-models/ietf-inet-types.yang"));
-
-        assertNotNull("genTypes is null", genTypes);
-        assertEquals(34, genTypes.size());
+        assertEquals(29, genTypes.size());
 
         // TODO: implement test
     }
 
     @Test
     public void unionTypedefLeafrefTest() {
-        final List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(
+        final var generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/bug8449.yang"));
-        assertNotNull(generateTypes);
-        assertEquals(6, generateTypes.size());
+        assertEquals(5, generateTypes.size());
 
         final GeneratedType cont = generateTypes.stream()
             .filter(type -> type.getName().equals("Cont"))

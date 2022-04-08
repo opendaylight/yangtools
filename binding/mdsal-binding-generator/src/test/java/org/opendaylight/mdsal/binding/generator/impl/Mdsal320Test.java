@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
@@ -29,10 +28,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Mdsal320Test {
     @Test
     public void mdsal320Test() {
-        final List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(
+        final var generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal320.yang"));
-        assertNotNull(generateTypes);
-        assertEquals(4, generateTypes.size());
+        assertEquals(2, generateTypes.size());
 
         final GeneratedType foo = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
             .equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo")).findFirst().get();

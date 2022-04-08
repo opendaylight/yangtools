@@ -26,10 +26,10 @@ public class Mdsal161Test {
      */
     @Test
     public void mdsal161Test() {
-        final Collection<GeneratedType> types = DefaultBindingGenerator.generateFor(
+        final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal161.yang"));
         assertNotNull(types);
-        assertEquals(25, types.size());
+        assertEquals(20, types.size());
 
         assertKeyStructure(types, "org.opendaylight.yang.gen.v1.mdsal161.norev.WithGrpKey");
         assertKeyStructure(types, "org.opendaylight.yang.gen.v1.mdsal161.norev.WithGrpExtKey");

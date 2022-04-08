@@ -69,8 +69,6 @@ public interface GeneratedTransferObject extends GeneratedType {
      */
     boolean isUnionType();
 
-    boolean isUnionTypeBuilder();
-
     Restrictions getRestrictions();
 
     default Optional<? extends GeneratedProperty> findProperty(final String name) {

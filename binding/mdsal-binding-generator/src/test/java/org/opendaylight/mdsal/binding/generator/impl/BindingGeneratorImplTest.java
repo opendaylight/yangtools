@@ -147,8 +147,8 @@ public class BindingGeneratorImplTest {
 
     @Test
     public void testBaseYangTypes() {
-        final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
+        final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/base-yang-types.yang"));
-        assertEquals(20, types.size());
+        assertEquals(19, types.size());
     }
 }

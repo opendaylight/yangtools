@@ -9,16 +9,14 @@ package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BinaryTypeTest {
     @Test
     public void binaryTypeTest() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(
+        final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResourceDirectory("/binary-type-test-models"));
-        assertEquals(10, genTypes.size());
+        assertEquals(9, genTypes.size());
     }
 }

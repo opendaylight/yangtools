@@ -23,12 +23,10 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class GeneratedTypesTest {
     @Test
     public void testMultipleModulesResolving() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(
+        final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResources(GeneratedTypesTest.class,
                 "/abstract-topology.yang", "/ietf-models/ietf-inet-types.yang"));
-
-        assertNotNull(genTypes);
-        assertEquals(30, genTypes.size());
+        assertEquals(27, genTypes.size());
     }
 
     @Test

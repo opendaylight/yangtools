@@ -8,10 +8,8 @@
 package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Test;
@@ -22,16 +20,14 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Mdsal458Test {
     @Test
     public void testNestedClassFallback() {
-        final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
+        final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal458.yang"));
-        assertNotNull(types);
-        assertEquals(3, types.size());
+        assertEquals(2, types.size());
 
         final Set<JavaTypeName> typeNames = types.stream().map(GeneratedType::getIdentifier)
             .collect(Collectors.toSet());
         assertEquals(ImmutableSet.of(
             JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal458.norev", "ExportedTo"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal458.norev", "ExportedToExportedTo$Builder"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal458.norev", "Mdsal458Data")), typeNames);
     }
 }

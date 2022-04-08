@@ -29,14 +29,13 @@ public class GeneratedTypesLeafrefTest {
 
     @Test
     public void testLeafrefResolving() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResources(GeneratedTypesLeafrefTest.class,
+        final var context = YangParserTestUtils.parseYangResources(GeneratedTypesLeafrefTest.class,
             "/leafref-test-models/abstract-topology@2013-02-08.yang", "/ietf-models/ietf-interfaces.yang",
             "/ietf-models/ietf-inet-types.yang", "/ietf-models/ietf-yang-types.yang");
         assertEquals(4, context.getModules().size());
 
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(context);
-
-        assertEquals(56, genTypes.size());
+        final var genTypes = DefaultBindingGenerator.generateFor(context);
+        assertEquals(53, genTypes.size());
 
         GeneratedTransferObject gtIfcKey = null;
         GeneratedType gtIfc = null;

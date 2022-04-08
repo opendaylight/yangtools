@@ -146,7 +146,6 @@ public class GeneratedTOBuilderImplTest {
             JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
         genTOBuilder.setTypedef(true);
         genTOBuilder.setIsUnion(true);
-        genTOBuilder.setIsUnionBuilder(true);
         genTOBuilder.setDescription("test description");
         genTOBuilder.setModuleName("test-module");
         genTOBuilder.setReference("http://tools.ietf.org/html/rfc6020");
@@ -156,7 +155,6 @@ public class GeneratedTOBuilderImplTest {
 
         assertTrue(genTO.isTypedef());
         assertTrue(genTO.isUnionType());
-        assertTrue(genTO.isUnionTypeBuilder());
         assertEquals("test description", genTO.getDescription());
         assertEquals("test-module", genTO.getModuleName());
         assertEquals("http://tools.ietf.org/html/rfc6020", genTO.getReference());

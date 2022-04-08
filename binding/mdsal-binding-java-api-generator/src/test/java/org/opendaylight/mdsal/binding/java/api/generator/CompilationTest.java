@@ -378,8 +378,7 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
         assertTrue(new File(parent, "Alg.java").exists());
-        assertTrue(new File(parent, "NodesIdUnionBuilder.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 6);
+        CompilationTestUtils.assertFilesCount(parent, 5);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);

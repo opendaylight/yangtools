@@ -27,9 +27,6 @@ public final class TOGenerator implements CodeGenerator {
             if (genTO.isUnionType()) {
                 final UnionTemplate template = new UnionTemplate(genTO);
                 return template.generate();
-            } else if (genTO.isUnionTypeBuilder()) {
-                final UnionBuilderTemplate template = new UnionBuilderTemplate(genTO);
-                return template.generate();
             } else if (genTO.isTypedef()) {
                 final ClassTemplate template = new ClassTemplate(genTO);
                 return template.generate();
