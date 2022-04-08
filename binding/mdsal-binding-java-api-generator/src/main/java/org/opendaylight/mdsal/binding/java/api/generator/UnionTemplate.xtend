@@ -137,9 +137,7 @@ class UnionTemplate extends ClassTemplate {
                 «ELSEIF EMPTY_TYPE.equals(propRet) || EMPTY_TYPE.equals(propRet.typedefReturnType)»
                     ««« generated empty typedef
                 return "";
-                «ELSEIF propRet instanceof GeneratedTransferObject // Is it a GeneratedTransferObject
-                        && (propRet as GeneratedTransferObject).typedef  // Is it a typedef
-                        && (propRet as GeneratedTransferObject).baseType instanceof BitsTypeDefinition»
+                «ELSEIF propRet.isBitsType»
                     ««« generated bits typedef
                 return «JU_ARRAYS.importedName».toString(«field».getValue());
                 «ELSE»
@@ -151,6 +149,13 @@ class UnionTemplate extends ClassTemplate {
             throw new IllegalStateException("No value assigned");
         }
     '''
+
+    private static def isBitsType(Type type) {
+        if (type instanceof GeneratedTransferObject) {
+            return type.typedef && type.baseType instanceof BitsTypeDefinition
+        }
+        return false
+    }
 
     private static def Type typedefReturnType(Type type) {
         if (!(type instanceof GeneratedTransferObject)) {
