@@ -19,6 +19,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.AbstractEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -41,8 +42,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
-        extends AbstractModelStatement<A> implements EffectiveStatement<A, D> {
+abstract class AbstractEffectiveStatementImpl<A, D extends DeclaredStatement<A>>
+        extends AbstractEffectiveStatement<A, D> {
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace,
             final K identifier) {
@@ -69,20 +70,6 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
     protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
             final @NonNull Class<N> namespace) {
         return Optional.empty();
-    }
-
-    /**
-     * Utility method for recovering singleton lists squashed by {@link #maskList(ImmutableList)}.
-     *
-     * @param masked list to unmask
-     * @return Unmasked list
-     * @throws NullPointerException if masked is null
-     * @throws ClassCastException if masked object does not match EffectiveStatement
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected static final @NonNull ImmutableList<? extends @NonNull EffectiveStatement<?, ?>> unmaskList(
-            final @NonNull Object masked) {
-        return (ImmutableList) unmaskList(masked, EffectiveStatement.class);
     }
 
     // TODO: below methods need to find a better place, this is just a temporary hideout as their public class is on

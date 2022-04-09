@@ -5,24 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.spi.meta;
+package org.opendaylight.yangtools.yang.model.api.meta;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 
 /**
  * Abstract base class for {@link ModelStatement} implementations. It mostly provides static methods for efficiently
  * storing lists.
- *
- * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
-abstract class AbstractModelStatement<A> implements ModelStatement<A> {
-
+abstract sealed class AbstractModelStatement<A> implements ModelStatement<A>
+        permits AbstractDeclaredStatement, AbstractEffectiveStatement {
     @Override
     public final int hashCode() {
         return System.identityHashCode(this);
