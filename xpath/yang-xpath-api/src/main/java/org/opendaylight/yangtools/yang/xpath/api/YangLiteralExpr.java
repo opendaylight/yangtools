@@ -57,7 +57,7 @@ public final class YangLiteralExpr implements YangExpr {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof YangLiteralExpr && literal.equals(((YangLiteralExpr) obj).literal);
+        return this == obj || obj instanceof YangLiteralExpr other && literal.equals(other.literal);
     }
 
     @Override

@@ -37,7 +37,7 @@ public final class YangNegateExpr implements YangExpr {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof YangNegateExpr && subExpr.equals(((YangNegateExpr) obj).subExpr);
+        return this == obj || obj instanceof YangNegateExpr other && subExpr.equals(other.subExpr);
     }
 
     @Override

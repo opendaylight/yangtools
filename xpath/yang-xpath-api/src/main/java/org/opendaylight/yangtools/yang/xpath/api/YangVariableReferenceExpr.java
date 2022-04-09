@@ -38,8 +38,7 @@ public final class YangVariableReferenceExpr implements YangExpr {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof YangVariableReferenceExpr
-                && variableName.equals(((YangVariableReferenceExpr) obj).variableName);
+        return this == obj || obj instanceof YangVariableReferenceExpr other && variableName.equals(other.variableName);
     }
 
     @Override
