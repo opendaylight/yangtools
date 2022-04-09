@@ -28,22 +28,10 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * @author Robert Varga
  */
 public final class DataSchemaContextTree extends AbstractEffectiveModelContextProvider {
-    // FIXME: record once we have JDK17+
-    public static final class NodeAndStack {
-        private final @NonNull DataSchemaContextNode<?> node;
-        private final @NonNull SchemaInferenceStack stack;
-
-        NodeAndStack(final DataSchemaContextNode<?> node, final @NonNull SchemaInferenceStack stack) {
+    public record NodeAndStack(@NonNull DataSchemaContextNode<?> node, @NonNull SchemaInferenceStack stack) {
+        public NodeAndStack(final @NonNull DataSchemaContextNode<?> node, final @NonNull SchemaInferenceStack stack) {
             this.node = requireNonNull(node);
             this.stack = requireNonNull(stack);
-        }
-
-        public @NonNull DataSchemaContextNode<?> node() {
-            return node;
-        }
-
-        public @NonNull SchemaInferenceStack stack() {
-            return stack;
         }
     }
 
