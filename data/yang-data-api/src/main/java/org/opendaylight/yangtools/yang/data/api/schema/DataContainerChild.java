@@ -9,21 +9,15 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 /**
  * Marker interface for direct children of {@link DataContainerNode}.
- *
- * <h2>Implementation notes</h2>
- * This interface should not be implemented directly, but rather using one of its subinterfaces:
- *
- * <ul>
- *   <li>{@link AugmentationNode}</li>
- *   <li>{@link ChoiceNode}</li>
- *   <li>{@link ContainerNode}</li>
- *   <li>{@link ForeignDataNode}</li>
- *   <li>{@link LeafNode}</li>
- *   <li>{@link LeafSetNode}</li>
- *   <li>{@link MapNode} and its specializations</li>
- *   <li>{@link UnkeyedListNode}</li>
- * </ul>
  */
-public interface DataContainerChild extends NormalizedNode {
+public sealed interface DataContainerChild extends NormalizedNode
+    permits AugmentationNode,
+            ChoiceNode,
+            ContainerNode,
+            ForeignDataNode,
+            LeafNode,
+            LeafSetNode,
+            MapNode,
+            UnkeyedListNode {
 
 }

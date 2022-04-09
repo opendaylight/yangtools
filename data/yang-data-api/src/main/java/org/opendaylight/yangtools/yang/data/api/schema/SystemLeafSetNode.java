@@ -16,7 +16,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  */
 // // FIXME: 9.0.0: we really want to do a Set<@NonNull V> body(), but need to reconcile that with key-based lookup in
 //                  implementations -- and those are using only a Map internally.
-public interface SystemLeafSetNode<T> extends LeafSetNode<T>, OrderingAware.System {
+public non-sealed interface SystemLeafSetNode<T> extends LeafSetNode<T>, OrderingAware.System {
     @Override
     @SuppressWarnings("rawtypes")
     default Class<SystemLeafSetNode> contract() {

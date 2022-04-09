@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *
  * @param <T> Value type
  */
-public interface LeafNode<T> extends ValueNode<T>, DataContainerChild {
+public non-sealed interface LeafNode<T> extends ValueNode<T>, DataContainerChild {
     @Override
     @SuppressWarnings("rawtypes")
     default Class<LeafNode> contract() {

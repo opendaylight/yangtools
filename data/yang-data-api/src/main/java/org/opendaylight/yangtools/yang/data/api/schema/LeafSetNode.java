@@ -19,8 +19,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  *
  * @param <T> Type of leaf node values.
  */
-public interface LeafSetNode<T>
-        extends DistinctNodeContainer<NodeWithValue<?>, LeafSetEntryNode<T>>, DataContainerChild, MixinNode {
+public sealed interface LeafSetNode<T>
+        extends DistinctNodeContainer<NodeWithValue<?>, LeafSetEntryNode<T>>, DataContainerChild, MixinNode
+        permits SystemLeafSetNode, UserLeafSetNode {
     @Override
     @SuppressWarnings("rawtypes")
     Class<? extends LeafSetNode> contract();

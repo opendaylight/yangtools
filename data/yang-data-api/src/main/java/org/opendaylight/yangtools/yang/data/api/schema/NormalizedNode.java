@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               boundary -- like RFC8528. Hence we cannot really have a reasonably-structured concept of unverified
  *               data. Nevertheless, this interface should be named 'NormalizedData'.
  */
+// FIXME: seal and deal with AbstractNormalizedNode
 public interface NormalizedNode extends Identifiable<PathArgument>, PrettyTreeAware {
     @Override
     // We override here, so that NormalizedNode.getIdentifier() has fewer implementations

@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <V> Value type, uniquely identifying the object model used for values
  */
 @Beta
-public interface ForeignDataNode<V> extends DataContainerChild {
+public sealed interface ForeignDataNode<V> extends DataContainerChild permits AnydataNode, AnyxmlNode {
     /**
      * {@inheritDoc}
      *
