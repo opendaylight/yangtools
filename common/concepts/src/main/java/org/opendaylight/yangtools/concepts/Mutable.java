@@ -13,6 +13,6 @@ package org.opendaylight.yangtools.concepts;
  *
  * @author Tony Tkacik
  */
-public interface Mutable extends MutationBehaviour<Mutable> {
-
+public non-sealed interface Mutable extends MutationBehaviour<Mutable> {
+    // Marker interface only
 }
