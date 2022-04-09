@@ -42,8 +42,7 @@ final class BigDecimalNumberExpr extends YangNumberExpr {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof BigDecimalNumberExpr
-                && number.equals(((BigDecimalNumberExpr) obj).number);
+        return this == obj || obj instanceof BigDecimalNumberExpr other && number.equals(other.number);
     }
 
     @Override
