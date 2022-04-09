@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
-// FIXME: sealed interface when we have JDK17+
-public interface ModelStatement<A> {
+public sealed interface ModelStatement<A> permits DeclaredStatement, EffectiveStatement {
     /**
      * Statement Definition of this statement.
      *
