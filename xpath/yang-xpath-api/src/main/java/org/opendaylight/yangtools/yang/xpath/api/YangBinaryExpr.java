@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Robert Varga
  */
 @Beta
-public abstract class YangBinaryExpr implements YangExpr {
+public abstract sealed class YangBinaryExpr implements YangExpr permits YangBinaryOperator.Expr {
     private static final long serialVersionUID = 1L;
 
     private final YangExpr leftExpr;
