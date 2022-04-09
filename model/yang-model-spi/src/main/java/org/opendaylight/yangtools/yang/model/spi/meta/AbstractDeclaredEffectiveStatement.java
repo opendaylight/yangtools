@@ -44,8 +44,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
  * @param <D> Class representing declared version of this statement.
  */
 @Beta
-public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>
-        extends AbstractEffectiveStatement<A, D> {
+public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>
+        extends AbstractIndexedEffectiveStatement<A, D> {
     @Override
     public abstract @NonNull D getDeclared();
 
