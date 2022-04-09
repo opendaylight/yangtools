@@ -46,14 +46,8 @@ public final class YangNaryExpr implements YangExpr {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangNaryExpr)) {
-            return false;
-        }
-        final YangNaryExpr other = (YangNaryExpr) obj;
-        return getOperator().equals(other.getOperator()) && expressions.equals(other.expressions);
+        return this == obj || obj instanceof YangNaryExpr other && getOperator().equals(other.getOperator())
+            && expressions.equals(other.expressions);
     }
 
     @Override

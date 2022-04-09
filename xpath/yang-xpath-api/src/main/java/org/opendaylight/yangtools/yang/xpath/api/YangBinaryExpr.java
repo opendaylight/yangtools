@@ -47,15 +47,8 @@ public abstract sealed class YangBinaryExpr implements YangExpr permits YangBina
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangBinaryExpr)) {
-            return false;
-        }
-        final YangBinaryExpr other = (YangBinaryExpr) obj;
-        return getOperator().equals(other.getOperator()) && leftExpr.equals(other.leftExpr)
-                && rightExpr.equals(other.rightExpr);
+        return this == obj || obj instanceof YangBinaryExpr other && getOperator().equals(other.getOperator())
+            && leftExpr.equals(other.leftExpr) && rightExpr.equals(other.rightExpr);
     }
 
     @Override
