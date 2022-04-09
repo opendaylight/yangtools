@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 @Beta
-public abstract class ArgumentDefinition implements Immutable {
+public abstract sealed class ArgumentDefinition implements Immutable {
     private static final class YinAttribute extends ArgumentDefinition {
         YinAttribute(final QName argumentName) {
             super(argumentName);
@@ -55,7 +55,6 @@ public abstract class ArgumentDefinition implements Immutable {
             final boolean yinElement) {
         return argumentName == null ? Optional.empty() : Optional.of(of(argumentName, yinElement));
     }
-
 
     public final @NonNull QName getArgumentName() {
         return argumentName;
