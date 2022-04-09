@@ -19,9 +19,8 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * Abstract superclass for sharing QName references, which can either be resolved {@link QName}s or unresolved
  * {@link UnresolvedQName.Unqualified} and {@link UnresolvedQName.Qualified}s.
  */
-// FIXME: sealed to allow QName and UnresolvedQName only when we have JDK17+
 @NonNullByDefault
-public abstract class AbstractQName implements Identifier, WritableObject {
+public abstract sealed class AbstractQName implements Identifier, WritableObject permits QName, UnresolvedQName {
     private static final long serialVersionUID = 1L;
 
     private final String localName;
