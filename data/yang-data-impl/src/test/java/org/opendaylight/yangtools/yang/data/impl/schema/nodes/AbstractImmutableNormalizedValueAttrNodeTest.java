@@ -16,23 +16,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 public class AbstractImmutableNormalizedValueAttrNodeTest {
-    // FIXME: Record once we have JDK17
-    private static final class TestValue {
-        private final int value;
-
-        TestValue(final int value) {
-            this.value = value;
-        }
-
-        @Override
-        public int hashCode() {
-            return value;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return obj == this || obj instanceof TestValue && value == ((TestValue) obj).value;
-        }
+    private record TestValue(int value) {
+        // Simple enough
     }
 
     private static final QName ROOT_QNAME = QName.create("urn:test", "2014-03-13", "root");
