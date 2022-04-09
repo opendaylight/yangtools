@@ -27,7 +27,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *   <li>{@link UnkeyedListEntryNode}</li>
  * </ul>
  */
-public interface DataContainerNode
+// FIXME: seal and deal with AbstractImmutableDataContainerNode
+public non-sealed interface DataContainerNode
         extends DistinctNodeContainer<PathArgument, DataContainerChild>, OrderingAware.System {
     @Override
     int hashCode();
