@@ -22,7 +22,7 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     // Annotations
     requires static com.github.spotbugs.annotations;
     requires static javax.inject;
-    requires static metainf.services;
+    requires static org.kohsuke.metainf_services;
     requires static org.eclipse.jdt.annotation;
     requires static org.osgi.service.component.annotations;
 }
