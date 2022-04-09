@@ -17,6 +17,18 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public interface YangExpr extends Immutable, Serializable {
+public sealed interface YangExpr extends Immutable, Serializable
+    permits YangBinaryExpr,
+            YangConstantExpr,
+            YangFilterExpr,
+            YangFunctionCallExpr,
+            YangLiteralExpr,
+            YangLocationPath,
+            YangNaryExpr,
+            YangNegateExpr,
+            YangNumberExpr,
+            YangPathExpr,
+            YangQNameExpr,
+            YangVariableReferenceExpr {
 
 }

@@ -16,7 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 
 @Beta
-public class YangPathExpr implements YangExpr {
+public sealed class YangPathExpr implements YangExpr {
     private static final class WithLocation extends YangPathExpr {
         private static final long serialVersionUID = 1L;
 
@@ -37,7 +37,7 @@ public class YangPathExpr implements YangExpr {
 
     private final YangExpr filterExpr;
 
-    YangPathExpr(final YangExpr filterExpr) {
+    private YangPathExpr(final YangExpr filterExpr) {
         this.filterExpr = requireNonNull(filterExpr);
     }
 
