@@ -28,8 +28,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
 @Beta
-public abstract class YangLocationPath implements YangExpr {
-    public abstract static class Step implements Serializable, YangPredicateAware {
+public abstract sealed class YangLocationPath implements YangExpr {
+    public abstract static sealed class Step implements Serializable, YangPredicateAware {
         private static final long serialVersionUID = 1L;
 
         private final YangXPathAxis axis;
@@ -63,7 +63,7 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    public static class AxisStep extends Step {
+    public static sealed class AxisStep extends Step {
         private static final long serialVersionUID = 1L;
 
         AxisStep(final YangXPathAxis axis) {
@@ -111,7 +111,7 @@ public abstract class YangLocationPath implements YangExpr {
     }
 
     // match a particular namespace
-    public static class NamespaceStep extends Step {
+    public static final class NamespaceStep extends Step {
         private static final long serialVersionUID = 1L;
 
         private final QNameModule namespace;
@@ -121,17 +121,17 @@ public abstract class YangLocationPath implements YangExpr {
             this.namespace = requireNonNull(namespace);
         }
 
-        public final QNameModule getNamespace() {
+        public QNameModule getNamespace() {
             return namespace;
         }
 
         @Override
-        public final int hashCode() {
+        public int hashCode() {
             return Objects.hash(getAxis(), namespace, getPredicates());
         }
 
         @Override
-        public final boolean equals(@Nullable final Object obj) {
+        public boolean equals(@Nullable final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -154,7 +154,7 @@ public abstract class YangLocationPath implements YangExpr {
      *
      * @author Robert Varga
      */
-    public abstract static class QNameStep extends Step implements QNameReferent {
+    public abstract static sealed class QNameStep extends Step implements QNameReferent {
         private static final long serialVersionUID = 1L;
 
         QNameStep(final YangXPathAxis axis) {
@@ -162,7 +162,7 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    private abstract static class AbstractQNameStep<T extends AbstractQName> extends QNameStep {
+    private abstract static sealed class AbstractQNameStep<T extends AbstractQName> extends QNameStep {
         private static final long serialVersionUID = 1L;
 
         private final T qname;
@@ -206,7 +206,7 @@ public abstract class YangLocationPath implements YangExpr {
         abstract Class<? extends AbstractQNameStep<?>> equalityClass();
     }
 
-    public static class ResolvedQNameStep extends AbstractQNameStep<QName> implements ResolvedQNameReferent {
+    public static sealed class ResolvedQNameStep extends AbstractQNameStep<QName> implements ResolvedQNameReferent {
         private static final long serialVersionUID = 1L;
 
         ResolvedQNameStep(final YangXPathAxis axis, final QName qname) {
@@ -242,7 +242,7 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    public static class UnresolvedQNameStep extends AbstractQNameStep<UnresolvedQName>
+    public static sealed class UnresolvedQNameStep extends AbstractQNameStep<UnresolvedQName>
             implements UnresolvedQNameReferent {
         private static final long serialVersionUID = 1L;
 
@@ -279,7 +279,7 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    public static class NodeTypeStep extends Step {
+    public static sealed class NodeTypeStep extends Step {
         private static final long serialVersionUID = 1L;
 
         private final YangXPathNodeType nodeType;
@@ -336,7 +336,7 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    public static class ProcessingInstructionStep extends NodeTypeStep {
+    public static sealed class ProcessingInstructionStep extends NodeTypeStep {
         private static final long serialVersionUID = 1L;
 
         private final String name;
@@ -415,7 +415,7 @@ public abstract class YangLocationPath implements YangExpr {
 
     private final ImmutableList<Step> steps;
 
-    YangLocationPath(final ImmutableList<Step> steps) {
+    private YangLocationPath(final ImmutableList<Step> steps) {
         this.steps = requireNonNull(steps);
     }
 
