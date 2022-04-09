@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends ModelStatement<A> {
+public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends ModelStatement<A> {
     /**
      * Returns {@link StatementOrigin}, which denotes if statement was explicitly declared in original model or inferred
      * during semantic processing of model.
