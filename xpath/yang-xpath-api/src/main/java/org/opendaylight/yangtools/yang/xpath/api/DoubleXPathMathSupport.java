@@ -37,40 +37,19 @@ final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNu
         final double l = left.getValue();
         final double r = right.getValue();
 
-        final double result;
-        switch (operator) {
-            case DIV:
-                result = l / r;
-                break;
-            case EQUALS:
-                return YangBooleanConstantExpr.of(left.equals(right));
-            case GT:
-                return YangBooleanConstantExpr.of(l > r);
-            case GTE:
-                return YangBooleanConstantExpr.of(l >= r);
-            case LT:
-                return YangBooleanConstantExpr.of(l < r);
-            case LTE:
-                return YangBooleanConstantExpr.of(l <= r);
-            case MINUS:
-                result = l - r;
-                break;
-            case MOD:
-                result = l % r;
-                break;
-            case MUL:
-                result = l * r;
-                break;
-            case NOT_EQUALS:
-                return YangBooleanConstantExpr.of(!left.equals(right));
-            case PLUS:
-                result = l + r;
-                break;
-            default:
-                throw new IllegalStateException("Unhandled operator " + operator);
-        }
-
-        return DoubleNumberExpr.of(result);
+        return switch (operator) {
+            case DIV -> DoubleNumberExpr.of(l / r);
+            case EQUALS -> YangBooleanConstantExpr.of(left.equals(right));
+            case GT -> YangBooleanConstantExpr.of(l > r);
+            case GTE -> YangBooleanConstantExpr.of(l >= r);
+            case LT -> YangBooleanConstantExpr.of(l < r);
+            case LTE -> YangBooleanConstantExpr.of(l <= r);
+            case MINUS -> DoubleNumberExpr.of(l - r);
+            case MOD -> DoubleNumberExpr.of(l % r);
+            case MUL -> DoubleNumberExpr.of(l * r);
+            case NOT_EQUALS -> YangBooleanConstantExpr.of(!left.equals(right));
+            case PLUS -> DoubleNumberExpr.of(l + r);
+        };
     }
 
     @Override
