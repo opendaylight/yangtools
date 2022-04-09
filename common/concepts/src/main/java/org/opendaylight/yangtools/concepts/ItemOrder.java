@@ -23,12 +23,12 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <T> Item order type
  */
 @Beta
-public interface ItemOrder<T extends ItemOrder<T>> {
+public sealed interface ItemOrder<T extends ItemOrder<T>> {
     /**
      * Items are ordered and their order is significant. A {@link List} is an example of a collection which conforms to
      * this contract.
      */
-    interface Ordered extends ItemOrder<Ordered> {
+    non-sealed interface Ordered extends ItemOrder<Ordered> {
         @Override
         default Class<Ordered> itemOrder() {
             return Ordered.class;
@@ -61,7 +61,7 @@ public interface ItemOrder<T extends ItemOrder<T>> {
      * Items are unordered and their order is insignificant. A {@link Set} is an example of a collection which conforms
      * to this contract.
      */
-    interface Unordered extends ItemOrder<Unordered> {
+    non-sealed interface Unordered extends ItemOrder<Unordered> {
         @Override
         default Class<Unordered> itemOrder() {
             return Unordered.class;
