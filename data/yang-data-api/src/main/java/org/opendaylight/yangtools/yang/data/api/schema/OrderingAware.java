@@ -23,7 +23,7 @@ public interface OrderingAware {
      * Marker interface for NormalizedNodeContainer implementations which correspond to {@code ordered-by system}. These
      * follow the {@link Unordered} contract.
      */
-    public interface System extends OrderingAware, Unordered {
+    interface System extends OrderingAware, Unordered {
         @Override
         default Ordering ordering() {
             return Ordering.SYSTEM;
@@ -34,7 +34,7 @@ public interface OrderingAware {
      * Marker interface for NormalizedNodeContainer implementations which correspond to {@code ordered-by user}. These
      * follow the {@link Ordered} contract.
      */
-    public interface User extends OrderingAware, Ordered {
+    interface User extends OrderingAware, Ordered {
         @Override
         default Ordering ordering() {
             return Ordering.USER;
