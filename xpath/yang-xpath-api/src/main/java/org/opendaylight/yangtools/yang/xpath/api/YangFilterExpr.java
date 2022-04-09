@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
 
 @Beta
-public class YangFilterExpr implements YangExpr, YangPredicateAware {
+public sealed class YangFilterExpr implements YangExpr, YangPredicateAware {
     private static final class WithPredicates extends YangFilterExpr {
         private static final long serialVersionUID = 1L;
 
