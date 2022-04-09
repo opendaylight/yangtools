@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
  */
 @Beta
 public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>
-        extends AbstractEffectiveStatement<A, D> {
+        extends AbstractEffectiveStatementImpl<A, D> {
     @Override
     public abstract @NonNull D getDeclared();
 
