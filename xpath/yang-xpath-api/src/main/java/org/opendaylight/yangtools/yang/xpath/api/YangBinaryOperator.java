@@ -90,7 +90,7 @@ public enum YangBinaryOperator {
     MOD("mod");
 
     @SuppressFBWarnings(value = "SE_INNER_CLASS", justification = "Outer class is a retained enumeration")
-    private final class Expr extends YangBinaryExpr {
+    final class Expr extends YangBinaryExpr {
         private static final long serialVersionUID = 1L;
 
         Expr(final YangExpr leftExpr, final YangExpr rightExpr) {

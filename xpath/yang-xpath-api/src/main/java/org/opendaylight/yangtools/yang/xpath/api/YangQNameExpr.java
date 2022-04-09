@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName;
  * @author Robert Varga
  */
 @Beta
-public abstract class YangQNameExpr implements YangExpr, QNameReferent {
+public abstract sealed class YangQNameExpr implements YangExpr, QNameReferent {
     public static final class Resolved extends YangQNameExpr implements ResolvedQNameReferent {
         private static final long serialVersionUID = 1L;
 
@@ -88,10 +88,6 @@ public abstract class YangQNameExpr implements YangExpr, QNameReferent {
     }
 
     private static final long serialVersionUID = 1L;
-
-    YangQNameExpr() {
-        // Prevent instantiation
-    }
 
     public static Unresolved of(final UnresolvedQName qname) {
         return new Unresolved(qname);

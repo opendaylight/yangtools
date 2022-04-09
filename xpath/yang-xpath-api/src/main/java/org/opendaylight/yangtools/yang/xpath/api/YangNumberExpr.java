@@ -14,12 +14,8 @@ import org.eclipse.jdt.annotation.Nullable;
  * A number-bearing expression.
  */
 @Beta
-public abstract class YangNumberExpr implements YangExpr {
+public abstract sealed class YangNumberExpr implements YangExpr permits BigDecimalNumberExpr, DoubleNumberExpr {
     private static final long serialVersionUID = 1L;
-
-    YangNumberExpr() {
-        // Hidden to prevent external subclassing
-    }
 
     public abstract Number getNumber();
 

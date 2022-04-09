@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * @author Robert Varga
  */
 @Beta
-public class YangFunctionCallExpr implements YangExpr {
+public sealed class YangFunctionCallExpr implements YangExpr {
     private static final class WithArgs extends YangFunctionCallExpr {
         private static final long serialVersionUID = 1L;
 
@@ -46,7 +46,7 @@ public class YangFunctionCallExpr implements YangExpr {
 
     private final QName name;
 
-    YangFunctionCallExpr(final QName name) {
+    private YangFunctionCallExpr(final QName name) {
         this.name = requireNonNull(name);
     }
 
