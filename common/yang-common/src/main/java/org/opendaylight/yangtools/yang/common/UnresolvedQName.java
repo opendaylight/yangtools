@@ -28,9 +28,8 @@ import org.eclipse.jdt.annotation.Nullable;
  *   <li>{@link Qualified}, which also holds a string prefix available via {@link Qualified#getPrefix()}.</li>
  * </ol>
  */
-// FIXME: sealed to allow Qualified and Unqualified only when we have JDK17+
 @NonNullByDefault
-public abstract class UnresolvedQName extends AbstractQName {
+public abstract sealed class UnresolvedQName extends AbstractQName {
     /**
      * An unresolved, qualified {@link QName}. It is guaranteed to hold a valid {@link #getLocalName()} bound to a
      * namespace identified through a prefix string, but remains unresolved. A resolved {@link QName} can be obtained
