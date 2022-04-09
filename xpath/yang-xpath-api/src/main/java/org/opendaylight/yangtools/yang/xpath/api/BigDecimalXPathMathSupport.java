@@ -60,40 +60,19 @@ final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigD
         final BigDecimal l = left.getNumber();
         final BigDecimal r = right.getNumber();
 
-        final BigDecimal result;
-        switch (operator) {
-            case DIV:
-                result = l.divide(r);
-                break;
-            case EQUALS:
-                return YangBooleanConstantExpr.of(l.equals(r));
-            case GT:
-                return YangBooleanConstantExpr.of(l.compareTo(r) > 0);
-            case GTE:
-                return YangBooleanConstantExpr.of(l.compareTo(r) >= 0);
-            case LT:
-                return YangBooleanConstantExpr.of(l.compareTo(r) < 0);
-            case LTE:
-                return YangBooleanConstantExpr.of(l.compareTo(r) <= 0);
-            case MINUS:
-                result = l.subtract(r);
-                break;
-            case MOD:
-                result = l.remainder(r);
-                break;
-            case MUL:
-                result = l.multiply(r);
-                break;
-            case NOT_EQUALS:
-                return YangBooleanConstantExpr.of(!l.equals(r));
-            case PLUS:
-                result = l.add(r);
-                break;
-            default:
-                throw new IllegalStateException("Unhandled operator " + operator);
-        }
-
-        return BigDecimalNumberExpr.of(result);
+        return switch (operator) {
+            case DIV -> BigDecimalNumberExpr.of(l.divide(r));
+            case EQUALS -> YangBooleanConstantExpr.of(l.equals(r));
+            case GT -> YangBooleanConstantExpr.of(l.compareTo(r) > 0);
+            case GTE -> YangBooleanConstantExpr.of(l.compareTo(r) >= 0);
+            case LT -> YangBooleanConstantExpr.of(l.compareTo(r) < 0);
+            case LTE -> YangBooleanConstantExpr.of(l.compareTo(r) <= 0);
+            case MINUS -> BigDecimalNumberExpr.of(l.subtract(r));
+            case MOD -> BigDecimalNumberExpr.of(l.remainder(r));
+            case MUL -> BigDecimalNumberExpr.of(l.multiply(r));
+            case NOT_EQUALS -> YangBooleanConstantExpr.of(!l.equals(r));
+            case PLUS -> BigDecimalNumberExpr.of(l.add(r));
+        };
     }
 
     @Override
