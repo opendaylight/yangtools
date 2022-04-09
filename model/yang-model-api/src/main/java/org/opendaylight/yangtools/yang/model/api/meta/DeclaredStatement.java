@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
-public interface DeclaredStatement<A> extends ModelStatement<A> {
+public non-sealed interface DeclaredStatement<A> extends ModelStatement<A> {
     /**
      * Returns statement argument as was present in original source.
      *
