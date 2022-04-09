@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * @author Robert Varga
  */
 @Beta
-public interface YangConstantExpr<T> extends YangExpr, Identifiable<QName> {
+public sealed interface YangConstantExpr<T> extends YangExpr, Identifiable<QName> permits YangBooleanConstantExpr {
     /**
      * Return this constant's value.
      *
