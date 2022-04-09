@@ -77,14 +77,8 @@ public sealed class YangFunctionCallExpr implements YangExpr {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangFunctionCallExpr)) {
-            return false;
-        }
-        final YangFunctionCallExpr other = (YangFunctionCallExpr) obj;
-        return getName().equals(other.getName()) && getArguments().equals(other.getArguments());
+        return this == obj || obj instanceof YangFunctionCallExpr other && getName().equals(other.getName())
+            && getArguments().equals(other.getArguments());
     }
 
     @Override

@@ -77,14 +77,8 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
         @Override
         public final boolean equals(@Nullable final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof AxisStep)) {
-                return false;
-            }
-            final AxisStep other = (AxisStep) obj;
-            return getAxis().equals(other.getAxis()) && getPredicates().equals(other.getPredicates());
+            return this == obj || obj instanceof AxisStep other && getAxis().equals(other.getAxis())
+                && getPredicates().equals(other.getPredicates());
         }
 
         @SuppressFBWarnings(value = "SE_PRIVATE_READ_RESOLVE_NOT_INHERITED",
@@ -132,15 +126,8 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
         @Override
         public boolean equals(@Nullable final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof NamespaceStep)) {
-                return false;
-            }
-            final NamespaceStep other = (NamespaceStep) obj;
-            return getAxis().equals(other.getAxis()) && namespace.equals(other.namespace)
-                    && getPredicates().equals(other.getPredicates());
+            return this == obj || obj instanceof NamespaceStep other && getAxis().equals(other.getAxis())
+                && namespace.equals(other.namespace) && getPredicates().equals(other.getPredicates());
         }
 
         @Override
@@ -467,14 +454,8 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangLocationPath)) {
-            return false;
-        }
-        final YangLocationPath other = (YangLocationPath) obj;
-        return isAbsolute() == other.isAbsolute() && steps.equals(other.steps);
+        return this == obj || obj instanceof YangLocationPath other && isAbsolute() == other.isAbsolute()
+            && steps.equals(other.steps);
     }
 
     @Override

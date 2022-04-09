@@ -48,7 +48,7 @@ public abstract sealed class YangQNameExpr implements YangExpr, QNameReferent {
 
         @Override
         public boolean equals(final @Nullable Object obj) {
-            return this == obj || obj instanceof Resolved && qname.equals(((Resolved) obj).qname);
+            return this == obj || obj instanceof Resolved other && qname.equals(other.qname);
         }
 
         @Override
@@ -78,7 +78,7 @@ public abstract sealed class YangQNameExpr implements YangExpr, QNameReferent {
 
         @Override
         public boolean equals(final @Nullable Object obj) {
-            return this == obj || obj instanceof Unresolved && qname.equals(((Unresolved) obj).qname);
+            return this == obj || obj instanceof Unresolved other && qname.equals(other.qname);
         }
 
         @Override

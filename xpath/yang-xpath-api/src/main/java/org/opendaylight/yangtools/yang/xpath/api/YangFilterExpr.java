@@ -66,14 +66,8 @@ public sealed class YangFilterExpr implements YangExpr, YangPredicateAware {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangFilterExpr)) {
-            return false;
-        }
-        final YangFilterExpr other = (YangFilterExpr) obj;
-        return expr.equals(((YangFilterExpr) obj).expr) && getPredicates().equals(other.getPredicates());
+        return this == obj || obj instanceof YangFilterExpr other
+            && expr.equals(other.expr) && getPredicates().equals(other.getPredicates());
     }
 
     @Override

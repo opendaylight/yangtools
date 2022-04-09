@@ -64,14 +64,8 @@ public sealed class YangPathExpr implements YangExpr {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangPathExpr)) {
-            return false;
-        }
-        final YangPathExpr other = (YangPathExpr) obj;
-        return filterExpr.equals(((YangPathExpr) obj).filterExpr) && getLocationPath().equals(other.getLocationPath());
+        return this == obj || obj instanceof YangPathExpr other && filterExpr.equals(other.filterExpr)
+            && getLocationPath().equals(other.getLocationPath());
     }
 
     @Override
