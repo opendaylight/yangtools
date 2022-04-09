@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * Schema of this node is described by instance of
  * {@link org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode}.
  */
-public interface ContainerNode extends DataContainerNode, DataContainerChild {
+public non-sealed interface ContainerNode extends DataContainerNode, DataContainerChild {
     @Override
     default Class<ContainerNode> contract() {
         return ContainerNode.class;
