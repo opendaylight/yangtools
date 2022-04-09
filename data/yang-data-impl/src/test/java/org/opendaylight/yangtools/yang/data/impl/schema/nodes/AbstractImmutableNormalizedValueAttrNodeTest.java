@@ -16,6 +16,24 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 public class AbstractImmutableNormalizedValueAttrNodeTest {
+    // FIXME: Record once we have JDK17
+    private static final class TestValue {
+        private final int value;
+
+        TestValue(final int value) {
+            this.value = value;
+        }
+
+        @Override
+        public int hashCode() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return obj == this || obj instanceof TestValue && value == ((TestValue) obj).value;
+        }
+    }
 
     private static final QName ROOT_QNAME = QName.create("urn:test", "2014-03-13", "root");
     private static final QName LEAF_QNAME = QName.create(ROOT_QNAME, "my-leaf");
@@ -36,11 +54,11 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         assertTrue(leafNode.equals(equalLeafNode));
         assertTrue(equalLeafNode.equals(leafNode));
 
-        Byte[] value2 = new Byte[] { new Byte("1"), new Byte("2") };
-        Byte[] equalValue2 = new Byte[] { new Byte("1"), new Byte("2") };
+        TestValue[] value2 = new TestValue[] { new TestValue(1), new TestValue(2) };
+        TestValue[] equalValue2 = new TestValue[] { new TestValue(1), new TestValue(2) };
 
-        LeafNode<Byte[]> leafNode2 = ImmutableNodes.leafNode(LEAF_QNAME, value2);
-        LeafNode<Byte[]> equalLeafNode2 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue2);
+        LeafNode<TestValue[]> leafNode2 = ImmutableNodes.leafNode(LEAF_QNAME, value2);
+        LeafNode<TestValue[]> equalLeafNode2 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue2);
 
         assertTrue(leafNode2.equals(leafNode2));
         assertTrue(leafNode2.equals(equalLeafNode2));
@@ -57,28 +75,27 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         assertTrue(leafNode3.equals(equalLeafNode3));
         assertTrue(equalLeafNode3.equals(leafNode3));
 
-        Byte[][] value4 = new Byte[][] {
-            new Byte[] { new Byte("1"), new Byte("2") },
-            new Byte[] { new Byte("3"), new Byte("4") },
+        TestValue[][] value4 = new TestValue[][] {
+            new TestValue[] { new TestValue(1), new TestValue(2) },
+            new TestValue[] { new TestValue(3), new TestValue(4) },
         };
-        Byte[][] equalValue4 = new Byte[][] {
-            new Byte[] { new Byte("1"), new Byte("2") },
-            new Byte[] { new Byte("3"), new Byte("4") },
+        TestValue[][] equalValue4 = new TestValue[][] {
+            new TestValue[] { new TestValue(1), new TestValue(2) },
+            new TestValue[] { new TestValue(3), new TestValue(4) },
         };
 
-        LeafNode<Byte[][]> leafNode4 = ImmutableNodes.leafNode(LEAF_QNAME,value4);
-        LeafNode<Byte[][]> equalLeafNode4 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue4);
+        LeafNode<TestValue[][]> leafNode4 = ImmutableNodes.leafNode(LEAF_QNAME,value4);
+        LeafNode<TestValue[][]> equalLeafNode4 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue4);
 
         assertTrue(leafNode4.equals(leafNode4));
         assertTrue(leafNode4.equals(equalLeafNode4));
         assertTrue(equalLeafNode4.equals(leafNode4));
 
-        Byte value6 = new Byte("1");
-        Byte equalValue6 = new Byte("1");
+        TestValue value6 = new TestValue(1);
+        TestValue equalValue6 = new TestValue(1);
 
-        LeafNode<Byte> leafNode6 = ImmutableNodes.leafNode(LEAF_QNAME, value6);
-        LeafNode<Byte> equalLeafNode6 = ImmutableNodes.leafNode(
-                SAME_LEAF_QNAME, equalValue6);
+        LeafNode<TestValue> leafNode6 = ImmutableNodes.leafNode(LEAF_QNAME, value6);
+        LeafNode<TestValue> equalLeafNode6 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue6);
 
         assertTrue(leafNode6.equals(leafNode6));
         assertTrue(leafNode6.equals(equalLeafNode6));
@@ -120,11 +137,11 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         assertFalse(leafNode1.equals(otherLeafNode1));
         assertFalse(otherLeafNode1.equals(leafNode1));
 
-        Byte[] value2 = new Byte[] { new Byte("1"), new Byte("1") };
-        Byte[] otherValue2 = new Byte[] { new Byte("1"), new Byte("2") };
+        TestValue[] value2 = new TestValue[] { new TestValue(1), new TestValue(1) };
+        TestValue[] otherValue2 = new TestValue[] { new TestValue(1), new TestValue(2) };
 
-        LeafNode<Byte[]> leafNode2 = ImmutableNodes.leafNode(LEAF_QNAME, value2);
-        LeafNode<Byte[]> otherLeafNode2 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue2);
+        LeafNode<TestValue[]> leafNode2 = ImmutableNodes.leafNode(LEAF_QNAME, value2);
+        LeafNode<TestValue[]> otherLeafNode2 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue2);
 
         assertFalse(leafNode2.equals(otherLeafNode2));
         assertFalse(otherLeafNode2.equals(leafNode2));
@@ -138,26 +155,26 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         assertFalse(leafNode3.equals(otherLeafNode3));
         assertFalse(otherLeafNode3.equals(leafNode3));
 
-        Byte[][] value4 = new Byte[][] {
-            new Byte[] { new Byte("1"), new Byte("2") },
-            new Byte[] { new Byte("3"), new Byte("4") },
+        TestValue[][] value4 = new TestValue[][] {
+            new TestValue[] { new TestValue(1), new TestValue(2) },
+            new TestValue[] { new TestValue(3), new TestValue(4) },
         };
-        Byte[][] otherValue4 = new Byte[][] {
-            new Byte[] { new Byte("1"), new Byte("2") },
-            new Byte[] { new Byte("3"), new Byte("5") },
+        TestValue[][] otherValue4 = new TestValue[][] {
+            new TestValue[] { new TestValue(1), new TestValue(2) },
+            new TestValue[] { new TestValue(3), new TestValue(5) },
         };
 
-        LeafNode<Byte[][]> leafNode4 = ImmutableNodes.leafNode(LEAF_QNAME, value4);
-        LeafNode<Byte[][]> otherLeafNode4 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue4);
+        LeafNode<TestValue[][]> leafNode4 = ImmutableNodes.leafNode(LEAF_QNAME, value4);
+        LeafNode<TestValue[][]> otherLeafNode4 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue4);
 
         assertFalse(leafNode4.equals(otherLeafNode4));
         assertFalse(otherLeafNode4.equals(leafNode4));
 
-        Byte value6 = new Byte("1");
-        Byte otherValue6 = new Byte("2");
+        TestValue value6 = new TestValue(1);
+        TestValue otherValue6 = new TestValue(2);
 
-        LeafNode<Byte> leafNode6 = ImmutableNodes.leafNode(LEAF_QNAME, value6);
-        LeafNode<Byte> otherLeafNode6 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue6);
+        LeafNode<TestValue> leafNode6 = ImmutableNodes.leafNode(LEAF_QNAME, value6);
+        LeafNode<TestValue> otherLeafNode6 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue6);
 
         assertFalse(leafNode6.equals(otherLeafNode6));
         assertFalse(otherLeafNode6.equals(leafNode6));
