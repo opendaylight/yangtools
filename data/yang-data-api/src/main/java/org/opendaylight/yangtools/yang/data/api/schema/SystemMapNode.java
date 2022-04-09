@@ -11,7 +11,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * {@link MapNode} which additionally preserves user-supplied ordering. This node represents a data instance of
  * a {@code list} with {@code ordered-by user;} substatement and a {@code key} definition.
  */
-public interface SystemMapNode extends MapNode, OrderingAware.System {
+public non-sealed interface SystemMapNode extends MapNode, OrderingAware.System {
     @Override
     default Class<SystemMapNode> contract() {
         return SystemMapNode.class;
