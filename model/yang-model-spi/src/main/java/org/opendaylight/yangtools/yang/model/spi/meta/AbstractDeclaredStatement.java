@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,25 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * stateful subclasses.
  */
 @Beta
-public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
+@SuppressFBWarnings(value = "NM_SAME_SIMPLE_NAME_AS_SUPERCLASS", justification = "Migration")
+public abstract class AbstractDeclaredStatement<A>
+        extends org.opendaylight.yangtools.yang.model.api.meta.AbstractDeclaredStatement<A> {
     @Override
     public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
         // Default to reduce load on subclasses and keep the number of implementations down
         return ImmutableList.of();
-    }
-
-    /**
-     * Utility method for recovering singleton lists squashed by {@link #maskList(ImmutableList)}.
-     *
-     * @param masked list to unmask
-     * @return Unmasked list
-     * @throws NullPointerException if masked is null
-     * @throws ClassCastException if masked object does not match DeclaredStatement
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected static final @NonNull ImmutableList<? extends DeclaredStatement<?>> unmaskList(
-            final @NonNull Object masked) {
-        return (ImmutableList) unmaskList(masked, DeclaredStatement.class);
     }
 
     public abstract static class WithRawArgument<A> extends AbstractDeclaredStatement<A> {

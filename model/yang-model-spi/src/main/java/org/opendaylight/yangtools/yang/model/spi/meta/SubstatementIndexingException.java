@@ -12,7 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 
 /**
- * Exception thrown when indexing of substatements of a {@link AbstractEffectiveStatement} fails.
+ * Exception thrown when indexing of substatements of either a {@link AbstractDeclaredEffectiveStatement} or
+ * {@link AbstractUndeclaredEffectiveStatement} fails.
  */
 @Beta
 public final class SubstatementIndexingException extends IllegalArgumentException {
