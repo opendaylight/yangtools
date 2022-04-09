@@ -46,116 +46,113 @@ final class FunctionSupport {
     }
 
     YangExpr functionToExpr(final YangFunction func, final List<YangExpr> args) {
-        switch (func) {
-            case BIT_IS_SET:
+        return switch (func) {
+            case BIT_IS_SET -> {
                 checkArgument(args.size() == 2, "bit-is-set(node-set, string) takes two arguments");
-                break;
-            case BOOLEAN:
-                return booleanExpr(args);
-            case CEILING:
+                yield call(func, args);
+            }
+            case BOOLEAN -> booleanExpr(args);
+            case CEILING -> {
                 checkArgument(args.size() == 1, "ceiling(number) takes one argument");
                 // TODO: constant folding requires math support
-                break;
-            case CONCAT:
-                return concatExpr(args);
-            case CONTAINS:
-                return containsExpr(args);
-            case COUNT:
+                yield call(func, args);
+            }
+            case CONCAT -> concatExpr(args);
+            case CONTAINS -> containsExpr(args);
+            case COUNT -> {
                 checkArgument(args.size() == 1, "count(node-set) takes one argument");
                 // TODO: constant folding requires math support
-                break;
-            case CURRENT:
+                yield call(func, args);
+            }
+            case CURRENT -> {
                 checkArgument(args.isEmpty(), "current() does not take any arguments");
-                return CURRENT;
-            case DEREF:
+                yield CURRENT;
+            }
+            case DEREF -> {
                 checkArgument(args.size() == 1, "deref(node-set) takes one argument");
-                break;
-            case DERIVED_FROM:
-                return derivedFromExpr(args);
-            case DERIVED_FROM_OR_SELF:
-                return derivedFromOrSelfExpr(args);
-            case ENUM_VALUE:
+                yield call(func, args);
+            }
+            case DERIVED_FROM ->  derivedFromExpr(args);
+            case DERIVED_FROM_OR_SELF -> derivedFromOrSelfExpr(args);
+            case ENUM_VALUE -> {
                 checkArgument(args.size() == 1, "enum-value(node-set) takes one argument");
-                break;
-            case FALSE:
+                yield call(func, args);
+            }
+            case FALSE -> {
                 checkArgument(args.isEmpty(), "false() does not take any arguments");
-                return YangBooleanConstantExpr.FALSE;
-            case FLOOR:
+                yield YangBooleanConstantExpr.FALSE;
+            }
+            case FLOOR -> {
                 checkArgument(args.size() == 1, "floor(number) takes one argument");
                 // TODO: constant folding requires math support
-                break;
-            case ID:
+                yield call(func, args);
+            }
+            case ID -> {
                 checkArgument(args.size() == 1, "id(object) takes one argument");
-                break;
-            case LANG:
+                yield call(func, args);
+            }
+            case LANG -> {
                 checkArgument(args.size() == 1, "lang(string) takes one argument");
-                break;
-            case LAST:
+                yield call(func, args);
+            }
+            case LAST -> {
                 checkArgument(args.isEmpty(), "last() does not take any arguments");
-                return LAST;
-            case LOCAL_NAME:
+                yield LAST;
+            }
+            case LOCAL_NAME -> {
                 checkArgument(args.size() <= 1, "local-name(node-set?) takes at most one argument");
-                if (args.isEmpty()) {
-                    return LOCAL_NAME;
-                }
-                break;
-            case NAME:
+                yield args.isEmpty() ? LOCAL_NAME : call(func, args);
+            }
+            case NAME -> {
                 checkArgument(args.size() <= 1, "name(node-set?) takes at most one argument");
-                if (args.isEmpty()) {
-                    return NAME;
-                }
-                break;
-            case NAMESPACE_URI:
+                yield args.isEmpty() ? NAME : call(func, args);
+            }
+            case NAMESPACE_URI -> {
                 checkArgument(args.size() <= 1, "namespace-uri(node-set?) takes at most one argument");
-                if (args.isEmpty()) {
-                    return NAMESPACE_URI;
-                }
-                break;
-            case NORMALIZE_SPACE:
-                return normalizeSpaceExpr(args);
-            case NOT:
-                return notExpr(args);
-            case NUMBER:
-                return numberExpr(args);
-            case POSITION:
+                yield args.isEmpty() ? NAMESPACE_URI : call(func, args);
+            }
+            case NORMALIZE_SPACE -> normalizeSpaceExpr(args);
+            case NOT -> notExpr(args);
+            case NUMBER -> numberExpr(args);
+            case POSITION -> {
                 checkArgument(args.isEmpty(), "position() does not take any arguments");
-                return POSITION;
-            case RE_MATCH:
+                yield POSITION;
+            }
+            case RE_MATCH -> {
                 checkArgument(args.size() == 2, "re-match(string, string) takes two arguments");
                 // TODO: static analysis requires XSD regex support -- we should validate args[1] and match it to
                 //       args[0] if that is a literal
-                break;
-            case ROUND:
+                yield call(func, args);
+            }
+            case ROUND -> {
                 checkArgument(args.size() == 1, "round(number) takes one argument");
                 // TODO: constant folding requires math support
-                break;
-            case STARTS_WITH:
-                return startsWithExpr(args);
-            case STRING:
-                return stringExpr(args);
-            case STRING_LENGTH:
-                return stringLengthExpr(args);
-            case SUBSTRING:
-                return substringExpr(args);
-            case SUBSTRING_AFTER:
-                return substringAfterExpr(args);
-            case SUBSTRING_BEFORE:
-                return substringBeforeExpr(args);
-            case SUM:
+                yield call(func, args);
+            }
+            case STARTS_WITH -> startsWithExpr(args);
+            case STRING -> stringExpr(args);
+            case STRING_LENGTH -> stringLengthExpr(args);
+            case SUBSTRING -> substringExpr(args);
+            case SUBSTRING_AFTER -> substringAfterExpr(args);
+            case SUBSTRING_BEFORE -> substringBeforeExpr(args);
+            case SUM -> {
                 checkArgument(args.size() == 1, "sub(node-set) takes one argument");
                 // TODO: constant folding requires math support
-                break;
-            case TRANSLATE:
+                yield call(func, args);
+            }
+            case TRANSLATE -> {
                 checkArgument(args.size() == 3, "translate(string, string, string) takes three arguments");
                 // TODO: constant folding?
-                break;
-            case TRUE:
+                yield call(func, args);
+            }
+            case TRUE -> {
                 checkArgument(args.isEmpty(), "true() does not take any arguments");
-                return YangBooleanConstantExpr.TRUE;
-            default:
-                throw new IllegalStateException("Unhandled function " + func);
-        }
+                yield YangBooleanConstantExpr.TRUE;
+            }
+        };
+    }
 
+    private static YangFunctionCallExpr call(final YangFunction func, final List<YangExpr> args) {
         return YangFunctionCallExpr.of(func.getIdentifier(), args);
     }
 
@@ -171,7 +168,7 @@ final class FunctionSupport {
 
         // TODO: handling YangNumberExpr requires math support
 
-        return YangFunctionCallExpr.of(YangFunction.BOOLEAN.getIdentifier(), args);
+        return call(YangFunction.BOOLEAN, args);
     }
 
     private static YangExpr concatExpr(final List<YangExpr> args) {
@@ -179,7 +176,7 @@ final class FunctionSupport {
 
         // TODO: constant folding
 
-        return YangFunctionCallExpr.of(YangFunction.CONCAT.getIdentifier(), args);
+        return call(YangFunction.CONCAT, args);
     }
 
     private static YangExpr containsExpr(final List<YangExpr> args) {
@@ -194,19 +191,19 @@ final class FunctionSupport {
         }
 
         // TODO: handling YangNumberExpr requires math support
-        return YangFunctionCallExpr.of(YangFunction.CONTAINS.getIdentifier(), args);
+        return call(YangFunction.CONTAINS, args);
     }
 
     private static YangExpr derivedFromExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 2, "derived-from(node-set, string) takes two arguments");
         // FIXME: coerce second arg to a QName
-        return YangFunctionCallExpr.of(YangFunction.DERIVED_FROM.getIdentifier(), args);
+        return call(YangFunction.DERIVED_FROM, args);
     }
 
     private static YangExpr derivedFromOrSelfExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 2, "derived-from-or-self(node-set, string) takes two arguments");
         // FIXME: coerce second arg to a QName
-        return YangFunctionCallExpr.of(YangFunction.DERIVED_FROM_OR_SELF.getIdentifier(), args);
+        return call(YangFunction.DERIVED_FROM_OR_SELF, args);
     }
 
     private static YangExpr notExpr(final List<YangExpr> args) {
@@ -216,7 +213,7 @@ final class FunctionSupport {
             return YangBooleanConstantExpr.of(((YangBooleanConstantExpr) arg).getValue());
         }
 
-        return YangFunctionCallExpr.of(YangFunction.NOT.getIdentifier(), args);
+        return call(YangFunction.NOT, args);
     }
 
     private static YangExpr normalizeSpaceExpr(final List<YangExpr> args) {
@@ -229,7 +226,7 @@ final class FunctionSupport {
         //     // TODO: normalize value
         // }
 
-        return YangFunctionCallExpr.of(YangFunction.NORMALIZE_SPACE.getIdentifier(), args);
+        return call(YangFunction.NORMALIZE_SPACE, args);
     }
 
     private YangExpr numberExpr(final List<YangExpr> args) {
@@ -250,7 +247,7 @@ final class FunctionSupport {
             return mathSupport.createNumber(value ? 1 : 0);
         }
 
-        return YangFunctionCallExpr.of(YangFunction.NUMBER.getIdentifier(), args);
+        return call(YangFunction.NUMBER, args);
     }
 
     private static YangExpr startsWithExpr(final List<YangExpr> args) {
@@ -258,7 +255,7 @@ final class FunctionSupport {
 
         // TODO: constant folding
 
-        return YangFunctionCallExpr.of(YangFunction.STARTS_WITH.getIdentifier(), args);
+        return call(YangFunction.STARTS_WITH, args);
     }
 
     private static YangExpr substringBeforeExpr(final List<YangExpr> args) {
@@ -266,7 +263,7 @@ final class FunctionSupport {
 
         // TODO: constant folding
 
-        return YangFunctionCallExpr.of(YangFunction.SUBSTRING_BEFORE.getIdentifier(), args);
+        return call(YangFunction.SUBSTRING_BEFORE, args);
     }
 
     private static YangExpr substringAfterExpr(final List<YangExpr> args) {
@@ -274,7 +271,7 @@ final class FunctionSupport {
 
         // TODO: constant folding
 
-        return YangFunctionCallExpr.of(YangFunction.SUBSTRING_AFTER.getIdentifier(), args);
+        return call(YangFunction.SUBSTRING_AFTER, args);
     }
 
     private static YangExpr substringExpr(final List<YangExpr> args) {
@@ -283,7 +280,7 @@ final class FunctionSupport {
 
         // TODO: constant folding
 
-        return YangFunctionCallExpr.of(YangFunction.SUBSTRING.getIdentifier(), args);
+        return call(YangFunction.SUBSTRING, args);
     }
 
     private static YangExpr stringExpr(final List<YangExpr> args) {
@@ -301,7 +298,7 @@ final class FunctionSupport {
         }
 
         // TODO: handling YangNumberExpr requires math support
-        return YangFunctionCallExpr.of(YangFunction.STRING.getIdentifier(), args);
+        return call(YangFunction.STRING, args);
     }
 
     private YangExpr stringLengthExpr(final List<YangExpr> args) {
@@ -318,6 +315,6 @@ final class FunctionSupport {
             return mathSupport.createNumber(((YangLiteralExpr) first).getLiteral().length());
         }
 
-        return YangFunctionCallExpr.of(YangFunction.STRING_LENGTH.getIdentifier(), args);
+        return call(YangFunction.STRING_LENGTH, args);
     }
 }
