@@ -591,7 +591,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     @SuppressFBWarnings("BC_UNCONFIRMED_CAST")
-    public ContainerNode toNormalizedNodeNotification(@NonNull final Notification<?> data) {
+    public ContainerNode toNormalizedNodeNotification(final Notification<?> data) {
         // FIXME: Should the cast to DataObject be necessary?
         return serializeDataObject((DataObject) data,
             (ctx, iface, domWriter) -> ctx.newNotificationWriter(
