@@ -17,10 +17,12 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -119,7 +121,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
         @Override
         public List<EffectiveStatement<?, ?>> statementPath() {
-            return ImmutableList.copyOf(deque.descendingIterator());
+            return ImmutableList.copyOf(deque);
         }
 
         /**
@@ -265,14 +267,14 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         final var path = inference.statementPath();
         final var ret = new SchemaInferenceStack(inference.getEffectiveModelContext(), path.size());
         ret.currentModule = ret.getModule(path.get(0).argument());
-        path.forEach(ret.deque::push);
+        ret.deque.addAll(path);
         return ret;
     }
 
     @VisibleForTesting
     static @NonNull SchemaInferenceStack ofUntrusted(final DefaultSchemaTreeInference inference) {
         final var ret = of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
-        if (!Iterators.elementsEqual(ret.deque.descendingIterator(), inference.statementPath().iterator())) {
+        if (!Iterables.elementsEqual(ret.deque, inference.statementPath())) {
             throw new IllegalArgumentException("Provided " + inference + " is not consistent with resolved path "
                 + ret.toSchemaTreeInference());
         }
@@ -378,7 +380,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalStateException if the stack is empty
      */
     public @NonNull EffectiveStatement<?, ?> currentStatement() {
-        return checkNonNullState(deque.peekFirst());
+        return checkNonNullState(deque.peekLast());
     }
 
     /**
@@ -434,7 +436,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull ChoiceEffectiveStatement enterChoice(final QName nodeIdentifier) {
         final QName nodeId = requireNonNull(nodeIdentifier);
-        final EffectiveStatement<?, ?> parent = deque.peek();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         if (parent instanceof ChoiceEffectiveStatement) {
             return enterChoice((ChoiceEffectiveStatement) parent, nodeId);
         }
@@ -463,7 +465,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
                     .map(ChoiceEffectiveStatement.class::cast);
                 if (optMatch.isPresent()) {
                     final SchemaTreeEffectiveStatement<?> match = optMatch.orElseThrow();
-                    deque.push(match);
+                    deque.addLast(match);
                     clean = false;
                     return (ChoiceEffectiveStatement) match;
                 }
@@ -553,7 +555,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalStateException if this stack is not empty
      */
     public @NonNull YangDataEffectiveStatement enterYangData(final QNameModule namespace, final String name) {
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         checkState(parent == null, "Cannot lookup yang-data in a non-empty stack");
 
         final String templateName = requireNonNull(name);
@@ -565,7 +567,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             .findFirst()
             .orElseThrow(
                 () -> new IllegalArgumentException("yang-data " + templateName + " not present in " + namespace));
-        deque.push(ret);
+        deque.addLast(ret);
         currentModule = module;
         return ret;
     }
@@ -577,7 +579,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws NoSuchElementException if this stack is empty
      */
     public @NonNull EffectiveStatement<?, ?> exit() {
-        final EffectiveStatement<?, ?> prev = deque.pop();
+        final EffectiveStatement<?, ?> prev = deque.removeLast();
         if (prev instanceof GroupingEffectiveStatement) {
             --groupingDepth;
         }
@@ -600,10 +602,10 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public @NonNull DataTreeEffectiveStatement<?> exitToDataTree() {
         final EffectiveStatement<?, ?> child = exit();
         checkState(child instanceof DataTreeEffectiveStatement, "Unexpected current %s", child);
-        EffectiveStatement<?, ?> parent = deque.peekFirst();
+        EffectiveStatement<?, ?> parent = deque.peekLast();
         while (parent instanceof ChoiceEffectiveStatement || parent instanceof CaseEffectiveStatement) {
-            deque.pollFirst();
-            parent = deque.peekFirst();
+            deque.pollLast();
+            parent = deque.peekLast();
         }
 
         checkState(parent == null || parent instanceof DataTreeAwareEffectiveStatement, "Unexpected parent %s", parent);
@@ -681,7 +683,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private @NonNull EffectiveStatement<?, ?> resolveLocationPath(final YangLocationPath path) {
         // get the default namespace before we clear and loose our deque
-        final QNameModule defaultNamespace = deque.isEmpty() ? null : ((QName) deque.peek().argument()).getModule();
+        final QNameModule defaultNamespace = deque.isEmpty() ? null : ((QName) deque.peekLast().argument()).getModule();
         if (path.isAbsolute()) {
             clear();
         }
@@ -742,11 +744,9 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public @NonNull SchemaTreeInference toSchemaTreeInference() {
         checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
         final var cleanDeque = clean ? deque : reconstructSchemaInferenceStack().deque;
-        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(),
-            ImmutableList.<SchemaTreeEffectiveStatement<?>>builderWithExpectedSize(cleanDeque.size())
-                .addAll(Iterators.transform(cleanDeque.descendingIterator(),
-                    stmt -> (SchemaTreeEffectiveStatement<?>) stmt))
-                .build());
+        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(), cleanDeque.stream()
+            .map(stmt -> (SchemaTreeEffectiveStatement<?>) stmt)
+            .collect(ImmutableList.toImmutableList()));
     }
 
     /**
@@ -757,9 +757,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull Absolute toSchemaNodeIdentifier() {
         checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
-        return Absolute.of(ImmutableList.<QName>builderWithExpectedSize(deque.size())
-            .addAll(simplePathFromRoot())
-            .build());
+        return Absolute.of(simplePathFromRoot());
     }
 
     /**
@@ -771,12 +769,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     @Deprecated
     public @NonNull SchemaPath toSchemaPath() {
-        SchemaPath ret = SchemaPath.ROOT;
-        final Iterator<QName> it = simplePathFromRoot();
-        while (it.hasNext()) {
-            ret = ret.createChild(it.next());
-        }
-        return ret;
+        return SchemaPath.create(simplePathFromRoot(), true);
     }
 
     /**
@@ -787,7 +780,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     @Deprecated
     public @NonNull Iterator<QName> schemaPathIterator() {
-        return Iterators.unmodifiableIterator(simplePathFromRoot());
+        return Iterators.unmodifiableIterator(simplePathFromRoot().iterator());
     }
 
     @Override
@@ -796,7 +789,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private @NonNull GroupingEffectiveStatement pushGrouping(final @NonNull QName nodeIdentifier) {
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         return parent != null ? pushGrouping(parent, nodeIdentifier) : pushFirstGrouping(nodeIdentifier);
     }
 
@@ -806,7 +799,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
             .findFirst()
             .orElseThrow(() -> notPresent(parent, "Grouping", nodeIdentifier));
-        deque.push(ret);
+        deque.addLast(ret);
         ++groupingDepth;
         return ret;
     }
@@ -819,7 +812,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private @NonNull SchemaTreeEffectiveStatement<?> pushSchema(final @NonNull QName nodeIdentifier) {
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         return parent != null ? pushSchema(parent, nodeIdentifier) : pushFirstSchema(nodeIdentifier);
     }
 
@@ -833,7 +826,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> parent, final @NonNull QName nodeIdentifier) {
         final SchemaTreeEffectiveStatement<?> ret = parent.findSchemaTreeNode(nodeIdentifier)
             .orElseThrow(() -> notPresent(parent, "Schema tree child ", nodeIdentifier));
-        deque.push(ret);
+        deque.addLast(ret);
         return ret;
     }
 
@@ -845,7 +838,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private @NonNull DataTreeEffectiveStatement<?> pushData(final @NonNull QName nodeIdentifier) {
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         return parent != null ? pushData(parent, nodeIdentifier) : pushFirstData(nodeIdentifier);
     }
 
@@ -859,7 +852,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final @NonNull QName nodeIdentifier) {
         final DataTreeEffectiveStatement<?> ret = parent.findDataTreeNode(nodeIdentifier)
             .orElseThrow(() -> notPresent(parent, "Data tree child", nodeIdentifier));
-        deque.push(ret);
+        deque.addLast(ret);
         clean = false;
         return ret;
     }
@@ -872,7 +865,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull QName nodeIdentifier) {
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         return parent != null ? pushTypedef(parent, nodeIdentifier) : pushFirstTypedef(nodeIdentifier);
     }
 
@@ -880,7 +873,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final @NonNull QName nodeIdentifier) {
         final TypedefEffectiveStatement ret = parent.get(TypedefNamespace.class, nodeIdentifier)
             .orElseThrow(() -> notPresent(parent, "Typedef", nodeIdentifier));
-        deque.push(ret);
+        deque.addLast(ret);
         return ret;
     }
 
@@ -899,12 +892,12 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     // Unified access to queue iteration for addressing purposes. Since we keep 'logical' steps as executed by user
     // at this point, conversion to SchemaNodeIdentifier may be needed. We dispatch based on 'clean'.
-    private Iterator<QName> simplePathFromRoot() {
-        return clean ? iterateQNames() : reconstructQNames();
+    private Collection<QName> simplePathFromRoot() {
+        return clean ? qnames() : reconstructQNames();
     }
 
-    private Iterator<QName> iterateQNames() {
-        return Iterators.transform(deque.descendingIterator(), stmt -> {
+    private Collection<QName> qnames() {
+        return Collections2.transform(deque, stmt -> {
             final Object argument = stmt.argument();
             verify(argument instanceof QName, "Unexpected statement %s", stmt);
             return (QName) argument;
@@ -914,14 +907,14 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     // So there are some data tree steps in the stack... we essentially need to convert a data tree item into a series
     // of schema tree items. This means at least N searches, but after they are done, we get an opportunity to set the
     // clean flag.
-    private Iterator<QName> reconstructQNames() {
-        return reconstructSchemaInferenceStack().iterateQNames();
+    private Collection<QName> reconstructQNames() {
+        return reconstructSchemaInferenceStack().qnames();
     }
 
     private SchemaInferenceStack reconstructSchemaInferenceStack() {
         // Let's walk all statements and decipher them into a temporary stack
         final SchemaInferenceStack tmp = new SchemaInferenceStack(effectiveModel, deque.size());
-        final Iterator<EffectiveStatement<?, ?>> it = deque.descendingIterator();
+        final Iterator<EffectiveStatement<?, ?>> it = deque.iterator();
         while (it.hasNext()) {
             final EffectiveStatement<?, ?> stmt = it.next();
             // Order of checks is significant
@@ -946,7 +939,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private void resolveChoiceSteps(final @NonNull QName nodeIdentifier) {
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         if (parent instanceof ChoiceEffectiveStatement) {
             resolveChoiceSteps((ChoiceEffectiveStatement) parent, nodeIdentifier);
         } else {
@@ -961,8 +954,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
                 final CaseEffectiveStatement caze = (CaseEffectiveStatement) stmt;
                 final SchemaTreeEffectiveStatement<?> found = caze.findSchemaTreeNode(nodeIdentifier).orElse(null);
                 if (found instanceof ChoiceEffectiveStatement) {
-                    deque.push(caze);
-                    deque.push(found);
+                    deque.addLast(caze);
+                    deque.addLast(found);
                     return;
                 }
             }
@@ -971,7 +964,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private void resolveDataTreeSteps(final @NonNull QName nodeIdentifier) {
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        final EffectiveStatement<?, ?> parent = deque.peekLast();
         if (parent != null) {
             verify(parent instanceof SchemaTreeAwareEffectiveStatement, "Unexpected parent %s", parent);
             resolveDataTreeSteps((SchemaTreeAwareEffectiveStatement<?, ?>) parent, nodeIdentifier);
@@ -995,17 +988,17 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         final SchemaTreeEffectiveStatement<?> found = parent.findSchemaTreeNode(nodeIdentifier).orElse(null);
         if (found instanceof DataTreeEffectiveStatement) {
             // ... and it did, we are done
-            deque.push(found);
+            deque.addLast(found);
             return;
         }
 
         // Alright, so now it's down to filtering choice/case statements. For that we keep some globally-reused state
         // and employ a recursive match.
-        final Deque<EffectiveStatement<QName, ?>> match = new ArrayDeque<>();
+        final var match = new ArrayDeque<EffectiveStatement<QName, ?>>();
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
             if (stmt instanceof ChoiceEffectiveStatement
                 && searchChoice(match, (ChoiceEffectiveStatement) stmt, nodeIdentifier)) {
-                match.descendingIterator().forEachRemaining(deque::push);
+                deque.addAll(match);
                 return;
             }
         }
@@ -1013,12 +1006,12 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         throw new VerifyException("Failed to resolve " + nodeIdentifier + " in " + parent);
     }
 
-    private static boolean searchCase(final @NonNull Deque<EffectiveStatement<QName, ?>> result,
+    private static boolean searchCase(final @NonNull ArrayDeque<EffectiveStatement<QName, ?>> result,
             final @NonNull CaseEffectiveStatement parent, final @NonNull QName nodeIdentifier) {
-        result.push(parent);
+        result.addLast(parent);
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
             if (stmt instanceof DataTreeEffectiveStatement && nodeIdentifier.equals(stmt.argument())) {
-                result.push((DataTreeEffectiveStatement<?>) stmt);
+                result.addLast((DataTreeEffectiveStatement<?>) stmt);
                 return true;
             }
             if (stmt instanceof ChoiceEffectiveStatement
@@ -1026,20 +1019,20 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
                 return true;
             }
         }
-        result.pop();
+        result.removeLast();
         return false;
     }
 
-    private static boolean searchChoice(final @NonNull Deque<EffectiveStatement<QName, ?>> result,
+    private static boolean searchChoice(final @NonNull ArrayDeque<EffectiveStatement<QName, ?>> result,
             final @NonNull ChoiceEffectiveStatement parent, final @NonNull QName nodeIdentifier) {
-        result.push(parent);
+        result.addLast(parent);
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
             if (stmt instanceof CaseEffectiveStatement
                 && searchCase(result, (CaseEffectiveStatement) stmt, nodeIdentifier)) {
                 return true;
             }
         }
-        result.pop();
+        result.removeLast();
         return false;
     }
 
