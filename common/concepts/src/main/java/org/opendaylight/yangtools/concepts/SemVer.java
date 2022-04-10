@@ -112,15 +112,8 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof SemVer)) {
-            return false;
-        }
-
-        final SemVer o = (SemVer) obj;
-        return major == o.major && minor == o.minor && patch == o.patch;
+        return this == obj || obj instanceof SemVer other && major == other.major && minor == other.minor
+            && patch == other.patch;
     }
 
     @Override
