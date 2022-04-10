@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 @Beta
+@Deprecated(forRemoval = true, since = "8.0.3")
 public abstract class DataNodeAggregator {
     protected void addChild(final DataSchemaNode childNode) {
         // No-op by default
