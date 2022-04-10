@@ -240,15 +240,12 @@ abstract class AntlrXPathParser implements YangXPathParser {
     abstract QNameStep createStep(YangXPathAxis axis, String prefix, String localName, List<YangExpr> predicates);
 
     private QNameStep createStep(final YangXPathAxis axis, final QNameContext expr, final List<YangExpr> predicates) {
-        switch (expr.getChildCount()) {
-            case 1:
-                return createStep(axis, getChild(expr, NCNameContext.class, 0).getText(), predicates);
-            case 3:
-                return createStep(axis, getChild(expr, NCNameContext.class, 0).getText(),
+        return switch (expr.getChildCount()) {
+            case 1 -> createStep(axis, getChild(expr, NCNameContext.class, 0).getText(), predicates);
+            case 3 -> createStep(axis, getChild(expr, NCNameContext.class, 0).getText(),
                     getChild(expr, NCNameContext.class, 2).getText(), predicates);
-            default:
-                throw illegalShape(expr);
-        }
+            default -> throw illegalShape(expr);
+        };
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -336,18 +333,11 @@ abstract class AntlrXPathParser implements YangXPathParser {
         // We are mapping functions to RFC7950 YIN namespace, to keep us consistent with type/statement definitions
 
         final FunctionNameContext name = getChild(expr, FunctionNameContext.class, 0);
-        final QName parsed;
-        switch (name.getChildCount()) {
-            case 1:
-                parsed = QName.create(YangConstants.RFC6020_YIN_MODULE, name.getChild(0).getText());
-                break;
-            case 3:
-                parsed = createQName(name.getChild(0).getText(), name.getChild(2).getText());
-                break;
-            default:
-                throw illegalShape(name);
-        }
-
+        final QName parsed = switch (name.getChildCount()) {
+            case 1 -> QName.create(YangConstants.RFC6020_YIN_MODULE, name.getChild(0).getText());
+            case 3 -> createQName(name.getChild(0).getText(), name.getChild(2).getText());
+            default -> throw illegalShape(name);
+        };
         final List<YangExpr> args = expr.expr().stream().map(this::parseExpr).collect(ImmutableList.toImmutableList());
         final YangFunction func = YANG_FUNCTIONS.get(parsed);
         if (func != null) {
@@ -370,8 +360,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
     private YangLocationPath parseLocationPath(final LocationPathContext expr) {
         verifyChildCount(expr, 1);
         final ParseTree first = expr.getChild(0);
-        if (first instanceof RelativeLocationPathContext) {
-            return YangLocationPath.relative(parseLocationPathSteps((RelativeLocationPathContext) first));
+        if (first instanceof RelativeLocationPathContext relativeLocation) {
+            return YangLocationPath.relative(parseLocationPathSteps(relativeLocation));
         }
 
         final AbsoluteLocationPathNorootContext abs = verifyTree(AbsoluteLocationPathNorootContext.class, first);
@@ -386,8 +376,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
     private YangExpr parseMultiplicative(final MultiplicativeExprContext expr) {
         final ParseTree first = expr.getChild(0);
         final YangExpr left;
-        if (first instanceof UnaryExprNoRootContext) {
-            left = parseUnary((UnaryExprNoRootContext) first);
+        if (first instanceof UnaryExprNoRootContext unary) {
+            left = parseUnary(unary);
         } else {
             left = YangLocationPath.root();
         }
@@ -404,8 +394,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
     private YangExpr parsePathExpr(final PathExprNoRootContext expr) {
         final ParseTree first = expr.getChild(0);
-        if (first instanceof LocationPathContext) {
-            return parseLocationPath((LocationPathContext) first);
+        if (first instanceof LocationPathContext location) {
+            return parseLocationPath(location);
         }
 
         final YangExpr filter = parseFilter(verifyTree(FilterExprContext.class, first));
@@ -431,16 +421,15 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
         verifyChildCount(expr, 1);
         final ParseTree first = expr.getChild(0);
-        if (first instanceof TerminalNode) {
-            return parseTerminal((TerminalNode) first);
+        if (first instanceof TerminalNode terminal) {
+            return parseTerminal(terminal);
+        } else if (first instanceof FunctionCallContext function) {
+            return parseFunctionCall(function);
+        } else if (first instanceof VariableReferenceContext variable) {
+            return YangVariableReferenceExpr.of(parseQName(variable.qName()));
+        } else {
+            throw illegalShape(first);
         }
-        if (first instanceof FunctionCallContext) {
-            return parseFunctionCall((FunctionCallContext) first);
-        }
-        if (first instanceof VariableReferenceContext) {
-            return YangVariableReferenceExpr.of(parseQName(((VariableReferenceContext) first).qName()));
-        }
-        throw illegalShape(first);
     }
 
     private YangExpr parseRelational(final RelationalExprContext expr) {
@@ -472,16 +461,15 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
     private YangExpr parseTerminal(final TerminalNode term) {
         final String text = term.getText();
-        switch (term.getSymbol().getType()) {
-            case xpathParser.Literal:
+        return  switch (term.getSymbol().getType()) {
+            case xpathParser.Literal -> {
                 // We have to strip quotes
                 haveLiteral = true;
-                return YangLiteralExpr.of(text.substring(1, text.length() - 1));
-            case xpathParser.Number:
-                return mathSupport.createNumber(text);
-            default:
-                throw illegalShape(term);
-        }
+                yield YangLiteralExpr.of(text.substring(1, text.length() - 1));
+            }
+            case xpathParser.Number -> mathSupport.createNumber(text);
+            default -> throw illegalShape(term);
+        };
     }
 
     private YangExpr parseUnary(final UnaryExprNoRootContext expr) {
@@ -498,8 +486,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
     private YangExpr parseUnion(final UnionExprNoRootContext expr) {
         final ParseTree first = expr.getChild(0);
         final YangExpr path;
-        if (first instanceof PathExprNoRootContext) {
-            path = parsePathExpr((PathExprNoRootContext) first);
+        if (first instanceof PathExprNoRootContext noRoot) {
+            path = parsePathExpr(noRoot);
             if (expr.getChildCount() == 1) {
                 return path;
             }
@@ -513,14 +501,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
         // Deduplicate expressions so we do not perform useless unioning
         final Set<YangExpr> expressions = new LinkedHashSet<>();
         expressions.add(path);
-        if (union instanceof YangNaryExpr) {
-            // If the result is a union expression, integrate it into this expression
-            final YangNaryExpr nary = (YangNaryExpr) union;
-            if (nary.getOperator() == YangNaryOperator.UNION) {
-                expressions.addAll(nary.getExpressions());
-            } else {
-                expressions.add(union);
-            }
+        if (union instanceof YangNaryExpr nary && nary.getOperator() == YangNaryOperator.UNION) {
+            expressions.addAll(nary.getExpressions());
         } else {
             expressions.add(union);
         }
@@ -534,7 +516,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
             final YangBinaryOperator operator = nextOperator(it);
             final YangExpr right = parseMultiplicative(nextContext(it, MultiplicativeExprContext.class));
             final Optional<YangExpr> simple = simplifyNumbers(operator, ret, right);
-            ret = simple.isPresent() ? simple.get() : operator.exprWith(ret, right);
+            ret = simple.isPresent() ? simple.orElseThrow() : operator.exprWith(ret, right);
         } while (it.hasNext());
 
         return ret;
@@ -568,7 +550,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
             }
 
             final Optional<YangExpr> simple = simplifyNumbers(operator, ret, right);
-            ret = simple.isPresent() ? simple.get() : operator.exprWith(ret, right);
+            ret = simple.isPresent() ? simple.orElseThrow() : operator.exprWith(ret, right);
         } while (it.hasNext());
 
         return ret;
@@ -580,7 +562,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
             final YangBinaryOperator operator = nextOperator(it);
             final YangExpr right = parseAdditive(nextContext(it, AdditiveExprContext.class));
             final Optional<YangExpr> simple = simplifyNumbers(operator, ret, right);
-            ret = simple.isPresent() ? simple.get() : operator.exprWith(ret, right);
+            ret = simple.isPresent() ? simple.orElseThrow() : operator.exprWith(ret, right);
         } while (it.hasNext());
 
         return ret;
@@ -590,14 +572,11 @@ abstract class AntlrXPathParser implements YangXPathParser {
         if (expr.getChildCount() == 1) {
             final AbbreviatedStepContext abbrev = getChild(expr, AbbreviatedStepContext.class, 0);
             verifyChildCount(abbrev, 1);
-            switch (getTerminalType(abbrev, 0)) {
-                case xpathParser.DOT:
-                    return YangXPathAxis.SELF.asStep();
-                case xpathParser.DOTDOT:
-                    return YangXPathAxis.PARENT.asStep();
-                default:
-                    throw illegalShape(abbrev);
-            }
+            return switch (getTerminalType(abbrev, 0)) {
+                case xpathParser.DOT -> YangXPathAxis.SELF.asStep();
+                case xpathParser.DOTDOT -> YangXPathAxis.PARENT.asStep();
+                default -> throw illegalShape(abbrev);
+            };
         }
 
         final int size = verifyAtLeastChildren(expr, 2);
@@ -608,50 +587,47 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
         final YangXPathAxis axis = parseAxis(getChild(expr, AxisSpecifierContext.class, 0));
         final NodeTestContext nodeTest = getChild(expr, NodeTestContext.class, 1);
-        switch (nodeTest.getChildCount()) {
-            case 1:
+        return  switch (nodeTest.getChildCount()) {
+            case 1 -> {
                 final NameTestContext nameChild = getChild(nodeTest, NameTestContext.class, 0);
                 final ParseTree first = nameChild.getChild(0);
                 if (first instanceof TerminalNode) {
                     verify(((TerminalNode) first).getSymbol().getType() == xpathParser.MUL);
-                    return axis.asStep(predicates);
+                    yield axis.asStep(predicates);
                 }
-                return createStep(axis, verifyTree(QNameContext.class, first), predicates);
-            case 3:
-                return axis.asStep(parseNodeType(nodeTest.getChild(0)), predicates);
-            case 4:
+                yield createStep(axis, verifyTree(QNameContext.class, first), predicates);
+            }
+            case 3 -> axis.asStep(parseNodeType(nodeTest.getChild(0)), predicates);
+            case 4 -> {
                 final String text = verifyToken(nodeTest, 2, xpathParser.Literal).getText();
-                return axis.asStep(text.substring(1, text.length() - 1), predicates);
-            default:
-                throw illegalShape(nodeTest);
-        }
+                yield axis.asStep(text.substring(1, text.length() - 1), predicates);
+            }
+            default -> throw illegalShape(nodeTest);
+        };
     }
 
     private static YangXPathAxis parseAxis(final AxisSpecifierContext expr) {
-        switch (expr.getChildCount()) {
-            case 0:
-                return YangXPathAxis.CHILD;
-            case 1:
+        return switch (expr.getChildCount()) {
+            case 0 -> YangXPathAxis.CHILD;
+            case 1 -> {
                 verify(getTerminalType(expr, 0) == xpathParser.AT, "Unhandled axis specifier shape %s", expr);
-                return YangXPathAxis.ATTRIBUTE;
-            case 2:
+                yield YangXPathAxis.ATTRIBUTE;
+            }
+            case 2 -> {
                 final String str = verifyTerminal(expr.getChild(0)).getText();
-                return verifyNotNull(XPATH_AXES.get(str), "Unhandled axis %s", str);
-            default:
-                throw illegalShape(expr);
-        }
+                yield verifyNotNull(XPATH_AXES.get(str), "Unhandled axis %s", str);
+            }
+            default -> throw illegalShape(expr);
+        };
     }
 
     private QName parseQName(final QNameContext expr) {
-        switch (expr.getChildCount()) {
-            case 1:
-                return createQName(getChild(expr, NCNameContext.class, 0).getText());
-            case 3:
-                return createQName(getChild(expr, NCNameContext.class, 0).getText(),
+        return switch (expr.getChildCount()) {
+            case 1 -> createQName(getChild(expr, NCNameContext.class, 0).getText());
+            case 3 -> createQName(getChild(expr, NCNameContext.class, 0).getText(),
                     getChild(expr, NCNameContext.class, 2).getText());
-            default:
-                throw illegalShape(expr);
-        }
+            default -> throw illegalShape(expr);
+        };
     }
 
     private static <T extends ParserRuleContext> T nextContext(final Iterator<ParseTree> it, final Class<T> type) {
@@ -677,13 +653,10 @@ abstract class AntlrXPathParser implements YangXPathParser {
     }
 
     private static Optional<Step> parseStepShorthand(final ParseTree tree) {
-        switch (verifyTerminal(tree).getSymbol().getType()) {
-            case xpathParser.PATHSEP:
-                return Optional.empty();
-            case xpathParser.ABRPATH:
-                return Optional.of(YangXPathAxis.DESCENDANT_OR_SELF.asStep());
-            default:
-                throw illegalShape(tree);
-        }
+        return switch (verifyTerminal(tree).getSymbol().getType()) {
+            case xpathParser.PATHSEP -> Optional.empty();
+            case xpathParser.ABRPATH -> Optional.of(YangXPathAxis.DESCENDANT_OR_SELF.asStep());
+            default -> throw illegalShape(tree);
+        };
     }
 }
