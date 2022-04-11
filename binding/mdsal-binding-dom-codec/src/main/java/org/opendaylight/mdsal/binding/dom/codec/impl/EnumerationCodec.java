@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+final class EnumerationCodec extends ValueTypeCodec implements SchemaUnawareCodec {
     private static final Logger LOG = LoggerFactory.getLogger(EnumerationCodec.class);
     /*
      * Use identity comparison for keys and allow classes to be GCd themselves.
@@ -42,9 +42,10 @@ final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawa
         .softValues().build();
 
     private final ImmutableBiMap<String, Enum<?>> nameToEnum;
+    private final Class<? extends Enum<?>> enumClass;
 
-    private EnumerationCodec(final Class<? extends Enum<?>> enumeration, final Map<String, Enum<?>> nameToEnum) {
-        super(enumeration);
+    private EnumerationCodec(final Class<? extends Enum<?>> enumClass, final Map<String, Enum<?>> nameToEnum) {
+        this.enumClass = requireNonNull(enumClass);
         this.nameToEnum = ImmutableBiMap.copyOf(nameToEnum);
     }
 
@@ -94,7 +95,7 @@ final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawa
 
     @Override
     public String serialize(final Object input) {
-        checkArgument(getTypeClass().isInstance(input), "Input %s is not a instance of %s", input, getTypeClass());
+        checkArgument(enumClass.isInstance(input), "Input %s is not a instance of %s", input, enumClass);
         return requireNonNull(nameToEnum.inverse().get(input));
     }
 }

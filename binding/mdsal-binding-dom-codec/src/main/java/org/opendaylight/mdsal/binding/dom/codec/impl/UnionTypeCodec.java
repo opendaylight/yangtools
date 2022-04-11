@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Method;
@@ -24,12 +25,14 @@ import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-final class UnionTypeCodec extends ReflectionBasedCodec {
+final class UnionTypeCodec extends ValueTypeCodec {
     private final ImmutableSet<UnionValueOptionContext> typeCodecs;
+    private final Class<?> unionClass;
 
-    private UnionTypeCodec(final Class<?> unionCls,final List<UnionValueOptionContext> codecs) {
-        super(unionCls);
-        typeCodecs = ImmutableSet.copyOf(codecs);
+    private UnionTypeCodec(final Class<?> unionClass, final List<UnionValueOptionContext> typeCodecs) {
+        this.unionClass = requireNonNull(unionClass);
+        // Squashes duplicates
+        this.typeCodecs = ImmutableSet.copyOf(typeCodecs);
     }
 
     static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType,
@@ -78,7 +81,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         }
 
         throw new IllegalArgumentException(String.format("Failed to construct instance of %s for input %s",
-            getTypeClass(), input));
+            unionClass, input));
     }
 
     @Override
