@@ -10,6 +10,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandle;
@@ -25,13 +27,26 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+    /*
+     * Use identity comparison for keys and allow classes to be GCd themselves.
+     *
+     * Since codecs can (and typically do) hold a direct or indirect strong reference to the class, they need to be also
+     * accessed via reference. Using a weak reference could be problematic, because the codec would quite often be only
+     * weakly reachable. We therefore use a soft reference, whose implementation guidance is suitable to our use case:
+     *
+     *     "Virtual machine implementations are, however, encouraged to bias against clearing recently-created or
+     *      recently-used soft references."
+     */
+    private static final Cache<Class<?>, @NonNull BitsCodec> CACHE = CacheBuilder.newBuilder().weakKeys().softValues()
+        .build();
     private static final MethodType CONSTRUCTOR_INVOKE_TYPE = MethodType.methodType(Object.class, Boolean[].class);
 
     // Ordered by position
@@ -48,8 +63,9 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
         this.getters = ImmutableMap.copyOf(getters);
     }
 
-    static Callable<BitsCodec> loader(final Class<?> returnType, final BitsTypeDefinition rootType) {
-        return () -> {
+    static @NonNull BitsCodec of(final Class<?> returnType, final BitsTypeDefinition rootType)
+            throws ExecutionException {
+        return CACHE.get(returnType, () -> {
             final Map<String, Method> getters = new LinkedHashMap<>();
             final Set<String> ctorArgs = new TreeSet<>();
 
@@ -69,7 +85,7 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
             final MethodHandle ctor = MethodHandles.publicLookup().unreflectConstructor(constructor)
                     .asSpreader(Boolean[].class, ctorArgs.size()).asType(CONSTRUCTOR_INVOKE_TYPE);
             return new BitsCodec(returnType, ctor, ctorArgs, getters);
-        };
+        });
     }
 
     @Override

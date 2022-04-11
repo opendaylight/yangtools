@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 public class EnumerationCodecTest {
-
     private enum TestEnum implements Enumeration {
         ENUM;
 
@@ -41,7 +40,7 @@ public class EnumerationCodecTest {
         EnumTypeDefinition definition = mock(EnumTypeDefinition.class);
         doReturn(ImmutableList.of(pair)).when(definition).getValues();
 
-        final EnumerationCodec codec = EnumerationCodec.loader(TestEnum.class, definition).call();
+        final EnumerationCodec codec = EnumerationCodec.of(TestEnum.class, definition);
         assertEquals(codec.deserialize(codec.serialize(TestEnum.ENUM)), TestEnum.ENUM);
         assertEquals(codec.serialize(codec.deserialize(TestEnum.ENUM.name())), TestEnum.ENUM.name());
     }

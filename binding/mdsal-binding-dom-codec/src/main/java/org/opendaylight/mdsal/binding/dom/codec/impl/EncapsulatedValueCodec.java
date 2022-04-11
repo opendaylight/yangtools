@@ -10,12 +10,15 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -25,8 +28,20 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * types, which are same as in NormalizedNode model.
  */
 final class EncapsulatedValueCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
-    private static final Lookup LOOKUP = MethodHandles.publicLookup();
+    /*
+     * Use identity comparison for keys and allow classes to be GCd themselves.
+     *
+     * Since codecs can (and typically do) hold a direct or indirect strong reference to the class, they need to be also
+     * accessed via reference. Using a weak reference could be problematic, because the codec would quite often be only
+     * weakly reachable. We therefore use a soft reference, whose implementation guidance is suitable to our use case:
+     *
+     *     "Virtual machine implementations are, however, encouraged to bias against clearing recently-created or
+     *      recently-used soft references."
+     */
+    private static final Cache<Class<?>, EncapsulatedValueCodec> CACHE = CacheBuilder.newBuilder().weakKeys()
+        .softValues().build();
     private static final MethodType OBJ_METHOD = MethodType.methodType(Object.class, Object.class);
+
     private final MethodHandle constructor;
     private final MethodHandle getter;
     private final Class<?> valueType;
@@ -39,15 +54,17 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
         this.valueType = requireNonNull(valueType);
     }
 
-    static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz, final TypeDefinition<?> typeDef) {
-        return () -> {
+    static @NonNull EncapsulatedValueCodec of(final Class<?> typeClz, final TypeDefinition<?> typeDef)
+            throws ExecutionException {
+        return CACHE.get(typeClz, () -> {
             final Method m = typeClz.getMethod(BindingMapping.SCALAR_TYPE_OBJECT_GET_VALUE_NAME);
-            final MethodHandle getter = LOOKUP.unreflect(m).asType(OBJ_METHOD);
+            final Lookup lookup = MethodHandles.publicLookup();
+            final MethodHandle getter = lookup.unreflect(m).asType(OBJ_METHOD);
             final Class<?> valueType = m.getReturnType();
-            final MethodHandle constructor = LOOKUP.findConstructor(typeClz,
+            final MethodHandle constructor = lookup.findConstructor(typeClz,
                 MethodType.methodType(void.class, valueType)).asType(OBJ_METHOD);
             return new EncapsulatedValueCodec(typeClz, constructor, getter, valueType);
-        };
+        });
     }
 
     /**

@@ -7,9 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import java.util.concurrent.Callable;
+import static java.util.Objects.requireNonNull;
+
 import java.util.concurrent.ExecutionException;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
@@ -22,19 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  */
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
 abstract class ValueTypeCodec implements IllegalArgumentCodec<Object, Object> {
-    /*
-     * Use identity comparison for keys and allow classes to be GCd themselves.
-     *
-     * Since codecs can (and typically do) hold a direct or indirect strong reference to the class, they need to be also
-     * accessed via reference. Using a weak reference could be problematic, because the codec would quite often be only
-     * weakly reachable. We therefore use a soft reference, whose implementation guidance is suitable to our use case:
-     *
-     *     "Virtual machine implementations are, however, encouraged to bias against clearing recently-created or
-     *      recently-used soft references."
-     */
-    private static final Cache<Class<?>, SchemaUnawareCodec> STATIC_CODECS = CacheBuilder.newBuilder()
-            .weakKeys().softValues().build();
-
     /**
      * Marker interface for codecs, which functionality will not be affected by schema change (introduction of new YANG
      * modules) they may have one static instance generated when first time needed.
@@ -62,40 +48,39 @@ abstract class ValueTypeCodec implements IllegalArgumentCodec<Object, Object> {
 
     public static SchemaUnawareCodec getCodecFor(final Class<?> typeClz, final TypeDefinition<?> def) {
         if (BindingReflections.isBindingClass(typeClz)) {
-            return getCachedSchemaUnawareCodec(typeClz, getCodecLoader(typeClz, def));
+            return getCachedSchemaUnawareCodec(typeClz, def);
         }
         return NOOP_CODEC;
     }
 
-    private static SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz,
-            final Callable<? extends SchemaUnawareCodec> loader) {
+    private static SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz, final TypeDefinition<?> def) {
+        // FIXME: extract this only when really needed
+        var rootType = requireNonNull(def);
+        while (true) {
+            final var base = rootType.getBaseType();
+            if (base != null) {
+                rootType = base;
+            } else {
+                break;
+            }
+        }
+
         try {
-            return STATIC_CODECS.get(typeClz, loader);
+            if (rootType instanceof EnumTypeDefinition) {
+                return EnumerationCodec.of(typeClz, (EnumTypeDefinition) rootType);
+            } else if (rootType instanceof BitsTypeDefinition) {
+                return BitsCodec.of(typeClz, (BitsTypeDefinition) rootType);
+            } else {
+                return EncapsulatedValueCodec.of(typeClz, def);
+            }
         } catch (ExecutionException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private static Callable<? extends SchemaUnawareCodec> getCodecLoader(final Class<?> typeClz,
-            final TypeDefinition<?> def) {
-
-        TypeDefinition<?> rootType = def;
-        while (rootType.getBaseType() != null) {
-            rootType = rootType.getBaseType();
-        }
-        if (rootType instanceof EnumTypeDefinition) {
-            return EnumerationCodec.loader(typeClz, (EnumTypeDefinition) rootType);
-        } else if (rootType instanceof BitsTypeDefinition) {
-            return BitsCodec.loader(typeClz, (BitsTypeDefinition) rootType);
-        }
-        return EncapsulatedValueCodec.loader(typeClz, def);
-    }
-
     @SuppressWarnings("rawtypes")
     static ValueTypeCodec encapsulatedValueCodecFor(final Class<?> typeClz, final TypeDefinition<?> typeDef,
              final IllegalArgumentCodec delegate) {
-        SchemaUnawareCodec extractor = getCachedSchemaUnawareCodec(typeClz,
-            EncapsulatedValueCodec.loader(typeClz, typeDef));
-        return new CompositeValueCodec(extractor, delegate);
+        return new CompositeValueCodec(getCachedSchemaUnawareCodec(typeClz, typeDef), delegate);
     }
 }
