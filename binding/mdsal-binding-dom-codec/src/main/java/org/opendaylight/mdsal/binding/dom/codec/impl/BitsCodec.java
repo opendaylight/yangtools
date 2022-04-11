@@ -33,7 +33,8 @@ import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+// FIXME: 'SchemaUnawareCodec' is not correct: we use BitsTypeDefinition in construction
+final class BitsCodec extends ValueTypeCodec implements SchemaUnawareCodec {
     /*
      * Use identity comparison for keys and allow classes to be GCd themselves.
      *
@@ -54,9 +55,7 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
     private final ImmutableSet<String> ctorArgs;
     private final MethodHandle ctor;
 
-    private BitsCodec(final Class<?> typeClass, final MethodHandle ctor, final Set<String> ctorArgs,
-            final Map<String, Method> getters) {
-        super(typeClass);
+    private BitsCodec(final MethodHandle ctor, final Set<String> ctorArgs, final Map<String, Method> getters) {
         this.ctor = requireNonNull(ctor);
         this.ctorArgs = ImmutableSet.copyOf(ctorArgs);
         this.getters = ImmutableMap.copyOf(getters);
@@ -83,7 +82,7 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
 
             final MethodHandle ctor = MethodHandles.publicLookup().unreflectConstructor(constructor)
                     .asSpreader(Boolean[].class, ctorArgs.size()).asType(CONSTRUCTOR_INVOKE_TYPE);
-            return new BitsCodec(returnType, ctor, ctorArgs, getters);
+            return new BitsCodec(ctor, ctorArgs, getters);
         });
     }
 
