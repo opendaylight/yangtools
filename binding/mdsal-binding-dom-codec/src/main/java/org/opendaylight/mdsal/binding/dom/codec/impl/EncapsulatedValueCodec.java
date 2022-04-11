@@ -26,7 +26,7 @@ import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
  * Derived YANG types are just immutable value holders for simple value
  * types, which are same as in NormalizedNode model.
  */
-final class EncapsulatedValueCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+final class EncapsulatedValueCodec extends ValueTypeCodec implements SchemaUnawareCodec {
     private static final MethodType OBJ_METHOD = MethodType.methodType(Object.class, Object.class);
 
     /*
@@ -49,7 +49,7 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
                 final Class<?> valueType = m.getReturnType();
                 final MethodHandle constructor = lookup.findConstructor(key,
                     MethodType.methodType(void.class, valueType)).asType(OBJ_METHOD);
-                return new EncapsulatedValueCodec(key, constructor, getter, valueType);
+                return new EncapsulatedValueCodec(constructor, getter, valueType);
             }
         });
 
@@ -57,9 +57,8 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
     private final MethodHandle getter;
     private final Class<?> valueType;
 
-    private EncapsulatedValueCodec(final Class<?> typeClz, final MethodHandle constructor, final MethodHandle getter,
+    private EncapsulatedValueCodec(final MethodHandle constructor, final MethodHandle getter,
             final Class<?> valueType) {
-        super(typeClz);
         this.constructor = requireNonNull(constructor);
         this.getter = requireNonNull(getter);
         this.valueType = requireNonNull(valueType);
