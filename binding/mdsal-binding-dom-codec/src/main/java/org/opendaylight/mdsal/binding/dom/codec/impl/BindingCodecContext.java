@@ -435,7 +435,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         }
         // FIXME: MDSAL-670: this is right for most situations, but we must never return NOOP_CODEC for
         //                   valueType=Object.class
-        return ValueTypeCodec.NOOP_CODEC;
+        return SchemaUnawareCodec.NOOP_CODEC;
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -467,7 +467,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
             return getCodec(valueType, def);
         }
-        return ValueTypeCodec.getCodecFor(valueType, typeDef);
+        return SchemaUnawareCodec.of(valueType, typeDef);
     }
 
     @Override

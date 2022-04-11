@@ -7,80 +7,18 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.concurrent.ExecutionException;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
  * Value codec, which serializes / deserializes values from DOM simple values.
  */
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
 abstract class ValueTypeCodec implements IllegalArgumentCodec<Object, Object> {
-    /**
-     * Marker interface for codecs, which functionality will not be affected by schema change (introduction of new YANG
-     * modules) they may have one static instance generated when first time needed.
-     */
-    // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
-    interface SchemaUnawareCodec extends IllegalArgumentCodec<Object, Object> {
-
-    }
-
-    /**
-     * No-op Codec, Java YANG Binding uses same types as NormalizedNode model for base YANG types, representing numbers,
-     * binary, strings and empty.
-     */
-    public static final SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
-        @Override
-        public Object serialize(final Object input) {
-            return input;
-        }
-
-        @Override
-        public Object deserialize(final Object input) {
-            return input;
-        }
-    };
-
-    public static SchemaUnawareCodec getCodecFor(final Class<?> typeClz, final TypeDefinition<?> def) {
-        if (BindingReflections.isBindingClass(typeClz)) {
-            return getCachedSchemaUnawareCodec(typeClz, def);
-        }
-        return NOOP_CODEC;
-    }
-
-    private static SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz, final TypeDefinition<?> def) {
-        // FIXME: extract this only when really needed
-        var rootType = requireNonNull(def);
-        while (true) {
-            final var base = rootType.getBaseType();
-            if (base != null) {
-                rootType = base;
-            } else {
-                break;
-            }
-        }
-
-        try {
-            if (rootType instanceof EnumTypeDefinition) {
-                return EnumerationCodec.of(typeClz, (EnumTypeDefinition) rootType);
-            } else if (rootType instanceof BitsTypeDefinition) {
-                return BitsCodec.of(typeClz, (BitsTypeDefinition) rootType);
-            } else {
-                return EncapsulatedValueCodec.of(typeClz, def);
-            }
-        } catch (ExecutionException e) {
-            throw new IllegalStateException(e);
-        }
-    }
 
     @SuppressWarnings("rawtypes")
     static ValueTypeCodec encapsulatedValueCodecFor(final Class<?> typeClz, final TypeDefinition<?> typeDef,
              final IllegalArgumentCodec delegate) {
-        return new CompositeValueCodec(getCachedSchemaUnawareCodec(typeClz, typeDef), delegate);
+        return new CompositeValueCodec(SchemaUnawareCodec.of(typeClz, typeDef), delegate);
     }
 }
