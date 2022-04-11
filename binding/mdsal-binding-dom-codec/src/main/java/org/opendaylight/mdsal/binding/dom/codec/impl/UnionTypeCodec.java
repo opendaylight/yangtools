@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeGeneratedUnion;
@@ -35,28 +34,26 @@ final class UnionTypeCodec extends ValueTypeCodec {
         this.typeCodecs = ImmutableSet.copyOf(typeCodecs);
     }
 
-    static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType,
-            final BindingCodecContext codecContext) {
-        return () -> {
-            final List<String> unionProperties = extractUnionProperties(codecContext.getRuntimeContext()
-                .getTypeWithSchema(unionCls).javaType());
-            final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
-            verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
-                unionTypes, unionProperties);
+    static UnionTypeCodec of(final Class<?> unionCls, final UnionTypeDefinition unionType,
+            final BindingCodecContext codecContext) throws Exception {
+        final List<String> unionProperties = extractUnionProperties(codecContext.getRuntimeContext()
+            .getTypeWithSchema(unionCls).javaType());
+        final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
+        verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
+            unionTypes, unionProperties);
 
-            final List<UnionValueOptionContext> values = new ArrayList<>(unionTypes.size());
-            final Iterator<String> it = unionProperties.iterator();
-            for (final TypeDefinition<?> subtype : unionTypes) {
-                final String getterName = BindingMapping.GETTER_PREFIX + BindingMapping.toFirstUpper(it.next());
-                final Method valueGetter = unionCls.getMethod(getterName);
-                final Class<?> valueType = valueGetter.getReturnType();
-                final IllegalArgumentCodec<Object, Object> codec = codecContext.getCodec(valueType, subtype);
+        final List<UnionValueOptionContext> values = new ArrayList<>(unionTypes.size());
+        final Iterator<String> it = unionProperties.iterator();
+        for (final TypeDefinition<?> subtype : unionTypes) {
+            final String getterName = BindingMapping.GETTER_PREFIX + BindingMapping.toFirstUpper(it.next());
+            final Method valueGetter = unionCls.getMethod(getterName);
+            final Class<?> valueType = valueGetter.getReturnType();
+            final IllegalArgumentCodec<Object, Object> codec = codecContext.getCodec(valueType, subtype);
 
-                values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, codec));
-            }
+            values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, codec));
+        }
 
-            return new UnionTypeCodec(unionCls, values);
-        };
+        return new UnionTypeCodec(unionCls, values);
     }
 
     private static List<String> extractUnionProperties(final Type type) {

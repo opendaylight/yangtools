@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -447,11 +446,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         } else if (typeDef instanceof InstanceIdentifierTypeDefinition) {
             return new CompositeValueCodec(SchemaUnawareCodec.of(valueType, typeDef), instanceIdentifierCodec);
         } else if (typeDef instanceof UnionTypeDefinition) {
-            final Callable<UnionTypeCodec> unionLoader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) typeDef,
-                this);
             try {
-                return unionLoader.call();
-            } catch (final Exception e) {
+                return UnionTypeCodec.of(valueType, (UnionTypeDefinition) typeDef, this);
+            } catch (Exception e) {
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
         } else if (typeDef instanceof LeafrefTypeDefinition) {
