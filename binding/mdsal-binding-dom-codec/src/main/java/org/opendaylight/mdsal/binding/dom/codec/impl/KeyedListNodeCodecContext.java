@@ -86,7 +86,7 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
 
         super.addYangPathArgument(arg, builder);
         if (arg instanceof IdentifiableItem) {
-            builder.add(codec.serialize((IdentifiableItem<?, ?>) arg));
+            builder.add(codec.bindingToDom((IdentifiableItem<?, ?>) arg));
         } else {
             // Adding wildcarded
             super.addYangPathArgument(arg, builder);
@@ -95,15 +95,13 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
 
     @Override
     protected InstanceIdentifier.PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
-        if (domArg instanceof NodeIdentifierWithPredicates) {
-            return codec.deserialize((NodeIdentifierWithPredicates) domArg);
-        }
-        return super.getBindingPathArgument(domArg);
+        return domArg instanceof NodeIdentifierWithPredicates
+            ? codec.domToBinding((NodeIdentifierWithPredicates) domArg) : super.getBindingPathArgument(domArg);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     NodeIdentifierWithPredicates serialize(final Identifier<?> key) {
-        return codec.serialize(IdentifiableItem.of((Class)getBindingClass(), (Identifier)key));
+        return codec.bindingToDom(IdentifiableItem.of((Class)getBindingClass(), (Identifier)key));
     }
 
     @NonNull Identifier<?> deserialize(final NodeIdentifierWithPredicates arg) {
@@ -112,17 +110,13 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        if (arg instanceof IdentifiableItem) {
-            return codec.serialize((IdentifiableItem<?, ?>) arg);
-        }
-        return super.serializePathArgument(arg);
+        return arg instanceof IdentifiableItem
+            ? codec.bindingToDom((IdentifiableItem<?, ?>) arg) : super.serializePathArgument(arg);
     }
 
     @Override
     public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        if (arg instanceof NodeIdentifierWithPredicates) {
-            return codec.deserialize((NodeIdentifierWithPredicates) arg);
-        }
-        return super.deserializePathArgument(arg);
+        return arg instanceof NodeIdentifierWithPredicates
+            ? codec.domToBinding((NodeIdentifierWithPredicates) arg) : super.deserializePathArgument(arg);
     }
 }
