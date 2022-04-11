@@ -65,7 +65,7 @@ interface SchemaUnawareCodec extends IllegalArgumentCodec<Object, Object> {
             } else if (rootType instanceof BitsTypeDefinition) {
                 return BitsCodec.of(typeClz, (BitsTypeDefinition) rootType);
             } else {
-                return EncapsulatedValueCodec.of(typeClz, def);
+                return EncapsulatedValueCodec.of(typeClz);
             }
         } catch (ExecutionException e) {
             throw new IllegalStateException(e);
