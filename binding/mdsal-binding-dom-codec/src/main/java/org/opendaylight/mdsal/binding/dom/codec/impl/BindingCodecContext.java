@@ -443,9 +443,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     private IllegalArgumentCodec<Object, Object> getCodecForBindingClass(final Class<?> valueType,
             final TypeDefinition<?> typeDef) {
         if (typeDef instanceof IdentityrefTypeDefinition) {
-            return ValueTypeCodec.encapsulatedValueCodecFor(valueType, typeDef, identityCodec);
+            return new CompositeValueCodec(SchemaUnawareCodec.of(valueType, typeDef), identityCodec);
         } else if (typeDef instanceof InstanceIdentifierTypeDefinition) {
-            return ValueTypeCodec.encapsulatedValueCodecFor(valueType, typeDef, instanceIdentifierCodec);
+            return new CompositeValueCodec(SchemaUnawareCodec.of(valueType, typeDef), instanceIdentifierCodec);
         } else if (typeDef instanceof UnionTypeDefinition) {
             final Callable<UnionTypeCodec> unionLoader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) typeDef,
                 this);

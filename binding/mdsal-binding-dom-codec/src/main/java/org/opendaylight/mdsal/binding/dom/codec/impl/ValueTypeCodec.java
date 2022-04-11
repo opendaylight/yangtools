@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Value codec, which serializes / deserializes values from DOM simple values.
@@ -16,9 +15,4 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
 abstract class ValueTypeCodec implements IllegalArgumentCodec<Object, Object> {
 
-    @SuppressWarnings("rawtypes")
-    static ValueTypeCodec encapsulatedValueCodecFor(final Class<?> typeClz, final TypeDefinition<?> typeDef,
-             final IllegalArgumentCodec delegate) {
-        return new CompositeValueCodec(SchemaUnawareCodec.of(typeClz, typeDef), delegate);
-    }
 }
