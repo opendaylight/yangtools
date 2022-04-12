@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
+import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -101,6 +102,7 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.YANG_VERSION)
         .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+        .addOptional(ModuleTagStatements.MODULE_TAG)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
         .addAny(YangStmtMapping.ANYDATA)
@@ -131,6 +133,7 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.USES)
         .addMandatory(YangStmtMapping.YANG_VERSION)
         .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+        .addOptional(ModuleTagStatements.MODULE_TAG)
         .build();
 
     private final boolean semanticVersioning;
