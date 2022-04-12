@@ -65,6 +65,7 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
     }
 
     static @NonNull EncapsulatedValueCodec of(final Class<?> typeClz) throws ExecutionException {
+        // FIXME: require base class to be ScalarTypeObject
         return CACHE.get(typeClz);
     }
 
@@ -80,7 +81,7 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public Object deserialize(final Object input) {
+    protected Object deserializeImpl(final Object input) {
         try {
             return constructor.invokeExact(input);
         } catch (Throwable e) {
@@ -91,7 +92,7 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public Object serialize(final Object input) {
+    protected Object serializeImpl(final Object input) {
         try {
             return getter.invokeExact(input);
         } catch (Throwable e) {

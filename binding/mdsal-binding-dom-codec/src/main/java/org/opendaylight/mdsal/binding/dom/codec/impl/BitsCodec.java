@@ -34,6 +34,8 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 // FIXME: 'SchemaUnawareCodec' is not correct: we use BitsTypeDefinition in construction
+// FIXME: require the base class to be a TypeObject
+// FIXME: MDSAL-743: require BitsTypeObject base class
 final class BitsCodec extends SchemaUnawareCodec {
     /*
      * Use identity comparison for keys and allow classes to be GCd themselves.
@@ -88,7 +90,7 @@ final class BitsCodec extends SchemaUnawareCodec {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public Object deserialize(final Object input) {
+    protected Object deserializeImpl(final Object input) {
         checkArgument(input instanceof Set);
         @SuppressWarnings("unchecked")
         final Set<String> casted = (Set<String>) input;
@@ -113,7 +115,7 @@ final class BitsCodec extends SchemaUnawareCodec {
     }
 
     @Override
-    public Set<String> serialize(final Object input) {
+    protected Set<String> serializeImpl(final Object input) {
         final Collection<String> result = new ArrayList<>(getters.size());
         for (Entry<String, Method> valueGet : getters.entrySet()) {
             final Boolean value;

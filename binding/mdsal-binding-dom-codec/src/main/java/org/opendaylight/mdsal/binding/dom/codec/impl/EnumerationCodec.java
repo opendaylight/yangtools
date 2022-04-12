@@ -86,7 +86,7 @@ final class EnumerationCodec extends SchemaUnawareCodec {
     }
 
     @Override
-    public Enum<?> deserialize(final Object input) {
+    protected Enum<?> deserializeImpl(final Object input) {
         checkArgument(input instanceof String, "Input %s is not a String", input);
         final Enum<?> value = nameToEnum.get(input);
         checkArgument(value != null, "Invalid enumeration value %s. Valid values are %s", input, nameToEnum.keySet());
@@ -94,8 +94,9 @@ final class EnumerationCodec extends SchemaUnawareCodec {
     }
 
     @Override
-    public String serialize(final Object input) {
+    protected String serializeImpl(final Object input) {
         checkArgument(enumClass.isInstance(input), "Input %s is not a instance of %s", input, enumClass);
+        // FIXME: verifyNotNull here
         return requireNonNull(nameToEnum.inverse().get(input));
     }
 }
