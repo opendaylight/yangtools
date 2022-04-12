@@ -13,10 +13,10 @@ import com.google.common.base.Splitter;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.data.api.codec.AbstractIllegalArgumentCodec;
 
 abstract class AbstractNamespaceCodec<T> extends AbstractIllegalArgumentCodec<String, T> {
     private static final Splitter COLON_SPLITTER = Splitter.on(':');

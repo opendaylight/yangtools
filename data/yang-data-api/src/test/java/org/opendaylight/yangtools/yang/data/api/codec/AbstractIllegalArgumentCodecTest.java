@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.concepts;
+package org.opendaylight.yangtools.yang.data.api.codec;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-@Deprecated(since = "8.0.0", forRemoval = true)
 public class AbstractIllegalArgumentCodecTest {
     private static final class TestCodec extends AbstractIllegalArgumentCodec<String, String> {
         @Override

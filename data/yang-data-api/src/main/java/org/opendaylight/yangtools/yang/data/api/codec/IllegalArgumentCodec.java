@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.concepts;
+package org.opendaylight.yangtools.yang.data.api.codec;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
@@ -16,14 +16,14 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <S> Serialized (external) type
  * @param <D> Deserialized (internal) type
- * @deprecated This interface ignores a number of complications when dealing with external forms. For one, it assumes
- *             a serdes operation does not have further context than the input -- and this is seldom the case. The other
- *             failing is that it actively discourages use of checked exceptions to deal with errors at the appropriate
- *             level. Based on these, this interface is deprecated for removal without a replacement. Users are
- *             encouraged to define similar interface fitting their needs.
  */
 @Beta
-@Deprecated(since = "8.0.0", forRemoval = true)
+// FIXME: sealed when we have JDK17+
+// FIXME: This interface ignores a number of complications when dealing with external forms. For one, it assumes
+//        a serdes operation does not have further context than the input -- and this is seldom the case. The other
+//        failing is that it actively discourages use of checked exceptions to deal with errors at the appropriate
+//        level. Based on these, this interface is deprecated for removal without a replacement. Users are
+//        encouraged to define similar interface fitting their needs.
 public interface IllegalArgumentCodec<S, D> {
     /**
      * Produce an internal object based on an external object.
