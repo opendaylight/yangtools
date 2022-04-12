@@ -22,12 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  * modules) they may have one static instance generated when first time needed.
  */
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
-interface SchemaUnawareCodec extends IllegalArgumentCodec<Object, Object> {
+abstract class SchemaUnawareCodec implements IllegalArgumentCodec<Object, Object> {
     /**
      * No-op Codec, Java YANG Binding uses same types as NormalizedNode model for base YANG types, representing numbers,
      * binary, strings and empty.
      */
-    @NonNull SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
+    static final @NonNull SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
         @Override
         public Object serialize(final Object input) {
             return input;

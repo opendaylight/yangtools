@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 // FIXME: 'SchemaUnawareCodec' is not correct: we use BitsTypeDefinition in construction
-final class BitsCodec extends ValueTypeCodec implements SchemaUnawareCodec {
+final class BitsCodec extends SchemaUnawareCodec {
     /*
      * Use identity comparison for keys and allow classes to be GCd themselves.
      *

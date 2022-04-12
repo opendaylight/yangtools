@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class EnumerationCodec extends ValueTypeCodec implements SchemaUnawareCodec {
+final class EnumerationCodec extends SchemaUnawareCodec {
     private static final Logger LOG = LoggerFactory.getLogger(EnumerationCodec.class);
     /*
      * Use identity comparison for keys and allow classes to be GCd themselves.
