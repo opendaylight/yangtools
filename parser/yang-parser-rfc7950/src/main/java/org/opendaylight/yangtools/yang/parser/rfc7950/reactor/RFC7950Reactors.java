@@ -100,6 +100,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.SourceGroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.UsesStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc8819.stmt.ModuleTagSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
@@ -306,7 +307,9 @@ public final class RFC7950Reactors {
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionNamespace.BEHAVIOUR)
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionModuleNamespace.BEHAVIOUR)
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE,
-                    ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR);
+                    ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR)
+                .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, new ModuleTagSupport(config));
+
     }
 
     /**
