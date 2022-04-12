@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
-
 public interface Int16Codec<T> extends IllegalArgumentCodec<T, Short> {
 
 }

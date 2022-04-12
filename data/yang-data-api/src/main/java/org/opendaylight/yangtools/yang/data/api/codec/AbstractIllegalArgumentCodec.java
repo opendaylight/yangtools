@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.concepts;
+package org.opendaylight.yangtools.yang.data.api.codec;
 
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
@@ -19,11 +19,8 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <S> Serializied (external) type
  * @param <D> Deserialized (internal) type
- * @deprecated This is a base class for implementing IllegalArgumentCodec, without further use. It will be removed with
- *             IllegalArgumentCodec.
  */
 @Beta
-@Deprecated(since = "8.0.0", forRemoval = true)
 public abstract class AbstractIllegalArgumentCodec<S, D> implements IllegalArgumentCodec<S, D> {
     @Override
     public final D deserialize(final S input) {

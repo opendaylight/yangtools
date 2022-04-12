@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.AbstractIllegalArgumentCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
