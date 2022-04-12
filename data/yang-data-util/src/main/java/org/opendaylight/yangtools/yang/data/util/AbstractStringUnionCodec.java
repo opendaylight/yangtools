@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(forRemoval = true, since = "8.0.3")
 public abstract class AbstractStringUnionCodec extends AbstractIllegalArgumentCodec<String, Object> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractStringUnionCodec.class);
 
