@@ -29,8 +29,18 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.slf4j.LoggerFactory;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> extends AbstractDataStringCodec<J> {
+    private static final boolean ENABLE_UNION_CODEC =
+        !Boolean.getBoolean("org.opendaylight.yangtools.yang.data.impl.codec.disable-union");
+
+    static {
+        if (!ENABLE_UNION_CODEC) {
+            LoggerFactory.getLogger(TypeDefinitionAwareCodec.class).info("Support for unions is disabled");
+        }
+    }
+
     private final @NonNull Class<J> inputClass;
     private final @Nullable T typeDefinition;
 
@@ -45,6 +55,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
         return inputClass;
     }
 
+    // FIXME: is this even useful?
     public Optional<T> getTypeDefinition() {
         return Optional.ofNullable(typeDefinition);
     }
@@ -78,8 +89,6 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
             return AbstractIntegerStringCodec.from((Int64TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof StringTypeDefinition) {
             return StringStringCodec.from((StringTypeDefinition)typeDefinition);
-        } else if (typeDefinition instanceof UnionTypeDefinition) {
-            return UnionStringCodec.from((UnionTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof Uint8TypeDefinition) {
             return AbstractIntegerStringCodec.from((Uint8TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Uint16TypeDefinition) {
@@ -88,6 +97,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
             return AbstractIntegerStringCodec.from((Uint32TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Uint64TypeDefinition) {
             return AbstractIntegerStringCodec.from((Uint64TypeDefinition) typeDefinition);
+        } else if (ENABLE_UNION_CODEC && typeDefinition instanceof UnionTypeDefinition) {
+            return UnionStringCodec.from((UnionTypeDefinition)typeDefinition);
         } else {
             return null;
         }

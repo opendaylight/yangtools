@@ -9,9 +9,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,36 +23,49 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
         implements UnionCodec<String> {
     private static final Logger LOG = LoggerFactory.getLogger(UnionStringCodec.class);
 
-    UnionStringCodec(final UnionTypeDefinition typeDef) {
+    private final ImmutableList<TypeDefinitionAwareCodec<Object, ?>> codecs;
+
+    private UnionStringCodec(final UnionTypeDefinition typeDef,
+            final ImmutableList<TypeDefinitionAwareCodec<Object, ?>> codecs) {
         super(requireNonNull(typeDef), Object.class);
+        this.codecs = requireNonNull(codecs);
     }
 
-    static TypeDefinitionAwareCodec<?, UnionTypeDefinition> from(final UnionTypeDefinition normalizedType) {
-        return new UnionStringCodec(normalizedType);
+    static @Nullable TypeDefinitionAwareCodec<?, UnionTypeDefinition> from(final UnionTypeDefinition typeDef) {
+        final var types = typeDef.getTypes();
+        final var builder = ImmutableList.<TypeDefinitionAwareCodec<Object, ?>>builderWithExpectedSize(types.size());
+        for (var type : types) {
+            final var codec = from(type);
+            if (codec == null) {
+                LOG.debug("Cannot handle {} because of unhandled component {}", typeDef, type);
+                return null;
+            }
+            builder.add(codec);
+        }
+        return new UnionStringCodec(typeDef, builder.build());
     }
 
     @Override
-    @SuppressWarnings("checkstyle:illegalCatch")
     protected Object deserializeImpl(final String stringRepresentation) {
-        for (final TypeDefinition<?> type : getTypeDefinition().get().getTypes()) {
-            final TypeDefinitionAwareCodec<Object, ?> typeAwareCodec = from(type);
-            if (typeAwareCodec == null) {
-                /*
-                 * This is a type for which we have no codec (eg identity ref) so we'll say it's
-                 * valid
-                 */
-                return stringRepresentation;
-            }
-
+        List<IllegalArgumentException> suppressed = null;
+        for (var codec : codecs) {
             try {
-                return typeAwareCodec.deserialize(stringRepresentation);
-            } catch (final Exception e) {
-                LOG.debug("Value {} did not matched representation for {}",stringRepresentation,type,e);
+                return codec.deserialize(stringRepresentation);
+            } catch (final IllegalArgumentException e) {
                 // invalid - try the next union type.
+                LOG.debug("Value {} did not match codec {}", stringRepresentation, codec, e);
+                if (suppressed == null) {
+                    suppressed = new ArrayList<>();
+                }
+                suppressed.add(e);
             }
         }
 
-        throw new IllegalArgumentException("Invalid value \"" + stringRepresentation + "\" for union type.");
+        final var ex = new IllegalArgumentException("Invalid value \"" + stringRepresentation + "\" for union type.");
+        if (suppressed != null) {
+            suppressed.forEach(ex::addSuppressed);
+        }
+        throw ex;
     }
 
     @Override

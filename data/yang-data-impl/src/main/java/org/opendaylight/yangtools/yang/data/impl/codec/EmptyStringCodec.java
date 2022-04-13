@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
@@ -29,7 +28,7 @@ final class EmptyStringCodec extends TypeDefinitionAwareCodec<Empty, EmptyTypeDe
     }
 
     @Override
-    protected @NonNull String serializeImpl(final Empty input) {
+    protected String serializeImpl(final Empty input) {
         return "";
     }
 }
