@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8aeaaad3_514a26e5",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/Tag.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-13T08:33:39Z",
+      "side": 1,
+      "message": "Hmm, do you think that tags are meant to be compared?\n\nInstead maybe adding `create` methods for \"IETF\", \"vendor\" and \"user\" tags would be useful. Also methods like `isIetfTag`, `isVendorTag`, \u0027isUserTag\u0027, `isRegistered`.\n\nJust idea - what do you think?",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ca35d7a_dc013a9d",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-13T08:33:39Z",
+      "side": 1,
+      "message": "I would prefer to do not create `constants` classes and create constant in files where are used.",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8bf21e3c_e2dc25aa",
+        "filename": "parser/rfc8819-parser-support/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-13T08:33:39Z",
+      "side": 1,
+      "message": "Maybe its better to define module properly in module-info.java.",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b3a6769_75e09a6e",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc8819/stmt/ModuleTagStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-04-13T08:33:39Z",
+      "side": 1,
+      "message": "One empty line is enough - in other classes as well.",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
