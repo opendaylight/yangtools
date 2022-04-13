@@ -22,11 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 public final class DecimalStringCodec extends TypeDefinitionAwareCodec<Decimal64, DecimalTypeDefinition>
         implements DecimalCodec<String> {
     private DecimalStringCodec(final DecimalTypeDefinition typeDef) {
-        super(typeDef, Decimal64.class);
+        super(requireNonNull(typeDef), Decimal64.class);
     }
 
     public static @NonNull DecimalStringCodec from(final DecimalTypeDefinition type) {
-        return new DecimalStringCodec(requireNonNull(type));
+        return new DecimalStringCodec(type);
     }
 
     @Override

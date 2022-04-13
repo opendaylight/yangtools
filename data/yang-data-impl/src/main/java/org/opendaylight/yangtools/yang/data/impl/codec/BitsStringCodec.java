@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -36,13 +35,13 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
     private final ImmutableSet<String> validBits;
 
     @SuppressWarnings("unchecked")
-    private BitsStringCodec(final @NonNull BitsTypeDefinition typeDef) {
-        super(typeDef, (Class<Set<String>>) (Class<?>) Set.class);
+    private BitsStringCodec(final BitsTypeDefinition typeDef) {
+        super(requireNonNull(typeDef), (Class<Set<String>>) (Class<?>) Set.class);
         validBits = ImmutableSet.copyOf(Collections2.transform(typeDef.getBits(), Bit::getName));
     }
 
     public static BitsStringCodec from(final BitsTypeDefinition type) {
-        return new BitsStringCodec(requireNonNull(type));
+        return new BitsStringCodec(type);
     }
 
     @Override

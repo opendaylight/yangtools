@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 @Beta
 public final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
         implements BooleanCodec<String> {
-    private BooleanStringCodec(final @NonNull BooleanTypeDefinition typeDef) {
-        super(typeDef, Boolean.class);
+    private BooleanStringCodec(final BooleanTypeDefinition typeDef) {
+        super(requireNonNull(typeDef), Boolean.class);
     }
 
-    public static @NonNull BooleanStringCodec from(final BooleanTypeDefinition normalizedType) {
-        return new BooleanStringCodec(requireNonNull(normalizedType));
+    public static @NonNull BooleanStringCodec from(final BooleanTypeDefinition typeDef) {
+        return new BooleanStringCodec(typeDef);
     }
 
     @Override
