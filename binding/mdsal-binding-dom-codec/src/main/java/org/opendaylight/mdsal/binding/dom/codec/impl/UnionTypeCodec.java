@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-final class UnionTypeCodec extends ValueTypeCodec {
+final class UnionTypeCodec implements IllegalArgumentCodec<Object, Object> {
     private final ImmutableSet<UnionValueOptionContext> typeCodecs;
     private final Class<?> unionClass;
 
