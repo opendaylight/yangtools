@@ -229,13 +229,9 @@ abstract class BaseTemplate extends JavaFileTemplate {
             lastChar = text.charAt(text.length - 1)
             badEnding = true
         }
-        sb.append("<a href = \"")
-        sb.append(tempText)
-        sb.append("\">")
-        sb.append(tempText)
-        sb.append("</a>")
+        sb.append("<a href = \"").append(tempText).append("\">").append(tempText).append("</a>")
 
-        if(badEnding)
+        if (badEnding)
             sb.append(lastChar)
 
         return sb.toString
