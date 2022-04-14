@@ -69,6 +69,11 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
         return CACHE.get(typeClz);
     }
 
+    static @NonNull EncapsulatedValueCodec ofUnchecked(final Class<?> typeClz) {
+        // FIXME: require base class to be ScalarTypeObject
+        return CACHE.getUnchecked(typeClz);
+    }
+
     /**
      * Quick check if a value object has a chance to deserialize using {@link #deserialize(Object)}.
      *

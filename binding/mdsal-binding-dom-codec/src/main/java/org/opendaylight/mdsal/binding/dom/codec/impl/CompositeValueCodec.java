@@ -7,29 +7,35 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
 final class CompositeValueCodec extends ValueTypeCodec {
-    private final SchemaUnawareCodec bindingToSimpleType;
+    private final EncapsulatedValueCodec typeObjectCodec;
     @SuppressWarnings("rawtypes")
-    // FIXME: this is probably not right w.r.t. null
-    private final IllegalArgumentCodec bindingToDom;
+    // FIXME: specialize for the two possibilities
+    private final IllegalArgumentCodec valueCodec;
 
-    CompositeValueCodec(final SchemaUnawareCodec extractor,
-            @SuppressWarnings("rawtypes") final IllegalArgumentCodec delegate) {
-        this.bindingToSimpleType = extractor;
-        this.bindingToDom = delegate;
+    CompositeValueCodec(final Class<?> valueType, final IdentityCodec codec) {
+        typeObjectCodec = EncapsulatedValueCodec.ofUnchecked(valueType);
+        valueCodec = requireNonNull(codec);
+    }
+
+    CompositeValueCodec(final Class<?> valueType, final InstanceIdentifierCodec codec) {
+        typeObjectCodec = EncapsulatedValueCodec.ofUnchecked(valueType);
+        valueCodec = requireNonNull(codec);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Object deserialize(final Object input) {
-        return bindingToSimpleType.deserialize(bindingToDom.deserialize(input));
+        return typeObjectCodec.deserialize(valueCodec.deserialize(input));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Object serialize(final Object input) {
-        return bindingToDom.serialize(bindingToSimpleType.serialize(input));
+        return valueCodec.serialize(typeObjectCodec.serialize(input));
     }
 }
