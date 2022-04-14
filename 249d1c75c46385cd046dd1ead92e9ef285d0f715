@@ -41,6 +41,48 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb278821_5a0b290d",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/Tag.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-04-14T11:18:55Z",
+      "side": 1,
+      "message": "Yes, I think it is a good idea.",
+      "parentUuid": "8aeaaad3_514a26e5",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f2db8a8_7f5202b2",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/Tag.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-04-14T11:18:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ad51e35_bcf5537b",
+      "range": {
+        "startLine": 10,
+        "startChar": 7,
+        "endLine": 10,
+        "endChar": 59
+      },
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "06fb49ba_6b32f790",
@@ -54,6 +96,24 @@
       "writtenOn": "2022-04-14T07:51:11Z",
       "side": 1,
       "message": "do not leave commented-out code around",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9ed5349_c0ee91a5",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/Tag.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-04-14T11:18:55Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "06fb49ba_6b32f790",
       "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -75,6 +135,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "66589d34_aa8b994a",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-04-14T11:18:55Z",
+      "side": 1,
+      "message": "It is used only in enum ModuleTagStatements, when I want to create a static field under enum, it does not recognize it, creating above is not allowed.\nCurrently, when there is only one usage for MODULE_NAMESPACE, I can leave creating this static field. So, it will look like this in an enum:\n\nMODULE_TAG(QName.create(XMLNamespace.of(\"urn:ietf:params:xml:ns:yang:ietf-module-tags\").intern(), \"module-tag\"), \"tag\", ModuleTagStatement.class, ModuleTagEffectiveStatement.class);\n\nSo, I am going to remove this class, if it will be needed in the future I will create it again.",
+      "parentUuid": "3ca35d7a_dc013a9d",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8bf21e3c_e2dc25aa",
@@ -92,6 +170,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "905d0489_69270c63",
+        "filename": "parser/rfc8819-parser-support/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-04-14T11:18:55Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8bf21e3c_e2dc25aa",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6b3a6769_75e09a6e",
@@ -105,6 +201,24 @@
       "writtenOn": "2022-04-13T08:33:39Z",
       "side": 1,
       "message": "One empty line is enough - in other classes as well.",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a6f99f2_3d0dfbe0",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc8819/stmt/ModuleTagStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-04-14T11:18:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b3a6769_75e09a6e",
       "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
