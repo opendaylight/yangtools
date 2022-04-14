@@ -20,6 +20,46 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2ad51e35_bcf5537b",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/Tag.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-04-14T07:51:11Z",
+      "side": 1,
+      "message": "this class is not a general concept, it should live in rfc8819-model-api.\nAlso not Serializable, that is an incredibly strong contract\nAlso missing copyright header\nAlso missing javadocs",
+      "range": {
+        "startLine": 10,
+        "startChar": 7,
+        "endLine": 10,
+        "endChar": 59
+      },
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06fb49ba_6b32f790",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/Tag.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-04-14T07:51:11Z",
+      "side": 1,
+      "message": "do not leave commented-out code around",
+      "revId": "249d1c75c46385cd046dd1ead92e9ef285d0f715",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3ca35d7a_dc013a9d",
         "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagConstants.java",
         "patchSetId": 2
