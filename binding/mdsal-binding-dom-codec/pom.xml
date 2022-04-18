@@ -26,10 +26,8 @@
 
     <dependencies>
         <dependency>
-            <!-- We are going to shade this -->
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.12.8</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -90,52 +88,8 @@
                             org.opendaylight.mdsal.binding.dom.codec.impl,
                             org.opendaylight.mdsal.binding.dom.codec.loader,
                         </Private-Package>
-                        <Import-Package>
-                            !net.bytebuddy.*,
-                            *
-                        </Import-Package>
                     </instructions>
                 </configuration>
-            </plugin>
-
-            <!-- Shade Byte-Buddy -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <createDependencyReducedPom>true</createDependencyReducedPom>
-                            <createSourcesJar>true</createSourcesJar>
-                            <shadeSourcesContent>true</shadeSourcesContent>
-                            <minimizeJar>true</minimizeJar>
-                            <relocations>
-                                <relocation>
-                                    <pattern>${shade.source}</pattern>
-                                    <shadedPattern>${shade.target}</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <artifactSet>
-                                <includes>
-                                    <include>net.bytebuddy:byte-buddy</include>
-                                </includes>
-                            </artifactSet>
-                            <filters>
-                                <filter>
-                                    <artifact>net.bytebuddy:byte-buddy</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
