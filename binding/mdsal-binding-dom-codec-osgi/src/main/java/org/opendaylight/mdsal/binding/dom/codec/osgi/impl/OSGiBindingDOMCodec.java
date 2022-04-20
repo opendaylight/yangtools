@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.dom.codec.osgi.OSGiBindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecFactory;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
@@ -40,7 +41,8 @@ public final class OSGiBindingDOMCodec {
 
         abstract void remove(OSGiBindingRuntimeContext runtimeContext);
 
-        abstract @NonNull AbstractInstances toActive(BindingDOMCodecFactory codecFactory, ComponentFactory factory);
+        abstract @NonNull AbstractInstances toActive(BindingDOMCodecFactory codecFactory,
+            ComponentFactory<OSGiBindingDOMCodecServices> factory);
 
         abstract @NonNull AbstractInstances toInactive();
     }
@@ -67,7 +69,8 @@ public final class OSGiBindingDOMCodec {
         }
 
         @Override
-        AbstractInstances toActive(final BindingDOMCodecFactory codecFactory, final ComponentFactory factory) {
+        AbstractInstances toActive(final BindingDOMCodecFactory codecFactory,
+                final ComponentFactory<OSGiBindingDOMCodecServices> factory) {
             final ActiveInstances active = new ActiveInstances(codecFactory, factory);
             instances.stream()
                 .sorted(Comparator.comparing(OSGiBindingRuntimeContext::getGeneration).reversed())
@@ -82,11 +85,13 @@ public final class OSGiBindingDOMCodec {
     }
 
     private static final class ActiveInstances extends AbstractInstances {
-        private final Map<OSGiBindingRuntimeContext, ComponentInstance> instances = new IdentityHashMap<>();
+        private final Map<OSGiBindingRuntimeContext, ComponentInstance<OSGiBindingDOMCodecServices>> instances =
+            new IdentityHashMap<>();
+        private final ComponentFactory<OSGiBindingDOMCodecServices> factory;
         private final BindingDOMCodecFactory codecFactory;
-        private final ComponentFactory factory;
 
-        ActiveInstances(final BindingDOMCodecFactory codecFactory, final ComponentFactory factory) {
+        ActiveInstances(final BindingDOMCodecFactory codecFactory,
+                final ComponentFactory<OSGiBindingDOMCodecServices> factory) {
             this.codecFactory = requireNonNull(codecFactory);
             this.factory = requireNonNull(factory);
         }
@@ -102,7 +107,7 @@ public final class OSGiBindingDOMCodec {
 
         @Override
         void remove(final OSGiBindingRuntimeContext runtimeContext) {
-            final ComponentInstance instance = instances.remove(runtimeContext);
+            final ComponentInstance<OSGiBindingDOMCodecServices> instance = instances.remove(runtimeContext);
             if (instance != null) {
                 instance.dispose();
             } else {
@@ -112,7 +117,7 @@ public final class OSGiBindingDOMCodec {
 
         @Override
         AbstractInstances toActive(final BindingDOMCodecFactory ignoreCodecFactory,
-                final ComponentFactory ignoreFactory) {
+                final ComponentFactory<OSGiBindingDOMCodecServices> ignoreFactory) {
             throw new IllegalStateException("Attempted to activate active instances");
         }
 
@@ -130,7 +135,7 @@ public final class OSGiBindingDOMCodec {
     BindingDOMCodecFactory codecFactory = null;
 
     @Reference(target = "(component.factory=" + OSGiBindingDOMCodecServicesImpl.FACTORY_NAME + ")")
-    ComponentFactory contextFactory = null;
+    ComponentFactory<OSGiBindingDOMCodecServices> contextFactory = null;
 
     @GuardedBy("this")
     private AbstractInstances instances = new InactiveInstances();
