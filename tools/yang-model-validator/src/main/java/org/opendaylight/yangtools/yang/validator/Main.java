@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
  *  -v, --verbose         shows details about the results of test running.
  *  -o, --output          path to output file for logs. Output file will be overwritten.
  *  -m, --module-name     validate yang by module name.
- *  -wul, --warning-for-unkeyed-lists
- *                        add warnings about unkeyed lists with config true.
+ *  -K, --no-warning-for-unkeyed-lists
+ *                        do not add warnings about unkeyed lists with config true.
  */
 @SuppressWarnings({"checkstyle:LoggerMustBeSlf4j", "checkstyle:LoggerFactoryClassParameter"})
 public final class Main {
@@ -78,9 +78,7 @@ public final class Main {
     private static final Option QUIET = new Option("q", "quiet", false, "completely suppress output.");
     private static final Option VERBOSE = new Option("v", "verbose", false,
         "shows details about the results of test running.");
-    private static final Option LIST_WARNING_ON = new Option("wul", "warning-for-unkeyed-lists", false,
-        "add warnings about unkeyed lists with config true");
-    private static final Option LIST_WARNING_OFF = new Option("no-wul", "no-warning-for-unkeyed-lists", false,
+    private static final Option LIST_WARNING_OFF = new Option("K", "no-warning-for-unkeyed-lists", false,
         "do not add warnings about unkeyed lists with config true");
 
     private Main() {
@@ -93,7 +91,7 @@ public final class Main {
             .addOption(PATH)
             .addOption(RECURSIVE)
             .addOptionGroup(new OptionGroup().addOption(DEBUG).addOption(QUIET).addOption(VERBOSE))
-            .addOptionGroup(new OptionGroup().addOption(LIST_WARNING_ON).addOption(LIST_WARNING_OFF))
+            .addOption(LIST_WARNING_OFF)
             .addOption(OUTPUT)
             .addOption(MODULE_NAME)
             .addOption(FEATURE);
@@ -123,12 +121,7 @@ public final class Main {
             LOG_ROOT.detachAndStopAllAppenders();
         }
 
-        final boolean warnForUnkeyedLists;
-        if (arguments.hasOption(LIST_WARNING_ON.getLongOpt()) || !arguments.hasOption(LIST_WARNING_OFF.getLongOpt())) {
-            warnForUnkeyedLists = true;
-        } else {
-            warnForUnkeyedLists = false;
-        }
+        final boolean warnForUnkeyedLists = !arguments.hasOption(LIST_WARNING_OFF.getLongOpt());
 
         final List<String> yangLibDirs = initYangDirsPath(arguments);
         final List<String> yangFiles = new ArrayList<>();
