@@ -22,7 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
  * The argument is one of the strings "not-supported", "add", "replace", or "delete".
  */
 @Beta
-public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateEffectiveStatement> {
+public interface DeviateDefinition extends EffectiveStatementEquivalent {
+    @Override
+    DeviateEffectiveStatement asEffectiveStatement();
+
     /**
      * Return deviation kind.
      *

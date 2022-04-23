@@ -14,8 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 /**
  * Contains the methods for getting the details about the unknown node.
  */
-public interface UnknownSchemaNode extends SchemaNode, CopyableNode,
-        EffectiveStatementEquivalent<UnknownEffectiveStatement<?, ?>> {
+public interface UnknownSchemaNode extends SchemaNode, CopyableNode, EffectiveStatementEquivalent {
+    @Override
+    UnknownEffectiveStatement<?, ?> asEffectiveStatement();
+
     /**
      * Returns QName instance with the name of the unknown node. This corresponds to
      * {@link ExtensionDefinition#getQName()} of the {@code extension} statement which defined it.

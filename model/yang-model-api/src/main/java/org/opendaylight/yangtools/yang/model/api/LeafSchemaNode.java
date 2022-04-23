@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
  * Since we are presenting the effective model of the world, the information dictated by 'default' and 'units'
  * substatements is captured in the type returned via {@link #getType()}.
  */
-public non-sealed interface LeafSchemaNode extends TypedDataSchemaNode, MandatoryAware, MustConstraintAware,
-        EffectiveStatementEquivalent<LeafEffectiveStatement> {
-
+public non-sealed interface LeafSchemaNode extends TypedDataSchemaNode, MandatoryAware, MustConstraintAware {
+    @Override
+    LeafEffectiveStatement asEffectiveStatement();
 }

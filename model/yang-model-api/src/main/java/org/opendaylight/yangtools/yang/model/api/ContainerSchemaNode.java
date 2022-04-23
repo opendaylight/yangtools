@@ -14,7 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  * containers, those that exist only for organizing the hierarchy of data nodes, and those whose presence in the
  * configuration has an explicit meaning.
  */
-public interface ContainerSchemaNode extends ContainerLike, EffectiveStatementEquivalent<ContainerEffectiveStatement> {
+public interface ContainerSchemaNode extends ContainerLike, EffectiveStatementEquivalent {
+    @Override
+    ContainerEffectiveStatement asEffectiveStatement();
+
     /**
      * Returns true if this container is marked as presence.
      *

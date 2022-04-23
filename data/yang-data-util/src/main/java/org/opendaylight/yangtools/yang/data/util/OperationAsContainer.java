@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
 public class OperationAsContainer extends AbstractAsContainer implements OperationDefinition {
@@ -62,6 +63,11 @@ public class OperationAsContainer extends AbstractAsContainer implements Operati
     }
 
     @Override
+    public final EffectiveStatement<?, ?> asEffectiveStatement() {
+        return delegate.asEffectiveStatement();
+    }
+
+    @Override
     public final DataSchemaNode dataChildByName(final QName name) {
         if (name.getModule().equals(getQName().getModule())) {
             return switch (name.getLocalName()) {
@@ -71,7 +77,6 @@ public class OperationAsContainer extends AbstractAsContainer implements Operati
             };
         }
         return null;
-
     }
 
     @Override

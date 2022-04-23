@@ -13,7 +13,7 @@ package org.opendaylight.yangtools.yang.model.api;
  *
  * @author Robert Varga
  */
-public sealed interface TypedDataSchemaNode extends DataSchemaNode, TypeAware
+public sealed interface TypedDataSchemaNode extends DataSchemaNode, TypeAware, EffectiveStatementEquivalent
         permits LeafSchemaNode, LeafListSchemaNode {
     /**
      * Returns type of the instance which implements <code>DataSchemaNode</code>.
