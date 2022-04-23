@@ -17,17 +17,15 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.junit.Test;
@@ -130,7 +128,7 @@ public class YangInstanceIdentifierTest {
                 new NodeIdentifier(NODENAME2), new NodeIdentifier(NODENAME3), new NodeIdentifier(NODENAME4));
         final YangInstanceIdentifier id2 = YangInstanceIdentifier.create(new NodeIdentifier(NODENAME1),
                 new NodeIdentifier(NODENAME2));
-        final YangInstanceIdentifier id3 = YangInstanceIdentifier.create(Arrays.asList(
+        final YangInstanceIdentifier id3 = YangInstanceIdentifier.create(List.of(
                     new NodeIdentifier(NODENAME1), new NodeIdentifier(NODENAME2)));
 
         Optional<YangInstanceIdentifier> relative = id1.relativeTo(id2);
@@ -189,7 +187,7 @@ public class YangInstanceIdentifierTest {
     public void testBuilder() {
         YangInstanceIdentifier newID = YangInstanceIdentifier.builder()
                 .node(NODENAME1)
-                .nodeWithKey(NODENAME2, Collections.singletonMap(KEY1, "foo"))
+                .nodeWithKey(NODENAME2, Map.of(KEY1, "foo"))
                 .nodeWithKey(NODENAME3, KEY2, "bar").build();
 
         assertNotNull("InstanceIdentifier is null", newID);
@@ -251,18 +249,15 @@ public class YangInstanceIdentifierTest {
         assertNotNull(node1.toString());
         assertNotNull(node1.toRelativeString(node2));
 
-        NodeIdentifierWithPredicates node3 = NodeIdentifierWithPredicates.of(NODENAME1,
-                ImmutableMap.of(KEY1, 10, KEY2, 20));
+        NodeIdentifierWithPredicates node3 = NodeIdentifierWithPredicates.of(NODENAME1, Map.of(KEY1, 10, KEY2, 20));
 
-        NodeIdentifierWithPredicates node4 = NodeIdentifierWithPredicates.of(NODENAME1,
-                ImmutableMap.of(KEY1, 10, KEY2, 20));
+        NodeIdentifierWithPredicates node4 = NodeIdentifierWithPredicates.of(NODENAME1, Map.of(KEY1, 10, KEY2, 20));
 
         assertEquals("hashCode", node3.hashCode(), node4.hashCode());
         assertTrue("equals", node3.equals(node4));
 
         assertFalse("equals", node3.equals(node1));
-        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1,
-            ImmutableMap.of(KEY1, 10, KEY3, 20))));
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1, Map.of(KEY1, 10, KEY3, 20))));
 
         node1 = NodeIdentifierWithPredicates.of(NODENAME1, KEY1, new byte[]{ 1, 2 });
         node2 = NodeIdentifierWithPredicates.of(NODENAME1, KEY1, new byte[]{ 1, 2 });
