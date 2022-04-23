@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
@@ -87,22 +85,9 @@ public final class NormalizedNodes {
         return findNode(Optional.ofNullable(parent), relativePath);
     }
 
-    /**
-     * Lookup a node based on relative SchemaPath.
-     *
-     * @deprecated Use {@link #findNode(NormalizedNode, Descendant)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static Optional<NormalizedNode> findNode(final NormalizedNode parent,
-            final SchemaPath relativePath) {
-        checkArgument(!relativePath.isAbsolute(), "%s is not a relative path", relativePath);
-        return findNode(Optional.ofNullable(parent), Iterables.transform(relativePath.getPathFromRoot(),
-            NodeIdentifier::new));
-    }
-
     public static Optional<NormalizedNode> findNode(final NormalizedNode parent, final Descendant path) {
         return findNode(Optional.ofNullable(parent),
-            Iterables.transform(path.getNodeIdentifiers(), NodeIdentifier::new));
+            Lists.transform(path.getNodeIdentifiers(), NodeIdentifier::new));
     }
 
     public static Optional<NormalizedNode> findNode(final NormalizedNode parent,
