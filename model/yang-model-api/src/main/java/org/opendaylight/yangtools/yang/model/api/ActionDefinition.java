@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  * is an identifier, followed by a block of substatements that holds
  * detailed action information.  The argument is the name of the action.
  */
-public interface ActionDefinition
-        extends OperationDefinition, CopyableNode, EffectiveStatementEquivalent<ActionEffectiveStatement> {
-
+public interface ActionDefinition extends OperationDefinition, CopyableNode, EffectiveStatementEquivalent {
+    @Override
+    ActionEffectiveStatement asEffectiveStatement();
 }

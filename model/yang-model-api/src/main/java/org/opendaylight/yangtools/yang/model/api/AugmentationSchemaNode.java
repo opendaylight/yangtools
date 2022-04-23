@@ -17,7 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
  * from a grouping in a "uses" statement.
  */
 public interface AugmentationSchemaNode extends DataNodeContainer, NotificationNodeContainer, ActionNodeContainer,
-        WhenConditionAware, WithStatus, EffectiveStatementEquivalent<AugmentEffectiveStatement> {
+        WhenConditionAware, WithStatus, EffectiveStatementEquivalent {
+    @Override
+    AugmentEffectiveStatement asEffectiveStatement();
+
     /**
      * Returns augmentation target path.
      *

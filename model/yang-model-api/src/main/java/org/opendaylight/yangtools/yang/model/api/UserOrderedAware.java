@@ -18,7 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveSta
  */
 @Beta
 public interface UserOrderedAware<E extends OrderedByAwareEffectiveStatement<?, ?>>
-        extends EffectiveStatementEquivalent<E> {
+        extends EffectiveStatementEquivalent {
+    @Override
+    E asEffectiveStatement();
+
     /**
      * YANG {@code ordered-by} statement. It defines whether the order of entries within this node are determined by the
      * user or the system. If not present, default is false.

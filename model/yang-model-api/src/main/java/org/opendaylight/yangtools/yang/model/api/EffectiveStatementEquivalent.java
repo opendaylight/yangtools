@@ -19,15 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * be deprecated and removed when last of its users in this package go.
  *
  * <p>
- * Implementations of this interface are recommeded to return a constant object, preferably {@code this}.
- *
- * @param <E> Type of equivalent {@link EffectiveStatement}.
+ * Implementations of this interface are recommended to return a constant object, preferably {@code this}.
  */
-public interface EffectiveStatementEquivalent<E extends EffectiveStatement<?, ?>> {
+public interface EffectiveStatementEquivalent {
     /**
      * Return {@link EffectiveStatement} representation of this object.
      *
      * @return {@link EffectiveStatement} representation of this object.
      */
-    @NonNull E asEffectiveStatement();
+    @NonNull EffectiveStatement<?, ?> asEffectiveStatement();
 }
