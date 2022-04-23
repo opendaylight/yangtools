@@ -14,8 +14,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.UnmodifiableIterator;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.junit.Test;
@@ -64,9 +64,9 @@ public class PathArgumentListTest {
         final PathArgumentList l = new TestClass();
 
         assertThrows(UnsupportedOperationException.class, () -> l.remove(null));
-        assertThrows(UnsupportedOperationException.class, () -> l.addAll(Collections.emptyList()));
-        assertThrows(UnsupportedOperationException.class, () -> l.removeAll(Collections.emptyList()));
-        assertThrows(UnsupportedOperationException.class, () -> l.retainAll(Collections.emptyList()));
+        assertThrows(UnsupportedOperationException.class, () -> l.addAll(List.of()));
+        assertThrows(UnsupportedOperationException.class, () -> l.removeAll(List.of()));
+        assertThrows(UnsupportedOperationException.class, () -> l.retainAll(List.of()));
         assertThrows(UnsupportedOperationException.class, () -> l.clear());
         assertThrows(UnsupportedOperationException.class, () -> l.addAll(0, null));
     }
