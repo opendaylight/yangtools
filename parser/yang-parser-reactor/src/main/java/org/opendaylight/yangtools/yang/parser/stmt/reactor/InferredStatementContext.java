@@ -92,6 +92,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private final QNameModule targetModule;
     private final A argument;
 
+    // Indicates whether or not this statement's substatement file was modified, i.e. it is not quite the same as the
+    // prototype's file.
+    private boolean modified;
+
     /**
      * Effective substatements, lazily materialized. This field can have four states:
      * <ul>
@@ -111,6 +115,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.prototype = original.prototype;
         this.originalCtx = original.originalCtx;
         this.argument = original.argument;
+        this.modified = original.modified;
         // Substatements are initialized here
         this.substatements = ImmutableList.of();
     }
@@ -306,7 +311,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         // the substatement list, as this operation turned out to not affect them.
         final E effective = createInferredEffective(factory);
         // Since we have forced instantiation to deal with this case, we also need to reset the 'modified' flag
-        setUnmodified();
+        modified = false;
 
         if (sameSubstatements(original.effectiveSubstatements(), effective)) {
             LOG.debug("Reusing unchanged substatements of: {}", prototype);
@@ -316,7 +321,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private @NonNull E internAlongCopyAxis(final StatementFactory<A, D, E> factory, final @NonNull E stmt) {
-        if (!isModified()) {
+        if (!modified) {
             final EffectiveStatementState state = factory.extractEffectiveState(stmt);
             if (state != null) {
                 return prototype.unmodifiedEffectiveSource().attachEffectiveCopy(state, stmt);
@@ -366,7 +371,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource() {
-        return isModified() ? this : prototype.unmodifiedEffectiveSource();
+        return modified ? this : prototype.unmodifiedEffectiveSource();
     }
 
     @Override
@@ -558,7 +563,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final var ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(), buffer.size());
         ret.addAll(buffer);
         substatements = ret;
-        setModified();
+        modified = true;
 
         prototype.decRef();
         return ret;
@@ -606,7 +611,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             // resizing operation.
             materializedSchemaTree = new HashMap<>(4);
             substatements = materializedSchemaTree;
-            setModified();
+            modified = true;
         } else {
             verify(substatements instanceof HashMap, "Unexpected substatements %s", substatements);
             materializedSchemaTree = castMaterialized(substatements);
