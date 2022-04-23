@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -19,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  */
 public final class DuplicateEntry implements Identifiable<YangInstanceIdentifier> {
     private final List<YangInstanceIdentifier> hardLinks = new ArrayList<>(1);
-    private List<YangInstanceIdentifier> duplicates = Collections.emptyList();
+    private List<YangInstanceIdentifier> duplicates = List.of();
 
     DuplicateEntry(final YangInstanceIdentifier path) {
         hardLinks.add(path);
