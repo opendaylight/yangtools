@@ -40,6 +40,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     private StatementMap substatements = StatementMap.empty();
     private @Nullable D declaredInstance;
     private boolean implicitDeclared;
+    private boolean fullyDefined;
 
     // Copy constructor
     AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
@@ -47,6 +48,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         this.rawArgument = original.rawArgument;
         this.substatements = original.substatements;
         this.declaredInstance = original.declaredInstance;
+        this.fullyDefined = original.fullyDefined;
     }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
@@ -102,7 +104,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     public final boolean isFullyDefined() {
-        return fullyDefined();
+        return fullyDefined;
+    }
+
+    final void setFullyDefined() {
+        fullyDefined = true;
     }
 
     @Override
