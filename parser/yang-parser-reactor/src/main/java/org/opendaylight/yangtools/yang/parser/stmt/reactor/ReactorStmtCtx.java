@@ -156,25 +156,18 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // hence improve memory layout.
     private byte flags;
 
-    // Flag for use by AbstractResumedStatement, ReplicaStatementContext and InferredStatementContext. Each of them
-    // uses it to indicated a different condition. This is hiding in the alignment shadow created by
-    // 'isSupportedToBuildEffective'.
-    // FIXME: move this out once we have JDK15+
-    private boolean boolFlag;
-
     ReactorStmtCtx() {
         // Empty on purpose
     }
 
     ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original) {
         isSupportedToBuildEffective = original.isSupportedToBuildEffective;
-        boolFlag = original.boolFlag;
         flags = original.flags;
     }
 
     // Used by ReplicaStatementContext only
     ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original, final Void dummy) {
-        boolFlag = isSupportedToBuildEffective = original.isSupportedToBuildEffective;
+        isSupportedToBuildEffective = original.isSupportedToBuildEffective;
         flags = original.flags;
     }
 
@@ -585,36 +578,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
         flags |= HAVE_IGNORE_IF_FEATURE;
         return false;
-    }
-
-    // These two exist only due to memory optimization, should live in AbstractResumedStatement.
-    final boolean fullyDefined() {
-        return boolFlag;
-    }
-
-    final void setFullyDefined() {
-        boolFlag = true;
-    }
-
-    // This exists only due to memory optimization, should live in ReplicaStatementContext. In this context the flag
-    // indicates the need to drop source's reference count when we are being swept.
-    final boolean haveSourceReference() {
-        return boolFlag;
-    }
-
-    // These three exist due to memory optimization, should live in InferredStatementContext. In this context the flag
-    // indicates whether or not this statement's substatement file was modified, i.e. it is not quite the same as the
-    // prototype's file.
-    final boolean isModified() {
-        return boolFlag;
-    }
-
-    final void setModified() {
-        boolFlag = true;
-    }
-
-    final void setUnmodified() {
-        boolFlag = false;
     }
 
     // These two exist only for StatementContextBase. Since we are squeezed for size, with only a single bit available

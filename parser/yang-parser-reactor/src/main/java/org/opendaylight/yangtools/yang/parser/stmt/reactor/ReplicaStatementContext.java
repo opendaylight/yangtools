@@ -34,6 +34,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         extends ReactorStmtCtx<A, D, E> {
     private final StatementContextBase<?, ?, ?> parent;
     private final ReactorStmtCtx<A, D, E> source;
+    // We need to drop source's reference count when we are being swept.
+    private final boolean haveSourceRef;
 
     ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final ReactorStmtCtx<A, D, E> source) {
         super(source, null);
@@ -41,6 +43,9 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         this.source = requireNonNull(source);
         if (source.isSupportedToBuildEffective()) {
             source.incRef();
+            haveSourceRef = true;
+        } else {
+            haveSourceRef = false;
         }
     }
 
@@ -146,7 +151,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     int sweepSubstatements() {
-        if (haveSourceReference()) {
+        if (haveSourceRef) {
             source.decRef();
         }
         return 0;
