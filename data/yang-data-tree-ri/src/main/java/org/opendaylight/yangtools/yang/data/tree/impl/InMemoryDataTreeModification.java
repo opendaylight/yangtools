@@ -21,18 +21,16 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification,
-        EffectiveModelContextProvider {
+final class InMemoryDataTreeModification extends AbstractDataTreeSnapshot implements DataTreeModification {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
     private final RootApplyStrategy strategyTree;
@@ -57,8 +55,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,
             final RootApplyStrategy resolver) {
         this.snapshot = requireNonNull(snapshot);
-        this.strategyTree = requireNonNull(resolver).snapshot();
-        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy());
+        strategyTree = requireNonNull(resolver).snapshot();
+        rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy());
 
         /*
          * We could allocate version beforehand, since Version contract
@@ -69,7 +67,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * node in modification and in data tree (if successfully
          * committed) will be same and will not change.
          */
-        this.version = snapshot.getRootNode().getSubtreeVersion().next();
+        version = snapshot.getRootNode().getSubtreeVersion().next();
     }
 
     ModifiedNode getRootModification() {

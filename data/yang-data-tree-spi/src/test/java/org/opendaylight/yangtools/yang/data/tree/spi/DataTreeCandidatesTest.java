@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -78,7 +77,7 @@ public class DataTreeCandidatesTest {
     @Test
     public void testApplyToCursorAwareModification() {
         final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
-        final CursorAwareDataTreeModification mockedModification = mock(CursorAwareDataTreeModification.class);
+        final DataTreeModification mockedModification = mock(DataTreeModification.class);
 
         final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
         doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
@@ -101,7 +100,7 @@ public class DataTreeCandidatesTest {
     @Test
     public void testApplyToCursorAwareModificationRoot() {
         final DataTreeCandidate mockedDataTreeCandidate = mock(DataTreeCandidate.class);
-        final CursorAwareDataTreeModification mockedModification = mock(CursorAwareDataTreeModification.class);
+        final DataTreeModification mockedModification = mock(DataTreeModification.class);
         final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();

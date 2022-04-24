@@ -7,29 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractCursorAware {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractCursorAware.class);
+abstract class AbstractDataTreeSnapshot implements DataTreeSnapshot {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractDataTreeSnapshot.class);
     @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<AbstractCursorAware, AbstractCursor> CURSOR_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(AbstractCursorAware.class, AbstractCursor.class, "cursor");
+    private static final AtomicReferenceFieldUpdater<AbstractDataTreeSnapshot, AbstractCursor> CURSOR_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(AbstractDataTreeSnapshot.class, AbstractCursor.class, "cursor");
     private volatile AbstractCursor<?> cursor = null;
 
     protected <T extends AbstractCursor<?>> T openCursor(final T cursorToOpen) {
         final boolean success = CURSOR_UPDATER.compareAndSet(this, null, cursorToOpen);
-        Preconditions.checkState(success, "Modification %s has cursor attached at path %s", this,
-            this.cursor.getRootPath());
+        checkState(success, "Modification %s has cursor attached at path %s", this, cursor.getRootPath());
         return cursorToOpen;
     }
 
     final void closeCursor(final AbstractCursor<?> cursorToClose) {
         final boolean success = CURSOR_UPDATER.compareAndSet(this, cursorToClose, null);
         if (!success) {
-            LOG.warn("Attempted to close cursor {} while {} is open", cursorToClose, this.cursor);
+            LOG.warn("Attempted to close cursor {} while {} is open", cursorToClose, cursor);
         }
     }
 }

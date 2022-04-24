@@ -17,11 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -56,36 +54,16 @@ public final class DataTreeCandidates {
     }
 
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
-        if (modification instanceof CursorAwareDataTreeModification) {
-            applyToCursorAwareModification((CursorAwareDataTreeModification) modification, candidate);
-            return;
-        }
-
-        final DataTreeCandidateNode node = candidate.getRootNode();
-        final YangInstanceIdentifier path = candidate.getRootPath();
-        switch (node.getModificationType()) {
-            case DELETE:
-                modification.delete(path);
-                LOG.debug("Modification {} deleted path {}", modification, path);
-                break;
-            case SUBTREE_MODIFIED:
-                LOG.debug("Modification {} modified path {}", modification, path);
-
-                NodeIterator iterator = new NodeIterator(null, path, node.getChildNodes().iterator());
-                do {
-                    iterator = iterator.next(modification);
-                } while (iterator != null);
-                break;
-            case UNMODIFIED:
-                LOG.debug("Modification {} unmodified path {}", modification, path);
-                // No-op
-                break;
-            case WRITE:
-                modification.write(path, node.getDataAfter().get());
-                LOG.debug("Modification {} written path {}", modification, path);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+        final YangInstanceIdentifier candidatePath = candidate.getRootPath();
+        final YangInstanceIdentifier parent = candidatePath.getParent();
+        if (parent == null) {
+            try (DataTreeModificationCursor cursor = modification.openCursor()) {
+                DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
+            }
+        } else {
+            try (DataTreeModificationCursor cursor = modification.openCursor(parent).orElseThrow()) {
+                DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
+            }
         }
     }
 
@@ -365,63 +343,5 @@ public final class DataTreeCandidates {
 
     private static ModificationType illegalModification(final ModificationType first, final ModificationType second) {
         throw new IllegalArgumentException(first + " modification event on " + second + " node");
-    }
-
-    private static void applyToCursorAwareModification(final CursorAwareDataTreeModification modification,
-                                                       final DataTreeCandidate candidate) {
-        final YangInstanceIdentifier candidatePath = candidate.getRootPath();
-        final YangInstanceIdentifier parent = candidatePath.getParent();
-        if (parent == null) {
-            try (DataTreeModificationCursor cursor = modification.openCursor()) {
-                DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
-            }
-        } else {
-            try (DataTreeModificationCursor cursor = modification.openCursor(parent).orElseThrow()) {
-                DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
-            }
-        }
-    }
-
-    private static final class NodeIterator {
-        private final Iterator<DataTreeCandidateNode> iterator;
-        private final YangInstanceIdentifier path;
-        private final NodeIterator parent;
-
-        NodeIterator(final @Nullable NodeIterator parent, final YangInstanceIdentifier path,
-                     final Iterator<DataTreeCandidateNode> iterator) {
-            this.iterator = requireNonNull(iterator);
-            this.path = requireNonNull(path);
-            this.parent = parent;
-        }
-
-        NodeIterator next(final DataTreeModification modification) {
-            while (iterator.hasNext()) {
-                final DataTreeCandidateNode node = iterator.next();
-                final YangInstanceIdentifier child = path.node(node.getIdentifier());
-
-                switch (node.getModificationType()) {
-                    case DELETE:
-                        modification.delete(child);
-                        LOG.debug("Modification {} deleted path {}", modification, child);
-                        break;
-                    case APPEARED:
-                    case DISAPPEARED:
-                    case SUBTREE_MODIFIED:
-                        LOG.debug("Modification {} modified path {}", modification, child);
-                        return new NodeIterator(this, child, node.getChildNodes().iterator());
-                    case UNMODIFIED:
-                        LOG.debug("Modification {} unmodified path {}", modification, child);
-                        // No-op
-                        break;
-                    case WRITE:
-                        modification.write(child, node.getDataAfter().get());
-                        LOG.debug("Modification {} written path {}", modification, child);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
-                }
-            }
-            return parent;
-        }
     }
 }

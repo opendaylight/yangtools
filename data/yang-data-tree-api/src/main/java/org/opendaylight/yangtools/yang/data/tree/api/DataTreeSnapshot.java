@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
+import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -33,4 +34,25 @@ public interface DataTreeSnapshot extends EffectiveModelContextProvider {
      * @return A new data tree modification
      */
     @NonNull DataTreeModification newModification();
+
+    /**
+     * Create a new {@link DataTreeSnapshotCursor} at specified path. May fail
+     * if specified path does not exist.
+     *
+     * @param path Path at which the cursor is to be anchored
+     * @return A new cursor, or empty if the path does not exist.
+     * @throws IllegalStateException if there is another cursor currently open.
+     */
+    Optional<? extends DataTreeSnapshotCursor> openCursor(@NonNull YangInstanceIdentifier path);
+
+    /**
+     * Create a new {@link DataTreeSnapshotCursor} at the root of the modification.
+     *
+     * @return A new cursor
+     * @throws IllegalStateException if there is another cursor currently open.
+     */
+    @Beta
+    default DataTreeSnapshotCursor openCursor() {
+        return openCursor(YangInstanceIdentifier.empty()).orElseThrow();
+    }
 }

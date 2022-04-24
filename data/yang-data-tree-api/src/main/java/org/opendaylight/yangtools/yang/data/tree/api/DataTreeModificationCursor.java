@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * Extension to the {@link DataTreeSnapshotCursor} which allows modifying the data tree. An instance of this interface
- * can be obtained from {@link CursorAwareDataTreeModification} and modifications made through this interface are staged
+ * can be obtained from a {@link DataTreeModification} and modifications made through this interface are staged
  * in the parent modification.
  */
 @Beta

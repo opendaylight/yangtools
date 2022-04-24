@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshotCursor;
 
-abstract class AbstractCursor<T extends AbstractCursorAware> implements DataTreeSnapshotCursor {
+abstract class AbstractCursor<T extends AbstractDataTreeSnapshot> implements DataTreeSnapshotCursor {
     @SuppressWarnings("rawtypes")
     private static final AtomicIntegerFieldUpdater<AbstractCursor> CLOSED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AbstractCursor.class, "closed");
