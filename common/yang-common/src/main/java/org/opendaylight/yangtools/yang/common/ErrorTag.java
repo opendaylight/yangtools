@@ -178,7 +178,7 @@ public final class ErrorTag implements Serializable {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return obj == this || obj instanceof ErrorTag && elementBody.equals(((ErrorTag) obj).elementBody);
+        return obj == this || obj instanceof ErrorTag other && elementBody.equals(other.elementBody);
     }
 
     @Override

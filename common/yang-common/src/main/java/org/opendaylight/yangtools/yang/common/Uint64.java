@@ -439,7 +439,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Uint64 && value == ((Uint64)obj).value;
+        return this == obj || obj instanceof Uint64 other && value == other.value;
     }
 
     /**

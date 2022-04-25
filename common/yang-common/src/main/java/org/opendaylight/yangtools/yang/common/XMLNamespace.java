@@ -65,7 +65,7 @@ public final class XMLNamespace implements Comparable<XMLNamespace>, Immutable, 
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof XMLNamespace && namespace.equals(((XMLNamespace) obj).namespace);
+        return this == obj || obj instanceof XMLNamespace other && namespace.equals(other.namespace);
     }
 
     @Override

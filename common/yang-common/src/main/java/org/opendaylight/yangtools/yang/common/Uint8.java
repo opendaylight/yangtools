@@ -370,7 +370,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Uint8 && value == ((Uint8)obj).value;
+        return this == obj || obj instanceof Uint8 other && value == other.value;
     }
 
     /**

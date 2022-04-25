@@ -155,14 +155,8 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof QNameModule)) {
-            return false;
-        }
-        final QNameModule other = (QNameModule) obj;
-        return Objects.equals(revision, other.revision) && namespace.equals(other.namespace);
+        return this == obj || obj instanceof QNameModule other
+            && Objects.equals(revision, other.revision) && namespace.equals(other.namespace);
     }
 
     @Override
