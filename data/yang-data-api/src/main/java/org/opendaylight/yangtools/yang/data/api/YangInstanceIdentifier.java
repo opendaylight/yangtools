@@ -75,8 +75,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-// FIXME: sealed once we have JDK17+
-public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier> {
+public abstract sealed class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier>
+        permits FixedYangInstanceIdentifier, StackedYangInstanceIdentifier {
     private static final long serialVersionUID = 4L;
     private static final VarHandle TO_STRING_CACHE;
     private static final VarHandle HASH;
@@ -233,7 +233,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
 
     @Override
     public final boolean equals(final Object obj) {
-        return this == obj || obj instanceof YangInstanceIdentifier && pathArgumentsEqual((YangInstanceIdentifier) obj);
+        return this == obj || obj instanceof YangInstanceIdentifier other && pathArgumentsEqual(other);
     }
 
     /**
@@ -977,15 +977,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof AugmentationIdentifier)) {
-                return false;
-            }
-
-            AugmentationIdentifier that = (AugmentationIdentifier) obj;
-            return childNames.equals(that.childNames);
+            return this == obj || obj instanceof AugmentationIdentifier other && childNames.equals(other.childNames);
         }
 
         @Override
@@ -996,10 +988,9 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
         @Override
         @SuppressWarnings("checkstyle:parameterName")
         public int compareTo(final PathArgument o) {
-            if (!(o instanceof AugmentationIdentifier)) {
+            if (!(o instanceof AugmentationIdentifier other)) {
                 return -1;
             }
-            AugmentationIdentifier other = (AugmentationIdentifier) o;
             Set<QName> otherChildNames = other.getPossibleChildNames();
             int thisSize = childNames.size();
             int otherSize = otherChildNames.size();
