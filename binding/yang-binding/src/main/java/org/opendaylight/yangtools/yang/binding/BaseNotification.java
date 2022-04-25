@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.binding;
  * only to tie together semantics of global notifications (as represented by {@link Notification}) and instance
  * notifications (as represented by {@link InstanceNotification}.
  */
-public interface BaseNotification extends DataContainer {
+public sealed interface BaseNotification extends DataContainer permits Notification, InstanceNotification {
 
 }
