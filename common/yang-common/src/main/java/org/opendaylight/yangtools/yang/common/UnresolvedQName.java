@@ -100,7 +100,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
 
         @Override
         public boolean equals(final @Nullable Object obj) {
-            return this == obj || obj instanceof Qualified && getLocalName().equals(((Qualified) obj).getLocalName());
+            return this == obj || obj instanceof Qualified other && getLocalName().equals(other.getLocalName());
         }
 
         @Override
@@ -178,8 +178,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
 
         @Override
         public boolean equals(final @Nullable Object obj) {
-            return this == obj || obj instanceof Unqualified
-                    && getLocalName().equals(((AbstractQName) obj).getLocalName());
+            return this == obj || obj instanceof Unqualified other && getLocalName().equals(other.getLocalName());
         }
 
         @Override

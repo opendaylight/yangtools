@@ -67,7 +67,6 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
         }
 
         @Override
-        @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
         @Nullable String appTag() {
             return null;
         }
@@ -140,14 +139,8 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof CanonicalValueViolation)) {
-            return false;
-        }
-        final CanonicalValueViolation other = (CanonicalValueViolation) obj;
-        return Objects.equals(appTag(), other.appTag()) && Objects.equals(message(), other.message());
+        return this == obj || obj instanceof CanonicalValueViolation other
+            && Objects.equals(appTag(), other.appTag()) && Objects.equals(message(), other.message());
     }
 
     @Override

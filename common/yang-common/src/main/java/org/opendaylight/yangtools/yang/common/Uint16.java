@@ -395,7 +395,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Uint16 && value == ((Uint16)obj).value;
+        return this == obj || obj instanceof Uint16 other && value == other.value;
     }
 
     /**

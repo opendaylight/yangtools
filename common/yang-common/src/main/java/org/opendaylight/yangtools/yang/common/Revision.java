@@ -144,7 +144,7 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof Revision && str.equals(((Revision)obj).str);
+        return this == obj || obj instanceof Revision other && str.equals(other.str);
     }
 
     @Override
