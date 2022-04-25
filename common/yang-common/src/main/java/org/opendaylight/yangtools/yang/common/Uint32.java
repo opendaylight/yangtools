@@ -412,7 +412,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Uint32 && value == ((Uint32)obj).value;
+        return this == obj || obj instanceof Uint32 other && value == other.value;
     }
 
     /**

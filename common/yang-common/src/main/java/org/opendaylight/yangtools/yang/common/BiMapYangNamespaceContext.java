@@ -74,8 +74,7 @@ public final class BiMapYangNamespaceContext implements YangNamespaceContext, Wr
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof BiMapYangNamespaceContext
-                && mapping.equals(((BiMapYangNamespaceContext) obj).mapping);
+        return this == obj || obj instanceof BiMapYangNamespaceContext other && mapping.equals(other.mapping);
     }
 
     @Override

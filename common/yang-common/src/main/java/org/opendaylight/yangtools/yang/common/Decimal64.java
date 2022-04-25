@@ -473,7 +473,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Decimal64 && equalsImpl((Decimal64) obj);
+        return this == obj || obj instanceof Decimal64 other && equalsImpl(other);
     }
 
     /**
