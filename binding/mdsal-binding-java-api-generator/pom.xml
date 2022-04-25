@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>dom-parent</artifactId>
-        <version>10.0.0-SNAPSHOT</version>
+        <version>11.0.0-SNAPSHOT-SNAPSHOT</version>
         <relativePath>../../dom/dom-parent</relativePath>
     </parent>
 
@@ -72,7 +72,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <javaSourceVersion>${maven.compiler.release}</javaSourceVersion>
+                            <javaSourceVersion>11</javaSourceVersion>
                             <outputDirectory>${project.build.directory}/generated-sources/xtend</outputDirectory>
                         </configuration>
                     </execution>

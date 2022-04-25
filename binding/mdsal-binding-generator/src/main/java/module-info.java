@@ -36,6 +36,6 @@ module org.opendaylight.mdsal.binding.generator {
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
     requires static javax.inject;
-    requires static metainf.services;
+    requires static org.kohsuke.metainf_services;
     requires static org.osgi.service.component.annotations;
 }
