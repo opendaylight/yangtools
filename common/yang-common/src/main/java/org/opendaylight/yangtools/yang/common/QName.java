@@ -223,8 +223,8 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @throws IOException if I/O error occurs
      */
     public static @NonNull QName readFrom(final DataInput in) throws IOException {
-        if (in instanceof QNameAwareDataInput) {
-            return ((QNameAwareDataInput) in).readQName();
+        if (in instanceof QNameAwareDataInput aware) {
+            return aware.readQName();
         }
 
         final QNameModule module = QNameModule.readFrom(in);
@@ -306,14 +306,8 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof QName)) {
-            return false;
-        }
-        final QName other = (QName) obj;
-        return Objects.equals(getLocalName(), other.getLocalName()) && module.equals(other.module);
+        return this == obj || obj instanceof QName other && getLocalName().equals(other.getLocalName())
+            && module.equals(other.module);
     }
 
     @Override
@@ -380,8 +374,8 @@ public final class QName extends AbstractQName implements Comparable<QName> {
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
-        if (out instanceof QNameAwareDataOutput) {
-            ((QNameAwareDataOutput) out).writeQName(this);
+        if (out instanceof QNameAwareDataOutput aware) {
+            aware.writeQName(this);
         } else {
             module.writeTo(out);
             out.writeUTF(getLocalName());
