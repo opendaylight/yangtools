@@ -134,20 +134,17 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean wasProcessAsSimpleNode(final NormalizedNode node) throws IOException {
-        if (node instanceof LeafSetEntryNode) {
-            final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
+        if (node instanceof LeafSetEntryNode<?> nodeAsLeafList) {
             writer.startLeafSetEntryNode(nodeAsLeafList.getIdentifier());
             writer.scalarValue(nodeAsLeafList.body());
             writer.endNode();
             return true;
-        } else if (node instanceof LeafNode) {
-            final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
+        } else if (node instanceof LeafNode<?> nodeAsLeaf) {
             writer.startLeafNode(nodeAsLeaf.getIdentifier());
             writer.scalarValue(nodeAsLeaf.body());
             writer.endNode();
             return true;
-        } else if (node instanceof AnyxmlNode) {
-            final AnyxmlNode<?> anyxmlNode = (AnyxmlNode<?>)node;
+        } else if (node instanceof AnyxmlNode<?> anyxmlNode) {
             final Class<?> model = anyxmlNode.bodyObjectModel();
             if (writer.startAnyxmlNode(anyxmlNode.getIdentifier(), model)) {
                 final Object value = node.body();
@@ -162,8 +159,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             }
 
             LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
-        } else if (node instanceof AnydataNode) {
-            final AnydataNode<?> anydata = (AnydataNode<?>) node;
+        } else if (node instanceof AnydataNode<?> anydata) {
             final Class<?> model = anydata.bodyObjectModel();
             if (writer.startAnydataNode(anydata.getIdentifier(), model)) {
                 writer.scalarValue(anydata.body());
@@ -199,55 +195,36 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
-        if (node instanceof ContainerNode) {
-            final ContainerNode n = (ContainerNode) node;
+        if (node instanceof ContainerNode n) {
             writer.startContainerNode(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        }
-        if (node instanceof MapEntryNode) {
-            return writeMapEntryNode((MapEntryNode) node);
-        }
-        if (node instanceof UnkeyedListEntryNode) {
-            final UnkeyedListEntryNode n = (UnkeyedListEntryNode) node;
+        } else if (node instanceof MapEntryNode n) {
+            return writeMapEntryNode(n);
+        } else if (node instanceof UnkeyedListEntryNode n) {
             writer.startUnkeyedListItem(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        }
-        if (node instanceof ChoiceNode) {
-            final ChoiceNode n = (ChoiceNode) node;
+        } else if (node instanceof ChoiceNode n) {
             writer.startChoiceNode(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        }
-        if (node instanceof AugmentationNode) {
-            final AugmentationNode n = (AugmentationNode) node;
+        } else if (node instanceof AugmentationNode n) {
             writer.startAugmentationNode(n.getIdentifier());
             return writeChildren(n.body());
-        }
-        if (node instanceof UnkeyedListNode) {
-            final UnkeyedListNode n = (UnkeyedListNode) node;
+        } else if (node instanceof UnkeyedListNode n) {
             writer.startUnkeyedList(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        }
-        if (node instanceof UserMapNode) {
-            final UserMapNode n = (UserMapNode) node;
+        } else if (node instanceof UserMapNode n) {
             writer.startOrderedMapNode(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        }
-        if (node instanceof SystemMapNode) {
-            final SystemMapNode n = (SystemMapNode) node;
+        } else if (node instanceof SystemMapNode n) {
             writer.startMapNode(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        }
-        if (node instanceof UserLeafSetNode) {
-            final UserLeafSetNode<?> n = (UserLeafSetNode<?>) node;
+        } else if (node instanceof UserLeafSetNode<?> n) {
             writer.startOrderedLeafSet(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        }
-        if (node instanceof SystemLeafSetNode) {
-            final SystemLeafSetNode<?> n = (SystemLeafSetNode<?>) node;
+        } else if (node instanceof SystemLeafSetNode<?> n) {
             writer.startLeafSet(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
         }
-
         return false;
     }
 
