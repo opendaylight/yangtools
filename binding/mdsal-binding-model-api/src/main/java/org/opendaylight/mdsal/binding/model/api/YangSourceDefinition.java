@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
  */
 @Beta
 @NonNullByDefault
-public abstract class YangSourceDefinition {
+public abstract sealed class YangSourceDefinition {
     public static final class Multiple extends YangSourceDefinition {
         private final List<? extends SchemaNode> nodes;
 
