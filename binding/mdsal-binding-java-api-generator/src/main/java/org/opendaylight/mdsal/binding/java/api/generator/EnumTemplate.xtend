@@ -12,7 +12,6 @@ import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableMap.Builder
-import java.util.Optional
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 
@@ -87,16 +86,16 @@ class EnumTemplate extends BaseTemplate {
                 VALUE_MAP = vb.build();
             }
 
-            private final «STRING.importedName» name;
+            private final «STRING.importedNonNull» name;
             private final int value;
 
-            private «enums.name»(int value, «STRING.importedName» name) {
+            private «enums.name»(int value, «STRING.importedNonNull» name) {
                 this.value = value;
                 this.name = name;
             }
 
             @«OVERRIDE.importedName»
-            public «STRING.importedName» getName() {
+            public «STRING.importedNonNull» getName() {
                 return name;
             }
 
@@ -106,24 +105,47 @@ class EnumTemplate extends BaseTemplate {
             }
 
             /**
-             * Return the enumeration member whose {@link #getName()} matches specified value.
+             * Return the enumeration member whose {@link #getName()} matches specified assigned name.
              *
              * @param name YANG assigned name
-             * @return corresponding «enums.name» item, if present
-             * @throws NullPointerException if name is null
+             * @return corresponding «enums.name» item, or {@code null} if no such item exists
+             * @throws NullPointerException if {@code name} is null
              */
-            public static «Optional.importedName»<«enums.name»> forName(«STRING.importedName» name) {
-                return «Optional.importedName».ofNullable(NAME_MAP.get(«JU_OBJECTS.importedName».requireNonNull(name)));
+            public static «enums.importedNullable» forName(«STRING.importedName» name) {
+                return NAME_MAP.get(«JU_OBJECTS.importedName».requireNonNull(name));
             }
 
             /**
              * Return the enumeration member whose {@link #getIntValue()} matches specified value.
              *
              * @param intValue integer value
-             * @return corresponding «enums.name» item, or null if no such item exists
+             * @return corresponding «enums.name» item, or {@code null} if no such item exists
              */
-            public static «enums.name» forValue(int intValue) {
+            public static «enums.importedNullable» forValue(int intValue) {
                 return VALUE_MAP.get(intValue);
+            }
+
+            /**
+             * Return the enumeration member whose {@link #getName()} matches specified assigned name.
+             *
+             * @param name YANG assigned name
+             * @return corresponding «enums.name» item
+             * @throws NullPointerException if {@code name} is null
+             * @throws IllegalArgumentException if {@code name} does not match any item
+             */
+            public static «enums.importedNonNull» ofName(«STRING.importedName» name) {
+                return «CODEHELPERS.importedName».checkEnum(forName(name), name);
+            }
+
+            /**
+             * Return the enumeration member whose {@link #getIntValue()} matches specified value.
+             *
+             * @param intValue integer value
+             * @return corresponding «enums.name» item
+             * @throws IllegalArgumentException if {@code intValue} does not match any item
+             */
+            public static «enums.importedNonNull» ofValue(int intValue) {
+                return «CODEHELPERS.importedName».checkEnum(forValue(intValue), intValue);
             }
         }
     '''

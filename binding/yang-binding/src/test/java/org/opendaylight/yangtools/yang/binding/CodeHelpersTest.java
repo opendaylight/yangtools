@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.yang.binding;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,5 +61,23 @@ public class CodeHelpersTest {
         iae = assertThrows(IllegalArgumentException.class,
             () -> CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Set.of(new Object())));
         assertThat(iae.getCause(), instanceOf(ClassCastException.class));
+    }
+
+    @Test
+    public void testCheckEnumName() {
+        final var ex = assertThrows(IllegalArgumentException.class, () -> CodeHelpers.checkEnum(null, "xyzzy"));
+        assertEquals("\"xyzzy\" is not a valid name", ex.getMessage());
+
+        final var obj = mock(Enumeration.class);
+        assertSame(obj, CodeHelpers.checkEnum(obj, "xyzzy"));
+    }
+
+    @Test
+    public void testCheckEnumValue() {
+        final var ex = assertThrows(IllegalArgumentException.class, () -> CodeHelpers.checkEnum(null, 1234));
+        assertEquals("1234 is not a valid value", ex.getMessage());
+
+        final var obj = mock(Enumeration.class);
+        assertSame(obj, CodeHelpers.checkEnum(obj, 1234));
     }
 }

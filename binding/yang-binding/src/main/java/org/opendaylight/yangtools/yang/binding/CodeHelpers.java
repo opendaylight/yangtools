@@ -370,6 +370,38 @@ public final class CodeHelpers {
     }
 
     /**
+     * Check that the specified {@link Enumeration} object is not {@code null}. This method is meant to be used with
+     * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
+     *
+     * @param obj enumeration object, possibly null
+     * @param name User-supplied enumeration name
+     * @return Enumeration object
+     * @throws IllegalArgumentException if {@code obj} is null
+     */
+    public static <T extends Enumeration> @NonNull T checkEnum(final @Nullable T obj, final String name) {
+        if (obj == null) {
+            throw new IllegalArgumentException("\"" + name + "\" is not a valid name");
+        }
+        return obj;
+    }
+
+    /**
+     * Check that the specified {@link Enumeration} object is not {@code null}. This method is meant to be used with
+     * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
+     *
+     * @param obj enumeration object, possibly null
+     * @param value User-supplied enumeration value
+     * @return Enumeration object
+     * @throws IllegalArgumentException if {@code obj} is null
+     */
+    public static <T extends Enumeration> @NonNull T checkEnum(final @Nullable T obj, final int value) {
+        if (obj == null) {
+            throw new IllegalArgumentException(value + " is not a valid value");
+        }
+        return obj;
+    }
+
+    /**
      * Utility method for checking whether a target object is a compatible DataObject.
      *
      * @param requiredClass Required DataObject class
