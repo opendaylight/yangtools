@@ -10,8 +10,6 @@ package org.opendaylight.mdsal.binding.java.api.generator
 import static extension org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.ImmutableMap.Builder
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 
@@ -71,21 +69,6 @@ class EnumTemplate extends BaseTemplate {
         public enum «enums.name» implements «org.opendaylight.yangtools.yang.binding.Enumeration.importedName» {
             «writeEnumeration(enums)»
 
-            private static final «JU_MAP.importedName»<«STRING.importedName», «enums.name»> NAME_MAP;
-            private static final «JU_MAP.importedName»<«Integer.importedName», «enums.name»> VALUE_MAP;
-
-            static {
-                final «Builder.importedName»<«STRING.importedName», «enums.name»> nb = «ImmutableMap.importedName».builder();
-                final «Builder.importedName»<«Integer.importedName», «enums.name»> vb = «ImmutableMap.importedName».builder();
-                for («enums.name» enumItem : «enums.name».values()) {
-                    vb.put(enumItem.value, enumItem);
-                    nb.put(enumItem.name, enumItem);
-                }
-
-                NAME_MAP = nb.build();
-                VALUE_MAP = vb.build();
-            }
-
             private final «STRING.importedNonNull» name;
             private final int value;
 
@@ -112,7 +95,12 @@ class EnumTemplate extends BaseTemplate {
              * @throws NullPointerException if {@code name} is null
              */
             public static «enums.importedNullable» forName(«STRING.importedName» name) {
-                return NAME_MAP.get(«JU_OBJECTS.importedName».requireNonNull(name));
+                return switch (name) {
+                    «FOR v : enums.values»
+                    case "«v.name»" -> «v.mappedName»;
+                    «ENDFOR»
+                    default -> null;
+                };
             }
 
             /**
@@ -122,7 +110,12 @@ class EnumTemplate extends BaseTemplate {
              * @return corresponding «enums.name» item, or {@code null} if no such item exists
              */
             public static «enums.importedNullable» forValue(int intValue) {
-                return VALUE_MAP.get(intValue);
+                return switch (intValue) {
+                    «FOR v : enums.values»
+                    case «v.value» -> «v.mappedName»;
+                    «ENDFOR»
+                    default -> null;
+                };
             }
 
             /**
