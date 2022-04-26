@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 @NonNullByDefault
-public abstract class JavaTypeName implements Identifier, Immutable {
+public abstract sealed class JavaTypeName implements Identifier, Immutable {
     private static final class Primitive extends JavaTypeName {
         private static final long serialVersionUID = 1L;
 
@@ -88,7 +88,7 @@ public abstract class JavaTypeName implements Identifier, Immutable {
         }
     }
 
-    private abstract static class Reference extends JavaTypeName {
+    private abstract static sealed class Reference extends JavaTypeName {
         private static final long serialVersionUID = 1L;
 
         Reference(final String simpleName) {
@@ -370,15 +370,9 @@ public abstract class JavaTypeName implements Identifier, Immutable {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof JavaTypeName)) {
-            return false;
-        }
-        final JavaTypeName other = (JavaTypeName) obj;
-        return simpleName.equals(other.simpleName) && packageName().equals(other.packageName())
-                && immediatelyEnclosingClass().equals(other.immediatelyEnclosingClass());
+        return this == obj || obj instanceof JavaTypeName other
+            && simpleName.equals(other.simpleName) && packageName().equals(other.packageName())
+            && immediatelyEnclosingClass().equals(other.immediatelyEnclosingClass());
     }
 
     /**
