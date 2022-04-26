@@ -19,6 +19,7 @@ package org.opendaylight.yangtools.yang.binding;
  *   <li>Case</li>
  * </ul>
  */
-public interface DataContainer extends BindingContract<DataContainer> {
+public sealed interface DataContainer extends BindingContract<DataContainer>
+    permits BaseNotification, ChoiceIn, DataObject, OpaqueObject {
 
 }

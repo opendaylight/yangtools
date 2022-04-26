@@ -8,18 +8,12 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A {@link TypeObject} that encapsulates an immutable native type. These are generated as YANG Binding type captures,
  * such as those implied by {@code typedef} and parameterized {@code type} statements.
  */
 @Beta
-public interface ScalarTypeObject<T> extends TypeObject {
-    /**
-     * Return encapsulated value.
-     *
-     * @return Encapsulated value.
-     */
-    @NonNull T getValue();
+public non-sealed interface ScalarTypeObject<T> extends TypeObject, ValueAware<T> {
+
 }

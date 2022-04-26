@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <T> value type
  */
 @Beta
-public interface ValueAware<T> {
+public sealed interface ValueAware<T> permits Annotation, OpaqueObject, ScalarTypeObject {
     /**
      * Return the value associated with this object.
      *

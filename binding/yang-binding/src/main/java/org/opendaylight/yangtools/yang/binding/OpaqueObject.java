@@ -26,7 +26,7 @@ import com.google.common.annotations.Beta;
  * @param <T> Generated interface
  */
 @Beta
-public interface OpaqueObject<T extends OpaqueObject<T>> extends BindingObject, DataContainer,
+public non-sealed interface OpaqueObject<T extends OpaqueObject<T>> extends BindingObject, DataContainer,
         ValueAware<OpaqueData<?>> {
     @Override
     Class<T> implementedInterface();

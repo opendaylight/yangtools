@@ -12,5 +12,5 @@ package org.opendaylight.yangtools.yang.binding;
  *
  * @author Jie Han
  */
-public interface TypeObject extends BindingObject {
+public non-sealed interface TypeObject extends BindingObject {
 }

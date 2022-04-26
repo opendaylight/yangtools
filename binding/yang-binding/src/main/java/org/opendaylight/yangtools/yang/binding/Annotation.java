@@ -28,6 +28,6 @@ import com.google.common.annotations.Beta;
  * @param <T> Value type
  */
 @Beta
-public interface Annotation<T> extends BindingObject, ValueAware<T> {
+public non-sealed interface Annotation<T> extends BindingObject, ValueAware<T> {
 
 }
