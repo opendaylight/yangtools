@@ -564,14 +564,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «ENDFOR»
     '''
 
-    override protected generateCopyAugmentation(Type implType) {
-        val hashMapRef = JU_HASHMAP.importedName
-        val augmentTypeRef = augmentType.importedName
-        return '''
-            «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug = base.augmentations();
-            if (!aug.isEmpty()) {
-                this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(aug);
-            }
-        '''
-    }
+    override protected generateCopyAugmentation(Type implType) '''
+       final var aug = base.augmentations();
+       if (!aug.isEmpty()) {
+           this.«AUGMENTATION_FIELD» = new «JU_HASHMAP.importedName»<>(aug);
+       }
+    '''
 }
