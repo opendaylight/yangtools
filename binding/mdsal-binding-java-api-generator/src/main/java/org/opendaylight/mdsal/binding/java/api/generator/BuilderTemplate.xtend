@@ -514,6 +514,14 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private def generateAugmentation() '''
+        /**
+         * Return the specified augmentation, if it is present in this builder.
+         *
+         * @param <E$$> augmentation type
+         * @param augmentationType augmentation type class
+         * @return Augmentation object from this builder, or {@code null} if not present
+         * @throws «NPE.importedName» if {@code augmentType} is {@code null}
+         */
         @«SUPPRESS_WARNINGS.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
         public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(«CLASS.importedName»<E$$> augmentationType) {
             return (E$$) «AUGMENTATION_FIELD».get(«JU_OBJECTS.importedName».requireNonNull(augmentationType));
