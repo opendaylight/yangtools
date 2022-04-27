@@ -107,7 +107,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              *
              * @return A new {@link «targetTypeName»} instance.
              */
-            public «targetTypeName» build() {
+            public «targetType.importedNonNull» build() {
                 return new «type.enclosedTypes.get(0).importedName»(this);
             }
 
