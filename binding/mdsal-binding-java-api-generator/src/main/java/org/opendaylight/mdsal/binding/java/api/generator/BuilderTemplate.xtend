@@ -73,8 +73,21 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 «generateAugmentField()»
             «ENDIF»
 
+            /**
+             * Construct an empty builder.
+             */
+            public «type.name»() {
+                // No-op
+            }
+
             «generateConstructorsFromIfcs()»
 
+            «val targetTypeName = targetType.importedName»
+            /**
+             * Construct a builder initialized with state from specified {@link «targetTypeName»}.
+             *
+             * @param base «targetTypeName» from which the builder should be initialized
+             */
             public «generateCopyConstructor(targetType, type.enclosedTypes.get(0))»
 
             «generateMethodFieldsFrom()»
@@ -88,11 +101,11 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «generateSetters»
 
             /**
-             * A new {@link «targetType.name»} instance.
+             * A new {@link «targetTypeName»} instance.
              *
-             * @return A new {@link «targetType.name»} instance.
+             * @return A new {@link «targetTypeName»} instance.
              */
-            public «targetType.name» build() {
+            public «targetTypeName» build() {
                 return new «type.enclosedTypes.get(0).importedName»(this);
             }
 
@@ -112,9 +125,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      * Generate default constructor and constructor for every implemented interface from uses statements.
      */
     def private generateConstructorsFromIfcs() '''
-        public «type.name»() {
-        }
-
         «IF (!(targetType instanceof GeneratedTransferObject))»
             «FOR impl : targetType.implements SEPARATOR "\n"»
                 «generateConstructorFromIfc(impl)»
@@ -128,9 +138,16 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private Object generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType)»
             «IF impl.hasNonDefaultMethods»
-                public «type.name»(«impl.importedName» arg) {
+                «val typeName = impl.importedName»
+                /**
+                 * Construct a new builder initialized from specified {@link «typeName»}.
+                 *
+                 * @param arg «typeName» from which the builder should be initialized
+                 */
+                public «type.name»(«typeName» arg) {
                     «printConstructorPropertySetter(impl)»
                 }
+
             «ENDIF»
             «FOR implTypeImplement : impl.implements»
                 «generateConstructorFromIfc(implTypeImplement)»
