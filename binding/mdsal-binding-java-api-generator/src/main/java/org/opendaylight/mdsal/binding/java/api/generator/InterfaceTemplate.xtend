@@ -166,7 +166,7 @@ class InterfaceTemplate extends BaseTemplate {
     '''
 
     /**
-     * Template method wich generates JAVA constants.
+     * Template method which generates JAVA constants.
      *
      * @return string with constants in JAVA format
      */
