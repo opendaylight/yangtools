@@ -202,7 +202,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
          * Set fields from given grouping argument. Valid argument is instance of one of following types:
          * <ul>
          «FOR impl : type.getAllIfcs»
-         * <li>«impl.importedName»</li>
+         *   <li>{@link «impl.importedName»}</li>
          «ENDFOR»
          * </ul>
          *
