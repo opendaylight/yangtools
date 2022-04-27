@@ -83,7 +83,15 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      */
     def final generateGetters(boolean addOverride) '''
         «IF keyType !== null»
-            «IF addOverride»@«OVERRIDE.importedName»«ENDIF»
+            «IF addOverride»
+            @«OVERRIDE.importedName»
+            «ELSE»
+            /**
+             * Return current value associated with the property corresponding to {@link «targetType.importedName»#«BindingMapping.IDENTIFIABLE_KEY_NAME»()}.
+             *
+             * @return current value
+             */
+            «ENDIF»
             public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
                 return key;
             }
@@ -91,7 +99,15 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         «ENDIF»
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
-                «IF addOverride»@«OVERRIDE.importedName»«ENDIF»
+                «IF addOverride»
+                @«OVERRIDE.importedName»
+                «ELSE»
+                /**
+                 * Return current value associated with the property corresponding to {@link «targetType.importedName»#«field.getterName»()}.
+                 *
+                 * @return current value
+                 */
+                «ENDIF»
                 «field.getterMethod»
             «ENDFOR»
         «ENDIF»
