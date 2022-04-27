@@ -23,23 +23,22 @@ import org.slf4j.LoggerFactory;
 
 @MetaInfServices
 @Component(immediate = true)
-public class AntlrXPathParserFactory implements YangXPathParserFactory {
+public final class AntlrXPathParserFactory implements YangXPathParserFactory {
     private static final Logger LOG = LoggerFactory.getLogger(AntlrXPathParserFactory.class);
 
     @Override
-    public final YangXPathParser newParser(final YangXPathMathMode mathMode) {
+    public YangXPathParser newParser(final YangXPathMathMode mathMode) {
         return new AntlrXPathParser.Base(mathMode);
     }
 
     @Override
-    public final QualifiedBound newParser(final YangXPathMathMode mathMode,
-            final YangNamespaceContext namespaceContext) {
+    public QualifiedBound newParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
         return new AntlrXPathParser.Qualified(mathMode, namespaceContext);
     }
 
     @Override
-    public final UnqualifiedBound newParser(final YangXPathMathMode mathMode,
-            final YangNamespaceContext namespaceContext, final QNameModule defaultNamespace) {
+    public UnqualifiedBound newParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
+            final QNameModule defaultNamespace) {
         return new AntlrXPathParser.Unqualified(mathMode, namespaceContext, defaultNamespace);
     }
 

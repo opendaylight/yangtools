@@ -8,20 +8,23 @@
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.opendaylight.yangtools.yang.xpath.impl.AntlrXPathParserFactory;
 
+/**
+ * Reference implementation of YANG XPath parser.
+ */
 module org.opendaylight.yangtools.yang.xpath.impl {
     exports org.opendaylight.yangtools.yang.xpath.impl.di;
 
     provides YangXPathParserFactory with AntlrXPathParserFactory;
 
+    requires transitive org.opendaylight.yangtools.yang.xpath.api;
     requires java.xml;
     requires org.antlr.antlr4.runtime;
     requires org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.yang.xpath.api;
     requires org.slf4j;
 
     // Annotations
+    requires static transitive javax.inject;
     requires static com.github.spotbugs.annotations;
-    requires static javax.inject;
     requires static org.eclipse.jdt.annotation;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.service.component.annotations;
