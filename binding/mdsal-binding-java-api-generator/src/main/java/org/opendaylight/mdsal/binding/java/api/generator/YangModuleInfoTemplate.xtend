@@ -89,6 +89,9 @@ class YangModuleInfoTemplate {
         collectSubmodules(submodules, module)
 
         val body = '''
+            /**
+             * The {@link ResourceYangModuleInfo} for {@code «module.name»} module.
+             */
             @«JavaFileTemplate.GENERATED»("mdsal-binding-generator")
             public final class «MODULE_INFO_CLASS_NAME» extends ResourceYangModuleInfo {
                 «val rev = module.revision»
@@ -97,10 +100,24 @@ class YangModuleInfoTemplate {
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
 
+                /**
+                 * Return the singleton instance of this class.
+                 *
+                 * @return The singleton instance
+                 */
                 public static @NonNull YangModuleInfo getInstance() {
                     return INSTANCE;
                 }
 
+                /**
+                 * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this
+                 * module.
+                 *
+                 * @param localName local name
+                 * @return A QName
+                 * @throws NullPointerException if {@code localName} is null
+                 * @throws IllegalArgumentException if localName is not a valid YANG identifier
+                 */
                 public static @NonNull QName «MODULE_INFO_QNAMEOF_METHOD_NAME»(final String localName) {
                     return QName.create(NAME, localName).intern();
                 }
@@ -121,10 +138,23 @@ class YangModuleInfoTemplate {
         package «packageName»;
 
         import java.lang.Override;
+        import java.util.ServiceLoader;
         import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
         import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 
+        /**
+         * The {@link YangModelBindingProvider} for {@code «module.name»} module. This class should not be used
+         * directly, but rather through {@link ServiceLoader}.
+         */
+        @«JavaFileTemplate.GENERATED»("mdsal-binding-generator")
         public final class «MODEL_BINDING_PROVIDER_CLASS_NAME» implements YangModelBindingProvider {
+            /**
+             * Construct a new provider.
+             */
+            public «MODEL_BINDING_PROVIDER_CLASS_NAME»() {
+                // No-op
+            }
+
             @Override
             public YangModuleInfo getModuleInfo() {
                 return «MODULE_INFO_CLASS_NAME».getInstance();
