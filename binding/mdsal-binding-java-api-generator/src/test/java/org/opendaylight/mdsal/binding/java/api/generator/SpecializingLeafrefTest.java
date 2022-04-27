@@ -67,11 +67,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static final String FOO_GRP_REF = "FooGrp";
     private static final String RESOLVED_LEAF_GRP_REF = "ResolvedLeafGrp";
-
-    private static final String UNRESOLVED_GROUPING_REF =
-            "UnresolvedGrouping";
-
-    private static final String ARG_AS_FOO_GRP = "((" + FOO_GRP_REF + ")arg)";
+    private static final String UNRESOLVED_GROUPING_REF = "UnresolvedGrouping";
 
     private static final String LEAF2_ASSIGNMENT = "this._leaf2 = arg.getLeaf2();";
 
@@ -218,16 +214,15 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 TAB_FIELDS_FROM_SIGNATURE,
                 DTAB_INIT_IS_VALID_ARG_FALSE,
-                doubleTab("if (arg instanceof " + FOO_GRP_REF + ") {"),
-                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", "
-                    + ARG_AS_FOO_GRP + ".getLeaf1());"),
+                doubleTab("if (arg instanceof " + FOO_GRP_REF + " castArg) {"),
+                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", castArg.getLeaf1());"),
                 tripleTab("this._leafList1 = CodeHelpers.checkSetFieldCast(String.class, \"leafList1\", "
-                    + ARG_AS_FOO_GRP + ".getLeafList1());"),
-                tripleTab("this._leaf2 = " + ARG_AS_FOO_GRP + ".getLeaf2();"),
+                    + "castArg.getLeafList1());"),
+                tripleTab("this._leaf2 = castArg.getLeaf2();"),
                 TTAB_SET_IS_VALID_ARG_TRUE,
                 DTAB_CLOSING_METHOD_BRACE,
-                doubleTab("if (arg instanceof " + RESOLVED_LEAF_GRP_REF + ") {"),
-                tripleTab("this._name = ((" + RESOLVED_LEAF_GRP_REF + ")arg).getName();"),
+                doubleTab("if (arg instanceof " + RESOLVED_LEAF_GRP_REF + " castArg) {"),
+                tripleTab("this._name = castArg.getName();"),
                 TTAB_SET_IS_VALID_ARG_TRUE,
                 DTAB_CLOSING_METHOD_BRACE,
                 doubleTab("CodeHelpers.validValue(isValidArg, arg, \"[" + FOO_GRP_REF + ", " + RESOLVED_LEAF_GRP_REF
@@ -259,9 +254,8 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 TAB_FIELDS_FROM_SIGNATURE,
                 DTAB_INIT_IS_VALID_ARG_FALSE,
-                doubleTab("if (arg instanceof " + UNRESOLVED_GROUPING_REF + ") {"),
-                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", (("
-                    + UNRESOLVED_GROUPING_REF + ")arg).getLeaf1());"),
+                doubleTab("if (arg instanceof " + UNRESOLVED_GROUPING_REF + " castArg) {"),
+                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", castArg.getLeaf1());"),
                 TTAB_SET_IS_VALID_ARG_TRUE,
                 DTAB_CLOSING_METHOD_BRACE,
                 doubleTab("CodeHelpers.validValue(isValidArg, arg, \"[" + UNRESOLVED_GROUPING_REF + "]\");"),

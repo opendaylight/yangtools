@@ -246,7 +246,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private generateIfCheck(Type impl, List<Type> done) '''
         «IF (impl instanceof GeneratedType && (impl as GeneratedType).hasNonDefaultMethods)»
             «val implType = impl as GeneratedType»
-            if (arg instanceof «implType.importedName») {
+            if (arg instanceof «implType.importedName» castArg) {
                 «printPropertySetter(implType)»
                 isValidArg = true;
             }
@@ -258,7 +258,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «val ifc = implementedIfc as GeneratedType»
         «FOR getter : ifc.nonDefaultMethods»
             «IF BindingMapping.isGetterMethodName(getter.name) && !hasOverrideAnnotation(getter)»
-                «printPropertySetter(getter, '''((«ifc.importedName»)arg).«getter.name»()''', getter.propertyNameFromGetter)»;
+                «printPropertySetter(getter, '''castArg.«getter.name»()''', getter.propertyNameFromGetter)»;
             «ENDIF»
         «ENDFOR»
         «ENDIF»
