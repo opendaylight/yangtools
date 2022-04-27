@@ -70,7 +70,9 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «constantsDeclarations()»
 
             «IF augmentType !== null»
-                «generateAugmentField()»
+                «val augmentTypeRef = augmentType.importedName»
+                «val mapTypeRef = JU_MAP.importedName»
+                «mapTypeRef»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> «AUGMENTATION_FIELD» = «mapTypeRef».of();
             «ENDIF»
 
             /**
@@ -427,7 +429,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
         «IF augmentType !== null»
             «val augmentTypeRef = augmentType.importedName»
-            «val jlClassRef = CLASS.importedName»
             «val hashMapRef = JU_HASHMAP.importedName»
             /**
               * Add an augmentation to this builder's product.
@@ -437,12 +438,11 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               * @throws NullPointerException if {@code augmentation} is null
               */
             public «type.name» addAugmentation(«augmentTypeRef» augmentation) {
-                «jlClassRef»<? extends «augmentTypeRef»> augmentationType = augmentation.«BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»();
                 if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
                     this.«AUGMENTATION_FIELD» = new «hashMapRef»<>();
                 }
 
-                this.«AUGMENTATION_FIELD».put(augmentationType, augmentation);
+                this.«AUGMENTATION_FIELD».put(augmentation.«BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»(), augmentation);
                 return this;
             }
 
@@ -453,7 +453,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               * @param augmentationType augmentation type to be removed
               * @return this builder
               */
-            public «type.name» removeAugmentation(«jlClassRef»<? extends «augmentTypeRef»> augmentationType) {
+            public «type.name» removeAugmentation(«CLASS.importedName»<? extends «augmentTypeRef»> augmentationType) {
                 if (this.«AUGMENTATION_FIELD» instanceof «hashMapRef») {
                     this.«AUGMENTATION_FIELD».remove(augmentationType);
                 }

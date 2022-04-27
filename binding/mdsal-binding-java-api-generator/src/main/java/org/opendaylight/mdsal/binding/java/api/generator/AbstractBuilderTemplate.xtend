@@ -7,11 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
-
 import java.util.ArrayList
 import java.util.Collection
-import java.util.Collections
 import java.util.Comparator
 import java.util.List
 import java.util.Set
@@ -78,13 +75,6 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             private«IF makeFinal» final«ENDIF» «keyType.importedName» key;
         «ENDIF»
     '''
-
-    def protected final generateAugmentField() {
-        val augmentTypeRef = augmentType.importedName
-        return '''
-           «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
-        '''
-    }
 
     /**
      * Template method which generate getter methods for IMPL class.
