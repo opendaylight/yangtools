@@ -428,7 +428,7 @@ class ClassTemplate extends BaseTemplate {
     def protected bitsArgs() '''
         «JU_LIST.importedName»<«STRING.importedName»> properties = «Lists.importedName».newArrayList(«allProperties.propsAsArgs»);
         if (!properties.contains(defaultValue)) {
-            throw new «IllegalArgumentException.importedName»("invalid default parameter");
+            throw new «IAE.importedName»("invalid default parameter");
         }
         int i = 0;
         return new «genTO.name»(

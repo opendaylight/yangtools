@@ -76,6 +76,10 @@ class JavaFileTemplate {
      */
     static final @NonNull JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
     /**
+     * {@code java.lang.IllegalArgumentException} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName IAE = JavaTypeName.create(IllegalArgumentException.class);
+    /**
      * {@code java.lang.NullPointerException} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName NPE = JavaTypeName.create(NullPointerException.class);

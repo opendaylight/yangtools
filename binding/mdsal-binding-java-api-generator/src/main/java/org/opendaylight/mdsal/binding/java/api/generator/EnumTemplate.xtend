@@ -92,7 +92,7 @@ class EnumTemplate extends BaseTemplate {
              *
              * @param name YANG assigned name
              * @return corresponding «enums.name» item, or {@code null} if no such item exists
-             * @throws NullPointerException if {@code name} is null
+             * @throws «NPE.importedName» if {@code name} is null
              */
             public static «enums.importedNullable» forName(«STRING.importedName» name) {
                 return switch (name) {
@@ -123,8 +123,8 @@ class EnumTemplate extends BaseTemplate {
              *
              * @param name YANG assigned name
              * @return corresponding «enums.name» item
-             * @throws NullPointerException if {@code name} is null
-             * @throws IllegalArgumentException if {@code name} does not match any item
+             * @throws «NPE.importedName» if {@code name} is null
+             * @throws «IAE.importedName» if {@code name} does not match any item
              */
             public static «enums.importedNonNull» ofName(«STRING.importedName» name) {
                 return «CODEHELPERS.importedName».checkEnum(forName(name), name);
@@ -135,7 +135,7 @@ class EnumTemplate extends BaseTemplate {
              *
              * @param intValue integer value
              * @return corresponding «enums.name» item
-             * @throws IllegalArgumentException if {@code intValue} does not match any item
+             * @throws «IAE.importedName» if {@code intValue} does not match any item
              */
             public static «enums.importedNonNull» ofValue(int intValue) {
                 return «CODEHELPERS.importedName».checkEnum(forValue(intValue), intValue);

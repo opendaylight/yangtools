@@ -226,7 +226,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
          * </ul>
          *
          * @param arg grouping object
-         * @throws IllegalArgumentException if given argument is none of valid types or has property with incompatible value
+         * @throws «IAE.importedName» if given argument is none of valid types or has property with incompatible value
         */
     '''
 
@@ -435,7 +435,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               *
               * @param augmentation augmentation to be added
               * @return this builder
-              * @throws NullPointerException if {@code augmentation} is null
+              * @throws «NPE.importedName» if {@code augmentation} is null
               */
             public «type.name» addAugmentation(«augmentTypeRef» augmentation) {
                 if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
