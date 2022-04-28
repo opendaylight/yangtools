@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2022 PANTHEON.tech s.r.o. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+module union-with-multi-identityref {
+  yang-version 1;
+  namespace "urn:opendaylight:yang:union:test";
+  prefix "uniontest";
+
+  description "test union with multiple identityref";
+
+  revision "2022-04-28";
+
+  identity ident-one;
+  identity ident-two;
+
+  typedef union-type {
+    type union {
+      type identityref {
+        base ident-one;
+      }
+      type identityref {
+        base ident-two;
+      }
+    }
+  }
+
+  container top {
+    leaf test-union-leaf{
+        type union-type;
+      }
+  }
+}

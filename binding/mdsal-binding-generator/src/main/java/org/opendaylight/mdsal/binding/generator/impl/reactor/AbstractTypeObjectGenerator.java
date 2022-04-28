@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.ArrayList;
@@ -729,6 +730,10 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                     builder.addEnclosingTransferObject(subBits);
                     generatedType = subBits;
                 } else if (TypeDefinitions.IDENTITYREF.equals(subName)) {
+                    propSource = stmt.findFirstEffectiveSubstatement(BaseEffectiveStatement.class)
+                        .orElseThrow(() -> new VerifyException(String.format("Invalid identityref "
+                            + "definition %s in %s, missing BASE statement", stmt, definingStatement)))
+                        .argument().getLocalName();
                     generatedType = verifyNotNull(dependencies.identityTypes.get(stmt),
                         "Cannot resolve identityref %s in %s", stmt, definingStatement)
                         .methodReturnType(builderFactory);
