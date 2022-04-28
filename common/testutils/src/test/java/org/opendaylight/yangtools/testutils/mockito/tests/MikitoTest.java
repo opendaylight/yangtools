@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.testutils.mockito.tests;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.testutils.mockito.MoreAnswers.realOrException;
 
@@ -48,12 +47,8 @@ public class MikitoTest {
     @Test
     public void usingMikitoToCallUnstubbedMethodAndExpectException() {
         MockSomeService service = mock(MockSomeService.class, realOrException());
-        try {
-            service.foo();
-            fail();
-        } catch (UnstubbedMethodException e) {
-            assertThat(e.getMessage()).isEqualTo("foo() is not implemented in mockSomeService");
-        }
+        String message = assertThrows(UnstubbedMethodException.class, service::foo).getMessage();
+        assertEquals("foo() is not implemented in mockSomeService", message);
     }
 
     abstract static class MockSomeService implements SomeService {

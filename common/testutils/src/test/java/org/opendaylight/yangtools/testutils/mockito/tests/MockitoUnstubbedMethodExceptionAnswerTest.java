@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.testutils.mockito.tests;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.testutils.mockito.MoreAnswers.exception;
 
 import java.io.Closeable;
@@ -18,17 +18,10 @@ import org.mockito.Mockito;
 import org.opendaylight.yangtools.testutils.mockito.UnstubbedMethodException;
 
 public class MockitoUnstubbedMethodExceptionAnswerTest {
-
     @Test
     public void testAnswering() throws IOException {
         Closeable mock = Mockito.mock(Closeable.class, exception());
-        try {
-            mock.close();
-            fail();
-        } catch (UnstubbedMethodException e) {
-            assertThat(e.getMessage()).isEqualTo("close() is not stubbed in mock of java.io.Closeable");
-        }
-
+        String message = assertThrows(UnstubbedMethodException.class, mock::close).getMessage();
+        assertEquals("close() is not stubbed in mock of java.io.Closeable", message);
     }
-
 }

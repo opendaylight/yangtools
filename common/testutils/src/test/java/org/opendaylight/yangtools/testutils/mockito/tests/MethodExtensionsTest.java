@@ -7,21 +7,20 @@
  */
 package org.opendaylight.yangtools.testutils.mockito.tests;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import org.junit.Test;
 import org.opendaylight.yangtools.testutils.mockito.MethodExtensions;
 
 public class MethodExtensionsTest {
-
     public <T> void fooBar(int index, T element) {
+        // No-op
     }
 
     @Test
     public void betterToString() throws Exception {
         Method method = MethodExtensionsTest.class.getMethod("fooBar", Integer.TYPE, Object.class);
-        assertThat(MethodExtensions.toString(method)).isEqualTo("fooBar(int index, T element)");
+        assertEquals("fooBar(int index, T element)", MethodExtensions.toString(method));
     }
-
 }
