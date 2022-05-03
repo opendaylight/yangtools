@@ -43,6 +43,7 @@ public final class ImportEffectiveStatementImpl extends WithSubstatements<String
     }
 
     @Override
+    @Deprecated(since = "8.0.4", forRemoval = true)
     public Optional<SemVer> getSemanticVersion() {
         return Optional.ofNullable(semVer);
     }
