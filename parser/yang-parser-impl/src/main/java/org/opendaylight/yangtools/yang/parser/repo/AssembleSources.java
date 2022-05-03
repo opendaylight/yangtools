@@ -90,6 +90,11 @@ final class AssembleSources implements AsyncFunction<List<IRSchemaSource>, Effec
         try {
             schemaContext = parser.buildEffectiveModel();
         } catch (final YangParserException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof ReactorException) {
+                throw new SchemaResolutionException("Failed to resolve required models",
+                    ((ReactorException) cause).getSourceIdentifier(), e);
+            }
             throw new SchemaResolutionException("Failed to resolve required models", e);
         }
 
