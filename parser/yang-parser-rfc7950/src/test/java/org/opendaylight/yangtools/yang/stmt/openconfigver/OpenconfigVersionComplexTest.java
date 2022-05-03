@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
+@Deprecated(since = "8.0.4", forRemoval = true)
 public class OpenconfigVersionComplexTest {
     private static final YangParserConfiguration SEMVER = YangParserConfiguration.builder()
         .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
