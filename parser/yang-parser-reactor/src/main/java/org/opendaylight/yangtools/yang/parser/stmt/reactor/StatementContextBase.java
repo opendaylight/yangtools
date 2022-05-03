@@ -150,12 +150,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      */
     private byte executionOrder;
 
-    /**
-     * This field should live in AbstractResumedStatement, but is placed here for memory efficiency to squat in the
-     * alignment shadow of {@link #bitsAight} and {@link #executionOrder}.
-     */
-    private boolean implicitDeclaredFlag;
-
     // TODO: we a single byte of alignment shadow left, we should think how we can use it to cache information we build
     //       during InferredStatementContext.tryToReusePrototype(). We usually end up being routed to
     //       copyAsChildOfImpl() -- which performs an eager instantiation and checks for changes afterwards. We should
@@ -877,13 +871,4 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      * @return True if {@link #allSubstatements()} and {@link #allSubstatementsStream()} would return an empty stream.
      */
     abstract boolean hasEmptySubstatements();
-
-    // Note: these two are exposed for AbstractResumedStatement only
-    final boolean getImplicitDeclaredFlag() {
-        return implicitDeclaredFlag;
-    }
-
-    final void setImplicitDeclaredFlag() {
-        implicitDeclaredFlag = true;
-    }
 }
