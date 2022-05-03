@@ -18,12 +18,12 @@ import org.opendaylight.yangtools.yang.common.Ordering;
  */
 @Beta
 @NonNullByDefault
-public interface OrderingAware {
+public sealed interface OrderingAware permits NormalizedNodeContainer, OrderingAware.System, OrderingAware.User {
     /**
      * Marker interface for NormalizedNodeContainer implementations which correspond to {@code ordered-by system}. These
      * follow the {@link Unordered} contract.
      */
-    interface System extends OrderingAware, Unordered {
+    non-sealed interface System extends OrderingAware, Unordered {
         @Override
         default Ordering ordering() {
             return Ordering.SYSTEM;
@@ -34,7 +34,7 @@ public interface OrderingAware {
      * Marker interface for NormalizedNodeContainer implementations which correspond to {@code ordered-by user}. These
      * follow the {@link Ordered} contract.
      */
-    interface User extends OrderingAware, Ordered {
+    non-sealed interface User extends OrderingAware, Ordered {
         @Override
         default Ordering ordering() {
             return Ordering.USER;
