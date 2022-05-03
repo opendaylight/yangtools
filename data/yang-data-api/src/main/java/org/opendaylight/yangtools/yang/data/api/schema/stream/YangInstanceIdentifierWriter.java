@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -257,12 +258,14 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
 
     private static AugmentationSchemaNode enterAugmentation(final AugmentationTarget target,
             final AugmentationIdentifier id) throws IOException {
-        for (var augment : target.getAvailableAugmentations()) {
+        final var augs = target.getAvailableAugmentations();
+        for (var augment : augs) {
             if (id.equals(augmentationIdentifierFrom(augment))) {
                 return augment;
             }
         }
-        throw new IOException("Cannot find augmentation " + id + " in " + target);
+        throw new IOException("Cannot find augmentation " + id + " in " + target + ", available: "
+            + Collections2.transform(augs, YangInstanceIdentifierWriter::augmentationIdentifierFrom));
     }
 
     // FIXME: duplicate of data.util.DataSchemaContextNode.augmentationIdentifierFrom()
