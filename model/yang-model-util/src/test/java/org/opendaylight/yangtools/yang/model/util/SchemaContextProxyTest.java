@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -369,8 +368,8 @@ public class SchemaContextProxyTest {
 
         SchemaContext schemaContext = mockSchema(module2, module3, module4, module5);
 
-        FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                Collections.singleton(module2), null);
+        FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(module2),
+            null);
         assertProxyContext(filteringSchemaContextProxy, module2, module3, module4, module5);
     }
 
@@ -397,8 +396,8 @@ public class SchemaContextProxyTest {
 
         SchemaContext schemaContext = mockSchema(moduleConfig, module2, module3, module4, module5);
 
-        FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-            Collections.singleton(module3), moduleConfig);
+        FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(module3),
+            moduleConfig);
         assertProxyContext(filteringSchemaContextProxy, moduleConfig, module2, module3, module4);
     }
 
@@ -406,12 +405,11 @@ public class SchemaContextProxyTest {
     public void testGetDataDefinitions() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
-        final Set<DataSchemaNode> childNodes = Collections.singleton(mockedContainer);
-        doReturn(childNodes).when(moduleConfig).getChildNodes();
+        doReturn(Set.of(mockedContainer)).when(moduleConfig).getChildNodes();
 
         final Collection<? extends DataSchemaNode> dataDefinitions =
                 filteringSchemaContextProxy.getDataDefinitions();
@@ -422,12 +420,11 @@ public class SchemaContextProxyTest {
     public void testGetNotifications() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final NotificationDefinition mockedNotification = mock(NotificationDefinition.class);
-        final Set<NotificationDefinition> notifications = Collections.singleton(mockedNotification);
-        doReturn(notifications).when(moduleConfig).getNotifications();
+        doReturn(Set.of(mockedNotification)).when(moduleConfig).getNotifications();
 
         final Collection<? extends NotificationDefinition> schemaContextProxyNotifications =
             filteringSchemaContextProxy.getNotifications();
@@ -438,12 +435,11 @@ public class SchemaContextProxyTest {
     public void testGetOperations() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final RpcDefinition mockedRpc = mock(RpcDefinition.class);
-        final Set<RpcDefinition> rpcs = Collections.singleton(mockedRpc);
-        doReturn(rpcs).when(moduleConfig).getRpcs();
+        doReturn(Set.of(mockedRpc)).when(moduleConfig).getRpcs();
 
         final Collection<? extends RpcDefinition> operations = filteringSchemaContextProxy.getOperations();
         assertTrue(operations.contains(mockedRpc));
@@ -453,12 +449,11 @@ public class SchemaContextProxyTest {
     public void testGetExtensions() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final ExtensionDefinition mockedExtension = mock(ExtensionDefinition.class);
-        final List<ExtensionDefinition> extensions = Collections.singletonList(mockedExtension);
-        doReturn(extensions).when(moduleConfig).getExtensionSchemaNodes();
+        doReturn(List.of(mockedExtension)).when(moduleConfig).getExtensionSchemaNodes();
 
         final Collection<? extends ExtensionDefinition> schemaContextProxyExtensions =
                 filteringSchemaContextProxy.getExtensions();
@@ -469,12 +464,11 @@ public class SchemaContextProxyTest {
     public void testGetUnknownSchemaNodes() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final UnknownSchemaNode mockedUnknownSchemaNode = mock(UnknownSchemaNode.class);
-        final List<UnknownSchemaNode> unknownSchemaNodes = Collections.singletonList(mockedUnknownSchemaNode);
-        doReturn(unknownSchemaNodes).when(moduleConfig).getUnknownSchemaNodes();
+        doReturn(List.of(mockedUnknownSchemaNode)).when(moduleConfig).getUnknownSchemaNodes();
 
         final Collection<? extends UnknownSchemaNode> schemaContextProxyUnknownSchemaNodes =
                 filteringSchemaContextProxy.getUnknownSchemaNodes();
@@ -485,12 +479,11 @@ public class SchemaContextProxyTest {
     public void testGetTypeDefinitions() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final TypeDefinition<?> mockedTypeDefinition = mock(TypeDefinition.class);
-        final Set<TypeDefinition<?>> typeDefinitions = Collections.singleton(mockedTypeDefinition);
-        doReturn(typeDefinitions).when(moduleConfig).getTypeDefinitions();
+        doReturn(Set.of(mockedTypeDefinition)).when(moduleConfig).getTypeDefinitions();
 
         final Collection<? extends TypeDefinition<?>> schemaContextProxyTypeDefinitions = filteringSchemaContextProxy
             .getTypeDefinitions();
@@ -501,12 +494,11 @@ public class SchemaContextProxyTest {
     public void testGetChildNodes() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
-        final Set<DataSchemaNode> childNodes = Collections.singleton(mockedContainer);
-        doReturn(childNodes).when(moduleConfig).getChildNodes();
+        doReturn(Set.of(mockedContainer)).when(moduleConfig).getChildNodes();
 
         final Collection<? extends DataSchemaNode> schemaContextProxyChildNodes =
                 filteringSchemaContextProxy.getChildNodes();
@@ -517,12 +509,11 @@ public class SchemaContextProxyTest {
     public void testGetGroupings() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final GroupingDefinition mockedGrouping = mock(GroupingDefinition.class);
-        final Set<GroupingDefinition> groupings = Collections.singleton(mockedGrouping);
-        doReturn(groupings).when(moduleConfig).getGroupings();
+        doReturn(Set.of(mockedGrouping)).when(moduleConfig).getGroupings();
 
         final Collection<? extends GroupingDefinition> schemaContextProxyGroupings =
                 filteringSchemaContextProxy.getGroupings();
@@ -533,8 +524,8 @@ public class SchemaContextProxyTest {
     public void testGetDataChildByName() {
         final Module moduleConfig = mockModule(CONFIG_NAME);
         final SchemaContext schemaContext = mockSchema(moduleConfig);
-        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
-                new HashSet<>(), moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(),
+            moduleConfig);
 
         final QName qname = QName.create("config-namespace", "2016-08-11", "cont");
         final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
@@ -547,7 +538,7 @@ public class SchemaContextProxyTest {
     private static void assertProxyContext(final FilteringSchemaContextProxy filteringSchemaContextProxy,
             final Module... expected) {
 
-        final Set<Module> modSet = expected != null ? ImmutableSet.copyOf(expected) : new HashSet<>();
+        final Set<Module> modSet = expected != null ? ImmutableSet.copyOf(expected) : Set.of();
         Set<Module> modSetFiltering = filteringSchemaContextProxy.getModules();
 
         assertEquals(modSet, modSetFiltering);
@@ -568,11 +559,7 @@ public class SchemaContextProxyTest {
 
     private static FilteringSchemaContextProxy createProxySchemaCtx(final SchemaContext schemaContext,
             final Set<Module> additionalModules, final Module... modules) {
-        Set<Module> modulesSet = new HashSet<>();
-        if (modules != null) {
-            modulesSet = ImmutableSet.copyOf(modules);
-        }
-
+        Set<Module> modulesSet = modules != null ? ImmutableSet.copyOf(modules) : Set.of();
         return new FilteringSchemaContextProxy(schemaContext, createModuleIds(modulesSet),
                 createModuleIds(additionalModules));
     }
@@ -589,10 +576,7 @@ public class SchemaContextProxyTest {
     }
 
     private static void mockSubmodules(final Module mainModule, final Submodule... submodules) {
-        Set<Submodule> submodulesSet = new HashSet<>();
-        submodulesSet.addAll(Arrays.asList(submodules));
-
-        doReturn(submodulesSet).when(mainModule).getSubmodules();
+        doReturn(Set.of(submodules)).when(mainModule).getSubmodules();
     }
 
     private static void mockModuleImport(final ModuleLike importer, final Module... imports) {
@@ -615,6 +599,7 @@ public class SchemaContextProxyTest {
                 }
 
                 @Override
+                @Deprecated(since = "8.0.4", forRemoval = true)
                 public Optional<SemVer> getSemanticVersion() {
                     return module.getSemanticVersion();
                 }
@@ -674,7 +659,7 @@ public class SchemaContextProxyTest {
         final XMLNamespace newNamespace = XMLNamespace.of(NAMESPACE.toString() + ":" + name);
         doReturn(newNamespace).when(mockedModule).getNamespace();
         doReturn(QNameModule.create(newNamespace, REVISION)).when(mockedModule).getQNameModule();
-        doReturn(new HashSet<>()).when(mockedModule).getSubmodules();
+        doReturn(Set.of()).when(mockedModule).getSubmodules();
         doReturn(mockedModule.getQNameModule().toString()).when(mockedModule).toString();
         mockModuleImport(mockedModule);
     }
