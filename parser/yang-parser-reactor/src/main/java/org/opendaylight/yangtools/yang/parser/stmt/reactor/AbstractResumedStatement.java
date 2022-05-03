@@ -176,10 +176,10 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         final var implicitParent = definition().getImplicitParentFor(this, support.getPublicView());
         if (implicitParent.isPresent()) {
             final var parent = createUndeclared(offset, implicitParent.orElseThrow(), ref, argument);
-            ret = new UndeclaredStmtCtx<>(parent, support, argument);
+            ret = new ImplicitStmtCtx<>(parent, support, argument);
             parent.addEffectiveSubstatement(ret);
         } else {
-            ret = new UndeclaredStmtCtx<>(this, support, argument);
+            ret = new ImplicitStmtCtx<>(this, support, argument);
             substatements = substatements.put(offset, ret);
         }
         support.onStatementAdded(ret);

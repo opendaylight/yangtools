@@ -1,0 +1,17 @@
+module bar {
+  namespace bar;
+  prefix bar;
+
+  feature bar;
+
+  container foo;
+
+  augment /foo {
+    choice bar {
+      leaf baz {
+        if-feature bar;
+        type string;
+      }
+    }
+  }
+}
