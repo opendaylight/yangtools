@@ -131,7 +131,9 @@ public abstract class YangModelDependencyInfo {
      * Returns semantic version of module.
      *
      * @return semantic version
+     * @deprecated Semantic versioning is deprecated
      */
+    @Deprecated(since = "8.0.4", forRemoval = true)
     public Optional<SemVer> getSemanticVersion() {
         return Optional.ofNullable(semVer);
     }
@@ -407,6 +409,7 @@ public abstract class YangModelDependencyInfo {
         }
 
         @Override
+        @Deprecated(forRemoval = true)
         public Optional<SemVer> getSemanticVersion() {
             return Optional.ofNullable(semVer);
         }

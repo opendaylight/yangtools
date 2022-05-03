@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 import org.xml.sax.SAXException;
 
+@Deprecated(since = "8.0.4", forRemoval = true)
 public class YinOpenconfigVersionTest {
     private static final YangParserConfiguration SEMVER = YangParserConfiguration.builder()
         .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
