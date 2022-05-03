@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -192,18 +191,12 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     private static byte historyFlags(final CopyType copyType) {
-        switch (copyType) {
-            case ADDED_BY_AUGMENTATION:
-                return COPY_ADDED_BY_AUGMENTATION;
-            case ADDED_BY_USES:
-                return COPY_ADDED_BY_USES;
-            case ADDED_BY_USES_AUGMENTATION:
-                return COPY_ADDED_BY_AUGMENTATION | COPY_ADDED_BY_USES;
-            case ORIGINAL:
-                return COPY_ORIGINAL;
-            default:
-                throw new VerifyException("Unhandled type " + copyType);
-        }
+        return switch (copyType) {
+            case ADDED_BY_AUGMENTATION -> COPY_ADDED_BY_AUGMENTATION;
+            case ADDED_BY_USES -> COPY_ADDED_BY_USES;
+            case ADDED_BY_USES_AUGMENTATION -> COPY_ADDED_BY_AUGMENTATION | COPY_ADDED_BY_USES;
+            case ORIGINAL -> COPY_ORIGINAL;
+        };
     }
 
     @Override
@@ -805,20 +798,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         if (implicitParent.isPresent()) {
             result = new UndeclaredStmtCtx(this, implicitParent.orElseThrow(), original, type);
 
-            final CopyType childCopyType;
-            switch (type) {
-                case ADDED_BY_AUGMENTATION:
-                    childCopyType = CopyType.ORIGINAL;
-                    break;
-                case ADDED_BY_USES_AUGMENTATION:
-                    childCopyType = CopyType.ADDED_BY_USES;
-                    break;
-                case ADDED_BY_USES:
-                case ORIGINAL:
-                default:
-                    childCopyType = type;
-            }
-
+            final CopyType childCopyType = switch (type) {
+                case ADDED_BY_AUGMENTATION -> CopyType.ORIGINAL;
+                case ADDED_BY_USES_AUGMENTATION -> CopyType.ADDED_BY_USES;
+                case ADDED_BY_USES, ORIGINAL -> type;
+            };
             copy = new InferredStatementContext<>(result, original, childCopyType, type, targetModule);
             result.addEffectiveSubstatement(copy);
             result.definition.onStatementAdded(result);
