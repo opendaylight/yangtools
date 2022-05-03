@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  *
  * @param <T> Value type
  */
-public interface LeafSetEntryNode<T> extends ValueNode<T> {
+public non-sealed interface LeafSetEntryNode<T> extends ValueNode<T> {
     @Override
     @SuppressWarnings("rawtypes")
     default Class<LeafSetEntryNode> contract() {
