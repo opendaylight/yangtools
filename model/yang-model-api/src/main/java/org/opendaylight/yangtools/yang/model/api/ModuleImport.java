@@ -43,7 +43,9 @@ public interface ModuleImport extends DocumentedNode, EffectiveStatementEquivale
      * Returns the semantic version to import.
      *
      * @return Semantic version of module to import
+     * @deprecated Semantic version imports are deprecated.
      */
+    @Deprecated(since = "8.0.4", forRemoval = true)
     Optional<SemVer> getSemanticVersion();
 
     /**

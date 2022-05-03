@@ -34,7 +34,9 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      *
      * @return SemVer semantic version of YANG module which is specified as argument of
      *         {@code (urn:opendaylight:yang:extension:semantic-version?revision=2016-02-02)semantic-version} statement
+     * @deprecated Semantic version imports are deprecated.
      */
+    @Deprecated(since = "8.0.4", forRemoval = true)
     Optional<SemVer> getSemanticVersion();
 
     /**
