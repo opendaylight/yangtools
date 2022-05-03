@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
-import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
@@ -133,11 +132,13 @@ public final class ModuleStatementSupport
         .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
         .build();
 
-    private final boolean semanticVersioning;
-
     private ModuleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.MODULE, StatementPolicy.reject(), config, validator);
-        semanticVersioning = config.importResolutionMode() == ImportResolutionMode.OPENCONFIG_SEMVER;
+
+        @SuppressWarnings("unused")
+        final var guard = switch (config.importResolutionMode()) {
+            case DEFAULT -> Empty.value();
+        };
     }
 
     public static @NonNull ModuleStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -213,10 +214,6 @@ public final class ModuleStatementSupport
         stmt.addToNs(ModuleCtxToSourceIdentifier.class, stmt, moduleIdentifier);
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, moduleName);
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
-
-        if (semanticVersioning) {
-            addToSemVerModuleNamespace(stmt, moduleIdentifier);
-        }
     }
 
     @Override
