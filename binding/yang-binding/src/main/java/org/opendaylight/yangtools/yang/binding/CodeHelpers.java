@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -117,8 +118,7 @@ public final class CodeHelpers {
      */
     public static void appendValue(final ToStringHelper helper, final String name, final byte[] value) {
         if (value != null) {
-            // FIXME: MDSAL-692: use hex-encoding instead
-            helper.add(name, Arrays.toString(value));
+            helper.add(name, HexFormat.of().formatHex(value));
         }
     }
 
@@ -214,8 +214,7 @@ public final class CodeHelpers {
      * @throws IllegalArgumentException always
      */
     public static void throwInvalidLength(final String expected, final byte[] actual) {
-        // FIXME: MDSAL-692: use hex-encoding instead
-        throwInvalidLength(expected, Arrays.toString(actual));
+        throwInvalidLength(expected, HexFormat.of().formatHex(actual));
     }
 
     /**

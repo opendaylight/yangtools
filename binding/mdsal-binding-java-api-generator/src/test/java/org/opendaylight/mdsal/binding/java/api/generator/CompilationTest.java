@@ -32,6 +32,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
@@ -417,7 +418,7 @@ public class CompilationTest extends BaseCompilationTest {
         final List<Range<Integer>> lengthConstraints = new ArrayList<>();
         lengthConstraints.add(Range.closed(1, 10));
         byte[] arg = new byte[] {};
-        String expectedMsg = String.format("Invalid length: %s, expected: %s.", Arrays.toString(arg),
+        String expectedMsg = String.format("Invalid length: %s, expected: %s.", HexFormat.of().formatHex(arg),
             lengthConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method, expectedMsg, arg);
 
