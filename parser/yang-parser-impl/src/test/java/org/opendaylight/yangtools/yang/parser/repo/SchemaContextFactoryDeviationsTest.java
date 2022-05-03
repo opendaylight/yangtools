@@ -12,16 +12,10 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.SetMultimap;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -51,63 +45,47 @@ public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepository
     private static final QNameModule BAZ_MODULE = QNameModule.create(BAZ_NS, REVISION);
 
     @Test
-    public void testDeviationsSupportedInSomeModules() throws Exception {
-        final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations =
-                ImmutableSetMultimap.<QNameModule, QNameModule>builder()
-                .put(FOO_MODULE, BAR_MODULE)
-                .put(FOO_MODULE, BAZ_MODULE)
-                .put(BAR_MODULE, BAZ_MODULE)
-                .build();
+    public void testDeviationsSupportedInSomeModules() {
+        final var context = assertModelContext(ImmutableSetMultimap.<QNameModule, QNameModule>builder()
+            .put(FOO_MODULE, BAR_MODULE)
+            .put(FOO_MODULE, BAZ_MODULE)
+            .put(BAR_MODULE, BAZ_MODULE)
+            .build(),
+            FOO, BAR, BAZ, FOOBAR);
 
-        final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(modulesWithSupportedDeviations, FOO, BAR,
-            BAZ, FOOBAR);
-        assertTrue(lf.isDone());
-        final EffectiveModelContext schemaContext = lf.get();
-        assertNotNull(schemaContext);
-
-        assertAbsent(schemaContext, MY_FOO_CONT_A);
-        assertAbsent(schemaContext, MY_FOO_CONT_B);
-        assertPresent(schemaContext, MY_FOO_CONT_C);
-        assertAbsent(schemaContext, MY_BAR_CONT_A);
-        assertPresent(schemaContext, MY_BAR_CONT_B);
+        assertAbsent(context, MY_FOO_CONT_A);
+        assertAbsent(context, MY_FOO_CONT_B);
+        assertPresent(context, MY_FOO_CONT_C);
+        assertAbsent(context, MY_BAR_CONT_A);
+        assertPresent(context, MY_BAR_CONT_B);
     }
 
     @Test
-    public void testDeviationsSupportedInAllModules() throws Exception {
-        final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(null, FOO, BAR, BAZ, FOOBAR);
-        assertTrue(lf.isDone());
-        final EffectiveModelContext schemaContext = lf.get();
-        assertNotNull(schemaContext);
+    public void testDeviationsSupportedInAllModules() {
+        final var context = assertModelContext(null, FOO, BAR, BAZ, FOOBAR);
 
-        assertAbsent(schemaContext, MY_FOO_CONT_A);
-        assertAbsent(schemaContext, MY_FOO_CONT_B);
-        assertAbsent(schemaContext, MY_FOO_CONT_C);
-        assertAbsent(schemaContext, MY_BAR_CONT_A);
-        assertAbsent(schemaContext, MY_BAR_CONT_B);
+        assertAbsent(context, MY_FOO_CONT_A);
+        assertAbsent(context, MY_FOO_CONT_B);
+        assertAbsent(context, MY_FOO_CONT_C);
+        assertAbsent(context, MY_BAR_CONT_A);
+        assertAbsent(context, MY_BAR_CONT_B);
     }
 
     @Test
-    public void testDeviationsSupportedInNoModule() throws Exception {
-        final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(ImmutableSetMultimap.of(), FOO, BAR, BAZ,
-            FOOBAR);
-        assertTrue(lf.isDone());
-        final EffectiveModelContext schemaContext = lf.get();
-        assertNotNull(schemaContext);
+    public void testDeviationsSupportedInNoModule() {
+        final var context = assertModelContext(ImmutableSetMultimap.of(), FOO, BAR, BAZ, FOOBAR);
 
-        assertPresent(schemaContext, MY_FOO_CONT_A);
-        assertPresent(schemaContext, MY_FOO_CONT_B);
-        assertPresent(schemaContext, MY_FOO_CONT_C);
-        assertPresent(schemaContext, MY_BAR_CONT_A);
-        assertPresent(schemaContext, MY_BAR_CONT_B);
+        assertPresent(context, MY_FOO_CONT_A);
+        assertPresent(context, MY_FOO_CONT_B);
+        assertPresent(context, MY_FOO_CONT_C);
+        assertPresent(context, MY_BAR_CONT_A);
+        assertPresent(context, MY_BAR_CONT_B);
     }
 
     @Test
-    public void shouldFailOnAttemptToDeviateTheSameModule2() throws Exception {
-        final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(null, BAR_INVALID, BAZ_INVALID);
-        assertTrue(lf.isDone());
+    public void shouldFailOnAttemptToDeviateTheSameModule2() {
+        final var cause = Throwables.getRootCause(assertExecutionException(null, BAR_INVALID, BAZ_INVALID));
 
-        final ExecutionException ex = assertThrows(ExecutionException.class, lf::get);
-        final Throwable cause = Throwables.getRootCause(ex);
         assertThat(cause, instanceOf(InferenceException.class));
         assertThat(cause.getMessage(),
             startsWith("Deviation must not target the same module as the one it is defined in"));

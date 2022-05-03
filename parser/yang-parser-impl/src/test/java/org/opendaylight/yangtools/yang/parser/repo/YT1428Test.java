@@ -10,19 +10,15 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
-import com.google.common.util.concurrent.Futures;
-import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 
 public class YT1428Test extends AbstractSchemaRepositoryTest {
     @Test
-    public void testDeviateSourceReported() throws Exception {
-        final var future = createSchemaContext(null, "/yt1428/orig.yang", "/yt1428/deviate.yang");
-        final var cause = assertThrows(ExecutionException.class, () -> Futures.getDone(future)).getCause();
+    public void testDeviateSourceReported() {
+        final var cause = assertExecutionException(null, "/yt1428/orig.yang", "/yt1428/deviate.yang").getCause();
         assertThat(cause, instanceOf(SchemaResolutionException.class));
         assertEquals(RevisionSourceIdentifier.create("deviate"), ((SchemaResolutionException) cause).getFailedSource());
     }

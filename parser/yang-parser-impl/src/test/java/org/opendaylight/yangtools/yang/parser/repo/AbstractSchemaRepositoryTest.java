@@ -7,11 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static org.junit.Assert.assertThrows;
+
 import com.google.common.collect.SetMultimap;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
@@ -19,9 +24,26 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
+import org.opentest4j.AssertionFailedError;
 
 public abstract class AbstractSchemaRepositoryTest {
-    static ListenableFuture<EffectiveModelContext> createSchemaContext(
+    static @NonNull EffectiveModelContext assertModelContext(
+            final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
+        final var future = createModelContext(modulesWithSupportedDeviations, resources);
+        try {
+            return Futures.getDone(future);
+        } catch (ExecutionException e) {
+            throw new AssertionFailedError("Failed to create context", e);
+        }
+    }
+
+    static @NonNull ExecutionException assertExecutionException(
+            final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
+        final var future = createModelContext(modulesWithSupportedDeviations, resources);
+        return assertThrows(ExecutionException.class, () -> Futures.getDone(future));
+    }
+
+    static ListenableFuture<EffectiveModelContext> createModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
         final var sharedSchemaRepository = new SharedSchemaRepository();
         final var requiredSources = Arrays.stream(resources)
