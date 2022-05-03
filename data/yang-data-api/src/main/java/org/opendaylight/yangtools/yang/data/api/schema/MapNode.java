@@ -21,8 +21,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * This node maps to the list node in YANG schema, schema and semantics of this node, its children and key construction
  * is defined by YANG {@code list} statement and its {@code key} and {@code ordered-by} substatements.
  */
-public interface MapNode
-        extends DistinctNodeContainer<NodeIdentifierWithPredicates, MapEntryNode>, DataContainerChild, MixinNode {
+public sealed interface MapNode
+        extends DistinctNodeContainer<NodeIdentifierWithPredicates, MapEntryNode>, DataContainerChild, MixinNode
+        permits SystemMapNode, UserMapNode {
     @Override
     Class<? extends MapNode> contract();
 
