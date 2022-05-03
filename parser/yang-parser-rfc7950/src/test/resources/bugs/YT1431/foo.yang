@@ -1,0 +1,13 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  feature foo;
+
+  choice foo {
+    leaf bar {
+      if-feature foo;
+      type string;
+    }
+  }
+}

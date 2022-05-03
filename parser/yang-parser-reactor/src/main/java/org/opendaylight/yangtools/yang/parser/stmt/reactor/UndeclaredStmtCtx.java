@@ -27,14 +27,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactor
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 
 /**
-/**
- * Core reactor statement implementation of {@link Mutable}.
+ * A statement which has not been declared, but exists in the statement hierarchy through some inference.
  *
  * @param <A> Argument type
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-final class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends OriginalStmtCtx<A, D, E> implements UndeclaredCurrent<A, D> {
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
@@ -68,7 +67,7 @@ final class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         this.argument = castArgument(original);
     }
 
-    // Exposed for AbstractResumedStatement
+    // Exposed for ImplicitStmtCtx
     UndeclaredStmtCtx(final StatementContextBase<?, ?, ?> parent, final StatementSupport<A, D, E> support,
             final String rawArgument) {
         super(new StatementDefinitionContext<>(support), ImplicitSubstatement.of(parent.sourceReference()));
