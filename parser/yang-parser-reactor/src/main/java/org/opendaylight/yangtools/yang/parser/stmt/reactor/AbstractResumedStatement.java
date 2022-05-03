@@ -39,6 +39,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     private StatementMap substatements = StatementMap.empty();
     private @Nullable D declaredInstance;
+    private boolean implicitDeclared;
 
     // Copy constructor
     AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
@@ -80,7 +81,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private @NonNull Stream<DeclaredStatement<?>> substatementsAsDeclared() {
         final Stream<AbstractResumedStatement<?, ?, ?>> stream;
-        if (getImplicitDeclaredFlag()) {
+        if (implicitDeclared) {
             stream = substatements.stream().map(AbstractResumedStatement::unmaskUndeclared);
         } else {
             stream = (Stream) substatements.stream();
@@ -155,7 +156,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         final SubstatementContext<X, Y, Z> ret;
         final var implicitParent = definition().getImplicitParentFor(this, def.getPublicView());
         if (implicitParent.isPresent()) {
-            setImplicitDeclaredFlag();
+            implicitDeclared = true;
             final var parent = createUndeclared(offset, implicitParent.orElseThrow(), ref, argument);
             ret = new SubstatementContext<>(parent, def, ref, argument);
             parent.addEffectiveSubstatement(ret);
