@@ -95,18 +95,17 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
             }
 
             final var arg = it.next();
-            if (arg instanceof AugmentationIdentifier) {
-                if (!(parent instanceof AugmentationTarget)) {
+            if (arg instanceof AugmentationIdentifier augId) {
+                if (!(parent instanceof AugmentationTarget target)) {
                     throw new IOException(parent + " does not support augmentations, cannot resolve" + arg);
                 }
                 if (reuse) {
                     throw new IOException(parent + " is expecting a nested item, cannot resolve " + arg);
                 }
 
-                final var augId = (AugmentationIdentifier) arg;
-                parent = enterAugmentation((AugmentationTarget) parent, augId);
+                parent = enterAugmentation(target, augId);
                 writer.startAugmentationNode(augId);
-            } else if (arg instanceof NodeWithValue) {
+            } else if (arg instanceof NodeWithValue<?> nodeId) {
                 if (!(parent instanceof LeafListSchemaNode)) {
                     throw new IOException(parent + " does not support leaf-list entry " + arg);
                 }
@@ -116,17 +115,14 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
 
                 reuse = false;
                 terminal = true;
-                writer.startLeafSetEntryNode((NodeWithValue<?>) arg);
-            } else if (arg instanceof NodeIdentifierWithPredicates) {
-                if (!(parent instanceof ListSchemaNode)) {
+                writer.startLeafSetEntryNode(nodeId);
+            } else if (arg instanceof NodeIdentifierWithPredicates nodeId) {
+                if (!(parent instanceof ListSchemaNode list)) {
                     throw new IOException(parent + " does not support map entry " + arg);
                 }
                 if (!reuse) {
                     throw new IOException(parent + " is already at its entry, cannot enter " + arg);
                 }
-
-                final var nodeId = (NodeIdentifierWithPredicates) arg;
-                final var list = (ListSchemaNode) parent;
                 if (!list.getQName().equals(nodeId.getNodeType())) {
                     throw new IOException(parent + " expects a matching map entry, cannot enter " + arg);
                 }
@@ -141,15 +137,12 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
 
                 reuse = false;
                 writer.startMapEntryNode(normalizePredicates(nodeId, key), 1);
-            } else if (arg instanceof NodeIdentifier) {
-                final var nodeId = (NodeIdentifier) arg;
-
+            } else if (arg instanceof NodeIdentifier nodeId) {
                 if (reuse) {
-                    if (!(parent instanceof ListSchemaNode)) {
+                    if (!(parent instanceof ListSchemaNode list)) {
                         throw new IOException(parent + " expects an identifiable entry, cannot enter " + arg);
                     }
 
-                    final var list = (ListSchemaNode) parent;
                     if (!list.getKeyDefinition().isEmpty()) {
                         throw new IOException(parent + " expects a map entry, cannot enter " + arg);
                     }
@@ -164,10 +157,10 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
                 }
 
                 final DataSchemaNode child;
-                if (parent instanceof DataNodeContainer) {
-                    child = ((DataNodeContainer) parent).dataChildByName(nodeId.getNodeType());
-                } else if (parent instanceof ChoiceSchemaNode) {
-                    child = ((ChoiceSchemaNode) parent).findDataSchemaChild(nodeId.getNodeType()).orElse(null);
+                if (parent instanceof DataNodeContainer container) {
+                    child = container.dataChildByName(nodeId.getNodeType());
+                } else if (parent instanceof ChoiceSchemaNode choice) {
+                    child = choice.findDataSchemaChild(nodeId.getNodeType()).orElse(null);
                 } else {
                     throw new IOException("Unhandled parent " + parent + " when looking up " + arg);
                 }
@@ -181,10 +174,9 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
                 if (child instanceof ContainerLike) {
                     parent = child;
                     writer.startContainerNode(nodeId, 1);
-                } else if (child instanceof ListSchemaNode) {
+                } else if (child instanceof ListSchemaNode list) {
                     parent = child;
                     reuse = true;
-                    final var list = (ListSchemaNode) child;
                     if (list.getKeyDefinition().isEmpty()) {
                         writer.startUnkeyedList(nodeId, 1);
                     } else if (list.isUserOrdered()) {
@@ -199,10 +191,10 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
                 } else if (child instanceof ChoiceSchemaNode) {
                     parent = child;
                     writer.startChoiceNode(nodeId, 1);
-                } else if (child instanceof LeafListSchemaNode) {
+                } else if (child instanceof LeafListSchemaNode leafList) {
                     parent = child;
                     reuse = true;
-                    if (((LeafListSchemaNode) child).isUserOrdered()) {
+                    if (leafList.isUserOrdered()) {
                         writer.startOrderedLeafSet(nodeId, 1);
                     } else {
                         writer.startLeafSet(nodeId, 1);
