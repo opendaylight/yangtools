@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb84537a_9acd3b3b",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "missing header",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 2
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a1a6746_e6dbadc7",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "add javadoc with a reference to the RFC\n\npublic final class TagType",
+      "range": {
+        "startLine": 3,
+        "startChar": 12,
+        "endLine": 3,
+        "endChar": 26
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0bdf9e88_c8246c07",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "javadocs for each, and each of these should be an\n\npublic static final @NonNull TagType IETF \u003d new TagType(\"ietf:\");",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 8
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cc27327_8b42a5da",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "these two are not really assignments",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 14
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5416a58_dab4720c",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "requireNonNull(prefix)",
+      "range": {
+        "startLine": 13,
+        "startChar": 22,
+        "endLine": 13,
+        "endChar": 28
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44e400ff_cbfd070a",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "not needed",
+      "range": {
+        "startLine": 15,
+        "startChar": 4,
+        "endLine": 15,
+        "endChar": 10
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb0285e8_8d6fe7d6",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "@NonNull prefix()",
+      "range": {
+        "startLine": 19,
+        "startChar": 11,
+        "endLine": 19,
+        "endChar": 27
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "97874dfb_d31403ad",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/Tag.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "TagType type, String value",
+      "range": {
+        "startLine": 28,
+        "startChar": 38,
+        "endLine": 28,
+        "endChar": 84
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64e8b39e_26eb127c",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/Tag.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "yes, IllegalArgumentException. StatementSupport.parseArgument() needs to catch it and turn it into a SourceException.",
+      "range": {
+        "startLine": 45,
+        "startChar": 59,
+        "endLine": 45,
+        "endChar": 109
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0dae7f0_ca63af3a",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/Tag.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-05-03T20:30:45Z",
+      "side": 1,
+      "message": "always compile Patterns into a constant",
+      "range": {
+        "startLine": 58,
+        "startChar": 27,
+        "endLine": 58,
+        "endChar": 36
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
