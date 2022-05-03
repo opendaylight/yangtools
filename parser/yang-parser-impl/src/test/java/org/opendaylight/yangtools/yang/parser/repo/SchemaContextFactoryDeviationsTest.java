@@ -20,8 +20,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
@@ -30,14 +28,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 
-public class SchemaContextFactoryDeviationsTest {
+public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepositoryTest {
     private static final String FOO = "/bug9195/foo.yang";
     private static final String BAR = "/bug9195/bar.yang";
     private static final String BAZ = "/bug9195/baz.yang";
@@ -126,33 +119,5 @@ public class SchemaContextFactoryDeviationsTest {
 
     private static void assertPresent(final EffectiveModelContext schemaContext, final QName qname) {
         assertNotEquals(Optional.empty(), schemaContext.findDataTreeChild(qname));
-    }
-
-    private static SettableSchemaProvider<IRSchemaSource> getImmediateYangSourceProviderFromResource(
-            final String resourceName) throws Exception {
-        final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
-                IRSchemaSource.class);
-    }
-
-    private static ListenableFuture<EffectiveModelContext> createSchemaContext(
-            final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources)
-            throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
-                "shared-schema-repo-with-deviations-test");
-
-        final Collection<SourceIdentifier> requiredSources = new ArrayList<>();
-        for (final String resource : resources) {
-            final SettableSchemaProvider<IRSchemaSource> yangSource = getImmediateYangSourceProviderFromResource(
-                    resource);
-            yangSource.register(sharedSchemaRepository);
-            yangSource.setResult();
-            requiredSources.add(yangSource.getId());
-        }
-
-        final SchemaContextFactoryConfiguration config = SchemaContextFactoryConfiguration.builder()
-                .setModulesDeviatedByModules(modulesWithSupportedDeviations).build();
-        return sharedSchemaRepository.createEffectiveModelContextFactory(config).createEffectiveModelContext(
-            requiredSources);
     }
 }
