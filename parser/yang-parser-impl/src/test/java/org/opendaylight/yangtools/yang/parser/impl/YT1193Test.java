@@ -11,16 +11,21 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 public class YT1193Test {
@@ -49,6 +54,22 @@ public class YT1193Test {
                     throw new IllegalStateException("Unexpected statement " + stmt);
             }
         }
+    }
+
+    @Test
+    public void testSupportedFeaturesEmptyCollection() throws Exception {
+        final YangParser parser = new DefaultYangParserFactory().createParser();
+        // Test will success if SupportedFeatures will not be set with empty collection.
+        parser.setSupportedFeatures(Collections.emptySet());
+
+        final File file = new File(getClass().getResource("/ietf-ip").toURI());
+        assertNotNull(file.listFiles());
+        for (File model : file.listFiles()) {
+            parser.addSource(YangTextSchemaSource.forPath(model.toPath()));
+        }
+
+        final EffectiveModelContext effectiveModelContext = parser.buildEffectiveModel();
+        assertNotNull(effectiveModelContext);
     }
 
     private static void assertFooReferences(final DeclaredStatement<?> foo) {
