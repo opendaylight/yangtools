@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
-import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -68,11 +67,13 @@ public final class ImportStatementSupport
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
-    private final boolean semanticVersioning;
-
     private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.IMPORT, StatementPolicy.reject(), config, validator);
-        semanticVersioning = config.importResolutionMode() == ImportResolutionMode.OPENCONFIG_SEMVER;
+
+        @SuppressWarnings("unused")
+        final var guard = switch (config.importResolutionMode()) {
+            case DEFAULT -> Empty.value();
+        };
     }
 
     public static @NonNull ImportStatementSupport rfc6020Instance(final YangParserConfiguration config) {
