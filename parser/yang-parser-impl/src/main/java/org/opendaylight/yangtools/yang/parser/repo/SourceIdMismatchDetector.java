@@ -45,7 +45,7 @@ final class SourceIdMismatchDetector implements Function<List<IRSchemaSource>, L
                 final SourceIdentifier expectedSId = srcIt.next();
                 if (!expectedSId.equals(realSId)) {
                     LOG.warn("Source identifier mismatch for module \"{}\", requested as {} but actually is {}. "
-                        + "Using actual id", expectedSId.getName(), expectedSId, realSId);
+                        + "Using actual id", expectedSId.name().getLocalName(), expectedSId, realSId);
                 }
             }
 

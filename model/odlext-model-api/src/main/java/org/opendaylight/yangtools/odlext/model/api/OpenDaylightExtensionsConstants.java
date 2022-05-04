@@ -11,8 +11,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * @author Robert Varga
  */
 public final class OpenDaylightExtensionsConstants {
-    private static final String MODULE_NAME = "yang-ext";
+    private static final Unqualified MODULE_NAME = Unqualified.of("yang-ext").intern();
     private static final XMLNamespace MODULE_NAMESPACE =
         XMLNamespace.of("urn:opendaylight:yang:extension:yang-ext").intern();
     private static final Revision ORIGINAL_REVISION = Revision.of("2013-07-09");
@@ -34,8 +34,7 @@ public final class OpenDaylightExtensionsConstants {
     /**
      * Baseline model source name.
      */
-    public static final SourceIdentifier ORIGINAL_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        ORIGINAL_REVISION);
+    public static final SourceIdentifier ORIGINAL_SOURCE = new SourceIdentifier(MODULE_NAME, ORIGINAL_REVISION);
 
     private OpenDaylightExtensionsConstants() {
         // Hidden on purpose

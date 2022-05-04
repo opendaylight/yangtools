@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -26,7 +27,7 @@ public class Bug9005Test extends AbstractYangTest {
         final Collection<? extends ModuleImport> imports = foo.getImports();
         assertEquals(1, imports.size());
         final ModuleImport imp1 = imports.iterator().next();
-        assertEquals("bar-2", imp1.getModuleName());
+        assertEquals(Unqualified.of("bar-2"), imp1.getModuleName());
         assertEquals("bar", imp1.getPrefix());
         assertEquals(Revision.ofNullable("2000-01-02"), imp1.getRevision());
 
@@ -37,7 +38,7 @@ public class Bug9005Test extends AbstractYangTest {
 
         assertEquals(1, subImports.size());
         final ModuleImport subImp1 = subImports.iterator().next();
-        assertEquals("bar-1", subImp1.getModuleName());
+        assertEquals(Unqualified.of("bar-1"), subImp1.getModuleName());
         assertEquals("bar", subImp1.getPrefix());
         assertEquals(Revision.ofNullable("2000-01-01"), subImp1.getRevision());
     }
