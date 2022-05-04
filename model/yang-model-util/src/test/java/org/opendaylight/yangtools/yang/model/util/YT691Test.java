@@ -11,12 +11,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -24,13 +21,12 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class YT691Test {
     @Test
     public void testGetAllModuleIdentifiers() {
-        final Optional<Revision> revision = Revision.ofNullable("2016-01-01");
-        final SourceIdentifier foo = RevisionSourceIdentifier.create("foo", revision);
-        final SourceIdentifier sub1Foo = RevisionSourceIdentifier.create("sub1-foo", revision);
-        final SourceIdentifier sub2Foo = RevisionSourceIdentifier.create("sub2-foo", revision);
-        final SourceIdentifier bar = RevisionSourceIdentifier.create("bar", revision);
-        final SourceIdentifier sub1Bar = RevisionSourceIdentifier.create("sub1-bar", revision);
-        final SourceIdentifier baz = RevisionSourceIdentifier.create("baz", revision);
+        final SourceIdentifier foo = new SourceIdentifier("foo", "2016-01-01");
+        final SourceIdentifier sub1Foo = new SourceIdentifier("sub1-foo", "2016-01-01");
+        final SourceIdentifier sub2Foo = new SourceIdentifier("sub2-foo", "2016-01-01");
+        final SourceIdentifier bar = new SourceIdentifier("bar", "2016-01-01");
+        final SourceIdentifier sub1Bar = new SourceIdentifier("sub1-bar", "2016-01-01");
+        final SourceIdentifier baz = new SourceIdentifier("baz", "2016-01-01");
         final Set<SourceIdentifier> testSet = ImmutableSet.of(foo, sub1Foo, sub2Foo, bar, sub1Bar, baz);
         final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/yt691");
         final Set<SourceIdentifier> allModuleIdentifiers = SchemaContextUtil.getConstituentModuleIdentifiers(context);

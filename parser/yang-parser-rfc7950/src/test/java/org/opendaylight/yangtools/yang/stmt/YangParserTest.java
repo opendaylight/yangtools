@@ -29,6 +29,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -75,11 +76,11 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(2, imports.size());
 
         final ModuleImport import2 = TestUtils.findImport(imports, "br");
-        assertEquals("bar", import2.getModuleName());
+        assertEquals(Unqualified.of("bar"), import2.getModuleName());
         assertEquals(Revision.ofNullable("2013-07-03"), import2.getRevision());
 
         final ModuleImport import3 = TestUtils.findImport(imports, "bz");
-        assertEquals("baz", import3.getModuleName());
+        assertEquals(Unqualified.of("baz"), import3.getModuleName());
         assertEquals(Revision.ofNullable("2013-02-27"), import3.getRevision());
 
         assertEquals(Optional.of("opendaylight"), FOO.getOrganization());

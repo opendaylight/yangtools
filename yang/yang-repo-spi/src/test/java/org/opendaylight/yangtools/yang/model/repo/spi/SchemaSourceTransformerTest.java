@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -48,10 +47,10 @@ public class SchemaSourceTransformerTest {
 
     @Test
     public void schemaSourceTransformerTest() {
-        this.schema = new SchemaSourceTransformer<>(
-                this.provider, SchemaSourceTransformerTest.SRC_CLASS, this.consumer,
-                SchemaSourceTransformerTest.DST_CLASS, this.function);
-        assertNotNull(this.schema);
+        schema = new SchemaSourceTransformer<>(
+                provider, SchemaSourceTransformerTest.SRC_CLASS, consumer,
+                SchemaSourceTransformerTest.DST_CLASS, function);
+        assertNotNull(schema);
     }
 
     @Test
@@ -59,12 +58,12 @@ public class SchemaSourceTransformerTest {
         final Provider p = new Provider();
         final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.IMMEDIATE);
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("source");
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
         reg.register(sourceIdentifier);
-        this.schema = new SchemaSourceTransformer<>(p,
-                SchemaSourceTransformerTest.SRC_CLASS, this.consumer, SchemaSourceTransformerTest.DST_CLASS,
-                this.function);
-        final SchemaSourceProvider<YinXmlSchemaSource> prov = this.schema;
+        schema = new SchemaSourceTransformer<>(p,
+                SchemaSourceTransformerTest.SRC_CLASS, consumer, SchemaSourceTransformerTest.DST_CLASS,
+                function);
+        final SchemaSourceProvider<YinXmlSchemaSource> prov = schema;
         final Future<? extends YinXmlSchemaSource> source = prov.getSource(sourceIdentifier);
         assertNotNull(source);
         source.cancel(true);
@@ -73,7 +72,7 @@ public class SchemaSourceTransformerTest {
 
     @Test
     public void schemaSourceRegAndUnregSchemaSourceTest() {
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("source");
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
         final Foo<YangSchemaSourceRepresentation> foo = new Foo<>(sourceIdentifier,
                 SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.COMPUTATION);
@@ -84,24 +83,24 @@ public class SchemaSourceTransformerTest {
         reg.register(sourceIdentifier);
 
         final Consumer c = new Consumer();
-        this.schema = new SchemaSourceTransformer<>(p,
-                SchemaSourceTransformerTest.SRC_CLASS, c, SchemaSourceTransformerTest.DST_CLASS, this.function);
+        schema = new SchemaSourceTransformer<>(p,
+                SchemaSourceTransformerTest.SRC_CLASS, c, SchemaSourceTransformerTest.DST_CLASS, function);
 
-        final SchemaSourceListener listener = this.schema;
+        final SchemaSourceListener listener = schema;
         p.registerSchemaSourceListener(listener);
 
         final PotentialSchemaSource<?>[] potList = { foo.getPotentialSchemSource() };
         final Iterable<PotentialSchemaSource<?>> sources = Arrays.asList(potList);
         listener.schemaSourceRegistered(sources);
-        final ListenableFuture<YinXmlSchemaSource> source = this.schema.getSource(sourceIdentifier);
+        final ListenableFuture<YinXmlSchemaSource> source = schema.getSource(sourceIdentifier);
         assertNotNull(source);
 
         listener.schemaSourceUnregistered(foo.getPotentialSchemSource());
-        final ListenableFuture<YinXmlSchemaSource> source2 = this.schema.getSource(sourceIdentifier);
+        final ListenableFuture<YinXmlSchemaSource> source2 = schema.getSource(sourceIdentifier);
         assertNotNull(source2);
     }
 
-    private class Foo<T extends SchemaSourceRepresentation> {
+    private static class Foo<T extends SchemaSourceRepresentation> {
 
         final PotentialSchemaSource<T> src;
 
@@ -116,7 +115,7 @@ public class SchemaSourceTransformerTest {
 
     }
 
-    private class Registrator extends AbstractSchemaSourceCache<YangSchemaSourceRepresentation> {
+    private static class Registrator extends AbstractSchemaSourceCache<YangSchemaSourceRepresentation> {
 
         Registrator(final SchemaSourceRegistry consumer, final Class<YangSchemaSourceRepresentation> srcClass,
                 final Costs cost) {
@@ -136,7 +135,7 @@ public class SchemaSourceTransformerTest {
 
     }
 
-    private class Provider extends AbstractSchemaRepository {
+    private static class Provider extends AbstractSchemaRepository {
         @Override
         public EffectiveModelContextFactory createEffectiveModelContextFactory(
                 final SchemaContextFactoryConfiguration config) {
@@ -144,7 +143,7 @@ public class SchemaSourceTransformerTest {
         }
     }
 
-    private class Consumer extends AbstractSchemaRepository {
+    private static class Consumer extends AbstractSchemaRepository {
         @Override
         public EffectiveModelContextFactory createEffectiveModelContextFactory(
                 final SchemaContextFactoryConfiguration config) {

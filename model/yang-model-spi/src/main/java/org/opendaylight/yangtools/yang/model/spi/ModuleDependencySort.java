@@ -110,7 +110,7 @@ public final class ModuleDependencySort {
 
             // no need to check if other Type of object, check is performed in process modules
             for (final ModuleImport imprt : allImports(module)) {
-                final String toName = imprt.getModuleName();
+                final String toName = imprt.getModuleName().getLocalName();
                 final Optional<Revision> toRevision = imprt.getRevision();
 
                 final ModuleNodeImpl from = moduleGraph.get(fromName, fromRevision);
@@ -218,7 +218,7 @@ public final class ModuleDependencySort {
         ModuleNodeImpl(final String name, final Revision revision, final Module module) {
             this.name = name;
             this.revision = revision;
-            this.originalObject = module;
+            originalObject = module;
         }
 
         String getName() {

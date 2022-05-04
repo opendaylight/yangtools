@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -64,7 +65,7 @@ public class EffectiveModuleTest {
         assertEquals(1, imports.size());
         final ModuleImport importStmt = imports.iterator().next();
         assertNotNull(importStmt);
-        assertEquals("imported", importStmt.getModuleName());
+        assertEquals(Unqualified.of("imported"), importStmt.getModuleName());
         assertEquals(Optional.of(REVISION), importStmt.getRevision());
         assertEquals("imp-pref", importStmt.getPrefix());
 
