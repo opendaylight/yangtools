@@ -35,7 +35,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -141,9 +140,9 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
-        final Optional<Revision> rev = identifier.getRevision();
+        final Revision rev = identifier.revision();
         final File file;
-        if (rev.isEmpty()) {
+        if (rev == null) {
             // FIXME: this does not look right
             file = findFileWithNewestRev(identifier, storageDirectory);
         } else {
@@ -152,11 +151,9 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         return file;
     }
 
-    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-            justification = "listFiles is analyzed to return null")
     private static File findFileWithNewestRev(final SourceIdentifier identifier, final File storageDirectory) {
         File[] files = storageDirectory.listFiles(new FilenameFilter() {
-            final Pattern pat = Pattern.compile(Pattern.quote(identifier.getName())
+            final Pattern pat = Pattern.compile(Pattern.quote(identifier.name().getLocalName())
                     + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
 
             @Override
@@ -280,7 +277,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
-                return Optional.of(RevisionSourceIdentifier.create(moduleName, Revision.ofNullable(revision)));
+                return Optional.of(new SourceIdentifier(moduleName, revision));
             }
             return Optional.empty();
         }

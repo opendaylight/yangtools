@@ -20,7 +20,7 @@ public class Bug8597Test extends AbstractYangTest {
     public void test() throws Exception {
         final var foo = assertEffectiveModelDir("/bugs/bug8597").findModule("foo").orElseThrow();
         for (ModuleImport moduleImport : foo.getImports()) {
-            switch (moduleImport.getModuleName()) {
+            switch (moduleImport.getModuleName().getLocalName()) {
                 case "bar":
                     assertEquals(Revision.ofNullable("1970-01-01"), moduleImport.getRevision());
                     assertEquals(Optional.of("bar-ref"), moduleImport.getReference());
