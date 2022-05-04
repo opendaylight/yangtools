@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd1028d5_7a8b466c",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb84537a_9acd3b3b",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 2
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6a1a6746_e6dbadc7",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-05-03T20:30:45Z",
       "side": 1,
       "message": "add javadoc with a reference to the RFC\n\npublic final class TagType",
+      "range": {
+        "startLine": 3,
+        "startChar": 12,
+        "endLine": 3,
+        "endChar": 26
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec5384a2_950ab105",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "I am going to upload Java docs in the next patch.",
+      "parentUuid": "6a1a6746_e6dbadc7",
       "range": {
         "startLine": 3,
         "startChar": 12,
@@ -70,6 +118,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad4affaf_bad08e4f",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0bdf9e88_c8246c07",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 8
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1cc27327_8b42a5da",
@@ -83,6 +155,30 @@
       "writtenOn": "2022-05-03T20:30:45Z",
       "side": 1,
       "message": "these two are not really assignments",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 14
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1a411d9_cf8b9bfc",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1cc27327_8b42a5da",
       "range": {
         "startLine": 7,
         "startChar": 4,
@@ -116,6 +212,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "06d9e372_e2ca21fd",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5416a58_dab4720c",
+      "range": {
+        "startLine": 13,
+        "startChar": 22,
+        "endLine": 13,
+        "endChar": 28
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "44e400ff_cbfd070a",
@@ -129,6 +249,30 @@
       "writtenOn": "2022-05-03T20:30:45Z",
       "side": 1,
       "message": "not needed",
+      "range": {
+        "startLine": 15,
+        "startChar": 4,
+        "endLine": 15,
+        "endChar": 10
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a6d2b53_ce718434",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "44e400ff_cbfd070a",
       "range": {
         "startLine": 15,
         "startChar": 4,
@@ -162,6 +306,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2af5d828_35bb2b4e",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/ModuleTagTypes.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb0285e8_8d6fe7d6",
+      "range": {
+        "startLine": 19,
+        "startChar": 11,
+        "endLine": 19,
+        "endChar": 27
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "97874dfb_d31403ad",
@@ -175,6 +343,30 @@
       "writtenOn": "2022-05-03T20:30:45Z",
       "side": 1,
       "message": "TagType type, String value",
+      "range": {
+        "startLine": 28,
+        "startChar": 38,
+        "endLine": 28,
+        "endChar": 84
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "53c99d5d_02cc8d5c",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/Tag.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97874dfb_d31403ad",
       "range": {
         "startLine": 28,
         "startChar": 38,
@@ -208,6 +400,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "02c10ae3_422a7dbb",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/Tag.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64e8b39e_26eb127c",
+      "range": {
+        "startLine": 45,
+        "startChar": 59,
+        "endLine": 45,
+        "endChar": 109
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b0dae7f0_ca63af3a",
@@ -221,6 +437,30 @@
       "writtenOn": "2022-05-03T20:30:45Z",
       "side": 1,
       "message": "always compile Patterns into a constant",
+      "range": {
+        "startLine": 58,
+        "startChar": 27,
+        "endLine": 58,
+        "endChar": 36
+      },
+      "revId": "35671390bd0552a1d1d36a440423b7e5fa41f564",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1385183f_3a8bb0ba",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/Tag.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-04T11:58:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0dae7f0_ca63af3a",
       "range": {
         "startLine": 58,
         "startChar": 27,
