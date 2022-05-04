@@ -26,8 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
@@ -70,7 +69,7 @@ public class GuavaSchemaSourceCacheTest {
             final String content = "content";
             final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
             cache.offer(source);
-            final var sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
+            final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
             final var checkedSource = cache .getSource(sourceIdentifier);
             assertNotNull(checkedSource);
             final var yangSchemaSourceRepresentation = checkedSource.get();
@@ -82,7 +81,7 @@ public class GuavaSchemaSourceCacheTest {
     @Test
     public void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
         try (var cache = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION)) {
-            final var sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
+            final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
             final var checkedSource = cache.getSource(sourceIdentifier);
             assertNotNull(checkedSource);
             assertThrows(ExecutionException.class, () -> checkedSource.get());
@@ -98,7 +97,7 @@ public class GuavaSchemaSourceCacheTest {
                 cache1.offer(source);
                 cache2.offer(source);
 
-                final var sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
+                final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
                 final var checkedSource = cache1.getSource(sourceIdentifier);
                 final var checkedSource2 = cache2.getSource(sourceIdentifier);
                 assertNotNull(checkedSource);
@@ -113,7 +112,7 @@ public class GuavaSchemaSourceCacheTest {
         private final String content;
 
         TestingYangSource(final String name, final String revision, final String content) {
-            super(RevisionSourceIdentifier.create(name, Revision.ofNullable(revision)));
+            super(new SourceIdentifier(name, revision));
             this.content = content;
         }
 

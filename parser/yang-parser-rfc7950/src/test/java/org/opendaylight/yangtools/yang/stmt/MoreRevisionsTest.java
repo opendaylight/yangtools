@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -142,7 +143,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
         Collection<? extends ModuleImport> imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
-        assertEquals("ietf-yang-types", interfacesImport.getModuleName());
+        assertEquals(Unqualified.of("ietf-yang-types"), interfacesImport.getModuleName());
         assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
 
@@ -211,7 +212,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
         Collection<? extends ModuleImport> imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
-        assertEquals("ietf-yang-types", interfacesImport.getModuleName());
+        assertEquals(Unqualified.of("ietf-yang-types"), interfacesImport.getModuleName());
         assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
 
@@ -230,7 +231,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
         Collection<? extends ModuleImport> imports = monitoringModule19700101.getImports();
         assertEquals(1, imports.size());
         ModuleImport monitoringImport = imports.iterator().next();
-        assertEquals("ietf-yang-types", monitoringImport.getModuleName());
+        assertEquals(Unqualified.of("ietf-yang-types"), monitoringImport.getModuleName());
         assertEquals(Optional.of(rev20130715), monitoringImport.getRevision());
     }
 

@@ -29,7 +29,7 @@ public final class ImportEffectiveStatementImpl extends WithSubstatements<Unqual
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @NonNull SourceIdentifier importedSource) {
         super(declared, substatements);
-        revision = importedSource.getRevision().orElse(null);
+        revision = importedSource.revision();
     }
 
     @Override
