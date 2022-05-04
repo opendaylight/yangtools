@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -582,8 +583,8 @@ public class SchemaContextProxyTest {
         for (final Module module : imports) {
             mockedImports.add(new ModuleImport() {
                 @Override
-                public String getModuleName() {
-                    return module.getName();
+                public Unqualified getModuleName() {
+                    return Unqualified.of(module.getName());
                 }
 
                 @Override

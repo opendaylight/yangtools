@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -35,10 +36,10 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -238,14 +239,17 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
-        final String arg = root.getRawArgument();
+        final Object arg = root.getArgument();
+        verify(arg instanceof Unqualified, "Unexpected argument %s", arg);
+
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
-            return RevisionSourceIdentifier.create(arg, qNameModule.getRevision());
+            return new SourceIdentifier((Unqualified) arg, qNameModule.getRevision().orElse(null));
         }
 
         // creates SourceIdentifier for a submodule
-        return RevisionSourceIdentifier.create(arg, StmtContextUtils.getLatestRevision(root.declaredSubstatements()));
+        return new SourceIdentifier((Unqualified) arg,
+            StmtContextUtils.getLatestRevision(root.declaredSubstatements()).orElse(null));
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -406,11 +410,12 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
                         + " but current phase was %s", currentPhase);
-        final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable = TreeBasedTable.create(
-            String::compareTo, Revision::compare);
+        final TreeBasedTable<Unqualified, Optional<Revision>, SourceSpecificContext> libSourcesTable =
+            TreeBasedTable.create(Unqualified::compareTo, Revision::compare);
         for (final SourceSpecificContext libSource : libSources) {
             final SourceIdentifier libSourceIdentifier = requireNonNull(libSource.getRootIdentifier());
-            libSourcesTable.put(libSourceIdentifier.getName(), libSourceIdentifier.getRevision(), libSource);
+            libSourcesTable.put(libSourceIdentifier.name(),
+                Optional.ofNullable(libSourceIdentifier.revision()), libSource);
         }
 
         final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
@@ -422,7 +427,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     private void collectRequiredSourcesFromLib(
-            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable,
+            final TreeBasedTable<Unqualified, Optional<Revision>, SourceSpecificContext> libSourcesTable,
             final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
         for (final SourceIdentifier requiredSource : source.getRequiredSources()) {
             final SourceSpecificContext libSource = getRequiredLibSource(requiredSource, libSourcesTable);
@@ -433,14 +438,14 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     private static SourceSpecificContext getRequiredLibSource(final SourceIdentifier requiredSource,
-            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable) {
-        return requiredSource.getRevision().isPresent()
-                ? libSourcesTable.get(requiredSource.getName(), requiredSource.getRevision())
-                        : getLatestRevision(libSourcesTable.row(requiredSource.getName()));
+            final TreeBasedTable<Unqualified, Optional<Revision>, SourceSpecificContext> libSourcesTable) {
+        final var revision = requiredSource.revision();
+        return revision != null ? libSourcesTable.get(requiredSource.name(), Optional.of(revision))
+            : getLatestRevision(libSourcesTable.row(requiredSource.name()));
     }
 
-    private static SourceSpecificContext getLatestRevision(final SortedMap<Optional<Revision>,
-            SourceSpecificContext> sourceMap) {
+    private static SourceSpecificContext getLatestRevision(
+            final SortedMap<Optional<Revision>, SourceSpecificContext> sourceMap) {
         return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
     }
 

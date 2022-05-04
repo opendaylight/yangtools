@@ -23,7 +23,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
@@ -42,7 +41,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
 
         final String baseName = name.substring(0, name.length() - RFC6020_YANG_FILE_EXTENSION.length());
         final var parsed = parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
+        return new SourceIdentifier(parsed.getKey(), parsed.getValue());
     }
 
     /**

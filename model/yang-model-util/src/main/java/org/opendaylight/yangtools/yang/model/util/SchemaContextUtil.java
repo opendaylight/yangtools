@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -48,6 +48,6 @@ public final class SchemaContextUtil {
     }
 
     private static SourceIdentifier moduleToIdentifier(final ModuleLike module) {
-        return RevisionSourceIdentifier.create(module.getName(), module.getRevision());
+        return new SourceIdentifier(Unqualified.of(module.getName()), module.getRevision().orElse(null));
     }
 }

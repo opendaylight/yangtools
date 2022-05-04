@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
@@ -32,11 +33,14 @@ public class YinFileImportStmtTest extends AbstractYinModulesTest {
         Iterator<? extends ModuleImport> importsIterator = imports.iterator();
         ModuleImport moduleImport = importsIterator.next();
 
-        assertThat(moduleImport.getModuleName(), anyOf(is("ietf-yang-types"), is("ietf-inet-types")));
+        final var nameMatch = anyOf(is(Unqualified.of("ietf-yang-types")),
+            is(Unqualified.of("ietf-inet-types")));
+
+        assertThat(moduleImport.getModuleName(), nameMatch);
         assertThat(moduleImport.getPrefix(), anyOf(is("yang"), is("inet")));
 
         moduleImport = importsIterator.next();
-        assertThat(moduleImport.getModuleName(), anyOf(is("ietf-yang-types"), is("ietf-inet-types")));
+        assertThat(moduleImport.getModuleName(), nameMatch);
         assertThat(moduleImport.getPrefix(), anyOf(is("yang"), is("inet")));
     }
 }

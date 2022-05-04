@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -64,7 +65,7 @@ abstract class DependencyResolver {
 
                 // in case of submodule, remember belongs to
                 if (dep instanceof YangModelDependencyInfo.SubmoduleDependencyInfo) {
-                    final String parent = ((YangModelDependencyInfo.SubmoduleDependencyInfo) dep).getParentModule();
+                    final var parent = ((YangModelDependencyInfo.SubmoduleDependencyInfo) dep).getParentModule();
                     submodules.put(id, new BelongsToDependency(parent));
                 }
 
@@ -153,14 +154,14 @@ abstract class DependencyResolver {
     }
 
     private static class BelongsToDependency implements ModuleImport {
-        private final String parent;
+        private final Unqualified parent;
 
-        BelongsToDependency(final String parent) {
+        BelongsToDependency(final Unqualified parent) {
             this.parent = parent;
         }
 
         @Override
-        public String getModuleName() {
+        public Unqualified getModuleName() {
             return parent;
         }
 

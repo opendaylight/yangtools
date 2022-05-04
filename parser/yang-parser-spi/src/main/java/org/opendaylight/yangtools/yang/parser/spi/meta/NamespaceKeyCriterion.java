@@ -35,12 +35,12 @@ public abstract class NamespaceKeyCriterion<K> {
 
         @Override
         public boolean match(final SourceIdentifier key) {
-            return moduleName.getLocalName().equals(key.getName());
+            return moduleName.equals(key.name());
         }
 
         @Override
         public SourceIdentifier select(final SourceIdentifier first, final SourceIdentifier second) {
-            return Revision.compare(first.getRevision(), second.getRevision()) >= 0 ? first : second;
+            return Revision.compare(first.revision(), second.revision()) >= 0 ? first : second;
         }
 
         @Override

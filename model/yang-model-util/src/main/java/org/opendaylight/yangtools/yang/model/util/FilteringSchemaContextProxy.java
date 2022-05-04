@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -28,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -35,6 +34,7 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -90,7 +90,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
          */
         final List<Module> sortedModules = new ArrayList<>(filteredModulesBuilder.build());
         sortedModules.sort(NAME_REVISION_COMPARATOR);
-        this.filteredModules = ImmutableSet.copyOf(sortedModules);
+        filteredModules = ImmutableSet.copyOf(sortedModules);
 
         final SetMultimap<XMLNamespace, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
@@ -135,7 +135,8 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             for (ModuleImport moduleImport : module.getImports()) {
                 Optional<Revision> revisionDate = moduleImport.getRevision();
                 if (revisionDate.isEmpty()) {
-                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision();
+                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName().getLocalName()).first()
+                        .getRevision();
                 }
 
                 ModuleId key = new ModuleId(moduleImport.getModuleName(), revisionDate);
@@ -209,17 +210,19 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     public static final class ModuleId {
-        private final String name;
+        private final Unqualified name;
         private final Revision rev;
 
         public ModuleId(final String name, final Optional<Revision> rev) {
-            checkArgument(!Strings.isNullOrEmpty(name), "No module dependency name given. Nothing to do.");
-            this.name = name;
-            checkArgument(rev.isPresent(), "No revision date given. Nothing to do.");
-            this.rev = rev.get();
+            this(Unqualified.of(name), rev);
         }
 
-        public String getName() {
+        public ModuleId(final Unqualified name, final Optional<Revision> rev) {
+            this.name = requireNonNull(name);
+            this.rev = rev.orElseThrow(() -> new IllegalArgumentException("No revision date given. Nothing to do."));
+        }
+
+        public Unqualified getName() {
             return name;
         }
 
@@ -232,22 +235,8 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof ModuleId)) {
-                return false;
-            }
-
-            ModuleId moduleId = (ModuleId) obj;
-            if (name != null ? !name.equals(moduleId.name) : moduleId.name != null) {
-                return false;
-            }
-            if (rev != null ? !rev.equals(moduleId.rev) : moduleId.rev != null) {
-                return false;
-            }
-
-            return true;
+            return this == obj || obj instanceof ModuleId other && name.equals(other.name)
+                && Objects.equals(rev, other.rev);
         }
 
         @Override
