@@ -29,16 +29,7 @@ public interface BasicCodeGenerator {
          * Standard, RFC6020 and RFC7950 compliant mode. Imports are satisfied by exact revision match (if specified),
          * or by latest available revision.
          */
-        REVISION_EXACT_OR_LATEST(FileGenerator.ImportResolutionMode.REVISION_EXACT_OR_LATEST),
-        /**
-         * Semantic version based mode. Imports which specify a semantic version (via the OpenConfig extension) will
-         * be satisfied by module which exports the latest compatible revision. Imports which do not specify semantic
-         * version will be resolved just as they would be via {@link #REVISION_EXACT_OR_LATEST}.
-         *
-         * @deprecated This mode has no users and is deprecated for removal.
-         */
-        @Deprecated(forRemoval = true, since = "8.0.4")
-        SEMVER_LATEST(FileGenerator.ImportResolutionMode.SEMVER_LATEST);
+        REVISION_EXACT_OR_LATEST(FileGenerator.ImportResolutionMode.REVISION_EXACT_OR_LATEST);
 
         private final FileGenerator.@NonNull ImportResolutionMode fileGeneratorMode;
 

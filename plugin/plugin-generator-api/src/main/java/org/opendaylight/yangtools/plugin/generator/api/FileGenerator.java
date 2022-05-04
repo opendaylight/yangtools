@@ -60,13 +60,6 @@ public interface FileGenerator {
          * Standard, RFC6020 and RFC7950 compliant mode. Imports are satisfied by exact revision match (if specified),
          * or by latest available revision.
          */
-        REVISION_EXACT_OR_LATEST,
-        /**
-         * Semantic version based mode. Imports which specify a semantic version (via the OpenConfig extension) will
-         * be satisfied by module which exports the latest compatible revision. Imports which do not specify semantic
-         * version will be resolved just as they would be via {@link #REVISION_EXACT_OR_LATEST}.
-         */
-        @Deprecated(since = "7.0.11", forRemoval = true)
-        SEMVER_LATEST,
+        REVISION_EXACT_OR_LATEST;
     }
 }
