@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import java.util.Collection;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
@@ -22,7 +21,7 @@ final class RevisionDependencyResolver extends DependencyResolver {
 
     protected static SourceIdentifier findWildcard(final Iterable<SourceIdentifier> haystack, final String needle) {
         for (final SourceIdentifier r : haystack) {
-            if (needle.equals(r.getName())) {
+            if (needle.equals(r.name().getLocalName())) {
                 return r;
             }
         }
@@ -37,7 +36,7 @@ final class RevisionDependencyResolver extends DependencyResolver {
 
     @Override
     protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
-        final SourceIdentifier msi = RevisionSourceIdentifier.create(mi.getModuleName(), mi.getRevision());
+        final SourceIdentifier msi = new SourceIdentifier(mi.getModuleName(), mi.getRevision());
 
         // Quick lookup
         if (haystack.contains(msi)) {

@@ -12,8 +12,9 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  */
 @NonNullByDefault
 public final class NACMConstants {
-    private static final String MODULE_NAME = "ietf-netconf-acm";
+    private static final Unqualified MODULE_NAME = UnresolvedQName.unqualified("ietf-netconf-acm").intern();
     private static final XMLNamespace MODULE_NAMESPACE =
         XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-netconf-acm").intern();
     private static final Revision RFC6536_REVISION = Revision.of("2012-02-22");
@@ -42,14 +43,12 @@ public final class NACMConstants {
     /**
      * RFC6536 model source name.
      */
-    public static final SourceIdentifier RFC6536_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        RFC6536_REVISION);
+    public static final SourceIdentifier RFC6536_SOURCE = new SourceIdentifier(MODULE_NAME, RFC6536_REVISION);
 
     /**
      * RFC8341 model source name.
      */
-    public static final SourceIdentifier RFC8341_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        RFC8341_REVISION);
+    public static final SourceIdentifier RFC8341_SOURCE = new SourceIdentifier(MODULE_NAME, RFC8341_REVISION);
 
     /**
      * Normative prefix to use when importing {@link #RFC6536_SOURCE}.

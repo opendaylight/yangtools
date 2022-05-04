@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
@@ -67,6 +65,6 @@ public class DependencyResolverTest {
             final String yangFileName) throws Exception {
         final var info = ModuleDependencyInfo.forYangText(YangTextSchemaSource.forResource(DependencyResolverTest.class,
             yangFileName));
-        map.put(RevisionSourceIdentifier.create(info.getName(), info.getRevision()), info);
+        map.put(new SourceIdentifier(info.getName(), info.getRevision()), info);
     }
 }

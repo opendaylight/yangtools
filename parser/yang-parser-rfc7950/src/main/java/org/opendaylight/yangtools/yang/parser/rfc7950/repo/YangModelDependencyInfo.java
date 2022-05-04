@@ -190,7 +190,7 @@ public abstract class YangModelDependencyInfo {
             if (isBuiltin(substatement, IMPORT)) {
                 final String importedModuleName = safeStringArgument(source, substatement, "imported module name");
                 final String revisionDateStr = getRevisionDateString(substatement, source);
-                final Revision revisionDate = Revision.ofNullable(revisionDateStr).orElse(null);
+                final Revision revisionDate = revisionDateStr != null ? Revision.of(revisionDateStr) : null;
                 result.add(new ModuleImportImpl(importedModuleName, revisionDate));
             }
         }
@@ -271,7 +271,7 @@ public abstract class YangModelDependencyInfo {
     }
 
     private static StatementSourceReference getReference(final SourceIdentifier source, final IRStatement stmt) {
-        return ExplicitStatement.atPosition(source.getName(), stmt.startLine(), stmt.startColumn() + 1);
+        return ExplicitStatement.atPosition(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 
     /**
