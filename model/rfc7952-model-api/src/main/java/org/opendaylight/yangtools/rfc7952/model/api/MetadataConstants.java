@@ -12,8 +12,9 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  */
 @NonNullByDefault
 public final class MetadataConstants {
-    private static final String MODULE_NAME = "ietf-yang-metadata";
+    private static final Unqualified MODULE_NAME = UnresolvedQName.unqualified("ietf-yang-metadata").intern();
     private static final XMLNamespace MODULE_NAMESPACE =
         XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-metadata").intern();
     private static final Revision RFC7952_REVISION = Revision.of("2016-08-05");
@@ -36,8 +37,7 @@ public final class MetadataConstants {
     /**
      * RFC7952 model source name.
      */
-    public static final SourceIdentifier RFC7952_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        RFC7952_REVISION);
+    public static final SourceIdentifier RFC7952_SOURCE = new SourceIdentifier(MODULE_NAME, RFC7952_REVISION);
 
     /**
      * Normative prefix to use when importing {@link #RFC7952_SOURCE}.

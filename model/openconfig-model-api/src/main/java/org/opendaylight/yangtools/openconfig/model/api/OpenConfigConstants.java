@@ -12,8 +12,9 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  */
 @NonNullByDefault
 public final class OpenConfigConstants {
-    private static final String MODULE_NAME = "yang-ext";
+    private static final Unqualified MODULE_NAME = UnresolvedQName.unqualified("yang-ext").intern();
 
     // Package-visible, because openconfig-version applies across all known revisions and needs to bind to all of them
     static final XMLNamespace MODULE_NAMESPACE = XMLNamespace.of("http://openconfig.net/yang/openconfig-ext").intern();
@@ -65,26 +66,24 @@ public final class OpenConfigConstants {
     /**
      * Original model source name.
      */
-    public static final SourceIdentifier SEMVER_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        SEMVER_REVISION);
+    public static final SourceIdentifier SEMVER_SOURCE = new SourceIdentifier(MODULE_NAME, SEMVER_REVISION);
 
     /**
      * Original model source name.
      */
-    public static final SourceIdentifier ENCRYPTED_VALUE_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
+    public static final SourceIdentifier ENCRYPTED_VALUE_SOURCE = new SourceIdentifier(MODULE_NAME,
         ENCRYPTED_VALUE_REVISION);
 
     /**
      * Original model source name.
      */
-    public static final SourceIdentifier HASHED_VALUE_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        HASHED_VALUE_REVISION);
+    public static final SourceIdentifier HASHED_VALUE_SOURCE = new SourceIdentifier(MODULE_NAME, HASHED_VALUE_REVISION);
 
     /**
      * Original model source name.
      */
-    public static final SourceIdentifier REGEXP_POSIX_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-            REGEXP_POSIX_REVISION);
+    public static final SourceIdentifier REGEXP_POSIX_SOURCE = new SourceIdentifier(MODULE_NAME, REGEXP_POSIX_REVISION);
+
     /**
      * Normative prefix to use when importing {@link #SEMVER_SOURCE} and later.
      */
