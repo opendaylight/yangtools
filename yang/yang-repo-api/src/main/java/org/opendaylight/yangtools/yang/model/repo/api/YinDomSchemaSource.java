@@ -25,7 +25,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +88,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         final Attr dateAttr = revisionStmt.getAttributeNode(REVISION_ARG);
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
-        final SourceIdentifier parsedId = RevisionSourceIdentifier.create(nameAttr.getValue(),
-            Revision.of(dateAttr.getValue()));
+        final SourceIdentifier parsedId = new SourceIdentifier(nameAttr.getValue(), dateAttr.getValue());
         final SourceIdentifier id;
         if (!parsedId.equals(identifier)) {
             LOG.debug("Changed identifier from {} to {}", identifier, parsedId);

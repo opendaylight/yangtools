@@ -8,10 +8,12 @@
 
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
@@ -19,9 +21,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -55,37 +56,34 @@ public class YangTextSchemaContextResolverTest {
 
         assertEquals(3, yangTextSchemaContextResolver.getAvailableSources().size());
 
-        final SourceIdentifier fooModuleId = RevisionSourceIdentifier.create("foo", Revision.of("2016-09-26"));
+        final SourceIdentifier fooModuleId = new SourceIdentifier("foo", "2016-09-26");
         final ListenableFuture<YangTextSchemaSource> foo = yangTextSchemaContextResolver.getSource(fooModuleId);
         assertTrue(foo.isDone());
         assertEquals(fooModuleId, foo.get().getIdentifier());
 
-        final SourceIdentifier barModuleId = RevisionSourceIdentifier.create("bar", Revision.of("2016-09-26"));
+        final SourceIdentifier barModuleId = new SourceIdentifier("bar", "2016-09-26");
         final ListenableFuture<YangTextSchemaSource> bar = yangTextSchemaContextResolver.getSource(barModuleId);
         assertTrue(bar.isDone());
         assertEquals(barModuleId, bar.get().getIdentifier());
 
-        final SourceIdentifier bazModuleId = RevisionSourceIdentifier.create("baz", Revision.of("2016-09-26"));
+        final SourceIdentifier bazModuleId = new SourceIdentifier("baz", "2016-09-26");
         final ListenableFuture<YangTextSchemaSource> baz =
                 yangTextSchemaContextResolver.getSource(bazModuleId);
         assertTrue(baz.isDone());
         assertEquals(bazModuleId, baz.get().getIdentifier());
 
-        final SourceIdentifier foobarModuleId = RevisionSourceIdentifier.create("foobar", Revision.of("2016-09-26"));
+        final SourceIdentifier foobarModuleId = new SourceIdentifier("foobar", "2016-09-26");
         final ListenableFuture<YangTextSchemaSource> foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);
         assertTrue(foobar.isDone());
-        try {
-            foobar.get();
-            fail("A MissingSchemaSourceException should have been thrown.");
-        } catch (ExecutionException e) {
-            assertEquals("URL for RevisionSourceIdentifier [name=foobar@2016-09-26] not registered",
-                e.getCause().getMessage());
-        }
+
+        final Throwable cause = assertThrows(ExecutionException.class, foobar::get).getCause();
+        assertThat(cause, instanceOf(MissingSchemaSourceException.class));
+        assertEquals("URL for SourceIdentifier [foobar@2016-09-26] not registered", cause.getMessage());
 
         Optional<? extends SchemaContext> schemaContextOptional =
             yangTextSchemaContextResolver.getEffectiveModelContext();
         assertTrue(schemaContextOptional.isPresent());
-        SchemaContext schemaContext = schemaContextOptional.get();
+        SchemaContext schemaContext = schemaContextOptional.orElseThrow();
         assertEquals(3, schemaContext.getModules().size());
 
         registration1.close();
@@ -96,7 +94,7 @@ public class YangTextSchemaContextResolverTest {
 
         schemaContextOptional = yangTextSchemaContextResolver.getEffectiveModelContext();
         assertTrue(schemaContextOptional.isPresent());
-        schemaContext = schemaContextOptional.get();
+        schemaContext = schemaContextOptional.orElseThrow();
         assertEquals(0, schemaContext.getModules().size());
     }
 }
