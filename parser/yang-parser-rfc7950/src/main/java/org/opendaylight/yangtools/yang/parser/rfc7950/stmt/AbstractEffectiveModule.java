@@ -20,8 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -193,11 +191,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     @Override
     public Collection<? extends UsesNode> getUses() {
         return uses;
-    }
-
-    @Override
-    public Optional<SemVer> getSemanticVersion() {
-        return findFirstEffectiveSubstatementArgument(OpenConfigVersionEffectiveStatement.class);
     }
 
     protected static final @NonNull String findPrefix(final CommonStmtCtx stmt,
