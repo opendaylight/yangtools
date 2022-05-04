@@ -101,7 +101,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
             StatementSupport<X, Y, Z> getSupport(final StatementDefinition def, final Class<Z> effectiveClass) {
         final var tmp = verifyNotNull(operations.getFromNamespace(StatementSupportNamespace.class,
             def.getStatementName()));
-        final var repr = tmp.getEffectiveRepresentationClass();
+        final var repr = tmp.definition().getEffectiveRepresentationClass();
         verify(effectiveClass.equals(repr), "Unexpected support %s representation %s", tmp, repr);
 
         @SuppressWarnings("unchecked")

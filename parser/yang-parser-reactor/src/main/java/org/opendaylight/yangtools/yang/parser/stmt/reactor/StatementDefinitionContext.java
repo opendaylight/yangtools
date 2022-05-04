@@ -91,7 +91,7 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
     }
 
     @NonNull QName getStatementName() {
-        return support.getStatementName();
+        return support.statementName();
     }
 
     @Override

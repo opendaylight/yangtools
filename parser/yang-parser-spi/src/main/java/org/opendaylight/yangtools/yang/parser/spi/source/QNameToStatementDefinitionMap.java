@@ -11,12 +11,13 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
-public class QNameToStatementDefinitionMap implements QNameToStatementDefinition {
+public final class QNameToStatementDefinitionMap implements QNameToStatementDefinition {
     private final Map<QName, StatementSupport<?, ?, ?>> noRevQNameToSupport;
     private final Map<QName, StatementSupport<?, ?, ?>> qnameToSupport;
 
@@ -60,12 +61,26 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
     }
 
     @Override
-    public StatementSupport<?, ?, ?> get(final QName identifier) {
-        return qnameToSupport.get(identifier);
+    public StatementDefinition get(final QName identifier) {
+        return definitionOf(getSupport(identifier));
     }
 
     @Override
     public StatementDefinition getByNamespaceAndLocalName(final XMLNamespace namespace, final String localName) {
-        return noRevQNameToSupport.get(QName.create(namespace, localName));
+        return definitionOf(noRevQNameToSupport.get(QName.create(namespace, localName)));
+    }
+
+    /**
+     * Returns StatementSupport with specified QName.
+     *
+     * @param identifier QName of requested statement
+     * @return StatementSupport
+     */
+    public @Nullable StatementSupport<?, ?, ?> getSupport(final QName identifier) {
+        return qnameToSupport.get(requireNonNull(identifier));
+    }
+
+    private static @Nullable StatementDefinition definitionOf(final @Nullable StatementSupport<?, ?, ?> support) {
+        return support != null ? support.definition() : null;
     }
 }

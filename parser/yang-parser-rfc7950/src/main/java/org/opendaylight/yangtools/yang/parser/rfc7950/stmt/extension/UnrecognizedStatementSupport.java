@@ -52,13 +52,13 @@ final class UnrecognizedStatementSupport
          * This code wraps statements encountered inside an extension so they do not get confused with regular
          * statements.
          */
-        final QName baseQName = getStatementName();
-        final QName statementName = QName.create(baseQName, childDef.getStatementName().getLocalName());
+        // FIXME: remove this bit?
+        final QName statementName = QName.create(statementName(), childDef.getStatementName().getLocalName());
 
-        final ModelDefinedStatementDefinition def;
+        final StatementDefinition def;
         final Optional<ArgumentDefinition> optArgDef = childDef.getArgumentDefinition();
         if (optArgDef.isPresent()) {
-            final ArgumentDefinition argDef = optArgDef.get();
+            final ArgumentDefinition argDef = optArgDef.orElseThrow();
             def = new ModelDefinedStatementDefinition(statementName, argDef.getArgumentName(), argDef.isYinElement());
         } else {
             def = new ModelDefinedStatementDefinition(statementName);

@@ -76,17 +76,21 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
         @Override
         public StatementSupport<?, ?, ?> getFrom(final NamespaceStorageNode storage, final QName key) {
-            return statementDefinitions.get(key);
+            return statementDefinitions.getSupport(key);
         }
 
         @Override
         public Map<QName, StatementSupport<?, ?, ?>> getAllFrom(final NamespaceStorageNode storage) {
-            throw new UnsupportedOperationException("StatementSupportNamespace is immutable");
+            throw uoe();
         }
 
         @Override
         public void addTo(final NamespaceStorageNode storage, final QName key, final StatementSupport<?, ?, ?> value) {
-            throw new UnsupportedOperationException("StatementSupportNamespace is immutable");
+            throw uoe();
+        }
+
+        private static UnsupportedOperationException uoe() {
+            return new UnsupportedOperationException("StatementSupportNamespace is immutable");
         }
     }
 
@@ -135,7 +139,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         if (def == null) {
             def = globalContext.getModelDefinedStatementDefinition(name);
             if (def == null) {
-                final StatementSupport<?, ?, ?> extension = qnameToStmtDefMap.get(name);
+                final StatementSupport<?, ?, ?> extension = qnameToStmtDefMap.getSupport(name);
                 if (extension != null) {
                     def = new StatementDefinitionContext<>(extension);
                     globalContext.putModelDefinedStatementDefinition(name, def);

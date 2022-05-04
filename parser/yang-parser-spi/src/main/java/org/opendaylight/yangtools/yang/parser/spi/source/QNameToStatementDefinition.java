@@ -23,7 +23,7 @@ public interface QNameToStatementDefinition {
      * @param identifier QName of requested statement
      * @return StatementDefinition
      */
-    StatementDefinition get(QName identifier);
+    @Nullable StatementDefinition get(QName identifier);
 
     /**
      * Returns StatementDefinition with specified namespace and localName.

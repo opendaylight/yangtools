@@ -176,7 +176,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         }
 
         public @NonNull Builder addSupport(final StatementSupport<?, ?, ?> support) {
-            final QName identifier = support.getStatementName();
+            final QName identifier = support.statementName();
             checkNoParentDefinition(identifier);
 
             checkState(!commonStatements.containsKey(identifier),
@@ -195,10 +195,10 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         }
 
         public @NonNull Builder addVersionSpecificSupport(final YangVersion version,
-                final StatementSupport<?, ?, ?> definition) {
+                final StatementSupport<?, ?, ?> support) {
             checkArgument(supportedVersions.contains(requireNonNull(version)));
 
-            final QName identifier = definition.getStatementName();
+            final QName identifier = support.statementName();
             checkState(!commonStatements.containsKey(identifier),
                     "Statement %s already defined in common statement bundle.", identifier);
             checkState(!versionSpecificStatements.contains(version, identifier),
@@ -206,7 +206,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             checkNoParentDefinition(identifier);
             checkState(parent.getVersionSpecificStatementDefinition(version, identifier) == null,
                     "Statement %s already defined for version %s in parent's statement bundle.", identifier, version);
-            versionSpecificStatements.put(version, identifier, definition);
+            versionSpecificStatements.put(version, identifier, support);
             return this;
         }
 
@@ -220,7 +220,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         }
 
         public @NonNull Builder overrideSupport(final StatementSupport<?, ?, ?> support) {
-            final QName identifier = support.getStatementName();
+            final QName identifier = support.statementName();
             checkNoParentDefinition(identifier);
 
             final StatementSupport<?, ?, ?> previousSupport = commonStatements.replace(identifier, support);

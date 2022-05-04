@@ -54,7 +54,7 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
             return Boolean.FALSE;
         } else {
             throw new SourceException(ctx, "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
-                getStatementName(), getArgumentDefinition().get().getArgumentName(), value);
+                statementName(), argumentName(), value);
         }
     }
 
