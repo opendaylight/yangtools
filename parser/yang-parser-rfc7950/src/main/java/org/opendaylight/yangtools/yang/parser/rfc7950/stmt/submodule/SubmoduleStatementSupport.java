@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -125,14 +124,14 @@ public final class SubmoduleStatementSupport
 
     @Override
     public void onPreLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getRawArgument(),
-            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements())));
+        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(),
+            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null)));
     }
 
     @Override
     public void onLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.getRawArgument(),
-            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));
+        final SourceIdentifier submoduleIdentifier = new SourceIdentifier(stmt.getArgument(),
+            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null));
 
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
             possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);

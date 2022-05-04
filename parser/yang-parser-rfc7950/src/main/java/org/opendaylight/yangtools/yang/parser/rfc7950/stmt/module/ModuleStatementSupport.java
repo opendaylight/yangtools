@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -36,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -163,11 +161,11 @@ public final class ModuleStatementSupport
 
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
 
-        final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
-        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
+        final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
+        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getArgument().getLocalName(), revisionDate));
+        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
     }
 
     @Override
@@ -176,8 +174,8 @@ public final class ModuleStatementSupport
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", stmt.argument());
 
-        final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
-        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
+        final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
+        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
@@ -186,7 +184,7 @@ public final class ModuleStatementSupport
         }
 
         final Unqualified moduleName = stmt.getArgument();
-        final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(moduleName, revisionDate);
+        final SourceIdentifier moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleName, stmt);
