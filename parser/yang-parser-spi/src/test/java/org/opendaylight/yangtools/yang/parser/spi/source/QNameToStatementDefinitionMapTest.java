@@ -9,10 +9,13 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 public class QNameToStatementDefinitionMapTest {
@@ -20,6 +23,12 @@ public class QNameToStatementDefinitionMapTest {
 
     private final QNameToStatementDefinitionMap map = new QNameToStatementDefinitionMap();
     private final StatementSupport<?, ?, ?> support = mock(StatementSupport.class);
+    private final StatementDefinition definition = mock(StatementDefinition.class);
+
+    @Before
+    public void before() {
+        doReturn(definition).when(support).definition();
+    }
 
     @Test
     public void testPutNullNull() {
@@ -28,7 +37,7 @@ public class QNameToStatementDefinitionMapTest {
 
     @Test
     public void testPutNullSome() {
-        assertThrows(NullPointerException.class, () -> map.put(null, mock(StatementSupport.class)));
+        assertThrows(NullPointerException.class, () -> map.put(null, support));
     }
 
     @Test
@@ -39,6 +48,7 @@ public class QNameToStatementDefinitionMapTest {
     @Test
     public void testPut() {
         map.put(QNAME, support);
-        assertSame(support, map.get(QNAME));
+        assertSame(definition, map.get(QNAME));
+        assertSame(support, map.getSupport(QNAME));
     }
 }

@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <E> Effective Statement representation
  */
 public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        implements StatementDefinition, StatementFactory<A, D, E> {
+        implements StatementFactory<A, D, E> {
     /**
      * A baseline class for implementing the {@link StatementFactory#canReuseCurrent(Current, Current, Collection)}
      * contract in a manner which is consistent with a statement's {@link CopyPolicy}.
@@ -196,21 +196,20 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     }
 
     private final @NonNull StatementPolicy<A, D> policy;
-    private final @NonNull StatementDefinition def;
+    private final @NonNull StatementDefinition publicDefinition;
     private final @NonNull CopyPolicy copyPolicy;
 
     @Beta
     protected StatementSupport(final StatementSupport<A, D, E> delegate) {
         checkArgument(delegate != this);
-        this.def = delegate.def;
+        this.publicDefinition = delegate.publicDefinition;
         this.policy = delegate.policy;
         this.copyPolicy = delegate.copyPolicy;
     }
 
     @Beta
     protected StatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
-        checkArgument(publicDefinition != this);
-        this.def = requireNonNull(publicDefinition);
+        this.publicDefinition = requireNonNull(publicDefinition);
         this.policy = requireNonNull(policy);
         this.copyPolicy = policy.copyPolicy;
     }
@@ -225,7 +224,13 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * @return public statement definition, which will be present in built statements.
      */
     public final @NonNull StatementDefinition getPublicView() {
-        return def;
+        return publicDefinition;
+    }
+
+    // Appropriate to most definitions
+    // Non-final for compatible extensions
+    public @NonNull StatementDefinition definition() {
+        return publicDefinition;
     }
 
     /**
@@ -438,26 +443,16 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         return false;
     }
 
-    @Override
-    public final QName getStatementName() {
-        return def.getStatementName();
+    public final @NonNull QName statementName() {
+        return publicDefinition.getStatementName();
     }
 
-    @Override
-    public final Optional<ArgumentDefinition> getArgumentDefinition() {
-        return def.getArgumentDefinition();
+    public final @Nullable QName argumentName() {
+        return publicDefinition.getArgumentDefinition().map(ArgumentDefinition::getArgumentName).orElse(null);
     }
 
-    @Override
-    // Non-final for compatible extensions
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return def.getDeclaredRepresentationClass();
-    }
-
-    @Override
-    // Non-final for compatible extensions
-    public Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
-        return def.getEffectiveRepresentationClass();
+    public final @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
+        return publicDefinition.getArgumentDefinition();
     }
 
     /**
