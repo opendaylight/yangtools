@@ -34,7 +34,10 @@ public interface BasicCodeGenerator {
          * Semantic version based mode. Imports which specify a semantic version (via the OpenConfig extension) will
          * be satisfied by module which exports the latest compatible revision. Imports which do not specify semantic
          * version will be resolved just as they would be via {@link #REVISION_EXACT_OR_LATEST}.
+         *
+         * @deprecated This mode has no users and is deprecated for removal.
          */
+        @Deprecated(forRemoval = true, since = "8.0.4")
         SEMVER_LATEST(FileGenerator.ImportResolutionMode.SEMVER_LATEST);
 
         private final FileGenerator.@NonNull ImportResolutionMode fileGeneratorMode;
