@@ -9,86 +9,94 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Base class of YANG Schema source identifiers. Source identifiers are designated to be carry only necessary
  * information to look up YANG module (or submodule) source and to be used by various SchemaSourceProviders.
  *
+ *
+ *  * <ul>
+ * <li>YANG schema name ({@link #getName()}
+ * <li>Module revision (optional) ({link {@link #getRevision()})
+ * </ul>
+
+ *
  * <p>
  * For further reference see: <a href="https://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
  * and <a href="https://tools.ietf.org/html/rfc6022#section-3.1">RFC6022</a>.
  */
-@Beta
-public abstract class SourceIdentifier implements Identifier, Immutable {
-    private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
-    private static final long serialVersionUID = 2L;
-
-    private final @Nullable Revision revision;
-    private final @NonNull String name;
+public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision revision) implements Identifier {
+    private static final long serialVersionUID = 3L;
 
     /**
-     * Creates new YANG Schema source identifier for sources without revision.
+     * Creates new YANG Schema source identifier for sources with or without a revision.
      *
      * @param name Name of schema
+     * @param revision Revision of schema
+     * @throws NullPointerException if {@code name} is null
      */
-    SourceIdentifier(final String name) {
-        this(name, (Revision) null);
+    public SourceIdentifier {
+        requireNonNull(name);
     }
 
     /**
-     * Creates new YANG Schema source identifier.
+     * Creates new YANG Schema source identifier for sources without a revision.
      *
      * @param name Name of schema
-     * @param revision Revision of source, may be null
+     * @throws NullPointerException if {@code name} is null
      */
-    SourceIdentifier(final String name, final @Nullable Revision revision) {
-        this.name = requireNonNull(name);
-        this.revision = revision;
+    public SourceIdentifier(final @NonNull Unqualified name) {
+        this(name, null);
     }
 
     /**
-     * Creates new YANG Schema source identifier.
+     * Creates new YANG Schema source identifier for sources without a revision.
      *
      * @param name Name of schema
-     * @param revision Revision of source, possibly not present
+     * @throws NullPointerException if {@code name} is null
+     * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
      */
-    SourceIdentifier(final String name, final Optional<Revision> revision) {
-        this(name, revision.orElse(null));
+    public SourceIdentifier(final @NonNull String name) {
+        this(UnresolvedQName.unqualified(name));
     }
 
     /**
-     * Return an interned reference to an equivalent SourceIdentifier.
+     * Creates new YANG Schema source identifier for sources with or without a revision.
      *
-     * @return Interned reference, or this object if it was interned.
+     * @param name Name of schema
+     * @throws NullPointerException if {@code name} is null
+     * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
      */
-    public @NonNull SourceIdentifier intern() {
-        return INTERNER.intern(this);
+    public SourceIdentifier(final @NonNull String name, final @Nullable String revision) {
+        this(UnresolvedQName.unqualified(name), revision != null ? Revision.of(revision) : null);
     }
 
     /**
      * Returns model name.
      *
      * @return model name
+     * @deprecated Use {@link #name()} instead.
      */
+    @Deprecated(since = "9.0.0", forRemoval = true)
     public @NonNull String getName() {
-        return name;
+        return name.getLocalName();
     }
 
     /**
      * Returns revision of source or null if revision was not supplied.
      *
      * @return revision of source or null if revision was not supplied.
+     * @deprecated Use {@link #revision()} instead.
      */
+    @Deprecated(since = "9.0.0", forRemoval = true)
     public Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
     }
@@ -105,7 +113,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * @return Filename for this source identifier.
      */
     public @NonNull String toYangFilename() {
-        return toYangFileName(name, Optional.ofNullable(revision));
+        return toYangFileName(name.getLocalName(), Optional.ofNullable(revision));
     }
 
     /**

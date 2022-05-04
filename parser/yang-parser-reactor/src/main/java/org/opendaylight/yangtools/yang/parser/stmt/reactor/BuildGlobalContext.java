@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -241,11 +240,11 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         final String arg = root.getRawArgument();
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
-            return RevisionSourceIdentifier.create(arg, qNameModule.getRevision());
+            return new SourceIdentifier(arg, qNameModule.getRevision());
         }
 
         // creates SourceIdentifier for a submodule
-        return RevisionSourceIdentifier.create(arg, StmtContextUtils.getLatestRevision(root.declaredSubstatements()));
+        return new SourceIdentifier(arg, StmtContextUtils.getLatestRevision(root.declaredSubstatements()));
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
