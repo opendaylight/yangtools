@@ -13,8 +13,9 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -25,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 @Beta
 @NonNullByDefault
 public final class NetconfConstants {
-    private static final String MODULE_NAME = "ietf-netconf";
+    private static final Unqualified MODULE_NAME = UnresolvedQName.unqualified("ietf-netconf").intern();
     private static final XMLNamespace MODULE_NAMESPACE =
         XMLNamespace.of("urn:ietf:params:xml:ns:netconf:base:1.0").intern();
     private static final Revision RFC6241_REVISION = Revision.of("2011-06-01");
@@ -38,8 +39,7 @@ public final class NetconfConstants {
     /**
      * RFC6241 model source name.
      */
-    public static final SourceIdentifier RFC6241_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        RFC6241_REVISION);
+    public static final SourceIdentifier RFC6241_SOURCE = new SourceIdentifier(MODULE_NAME, RFC6241_REVISION);
 
     /**
      * Normative prefix to use when importing {@link #RFC6241_SOURCE}.

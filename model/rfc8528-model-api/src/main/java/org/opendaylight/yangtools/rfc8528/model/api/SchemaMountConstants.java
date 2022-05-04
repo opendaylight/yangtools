@@ -12,8 +12,9 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  */
 @NonNullByDefault
 public final class SchemaMountConstants {
-    private static final String MODULE_NAME = "ietf-yang-schema-mount";
+    private static final Unqualified MODULE_NAME = UnresolvedQName.unqualified("ietf-yang-schema-mount").intern();
     private static final XMLNamespace MODULE_NAMESPACE =
         XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-schema-mount").intern();
     private static final Revision RFC8528_REVISION = Revision.of("2019-01-14");
@@ -36,8 +37,7 @@ public final class SchemaMountConstants {
     /**
      * RFC8528 model source name.
      */
-    public static final SourceIdentifier RFC8528_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        RFC8528_REVISION);
+    public static final SourceIdentifier RFC8528_SOURCE = new SourceIdentifier(MODULE_NAME, RFC8528_REVISION);
 
     /**
      * Normative prefix to use when importing {@link #RFC8528_SOURCE}.

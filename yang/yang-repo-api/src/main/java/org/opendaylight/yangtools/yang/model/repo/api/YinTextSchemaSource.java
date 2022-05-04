@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
 import org.slf4j.Logger;
@@ -52,7 +51,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         }
 
         final var parsed = YangNames.parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
+        return new SourceIdentifier(parsed.getKey(), parsed.getValue());
     }
 
     @Override

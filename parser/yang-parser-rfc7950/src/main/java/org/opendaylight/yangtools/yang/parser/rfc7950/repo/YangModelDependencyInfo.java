@@ -271,7 +271,7 @@ public abstract class YangModelDependencyInfo {
     }
 
     private static StatementSourceReference getReference(final SourceIdentifier source, final IRStatement stmt) {
-        return ExplicitStatement.atPosition(source.getName(), stmt.startLine(), stmt.startColumn() + 1);
+        return ExplicitStatement.atPosition(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 
     /**
