@@ -177,7 +177,8 @@ public final class StmtTestUtils {
             }
         }
 
-        return context.findModule(requestedModuleImport.getModuleName(), requestedModuleImport.getRevision())
+        return context.findModule(requestedModuleImport.getModuleName().getLocalName(),
+                    requestedModuleImport.getRevision())
                 .orElse(null);
     }
 

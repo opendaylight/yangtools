@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import java.util.Collection;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -52,12 +50,11 @@ final class RevisionImport {
             imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
                 NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);
         } else {
-            imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
-                RevisionSourceIdentifier.create(moduleName, Optional.of(revision)), SOURCE_LINKAGE);
+            imported = importAction.requiresCtx(stmt, ModuleNamespace.class, new SourceIdentifier(moduleName, revision),
+                SOURCE_LINKAGE);
         }
 
-        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(),
-            SOURCE_LINKAGE);
+        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override
@@ -89,9 +86,7 @@ final class RevisionImport {
     }
 
     static SourceIdentifier getImportedSourceIdentifier(final StmtContext<Unqualified, ImportStatement, ?> stmt) {
-        final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
-            RevisionDateStatement.class);
-        return revision == null ? RevisionSourceIdentifier.create(stmt.argument(), Optional.empty())
-                : RevisionSourceIdentifier.create(stmt.argument(), revision.argument());
+        final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
+        return new SourceIdentifier(stmt.getArgument(), revision != null ? revision.getArgument() : null);
     }
 }

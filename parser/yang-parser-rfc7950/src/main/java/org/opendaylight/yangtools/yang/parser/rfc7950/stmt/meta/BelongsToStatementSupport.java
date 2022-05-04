@@ -11,7 +11,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -20,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -53,7 +51,7 @@ public final class BelongsToStatementSupport
 
     @Override
     public void onPreLinkageDeclared(final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
-        ctx.addRequiredSource(getSourceIdentifier(ctx));
+        ctx.addRequiredSource(new SourceIdentifier(ctx.getArgument()));
     }
 
     @Override
@@ -61,7 +59,7 @@ public final class BelongsToStatementSupport
             final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
         ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
-        final SourceIdentifier belongsToSourceIdentifier = getSourceIdentifier(belongsToCtx);
+        final SourceIdentifier belongsToSourceIdentifier = new SourceIdentifier(belongsToCtx.getArgument());
         final Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
             ModuleNamespaceForBelongsTo.class, belongsToCtx.getArgument(), ModelProcessingPhase.SOURCE_LINKAGE);
 
@@ -102,10 +100,5 @@ public final class BelongsToStatementSupport
     protected BelongsToEffectiveStatement createEffective(final Current<Unqualified, BelongsToStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createBelongsTo(stmt.declared(), substatements);
-    }
-
-    private static SourceIdentifier getSourceIdentifier(
-            final StmtContext<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
-        return RevisionSourceIdentifier.create(belongsToCtx.getArgument(), Optional.empty());
     }
 }

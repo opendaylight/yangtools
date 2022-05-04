@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -190,8 +191,8 @@ public abstract class YangModelDependencyInfo {
             if (isBuiltin(substatement, IMPORT)) {
                 final String importedModuleName = safeStringArgument(source, substatement, "imported module name");
                 final String revisionDateStr = getRevisionDateString(substatement, source);
-                final Revision revisionDate = Revision.ofNullable(revisionDateStr).orElse(null);
-                result.add(new ModuleImportImpl(importedModuleName, revisionDate));
+                result.add(new ModuleImportImpl(UnresolvedQName.Unqualified.of(importedModuleName),
+                    revisionDateStr != null ? Revision.of(revisionDateStr) : null));
             }
         }
         return ImmutableSet.copyOf(result);
@@ -207,9 +208,9 @@ public abstract class YangModelDependencyInfo {
         for (final IRStatement substatement : module.statements()) {
             if (isBuiltin(substatement, INCLUDE)) {
                 final String revisionDateStr = getRevisionDateString(substatement, source);
-                final String IncludeModuleName = safeStringArgument(source, substatement, "included submodule name");
-                final Revision revisionDate = Revision.ofNullable(revisionDateStr).orElse(null);
-                result.add(new ModuleImportImpl(IncludeModuleName, revisionDate));
+                final String includeModuleName = safeStringArgument(source, substatement, "included submodule name");
+                result.add(new ModuleImportImpl(UnresolvedQName.Unqualified.of(includeModuleName),
+                    revisionDateStr == null ? null : Revision.of(revisionDateStr)));
             }
         }
         return ImmutableSet.copyOf(result);
@@ -241,7 +242,7 @@ public abstract class YangModelDependencyInfo {
     private static @NonNull YangModelDependencyInfo parseSubmoduleContext(final IRStatement submodule,
             final SourceIdentifier source) {
         final String name = safeStringArgument(source, submodule, "submodule name");
-        final String belongsTo = parseBelongsTo(submodule, source);
+        final UnresolvedQName.Unqualified belongsTo = UnresolvedQName.Unqualified.of(parseBelongsTo(submodule, source));
 
         final String latestRevision = getLatestRevision(submodule, source);
         final ImmutableSet<ModuleImport> imports = parseImports(submodule, source);
@@ -271,7 +272,7 @@ public abstract class YangModelDependencyInfo {
     }
 
     private static StatementSourceReference getReference(final SourceIdentifier source, final IRStatement stmt) {
-        return ExplicitStatement.atPosition(source.getName(), stmt.startLine(), stmt.startColumn() + 1);
+        return ExplicitStatement.atPosition(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 
     /**
@@ -295,10 +296,11 @@ public abstract class YangModelDependencyInfo {
      * Dependency information for submodule, also provides name for parent module.
      */
     public static final class SubmoduleDependencyInfo extends YangModelDependencyInfo {
-        private final String belongsTo;
+        private final UnresolvedQName.Unqualified belongsTo;
 
-        private SubmoduleDependencyInfo(final String name, final String latestRevision, final String belongsTo,
-                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+        private SubmoduleDependencyInfo(final String name, final String latestRevision,
+                final UnresolvedQName.Unqualified belongsTo, final ImmutableSet<ModuleImport> imports,
+                final ImmutableSet<ModuleImport> includes) {
             super(name, latestRevision, imports, includes);
             this.belongsTo = belongsTo;
         }
@@ -308,7 +310,7 @@ public abstract class YangModelDependencyInfo {
          *
          * @return The module this info belongs to
          */
-        public String getParentModule() {
+        public UnresolvedQName.Unqualified getParentModule() {
             return belongsTo;
         }
 
@@ -325,16 +327,16 @@ public abstract class YangModelDependencyInfo {
      */
     // FIXME: this is a rather nasty misuse of APIs :(
     private static final class ModuleImportImpl implements ModuleImport {
-        private final @NonNull String moduleName;
+        private final UnresolvedQName.@NonNull Unqualified moduleName;
         private final Revision revision;
 
-        ModuleImportImpl(final @NonNull String moduleName, final @Nullable Revision revision) {
+        ModuleImportImpl(final UnresolvedQName.@NonNull Unqualified moduleName, final @Nullable Revision revision) {
             this.moduleName = requireNonNull(moduleName, "Module name must not be null.");
             this.revision = revision;
         }
 
         @Override
-        public String getModuleName() {
+        public UnresolvedQName.Unqualified getModuleName() {
             return moduleName;
         }
 

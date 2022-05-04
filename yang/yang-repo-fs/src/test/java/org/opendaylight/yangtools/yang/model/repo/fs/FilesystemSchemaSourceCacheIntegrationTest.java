@@ -33,11 +33,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -94,10 +92,10 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
         assertEquals(4, listener.registeredSources.size());
 
         assertThat(Lists.transform(listener.registeredSources, PotentialSchemaSource::getSourceIdentifier),
-                both(hasItem(RevisionSourceIdentifier.create("test", Optional.empty())))
-                        .and(hasItem(RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"))))
-                        .and(hasItem(RevisionSourceIdentifier.create("test", Revision.of("2013-12-12"))))
-                        .and(hasItem(RevisionSourceIdentifier.create("module", Revision.of("2010-12-12"))))
+                both(hasItem(new SourceIdentifier("test")))
+                        .and(hasItem(new SourceIdentifier("test", "2012-12-12")))
+                        .and(hasItem(new SourceIdentifier("test", "2013-12-12")))
+                        .and(hasItem(new SourceIdentifier("module", "2010-12-12")))
         );
     }
 
@@ -111,7 +109,7 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
                 sharedSchemaRepository, YangTextSchemaSource.class, storageDir);
         sharedSchemaRepository.registerSchemaSourceListener(cache);
 
-        final SourceIdentifier runningId = RevisionSourceIdentifier.create("running", Revision.of("2012-12-12"));
+        final SourceIdentifier runningId = new SourceIdentifier("running", "2012-12-12");
 
         sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(
             new YangTextSchemaSource(runningId) {

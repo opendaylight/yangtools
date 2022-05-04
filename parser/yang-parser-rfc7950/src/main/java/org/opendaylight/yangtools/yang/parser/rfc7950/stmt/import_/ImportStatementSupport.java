@@ -106,7 +106,7 @@ public final class ImportStatementSupport
 
                 final Mutable<?, ?, ?> root = rootPrereq.resolve(ctx);
                 // Version 1 sources must not import-by-revision Version 1.1 modules
-                if (importId.getRevision().isPresent() && root.yangVersion() == YangVersion.VERSION_1) {
+                if (importId.revision() != null && root.yangVersion() == YangVersion.VERSION_1) {
                     final YangVersion importedVersion = importedModuleContext.yangVersion();
                     if (importedVersion != YangVersion.VERSION_1) {
                         throw new YangVersionLinkageException(stmt, "Cannot import by revision version %s module %s",

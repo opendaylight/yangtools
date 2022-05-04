@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -25,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -75,10 +74,9 @@ public final class IncludeStatementSupport
 
     @Override
     public void onPreLinkageDeclared(final Mutable<Unqualified, IncludeStatement, IncludeEffectiveStatement> stmt) {
-        final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
-            RevisionDateStatement.class);
-        stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.argument(), Optional.empty())
-            : RevisionSourceIdentifier.create(stmt.argument(), revision.argument()));
+        final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
+        stmt.addRequiredSource(
+            new SourceIdentifier(stmt.getArgument(), revision != null ? revision.getArgument() : null));
     }
 
     @Override
@@ -93,7 +91,7 @@ public final class IncludeStatementSupport
                 NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
         } else {
             requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
-                RevisionSourceIdentifier.create(submoduleName, Optional.of(revision.argument())), SOURCE_LINKAGE);
+                new SourceIdentifier(submoduleName, revision.argument()), SOURCE_LINKAGE);
         }
 
         includeAction.apply(new InferenceAction() {
@@ -107,9 +105,9 @@ public final class IncludeStatementSupport
                         "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
                 }
 
-                stmt.addToNs(IncludedModuleContext.class, revision != null
-                    ? RevisionSourceIdentifier.create(submoduleName, revision.argument())
-                        : RevisionSourceIdentifier.create(submoduleName, Optional.empty()), includedSubModuleContext);
+                stmt.addToNs(IncludedModuleContext.class,
+                    new SourceIdentifier(submoduleName, revision != null ? revision.getArgument() : null),
+                    includedSubModuleContext);
                 stmt.addToNs(IncludedSubmoduleNameToModuleCtx.class, stmt.argument(), includedSubModuleContext);
             }
 
