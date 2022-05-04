@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
@@ -112,14 +111,13 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         final SourceIdentifier parsedId = ast.getIdentifier();
         final YangTextSchemaSource text;
         if (!parsedId.equals(providedId)) {
-            if (!parsedId.getName().equals(providedId.getName())) {
+            if (!parsedId.name().equals(providedId.name())) {
                 LOG.info("Provided module name {} does not match actual text {}, corrected",
                     providedId.toYangFilename(), parsedId.toYangFilename());
             } else {
-                final Optional<Revision> sourceRev = providedId.getRevision();
-                final Optional<Revision> astRev = parsedId.getRevision();
-                if (sourceRev.isPresent()) {
-                    if (!sourceRev.equals(astRev)) {
+                final Revision sourceRev = providedId.revision();
+                if (sourceRev != null) {
+                    if (!sourceRev.equals(parsedId.revision())) {
                         LOG.info("Provided module revision {} does not match actual text {}, corrected",
                             providedId.toYangFilename(), parsedId.toYangFilename());
                     }
@@ -182,7 +180,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             return YangTextSchemaSource.identifierFromFilename(fileName);
         } catch (final IllegalArgumentException e) {
             LOG.warn("Invalid file name format in '{}'", fileName, e);
-            return RevisionSourceIdentifier.create(fileName);
+            return new SourceIdentifier(fileName);
         }
     }
 

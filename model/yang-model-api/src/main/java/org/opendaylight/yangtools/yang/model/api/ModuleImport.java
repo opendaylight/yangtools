@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 
 /**
@@ -27,8 +28,8 @@ public interface ModuleImport extends DocumentedNode, EffectiveStatementEquivale
      *
      * @return Name of the module to import
      */
-    default @NonNull String getModuleName() {
-        return asEffectiveStatement().argument().getLocalName();
+    default @NonNull Unqualified getModuleName() {
+        return asEffectiveStatement().argument();
     }
 
     /**

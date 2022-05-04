@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -27,8 +26,7 @@ public class PotentialSchemaSourceTest {
 
     }
 
-    @Mock
-    public SourceIdentifier sourceIdentifier;
+    public final SourceIdentifier sourceIdentifier = new SourceIdentifier("foo");
     @SuppressWarnings("exports")
     public PotentialSchemaSource<TestSchemaSourceRepresentation> source;
     @SuppressWarnings("exports")

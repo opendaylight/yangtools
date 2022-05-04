@@ -21,10 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -46,8 +44,8 @@ public class SharedEffectiveModelContextFactoryTest {
     public void setUp() {
         final YangTextSchemaSource source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         final YangTextSchemaSource source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
-        s1 = RevisionSourceIdentifier.create("ietf-inet-types", Revision.of("2010-09-24"));
-        s2 = RevisionSourceIdentifier.create("iana-timezones", Revision.of("2012-07-09"));
+        s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
+        s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
 
         final TextToIRTransformer transformer = TextToIRTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
@@ -82,7 +80,7 @@ public class SharedEffectiveModelContextFactoryTest {
         provider.register(repository);
 
         // Register the same provider under source id without revision
-        final SourceIdentifier sIdWithoutRevision = RevisionSourceIdentifier.create(provider.getId().getName());
+        final SourceIdentifier sIdWithoutRevision = new SourceIdentifier(provider.getId().name());
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(
                 sIdWithoutRevision, IRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
@@ -95,8 +93,7 @@ public class SharedEffectiveModelContextFactoryTest {
 
     @Test
     public void testTransientFailureWhilreRetrievingSchemaSource() throws Exception {
-        final RevisionSourceIdentifier s3 =
-            RevisionSourceIdentifier.create("network-topology", Revision.of("2013-10-21"));
+        final SourceIdentifier s3 = new SourceIdentifier("network-topology", "2013-10-21");
 
         repository.registerSchemaSource(new TransientFailureProvider(
             YangTextSchemaSource.forResource("/ietf/network-topology@2013-10-21.yang")),

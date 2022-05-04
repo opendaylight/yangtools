@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -50,7 +51,7 @@ public class ModuleDependencySortTest {
         doReturn(Set.of()).when(fooNoRev).getImports();
         doReturn(Set.of()).when(fooNoRev).getSubmodules();
 
-        doReturn("foo").when(fooNoRevImport).getModuleName();
+        doReturn(UnresolvedQName.unqualified("foo")).when(fooNoRevImport).getModuleName();
         doReturn(Optional.empty()).when(fooNoRevImport).getRevision();
 
         doReturn("bar").when(bar).getName();
