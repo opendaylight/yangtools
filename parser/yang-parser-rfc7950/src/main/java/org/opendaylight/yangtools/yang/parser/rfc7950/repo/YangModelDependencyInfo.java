@@ -240,6 +240,7 @@ public abstract class YangModelDependencyInfo {
     }
 
     @Beta
+    @Deprecated(since = "8.0.4", forRemoval = true)
     public static SemVer findSemanticVersion(final IRStatement statement, final SourceIdentifier source) {
         String semVerString = null;
         for (final IRStatement substatement : statement.statements()) {
