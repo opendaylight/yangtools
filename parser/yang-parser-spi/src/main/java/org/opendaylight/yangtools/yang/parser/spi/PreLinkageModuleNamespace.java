@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -19,8 +20,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * used to resolve inter-module references before actual linkage occurs.
  */
 public interface PreLinkageModuleNamespace
-        extends StatementNamespace<String, ModuleStatement, ModuleEffectiveStatement> {
-    NamespaceBehaviour<String, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
+        extends StatementNamespace<Unqualified, ModuleStatement, ModuleEffectiveStatement> {
+    NamespaceBehaviour<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
             @NonNull PreLinkageModuleNamespace> BEHAVIOUR = NamespaceBehaviour.global(PreLinkageModuleNamespace.class);
 
 }

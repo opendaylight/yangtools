@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -42,10 +43,10 @@ final class RevisionImport {
         // Hidden on purpose
     }
 
-    static void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
+    static void onLinkageDeclared(final Mutable<Unqualified, ImportStatement, ImportEffectiveStatement> stmt) {
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported;
-        final String moduleName = stmt.getArgument();
+        final Unqualified moduleName = stmt.getArgument();
         final Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
         if (revision == null) {
             imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
@@ -80,16 +81,17 @@ final class RevisionImport {
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 if (failed.contains(imported)) {
-                    throw new InferenceException(stmt, "Imported module [%s] was not found.", moduleName);
+                    throw new InferenceException(stmt, "Imported module [%s] was not found.",
+                        moduleName.getLocalName());
                 }
             }
         });
     }
 
-    static SourceIdentifier getImportedSourceIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
+    static SourceIdentifier getImportedSourceIdentifier(final StmtContext<Unqualified, ImportStatement, ?> stmt) {
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);
-        return revision == null ? RevisionSourceIdentifier.create(stmt.argument())
+        return revision == null ? RevisionSourceIdentifier.create(stmt.argument(), Optional.empty())
                 : RevisionSourceIdentifier.create(stmt.argument(), revision.argument());
     }
 }

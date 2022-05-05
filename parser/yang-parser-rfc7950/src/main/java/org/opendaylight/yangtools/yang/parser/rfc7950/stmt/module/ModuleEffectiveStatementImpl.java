@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameTo
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
         implements Module, ModuleEffectiveStatement {
-    private final ImmutableMap<String, SubmoduleEffectiveStatement> nameToSubmodule;
+    private final ImmutableMap<Unqualified, SubmoduleEffectiveStatement> nameToSubmodule;
     private final ImmutableMap<QName, ExtensionEffectiveStatement> qnameToExtension;
     private final ImmutableMap<QName, FeatureEffectiveStatement> qnameToFeature;
     private final ImmutableMap<QName, IdentityEffectiveStatement> qnameToIdentity;
@@ -72,7 +72,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         }
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
-        final Map<String, StmtContext<?, ?, ?>> includedSubmodules =
+        final Map<Unqualified, StmtContext<?, ?, ?>> includedSubmodules =
                 stmt.localNamespacePortion(IncludedSubmoduleNameToModuleCtx.class);
         nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,

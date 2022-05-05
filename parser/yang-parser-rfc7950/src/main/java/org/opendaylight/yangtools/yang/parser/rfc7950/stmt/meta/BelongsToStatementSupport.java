@@ -11,6 +11,8 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -24,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -41,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 
 public final class BelongsToStatementSupport
-        extends AbstractStringStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BELONGS_TO).addMandatory(YangStmtMapping.PREFIX).build();
 
@@ -50,12 +52,13 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<String, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
+    public void onPreLinkageDeclared(final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
         ctx.addRequiredSource(getSourceIdentifier(ctx));
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<String, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
+    public void onLinkageDeclared(
+            final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
         ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
         final SourceIdentifier belongsToSourceIdentifier = getSourceIdentifier(belongsToCtx);
@@ -84,9 +87,9 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    protected BelongsToStatement createDeclared(final BoundStmtCtx<String> ctx,
+    protected BelongsToStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createBelongsTo(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createBelongsTo(ctx.getArgument(), substatements);
     }
 
     @Override
@@ -96,13 +99,13 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    protected BelongsToEffectiveStatement createEffective(final Current<String, BelongsToStatement> stmt,
+    protected BelongsToEffectiveStatement createEffective(final Current<Unqualified, BelongsToStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createBelongsTo(stmt.declared(), substatements);
     }
 
-    private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,
-            BelongsToEffectiveStatement> belongsToCtx) {
-        return RevisionSourceIdentifier.create(belongsToCtx.getArgument());
+    private static SourceIdentifier getSourceIdentifier(
+            final StmtContext<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
+        return RevisionSourceIdentifier.create(belongsToCtx.getArgument(), Optional.empty());
     }
 }

@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
 /**
  * YANG Schema revision source identifier.
@@ -81,6 +82,11 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
         return new RevisionSourceIdentifier(moduleName, revision);
     }
 
+    public static @NonNull RevisionSourceIdentifier create(final Unqualified moduleName,
+            final Optional<Revision> revision) {
+        return create(moduleName.getLocalName(), revision);
+    }
+
     /**
      * Creates new YANG Schema revision source identifier.
      *
@@ -90,6 +96,11 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      */
     public static @NonNull RevisionSourceIdentifier create(final String moduleName, final @Nullable Revision revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
+    }
+
+    public static @NonNull RevisionSourceIdentifier create(final Unqualified moduleName,
+            final @Nullable Revision revision) {
+        return create(moduleName.getLocalName(), revision);
     }
 
     /**
@@ -117,10 +128,9 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof RevisionSourceIdentifier)) {
+        if (!(obj instanceof RevisionSourceIdentifier other)) {
             return false;
         }
-        final RevisionSourceIdentifier other = (RevisionSourceIdentifier) obj;
         return Objects.equals(getName(), other.getName()) && Objects.equals(getRevision(), other.getRevision());
     }
 
