@@ -557,8 +557,7 @@ public final class StmtContextUtils {
         if (rootCtx.producesDeclared(ModuleStatement.class)) {
             qnameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
         } else if (rootCtx.producesDeclared(SubmoduleStatement.class)) {
-            final String belongsToModuleName = firstAttributeOf(rootCtx.declaredSubstatements(),
-                BelongsToStatement.class);
+            final var belongsToModuleName = firstAttributeOf(rootCtx.declaredSubstatements(), BelongsToStatement.class);
             qnameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
         } else {
             qnameModule = null;
@@ -577,7 +576,7 @@ public final class StmtContextUtils {
         }
 
         if (root.producesDeclared(SubmoduleStatement.class)) {
-            final String moduleName = root.getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
+            final var moduleName = root.getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
             return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
         }
 

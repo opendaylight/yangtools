@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -19,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * into Yang model storage but keyed by plain name.
  */
 public interface ModuleNamespaceForBelongsTo
-        extends StatementNamespace<String, ModuleStatement, ModuleEffectiveStatement> {
-    NamespaceBehaviour<String, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
+        extends StatementNamespace<Unqualified, ModuleStatement, ModuleEffectiveStatement> {
+    NamespaceBehaviour<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
         @NonNull ModuleNamespaceForBelongsTo> BEHAVIOUR = NamespaceBehaviour.global(ModuleNamespaceForBelongsTo.class);
 }
