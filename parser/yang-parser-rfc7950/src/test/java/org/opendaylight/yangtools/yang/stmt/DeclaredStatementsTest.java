@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -238,7 +239,7 @@ public class DeclaredStatementsTest {
 
         assertEquals(1, moduleStatement.getIncludes().size());
         final IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
-        assertEquals("child-module-declared-test", includeStatement.argument());
+        assertEquals(UnresolvedQName.unqualified("child-module-declared-test"), includeStatement.argument());
 
         final Collection<? extends Submodule> submodules = testModule.getSubmodules();
         assertNotNull(submodules);
@@ -277,7 +278,7 @@ public class DeclaredStatementsTest {
 
         assertEquals(1, moduleStatement.getImports().size());
         final ImportStatement importStatement = moduleStatement.getImports().iterator().next();
-        assertEquals("imported-module-declared-test", importStatement.argument());
+        assertEquals(UnresolvedQName.unqualified("imported-module-declared-test"), importStatement.argument());
         assertEquals("imdt", importStatement.getPrefix().argument());
         assertEquals(revision, importStatement.getRevisionDate().argument());
 

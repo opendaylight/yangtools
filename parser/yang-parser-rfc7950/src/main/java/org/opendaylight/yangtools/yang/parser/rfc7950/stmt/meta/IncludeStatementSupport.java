@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -30,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -48,7 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
 
 @Beta
 public final class IncludeStatementSupport
-        extends AbstractStringStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.INCLUDE)
             .addOptional(YangStmtMapping.REVISION_DATE)
@@ -73,16 +74,16 @@ public final class IncludeStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
+    public void onPreLinkageDeclared(final Mutable<Unqualified, IncludeStatement, IncludeEffectiveStatement> stmt) {
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);
-        stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.argument())
+        stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.argument(), Optional.empty())
             : RevisionSourceIdentifier.create(stmt.argument(), revision.argument()));
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
-        final String submoduleName = stmt.getArgument();
+    public void onLinkageDeclared(final Mutable<Unqualified, IncludeStatement, IncludeEffectiveStatement> stmt) {
+        final Unqualified submoduleName = stmt.getArgument();
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
 
         final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
@@ -107,8 +108,8 @@ public final class IncludeStatementSupport
                 }
 
                 stmt.addToNs(IncludedModuleContext.class, revision != null
-                        ? RevisionSourceIdentifier.create(submoduleName, revision.argument())
-                                : RevisionSourceIdentifier.create(submoduleName), includedSubModuleContext);
+                    ? RevisionSourceIdentifier.create(submoduleName, revision.argument())
+                        : RevisionSourceIdentifier.create(submoduleName, Optional.empty()), includedSubModuleContext);
                 stmt.addToNs(IncludedSubmoduleNameToModuleCtx.class, stmt.argument(), includedSubModuleContext);
             }
 
@@ -121,9 +122,9 @@ public final class IncludeStatementSupport
     }
 
     @Override
-    protected IncludeStatement createDeclared(final BoundStmtCtx<String> ctx,
+    protected IncludeStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createInclude(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createInclude(ctx.getArgument(), substatements);
     }
 
     @Override
@@ -133,7 +134,7 @@ public final class IncludeStatementSupport
     }
 
     @Override
-    protected IncludeEffectiveStatement createEffective(final Current<String, IncludeStatement> stmt,
+    protected IncludeEffectiveStatement createEffective(final Current<Unqualified, IncludeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createInclude(stmt.declared(), substatements);
     }

@@ -14,6 +14,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -26,15 +27,15 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 @Beta
 public abstract class NamespaceKeyCriterion<K> {
     private static final class LatestRevisionModule extends NamespaceKeyCriterion<SourceIdentifier> {
-        private final String moduleName;
+        private final Unqualified moduleName;
 
-        LatestRevisionModule(final String moduleName) {
+        LatestRevisionModule(final Unqualified moduleName) {
             this.moduleName = requireNonNull(moduleName);
         }
 
         @Override
         public boolean match(final SourceIdentifier key) {
-            return moduleName.equals(key.getName());
+            return moduleName.getLocalName().equals(key.getName());
         }
 
         @Override
@@ -44,7 +45,7 @@ public abstract class NamespaceKeyCriterion<K> {
 
         @Override
         protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return toStringHelper.add("moduleName", moduleName);
+            return toStringHelper.add("moduleName", moduleName.getLocalName());
         }
     }
 
@@ -54,7 +55,7 @@ public abstract class NamespaceKeyCriterion<K> {
      * @param moduleName Module name
      * @return A criterion object.
      */
-    public static NamespaceKeyCriterion<SourceIdentifier> latestRevisionModule(final String moduleName) {
+    public static NamespaceKeyCriterion<SourceIdentifier> latestRevisionModule(final Unqualified moduleName) {
         return new LatestRevisionModule(moduleName);
     }
 

@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyIncludeEffectiveStatement extends DefaultArgument<String, IncludeStatement>
+public final class EmptyIncludeEffectiveStatement extends DefaultArgument<Unqualified, IncludeStatement>
         implements IncludeEffectiveStatement {
     public EmptyIncludeEffectiveStatement(final IncludeStatement declared) {
         super(declared);
