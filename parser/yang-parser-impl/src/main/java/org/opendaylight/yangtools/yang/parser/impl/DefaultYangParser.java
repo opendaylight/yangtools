@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.xml.sax.SAXException;
 
 final class DefaultYangParser implements YangParser {
-    private static final @NonNull Collection<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS =
+    static final @NonNull Collection<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS =
             ImmutableList.of(IRSchemaSource.class, YangTextSchemaSource.class, YinDomSchemaSource.class,
                 YinXmlSchemaSource.class, YinTextSchemaSource.class);
 
@@ -99,12 +99,12 @@ final class DefaultYangParser implements YangParser {
         }
     }
 
-    private static YangParserException decodeReactorException(final ReactorException reported) {
+    static YangParserException decodeReactorException(final ReactorException reported) {
         // FIXME: map exception in some reasonable manner
         return new YangParserException("Failed to assemble sources", reported);
     }
 
-    private static StatementStreamSource sourceToStatementStream(final SchemaSourceRepresentation source)
+    static StatementStreamSource sourceToStatementStream(final SchemaSourceRepresentation source)
             throws IOException, YangSyntaxErrorException {
         requireNonNull(source);
         if (source instanceof IRSchemaSource) {
