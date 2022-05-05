@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyBelongsToStatement extends WithRawStringArgument implements BelongsToStatement {
-    public EmptyBelongsToStatement(final String rawArgument) {
-        super(rawArgument);
+public final class EmptyBelongsToStatement extends WithArgument<Unqualified> implements BelongsToStatement {
+    public EmptyBelongsToStatement(final Unqualified argument) {
+        super(argument.getLocalName(), argument);
     }
 }

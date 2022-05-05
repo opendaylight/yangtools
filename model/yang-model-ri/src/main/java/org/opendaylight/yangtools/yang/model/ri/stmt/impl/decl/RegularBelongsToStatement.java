@@ -9,13 +9,14 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularBelongsToStatement extends WithSubstatements implements BelongsToStatement {
-    public RegularBelongsToStatement(final @NonNull String rawArgument,
+public final class RegularBelongsToStatement extends WithSubstatements<Unqualified> implements BelongsToStatement {
+    public RegularBelongsToStatement(final @NonNull Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+        super(argument.getLocalName(), argument, substatements);
     }
 }

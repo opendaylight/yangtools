@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -20,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-public final class ImportEffectiveStatementImpl extends WithSubstatements<String, ImportStatement>
-        implements ImportEffectiveStatement, ModuleImport, DocumentedNodeMixin<String, ImportStatement> {
+public final class ImportEffectiveStatementImpl extends WithSubstatements<Unqualified, ImportStatement>
+        implements ImportEffectiveStatement, ModuleImport, DocumentedNodeMixin<Unqualified, ImportStatement> {
     private final @Nullable Revision revision;
 
     public ImportEffectiveStatementImpl(final ImportStatement declared,

@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularIncludeEffectiveStatement extends WithSubstatements<String, IncludeStatement>
+public final class RegularIncludeEffectiveStatement extends WithSubstatements<Unqualified, IncludeStatement>
         implements IncludeEffectiveStatement {
     public RegularIncludeEffectiveStatement(final IncludeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
