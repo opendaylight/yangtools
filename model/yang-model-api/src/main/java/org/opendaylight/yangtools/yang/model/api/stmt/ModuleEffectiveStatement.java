@@ -47,7 +47,7 @@ public interface ModuleEffectiveStatement
      * Namespace mapping all included submodules. The namespaces is keyed by submodule name.
      */
     abstract class NameToEffectiveSubmoduleNamespace
-            extends IdentifierNamespace<String, @NonNull SubmoduleEffectiveStatement> {
+            extends IdentifierNamespace<Unqualified, @NonNull SubmoduleEffectiveStatement> {
         private NameToEffectiveSubmoduleNamespace() {
             // This class should never be subclassed
         }

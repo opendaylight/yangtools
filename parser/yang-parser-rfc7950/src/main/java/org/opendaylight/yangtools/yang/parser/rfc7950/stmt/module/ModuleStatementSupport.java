@@ -149,7 +149,7 @@ public final class ModuleStatementSupport
 
     @Override
     public void onPreLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final String moduleName = stmt.getRawArgument();
+        final Unqualified moduleName = stmt.getArgument();
 
         final XMLNamespace moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
@@ -185,11 +185,11 @@ public final class ModuleStatementSupport
                 possibleDuplicateModule.sourceReference());
         }
 
-        final String moduleName = stmt.getRawArgument();
+        final Unqualified moduleName = stmt.getArgument();
         final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(moduleName, revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
-        stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
+        stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleName, stmt);
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
         final String modulePrefix = SourceException.throwIfNull(
@@ -270,7 +270,7 @@ public final class ModuleStatementSupport
     }
 
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
-        final Map<String, StmtContext<?, ?, ?>> submodules = stmt.localNamespacePortion(
+        final Map<Unqualified, StmtContext<?, ?, ?>> submodules = stmt.localNamespacePortion(
             IncludedSubmoduleNameToModuleCtx.class);
         return submodules == null ? List.of() : submodules.values();
     }

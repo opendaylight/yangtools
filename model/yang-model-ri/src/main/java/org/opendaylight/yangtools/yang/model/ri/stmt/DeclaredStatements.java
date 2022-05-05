@@ -279,7 +279,7 @@ public final class DeclaredStatements {
             : new RegularBaseStatement(argument, substatements);
     }
 
-    public static BelongsToStatement createBelongsTo(final String argument,
+    public static BelongsToStatement createBelongsTo(final Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyBelongsToStatement(argument)
             : new RegularBelongsToStatement(argument, substatements);
@@ -408,15 +408,15 @@ public final class DeclaredStatements {
             : new RegularIfFeatureStatement(rawArgument, argument, substatements);
     }
 
-    public static ImportStatement createImport(final String argument,
+    public static ImportStatement createImport(final Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ImportStatementImpl(argument, substatements);
     }
 
-    public static IncludeStatement createInclude(final String rawArgument, final String argument,
+    public static IncludeStatement createInclude(final Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? new EmptyIncludeStatement(rawArgument, argument)
-            : new RegularIncludeStatement(rawArgument, argument, substatements);
+        return substatements.isEmpty() ? new EmptyIncludeStatement(argument)
+            : new RegularIncludeStatement(argument, substatements);
     }
 
     public static InputStatement createInput(final QName argument) {
