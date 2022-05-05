@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -32,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -50,7 +51,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
 
 @Beta
 public final class ImportStatementSupport
-        extends AbstractStringStatementSupport<ImportStatement, ImportEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<ImportStatement, ImportEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
@@ -77,7 +78,7 @@ public final class ImportStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
+    public void onPreLinkageDeclared(final Mutable<Unqualified, ImportStatement, ImportEffectiveStatement> stmt) {
         /*
          * Add ModuleIdentifier of a module which is required by this module.
          * Based on this information, required modules are searched from library
@@ -86,7 +87,7 @@ public final class ImportStatementSupport
         final SourceIdentifier importId = RevisionImport.getImportedSourceIdentifier(stmt);
         stmt.addRequiredSource(importId);
 
-        final String moduleName = stmt.getArgument();
+        final Unqualified moduleName = stmt.getArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
                 PreLinkageModuleNamespace.class, moduleName, SOURCE_PRE_LINKAGE);
@@ -96,7 +97,7 @@ public final class ImportStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
-                verify(moduleName.equals(importedModuleContext.getRawArgument()));
+                verify(moduleName.equals(importedModuleContext.getArgument()));
                 final XMLNamespace importedModuleNamespace = verifyNotNull(
                     importedModuleContext.getFromNamespace(ModuleNameToNamespace.class, moduleName));
                 final String impPrefix = SourceException.throwIfNull(
@@ -125,14 +126,14 @@ public final class ImportStatementSupport
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
+    public void onLinkageDeclared(final Mutable<Unqualified, ImportStatement, ImportEffectiveStatement> stmt) {
         RevisionImport.onLinkageDeclared(stmt);
     }
 
     @Override
-    protected ImportStatement createDeclared(final BoundStmtCtx<String> ctx,
+    protected ImportStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createImport(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createImport(ctx.getArgument(), substatements);
     }
 
     @Override
@@ -142,7 +143,7 @@ public final class ImportStatementSupport
     }
 
     @Override
-    protected ImportEffectiveStatement createEffective(final Current<String, ImportStatement> stmt,
+    protected ImportEffectiveStatement createEffective(final Current<Unqualified, ImportStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");
         return EffectiveStatements.createImport(stmt.declared(), substatements,

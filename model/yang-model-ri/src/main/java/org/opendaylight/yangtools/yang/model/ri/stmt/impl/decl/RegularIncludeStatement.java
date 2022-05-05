@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularIncludeStatement extends WithSubstatements<String> implements IncludeStatement {
-    public RegularIncludeStatement(final String rawArgument, final String argument,
+public final class RegularIncludeStatement extends WithSubstatements<Unqualified> implements IncludeStatement {
+    public RegularIncludeStatement(final Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, argument, substatements);
+        super(argument.getLocalName(), argument, substatements);
     }
 }
