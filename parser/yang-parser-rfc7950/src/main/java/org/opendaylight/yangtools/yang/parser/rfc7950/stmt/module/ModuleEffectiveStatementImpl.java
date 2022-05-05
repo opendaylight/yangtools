@@ -72,7 +72,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         }
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
-        final Map<String, StmtContext<?, ?, ?>> includedSubmodules =
+        final Map<Unqualified, StmtContext<?, ?, ?>> includedSubmodules =
                 stmt.localNamespacePortion(IncludedSubmoduleNameToModuleCtx.class);
         nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,

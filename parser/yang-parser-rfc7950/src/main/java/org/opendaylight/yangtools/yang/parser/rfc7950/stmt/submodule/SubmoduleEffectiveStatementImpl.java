@@ -81,7 +81,7 @@ final class SubmoduleEffectiveStatementImpl
          * collect only submodule contexts here and then build them during
          * sealing of this statement.
          */
-        final Map<String, StmtContext<?, ?, ?>> includedSubmodulesMap = stmt.localNamespacePortion(
+        final Map<Unqualified, StmtContext<?, ?, ?>> includedSubmodulesMap = stmt.localNamespacePortion(
             IncludedSubmoduleNameToModuleCtx.class);
         if (includedSubmodulesMap != null) {
             final Set<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContextsInit =
