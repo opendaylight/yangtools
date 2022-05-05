@@ -142,7 +142,8 @@ public final class SubmoduleStatementSupport
 
         stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
-        final String belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
+        final Unqualified belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(),
+            BelongsToStatement.class);
         final StmtContext<?, ?, ?> prefixSubStmtCtx = SourceException.throwIfNull(
             findFirstDeclaredSubstatement(stmt, 0, BelongsToStatement.class, PrefixStatement.class), stmt,
             "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());

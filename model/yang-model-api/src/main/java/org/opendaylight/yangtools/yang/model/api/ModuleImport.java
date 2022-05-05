@@ -28,7 +28,7 @@ public interface ModuleImport extends DocumentedNode, EffectiveStatementEquivale
      * @return Name of the module to import
      */
     default @NonNull String getModuleName() {
-        return asEffectiveStatement().argument();
+        return asEffectiveStatement().argument().getLocalName();
     }
 
     /**

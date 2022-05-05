@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -36,7 +37,7 @@ final class StmtNamespaceContext implements YangNamespaceContext {
     StmtNamespaceContext(final StmtContext<?, ?, ?> ctx) {
         // QNameModule -> prefix mappings
         final Map<QNameModule, String> qnameToPrefix = ctx.getAllFromNamespace(ModuleQNameToPrefix.class);
-        this.moduleToPrefix = qnameToPrefix == null ? ImmutableBiMap.of() : ImmutableBiMap.copyOf(qnameToPrefix);
+        moduleToPrefix = qnameToPrefix == null ? ImmutableBiMap.of() : ImmutableBiMap.copyOf(qnameToPrefix);
 
         // Additional mappings
         final Map<String, QNameModule> additional = new HashMap<>();
@@ -46,7 +47,7 @@ final class StmtNamespaceContext implements YangNamespaceContext {
                 if (!moduleToPrefix.containsValue(entry.getKey())) {
                     QNameModule qnameModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, entry.getValue());
                     if (qnameModule == null && ctx.producesDeclared(SubmoduleStatement.class)) {
-                        final String moduleName = ctx.getFromNamespace(BelongsToPrefixToModuleName.class,
+                        final Unqualified moduleName = ctx.getFromNamespace(BelongsToPrefixToModuleName.class,
                             entry.getKey());
                         qnameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
                     }
@@ -58,9 +59,9 @@ final class StmtNamespaceContext implements YangNamespaceContext {
             }
         }
         if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final Map<String, String> belongsTo = ctx.getAllFromNamespace(BelongsToPrefixToModuleName.class);
+            final Map<String, Unqualified> belongsTo = ctx.getAllFromNamespace(BelongsToPrefixToModuleName.class);
             if (belongsTo != null) {
-                for (Entry<String, String> entry : belongsTo.entrySet()) {
+                for (Entry<String, Unqualified> entry : belongsTo.entrySet()) {
                     final QNameModule module = ctx.getFromNamespace(ModuleNameToModuleQName.class, entry.getValue());
                     if (module != null && !additional.containsKey(entry.getKey())) {
                         additional.put(entry.getKey(), module);
@@ -69,7 +70,7 @@ final class StmtNamespaceContext implements YangNamespaceContext {
             }
         }
 
-        this.prefixToModule = ImmutableMap.copyOf(additional);
+        prefixToModule = ImmutableMap.copyOf(additional);
     }
 
     @Override
