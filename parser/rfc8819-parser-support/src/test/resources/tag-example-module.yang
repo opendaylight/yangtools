@@ -1,0 +1,25 @@
+module tag-example-module {
+  yang-version 1.1;
+  namespace "https://example.com/yang/example";
+  prefix "tex";
+
+  import ietf-module-tags { prefix tags; }
+  import ietf-module-tags-state { prefix tags-s; }
+
+  revision "2022-04-05" {
+    description "Initial version";
+  }
+
+  container cntr {
+    tags:module-tag "ietf:tag-inside-cntr";
+  }
+
+  tags:module-tag "ietf:tag-outside-cntr";
+  tags:module-tag "ietf:some-other-tag";
+  tags:module-tag "ietf:network-element-class";
+  tags:module-tag "vendor:some-other-tag";
+  tags:module-tag "user:some-other-tag";
+  tags:module-tag "somestring";
+  tags:module-tag "sometag:somestring";
+
+}
