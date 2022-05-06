@@ -18,6 +18,6 @@ public final class IfFeatureStatementRFC7950Support extends AbstractIfFeatureSta
 
     @Override
     public IfFeatureExpr parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return IfFeaturePredicateVisitor.parseIfFeatureExpression(ctx, value);
+        return IfFeaturePredicateParser.parseIfFeatureExpression(ctx, value);
     }
 }
