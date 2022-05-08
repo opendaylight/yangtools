@@ -19,7 +19,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
@@ -86,8 +86,7 @@ class PathExpressionParser {
         final Steps steps;
         if (childPath instanceof Path_strContext) {
             steps = new LocationPathSteps(parsePathStr(ctx, pathArg, (Path_strContext) childPath));
-        } else if (childPath instanceof Deref_exprContext) {
-            final Deref_exprContext deref = (Deref_exprContext) childPath;
+        } else if (childPath instanceof Deref_exprContext deref) {
             steps = new DerefSteps(parseRelative(ctx, pathArg,
                 getChild(deref, 0, Deref_function_invocationContext.class).getChild(Relative_pathContext.class, 0)),
                 parseRelative(ctx, pathArg, getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
@@ -221,7 +220,7 @@ class PathExpressionParser {
     private static YangQNameExpr createChildExpr(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
         switch (qname.getChildCount()) {
             case 1:
-                return YangQNameExpr.of(UnresolvedQName.unqualified(qname.getText()).intern());
+                return YangQNameExpr.of(Unqualified.of(qname.getText()).intern());
             case 3:
                 return YangQNameExpr.of(parseQName(ctx, qname));
             default:
@@ -233,7 +232,7 @@ class PathExpressionParser {
             final List<YangExpr> predicates) {
         switch (qname.getChildCount()) {
             case 1:
-                return YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified(qname.getText()).intern(), predicates);
+                return YangXPathAxis.CHILD.asStep(Unqualified.of(qname.getText()).intern(), predicates);
             case 3:
                 return YangXPathAxis.CHILD.asStep(parseQName(ctx, qname), predicates);
             default:

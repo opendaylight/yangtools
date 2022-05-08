@@ -39,7 +39,7 @@ public final class AugmentIdentifierStatementSupport
     @Override
     public Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return UnresolvedQName.unqualified(value).intern();
+            return Unqualified.of(value).intern();
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid identifier \"%s\"", value);
         }

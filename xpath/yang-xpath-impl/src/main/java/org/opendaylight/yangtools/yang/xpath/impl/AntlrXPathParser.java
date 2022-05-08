@@ -117,13 +117,13 @@ abstract class AntlrXPathParser implements YangXPathParser {
         @Override
         QNameStep createStep(final YangXPathAxis axis, final String localName,
                 final List<YangExpr> predicates) {
-            return axis.asStep(UnresolvedQName.unqualified(localName).intern(), predicates);
+            return axis.asStep(UnresolvedQName.Unqualified.of(localName).intern(), predicates);
         }
 
         @Override
         QNameStep createStep(final YangXPathAxis axis, final String prefix, final String localName,
                 final List<YangExpr> predicates) {
-            return axis.asStep(UnresolvedQName.qualified(prefix, localName).intern(), predicates);
+            return axis.asStep(UnresolvedQName.Qualified.of(prefix, localName).intern(), predicates);
         }
 
         @Override

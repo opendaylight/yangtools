@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
@@ -66,9 +66,9 @@ public class PathExpressionParserTest {
 
         final DerefSteps derefSteps = (DerefSteps) steps;
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
-            YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified("type"))), derefSteps.getRelativePath());
+            YangXPathAxis.CHILD.asStep(Unqualified.of("type"))), derefSteps.getRelativePath());
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
-            YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified("id"))), derefSteps.getDerefArgument());
+            YangXPathAxis.CHILD.asStep(Unqualified.of("id"))), derefSteps.getDerefArgument());
     }
 
     @Test
@@ -114,13 +114,13 @@ public class PathExpressionParserTest {
 
         path.getSteps();
         assertEquals(ImmutableList.of(
-            YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified("device_types")),
-            YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified("device_type"),
+            YangXPathAxis.CHILD.asStep(Unqualified.of("device_types")),
+            YangXPathAxis.CHILD.asStep(Unqualified.of("device_type"),
                 ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(
-                    YangQNameExpr.of(UnresolvedQName.unqualified("type")),
+                    YangQNameExpr.of(Unqualified.of("type")),
                     YangPathExpr.of(YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier()), Relative.relative(
                         YangXPathAxis.PARENT.asStep(),
-                        YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified("type_text"))))))),
-            YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified("desc"))), path.getSteps());
+                        YangXPathAxis.CHILD.asStep(Unqualified.of("type_text"))))))),
+            YangXPathAxis.CHILD.asStep(Unqualified.of("desc"))), path.getSteps());
     }
 }
