@@ -55,12 +55,12 @@ abstract class InstanceIdentifierParser {
 
         @Override
         YangQNameExpr createExpr(final String prefix, final String localName) {
-            return YangQNameExpr.of(UnresolvedQName.qualified(prefix, localName));
+            return YangQNameExpr.of(UnresolvedQName.Qualified.of(prefix, localName));
         }
 
         @Override
         QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
-            return YangXPathAxis.CHILD.asStep(UnresolvedQName.qualified(prefix, localName), predicates);
+            return YangXPathAxis.CHILD.asStep(UnresolvedQName.Qualified.of(prefix, localName), predicates);
         }
     }
 

@@ -22,7 +22,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -141,7 +140,7 @@ public final class ModuleStatementSupport
     @Override
     public Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return UnresolvedQName.unqualified(value);
+            return Unqualified.of(value);
         } catch (IllegalArgumentException e) {
             throw new SourceException(e.getMessage(), ctx, e);
         }

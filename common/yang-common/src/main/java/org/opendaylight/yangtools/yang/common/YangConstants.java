@@ -142,8 +142,8 @@ public final class YangConstants {
 
     // Dummy template UnqualifiedQName. These are never leaked, but are used for efficient instantiation via
     // UnqualifiedQName#bindTo()
-    private static final Unqualified DUMMY_OPERATION_INPUT = UnresolvedQName.unqualified("input");
-    private static final Unqualified DUMMY_OPERATION_OUTPUT = UnresolvedQName.unqualified("output");
+    private static final Unqualified DUMMY_OPERATION_INPUT = Unqualified.of("input");
+    private static final Unqualified DUMMY_OPERATION_OUTPUT = Unqualified.of("output");
 
     private YangConstants() {
         // Hidden on purpose

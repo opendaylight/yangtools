@@ -47,6 +47,19 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
         }
 
         /**
+         * Create a new qualified unresolved QName.
+         *
+         * @param prefix The prefix on this qualified QName
+         * @param localName The local name of this qualified QName
+         * @return An UnqualifiedQName instance
+         * @throws NullPointerException if any argument is {@code null}
+         * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
+         */
+        public static Qualified of(final String prefix, final String localName) {
+            return new Qualified(checkLocalName(prefix), checkLocalName(localName));
+        }
+
+        /**
          * Read an QualifiedQName from a DataInput. The format is expected to match the output format of
          * {@link #writeTo(DataOutput)}.
          *
@@ -55,7 +68,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
          * @throws IOException if I/O error occurs
          */
         public static Qualified readFrom(final DataInput in) throws IOException {
-            return qualified(in.readUTF(), in.readUTF());
+            return of(in.readUTF(), in.readUTF());
         }
 
         @Override
@@ -128,6 +141,18 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
         }
 
         /**
+         * Create a new unqualified unresolved QName.
+         *
+         * @param localName The local name of this unqualified QName
+         * @return An UnqualifiedQName instance
+         * @throws NullPointerException if localName is {@code null}
+         * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
+         */
+        public static Unqualified of(final String localName) {
+            return new Unqualified(checkLocalName(localName));
+        }
+
+        /**
          * Read an UnqualifiedQName from a DataInput. The format is expected to match the output format of
          * {@link #writeTo(DataOutput)}.
          *
@@ -136,7 +161,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
          * @throws IOException if I/O error occurs
          */
         public static Unqualified readFrom(final DataInput in) throws IOException {
-            return unqualified(in.readUTF());
+            return of(in.readUTF());
         }
 
         @Override
@@ -150,7 +175,6 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
         }
 
         @Override
-        @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "Non-grok of @Nullable")
         public @Nullable String getPrefix() {
             return null;
         }
@@ -206,9 +230,11 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
      * @return An UnqualifiedQName instance
      * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
+     * @deprecated Use {@link Qualified#of(String, String)} instead.
      */
+    @Deprecated(since = "9.0.0", forRemoval = true)
     public static Qualified qualified(final String prefix, final String localName) {
-        return new Qualified(checkLocalName(prefix), checkLocalName(localName));
+        return Qualified.of(prefix, localName);
     }
 
     /**
@@ -218,9 +244,11 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
      * @return An UnqualifiedQName instance
      * @throws NullPointerException if localName is {@code null}
      * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
+     * @deprecated Use {@link Unqualified#of(String)} instead.
      */
+    @Deprecated(since = "9.0.0", forRemoval = true)
     public static Unqualified unqualified(final String localName) {
-        return new Unqualified(checkLocalName(localName));
+        return Unqualified.of(localName);
     }
 
     /**
@@ -229,7 +257,6 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
      * @param localName The local name of this unqualified QName
      * @return An UnqualifiedQName instance, or null if localName is not valid
      */
-    @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "Non-grok of @Nullable")
     public static @Nullable Unqualified tryLocalName(final String localName) {
         return isValidLocalName(localName) ? new Unqualified(localName) : null;
     }
