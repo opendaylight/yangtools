@@ -12,7 +12,6 @@ module org.opendaylight.yangtools.yang.repo.spi {
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.repo.api;
 
-    requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
