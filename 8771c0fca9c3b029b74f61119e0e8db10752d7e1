@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56ef2c96_37157b25",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-09T07:24:43Z",
+      "side": 1,
+      "message": "Yes, we have fixed it :D",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f479bd0d_36741324",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-09T07:24:43Z",
+      "side": 1,
+      "message": "Maybe there is another interface we should implement now? I don\u0027t know.",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7fae7de_4ad03b07",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-09T07:24:43Z",
+      "side": 1,
+      "message": "`private static`",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8041a15d_01f62e05",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-09T07:24:43Z",
+      "side": 1,
+      "message": "`private static`",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e122d78_c2bafb8f",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-09T07:24:43Z",
+      "side": 1,
+      "message": "When its possible to make it static - make it static..",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03fba867_f0315f92",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-09T07:24:43Z",
+      "side": 1,
+      "message": "Maybe `public` methods could be little bit more up in the class.",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7738e59f_863813e3",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-09T07:24:43Z",
+      "side": 1,
+      "message": "Please use Java 11/17 style as possible.",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
