@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "080785fa_0b47bc31",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-05-09T14:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56ef2c96_37157b25",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f479bd0d_36741324",
@@ -31,6 +49,24 @@
       "writtenOn": "2022-05-09T07:24:43Z",
       "side": 1,
       "message": "Maybe there is another interface we should implement now? I don\u0027t know.",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9d30152_df0c04c6",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-05-09T14:53:09Z",
+      "side": 1,
+      "message": "I did not find any interface to implement.",
+      "parentUuid": "f479bd0d_36741324",
       "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "52d8d3c4_4e28cb65",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-05-09T14:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7fae7de_4ad03b07",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8041a15d_01f62e05",
@@ -65,6 +119,24 @@
       "writtenOn": "2022-05-09T07:24:43Z",
       "side": 1,
       "message": "`private static`",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e15055de_328538cb",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-05-09T14:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8041a15d_01f62e05",
       "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -86,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "858e3696_1a736d35",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-05-09T14:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e122d78_c2bafb8f",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03fba867_f0315f92",
@@ -103,6 +193,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3735a953_b0f2539c",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-05-09T14:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03fba867_f0315f92",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7738e59f_863813e3",
@@ -116,6 +224,24 @@
       "writtenOn": "2022-05-09T07:24:43Z",
       "side": 1,
       "message": "Please use Java 11/17 style as possible.",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5941c008_88ce7dc8",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 9074
+      },
+      "writtenOn": "2022-05-09T14:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7738e59f_863813e3",
       "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
