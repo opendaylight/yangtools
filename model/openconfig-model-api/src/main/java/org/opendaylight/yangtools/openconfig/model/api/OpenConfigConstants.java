@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  */
 @NonNullByDefault
 public final class OpenConfigConstants {
-    private static final String MODULE_NAME = "yang-ext";
+    private static final String MODULE_NAME = "openconfig-extensions";
 
     // Package-visible, because openconfig-version applies across all known revisions and needs to bind to all of them
     static final XMLNamespace MODULE_NAMESPACE = XMLNamespace.of("http://openconfig.net/yang/openconfig-ext").intern();
