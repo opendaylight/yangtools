@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Utility for emitting a {@link YangInstanceIdentifier} into a {@link NormalizedNodeStreamWriter} as a set of
@@ -102,8 +103,12 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
                 if (reuse) {
                     throw new IOException(parent + " is expecting a nested item, cannot resolve " + arg);
                 }
+                if (!(parent instanceof DataNodeContainer container)) {
+                    throw new IOException(parent + " is not a container, cannot resolve" + arg);
+                }
 
-                parent = enterAugmentation(target, augId);
+                final var aug = enterAugmentation(target, augId);
+                parent = new EffectiveAugmentationSchema(aug, container);
                 writer.startAugmentationNode(augId);
             } else if (arg instanceof NodeWithValue<?> nodeId) {
                 if (!(parent instanceof LeafListSchemaNode)) {
