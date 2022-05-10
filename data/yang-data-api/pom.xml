@@ -47,5 +47,10 @@
             <artifactId>value</artifactId>
             <classifier>annotations</classifier>
         </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-test-util</artifactId>
+        </dependency>
     </dependencies>
 </project>
