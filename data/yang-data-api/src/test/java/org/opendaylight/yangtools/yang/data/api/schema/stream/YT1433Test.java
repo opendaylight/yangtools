@@ -48,16 +48,18 @@ public class YT1433Test {
             }
         }
 
-        assertEquals("(foo)foo(container)\n"
-            + "  AugmentationIdentifier{childNames=[(foo)bar]}(augmentation)\n"
-            + "    (foo)bar(container)\n"
-            + "      AugmentationIdentifier{childNames=[(foo)baz]}(augmentation)\n"
-            + "        (foo)baz(container)\n"
-            + "        (end)\n"
-            + "      (end)\n"
-            + "    (end)\n"
-            + "  (end)\n"
-            + "(end)\n", streamWriter.result());
+        assertEquals("""
+            (foo)foo(container)
+              AugmentationIdentifier{childNames=[(foo)bar]}(augmentation)
+                (foo)bar(container)
+                  AugmentationIdentifier{childNames=[(foo)baz]}(augmentation)
+                    (foo)baz(container)
+                    (end)
+                  (end)
+                (end)
+              (end)
+            (end)
+            """, streamWriter.result());
     }
 
     @Test
@@ -79,11 +81,13 @@ public class YT1433Test {
             }
         }
 
-        assertEquals("(bar)foo(choice)\n"
-            + "  (bar)bar(container)\n"
-            + "    (bar)baz(container)\n"
-            + "    (end)\n"
-            + "  (end)\n"
-            + "(end)\n", streamWriter.result());
+        assertEquals("""
+            (bar)foo(choice)
+              (bar)bar(container)
+                (bar)baz(container)
+                (end)
+              (end)
+            (end)
+            """, streamWriter.result());
     }
 }
