@@ -54,17 +54,19 @@ public class YangInstanceIdentifierWriterTest {
             }
         }
 
-        assertEquals("(test)container-1(container)\n"
-            + "  (test)container-2(container)\n"
-            + "    (test)container-3(container)\n"
-            + "      (test)payload-container(container)\n"
-            + "        (test)payload-leaf(leaf)\n"
-            + "          (String)=leaf-value\n"
-            + "        (end)\n"
-            + "      (end)\n"
-            + "    (end)\n"
-            + "  (end)\n"
-            + "(end)\n", streamWriter.result());
+        assertEquals("""
+            (test)container-1(container)
+              (test)container-2(container)
+                (test)container-3(container)
+                  (test)payload-container(container)
+                    (test)payload-leaf(leaf)
+                      (String)=leaf-value
+                    (end)
+                  (end)
+                (end)
+              (end)
+            (end)
+            """, streamWriter.result());
     }
 
     @Test
@@ -86,19 +88,21 @@ public class YangInstanceIdentifierWriterTest {
             }
         }
 
-        assertEquals("(test)container-1(container)\n"
-            + "  AugmentationIdentifier{childNames=[(augment-namespace)augmented-container]}(augmentation)\n"
-            + "    (augment-namespace)augmented-container(container)\n"
-            + "      (augment-namespace)container-2(container)\n"
-            + "        (test)payload-container(container)\n"
-            + "          (test)payload-leaf(leaf)\n"
-            + "            (String)=leaf-value\n"
-            + "          (end)\n"
-            + "        (end)\n"
-            + "      (end)\n"
-            + "    (end)\n"
-            + "  (end)\n"
-            + "(end)\n", streamWriter.result());
+        assertEquals("""
+            (test)container-1(container)
+              AugmentationIdentifier{childNames=[(augment-namespace)augmented-container]}(augmentation)
+                (augment-namespace)augmented-container(container)
+                  (augment-namespace)container-2(container)
+                    (test)payload-container(container)
+                      (test)payload-leaf(leaf)
+                        (String)=leaf-value
+                      (end)
+                    (end)
+                  (end)
+                (end)
+              (end)
+            (end)
+            """, streamWriter.result());
     }
 
     @Test
@@ -119,17 +123,19 @@ public class YangInstanceIdentifierWriterTest {
             }
         }
 
-        assertEquals("(test)list-1(key)\n"
-            + "  (test)list-1[{(test)list-1-key=test-list-entry}][](key)\n"
-            + "    (test)container-1(container)\n"
-            + "      (test)payload-container(container)\n"
-            + "        (test)payload-leaf(leaf)\n"
-            + "          (String)=leaf-value\n"
-            + "        (end)\n"
-            + "      (end)\n"
-            + "    (end)\n"
-            + "  (end)\n"
-            + "(end)\n", streamWriter.result());
+        assertEquals("""
+            (test)list-1(key)
+              (test)list-1[{(test)list-1-key=test-list-entry}][](key)
+                (test)container-1(container)
+                  (test)payload-container(container)
+                    (test)payload-leaf(leaf)
+                      (String)=leaf-value
+                    (end)
+                  (end)
+                (end)
+              (end)
+            (end)
+            """, streamWriter.result());
     }
 
     @Test
@@ -147,15 +153,17 @@ public class YangInstanceIdentifierWriterTest {
             }
         }
 
-        assertEquals("(test)choice-node(choice)\n"
-            + "  (test)container-in-case(container)\n"
-            + "    (test)payload-container(container)\n"
-            + "      (test)payload-leaf(leaf)\n"
-            + "        (String)=leaf-value\n"
-            + "      (end)\n"
-            + "    (end)\n"
-            + "  (end)\n"
-            + "(end)\n", streamWriter.result());
+        assertEquals("""
+            (test)choice-node(choice)
+              (test)container-in-case(container)
+                (test)payload-container(container)
+                  (test)payload-leaf(leaf)
+                    (String)=leaf-value
+                  (end)
+                (end)
+              (end)
+            (end)
+            """, streamWriter.result());
     }
 
     @Test
@@ -182,14 +190,16 @@ public class YangInstanceIdentifierWriterTest {
             }
         }
 
-        assertEquals("(test)list-list(leaf-list)\n"
-            + "  (test)leaf(entry)\n"
-            + "    (String)=test-value\n"
-            + "  (end)\n"
-            + "  (test)leaf(entry)\n"
-            + "    (String)=test-value-2\n"
-            + "  (end)\n"
-            + "(end)\n", streamWriter.result());
+        assertEquals("""
+            (test)list-list(leaf-list)
+              (test)leaf(entry)
+                (String)=test-value
+              (end)
+              (test)leaf(entry)
+                (String)=test-value-2
+              (end)
+            (end)
+            """, streamWriter.result());
     }
 
     private static NormalizedNode mockedPayload() {
