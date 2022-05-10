@@ -8,12 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -94,9 +91,6 @@ abstract class AbstractDeviateStatementSupport
                 .addOptional(YangStmtMapping.UNITS)
                 .build();
 
-    private static final ImmutableMap<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP =
-            Maps.uniqueIndex(Arrays.asList(DeviateKind.values()), DeviateKind::getKeyword);
-
     private static final ImmutableSet<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
             YangStmtMapping.UNITS, YangStmtMapping.CONFIG, YangStmtMapping.MANDATORY,
             YangStmtMapping.MIN_ELEMENTS, YangStmtMapping.MAX_ELEMENTS);
@@ -112,7 +106,7 @@ abstract class AbstractDeviateStatementSupport
 
     @Override
     public final DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value), ctx,
+        return SourceException.throwIfNull(DeviateKind.forArgument(value), ctx,
             "String '%s' is not valid deviate argument", value);
     }
 
