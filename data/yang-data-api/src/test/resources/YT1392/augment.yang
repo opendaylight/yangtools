@@ -1,0 +1,14 @@
+module augment {
+  namespace augment-namespace;
+  prefix aug;
+
+  import test {
+    prefix test;
+  }
+
+  augment /test:container-1 {
+    container augmented-container {
+      container container-2;
+    }
+  }
+}
