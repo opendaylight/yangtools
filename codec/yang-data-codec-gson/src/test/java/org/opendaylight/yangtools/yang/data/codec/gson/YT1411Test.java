@@ -34,17 +34,18 @@ public class YT1411Test extends AbstractComplexJsonTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.RFC7951.getShared(schemaContext));
-        jsonParser.parse(new JsonReader(new StringReader("{\n"
-            + "  \"complexjson:cont1\": {\n"
-            + "    \"lst11\": [\n"
-            + "      {\n"
-            + "        \"key111\": \"foo\",\n"
-            + "        \"lf111\": \"bar\",\n"
-            + "        \"lf112\": \"/complexjson:cont1/case11-choice-case-container\"\n"
-            + "      }\n"
-            + "    ]\n"
-            + "  }\n"
-            + "}")));
+        jsonParser.parse(new JsonReader(new StringReader("""
+            {
+              "complexjson:cont1": {
+                "lst11": [
+                  {
+                    "key111": "foo",
+                    "lf111": "bar",
+                    "lf112": "/complexjson:cont1/case11-choice-case-container"
+                  }
+                ]
+              }
+            }""")));
         final var cont1 = result.getResult();
         assertThat(cont1, instanceOf(ContainerNode.class));
 
