@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class SubmoduleStatementSupport
-        extends AbstractStatementSupport<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<SubmoduleStatement, SubmoduleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
             .addAny(YangStmtMapping.ANYXML)
@@ -110,15 +110,6 @@ public final class SubmoduleStatementSupport
 
     public static @NonNull SubmoduleStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new SubmoduleStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    public Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        try {
-            return Unqualified.of(value);
-        } catch (IllegalArgumentException e) {
-            throw new SourceException(e.getMessage(), ctx, e);
-        }
     }
 
     @Override

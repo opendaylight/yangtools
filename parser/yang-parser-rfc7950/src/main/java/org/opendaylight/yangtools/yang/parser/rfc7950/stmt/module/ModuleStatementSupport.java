@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -64,7 +64,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class ModuleStatementSupport
-        extends AbstractStatementSupport<Unqualified, ModuleStatement, ModuleEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<ModuleStatement, ModuleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.AUGMENT)
@@ -133,15 +133,6 @@ public final class ModuleStatementSupport
 
     public static @NonNull ModuleStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new ModuleStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    public Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        try {
-            return Unqualified.of(value);
-        } catch (IllegalArgumentException e) {
-            throw new SourceException(e.getMessage(), ctx, e);
-        }
     }
 
     @Override
