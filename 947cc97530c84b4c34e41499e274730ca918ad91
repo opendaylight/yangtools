@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a3a256c_e17e89f5",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/module/ModuleStatementSupport.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-11T18:04:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "55f49fc5_4410aa05",
+      "range": {
+        "startLine": 101,
+        "startChar": 8,
+        "endLine": 101,
+        "endChar": 47
+      },
+      "revId": "947cc97530c84b4c34e41499e274730ca918ad91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7be85fc3_ca28899d",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-05-09T14:52:29Z",
       "side": 1,
       "message": "we really want to keep the extension in a separate module",
+      "range": {
+        "startLine": 21,
+        "startChar": 13,
+        "endLine": 21,
+        "endChar": 44
+      },
+      "revId": "947cc97530c84b4c34e41499e274730ca918ad91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac08b73a_69c20291",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc8819/stmt/ModuleTagEffectiveStatementImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-05-11T18:04:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7be85fc3_ca28899d",
       "range": {
         "startLine": 21,
         "startChar": 13,
