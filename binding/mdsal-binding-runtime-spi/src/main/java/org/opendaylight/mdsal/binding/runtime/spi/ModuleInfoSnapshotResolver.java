@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.lock.qual.Holding;
@@ -43,7 +42,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -172,12 +170,12 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         // Alright, now let's find out which sources got captured
         final Set<SourceIdentifier> sources = new HashSet<>();
         for (Entry<QNameModule, ModuleEffectiveStatement> entry : effectiveModel.getModuleStatements().entrySet()) {
-            final Optional<Revision> revision = entry.getKey().getRevision();
+            final Revision revision = entry.getKey().getRevision().orElse(null);
             final ModuleEffectiveStatement module = entry.getValue();
 
-            sources.add(RevisionSourceIdentifier.create(module.argument().getLocalName(), revision));
+            sources.add(new SourceIdentifier(module.argument(), revision));
             module.streamEffectiveSubstatements(SubmoduleEffectiveStatement.class)
-                .map(submodule -> RevisionSourceIdentifier.create(submodule.argument().getLocalName(), revision))
+                .map(submodule -> new SourceIdentifier(submodule.argument(), revision))
                 .forEach(sources::add);
         }
 
@@ -228,7 +226,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
     private static SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
         final QName name = moduleInfo.getName();
-        return RevisionSourceIdentifier.create(name.getLocalName(), name.getRevision());
+        return new SourceIdentifier(name.getLocalName(), name.getRevision().map(Revision::toString).orElse(null));
     }
 
     private static @NonNull List<@NonNull YangModuleInfo> flatDependencies(final YangModuleInfo moduleInfo) {
