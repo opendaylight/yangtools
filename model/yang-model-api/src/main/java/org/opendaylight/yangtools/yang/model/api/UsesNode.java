@@ -31,7 +31,7 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode,
      *
      * @return Set of augment statements defined under this uses node
      */
-    @NonNull Collection<? extends AugmentationSchemaNode> getAugmentations();
+    @NonNull Collection<? extends @NonNull AugmentationSchemaNode> getAugmentations();
 
     /**
      * Some of the properties of each node in the grouping can be refined with the "refine" statement.
