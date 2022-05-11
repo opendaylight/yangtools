@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.Collection;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -23,23 +21,22 @@ public class Bug4456Test extends AbstractYangTest {
     public void test() {
         final var schema = assertEffectiveModelDir("/bugs/bug4456");
 
-        Set<Module> modules = (Set<Module>) schema.findModules(XMLNamespace.of("foo"));
+        var modules = schema.findModules(XMLNamespace.of("foo"));
         assertEquals(1, modules.size());
         Module moduleFoo = modules.iterator().next();
 
-        Collection<? extends ExtensionDefinition> extensionSchemaNodes = moduleFoo.getExtensionSchemaNodes();
+        var extensionSchemaNodes = moduleFoo.getExtensionSchemaNodes();
         assertEquals(5, extensionSchemaNodes.size());
         for (ExtensionDefinition extensionDefinition : extensionSchemaNodes) {
 
-            Collection<? extends UnrecognizedStatement> unknownSchemaNodes = extensionDefinition.asEffectiveStatement()
+            var unknownSchemaNodes = extensionDefinition.asEffectiveStatement()
                 .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
             assertEquals(1, unknownSchemaNodes.size());
             UnrecognizedStatement unknownSchemaNode = unknownSchemaNodes.iterator().next();
             String unknownNodeExtensionDefName = unknownSchemaNode.statementDefinition().getStatementName()
                 .getLocalName();
 
-            Collection<? extends UnrecognizedStatement> subUnknownSchemaNodes =
-                unknownSchemaNode.declaredSubstatements(UnrecognizedStatement.class);
+            var subUnknownSchemaNodes = unknownSchemaNode.declaredSubstatements(UnrecognizedStatement.class);
             assertEquals(1, subUnknownSchemaNodes.size());
             UnrecognizedStatement subUnknownSchemaNode = subUnknownSchemaNodes.iterator().next();
             String subUnknownNodeExtensionDefName = subUnknownSchemaNode.statementDefinition().getStatementName()
