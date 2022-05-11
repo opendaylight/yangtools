@@ -178,18 +178,18 @@ class YangModuleInfoTemplate {
             «ENDIF»
             «IF !m.imports.empty»
                 «FOR imp : m.imports»
-                    «val name = imp.moduleName»
+                    «val name = imp.moduleName.localName»
                     «val rev = imp.revision»
                     «IF !rev.present»
                         «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap(REVISION_COMPARATOR)»
                         «FOR module : ctx.modules»
-                            «IF module.name.equals(name)»
+                            «IF name.equals(module.name)»
                                 «sorted.put(module.revision, module)»
                             «ENDIF»
                         «ENDFOR»
                         set.add(«sorted.lastEntry().value.QNameModule.rootPackageName».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ELSE»
-                        set.add(«(ctx.findModule(name, rev).get.QNameModule).rootPackageName».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«(ctx.findModule(name, rev).orElseThrow.QNameModule).rootPackageName».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»

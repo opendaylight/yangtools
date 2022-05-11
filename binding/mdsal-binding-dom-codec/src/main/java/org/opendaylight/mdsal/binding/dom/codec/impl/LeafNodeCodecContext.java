@@ -112,7 +112,7 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
 
             for (ModuleImport moduleImport : module.getImports()) {
                 if (moduleImport.getPrefix().equals(defaultValuePrefix)) {
-                    Module importedModule = schemaContext.findModule(moduleImport.getModuleName(),
+                    Module importedModule = schemaContext.findModule(moduleImport.getModuleName().getLocalName(),
                         moduleImport.getRevision()).get();
                     qname = QName.create(importedModule.getQNameModule(), defaultValue.substring(prefixEndIndex + 1));
                     return codec.deserialize(qname);
