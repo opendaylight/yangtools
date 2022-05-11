@@ -152,10 +152,8 @@ public final class ModuleStatementSupport
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
 
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
-        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
 
-        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
+        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, QNameModule.create(moduleNs, revisionDate).intern());
     }
 
     @Override

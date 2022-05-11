@@ -68,6 +68,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
      */
     public static YangStatementStreamSource create(final YangTextSchemaSource source) throws IOException,
             YangSyntaxErrorException {
+        // FIXME: parse SourceIdentifier from IRStatement, and ... what is the relationship to IRSchemaSource here?
         return new YangStatementStreamSource(source.getIdentifier(),
             AntlrSupport.createStatement(parseYangSource(source)), source.getSymbolicName().orElse(null));
     }
@@ -85,6 +86,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final IRStatement rootStatement,
             final String symbolicName) {
+        // FIXME: hmm. what exactly is the trust model here?
         return new YangStatementStreamSource(identifier, rootStatement, symbolicName);
     }
 

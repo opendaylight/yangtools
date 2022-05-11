@@ -215,11 +215,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
-    public final void setRootIdentifier(final SourceIdentifier identifier) {
-        getRoot().setRootIdentifierImpl(identifier);
-    }
-
-    @Override
     public final ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
         return getRoot().getSourceContext().newInferenceAction(phase);
     }

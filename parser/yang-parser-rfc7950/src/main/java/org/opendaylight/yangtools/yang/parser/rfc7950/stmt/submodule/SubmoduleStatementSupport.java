@@ -113,12 +113,6 @@ public final class SubmoduleStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(),
-            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null)));
-    }
-
-    @Override
     public void onLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         final SourceIdentifier submoduleIdentifier = new SourceIdentifier(stmt.getArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null));
