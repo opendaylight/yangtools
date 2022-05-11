@@ -413,7 +413,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         final TreeBasedTable<Unqualified, Optional<Revision>, SourceSpecificContext> libSourcesTable =
             TreeBasedTable.create(Unqualified::compareTo, Revision::compare);
         for (final SourceSpecificContext libSource : libSources) {
-            final SourceIdentifier libSourceIdentifier = requireNonNull(libSource.getRootIdentifier());
+            final SourceIdentifier libSourceIdentifier = libSource.sourceIdentifier();
             libSourcesTable.put(libSourceIdentifier.name(),
                 Optional.ofNullable(libSourceIdentifier.revision()), libSource);
         }
@@ -459,7 +459,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         final Iterator<SourceSpecificContext> requiredLibsIter = requiredLibs.iterator();
         while (requiredLibsIter.hasNext()) {
             final SourceSpecificContext currentReqSource = requiredLibsIter.next();
-            if (source.getRootIdentifier().equals(currentReqSource.getRootIdentifier())) {
+            if (source.sourceIdentifier().equals(currentReqSource.sourceIdentifier())) {
                 requiredLibsIter.remove();
             }
         }
