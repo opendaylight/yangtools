@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 import org.junit.Test;
@@ -25,7 +24,7 @@ public class YinFileExtensionStmtTest extends AbstractYinModulesTest {
         Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
-        Collection<? extends ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
+        var extensions = testModule.getExtensionSchemaNodes();
         assertEquals(5, extensions.size());
 
         Iterator<? extends ExtensionDefinition> extIterator = extensions.iterator();

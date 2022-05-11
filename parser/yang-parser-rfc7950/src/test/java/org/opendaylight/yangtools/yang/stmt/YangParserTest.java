@@ -22,10 +22,8 @@ import com.google.common.collect.RangeSet;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -41,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -55,7 +52,6 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
@@ -107,7 +103,7 @@ public class YangParserTest extends AbstractModelTest {
         // ifEntry should be a context node ?
         // assertNull(constraints.getWhenCondition());
         assertEquals(0, ifEntry.getMustConstraints().size());
-        ElementCountConstraint constraints = ifEntry.getElementCountConstraint().get();
+        ElementCountConstraint constraints = ifEntry.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 1, constraints.getMinElements());
         assertEquals((Object) 11, constraints.getMaxElements());
         // test AugmentationTarget args
@@ -141,11 +137,10 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.of("mile"), leafType.getUnits());
         assertEquals(Optional.of("11"), leafType.getDefaultValue());
 
-        final RangeSet<? extends Number> rangeset = leafType.getRangeConstraint().get().getAllowedRanges();
-        final Set<? extends Range<? extends Number>> ranges = rangeset.asRanges();
+        final var ranges = leafType.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();
         assertEquals(1, ranges.size());
 
-        final Range<? extends Number> range = ranges.iterator().next();
+        final var range = ranges.iterator().next();
         assertEquals(12, range.lowerEndpoint().intValue());
         assertEquals(20, range.upperEndpoint().intValue());
 
@@ -154,15 +149,14 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.of("mile"), firstBaseType.getUnits());
         assertEquals(Optional.of("11"), firstBaseType.getDefaultValue());
 
-        final RangeSet<? extends Number> firstRangeset = firstBaseType.getRangeConstraint().get().getAllowedRanges();
-        final Set<? extends Range<? extends Number>> baseRanges = firstRangeset.asRanges();
+        final var baseRanges = firstBaseType.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();
         assertEquals(2, baseRanges.size());
 
-        final Iterator<? extends Range<? extends Number>> it = baseRanges.iterator();
-        final Range<? extends Number> baseTypeRange1 = it.next();
+        final var it = baseRanges.iterator();
+        final var baseTypeRange1 = it.next();
         assertEquals(3, baseTypeRange1.lowerEndpoint().intValue());
         assertEquals(9, baseTypeRange1.upperEndpoint().intValue());
-        final Range<? extends Number> baseTypeRange2 = it.next();
+        final var baseTypeRange2 = it.next();
         assertEquals(11, baseTypeRange2.lowerEndpoint().intValue());
         assertEquals(20, baseTypeRange2.upperEndpoint().intValue());
 
@@ -171,10 +165,9 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.empty(), secondBaseType.getUnits());
         assertEquals(Optional.empty(), secondBaseType.getDefaultValue());
 
-        final Set<? extends Range<? extends Number>> secondRanges = secondBaseType.getRangeConstraint().get()
-                .getAllowedRanges().asRanges();
+        final var secondRanges = secondBaseType.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();
         assertEquals(1, secondRanges.size());
-        final Range<? extends Number> secondRange = secondRanges.iterator().next();
+        final var secondRange = secondRanges.iterator().next();
         assertEquals(2, secondRange.lowerEndpoint().intValue());
         assertEquals(20, secondRange.upperEndpoint().intValue());
 
@@ -194,7 +187,7 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
         assertEquals("^(?:[e-z]*)$", pattern.getJavaPatternString());
-        assertEquals(1, type.getLengthConstraint().get().getAllowedRanges().asRanges().size());
+        assertEquals(1, type.getLengthConstraint().orElseThrow().getAllowedRanges().asRanges().size());
 
         final StringTypeDefinition baseType1 = type.getBaseType();
         assertEquals(barQName("string-ext3"), baseType1.getQName());
@@ -204,14 +197,14 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
         assertEquals("^(?:[b-u]*)$", pattern.getJavaPatternString());
-        assertEquals(1, baseType1.getLengthConstraint().get().getAllowedRanges().asRanges().size());
+        assertEquals(1, baseType1.getLengthConstraint().orElseThrow().getAllowedRanges().asRanges().size());
 
         final StringTypeDefinition baseType2 = baseType1.getBaseType();
         assertEquals(barQName("string-ext2"), baseType2.getQName());
         assertEquals(Optional.empty(), baseType2.getUnits());
         assertEquals(Optional.empty(), baseType2.getDefaultValue());
         assertTrue(baseType2.getPatternConstraints().isEmpty());
-        final RangeSet<Integer> baseType2Lengths = baseType2.getLengthConstraint().get().getAllowedRanges();
+        final RangeSet<Integer> baseType2Lengths = baseType2.getLengthConstraint().orElseThrow().getAllowedRanges();
         assertEquals(1, baseType2Lengths.asRanges().size());
         Range<Integer> length = baseType2Lengths.span();
         assertEquals(6, length.lowerEndpoint().intValue());
@@ -225,7 +218,7 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
         assertEquals("^(?:[a-k]*)$", pattern.getJavaPatternString());
-        final RangeSet<Integer> baseType3Lengths = baseType3.getLengthConstraint().get().getAllowedRanges();
+        final RangeSet<Integer> baseType3Lengths = baseType3.getLengthConstraint().orElseThrow().getAllowedRanges();
         assertEquals(1, baseType3Lengths.asRanges().size());
         length = baseType3Lengths.span();
         assertEquals(5, length.lowerEndpoint().intValue());
@@ -246,7 +239,7 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(2, patterns.size());
         assertEquals("^(?:[A-Z]*-%22!\\^\\^)$", patterns.get(0).getJavaPatternString());
         assertEquals("^(?:[e-z]*)$", patterns.get(1).getJavaPatternString());
-        assertEquals(1, type.getLengthConstraint().get().getAllowedRanges().asRanges().size());
+        assertEquals(1, type.getLengthConstraint().orElseThrow().getAllowedRanges().asRanges().size());
 
         final LeafSchemaNode multiplePatternDirectStringDefLeaf = (LeafSchemaNode) FOO.getDataChildByName(
             fooQName("multiple-pattern-direct-string-def-leaf"));
@@ -271,7 +264,7 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
         assertTrue(type.getPatternConstraints().isEmpty());
-        final RangeSet<Integer> typeLengths = type.getLengthConstraint().get().getAllowedRanges();
+        final RangeSet<Integer> typeLengths = type.getLengthConstraint().orElseThrow().getAllowedRanges();
         assertEquals(1, typeLengths.asRanges().size());
         Range<Integer> length = typeLengths.span();
         assertEquals(7, length.lowerEndpoint().intValue());
@@ -282,7 +275,7 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.empty(), baseType1.getUnits());
         assertEquals(Optional.empty(), baseType1.getDefaultValue());
         assertTrue(baseType1.getPatternConstraints().isEmpty());
-        final RangeSet<Integer> baseType2Lengths = baseType1.getLengthConstraint().get().getAllowedRanges();
+        final RangeSet<Integer> baseType2Lengths = baseType1.getLengthConstraint().orElseThrow().getAllowedRanges();
         assertEquals(1, baseType2Lengths.asRanges().size());
         length = baseType2Lengths.span();
         assertEquals(6, length.lowerEndpoint().intValue());
@@ -296,7 +289,7 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(1, patterns.size());
         final PatternConstraint pattern = patterns.iterator().next();
         assertEquals("^(?:[a-k]*)$", pattern.getJavaPatternString());
-        final RangeSet<Integer> baseType3Lengths = baseType2.getLengthConstraint().get().getAllowedRanges();
+        final RangeSet<Integer> baseType3Lengths = baseType2.getLengthConstraint().orElseThrow().getAllowedRanges();
         assertEquals(1, baseType3Lengths.asRanges().size());
         length = baseType3Lengths.span();
         assertEquals(5, length.lowerEndpoint().intValue());
@@ -315,14 +308,14 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
         assertEquals(6, type.getFractionDigits());
-        assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
+        assertEquals(1, type.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition typeBase = type.getBaseType();
         assertEquals(barQName("decimal64"), typeBase.getQName());
         assertEquals(Optional.empty(), typeBase.getUnits());
         assertEquals(Optional.empty(), typeBase.getDefaultValue());
         assertEquals(6, typeBase.getFractionDigits());
-        assertEquals(1, typeBase.getRangeConstraint().get().getAllowedRanges().asRanges().size());
+        assertEquals(1, typeBase.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges().size());
 
         assertNull(typeBase.getBaseType());
     }
@@ -337,7 +330,7 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
         assertEquals(6, type.getFractionDigits());
-        assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
+        assertEquals(1, type.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition baseTypeDecimal = type.getBaseType();
         assertEquals(6, baseTypeDecimal.getFractionDigits());
@@ -367,11 +360,11 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.empty(), unionType1.getUnits());
         assertEquals(Optional.empty(), unionType1.getDefaultValue());
 
-        final RangeConstraint<?> ranges = unionType1.getRangeConstraint().get();
+        final var ranges = unionType1.getRangeConstraint().orElseThrow();
         assertEquals(1, ranges.getAllowedRanges().asRanges().size());
-        final Range<?> range = ranges.getAllowedRanges().span();
-        assertEquals((short)1, range.lowerEndpoint());
-        assertEquals((short)100, range.upperEndpoint());
+        final var range = ranges.getAllowedRanges().span();
+        assertEquals(Short.valueOf("1"), range.lowerEndpoint());
+        assertEquals(Short.valueOf("100"), range.upperEndpoint());
         assertEquals(BaseTypes.int16Type(), unionType1.getBaseType());
 
         assertEquals(BaseTypes.int32Type(), unionTypes.get(1));
@@ -430,10 +423,9 @@ public class YangParserTest extends AbstractModelTest {
         assertEquals(TypeDefinitions.INT16, int16Ext.getQName());
         assertEquals(Optional.empty(), int16Ext.getUnits());
         assertEquals(Optional.empty(), int16Ext.getDefaultValue());
-        final Set<? extends Range<? extends Number>> ranges = int16Ext.getRangeConstraint().get().getAllowedRanges()
-                .asRanges();
+        final var ranges = int16Ext.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();
         assertEquals(1, ranges.size());
-        final Range<? extends Number> range = ranges.iterator().next();
+        final var range = ranges.iterator().next();
         assertEquals(1, range.lowerEndpoint().intValue());
         assertEquals(100, range.upperEndpoint().intValue());
 
@@ -444,7 +436,7 @@ public class YangParserTest extends AbstractModelTest {
     public void testChoice() {
         final ContainerSchemaNode transfer = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("transfer"));
         final ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName(fooQName("how"));
-        final Collection<? extends CaseSchemaNode> cases = how.getCases();
+        final var cases = how.getCases();
         assertEquals(5, cases.size());
         CaseSchemaNode input = null;
         CaseSchemaNode output = null;
@@ -461,7 +453,7 @@ public class YangParserTest extends AbstractModelTest {
 
     @Test
     public void testDeviation() {
-        final Collection<? extends Deviation> deviations = FOO.getDeviations();
+        final var deviations = FOO.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();
         assertEquals(Optional.of("system/user ref"), dev.getReference());
@@ -473,7 +465,7 @@ public class YangParserTest extends AbstractModelTest {
     @Test
     public void testUnknownNode() {
         final ContainerSchemaNode network = (ContainerSchemaNode) BAZ.getDataChildByName(bazQName("network"));
-        final Collection<? extends UnrecognizedStatement> unknownNodes = network.asEffectiveStatement().getDeclared()
+        final var unknownNodes = network.asEffectiveStatement().getDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         assertEquals("point", unknownNodes.iterator().next().argument());
@@ -481,13 +473,13 @@ public class YangParserTest extends AbstractModelTest {
 
     @Test
     public void testFeature() {
-        final Collection<? extends FeatureDefinition> features = BAZ.getFeatures();
+        final var features = BAZ.getFeatures();
         assertEquals(3, features.size());
     }
 
     @Test
     public void testExtension() {
-        final Collection<? extends ExtensionDefinition> extensions = BAZ.getExtensionSchemaNodes();
+        final var extensions = BAZ.getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
         final ExtensionDefinition extension = extensions.iterator().next();
         assertEquals("name", extension.getArgument());
@@ -499,7 +491,7 @@ public class YangParserTest extends AbstractModelTest {
 
     @Test
     public void testNotification() {
-        final Collection<? extends NotificationDefinition> notifications = BAZ.getNotifications();
+        final var notifications = BAZ.getNotifications();
         assertEquals(1, notifications.size());
 
         final NotificationDefinition notification = notifications.iterator().next();
@@ -523,7 +515,7 @@ public class YangParserTest extends AbstractModelTest {
 
     @Test
     public void testRpc() {
-        final Collection<? extends RpcDefinition> rpcs = BAZ.getRpcs();
+        final var rpcs = BAZ.getRpcs();
         assertEquals(1, rpcs.size());
 
         final RpcDefinition rpc = rpcs.iterator().next();
@@ -545,7 +537,7 @@ public class YangParserTest extends AbstractModelTest {
 
     @Test
     public void testTypePath2() throws ParseException {
-        final Collection<? extends TypeDefinition<?>> types = BAR.getTypeDefinitions();
+        final var types = BAR.getTypeDefinitions();
 
         // my-decimal-type
         final DecimalTypeDefinition myDecType = (DecimalTypeDefinition) TestUtils.findTypedef(types, "my-decimal-type");

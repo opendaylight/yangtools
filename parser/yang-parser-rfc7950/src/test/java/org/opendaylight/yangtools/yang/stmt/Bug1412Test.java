@@ -10,13 +10,9 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -34,12 +30,10 @@ public class Bug1412Test extends AbstractYangTest {
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
                 bug1412.getQNameModule(), "node"));
-        Collection<? extends UnrecognizedStatement> unknownNodes = node.asEffectiveStatement().getDeclared()
-            .declaredSubstatements(UnrecognizedStatement.class);
+        var unknownNodes = node.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         final UnrecognizedStatement action = unknownNodes.iterator().next();
 
-        final QNameModule qm = QNameModule.create(XMLNamespace.of("urn:test:bug1412"), Revision.of("2014-07-25"));
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action"),
             action.statementDefinition().getStatementName());
         assertEquals("hello", action.argument());

@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -113,7 +112,7 @@ public class YangParserWithContextTest {
         final Module testModule = context.findModule("test2", Revision.of("2013-06-18")).get();
         final Module contextModule = context.findModules(XMLNamespace.of("urn:opendaylight.baz")).iterator().next();
         assertNotNull(contextModule);
-        final Collection<? extends GroupingDefinition> groupings = contextModule.getGroupings();
+        final var groupings = contextModule.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
 
@@ -124,7 +123,7 @@ public class YangParserWithContextTest {
                 testModule.getQNameModule(), "destination"));
 
         // check uses
-        final Collection<? extends UsesNode> uses = destination.getUses();
+        final var uses = destination.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
@@ -184,11 +183,11 @@ public class YangParserWithContextTest {
         assertFalse(addresses_u.equals(addresses_g));
 
         // grouping defined by 'uses'
-        final Collection<? extends GroupingDefinition> groupings_u = destination.getGroupings();
+        final var groupings_u = destination.getGroupings();
         assertEquals(0, groupings_u.size());
 
         // grouping defined in 'grouping' node
-        final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
+        final var groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         assertFalse(grouping_g.isAddedByUses());
@@ -205,7 +204,7 @@ public class YangParserWithContextTest {
                 module.getQNameModule(), "peer"));
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
                 module.getQNameModule(), "destination"));
-        final Collection<? extends UsesNode> usesNodes = destination.getUses();
+        final var usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
 
@@ -238,14 +237,14 @@ public class YangParserWithContextTest {
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertEquals(Optional.of(Boolean.FALSE), refineLeaf.effectiveConfig());
         assertTrue(refineLeaf.isMandatory());
-        final Collection<? extends MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
+        final var leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
 
         // container port
         assertNotNull(refineContainer);
-        final Collection<? extends MustDefinition> mustConstraints = refineContainer.getMustConstraints();
+        final var mustConstraints = refineContainer.getMustConstraints();
         assertTrue(mustConstraints.isEmpty());
         assertEquals(Optional.of("description of port defined by refine"), refineContainer.getDescription());
         assertEquals(Optional.of("port reference added by refine"), refineContainer.getReference());
@@ -271,7 +270,7 @@ public class YangParserWithContextTest {
                 .buildEffective();
 
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
-        final Collection<? extends IdentitySchemaNode> identities = module.getIdentities();
+        final var identities = module.getIdentities();
         assertEquals(1, identities.size());
 
         final IdentitySchemaNode identity = identities.iterator().next();
@@ -298,8 +297,7 @@ public class YangParserWithContextTest {
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
         final ContainerStatement network = ((ContainerSchemaNode) module.getDataChildByName(
             QName.create(module.getQNameModule(), "network"))).asEffectiveStatement().getDeclared();
-        final Collection<? extends UnrecognizedStatement> unknownNodes =
-            network.declaredSubstatements(UnrecognizedStatement.class);
+        final var unknownNodes = network.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
 
         final UnrecognizedStatement un = unknownNodes.iterator().next();
@@ -351,7 +349,7 @@ public class YangParserWithContextTest {
                 .buildEffective();
 
         final Module testModule = context.findModule("deviation-test", Revision.of("2013-02-27")).get();
-        final Collection<? extends Deviation> deviations = testModule.getDeviations();
+        final var deviations = testModule.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();
 

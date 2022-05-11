@@ -12,12 +12,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collection;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -30,13 +27,13 @@ public class IdentityrefStatementTest extends AbstractYangTest {
         final var context = assertEffectiveModel("/rfc7950/identityref-stmt/foo.yang");
 
         final Module foo = context.findModule("foo", Revision.of("2017-01-11")).get();
-        final Collection<? extends IdentitySchemaNode> identities = foo.getIdentities();
+        final var identities = foo.getIdentities();
         assertEquals(3, identities.size());
 
         final LeafSchemaNode idrefLeaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "idref-leaf"));
         final IdentityrefTypeDefinition idrefType = (IdentityrefTypeDefinition) idrefLeaf.getType();
-        final Set<? extends IdentitySchemaNode> referencedIdentities = idrefType.getIdentities();
+        final var referencedIdentities = idrefType.getIdentities();
         assertEquals(3, referencedIdentities.size());
         assertThat(referencedIdentities, containsInAnyOrder(identities.toArray()));
         assertEquals("id-a", idrefType.getIdentities().iterator().next().getQName().getLocalName());

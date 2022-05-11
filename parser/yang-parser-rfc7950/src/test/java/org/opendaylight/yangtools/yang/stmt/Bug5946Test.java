@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Collection;
@@ -21,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -45,27 +46,25 @@ public class Bug5946Test {
                 .getResource("/bugs/bug5946/foo.yang").toURI()));
         assertNotNull(context);
 
-        Collection<? extends UniqueEffectiveStatement> uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
+        var uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
         assertNotNull(uniqueConstraints);
         assertTrue(uniqueConstraints.isEmpty());
 
-        Collection<? extends UniqueEffectiveStatement> simpleUniqueConstraints =
-            getListConstraints(context, SIMPLE_UNIQUE);
+        var simpleUniqueConstraints = getListConstraints(context, SIMPLE_UNIQUE);
         assertNotNull(simpleUniqueConstraints);
         assertEquals(1, simpleUniqueConstraints.size());
-        Collection<Descendant> simpleUniqueConstraintTag = simpleUniqueConstraints.iterator().next().argument();
+        var simpleUniqueConstraintTag = simpleUniqueConstraints.iterator().next().argument();
         assertTrue(simpleUniqueConstraintTag.contains(L1_ID));
         assertTrue(simpleUniqueConstraintTag.contains(C_L3_ID));
 
-        Collection<? extends UniqueEffectiveStatement> multipleUniqueConstraints =
-            getListConstraints(context, MULTIPLE_UNIQUE);
+        var multipleUniqueConstraints = getListConstraints(context, MULTIPLE_UNIQUE);
         assertNotNull(multipleUniqueConstraints);
         assertEquals(3, multipleUniqueConstraints.size());
         boolean l1l2 = false;
         boolean l1cl3 = false;
         boolean cl3l2 = false;
         for (UniqueEffectiveStatement uniqueConstraint : multipleUniqueConstraints) {
-            Collection<Descendant> uniqueConstraintTag = uniqueConstraint.argument();
+            var uniqueConstraintTag = uniqueConstraint.argument();
             if (uniqueConstraintTag.contains(L1_ID) && uniqueConstraintTag.contains(L2_ID)) {
                 l1l2 = true;
             } else if (uniqueConstraintTag.contains(L1_ID) && uniqueConstraintTag.contains(C_L3_ID)) {
@@ -79,17 +78,14 @@ public class Bug5946Test {
 
     @Test
     public void testInvalid() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(new File(getClass().getResource("/bugs/bug5946/foo-invalid.yang").toURI()));
-            fail("Should fail due to invalid argument of unique constraint");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Unique statement argument '/simple-unique/l1' contains schema node identifier '/simple-unique/l1'"
-                            + " which is not in the descendant node identifier form."));
-        }
+        final var cause = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            new File(getClass().getResource("/bugs/bug5946/foo-invalid.yang").toURI())))
+            .getCause();
+        assertThat(cause.getMessage(), startsWith("Unique statement argument '/simple-unique/l1' contains schema node "
+            + "identifier '/simple-unique/l1' which is not in the descendant node identifier form."));
     }
 
-    private static @NonNull Collection<? extends UniqueEffectiveStatement> getListConstraints(
+    private static @NonNull Collection<? extends @NonNull UniqueEffectiveStatement> getListConstraints(
             final SchemaContext context, final QName listQName) {
         DataSchemaNode dataChildByName = context.getDataChildByName(listQName);
         assertTrue(dataChildByName instanceof ListSchemaNode);
