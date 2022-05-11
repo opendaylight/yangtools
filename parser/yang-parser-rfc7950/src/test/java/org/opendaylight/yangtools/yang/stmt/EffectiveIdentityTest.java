@@ -13,12 +13,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -27,33 +30,48 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class EffectiveIdentityTest {
-
     private static final StatementStreamSource IDENTITY_TEST = sourceForResource(
             "/stmt-test/identity/identity-test.yang");
-
     private static final StatementStreamSource CYCLIC_IDENTITY_TEST = sourceForResource(
             "/stmt-test/identity/cyclic-identity-test.yang");
 
     @Test
-    public void cyclicefineTest() throws SourceException, ReactorException, URISyntaxException {
+    public void cyclicDefineTest() {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(CYCLIC_IDENTITY_TEST);
         final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
         assertThat(cause, instanceOf(InferenceException.class));
         assertThat(cause.getMessage(), startsWith("Yang model processing phase STATEMENT_DEFINITION failed [at "));
 
+        // This is a bit complicated, as the order of exceptions may differ
+        final var causes = new ArrayList<Throwable>();
         final var cause1 = cause.getCause();
-        assertThat(cause1, instanceOf(InferenceException.class));
-        assertThat(cause1.getMessage(), startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-1 "
-            + "and base identity (cyclic.identity.test)child-identity-2 [at "));
+        if (cause1 != null) {
+            causes.add(cause1);
+        }
+        causes.addAll(Arrays.asList(cause.getSuppressed()));
+        causes.sort(Comparator.comparing(Throwable::getMessage));
+        assertEquals(4, causes.size());
+        causes.forEach(throwable -> assertThat(throwable, instanceOf(InferenceException.class)));
+
+        assertThat(causes.get(0).getMessage(),
+            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-1 and base identity "
+                + "(cyclic.identity.test)child-identity-2 [at "));
+        assertThat(causes.get(1).getMessage(),
+            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-2 and base identity "
+                + "(cyclic.identity.test)child-identity-3 [at "));
+        assertThat(causes.get(2).getMessage(),
+            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-3 and base identity "
+                + "(cyclic.identity.test)child-identity-4 [at "));
+        assertThat(causes.get(3).getMessage(),
+            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-4 and base identity "
+                + "(cyclic.identity.test)child-identity-1 [at "));
     }
 
     @Test
-    public void identityTest() throws SourceException, ReactorException,
-            URISyntaxException {
+    public void identityTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(IDENTITY_TEST).buildEffective();
         assertNotNull(result);
 
@@ -99,10 +117,10 @@ public class EffectiveIdentityTest {
         assertTrue(rootDerivedIdentities.contains(child1));
         assertTrue(rootDerivedIdentities.contains(child2));
         assertFalse(rootDerivedIdentities.contains(child12));
-        assertFalse(child1.equals(child2));
+        assertNotEquals(child1, child2));
 
-        assertTrue(root == Iterables.getOnlyElement(child1.getBaseIdentities()));
-        assertTrue(root == Iterables.getOnlyElement(child2.getBaseIdentities()));
+        assertSame(root, Iterables.getOnlyElement(child1.getBaseIdentities()));
+        assertSame(root, Iterables.getOnlyElement(child2.getBaseIdentities()));
 
         assertEquals(0, result.getDerivedIdentities(child2).size());
 
@@ -111,7 +129,7 @@ public class EffectiveIdentityTest {
         assertTrue(child1DerivedIdentities.contains(child12));
         assertFalse(child1DerivedIdentities.contains(child1));
 
-        assertTrue(child1 == Iterables.getOnlyElement(child12.getBaseIdentities()));
-        assertTrue(child12 == child1DerivedIdentities.iterator().next());
+        assertSame(child1, Iterables.getOnlyElement(child12.getBaseIdentities()));
+        assertSame(child12, child1DerivedIdentities.iterator().next());
     }
 }
