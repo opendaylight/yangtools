@@ -101,6 +101,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final SupportedStatements statementSupports = new SupportedStatements(qnameToStmtDefMap);
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
+    private final @NonNull SourceIdentifier sourceIdentifier;
     private final @NonNull BuildGlobalContext globalContext;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
@@ -123,6 +124,11 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
         this.globalContext = requireNonNull(globalContext);
         this.source = requireNonNull(source);
+        sourceIdentifier = source.getIdentifier();
+    }
+
+    @NonNull SourceIdentifier sourceIdentifier() {
+        return sourceIdentifier;
     }
 
     @NonNull BuildGlobalContext globalContext() {
@@ -178,8 +184,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
             root = new RootStatementContext<>(this, def, ref, argument);
         } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
                 && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
-            root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
-                    root.getRootIdentifier());
+            root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion());
         } else {
             final QName rootStatement = root.definition().getStatementName();
             final String rootArgument = root.rawArgument();
@@ -487,9 +492,5 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     Collection<SourceIdentifier> getRequiredSources() {
         return root.getRequiredSources();
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return root.getRootIdentifier();
     }
 }
