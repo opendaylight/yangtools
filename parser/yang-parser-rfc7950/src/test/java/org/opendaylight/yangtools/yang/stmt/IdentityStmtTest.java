@@ -8,17 +8,15 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import com.google.common.base.Throwables;
-import java.util.Collection;
-import java.util.Iterator;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -82,10 +80,10 @@ public class IdentityStmtTest {
         Module testModule = result.findModules("legal-chained-identity-test").iterator().next();
         assertNotNull(testModule);
 
-        Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();
+        var identities = testModule.getIdentities();
         assertEquals(4, identities.size());
 
-        Iterator<? extends IdentitySchemaNode> identitiesIterator = identities.iterator();
+        var identitiesIterator = identities.iterator();
         IdentitySchemaNode identity = identitiesIterator.next();
         assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"),
             is("third-identity"), is("fourth-identity")));
@@ -105,12 +103,9 @@ public class IdentityStmtTest {
 
     @Test
     public void duplicateIdentityTest() throws ReactorException {
-        try {
-            RFC7950Reactors.defaultReactor().newBuild().addSource(DUPLICATE_IDENTITY_MODULE).buildEffective();
-            fail("Duplicate identities should have been detected");
-        } catch (SomeModifiersUnresolvedException e) {
-            final SourceException cause = Throwables.getCauseAs(e, SourceException.class);
-            assertThat(cause.getMessage(), startsWith("Duplicate identity definition "));
-        }
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(DUPLICATE_IDENTITY_MODULE);
+        final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Duplicate identity definition "));
     }
 }

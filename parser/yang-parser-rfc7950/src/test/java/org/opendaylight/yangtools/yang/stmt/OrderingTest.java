@@ -11,7 +11,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public class OrderingTest extends AbstractModelTest {
     @Test
     public void testOrderingTypedef() {
-        final Collection<? extends TypeDefinition<?>> typedefs = BAR.getTypeDefinitions();
+        final var typedefs = BAR.getTypeDefinitions();
         final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
             "string-ext4", "multiple-pattern-string", "my-decimal-type", "my-union", "my-union-ext", "nested-union2"
         };
@@ -63,7 +62,7 @@ public class OrderingTest extends AbstractModelTest {
 
     @Test
     public void testOrderingNestedChildNodes1() {
-        final Collection<? extends DataSchemaNode> childNodes = FOO.getChildNodes();
+        final var childNodes = FOO.getChildNodes();
         final String[] expectedOrder = { "int32-leaf", "string-leaf", "multiple-pattern-string-leaf",
             "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
             "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data", "how", "address", "port",
@@ -81,11 +80,11 @@ public class OrderingTest extends AbstractModelTest {
 
     @Test
     public void testOrderingNestedChildNodes2() {
-        final Collection<? extends GroupingDefinition> groupings = BAZ.getGroupings();
+        final var groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition target = groupings.iterator().next();
 
-        final Collection<? extends DataSchemaNode> childNodes = target.getChildNodes();
+        final var childNodes = target.getChildNodes();
         final String[] expectedOrder = { "data", "how", "address", "port", "addresses" };
         final String[] actualOrder = new String[childNodes.size()];
 
@@ -102,7 +101,7 @@ public class OrderingTest extends AbstractModelTest {
         final Module justFoo = assertEffectiveModel("/ordering/foo.yang").getModules().iterator().next();
         final ContainerSchemaNode x = (ContainerSchemaNode) justFoo
                 .getDataChildByName(QName.create(justFoo.getQNameModule(), "x"));
-        final Collection<? extends DataSchemaNode> childNodes = x.getChildNodes();
+        final var childNodes = x.getChildNodes();
 
         final String[] expectedOrder = { "x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };
         final String[] actualOrder = new String[childNodes.size()];

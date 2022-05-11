@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,7 +27,7 @@ public class Bug5942Test extends AbstractYangTest {
         final DataSchemaNode root = schemaContext.getDataChildByName(QName.create("foo", "2016-06-02", "root"));
         assertTrue(root instanceof ContainerSchemaNode);
 
-        final Collection<? extends UsesNode> uses = ((ContainerSchemaNode) root).getUses();
+        final var uses = ((ContainerSchemaNode) root).getUses();
         assertEquals(1, uses.size());
         final UsesNode usesNode = uses.iterator().next();
 

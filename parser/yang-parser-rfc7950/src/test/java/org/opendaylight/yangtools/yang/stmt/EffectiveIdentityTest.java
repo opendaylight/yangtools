@@ -7,25 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public class EffectiveIdentityTest {
 
@@ -35,17 +38,17 @@ public class EffectiveIdentityTest {
     private static final StatementStreamSource CYCLIC_IDENTITY_TEST = sourceForResource(
             "/stmt-test/identity/cyclic-identity-test.yang");
 
-    @Test(expected = SomeModifiersUnresolvedException.class)
+    @Test
     public void cyclicefineTest() throws SourceException, ReactorException, URISyntaxException {
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(CYCLIC_IDENTITY_TEST);
+        final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith("Yang model processing phase STATEMENT_DEFINITION failed [at "));
 
-        CrossSourceStatementReactor.BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(CYCLIC_IDENTITY_TEST);
-        try {
-            reactor.buildEffective();
-        } catch (SomeModifiersUnresolvedException e) {
-            StmtTestUtils.log(e, "      ");
-            throw e;
-        }
+        final var cause1 = cause.getCause();
+        assertThat(cause1, instanceOf(InferenceException.class));
+        assertThat(cause1.getMessage(), startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-1 "
+            + "and base identity (cyclic.identity.test)child-identity-2 [at "));
     }
 
     @Test
@@ -54,8 +57,8 @@ public class EffectiveIdentityTest {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(IDENTITY_TEST).buildEffective();
         assertNotNull(result);
 
-        Module module = result.findModule("identity-test").get();
-        Collection<? extends IdentitySchemaNode> identities = module.getIdentities();
+        Module module = result.findModule("identity-test").orElseThrow();
+        var identities = module.getIdentities();
 
         assertNotNull(identities);
         assertEquals(4, identities.size());
@@ -90,7 +93,7 @@ public class EffectiveIdentityTest {
 
         assertTrue(root.getBaseIdentities().isEmpty());
 
-        Collection<? extends IdentitySchemaNode> rootDerivedIdentities = result.getDerivedIdentities(root);
+        var rootDerivedIdentities = result.getDerivedIdentities(root);
         assertEquals(2, rootDerivedIdentities.size());
 
         assertTrue(rootDerivedIdentities.contains(child1));
@@ -103,7 +106,7 @@ public class EffectiveIdentityTest {
 
         assertEquals(0, result.getDerivedIdentities(child2).size());
 
-        Collection<? extends IdentitySchemaNode> child1DerivedIdentities = result.getDerivedIdentities(child1);
+        var child1DerivedIdentities = result.getDerivedIdentities(child1);
         assertEquals(1, child1DerivedIdentities.size());
         assertTrue(child1DerivedIdentities.contains(child12));
         assertFalse(child1DerivedIdentities.contains(child1));

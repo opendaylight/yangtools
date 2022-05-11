@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -24,23 +23,23 @@ public class Bug3799Test extends AbstractYangTest {
     public void test() {
         final var schema = assertEffectiveModelDir("/bugs/bug3799");
 
-        Collection<? extends Module> modules = schema.getModules();
+        var modules = schema.getModules();
         assertNotNull(modules);
         assertEquals(1, modules.size());
 
         Module testModule = modules.iterator().next();
-        Collection<? extends Submodule> subModules = testModule.getSubmodules();
+        var subModules = testModule.getSubmodules();
         assertNotNull(subModules);
         assertEquals(1, subModules.size());
 
         Submodule testSubmodule = subModules.iterator().next();
 
-        Collection<? extends NotificationDefinition> notifications = testSubmodule.getNotifications();
+        var notifications = testSubmodule.getNotifications();
         assertNotNull(notifications);
         assertEquals(1, notifications.size());
 
         NotificationDefinition bazNotification = notifications.iterator().next();
-        Collection<? extends DataSchemaNode> childNodes = bazNotification.getChildNodes();
+        var childNodes = bazNotification.getChildNodes();
         assertNotNull(childNodes);
         assertEquals(1, childNodes.size());
 

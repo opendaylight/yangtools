@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -36,7 +35,7 @@ public class ExtensionStmtTest {
 
         assertEquals(1, testModule.getExtensionSchemaNodes().size());
 
-        final Collection<? extends ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
+        final var extensions = testModule.getExtensionSchemaNodes();
         final ExtensionDefinition extension = extensions.iterator().next();
         assertEquals("opendaylight", extension.getQName().getLocalName());
         assertEquals("name", extension.getArgument());
@@ -56,7 +55,7 @@ public class ExtensionStmtTest {
 
         assertEquals(1, testModule1.getExtensionSchemaNodes().size());
 
-        final Collection<? extends ExtensionDefinition> extensions = testModule1.getExtensionSchemaNodes();
+        final var extensions = testModule1.getExtensionSchemaNodes();
         final ExtensionDefinition extensionDefinition = extensions.iterator().next();
 
         final Module testModule2 = result.findModules("ext-use").iterator().next();
@@ -66,7 +65,7 @@ public class ExtensionStmtTest {
             QName.create(testModule2.getQNameModule(), "value"));
         assertNotNull(leaf);
 
-        final Collection<? extends UnrecognizedStatement> unknownNodes = leaf.asEffectiveStatement().getDeclared()
+        final var unknownNodes = leaf.asEffectiveStatement().getDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         final UnrecognizedStatement extensionUse = unknownNodes.iterator().next();

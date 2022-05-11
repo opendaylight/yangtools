@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Iterables;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Test;
@@ -50,7 +49,7 @@ public class GroupingTest extends AbstractModelTest {
         final ContainerSchemaNode peer = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("peer"));
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(fooQName("destination"));
 
-        final Collection<? extends UsesNode> usesNodes = destination.getUses();
+        final var usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
         final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
@@ -85,7 +84,7 @@ public class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertEquals(Optional.of(Boolean.FALSE), refineLeaf.effectiveConfig());
         assertFalse(refineLeaf.isMandatory());
-        final Collection<? extends MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
+        final var leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
@@ -96,7 +95,7 @@ public class GroupingTest extends AbstractModelTest {
 
         // container port
         assertNotNull(refineContainer);
-        final Collection<? extends MustDefinition> mustConstraints = refineContainer.getMustConstraints();
+        final var mustConstraints = refineContainer.getMustConstraints();
         assertTrue(mustConstraints.isEmpty());
         assertEquals(Optional.of("description of port defined by refine"), refineContainer.getDescription());
         assertEquals(Optional.of("port reference added by refine"), refineContainer.getReference());
@@ -119,10 +118,10 @@ public class GroupingTest extends AbstractModelTest {
 
     @Test
     public void testGrouping() {
-        final Collection<? extends GroupingDefinition> groupings = BAZ.getGroupings();
+        final var groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
-        final Collection<? extends DataSchemaNode> children = grouping.getChildNodes();
+        final var children = grouping.getChildNodes();
         assertEquals(5, children.size());
     }
 
@@ -133,7 +132,7 @@ public class GroupingTest extends AbstractModelTest {
 
 
         // get grouping
-        final Collection<? extends GroupingDefinition> groupings = BAZ.getGroupings();
+        final var groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
 
@@ -142,7 +141,7 @@ public class GroupingTest extends AbstractModelTest {
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(fooQName("destination"));
 
         // check uses
-        final Collection<? extends UsesNode> uses = destination.getUses();
+        final var uses = destination.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
@@ -194,11 +193,11 @@ public class GroupingTest extends AbstractModelTest {
         assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
-        final Collection<? extends GroupingDefinition> groupings_u = destination.getGroupings();
+        final var groupings_u = destination.getGroupings();
         assertEquals(0, groupings_u.size());
 
         // grouping defined in 'grouping' node
-        final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
+        final var groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         assertIsAddedByUses(grouping_g, false);
@@ -214,12 +213,12 @@ public class GroupingTest extends AbstractModelTest {
         // suffix _g = defined in grouping
 
         // get grouping
-        final Collection<? extends GroupingDefinition> groupings = BAZ.getGroupings();
+        final var groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
 
         // check uses
-        final Collection<? extends UsesNode> uses = FOO.getUses();
+        final var uses = FOO.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
@@ -233,7 +232,7 @@ public class GroupingTest extends AbstractModelTest {
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) FOO.getDataChildByName(fooQName("how"));
         assertIsAddedByUses(how_u, true);
         assertFalse(how_u.isAugmenting());
-        final Collection<? extends CaseSchemaNode> cases_u = how_u.getCases();
+        final var cases_u = how_u.getCases();
         assertEquals(2, cases_u.size());
         final CaseSchemaNode interval = how_u.findCaseNodes("interval").iterator().next();
         assertFalse(interval.isAugmenting());
@@ -276,11 +275,11 @@ public class GroupingTest extends AbstractModelTest {
         assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
-        final Collection<? extends GroupingDefinition> groupings_u = FOO.getGroupings();
+        final var groupings_u = FOO.getGroupings();
         assertEquals(0, groupings_u.size());
 
         // grouping defined in 'grouping' node
-        final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
+        final var groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         assertIsAddedByUses(grouping_g, false);
@@ -290,11 +289,11 @@ public class GroupingTest extends AbstractModelTest {
             .size());
 
         final UsesNode un = uses.iterator().next();
-        final Collection<? extends AugmentationSchemaNode> usesAugments = un.getAugmentations();
+        final var usesAugments = un.getAugmentations();
         assertEquals(1, usesAugments.size());
         final AugmentationSchemaNode augment = usesAugments.iterator().next();
         assertEquals(Optional.of("inner augment"), augment.getDescription());
-        final Collection<? extends DataSchemaNode> children = augment.getChildNodes();
+        final var children = augment.getChildNodes();
         assertEquals(1, children.size());
         final DataSchemaNode leaf = children.iterator().next();
         assertTrue(leaf instanceof LeafSchemaNode);
@@ -308,7 +307,7 @@ public class GroupingTest extends AbstractModelTest {
 
         final Module testModule =  Iterables.getOnlyElement(loadModules.findModules("cascade-uses"));
         final QNameModule namespace = testModule.getQNameModule();
-        final Collection<? extends GroupingDefinition> groupings = testModule.getGroupings();
+        final var groupings = testModule.getGroupings();
 
         GroupingDefinition gu = null;
         GroupingDefinition gv = null;
@@ -352,7 +351,7 @@ public class GroupingTest extends AbstractModelTest {
             Revision.of("2013-07-18"));
 
         // grouping-U
-        Collection<? extends DataSchemaNode> childNodes = gu.getChildNodes();
+        var childNodes = gu.getChildNodes();
         assertEquals(7, childNodes.size());
 
         final LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName(

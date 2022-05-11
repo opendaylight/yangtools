@@ -12,7 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -57,14 +56,14 @@ public class AugmentTest extends AbstractYangTest {
     public void testAugmentParsing() {
         // foo.yang
         final Module module1 = AUGMENT_IN_AUGMENT.findModules("foo").iterator().next();
-        Collection<? extends AugmentationSchemaNode> augmentations = module1.getAugmentations();
+        var augmentations = module1.getAugmentations();
         assertEquals(1, augmentations.size());
         final AugmentationSchemaNode augment = augmentations.iterator().next();
         assertNotNull(augment);
 
         assertEquals(Absolute.of(Q0, Q1, Q2), augment.getTargetPath());
 
-        final Collection<? extends DataSchemaNode> augmentChildren = augment.getChildNodes();
+        final var augmentChildren = augment.getChildNodes();
         assertEquals(4, augmentChildren.size());
         for (final DataSchemaNode dsn : augmentChildren) {
             checkIsAugmenting(dsn, false);
@@ -196,7 +195,7 @@ public class AugmentTest extends AbstractYangTest {
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
         final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentedHolder.getDataChildByName(QName.create(FOO, "odl"));
         assertNotNull(odl);
-        final Collection<? extends CaseSchemaNode> cases = odl.getCases();
+        final var cases = odl.getCases();
         assertEquals(4, cases.size());
 
         CaseSchemaNode id = null;
@@ -223,22 +222,22 @@ public class AugmentTest extends AbstractYangTest {
 
         // case id
         assertEquals(QName.create(FOO, "id"), id.getQName());
-        final Collection<? extends DataSchemaNode> idChildren = id.getChildNodes();
+        final var idChildren = id.getChildNodes();
         assertEquals(1, idChildren.size());
 
         // case node1
         assertEquals(QName.create(FOO, "node1"), node1.getQName());
-        final Collection<? extends DataSchemaNode> node1Children = node1.getChildNodes();
+        final var node1Children = node1.getChildNodes();
         assertTrue(node1Children.isEmpty());
 
         // case node2
         assertEquals(QName.create(FOO, "node2"), node2.getQName());
-        final Collection<? extends DataSchemaNode> node2Children = node2.getChildNodes();
+        final var node2Children = node2.getChildNodes();
         assertTrue(node2Children.isEmpty());
 
         // case node3
         assertEquals(QName.create(FOO, "node3"), node3.getQName());
-        final Collection<? extends DataSchemaNode> node3Children = node3.getChildNodes();
+        final var node3Children = node3.getChildNodes();
         assertEquals(1, node3Children.size());
 
         // test cases
@@ -260,7 +259,7 @@ public class AugmentTest extends AbstractYangTest {
         final XMLNamespace NS_FOO = XMLNamespace.of("urn:opendaylight:foo");
         final Revision revision = Revision.of("2013-10-11");
         final Module bar = context.findModules("bar").iterator().next();
-        final Collection<? extends RpcDefinition> rpcs = bar.getRpcs();
+        final var rpcs = bar.getRpcs();
         assertEquals(2, rpcs.size());
 
         RpcDefinition submit = null;
@@ -282,7 +281,7 @@ public class AugmentTest extends AbstractYangTest {
         final QName argumentsQName = QName.create(NS_BAR, revision, "arguments");
         assertEquals(argumentsQName, arguments.getQName());
         assertFalse(arguments.isAugmenting());
-        final Collection<? extends CaseSchemaNode> cases = arguments.getCases();
+        final var cases = arguments.getCases();
         assertEquals(3, cases.size());
 
         CaseSchemaNode attach = null;
@@ -307,17 +306,17 @@ public class AugmentTest extends AbstractYangTest {
 
         // case attach
         assertEquals(QName.create(NS_FOO, revision, "attach"), attach.getQName());
-        final Collection<? extends DataSchemaNode> attachChildren = attach.getChildNodes();
+        final var attachChildren = attach.getChildNodes();
         assertEquals(1, attachChildren.size());
 
         // case create
         assertEquals(QName.create(NS_FOO, revision, "create"), create.getQName());
-        final Collection<? extends DataSchemaNode> createChildren = create.getChildNodes();
+        final var createChildren = create.getChildNodes();
         assertEquals(1, createChildren.size());
 
         // case attach
         assertEquals(QName.create(NS_FOO, revision, "destroy"), destroy.getQName());
-        final Collection<? extends DataSchemaNode> destroyChildren = destroy.getChildNodes();
+        final var destroyChildren = destroy.getChildNodes();
         assertEquals(1, destroyChildren.size());
     }
 
@@ -335,7 +334,7 @@ public class AugmentTest extends AbstractYangTest {
                 "nodes"));
         final ContainerSchemaNode node = (ContainerSchemaNode) nodes.getDataChildByName(QName.create(
                 test.getQNameModule(), "node"));
-        final Collection<? extends AugmentationSchemaNode> augments = node.getAvailableAugmentations();
+        final var augments = node.getAvailableAugmentations();
         assertEquals(1, augments.size());
         assertEquals(1, node.getChildNodes().size());
         final LeafSchemaNode id = (LeafSchemaNode) node.getDataChildByName(QName.create(test.getQNameModule(), "id"));

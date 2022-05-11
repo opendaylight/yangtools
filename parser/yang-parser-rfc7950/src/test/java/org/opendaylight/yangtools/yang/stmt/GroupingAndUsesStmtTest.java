@@ -14,7 +14,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,11 +50,10 @@ public class GroupingAndUsesStmtTest {
         final Module testModule = result.findModules("baz").iterator().next();
         assertNotNull(testModule);
 
-        final Collection<? extends GroupingDefinition> groupings = testModule.getGroupings();
+        final var groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
 
-        final Iterator<? extends GroupingDefinition> groupingsIterator = groupings.iterator();
-        final GroupingDefinition grouping = groupingsIterator.next();
+        final GroupingDefinition grouping = groupings.iterator().next();
         assertEquals("target", grouping.getQName().getLocalName());
         assertEquals(5, grouping.getChildNodes().size());
 
@@ -97,7 +95,7 @@ public class GroupingAndUsesStmtTest {
 
         final Module testModule = result.findModules("foo").iterator().next();
 
-        final Collection<? extends UsesNode> usesNodes = testModule.getUses();
+        final var usesNodes = testModule.getUses();
         assertEquals(1, usesNodes.size());
 
         UsesNode usesNode = usesNodes.iterator().next();

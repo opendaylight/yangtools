@@ -12,7 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,7 +39,7 @@ public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
         assertEquals(1, choice.getCases().size());
 
         // this choice is augmented (see main-impl.yang.xml)
-        final Iterator<? extends CaseSchemaNode> casesIterator = choice.getCases().iterator();
+        final var casesIterator = choice.getCases().iterator();
         final CaseSchemaNode caseNode = casesIterator.next();
         assertEquals("main-impl", caseNode.getQName().getLocalName());
         assertEquals(13, caseNode.getChildNodes().size());
