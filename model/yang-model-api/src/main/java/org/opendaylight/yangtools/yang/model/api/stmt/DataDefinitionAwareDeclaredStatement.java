@@ -14,16 +14,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
 public interface DataDefinitionAwareDeclaredStatement<A> extends DeclaredStatement<A> {
-    default @NonNull Collection<? extends DataDefinitionStatement> getDataDefinitions() {
+    default @NonNull Collection<? extends @NonNull DataDefinitionStatement> getDataDefinitions() {
         return declaredSubstatements(DataDefinitionStatement.class);
     }
 
     interface WithReusableDefinitions<A> extends DataDefinitionAwareDeclaredStatement<A> {
-        default @NonNull Collection<? extends TypedefStatement> getTypedefs() {
+        default @NonNull Collection<? extends @NonNull TypedefStatement> getTypedefs() {
             return declaredSubstatements(TypedefStatement.class);
         }
 
-        default @NonNull Collection<? extends GroupingStatement> getGroupings() {
+        default @NonNull Collection<? extends @NonNull GroupingStatement> getGroupings() {
             return declaredSubstatements(GroupingStatement.class);
         }
     }
