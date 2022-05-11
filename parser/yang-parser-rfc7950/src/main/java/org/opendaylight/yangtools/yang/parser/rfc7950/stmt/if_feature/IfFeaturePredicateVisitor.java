@@ -23,15 +23,13 @@ import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.Id
 import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.If_feature_exprContext;
 import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.If_feature_factorContext;
 import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.If_feature_termContext;
-import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParserBaseVisitor;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-// FIXME: YANGTOOLS-1396: refactor on top of vanilla IfFeatureExpressionParser
 @NonNullByDefault
-final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisitor<IfFeatureExpr> {
+final class IfFeaturePredicateVisitor {
     private final StmtContext<?, ?, ?> stmtCtx;
 
     private IfFeaturePredicateVisitor(final StmtContext<?, ?, ?> ctx) {
@@ -41,20 +39,19 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
     static IfFeatureExpr parseIfFeatureExpression(final StmtContext<?, ?, ?> ctx, final String value) {
         final IfFeatureExpressionLexer lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
         final IfFeatureExpressionParser parser = new IfFeatureExpressionParser(new CommonTokenStream(lexer));
-        final IfFeatureExpr ret = new IfFeaturePredicateVisitor(ctx).visit(SourceExceptionParser.parse(lexer, parser,
-            parser::if_feature_expr, ctx.sourceReference()));
-
-        return ret;
+        final var ifFeatureExprContext =
+                SourceExceptionParser.parse(lexer, parser, parser::if_feature_expr, ctx.sourceReference());
+        return new IfFeaturePredicateVisitor(ctx).visitIf_feature_expr(ifFeatureExprContext);
     }
 
-    @Override
+
     public IfFeatureExpr visitIf_feature_expr(final @Nullable If_feature_exprContext ctx) {
         return IfFeatureExpr.or(ctx.if_feature_term().stream()
             .map(this::visitIf_feature_term)
             .collect(ImmutableSet.toImmutableSet()));
     }
 
-    @Override
+
     public IfFeatureExpr visitIf_feature_term(final @Nullable If_feature_termContext ctx) {
         final IfFeatureExpr factor = visitIf_feature_factor(ctx.if_feature_factor());
         final List<If_feature_termContext> terms = ctx.if_feature_term();
@@ -69,7 +66,7 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
         return IfFeatureExpr.and(ImmutableSet.copyOf(factors));
     }
 
-    @Override
+
     public IfFeatureExpr visitIf_feature_factor(final @Nullable If_feature_factorContext ctx) {
         if (ctx.if_feature_expr() != null) {
             return visitIf_feature_expr(ctx.if_feature_expr());
@@ -83,7 +80,7 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
                 + "Most probably IfFeature grammar has been changed.", stmtCtx);
     }
 
-    @Override
+
     public IfFeatureExpr visitIdentifier_ref_arg(final @Nullable Identifier_ref_argContext ctx) {
         return IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(stmtCtx, ctx.getText()));
     }
