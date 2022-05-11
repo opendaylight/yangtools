@@ -36,6 +36,8 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
     public static @NonNull IRSchemaSource transformText(final YangTextSchemaSource text)
             throws YangSyntaxErrorException, IOException {
         final IRStatement rootStatement = AntlrSupport.createStatement(YangStatementStreamSource.parseYangSource(text));
+
+        // FIXME: relocate these to IRSchemaSource so we can trust it's view
         final String name = YangModelDependencyInfo.safeStringArgument(text.getIdentifier(), rootStatement, "name");
         final String latestRevision = YangModelDependencyInfo.getLatestRevision(rootStatement, text.getIdentifier());
         final SourceIdentifier sourceId = new SourceIdentifier(name, latestRevision);

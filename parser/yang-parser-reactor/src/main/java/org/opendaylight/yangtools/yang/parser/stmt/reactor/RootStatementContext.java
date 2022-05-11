@@ -62,7 +62,6 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     private YangVersion rootVersion;
     private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
-    private SourceIdentifier rootIdentifier;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -77,11 +76,9 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
-            final StatementSourceReference ref, final String rawArgument, final YangVersion version,
-            final SourceIdentifier identifier) {
+            final StatementSourceReference ref, final String rawArgument, final YangVersion version) {
         this(sourceContext, def, ref, rawArgument);
-        this.setRootVersion(version);
-        this.setRootIdentifier(identifier);
+        setRootVersion(version);
     }
 
     @Override
@@ -201,10 +198,6 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
         return ImmutableSet.copyOf(requiredSources);
     }
 
-    SourceIdentifier getRootIdentifier() {
-        return rootIdentifier;
-    }
-
     @Override
     protected boolean isIgnoringIfFeatures() {
         return false;
@@ -218,10 +211,6 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     @Override
     protected boolean isParentSupportedByFeatures() {
         return true;
-    }
-
-    void setRootIdentifierImpl(final SourceIdentifier identifier) {
-        this.rootIdentifier = requireNonNull(identifier);
     }
 
     @NonNull Registry getBehaviourRegistryImpl() {
