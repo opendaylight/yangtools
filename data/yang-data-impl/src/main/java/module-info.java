@@ -43,7 +43,7 @@ module org.opendaylight.yangtools.yang.data.impl {
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
-    requires static org.osgi.service.component.annotations;
     requires static javax.inject;
-    requires static metainf.services;
+    requires static org.kohsuke.metainf_services;
+    requires static org.osgi.service.component.annotations;
 }
