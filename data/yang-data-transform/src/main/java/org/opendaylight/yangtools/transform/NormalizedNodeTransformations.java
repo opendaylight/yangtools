@@ -35,7 +35,7 @@ public final class NormalizedNodeTransformations {
             NormalizedNodeWriter.forStreamWriter(transformWriter).write(original);
             return result.getResult();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
