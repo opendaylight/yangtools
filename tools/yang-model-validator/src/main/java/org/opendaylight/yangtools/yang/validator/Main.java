@@ -19,14 +19,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.ArgumentGroup;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.Namespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.slf4j.Logger;
@@ -59,81 +56,52 @@ public final class Main {
             (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
     private static final int MB = 1024 * 1024;
 
-    private static final Option FEATURE = new Option("f", "features", true,
-        "features is a string in the form [feature(,feature)*] and feature is a string in the form "
-                + "[($namespace?revision=$revision)$local_name]. This option is used to prune the data model "
-                + "by removing all nodes that are defined with a \"if-feature\".");
-
-    private static final Option HELP = new Option("h", "help", false, "print help message and exit.");
-    private static final Option MODULE_NAME = new Option("m", "module-name", true,
-            "validate yang model by module name.");
-    private static final Option OUTPUT = new Option("o", "output", true,
-            "path to output file for logs. Output file will be overwritten");
-    private static final Option PATH = new Option("p", "path", true,
-            "path is a colon (:) separated list of directories to search for yang modules.");
-    private static final Option RECURSIVE = new Option("r", "recursive", false,
-            "recursive search of directories specified by -p option.");
-
-    private static final Option DEBUG = new Option("d", "debug", false, "add debug output");
-    private static final Option QUIET = new Option("q", "quiet", false, "completely suppress output.");
-    private static final Option VERBOSE = new Option("v", "verbose", false,
-        "shows details about the results of test running.");
-    private static final Option LIST_WARNING_OFF = new Option("K", "no-warning-for-unkeyed-lists", false,
-        "do not add warnings about unkeyed lists with config true");
+    private static final String FEATURES = "features";
+    private static final String MODULE_NAME = "module-name";
+    private static final String OUTPUT = "output";
+    private static final String PATH = "path";
+    private static final String RECURSIVE = "recursive";
+    private static final String DEBUG = "debug";
+    private static final String QUIET = "quiet";
+    private static final String VERBOSE = "verbose";
+    private static final String LIST_WARNING_OFF = "no-warning-for-unkeyed-lists";
+    private static final String YANG_MODEL = "yang-model";
 
     private Main() {
         // Hidden on purpose
     }
 
-    private static Options createOptions() {
-        return new Options()
-            .addOption(HELP)
-            .addOption(PATH)
-            .addOption(RECURSIVE)
-            .addOptionGroup(new OptionGroup().addOption(DEBUG).addOption(QUIET).addOption(VERBOSE))
-            .addOption(LIST_WARNING_OFF)
-            .addOption(OUTPUT)
-            .addOption(MODULE_NAME)
-            .addOption(FEATURE);
-    }
-
     public static void main(final String[] args) {
-        final HelpFormatter formatter = new HelpFormatter();
-        final Options options = createOptions();
-        final CommandLine arguments = parseArguments(args, options, formatter);
+        final ArgumentParser parser = getParser();
+        final Namespace arguments = parser.parseArgsOrFail(args);
 
-        if (arguments.hasOption(HELP.getLongOpt())) {
-            printHelp(options, formatter);
-            return;
-        }
-
-        final String[] outputValues = arguments.getOptionValues(OUTPUT.getLongOpt());
+        final String[] outputValues = arguments.get(OUTPUT);
         if (outputValues != null) {
             setOutput(outputValues);
         }
 
         LOG_ROOT.setLevel(Level.WARN);
-        if (arguments.hasOption(DEBUG.getLongOpt())) {
+        if (arguments.getBoolean(DEBUG)) {
             LOG_ROOT.setLevel(Level.DEBUG);
-        } else if (arguments.hasOption(VERBOSE.getLongOpt())) {
+        } else if (arguments.getBoolean(VERBOSE)) {
             LOG_ROOT.setLevel(Level.INFO);
-        } else if (arguments.hasOption(QUIET.getLongOpt())) {
+        } else if (arguments.getBoolean(QUIET)) {
             LOG_ROOT.detachAndStopAllAppenders();
         }
 
-        final boolean warnForUnkeyedLists = !arguments.hasOption(LIST_WARNING_OFF.getLongOpt());
+        final boolean warnForUnkeyedLists = !arguments.getBoolean(LIST_WARNING_OFF);
 
         final List<String> yangLibDirs = initYangDirsPath(arguments);
         final List<String> yangFiles = new ArrayList<>();
-        final String[] moduleNameValues = arguments.getOptionValues(MODULE_NAME.getLongOpt());
+        final String moduleNameValues = arguments.getString(MODULE_NAME);
         if (moduleNameValues != null) {
-            yangFiles.addAll(Arrays.asList(moduleNameValues));
+            yangFiles.add(moduleNameValues);
         }
-        yangFiles.addAll(Arrays.asList(arguments.getArgs()));
+        yangFiles.add(arguments.get(YANG_MODEL));
 
         final Set<QName> supportedFeatures = initSupportedFeatures(arguments);
 
-        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption(RECURSIVE.getLongOpt()),
+        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.getBoolean(RECURSIVE),
             warnForUnkeyedLists);
 
         LOG_ROOT.getLoggerContext().reset();
@@ -190,22 +158,22 @@ public final class Main {
         printMemoryInfo("after gc");
     }
 
-    private static List<String> initYangDirsPath(final CommandLine arguments) {
+    private static List<String> initYangDirsPath(final Namespace arguments) {
         final List<String> yangDirs = new ArrayList<>();
-        if (arguments.hasOption("path")) {
-            for (final String pathArg : arguments.getOptionValues("path")) {
-                yangDirs.addAll(Arrays.asList(pathArg.split(":")));
-            }
+        final List<String> path = arguments.get(PATH);
+        if (path != null) {
+            yangDirs.addAll(path);
         }
         return yangDirs;
     }
 
-    private static Set<QName> initSupportedFeatures(final CommandLine arguments) {
+    private static Set<QName> initSupportedFeatures(final Namespace arguments) {
         Set<QName> supportedFeatures = null;
-        if (arguments.hasOption("features")) {
+        final List<String> features = arguments.get(FEATURES);
+        if (features != null) {
             supportedFeatures = new HashSet<>();
-            for (final String pathArg : arguments.getOptionValues("features")) {
-                supportedFeatures.addAll(createQNames(pathArg.split(",")));
+            for (final Object pathArg : features) {
+                supportedFeatures.addAll(createQNames(pathArg.toString().split(",")));
             }
         }
         return supportedFeatures;
@@ -220,25 +188,57 @@ public final class Main {
         return qnames;
     }
 
-    @SuppressFBWarnings("DM_EXIT")
-    private static CommandLine parseArguments(final String[] args, final Options options,
-            final HelpFormatter formatter) {
-        final CommandLineParser parser = new DefaultParser();
+    private static ArgumentParser getParser() {
+        final ArgumentParser parser = ArgumentParsers.newFor("YANG validator").addHelp(true).build()
+                .description("Main class of Yang parser system test.");
 
-        CommandLine cmd = null;
-        try {
-            cmd = parser.parse(options, args);
-        } catch (final ParseException e) {
-            LOG.error("Failed to parse command line options.", e);
-            printHelp(options, formatter);
-            System.exit(1);
-        }
+        parser.addArgument("-f", "--features")
+                .help("features is a string in the form [feature(,feature)*] and feature is a string in the form "
+                        + "[($namespace?revision=$revision)$local_name]. This option is used to prune the data model "
+                        + "by removing all nodes that are defined with a \"if-feature\".")
+                .dest(FEATURES)
+                .type(String.class);
+        parser.addArgument("-m", "--module-name")
+                .help("validate yang model by module name.")
+                .dest(MODULE_NAME)
+                .type(String.class);
+        parser.addArgument("-o", "--output")
+                .help("path to output file for logs. Output file will be overwritten.")
+                .dest(OUTPUT);
+        parser.addArgument("-p", "--path")
+                .help("path is a space separated list of directories to search for yang modules.")
+                .dest(PATH)
+                .nargs("+")
+                .type(String.class);
+        parser.addArgument("-r", "--recursive")
+                .help("recursive search of directories specified by -p option.")
+                .dest(RECURSIVE)
+                .action(Arguments.storeTrue());
+        parser.addArgument("-K", "--no-warning-for-unkeyed-lists")
+                .help("do not add warnings about unkeyed lists with config true.")
+                .dest(LIST_WARNING_OFF)
+                .action(Arguments.storeTrue());
+        parser.addArgument(YANG_MODEL)
+                .help("yang file to validate.")
+                .dest(YANG_MODEL)
+                .metavar(YANG_MODEL)
+                .type(String.class);
+        ArgumentGroup group = parser.addArgumentGroup("logging")
+                .description("exclusive group for logging parameters");
+        group.addArgument("-d", "--debug")
+                .help("add debug output.")
+                .dest(DEBUG)
+                .action(Arguments.storeTrue());
+        group.addArgument("-q", "--quiet")
+                .help("completely suppress output.")
+                .dest(QUIET)
+                .action(Arguments.storeTrue());
+        group.addArgument("-v", "--verbose")
+                .help("shows details about the results of test running.")
+                .dest(VERBOSE)
+                .action(Arguments.storeTrue());
 
-        return cmd;
-    }
-
-    private static void printHelp(final Options options, final HelpFormatter formatter) {
-        formatter.printHelp("yang-system-test [OPTION...] YANG-FILE...", options);
+        return parser;
     }
 
     private static void printMemoryInfo(final String info) {
