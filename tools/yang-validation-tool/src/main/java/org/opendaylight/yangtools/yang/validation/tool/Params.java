@@ -21,7 +21,7 @@ final class Params {
     private File yangSourceDir;
 
     static ArgumentParser getParser() {
-        final ArgumentParser parser = ArgumentParsers.newArgumentParser("jar_file_name");
+        final ArgumentParser parser = ArgumentParsers.newFor("jar_file_name").addHelp(true).build();
         parser.description("Validation Tool for Yang Models")
             .formatUsage();
 
