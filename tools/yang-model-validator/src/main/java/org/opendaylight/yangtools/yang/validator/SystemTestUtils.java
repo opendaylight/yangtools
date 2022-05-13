@@ -96,9 +96,7 @@ final class SystemTestUtils {
         final YangParserConfiguration configuration = YangParserConfiguration.builder()
                 .warnForUnkeyedLists(warnForUnkeyedLists).build();
         final YangParser parser = PARSER_FACTORY.createParser(configuration);
-        if (supportedFeatures != null) {
-            parser.setSupportedFeatures(supportedFeatures);
-        }
+        parser.setSupportedFeatures(supportedFeatures);
 
         for (File file : testFiles) {
             parser.addSource(YangTextSchemaSource.forPath(file.toPath()));
