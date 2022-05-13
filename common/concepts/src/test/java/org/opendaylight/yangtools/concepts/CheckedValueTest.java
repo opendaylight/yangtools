@@ -137,20 +137,6 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testOrElseThrow() {
-        final String foo = "foo";
-        assertSame(foo, CheckedValue.ofValue(foo)
-            .orElseThrow((Supplier<NullPointerException>)NullPointerException::new));
-    }
-
-    @Test
-    public void testThrowableOrElseThrow() {
-        final CheckedValue<?, ?> value = CheckedValue.ofException(new NullPointerException("foo"));
-        final Exception mock = mock(Exception.class);
-        assertThrows(mock.getClass(), () -> value.orElseThrow(() -> mock));
-    }
-
-    @Test
     public void testOrElseGet() {
         final String foo = "foo";
         @SuppressWarnings("unchecked")

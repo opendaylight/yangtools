@@ -205,25 +205,6 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
     }
 
     /**
-     * Return contained value if present or throw the exception supplied by supplier.
-     *
-     * @param supplier Exception supplier
-     * @param <X> Thrown exception type
-     * @return Contained value
-     * @throws NullPointerException if {@code exceptionMapper} is null
-     * @throws X When there is no contained value
-     * @deprecated This method is losing the underlying failure cause. Use {@link #orElseThrow(Function)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "8.0.2")
-    public final <X extends Throwable> T orElseThrow(final Supplier<X> supplier) throws X {
-        requireNonNull(supplier);
-        if (isFirst()) {
-            return first();
-        }
-        throw supplier.get();
-    }
-
-    /**
      * Complete target {@link CompletableFuture} either successfully or exceptionally based on the state of this object.
      *
      * @param future Future to complete
