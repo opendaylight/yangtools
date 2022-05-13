@@ -96,7 +96,7 @@ final class SystemTestUtils {
         final YangParserConfiguration configuration = YangParserConfiguration.builder()
                 .warnForUnkeyedLists(warnForUnkeyedLists).build();
         final YangParser parser = PARSER_FACTORY.createParser(configuration);
-        if (supportedFeatures != null) {
+        if (!supportedFeatures.isEmpty()) {
             parser.setSupportedFeatures(supportedFeatures);
         }
 
