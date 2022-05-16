@@ -71,6 +71,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1461bac9_b69a9092",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/if_feature/IfFeaturePredicateVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-16T09:26:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e9d30152_df0c04c6",
+      "revId": "8771c0fca9c3b029b74f61119e0e8db10752d7e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e7fae7de_4ad03b07",
