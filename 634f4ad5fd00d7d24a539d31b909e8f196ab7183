@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5732c3c6_ba58e5c2",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-16T09:19:25Z",
+      "side": 1,
+      "message": "In the previous solution - this was not boolean - just presence of parameter was used to indicate that warnings are off.\n\nThe same applied for `debug`, for example. When you add `--debug` debug option is enabled. Its not a boolean variable.",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5a587f5_792754ee",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-16T09:19:25Z",
+      "side": 1,
+      "message": "Remove commented line. Test if adding YANG files to parse works...\n\nNo, its not - a tool doesn\u0027t not work any more :D",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cecf6820_4ebc44ad",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-16T09:19:25Z",
+      "side": 1,
+      "message": "`private`",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d7678dfa_a939ca96",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-16T09:19:25Z",
+      "side": 1,
+      "message": "Please add something more meaningful - for example: `YANG validator`",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e362cea_82b40c43",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-16T09:19:25Z",
+      "side": 1,
+      "message": "We need to have an exclusive group of `debug`, `quiet` and `verbose`",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
