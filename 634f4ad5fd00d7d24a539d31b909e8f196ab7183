@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fe70591d_6d6cc269",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-16T11:58:29Z",
+      "side": 1,
+      "message": "Yes I know about it. But in argparse4j for same purpose I\u0027m using ```.action(Arguments.storeTrue())``` - storing constant true. So when such flag is present it will store true for that property. And it will stay false in other case. You can read about it here: https://argparse4j.github.io/usage.html#arguments-storetrue-and-arguments-storefalse",
+      "parentUuid": "5732c3c6_ba58e5c2",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c5a587f5_792754ee",
         "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
         "patchSetId": 4
@@ -52,6 +70,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ef4144f_f572fbd3",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-16T11:58:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cecf6820_4ebc44ad",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d7678dfa_a939ca96",
@@ -69,6 +105,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c89dc09_391d432f",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-16T11:58:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d7678dfa_a939ca96",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2e362cea_82b40c43",
@@ -82,6 +136,24 @@
       "writtenOn": "2022-05-16T09:19:25Z",
       "side": 1,
       "message": "We need to have an exclusive group of `debug`, `quiet` and `verbose`",
+      "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "30442110_fb522b90",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-16T11:58:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e362cea_82b40c43",
       "revId": "634f4ad5fd00d7d24a539d31b909e8f196ab7183",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
