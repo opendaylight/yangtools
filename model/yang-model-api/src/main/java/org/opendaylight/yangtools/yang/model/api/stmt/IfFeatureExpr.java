@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 @Beta
 public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<QName>> {
     private abstract static sealed class Single extends IfFeatureExpr {
-        final QName qname;
+        final @NonNull QName qname;
 
         Single(final QName qname) {
             this.qname = requireNonNull(qname);
@@ -91,6 +91,9 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
     private abstract static sealed class Complex extends AbstractArray<IfFeatureExpr> {
         Complex(final IfFeatureExpr[] array) {
             super(array);
+            for (var expr : array) {
+                requireNonNull(expr);
+            }
         }
 
         @Override
