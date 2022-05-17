@@ -36,8 +36,8 @@ import org.opendaylight.yangtools.yang.common.QName;
  * @author Robert Varga
  */
 @Beta
-public abstract class IfFeatureExpr implements Immutable, Predicate<Set<QName>> {
-    private abstract static class Single extends IfFeatureExpr {
+public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<QName>> {
+    private abstract static sealed class Single extends IfFeatureExpr {
         final QName qname;
 
         Single(final QName qname) {
@@ -68,7 +68,7 @@ public abstract class IfFeatureExpr implements Immutable, Predicate<Set<QName>> 
     // We are using arrays to hold our components to save a wee bit of space. The arrays originate from Sets retaining
     // insertion order of Lists, each component is guaranteed to be unique, in definition order, not appearing multiple
     // times
-    private abstract static class AbstractArray<T> extends IfFeatureExpr {
+    private abstract static sealed class AbstractArray<T> extends IfFeatureExpr {
         final T[] array;
 
         AbstractArray(final T[] array) {
@@ -90,7 +90,7 @@ public abstract class IfFeatureExpr implements Immutable, Predicate<Set<QName>> 
         abstract String infix();
     }
 
-    private abstract static class Complex extends AbstractArray<IfFeatureExpr> {
+    private abstract static sealed class Complex extends AbstractArray<IfFeatureExpr> {
         Complex(final IfFeatureExpr[] array) {
             super(array);
         }
@@ -129,7 +129,7 @@ public abstract class IfFeatureExpr implements Immutable, Predicate<Set<QName>> 
         }
     }
 
-    private abstract static class Compound extends AbstractArray<QName> {
+    private abstract static sealed class Compound extends AbstractArray<QName> {
         Compound(final QName[] qnames) {
             super(qnames);
         }
@@ -256,7 +256,7 @@ public abstract class IfFeatureExpr implements Immutable, Predicate<Set<QName>> 
         }
     }
 
-    private abstract static class AbstractAll extends Compound {
+    private abstract static sealed class AbstractAll extends Compound {
         AbstractAll(final QName[] qnames) {
             super(qnames);
         }
@@ -310,7 +310,7 @@ public abstract class IfFeatureExpr implements Immutable, Predicate<Set<QName>> 
         }
     }
 
-    private abstract static class AbstractAny extends Compound {
+    private abstract static sealed class AbstractAny extends Compound {
         AbstractAny(final QName[] qnames) {
             super(qnames);
         }
