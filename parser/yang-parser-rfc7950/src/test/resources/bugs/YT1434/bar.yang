@@ -1,0 +1,7 @@
+submodule bar {
+  belongs-to foo {
+    prefix foo;
+  }
+
+  container bar;
+}

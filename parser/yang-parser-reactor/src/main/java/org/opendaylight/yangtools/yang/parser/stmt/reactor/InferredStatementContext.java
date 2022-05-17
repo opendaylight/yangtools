@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -474,7 +475,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private List<ReactorStmtCtx<?, ?, ?>> ensureEffectiveSubstatements() {
         accessSubstatements();
         return substatements instanceof List ? castEffective(substatements)
-            : initializeSubstatements(castMaterialized(substatements));
+            // We have either not started or have only partially-materialized statements, ensure full materialization
+            : initializeSubstatements();
     }
 
     @Override
@@ -529,22 +531,31 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return count;
     }
 
-    private List<ReactorStmtCtx<?, ?, ?>> initializeSubstatements(
-            final Map<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree) {
-        final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
-        final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
+    private List<ReactorStmtCtx<?, ?, ?>> initializeSubstatements() {
+        final var declared = prototype.mutableDeclaredSubstatements();
+        final var effective = prototype.mutableEffectiveSubstatements();
 
-        final var buffer = new ArrayList<ReactorStmtCtx<?, ?, ?>>(declared.size() + effective.size());
-        for (final Mutable<?, ?, ?> stmtContext : declared) {
+        // We are about to instantiate some substatements. The simple act of materializing them may end up triggering
+        // namespace lookups, which in turn can materialize copies by themselves, running ahead of our materialization.
+        // We therefore need a meeting place for, which are the partially-materialized substatements. If we do not have
+        // them yet, instantiate them and we need to populate them as well.
+        final int expectedSize = declared.size() + effective.size();
+        var materializedSchemaTree = castMaterialized(substatements);
+        if (materializedSchemaTree == null) {
+            substatements = materializedSchemaTree = Maps.newHashMapWithExpectedSize(expectedSize);
+        }
+
+        final var buffer = new ArrayList<ReactorStmtCtx<?, ?, ?>>(expectedSize);
+        for (var stmtContext : declared) {
             if (stmtContext.isSupportedByFeatures()) {
                 copySubstatement(stmtContext, buffer, materializedSchemaTree);
             }
         }
-        for (final Mutable<?, ?, ?> stmtContext : effective) {
+        for (var stmtContext : effective) {
             copySubstatement(stmtContext, buffer, materializedSchemaTree);
         }
 
-        final List<ReactorStmtCtx<?, ?, ?>> ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(), buffer.size());
+        final var ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(), buffer.size());
         ret.addAll(buffer);
         substatements = ret;
         setModified();
@@ -570,10 +581,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         //
         // We could also perform a Map.containsKey() and perform a bulk add, but that would mean the statement order
         // against parent would change -- and we certainly do not want that to happen.
-        final ReactorStmtCtx<?, ?, ?> materialized = findMaterialized(materializedSchemaTree, substatement);
+        final var materialized = findMaterialized(materializedSchemaTree, substatement);
         if (materialized == null) {
             copySubstatement(substatement).ifPresent(copy -> {
-                buffer.add(ensureCompletedPhase(copy));
+                final var cast = ensureCompletedPhase(copy);
+                materializedSchemaTree.put(substatement, cast);
+                buffer.add(cast);
             });
         } else {
             buffer.add(materialized);
