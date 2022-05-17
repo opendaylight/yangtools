@@ -77,14 +77,8 @@ public final class PatternExpression implements Immutable {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof PatternExpression)) {
-            return false;
-        }
-        final PatternExpression other = (PatternExpression) obj;
-        return regex.equals(other.regex) && pattern.equals(other.pattern);
+        return this == obj || obj instanceof PatternExpression other
+            && regex.equals(other.regex) && pattern.equals(other.pattern);
     }
 
     @Override
