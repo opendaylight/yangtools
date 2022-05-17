@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * Common interface for an operation.
  */
 @Beta
-public interface OperationDefinition extends SchemaNode {
+public sealed interface OperationDefinition extends SchemaNode permits RpcDefinition, ActionDefinition {
     /**
      * Returns the set of type definitions declared under this operation.
      *

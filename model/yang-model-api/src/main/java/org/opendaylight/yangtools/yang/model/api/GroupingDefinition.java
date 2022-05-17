@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
  *       as groupings can never be encountered in 'data schema node' context. It is their children, which are data
  *       schema node, but those really are instantiated and typically differ in {@link #getQName()}'s namespace.
  */
-public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer,
+public non-sealed interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer,
        ActionNodeContainer, AddedByUsesAware, EffectiveStatementEquivalent<GroupingEffectiveStatement> {
 
 }

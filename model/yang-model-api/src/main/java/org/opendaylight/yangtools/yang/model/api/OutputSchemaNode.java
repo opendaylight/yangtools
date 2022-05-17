@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 @Beta
-public interface OutputSchemaNode extends ContainerLike, EffectiveStatementEquivalent<OutputEffectiveStatement> {
+public non-sealed interface OutputSchemaNode
+    extends ContainerLike, EffectiveStatementEquivalent<OutputEffectiveStatement> {
 
 }

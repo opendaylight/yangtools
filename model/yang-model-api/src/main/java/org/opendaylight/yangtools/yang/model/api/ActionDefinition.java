@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  * detailed action information.  The argument is the name of the action.
  */
 @Beta
-public interface ActionDefinition
+public non-sealed interface ActionDefinition
         extends OperationDefinition, CopyableNode, EffectiveStatementEquivalent<ActionEffectiveStatement> {
 
 }

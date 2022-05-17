@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement
 /**
  * Interface describing YANG 'leaf-list' statement.
  */
-public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware, ElementCountConstraintAware,
-        UserOrderedAware<LeafListEffectiveStatement> {
+public non-sealed interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware,
+        ElementCountConstraintAware, UserOrderedAware<LeafListEffectiveStatement> {
 
     /**
      * Return the default value of this leaf-list, as per the rules outlined in
