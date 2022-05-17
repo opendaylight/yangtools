@@ -28,6 +28,6 @@ abstract class AbstractStatusStatement extends AbstractDeclaredStatement<Status>
 
     @Override
     public final @NonNull String rawArgument() {
-        return argument.getArgumentString();
+        return argument.argument();
     }
 }

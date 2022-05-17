@@ -37,30 +37,18 @@ public final class StatusStatementSupport
 
     @Override
     public Status parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        switch (value) {
-            case "current":
-                return Status.CURRENT;
-            case "deprecated":
-                return Status.DEPRECATED;
-            case "obsolete":
-                return Status.OBSOLETE;
-            default:
-                throw new SourceException(ctx,
-                    "Invalid status '%s', must be one of 'current', 'deprecated' or 'obsolete'", value);
-        }
+        return SourceException.throwIfNull(Status.forArgument(value), ctx,
+            "Invalid status '%s', must be one of 'current', 'deprecated' or 'obsolete'", value);
     }
 
     @Override
     public String internArgument(final String rawArgument) {
-        if ("current".equals(rawArgument)) {
-            return "current";
-        } else if ("deprecated".equals(rawArgument)) {
-            return "deprecated";
-        } else if ("obsolete".equals(rawArgument)) {
-            return "obsolete";
-        } else {
-            return rawArgument;
-        }
+        return switch (rawArgument) {
+            case "current" -> "current";
+            case "deprecated" -> "deprecated";
+            case "obsolete" -> "obsolete";
+            default -> rawArgument;
+        };
     }
 
     @Override

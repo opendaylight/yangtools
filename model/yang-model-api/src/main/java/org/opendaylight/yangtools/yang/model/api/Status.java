@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Enumeration describing YANG 'status' statement. If no status is specified, the
@@ -32,28 +34,54 @@ public enum Status {
      */
     OBSOLETE("obsolete");
 
-    private final String argumentString;
+    private final String argument;
 
-    Status(final String argumentString) {
-        this.argumentString = argumentString;
+    Status(final String argument) {
+        this.argument = requireNonNull(argument);
     }
 
-    @Beta
-    public String getArgumentString() {
-        return argumentString;
+    /**
+     * Returns the YANG {@code status} statement argument value corresponding to this object.
+     *
+     * @return String that corresponds to the YANG {@code status} statement argument
+     */
+    public String argument() {
+        return argument;
     }
 
-    @Beta
-    public static Status forArgumentString(final String argumentString) {
-        switch (argumentString) {
-            case "current":
-                return CURRENT;
-            case "deprecated":
-                return DEPRECATED;
-            case "obsolete":
-                return OBSOLETE;
-            default:
-                throw new IllegalArgumentException("Invalid status string '" + argumentString + "'");
+    /**
+     * Return a {@link Status} for specified {@code status} statement argument. This methods returns a  {@code null} for
+     * illegal values. See {@link #ofArgument(String)} for a version which returns non-null and throws an exception for
+     * illegal values.
+     *
+     * @param argument {@code status} statement argument
+     * @return An enumeration value, or {@code null} if specified argument is not valid
+     * @throws NullPointerException if {@code argument} is {@code null}
+     */
+    public static @Nullable Status forArgument(final String argument) {
+        return switch (argument) {
+            case "current" -> CURRENT;
+            case "deprecated" -> DEPRECATED;
+            case "obsolete" -> OBSOLETE;
+            default -> null;
+        };
+    }
+
+    /**
+     * Return a {@link Status} for specified {@code status} statement argument. This methods throws an exception for
+     * illegal values. See {@link #forArgument(String)} for a version which returns a {@code null} instead for illegal
+     * values.
+     *
+     * @param argument {@code status} statement argument
+     * @return An enumeration value, or {@code null} if specified argument is not valid
+     * @throws NullPointerException if {@code argument} is {@code null}
+     * @throws IllegalArgumentException if {@code argument} is not a valid {@code status} statement argument
+     */
+    public static Status ofArgument(final String argument) {
+        final var ret = forArgument(argument);
+        if (ret == null) {
+            throw new IllegalArgumentException("\"" + argument + "\" is not a valid status statement argument");
         }
+        return ret;
     }
 }
