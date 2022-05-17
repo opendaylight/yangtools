@@ -147,7 +147,7 @@ public interface DataNodeContainer {
     default Optional<DataSchemaNode> findDataTreeChild(final QName name) {
         // First we try to find a direct child and check if it is a data node (as per RFC7950)
         final Optional<DataSchemaNode> optDataChild = findDataChildByName(name);
-        if (HelperMethods.isDataNode(optDataChild)) {
+        if (isDataNode(optDataChild)) {
             return optDataChild;
         }
 
@@ -206,5 +206,15 @@ public interface DataNodeContainer {
             checkArgument(child instanceof DataNodeContainer, "Path %s extends beyond terminal child %s", path, child);
             parent = (DataNodeContainer) child;
         } while (true);
+    }
+
+    private static boolean isDataNode(final Optional<DataSchemaNode> optNode) {
+        return optNode.isPresent() && isDataNode(optNode.orElseThrow());
+    }
+
+    private static boolean isDataNode(final DataSchemaNode node) {
+        return node instanceof ContainerSchemaNode || node instanceof LeafSchemaNode
+                || node instanceof LeafListSchemaNode || node instanceof ListSchemaNode
+                || node instanceof AnydataSchemaNode || node instanceof AnyxmlSchemaNode;
     }
 }
