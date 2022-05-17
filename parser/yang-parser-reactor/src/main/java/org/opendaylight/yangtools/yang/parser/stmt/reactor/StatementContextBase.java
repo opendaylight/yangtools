@@ -394,8 +394,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     abstract Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
 
     // exposed for InferredStatementContext only
-    final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
-        ensureCompletedExecution(verifyStatement(stmt));
+    final ReactorStmtCtx<?, ?, ?> ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
+        final var ret = verifyStatement(stmt);
+        ensureCompletedExecution(ret);
+        return ret;
     }
 
     // Make sure target statement has transitioned at least to our phase (if we have one). This method is just before we

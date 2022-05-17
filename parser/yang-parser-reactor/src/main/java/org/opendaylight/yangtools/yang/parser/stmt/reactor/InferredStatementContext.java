@@ -437,8 +437,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final Mutable<QName, Y, Z> ret = (Mutable<QName, Y, Z>) copySubstatement((Mutable<?, ?, ?>) template)
             .orElseThrow(
                 () -> new InferenceException(this, "Failed to materialize child %s template %s", qname, template));
-        ensureCompletedPhase(ret);
-        addMaterialized(template, ret);
+        addMaterialized(template, ensureCompletedPhase(ret));
 
         LOG.debug("Child {} materialized", qname);
         return ret;
@@ -509,7 +508,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
 
-        final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
+        final var buffer = new ArrayList<ReactorStmtCtx<?, ?, ?>>(declared.size() + effective.size());
         for (final Mutable<?, ?, ?> stmtContext : declared) {
             if (stmtContext.isSupportedByFeatures()) {
                 copySubstatement(stmtContext, buffer, materializedSchemaTree);
@@ -520,7 +519,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
 
         final List<ReactorStmtCtx<?, ?, ?>> ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(), buffer.size());
-        ret.addAll((Collection) buffer);
+        ret.addAll(buffer);
         substatements = ret;
         setModified();
 
@@ -538,7 +537,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return effective == null ? null : new EffectiveCopy(stmt, effective);
     }
 
-    private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer,
+    private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<ReactorStmtCtx<?, ?, ?>> buffer,
             final Map<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree) {
         // Consult materialized substatements. We are in a copy operation and will end up throwing materialized
         // statements away -- hence we do not perform Map.remove() to save ourselves a mutation operation.
@@ -548,8 +547,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final ReactorStmtCtx<?, ?, ?> materialized = findMaterialized(materializedSchemaTree, substatement);
         if (materialized == null) {
             copySubstatement(substatement).ifPresent(copy -> {
-                ensureCompletedPhase(copy);
-                buffer.add(copy);
+                buffer.add(ensureCompletedPhase(copy));
             });
         } else {
             buffer.add(materialized);
@@ -560,7 +558,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return substatement.copyAsChildOf(this, childCopyType(), targetModule);
     }
 
-    private void addMaterialized(final StmtContext<?, ?, ?> template, final Mutable<?, ?, ?> copy) {
+    private void addMaterialized(final StmtContext<?, ?, ?> template, final ReactorStmtCtx<?, ?, ?> copy) {
         final HashMap<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree;
         if (substatements == null) {
             // Lazy initialization of backing map. We do not expect this to be used often or multiple times -- each hit
@@ -575,8 +573,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             materializedSchemaTree = castMaterialized(substatements);
         }
 
-        final StmtContext<?, ?, ?> existing = materializedSchemaTree.put(template,
-            (StatementContextBase<?, ?, ?>) copy);
+        final var existing = materializedSchemaTree.put(template, copy);
         if (existing != null) {
             throw new VerifyException(
                 "Unexpected duplicate request for " + copy.argument() + " previous result was " + existing);
