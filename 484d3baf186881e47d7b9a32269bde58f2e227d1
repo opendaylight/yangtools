@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "17648bf0_875f38de",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-17T10:37:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84e0a212_1a363e23",
+      "revId": "484d3baf186881e47d7b9a32269bde58f2e227d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0d169d3f_a1acdf28",
@@ -48,6 +66,24 @@
       "writtenOn": "2022-05-17T10:16:31Z",
       "side": 1,
       "message": "Move YANG_MODEL to be the first argument above - because its special.",
+      "revId": "484d3baf186881e47d7b9a32269bde58f2e227d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69dbde8b_40fb44a2",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-17T10:37:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99e30668_7a317277",
       "revId": "484d3baf186881e47d7b9a32269bde58f2e227d1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
