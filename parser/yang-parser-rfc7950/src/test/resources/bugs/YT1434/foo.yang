@@ -1,0 +1,25 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  container foo;
+
+  augment /foo {
+    list bar {
+      key one;
+      unique "two three";
+
+      leaf one {
+        type string;
+      }
+
+      leaf two {
+        type string;
+      }
+
+      leaf three {
+        type string;
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+module bar {
+  namespace bar;
+  prefix bar;
+
+  container foo {
+    uses bar;
+  }
+
+  grouping bar {
+    list bar {
+      key one;
+      unique "two three";
+
+      leaf one {
+        type string;
+      }
+
+      leaf two {
+        type string;
+      }
+
+      leaf three {
+        type string;
+      }
+    }
+  }
+}
