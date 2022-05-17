@@ -7,20 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -383,17 +381,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
      * @throws IllegalArgumentException if {@code exprs} is empty
      */
     public static final @NonNull IfFeatureExpr and(final Set<IfFeatureExpr> exprs) {
-        checkArgument(!exprs.isEmpty(), "Expressions may not be empty");
-        if (exprs.size() == 1) {
-            return exprs.iterator().next();
-        }
-        final Boolean composition = composition(exprs);
-        if (composition == null) {
-            return new AllExprs(exprs.toArray(new IfFeatureExpr[0]));
-        }
-
-        final QName[] qnames = extractQNames(exprs);
-        return composition ? new All(qnames) : new NotAny(qnames);
+        return compose(exprs, All::new, NotAny::new, AllExprs::new);
     }
 
     /**
@@ -405,17 +393,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
      * @throws IllegalArgumentException if {@code exprs} is empty
      */
     public static final @NonNull IfFeatureExpr or(final Set<IfFeatureExpr> exprs) {
-        checkArgument(!exprs.isEmpty(), "Expressions may not be empty");
-        if (exprs.size() == 1) {
-            return exprs.iterator().next();
-        }
-        final Boolean composition = composition(exprs);
-        if (composition == null) {
-            return new AnyExpr(exprs.toArray(new IfFeatureExpr[0]));
-        }
-
-        final QName[] qnames = extractQNames(exprs);
-        return composition ? new Any(qnames) : new NotAll(qnames);
+        return compose(exprs, Any::new, NotAll::new, AnyExpr::new);
     }
 
     /**
@@ -448,9 +426,19 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
      */
     abstract void addQNames(@NonNull Set<QName> set);
 
-    @SuppressFBWarnings(value = "NP_BOOLEAN_RETURN_NULL",
-            justification = "We need a tri-state value, this is the simplest")
-    private static @Nullable Boolean composition(final Set<IfFeatureExpr> exprs) {
+    private static @NonNull IfFeatureExpr compose(final Set<IfFeatureExpr> exprs,
+            final Function<QName[], @NonNull Compound> allPresent,
+            final Function<QName[], @NonNull Compound> allAbsent,
+            final Function<IfFeatureExpr[], @NonNull Complex> mixed) {
+        switch (exprs.size()) {
+            case 0:
+                throw new IllegalArgumentException("Expressions may not be empty");
+            case 1:
+                return requireNonNull(exprs.iterator().next());
+            default:
+                // Heavy lifting is needed
+        }
+
         boolean negative = false;
         boolean positive = false;
         for (IfFeatureExpr expr : exprs) {
@@ -459,18 +447,22 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
             } else if (expr instanceof Absent) {
                 negative = true;
             } else {
-                return null;
+                return mixed.apply(exprs.toArray(new IfFeatureExpr[0]));
             }
         }
 
         verify(negative || positive, "Unresolved expressions %s", exprs);
-        return positive == negative ? null : positive;
-    }
+        if (positive == negative) {
+            return mixed.apply(exprs.toArray(new IfFeatureExpr[0]));
+        }
 
-    private static QName[] extractQNames(final Set<IfFeatureExpr> exprs) {
-        return exprs.stream().map(expr -> {
-            verify(expr instanceof Single, "Unexpected expression %s", expr);
-            return ((Single) expr).qname;
-        }).collect(ImmutableSet.toImmutableSet()).toArray(new QName[0]);
+        final var qnames = exprs.stream()
+            .map(expr -> {
+                verify(expr instanceof Single, "Unexpected expression %s", expr);
+                return ((Single) expr).qname;
+            })
+            .collect(ImmutableSet.toImmutableSet())
+            .toArray(new QName[0]);
+        return positive ? allPresent.apply(qnames) : allAbsent.apply(qnames);
     }
 }
