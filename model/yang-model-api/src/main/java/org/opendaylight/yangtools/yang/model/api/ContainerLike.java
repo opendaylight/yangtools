@@ -13,7 +13,8 @@ import com.google.common.annotations.Beta;
  * Common interface for common container-like constructs.
  */
 @Beta
-public interface ContainerLike extends DataNodeContainer,
-        AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer, MustConstraintAware {
+public sealed interface ContainerLike extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
+        NotificationNodeContainer, ActionNodeContainer, MustConstraintAware
+        permits ContainerSchemaNode, InputSchemaNode, OutputSchemaNode, SchemaContext {
 
 }
