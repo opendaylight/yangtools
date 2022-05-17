@@ -795,7 +795,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return null;
         }
 
-        parent.ensureCompletedPhase(copy);
+        parent.ensureCompletedExecution(copy);
         return canReuseCurrent(copy) ? this : copy;
     }
 
