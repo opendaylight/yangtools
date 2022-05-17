@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe59270f_583a4ed5",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-17T15:50:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22e824f5_641f0fd2",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1872174c_da7602f7",
@@ -66,6 +84,24 @@
       "writtenOn": "2022-05-17T14:56:03Z",
       "side": 1,
       "message": "This method has ugly logic - please rework it.\n\nHint: return empty set if argument is null.",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9aecfb36_a8fb4148",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-17T15:50:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ab2312b6_3f2786a3",
       "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
