@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22e824f5_641f0fd2",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-17T14:56:03Z",
+      "side": 1,
+      "message": "Please update documentation here according to enhancements you made.",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1872174c_da7602f7",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-17T14:56:03Z",
+      "side": 1,
+      "message": "Can we get rid of this variable?",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab2312b6_3f2786a3",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-17T14:56:03Z",
+      "side": 1,
+      "message": "This method has ugly logic - please rework it.\n\nHint: return empty set if argument is null.",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c26a43e_493cfa96",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-17T14:56:03Z",
+      "side": 1,
+      "message": "`Arguments.storeTrue()` but value is `false`. What is the meaning of `Arguments.storeTrue()`?",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
