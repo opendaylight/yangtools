@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84e0a212_1a363e23",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-17T10:16:31Z",
+      "side": 1,
+      "message": "This logic seems to be \u0027unlogical\u0027.\n\nSet to default false and remove ! negation here.",
+      "revId": "484d3baf186881e47d7b9a32269bde58f2e227d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d169d3f_a1acdf28",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-17T10:16:31Z",
+      "side": 1,
+      "message": "OK, I have changed mind - with argparse we can make a list of features to be separated by space instead of `,`.",
+      "revId": "484d3baf186881e47d7b9a32269bde58f2e227d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99e30668_7a317277",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-17T10:16:31Z",
+      "side": 1,
+      "message": "Move YANG_MODEL to be the first argument above - because its special.",
+      "revId": "484d3baf186881e47d7b9a32269bde58f2e227d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
