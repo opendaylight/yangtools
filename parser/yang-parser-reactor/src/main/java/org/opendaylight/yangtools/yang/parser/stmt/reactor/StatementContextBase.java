@@ -351,10 +351,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     final List<ReactorStmtCtx<?, ?, ?>> addEffectiveSubstatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final Mutable<?, ?, ?> substatement) {
-        verifyStatement(substatement);
-
+        final ReactorStmtCtx<?, ?, ?> stmt = verifyStatement(substatement);
         final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, 1);
-        final ReactorStmtCtx<?, ?, ?> stmt = (ReactorStmtCtx<?, ?, ?>) substatement;
         ensureCompletedExecution(stmt);
         resized.add(stmt);
         return resized;
@@ -397,8 +395,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     // exposed for InferredStatementContext only
     final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
-        verifyStatement(stmt);
-        ensureCompletedExecution((ReactorStmtCtx<?, ?, ?>) stmt);
+        ensureCompletedExecution(verifyStatement(stmt));
     }
 
     // Make sure target statement has transitioned at least to our phase (if we have one). This method is just before we
@@ -414,8 +411,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         verify(stmt.tryToCompletePhase(executionOrder), "Statement %s cannot complete phase %s", stmt, executionOrder);
     }
 
-    private static void verifyStatement(final Mutable<?, ?, ?> stmt) {
+    private static ReactorStmtCtx<?, ?, ?> verifyStatement(final Mutable<?, ?, ?> stmt) {
         verify(stmt instanceof ReactorStmtCtx, "Unexpected statement %s", stmt);
+        return (ReactorStmtCtx<?, ?, ?>) stmt;
     }
 
     private List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
