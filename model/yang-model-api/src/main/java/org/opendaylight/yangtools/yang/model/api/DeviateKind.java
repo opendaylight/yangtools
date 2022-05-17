@@ -38,8 +38,8 @@ public enum DeviateKind {
 
     private final String argument;
 
-    DeviateKind(final String argumentValue) {
-        argument = requireNonNull(argumentValue);
+    DeviateKind(final String argument) {
+        this.argument = requireNonNull(argument);
     }
 
     /**
