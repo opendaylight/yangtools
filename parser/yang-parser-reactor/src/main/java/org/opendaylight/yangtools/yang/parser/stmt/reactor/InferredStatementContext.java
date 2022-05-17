@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -473,8 +474,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     // BuildGlobalContext, hence it must be called at most once.
     private List<ReactorStmtCtx<?, ?, ?>> ensureEffectiveSubstatements() {
         accessSubstatements();
-        return substatements instanceof List ? castEffective(substatements)
-            : initializeSubstatements(castMaterialized(substatements));
+        if (substatements instanceof List) {
+            // We have already fully-materialized statements
+            return castEffective(substatements);
+        }
+
+        // We have either not started or have only partially-materialized statements, ensure full materialization
+        return initializeSubstatements();
     }
 
     @Override
@@ -529,12 +535,26 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return count;
     }
 
-    private List<ReactorStmtCtx<?, ?, ?>> initializeSubstatements(
-            final Map<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree) {
-        final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
-        final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
+    //
+    // Statement copy mess starts here. As it turns out, it's not that much of a mess, but it does make your head spin
+    // sometimes. Tread softly because you tread on my dreams.
+    //
 
-        final var buffer = new ArrayList<ReactorStmtCtx<?, ?, ?>>(declared.size() + effective.size());
+    private List<ReactorStmtCtx<?, ?, ?>> initializeSubstatements() {
+        final var declared = prototype.mutableDeclaredSubstatements();
+        final var effective = prototype.mutableEffectiveSubstatements();
+
+        // We are about to instantiate some substatements. The simple act of materializing them may end up triggering
+        // namespace lookups, which in turn can materialize copies by themselves, running ahead of our materialization.
+        // We therefore need a meeting place for, which are the partially-materialized substatements. If we do not have
+        // them yet, instantiate them and we need to populate them as well.
+        final int expectedSize = declared.size() + effective.size();
+        var materializedSchemaTree = castMaterialized(substatements);
+        if (materializedSchemaTree == null) {
+            substatements = materializedSchemaTree = Maps.newHashMapWithExpectedSize(expectedSize);
+        }
+
+        final var buffer = new ArrayList<ReactorStmtCtx<?, ?, ?>>(expectedSize);
         for (final Mutable<?, ?, ?> stmtContext : declared) {
             if (stmtContext.isSupportedByFeatures()) {
                 copySubstatement(stmtContext, buffer, materializedSchemaTree);
@@ -553,11 +573,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return ret;
     }
 
-    //
-    // Statement copy mess starts here. As it turns out, it's not that much of a mess, but it does make your head spin
-    // sometimes. Tread softly because you tread on my dreams.
-    //
-
     private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
         final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, childCopyType(), targetModule);
         return effective == null ? null : new EffectiveCopy(stmt, effective);
@@ -573,7 +588,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final ReactorStmtCtx<?, ?, ?> materialized = findMaterialized(materializedSchemaTree, substatement);
         if (materialized == null) {
             copySubstatement(substatement).ifPresent(copy -> {
-                buffer.add(ensureCompletedPhase(copy));
+                final ReactorStmtCtx<?, ?, ?> cast = ensureCompletedPhase(copy);
+                materializedSchemaTree.put(substatement, cast);
+                buffer.add(cast);
             });
         } else {
             buffer.add(materialized);
