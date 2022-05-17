@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Common interface implemented by entities which act as the root of the {@code schema tree} and are able to resolve an
- * {@code SchemaNodeIdentifier} to a {@link SchemaTreeEffectiveStatement}.
+ * {@link SchemaNodeIdentifier} to a {@link SchemaTreeEffectiveStatement}.
  */
 @Beta
 public interface SchemaTreeRoot {
