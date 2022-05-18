@@ -89,6 +89,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5706e4c8_d223a706",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-18T12:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a045f874_a05280b7",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ab2312b6_3f2786a3",

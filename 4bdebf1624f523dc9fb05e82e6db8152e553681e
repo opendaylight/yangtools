@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e6cc4ba_f9a4b497",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-18T12:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1de4ae0_1cdc68a3",
+      "revId": "4bdebf1624f523dc9fb05e82e6db8152e553681e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a87eebbd_455d4043",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "824b50f1_9e927d85",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-18T12:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a87eebbd_455d4043",
+      "revId": "4bdebf1624f523dc9fb05e82e6db8152e553681e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a51a448e_0f2a6f13",
@@ -48,6 +84,24 @@
       "writtenOn": "2022-05-18T11:59:07Z",
       "side": 1,
       "message": "I see that features can still be `null`.",
+      "revId": "4bdebf1624f523dc9fb05e82e6db8152e553681e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7002f3a_237c0383",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/SystemTestUtils.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-18T12:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a51a448e_0f2a6f13",
       "revId": "4bdebf1624f523dc9fb05e82e6db8152e553681e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
