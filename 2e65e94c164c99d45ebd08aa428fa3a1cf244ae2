@@ -73,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a045f874_a05280b7",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-18T10:24:27Z",
+      "side": 1,
+      "message": "Remove the variable and set default `LIST_WARNING_OFF` to false.",
+      "parentUuid": "a83ba7c5_3989946a",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ab2312b6_3f2786a3",
         "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
         "patchSetId": 12
@@ -137,6 +155,24 @@
       "side": 1,
       "message": "Arguments.storeTrue() and Arguments.storeFalse() are special cases of Arguments.storeConst() using for storing values true and false respectively. In addition, they create default values of false and true respectively. For example if we have:\n parser.addArgument(\"--foo\").action(Arguments.storeTrue());\nand we trigger this flag:\n java Demo --foo\nthen foo will be true. And if we do not trigger it - false.\n\nSo that mean when we have -d or --debug flag - than it will be true. No flag \u003d false.",
       "parentUuid": "6c26a43e_493cfa96",
+      "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3436b2df_3eaab137",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-05-18T10:24:27Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e889ec59_e560e746",
       "revId": "2e65e94c164c99d45ebd08aa428fa3a1cf244ae2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
