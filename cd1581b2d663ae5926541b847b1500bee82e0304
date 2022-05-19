@@ -16,6 +16,24 @@
       "message": "This is changing meaning of this flag",
       "revId": "cd1581b2d663ae5926541b847b1500bee82e0304",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb7701a5_388e6488",
+        "filename": "tools/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-05-19T11:48:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "4db9b3fc_c1239c94",
+      "revId": "cd1581b2d663ae5926541b847b1500bee82e0304",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
