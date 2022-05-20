@@ -1,0 +1,11 @@
+module bar {
+    namespace "urn:bar";
+    prefix "bar";
+
+    import foo { prefix "foo"; }
+
+    container bar {
+        uses foo:foo-a;
+        uses foo:foo-b;
+    }
+}
