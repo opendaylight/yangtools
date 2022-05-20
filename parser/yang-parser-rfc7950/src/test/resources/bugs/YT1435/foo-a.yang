@@ -1,0 +1,11 @@
+submodule foo-a {
+    belongs-to foo {
+        prefix "foo";
+    }
+
+    grouping foo-a {
+        leaf a {
+            type string;
+        }
+    }
+}
