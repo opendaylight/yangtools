@@ -31,8 +31,10 @@ public final class DecimalStringCodec extends TypeDefinitionAwareCodec<Decimal64
 
     @Override
     protected Decimal64 deserializeImpl(final String product) {
-        // FIXME: run value validation
-        return Decimal64.valueOf(product);
+        final var typeDef = getTypeDefinition().orElseThrow();
+        final var value = Decimal64.valueOf(product).scaleTo(typeDef.getFractionDigits());
+        // FIXME: check ranges
+        return value;
     }
 
     @Override

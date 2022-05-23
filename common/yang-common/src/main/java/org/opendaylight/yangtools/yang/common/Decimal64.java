@@ -48,21 +48,20 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
             // Deal with optional sign
             final boolean negative;
-            int idx;
-            switch (str.charAt(0)) {
-                case '-':
-                    negative = true;
-                    idx = 1;
-                    break;
-                case '+':
-                    negative = false;
-                    idx = 1;
-                    break;
-                default:
-                    negative = false;
-                    idx = 0;
+            int idx = switch (str.charAt(0)) {
+            case '-' -> {
+                negative = true;
+                yield 1;
             }
-
+            case '+' -> {
+                negative = false;
+                yield 1;
+            }
+            default -> {
+                negative = false;
+                yield 0;
+            }
+            };
             // Sanity check length
             if (idx == str.length()) {
                 return CanonicalValueViolation.variantOf("Missing digits after sign");
@@ -334,6 +333,34 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      */
     public final long unscaledValue() {
         return value;
+    }
+
+    /**
+     * Return this decimal in the specified scale.
+     *
+     * @param requiredScale required scale
+     * @return Scaled number
+     * @throws IllegalArgumentException if the conversion would require trimming or rounding
+     */
+    public Decimal64 scaleTo(final int requiredScale) {
+        final byte required = offsetOf(requiredScale);
+        if (offset == required) {
+            return this;
+        }
+
+        final long intPart = intPart();
+        final var conv = CONVERSION[required];
+        if (conv.minLong > intPart || conv.maxLong < intPart) {
+            throw new IllegalArgumentException("Scaling " + this + " to " + requiredScale + " requires trimming");
+        }
+
+        final long fracPart = fracPart();
+
+
+
+
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public final BigDecimal decimalValue() {
