@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
@@ -132,6 +133,37 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
                 throw new NumberFormatException("Illegal character at offset " + index);
             }
             return ch - '0';
+        }
+    }
+
+    /**
+     * Tri-state indicator of how a non-zero remainder is significant to rounding.
+     */
+    private enum RemainderSignificance {
+        /**
+         * The remainder is less than the half of the interval.
+         */
+        LT_HALF,
+        /**
+         * The remainder is exactly half of the interval.
+         */
+        HALF,
+        /**
+         * The remainder is greater than the half of the interval.
+         */
+        GT_HALF;
+
+        static RemainderSignificance of(final long remainder, final long interval) {
+            final long absRemainder = Math.abs(remainder);
+            final long half = interval / 2;
+
+            if (absRemainder > half) {
+                return GT_HALF;
+            } else if (absRemainder < half) {
+                return LT_HALF;
+            } else {
+                return HALF;
+            }
         }
     }
 
@@ -333,6 +365,87 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      */
     public final long unscaledValue() {
         return value;
+    }
+
+    /**
+     * Return this decimal in the specified scale.
+     *
+     * @param scale target scale
+     * @return Scaled number
+     * @throws ArithmeticException if the conversion would overflow or require rounding
+     */
+    public Decimal64 scaleTo(final int scale) {
+        return scaleTo(scale, RoundingMode.UNNECESSARY);
+    }
+
+    /**
+     * Return this decimal in the specified scale.
+     *
+     * @param scale scale
+     * @param roundingMode rounding mode
+     * @return Scaled number
+     * @throws ArithmeticException if the conversion would overflow or require rounding and {@code roundingMode} is
+     *                             {@link RoundingMode#UNNECESSARY}.
+     * @throws IllegalArgumentException if {@code scale} is not valid
+     * @throws NullPointerException if {@code roundingMode} is {@code null}
+     */
+    public Decimal64 scaleTo(final int scale, final RoundingMode roundingMode) {
+        final var mode = requireNonNull(roundingMode);
+        final byte scaleOffset = offsetOf(scale);
+        final int diff = scaleOffset - offset;
+        if (diff == 0) {
+            // Same scale, no-op
+            return this;
+        } else if (value == 0) {
+            // Zero is special, as it has the same unscaled value in all scales
+            return new Decimal64(scaleOffset, 0);
+        }
+
+        if (diff > 0) {
+            // Increasing scale is simple, as we have pre-calculated min/max boundaries and then it's just
+            // factor multiplication
+            final int diffOffset = diff - 1;
+            final var conv = CONVERSION[diffOffset];
+            if (value < conv.minLong || value > conv.maxLong) {
+                throw new ArithmeticException("Increasing scale of " + this + " to " + scale + " would overflow");
+            }
+            return new Decimal64(scaleOffset, value * FACTOR[diffOffset]);
+        }
+
+        // Decreasing scale is hard, as we need to deal with rounding
+        final int diffOffset = -diff - 1;
+        final long factor = FACTOR[diffOffset];
+        final long trunc = value / factor;
+        final long remainder = value - trunc * factor;
+
+        // No remainder, we do not need to involve rounding
+        if (remainder == 0) {
+            return new Decimal64(scaleOffset, trunc);
+        }
+
+        final long increment = switch (mode) {
+            case UP -> Long.signum(trunc);
+            case DOWN -> 0;
+            case CEILING -> Long.signum(trunc) > 0 ? 1 : 0;
+            case FLOOR -> Long.signum(trunc) < 0 ? -1 : 0;
+            case HALF_UP -> switch (RemainderSignificance.of(remainder, factor)) {
+                case LT_HALF -> 0;
+                case HALF, GT_HALF -> Long.signum(trunc);
+                };
+            case HALF_DOWN -> switch (RemainderSignificance.of(remainder, factor)) {
+                case LT_HALF, HALF -> 0;
+                case GT_HALF -> Long.signum(trunc);
+            };
+            case HALF_EVEN -> switch (RemainderSignificance.of(remainder, factor)) {
+                case LT_HALF -> 0;
+                case HALF -> (trunc & 0x1) != 0 ? Long.signum(trunc) : 0;
+                case GT_HALF -> Long.signum(trunc);
+            };
+            case UNNECESSARY ->
+                throw new ArithmeticException("Decreasing scale of " + this + " to " + scale + " requires rounding");
+        };
+
+        return new Decimal64(scaleOffset, trunc + increment);
     }
 
     public final BigDecimal decimalValue() {
