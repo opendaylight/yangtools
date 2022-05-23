@@ -41,6 +41,6 @@ public class DecimalCodecStringTest {
     }
 
     private static DecimalTypeDefinition getType() {
-        return BaseTypes.decimalTypeBuilder(QName.create("foo", "foo")).setFractionDigits(2).build();
+        return BaseTypes.decimalTypeBuilder(QName.create("foo", "foo")).setFractionDigits(3).build();
     }
 }
