@@ -335,6 +335,34 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         return value;
     }
 
+    /**
+     * Return this decimal in the specified scale.
+     *
+     * @param requiredScale required scale
+     * @return Scaled number
+     * @throws IllegalArgumentException if the conversion would require trimming or rounding
+     */
+    public Decimal64 scaleTo(final int requiredScale) {
+        final byte required = offsetOf(requiredScale);
+        if (offset == required) {
+            return this;
+        }
+
+        final long intPart = intPart();
+        final var conv = CONVERSION[required];
+        if (conv.minLong > intPart || conv.maxLong < intPart) {
+            throw new IllegalArgumentException("Scaling " + this + " to " + requiredScale + " requires trimming");
+        }
+
+        final long fracPart = fracPart();
+
+
+
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public final BigDecimal decimalValue() {
         return BigDecimal.valueOf(value, scale());
     }
