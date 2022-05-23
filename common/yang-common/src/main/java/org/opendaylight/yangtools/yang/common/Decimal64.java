@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
@@ -333,6 +334,60 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      */
     public final long unscaledValue() {
         return value;
+    }
+
+    /**
+     * Return this decimal in the specified scale.
+     *
+     * @param scale target scale
+     * @return Scaled number
+     * @throws ArithmeticException if the conversion would overflow or require rounding
+     */
+    public Decimal64 scaleTo(final int scale) {
+        return scaleTo(scale, RoundingMode.UNNECESSARY);
+    }
+
+    /**
+     * Return this decimal in the specified scale.
+     *
+     * @param scale scale
+     * @param roundingMode rounding mode
+     * @return Scaled number
+     * @throws ArithmeticException if the conversion would overflow or require rounding and {@code roundingMode} is
+     *                             {@link RoundingMode#UNNECESSARY}.
+     * @throws IllegalArgumentException if {@code scale} is not valid
+     * @throws NullPointerException if {@code roundingMode} is {@code null}
+     */
+    public Decimal64 scaleTo(final int scale, final RoundingMode roundingMode) {
+        final var mode = requireNonNull(roundingMode);
+        final byte scaleOffset = offsetOf(scale);
+        if (scaleOffset == offset) {
+            return this;
+        } else if (value == 0) {
+            return new Decimal64(scaleOffset, 0);
+        } else {
+            return new Decimal64(scaleOffset, multiplyByPowerOfTen(value, scaleOffset - offset, mode));
+        }
+    }
+
+    private static long multiplyByPowerOfTen(final long value, final int power, final RoundingMode roundingMode) {
+        if (power < 0) {
+            return divideByPowerOfTen(value, -power, roundingMode);
+        }
+
+        final int offset = power - 1;
+        final var conv = CONVERSION[offset];
+        if (value < conv.minLong || value > conv.maxLong) {
+            throw new ArithmeticException("Scale operation would overflow");
+        }
+        return value * FACTOR[offset];
+    }
+
+    private static long divideByPowerOfTen(final long value, final int power, final RoundingMode roundingMode) {
+        final int offset = power - 1;
+        final long factor = FACTOR[offset];
+        final var conv = CONVERSION[offset];
+
     }
 
     public final BigDecimal decimalValue() {
