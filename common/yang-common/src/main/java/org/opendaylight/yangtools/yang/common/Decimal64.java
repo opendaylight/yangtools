@@ -513,7 +513,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     }
 
     private static byte offsetOf(final int scale) {
-        checkArgument(scale >= 1 && scale <= MAX_SCALE);
+        checkArgument(scale >= 1 && scale <= MAX_SCALE, "Scale %s is not in range [1..%s]", scale, MAX_SCALE);
         return (byte) (scale - 1);
     }
 }
