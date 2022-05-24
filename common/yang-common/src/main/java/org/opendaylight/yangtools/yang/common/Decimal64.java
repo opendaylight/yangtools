@@ -447,11 +447,18 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // prohibited, subject to the rule that there MUST be at least one digit
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
-        final StringBuilder sb = new StringBuilder(21).append(intPart()).append('.');
+
+        final long intPart = intPart();
         final long fracPart = fracPart();
+        final StringBuilder sb = new StringBuilder(21);
+        if (intPart == 0 && fracPart < 0) {
+            sb.append('-');
+        }
+        sb.append(intPart).append('.');
+
         if (fracPart != 0) {
             // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(fracPart), scale(), '0'));
+            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
         } else {
             sb.append('0');
         }
@@ -501,7 +508,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     }
 
     private long fracPart() {
-        return Math.abs(value % FACTOR[offset]);
+        return value % FACTOR[offset];
     }
 
     private static byte offsetOf(final int scale) {

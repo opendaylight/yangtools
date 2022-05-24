@@ -224,6 +224,11 @@ public class Decimal64Test {
     }
 
     @Test
+    public void testLeadingZeroToString() {
+        assertEquals("-0.63", Decimal64.valueOf("-0.63").toString());
+    }
+
+    @Test
     public void testBoundaries() {
         assertEquals(-128L, Decimal64.valueOf(1, Byte.MIN_VALUE).longValue());
         assertEquals(127L, Decimal64.valueOf(1, Byte.MAX_VALUE).longValue());
