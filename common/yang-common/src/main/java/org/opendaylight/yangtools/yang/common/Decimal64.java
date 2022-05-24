@@ -172,8 +172,8 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         MIN_VALUE = new Decimal64[MAX_SCALE];
         MAX_VALUE = new Decimal64[MAX_SCALE];
         for (byte i = 0; i < MAX_SCALE; ++i) {
-            MIN_VALUE[i] = new Decimal64(i, -9223372036854775808L);
-            MAX_VALUE[i] = new Decimal64(i, 9223372036854775807L);
+            MIN_VALUE[i] = new Decimal64(i, Long.MIN_VALUE);
+            MAX_VALUE[i] = new Decimal64(i, Long.MAX_VALUE);
         }
     }
 
