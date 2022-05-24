@@ -48,21 +48,20 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
             // Deal with optional sign
             final boolean negative;
-            int idx;
-            switch (str.charAt(0)) {
-                case '-':
+            int idx = switch (str.charAt(0)) {
+                case '-' -> {
                     negative = true;
-                    idx = 1;
-                    break;
-                case '+':
+                    yield 1;
+                }
+                case '+' -> {
                     negative = false;
-                    idx = 1;
-                    break;
-                default:
+                    yield 1;
+                }
+                default -> {
                     negative = false;
-                    idx = 0;
-            }
-
+                    yield 0;
+                }
+            };
             // Sanity check length
             if (idx == str.length()) {
                 return CanonicalValueViolation.variantOf("Missing digits after sign");
