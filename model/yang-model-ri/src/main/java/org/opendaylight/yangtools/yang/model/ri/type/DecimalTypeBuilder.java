@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -29,8 +28,7 @@ public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<Decimal
 
     @Override
     DecimalTypeDefinition buildType() {
-        Preconditions.checkState(fractionDigits != null, "Fraction digits not defined");
-
+        checkState(fractionDigits != null, "Fraction digits not defined");
         return new BaseDecimalType(getQName(), getUnknownSchemaNodes(), fractionDigits,
             calculateRangeConstraint(BaseDecimalType.constraintsForDigits(fractionDigits)));
     }
