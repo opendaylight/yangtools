@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Either;
 @Beta
 @NonNullByDefault
 public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>> implements CanonicalValueSupport<T> {
-    private static final ClassValue<Boolean> SUPPORTS = new ClassValue<Boolean>() {
+    private static final ClassValue<Boolean> SUPPORTS = new ClassValue<>() {
         @Override
         protected Boolean computeValue(final @Nullable Class<?> type) {
             // Every DerivedStringSupport representation class must:
