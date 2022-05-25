@@ -64,8 +64,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.mdsal.binding.runtime.osgi</Automatic-Module-Name>
-                        <!-- Karaf cannot handle Factory Component requirements, see https://issues.apache.org/jira/browse/KARAF-6625 -->
-                        <_dsannotations-options>norequirements</_dsannotations-options>
                     </instructions>
                 </configuration>
             </plugin>
