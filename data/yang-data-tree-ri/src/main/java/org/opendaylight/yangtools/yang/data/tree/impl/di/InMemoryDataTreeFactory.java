@@ -50,9 +50,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A factory for creating in-memory data trees.
  */
-@MetaInfServices
 @Singleton
-@Component(immediate = true)
+@Component
+@MetaInfServices
 @RequireServiceComponentRuntime
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeFactory.class);
@@ -94,13 +94,13 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     @Activate
     @SuppressWarnings("static-method")
     void activate() {
-        LOG.info("In-memory Data Tree activated");
+        LOG.debug("In-memory Data Tree activated");
     }
 
     @Deactivate
     @SuppressWarnings("static-method")
     void deactivate() {
-        LOG.info("In-memory Data Tree deactivated");
+        LOG.debug("In-memory Data Tree deactivated");
     }
 
     private static @NonNull DataTree createDataTree(final DataTreeConfiguration treeConfig,

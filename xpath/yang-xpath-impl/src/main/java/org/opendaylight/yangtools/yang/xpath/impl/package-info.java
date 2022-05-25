@@ -10,8 +10,6 @@
  * on the XPath grammar from <a href="https://github.com/antlr/grammars-v4/blob/master/xpath/xpath.g4">grammars-v4</a>.
  */
 @NonNullByDefault
-@RequireServiceComponentRuntime
 package org.opendaylight.yangtools.yang.xpath.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.osgi.service.component.annotations.RequireServiceComponentRuntime;

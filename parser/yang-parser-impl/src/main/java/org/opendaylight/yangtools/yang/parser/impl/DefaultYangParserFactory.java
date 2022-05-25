@@ -28,14 +28,16 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
 
 /**
  * Reference {@link YangParserFactory} implementation.
  */
 @Beta
-@MetaInfServices
+@Component
 @Singleton
-@Component(immediate = true)
+@MetaInfServices
+@RequireServiceComponentRuntime
 public final class DefaultYangParserFactory implements YangParserFactory {
     private static final List<ImportResolutionMode> SUPPORTED_MODES = List.of(ImportResolutionMode.DEFAULT);
 
