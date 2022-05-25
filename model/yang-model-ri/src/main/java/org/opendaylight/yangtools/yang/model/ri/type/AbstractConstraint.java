@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -30,11 +31,7 @@ abstract class AbstractConstraint<T extends Number & Comparable<T>> implements C
         this.meta = requireNonNull(meta);
 
         final var tmp = ranges.asRanges();
-        if (tmp.size() == 1) {
-            this.ranges = tmp.iterator().next();
-        } else {
-            this.ranges = ImmutableRangeSet.copyOf(ranges);
-        }
+        this.ranges = tmp.size() == 1 ? tmp.iterator().next() : ImmutableRangeSet.copyOf(ranges);
     }
 
     @Override
@@ -55,6 +52,11 @@ abstract class AbstractConstraint<T extends Number & Comparable<T>> implements C
     @Override
     public final Optional<String> getReference() {
         return meta.getReference();
+    }
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).add("ranges", ranges()).toString();
     }
 
     @SuppressWarnings("unchecked")
