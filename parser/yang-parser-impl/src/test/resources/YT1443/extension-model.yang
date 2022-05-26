@@ -1,0 +1,13 @@
+module extension-model {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-restconf";
+  prefix "em";
+
+  revision 2017-01-26;
+
+  extension yang-data {
+    argument name {
+      yin-element true;
+    }
+  }
+}
