@@ -42,15 +42,8 @@ final class QNameFactory {
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof StringQName)) {
-                return false;
-            }
-            final StringQName other = (StringQName) obj;
-            return localName.equals(other.localName) && namespace.equals(other.namespace)
-                    && Objects.equals(revision, other.revision);
+            return this == obj && obj instanceof StringQName other && localName.equals(other.localName)
+                && namespace.equals(other.namespace) && Objects.equals(revision, other.revision);
         }
 
         QName toQName() {
@@ -74,14 +67,8 @@ final class QNameFactory {
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof ModuleQName)) {
-                return false;
-            }
-            final ModuleQName other = (ModuleQName) obj;
-            return localName.equals(other.localName) && module.equals(other.module);
+            return this == obj || obj instanceof ModuleQName other && localName.equals(other.localName)
+                && module.equals(other.module);
         }
 
         QName toQName() {
@@ -105,14 +92,8 @@ final class QNameFactory {
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof StringModule)) {
-                return false;
-            }
-            final StringModule other = (StringModule) obj;
-            return namespace.equals(other.namespace) && Objects.equals(revision, other.revision);
+            return this == obj || obj instanceof StringModule other && namespace.equals(other.namespace)
+                && Objects.equals(revision, other.revision);
         }
 
         QNameModule toQNameModule() {
