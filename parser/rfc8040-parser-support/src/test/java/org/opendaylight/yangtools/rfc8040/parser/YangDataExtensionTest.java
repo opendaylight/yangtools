@@ -13,7 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -25,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -54,8 +54,6 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
 
     private static final Revision REVISION = Revision.of("2017-06-01");
     private static final QNameModule FOO_QNAMEMODULE = QNameModule.create(XMLNamespace.of("foo"), REVISION);
-    private static final QName MY_YANG_DATA_A = QName.create(FOO_QNAMEMODULE, "my-yang-data-a");
-    private static final QName MY_YANG_DATA_B = QName.create(FOO_QNAMEMODULE, "my-yang-data-b");
 
     @Test
     public void testYangData() throws Exception {
@@ -73,20 +71,17 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         YangDataSchemaNode myYangDataANode = null;
         YangDataSchemaNode myYangDataBNode = null;
         for (final UnknownSchemaNode unknownSchemaNode : unknownSchemaNodes) {
-            assertTrue(unknownSchemaNode instanceof YangDataSchemaNode);
+            assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
             final YangDataSchemaNode yangDataSchemaNode = (YangDataSchemaNode) unknownSchemaNode;
-            if (MY_YANG_DATA_A.equals(yangDataSchemaNode.getQName())) {
+            if ("my-yang-data-a".equals(yangDataSchemaNode.getNodeParameter())) {
                 myYangDataANode = yangDataSchemaNode;
-            } else if (MY_YANG_DATA_B.equals(yangDataSchemaNode.getQName())) {
+            } else if ("my-yang-data-b".equals(yangDataSchemaNode.getNodeParameter())) {
                 myYangDataBNode = yangDataSchemaNode;
             }
         }
 
         assertNotNull(myYangDataANode);
         assertNotNull(myYangDataBNode);
-
-        assertNotNull(myYangDataANode.getContainerSchemaNode());
-        assertNotNull(myYangDataBNode.getContainerSchemaNode());
     }
 
     @Test
@@ -100,19 +95,23 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertTrue(unknownSchemaNode instanceof YangDataSchemaNode);
+        assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
         final YangDataSchemaNode myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
-        final ContainerSchemaNode contInYangData = myYangDataNode.getContainerSchemaNode();
-        assertNotNull(contInYangData);
+        final Collection<? extends DataSchemaNode> yangDataChildren = myYangDataNode.getChildNodes();
+        assertEquals(1, yangDataChildren.size());
+
+        final DataSchemaNode childInYangData = yangDataChildren.iterator().next();
+        assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
+        final ContainerSchemaNode contInYangData = (ContainerSchemaNode) childInYangData;
         assertEquals(Optional.empty(), contInYangData.effectiveConfig());
-        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
-                QName.create(baz.getQNameModule(), "inner-cont")).get();
+        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+                QName.create(baz.getQNameModule(), "inner-cont"));
         assertNotNull(innerCont);
         assertEquals(Optional.empty(), innerCont.effectiveConfig());
-        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
-                QName.create(baz.getQNameModule(), "grp-cont")).get();
+        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+                QName.create(baz.getQNameModule(), "grp-cont"));
         assertNotNull(grpCont);
         assertEquals(Optional.empty(), grpCont.effectiveConfig());
     }
@@ -128,17 +127,21 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertTrue(unknownSchemaNode instanceof YangDataSchemaNode);
+        assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
         final YangDataSchemaNode myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
-        final ContainerSchemaNode contInYangData = myYangDataNode.getContainerSchemaNode();
-        assertNotNull(contInYangData);
-        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
-                QName.create(foobar.getQNameModule(), "inner-cont")).get();
+        final Collection<? extends DataSchemaNode> yangDataChildren = myYangDataNode.getChildNodes();
+        assertEquals(1, yangDataChildren.size());
+
+        final DataSchemaNode childInYangData = yangDataChildren.iterator().next();
+        assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
+        final ContainerSchemaNode contInYangData = (ContainerSchemaNode) childInYangData;
+        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+                QName.create(foobar.getQNameModule(), "inner-cont"));
         assertNotNull(innerCont);
-        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
-                QName.create(foobar.getQNameModule(), "grp-cont")).get();
+        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+                QName.create(foobar.getQNameModule(), "grp-cont"));
         assertNotNull(grpCont);
     }
 
@@ -151,8 +154,8 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         assertNotNull(schemaContext);
 
         final Module bar = schemaContext.findModule("bar", REVISION).get();
-        final ContainerSchemaNode cont = (ContainerSchemaNode) bar.findDataChildByName(
-                QName.create(bar.getQNameModule(), "cont")).get();
+        final ContainerSchemaNode cont = (ContainerSchemaNode) bar.getDataChildByName(
+                QName.create(bar.getQNameModule(), "cont"));
         assertNotNull(cont);
 
         final Collection<? extends ExtensionDefinition> extensions = schemaContext.getExtensions();
@@ -168,7 +171,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(MissingSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("yang-data requires exactly one container"));
+        assertThat(cause.getMessage(), startsWith("yang-data requires at least one substatement [at "));
     }
 
     @Test
@@ -177,6 +180,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InvalidSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("yang-data requires exactly one data definition node, found 2"));
+        assertThat(cause.getMessage(),
+            startsWith("yang-data requires exactly one container data node definition, found ["));
     }
 }
