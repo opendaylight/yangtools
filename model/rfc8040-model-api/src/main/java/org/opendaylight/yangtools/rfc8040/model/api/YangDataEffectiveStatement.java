@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
@@ -25,11 +23,4 @@ public interface YangDataEffectiveStatement extends UnknownEffectiveStatement<St
     default StatementDefinition statementDefinition() {
         return YangDataStatements.YANG_DATA;
     }
-
-    /**
-     * Return the container statement defined in this yang-data statement instance.
-     *
-     * @return container statement
-     */
-    @NonNull ContainerEffectiveStatement getContainer();
 }
