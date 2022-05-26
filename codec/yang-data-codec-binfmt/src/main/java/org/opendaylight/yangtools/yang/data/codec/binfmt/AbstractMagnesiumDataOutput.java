@@ -82,9 +82,9 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
     @Override
     public final void startLeafNode(final NodeIdentifier name) throws IOException {
         final Object current = stack.peek();
-        if (current instanceof NodeIdentifierWithPredicates) {
+        if (current instanceof NodeIdentifierWithPredicates nip) {
             final QName qname = name.getNodeType();
-            if (((NodeIdentifierWithPredicates) current).containsKey(qname)) {
+            if (nip.containsKey(qname)) {
                 writeQNameNode(MagnesiumNode.NODE_LEAF | MagnesiumNode.PREDICATE_ONE, qname);
                 stack.push(KEY_LEAF_STATE);
                 return;
@@ -229,16 +229,16 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
 
     @Override
     final void writePathArgumentInternal(final PathArgument pathArgument) throws IOException {
-        if (pathArgument instanceof NodeIdentifier) {
-            writeNodeIdentifier((NodeIdentifier) pathArgument);
-        } else if (pathArgument instanceof NodeIdentifierWithPredicates) {
-            writeNodeIdentifierWithPredicates((NodeIdentifierWithPredicates) pathArgument);
-        } else if (pathArgument instanceof AugmentationIdentifier) {
-            writeAugmentationIdentifier((AugmentationIdentifier) pathArgument);
-        } else if (pathArgument instanceof NodeWithValue) {
-            writeNodeWithValue((NodeWithValue<?>) pathArgument);
-        } else if (pathArgument instanceof MountPointIdentifier) {
-            writeMountPointIdentifier((MountPointIdentifier) pathArgument);
+        if (pathArgument instanceof NodeIdentifier nid) {
+            writeNodeIdentifier(nid);
+        } else if (pathArgument instanceof NodeIdentifierWithPredicates nip) {
+            writeNodeIdentifierWithPredicates(nip);
+        } else if (pathArgument instanceof AugmentationIdentifier augid) {
+            writeAugmentationIdentifier(augid);
+        } else if (pathArgument instanceof NodeWithValue<?> niv) {
+            writeNodeWithValue(niv);
+        } else if (pathArgument instanceof MountPointIdentifier mpid) {
+            writeMountPointIdentifier(mpid);
         } else {
             throw new IOException("Unhandled PathArgument " + pathArgument);
         }
@@ -336,41 +336,41 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
     }
 
     private void writeObject(final @NonNull Object value) throws IOException {
-        if (value instanceof String) {
-            writeValue((String) value);
-        } else if (value instanceof Boolean) {
+        if (value instanceof String str) {
+            writeValue(str);
+        } else if (value instanceof Boolean bool) {
             writeValue((Boolean) value);
-        } else if (value instanceof Byte) {
-            writeValue((Byte) value);
-        } else if (value instanceof Short) {
-            writeValue((Short) value);
-        } else if (value instanceof Integer) {
-            writeValue((Integer) value);
-        } else if (value instanceof Long) {
-            writeValue((Long) value);
-        } else if (value instanceof Uint8) {
-            writeValue((Uint8) value);
-        } else if (value instanceof Uint16) {
-            writeValue((Uint16) value);
-        } else if (value instanceof Uint32) {
-            writeValue((Uint32) value);
-        } else if (value instanceof Uint64) {
-            writeValue((Uint64) value);
-        } else if (value instanceof QName) {
-            writeQNameInternal((QName) value);
-        } else if (value instanceof YangInstanceIdentifier) {
-            writeValue((YangInstanceIdentifier) value);
-        } else if (value instanceof byte[]) {
-            writeValue((byte[]) value);
+        } else if (value instanceof Byte byteVal) {
+            writeValue(byteVal);
+        } else if (value instanceof Short shortVal) {
+            writeValue(shortVal);
+        } else if (value instanceof Integer intVal) {
+            writeValue(intVal);
+        } else if (value instanceof Long longVal) {
+            writeValue(longVal);
+        } else if (value instanceof Uint8 uint8) {
+            writeValue(uint8);
+        } else if (value instanceof Uint16 uint16) {
+            writeValue(uint16);
+        } else if (value instanceof Uint32 uint32) {
+            writeValue(uint32);
+        } else if (value instanceof Uint64 uint64) {
+            writeValue(uint64);
+        } else if (value instanceof QName qname) {
+            writeQNameInternal(qname);
+        } else if (value instanceof YangInstanceIdentifier id) {
+            writeValue(id);
+        } else if (value instanceof byte[] bytes) {
+            writeValue(bytes);
         } else if (value instanceof Empty) {
             output.writeByte(MagnesiumValue.EMPTY);
-        } else if (value instanceof Set) {
-            writeValue((Set<?>) value);
+        } else if (value instanceof Set<?> set) {
+            writeValue(set);
         } else if (value instanceof BigDecimal || value instanceof Decimal64) {
             output.writeByte(MagnesiumValue.BIGDECIMAL);
             output.writeUTF(value.toString());
-        } else if (value instanceof BigInteger) {
-            writeValue((BigInteger) value);
+        } else if (value instanceof BigInteger val) {
+            writeValue(val);
         } else {
             throw new IOException("Unhandled value type " + value.getClass());
         }
@@ -548,7 +548,7 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
     // NodeIdentifier -- which is typically true
     private boolean matchesParentQName(final QName qname) {
         final Object current = stack.peek();
-        return current instanceof NodeIdentifier && qname.equals(((NodeIdentifier) current).getNodeType());
+        return current instanceof NodeIdentifier nid && qname.equals(nid.getNodeType());
     }
 
     // Start an END_NODE-terminated node, which typically has a QName matching the parent. If that is the case we emit

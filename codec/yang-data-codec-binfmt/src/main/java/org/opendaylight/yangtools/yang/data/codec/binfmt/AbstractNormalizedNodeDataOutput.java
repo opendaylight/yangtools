@@ -193,8 +193,8 @@ abstract class AbstractNormalizedNodeDataOutput implements NormalizedNodeDataOut
 
     @Override
     public void flush() throws IOException {
-        if (output instanceof OutputStream) {
-            ((OutputStream)output).flush();
+        if (output instanceof OutputStream out) {
+            out.flush();
         }
     }
 
