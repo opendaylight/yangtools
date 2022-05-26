@@ -1,0 +1,13 @@
+module test-bug {
+  yang-version 1.1;
+  namespace "test:bug";
+  prefix "tb";
+
+  import extension-model { prefix em; revision-date 2017-01-26; }
+
+  revision 2017-07-27;
+
+  em:yang-data support-save-data {
+    anydata support-save-data;
+  }
+}
