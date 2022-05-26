@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.rfc6643.parser.MaxAccessStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.OidStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.SubIdStatementSupport;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
-import org.opendaylight.yangtools.rfc8040.parser.YangDataArgumentNamespace;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
 import org.opendaylight.yangtools.rfc8639.parser.SubscriptionStateNotificationStatementSupport;
@@ -153,7 +152,6 @@ public final class DefaultReactors {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AnnotationStatementSupport(config))
 
                 // RFC8040 yang-data support
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new YangDataStatementSupport(config))
 
                 // RFC8528 mount-point support

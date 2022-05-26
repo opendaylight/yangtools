@@ -8,24 +8,16 @@
 package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
  * Represents 'yang-data' extension statement defined in
  * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC8040</a>. This statement must appear as a top-level
- * statement, otherwise it is ignored and does not appear in the final schema context. It must contain exactly one
- * top-level container node (directly or indirectly via a uses statement).
+ * statement, otherwise it is ignored and does not appear in the final schema context.
  */
 @Beta
-public interface YangDataSchemaNode extends UnknownSchemaNode {
-    /**
-     * Returns container schema node container within this yang-data definition.
-     *
-     * @return container schema node
-     */
-    ContainerSchemaNode getContainerSchemaNode();
-
+public interface YangDataSchemaNode extends UnknownSchemaNode, DataNodeContainer {
     @Override
     YangDataEffectiveStatement asEffectiveStatement();
 }

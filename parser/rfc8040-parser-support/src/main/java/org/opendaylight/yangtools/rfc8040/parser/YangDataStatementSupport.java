@@ -7,20 +7,22 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static com.google.common.base.Verify.verifyNotNull;
+import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatements;
-import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -29,16 +31,39 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class YangDataStatementSupport
         extends AbstractStringStatementSupport<YangDataStatement, YangDataEffectiveStatement> {
+    // As per RFC8040 page 81:
+    //
+    //    The substatements of this extension MUST follow the
+    //    'data-def-stmt' rule in the YANG ABNF.
+    //
+    // As per RFC7950 page 185:
+    //
+    //    data-def-stmt = container-stmt /
+    //                    leaf-stmt /
+    //                    leaf-list-stmt /
+    //                    list-stmt /
+    //                    choice-stmt /
+    //                    anydata-stmt /
+    //                    anyxml-stmt /
+    //                    uses-stmt
+    //
+    // The cardinality is not exactly constrained, but the entirety of substatements are required to resolve to a single
+    // XML document (page 80). This is enforced when we arrive at full declaration.
     private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatements.YANG_DATA)
-        .addMandatory(YangStmtMapping.CONTAINER)
-        .addOptional(YangStmtMapping.USES)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addAny(YangStmtMapping.CHOICE)
+        .addAny(YangStmtMapping.ANYDATA)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.USES)
         .build();
 
     public YangDataStatementSupport(final YangParserConfiguration config) {
@@ -56,10 +81,13 @@ public final class YangDataStatementSupport
 
     @Override
     public void onFullDefinitionDeclared(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
-        // Parse and populate our argument to be picked up when we build the effective statement
-        final String argument = SourceException.throwIfNull(ctx.argument(), ctx, "yang-data requires an argument");
-        final QName qname = StmtContextUtils.parseIdentifier(ctx, argument);
-        ctx.addToNs(YangDataArgumentNamespace.class, Empty.value(), qname);
+        // If we are declared in an illegal place, this becomes a no-op
+        if (!ctx.isSupportedToBuildEffective()) {
+            return;
+        }
+
+        // Run SubstatementValidator-based validation first
+        super.onFullDefinitionDeclared(ctx);
 
         // Support for 'operations' container semantics. For this we need to recognize when the model at hand matches
         // RFC8040 ietf-restconf module. In ordered to do that we hook onto this particular definition:
@@ -69,7 +97,7 @@ public final class YangDataStatementSupport
         //   }
         //
         // If we find it, we hook an inference action which performs the next step when the module is fully declared.
-        if (ctx.isSupportedToBuildEffective() && "yang-api".equals(ctx.argument())) {
+        if ("yang-api".equals(ctx.argument())) {
             final var stmts = ctx.declaredSubstatements();
             if (stmts.size() == 1) {
                 final var stmt = stmts.iterator().next();
@@ -107,19 +135,36 @@ public final class YangDataStatementSupport
     @Override
     protected YangDataEffectiveStatement createEffective(final Current<String, YangDataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        // So now we need to deal with effective validation. The requirement is that:
-        //        It MUST contain data definition statements
-        //        that result in exactly one container data node definition.
-        final long dataDefs = substatements.stream().filter(DataTreeEffectiveStatement.class::isInstance).count();
-        if (dataDefs == 0) {
-            throw new MissingSubstatementException("yang-data requires exactly one container", stmt.sourceReference());
-        }
-        if (dataDefs > 1) {
-            throw new InvalidSubstatementException(stmt,
-                "yang-data requires exactly one data definition node, found %s", dataDefs);
-        }
+        // RFC8040 page 80 requires that:
+        //    It MUST contain data definition statements
+        //    that result in exactly one container data node definition.
+        //    An instance of a YANG data template can thus be translated
+        //    into an XML instance document, whose top-level element
+        //    corresponds to the top-level container.
+        //
+        // We validate this additional constraint when we arrive at the effective model, with the view that
+        // 'container data node definition' is really meant to say 'XML element'.
+        //
+        // This really boils down to the requirement to have a single schema tree substatement, which needs to either
+        // be a data tree statement or a choice statement.
+        final var schemaSub = substatements.stream()
+            .filter(SchemaTreeEffectiveStatement.class::isInstance)
+            .map(SchemaTreeEffectiveStatement.class::cast)
+            .collect(Collectors.toUnmodifiableList());
+        final var child = switch (schemaSub.size()) {
+            case 0 -> throw new MissingSubstatementException(stmt, "yang-data requires at least one substatement");
+            case 1 -> {
+                final SchemaTreeEffectiveStatement<?> substmt = schemaSub.get(0);
+                SourceException.throwIf(
+                    !(substmt instanceof ChoiceEffectiveStatement) && !(substmt instanceof DataTreeEffectiveStatement),
+                    stmt, "%s is not a recognized container data node definition", substmt);
+                verify(substmt instanceof DataSchemaNode, "Unexpected single child %s", substmt);
+                yield (DataSchemaNode) substmt;
+            }
+            default -> throw new InvalidSubstatementException(stmt,
+                "yang-data requires exactly one container data node definition, found %s", schemaSub);
+        };
 
-        return new YangDataEffectiveStatementImpl(stmt, substatements,
-            verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.class, Empty.value())));
+        return new YangDataEffectiveStatementImpl(stmt, substatements, child);
     }
 }
