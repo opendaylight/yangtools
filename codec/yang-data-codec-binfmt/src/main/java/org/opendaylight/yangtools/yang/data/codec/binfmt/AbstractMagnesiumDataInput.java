@@ -164,12 +164,12 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
 
         final Object value;
         if ((nodeHeader & MagnesiumNode.PREDICATE_ONE) == MagnesiumNode.PREDICATE_ONE) {
-            if (!(parent instanceof NodeIdentifierWithPredicates)) {
+            if (!(parent instanceof NodeIdentifierWithPredicates nip)) {
                 throw new InvalidNormalizedNodeStreamException("Invalid predicate leaf " + identifier + " in parent "
                         + parent);
             }
 
-            value = ((NodeIdentifierWithPredicates) parent).getValue(identifier.getNodeType());
+            value = nip.getValue(identifier.getNodeType());
             if (value == null) {
                 throw new InvalidNormalizedNodeStreamException("Failed to find predicate leaf " + identifier
                     + " in parent " + parent);
@@ -241,26 +241,16 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             final byte nodeHeader) throws IOException {
         final NodeIdentifier nodeId = decodeNodeIdentifier(nodeHeader, parent);
 
-        final int size;
-        switch (mask(nodeHeader, MagnesiumNode.PREDICATE_MASK)) {
-            case MagnesiumNode.PREDICATE_ZERO:
-                size = 0;
-                break;
-            case MagnesiumNode.PREDICATE_ONE:
-                size = 1;
-                break;
-            case MagnesiumNode.PREDICATE_1B:
-                size = input.readUnsignedByte();
-                break;
-            case MagnesiumNode.PREDICATE_4B:
-                size = input.readInt();
-                break;
-            default:
+        final int size = switch (mask(nodeHeader, MagnesiumNode.PREDICATE_MASK)) {
+            case MagnesiumNode.PREDICATE_ZERO -> 0;
+            case MagnesiumNode.PREDICATE_ONE -> 1;
+            case MagnesiumNode.PREDICATE_1B -> input.readUnsignedByte();
+            case MagnesiumNode.PREDICATE_4B -> input.readInt();
+            default ->
                 // ISE on purpose: this should never ever happen
                 throw new IllegalStateException("Failed to decode NodeIdentifierWithPredicates size from header "
-                        + nodeHeader);
-        }
-
+                    + nodeHeader);
+        };
         final NodeIdentifierWithPredicates identifier = readNodeIdentifierWithPredicates(nodeId.getNodeType(), size);
         LOG.trace("Streaming map entry node {}", identifier);
         writer.startMapEntryNode(identifier, UNKNOWN_SIZE);
@@ -306,8 +296,8 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
                 index = input.readInt();
                 break;
             case MagnesiumNode.ADDR_PARENT:
-                if (parent instanceof NodeIdentifier) {
-                    return (NodeIdentifier) parent;
+                if (parent instanceof NodeIdentifier nid) {
+                    return nid;
                 }
                 throw new InvalidNormalizedNodeStreamException("Invalid node identifier reference to parent " + parent);
             default:

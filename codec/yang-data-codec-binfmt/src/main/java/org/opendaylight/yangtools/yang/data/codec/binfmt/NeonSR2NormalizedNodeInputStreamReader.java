@@ -40,27 +40,21 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     @Override
     public QName readQName() throws IOException {
         final byte valueType = readByte();
-        switch (valueType) {
-            case NeonSR2Tokens.IS_QNAME_CODE:
-                return codedQName(readInt());
-            case NeonSR2Tokens.IS_QNAME_VALUE:
-                return rawQName();
-            default:
-                throw new IOException("Unhandled QName value type " + valueType);
-        }
+        return switch (valueType) {
+            case NeonSR2Tokens.IS_QNAME_CODE -> codedQName(readInt());
+            case NeonSR2Tokens.IS_QNAME_VALUE -> rawQName();
+            default -> throw new IOException("Unhandled QName value type " + valueType);
+        };
     }
 
     @Override
     AugmentationIdentifier readAugmentationIdentifier() throws IOException {
         final byte valueType = readByte();
-        switch (valueType) {
-            case NeonSR2Tokens.IS_AUGMENT_CODE:
-                return codedAugmentId(readInt());
-            case NeonSR2Tokens.IS_AUGMENT_VALUE:
-                return rawAugmentId();
-            default:
-                throw new IOException("Unhandled AugmentationIdentifier value type " + valueType);
-        }
+        return switch (valueType) {
+            case NeonSR2Tokens.IS_AUGMENT_CODE -> codedAugmentId(readInt());
+            case NeonSR2Tokens.IS_AUGMENT_VALUE -> rawAugmentId();
+            default -> throw new IOException("Unhandled AugmentationIdentifier value type " + valueType);
+        };
     }
 
     @Override
@@ -68,26 +62,20 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
         // NodeIdentifier rides on top of QName, with this method really saying 'interpret next QName as NodeIdentifier'
         // to do that we inter-mingle with readQName()
         final byte valueType = readByte();
-        switch (valueType) {
-            case NeonSR2Tokens.IS_QNAME_CODE:
-                return codedNodeIdentifier(readInt());
-            case NeonSR2Tokens.IS_QNAME_VALUE:
-                return rawNodeIdentifier();
-            default:
-                throw new IOException("Unhandled NodeIdentifier value type " + valueType);
-        }
+        return switch (valueType) {
+            case NeonSR2Tokens.IS_QNAME_CODE -> codedNodeIdentifier(readInt());
+            case NeonSR2Tokens.IS_QNAME_VALUE -> rawNodeIdentifier();
+            default -> throw new IOException("Unhandled NodeIdentifier value type " + valueType);
+        };
     }
 
     private QNameModule readModule() throws IOException {
         final byte valueType = readByte();
-        switch (valueType) {
-            case NeonSR2Tokens.IS_MODULE_CODE:
-                return codedModule(readInt());
-            case NeonSR2Tokens.IS_MODULE_VALUE:
-                return rawModule();
-            default:
-                throw new IOException("Unhandled QNameModule value type " + valueType);
-        }
+        return switch (valueType) {
+            case NeonSR2Tokens.IS_MODULE_CODE -> codedModule(readInt());
+            case NeonSR2Tokens.IS_MODULE_VALUE -> rawModule();
+            default -> throw new IOException("Unhandled QNameModule value type " + valueType);
+        };
     }
 
     private NodeIdentifier codedNodeIdentifier(final int code) throws IOException {

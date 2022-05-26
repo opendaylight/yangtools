@@ -66,47 +66,20 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
 
     private void streamNormalizedNode(final NormalizedNodeStreamWriter writer, final byte nodeType) throws IOException {
         switch (nodeType) {
-            case LithiumNode.ANY_XML_NODE:
-                streamAnyxml(writer);
-                break;
-            case LithiumNode.AUGMENTATION_NODE:
-                streamAugmentation(writer);
-                break;
-            case LithiumNode.CHOICE_NODE:
-                streamChoice(writer);
-                break;
-            case LithiumNode.CONTAINER_NODE:
-                streamContainer(writer);
-                break;
-            case LithiumNode.LEAF_NODE:
-                streamLeaf(writer);
-                break;
-            case LithiumNode.LEAF_SET:
-                streamLeafSet(writer);
-                break;
-            case LithiumNode.ORDERED_LEAF_SET:
-                streamOrderedLeafSet(writer);
-                break;
-            case LithiumNode.LEAF_SET_ENTRY_NODE:
-                streamLeafSetEntry(writer);
-                break;
-            case LithiumNode.MAP_ENTRY_NODE:
-                streamMapEntry(writer);
-                break;
-            case LithiumNode.MAP_NODE:
-                streamMap(writer);
-                break;
-            case LithiumNode.ORDERED_MAP_NODE:
-                streamOrderedMap(writer);
-                break;
-            case LithiumNode.UNKEYED_LIST:
-                streamUnkeyedList(writer);
-                break;
-            case LithiumNode.UNKEYED_LIST_ITEM:
-                streamUnkeyedListItem(writer);
-                break;
-            default:
-                throw new InvalidNormalizedNodeStreamException("Unexpected node " + nodeType);
+            case LithiumNode.ANY_XML_NODE -> streamAnyxml(writer);
+            case LithiumNode.AUGMENTATION_NODE -> streamAugmentation(writer);
+            case LithiumNode.CHOICE_NODE -> streamChoice(writer);
+            case LithiumNode.CONTAINER_NODE -> streamContainer(writer);
+            case LithiumNode.LEAF_NODE -> streamLeaf(writer);
+            case LithiumNode.LEAF_SET -> streamLeafSet(writer);
+            case LithiumNode.ORDERED_LEAF_SET -> streamOrderedLeafSet(writer);
+            case LithiumNode.LEAF_SET_ENTRY_NODE -> streamLeafSetEntry(writer);
+            case LithiumNode.MAP_ENTRY_NODE -> streamMapEntry(writer);
+            case LithiumNode.MAP_NODE -> streamMap(writer);
+            case LithiumNode.ORDERED_MAP_NODE -> streamOrderedMap(writer);
+            case LithiumNode.UNKEYED_LIST -> streamUnkeyedList(writer);
+            case LithiumNode.UNKEYED_LIST_ITEM -> streamUnkeyedListItem(writer);
+            default -> throw new InvalidNormalizedNodeStreamException("Unexpected node " + nodeType);
         }
     }
 
@@ -279,23 +252,23 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
 
     final String readCodedString() throws IOException {
         final byte valueType = input.readByte();
-        switch (valueType) {
-            case LithiumTokens.IS_NULL_VALUE:
-                return null;
-            case LithiumTokens.IS_CODE_VALUE:
+        return switch (valueType) {
+            case LithiumTokens.IS_NULL_VALUE -> null;
+            case LithiumTokens.IS_CODE_VALUE -> {
                 final int code = input.readInt();
                 try {
-                    return codedStringMap.get(code);
+                    yield codedStringMap.get(code);
                 } catch (IndexOutOfBoundsException e) {
                     throw new IOException("String code " + code + " was not found", e);
                 }
-            case LithiumTokens.IS_STRING_VALUE:
+            }
+            case LithiumTokens.IS_STRING_VALUE -> {
                 final String value = input.readUTF().intern();
                 codedStringMap.add(value);
-                return value;
-            default:
-                throw new IOException("Unhandled string value type " + valueType);
-        }
+                yield value;
+            }
+            default -> throw new IOException("Unhandled string value type " + valueType);
+        };
     }
 
     private Set<QName> readQNameSet() throws IOException {
@@ -340,60 +313,33 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
 
     private Object readObject() throws IOException {
         byte objectType = input.readByte();
-        switch (objectType) {
-            case LithiumValue.BITS_TYPE:
-                return readObjSet();
-
-            case LithiumValue.BOOL_TYPE:
-                return input.readBoolean();
-
-            case LithiumValue.BYTE_TYPE:
-                return input.readByte();
-
-            case LithiumValue.INT_TYPE:
-                return input.readInt();
-
-            case LithiumValue.LONG_TYPE:
-                return input.readLong();
-
-            case LithiumValue.QNAME_TYPE:
-                return readQName();
-
-            case LithiumValue.SHORT_TYPE:
-                return input.readShort();
-
-            case LithiumValue.STRING_TYPE:
-                return input.readUTF();
-
-            case LithiumValue.STRING_BYTES_TYPE:
-                return readStringBytes();
-
-            case LithiumValue.BIG_DECIMAL_TYPE:
-                return Decimal64.valueOf(input.readUTF());
-
-            case LithiumValue.BIG_INTEGER_TYPE:
-                return new BigInteger(input.readUTF());
-
-            case LithiumValue.BINARY_TYPE:
+        return switch (objectType) {
+            case LithiumValue.BITS_TYPE -> readObjSet();
+            case LithiumValue.BOOL_TYPE -> input.readBoolean();
+            case LithiumValue.BYTE_TYPE -> input.readByte();
+            case LithiumValue.INT_TYPE -> input.readInt();
+            case LithiumValue.LONG_TYPE -> input.readLong();
+            case LithiumValue.QNAME_TYPE -> readQName();
+            case LithiumValue.SHORT_TYPE -> input.readShort();
+            case LithiumValue.STRING_TYPE -> input.readUTF();
+            case LithiumValue.STRING_BYTES_TYPE -> readStringBytes();
+            case LithiumValue.BIG_DECIMAL_TYPE -> Decimal64.valueOf(input.readUTF());
+            case LithiumValue.BIG_INTEGER_TYPE -> new BigInteger(input.readUTF());
+            case LithiumValue.BINARY_TYPE -> {
                 byte[] bytes = new byte[input.readInt()];
                 input.readFully(bytes);
-                return bytes;
-
-            case LithiumValue.YANG_IDENTIFIER_TYPE:
-                return readYangInstanceIdentifierInternal();
-
-            case LithiumValue.EMPTY_TYPE:
+                yield bytes;
+            }
+            case LithiumValue.YANG_IDENTIFIER_TYPE -> readYangInstanceIdentifierInternal();
+            case LithiumValue.EMPTY_TYPE, LithiumValue.NULL_TYPE ->
             // Leaf nodes no longer allow null values and thus we no longer emit null values. Previously, the "empty"
             // yang type was represented as null so we translate an incoming null value to Empty. It was possible for
             // a BI user to set a string leaf to null and we're rolling the dice here but the chances for that are
             // very low. We'd have to know the yang type but, even if we did, we can't let a null value pass upstream
             // so we'd have to drop the leaf which might cause other issues.
-            case LithiumValue.NULL_TYPE:
-                return Empty.value();
-
-            default:
-                return null;
-        }
+                Empty.value();
+            default -> null;
+        };
     }
 
     private String readStringBytes() throws IOException {
@@ -429,19 +375,14 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
     public final PathArgument readPathArgument() throws IOException {
         // read Type
         int type = input.readByte();
-
-        switch (type) {
-            case LithiumPathArgument.AUGMENTATION_IDENTIFIER:
-                return readAugmentationIdentifier();
-            case LithiumPathArgument.NODE_IDENTIFIER:
-                return readNodeIdentifier();
-            case LithiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES:
-                return readNormalizedNodeWithPredicates();
-            case LithiumPathArgument.NODE_IDENTIFIER_WITH_VALUE:
-                return new NodeWithValue<>(readQName(), readObject());
-            default:
+        return  switch (type) {
+            case LithiumPathArgument.AUGMENTATION_IDENTIFIER -> readAugmentationIdentifier();
+            case LithiumPathArgument.NODE_IDENTIFIER -> readNodeIdentifier();
+            case LithiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES -> readNormalizedNodeWithPredicates();
+            case LithiumPathArgument.NODE_IDENTIFIER_WITH_VALUE -> new NodeWithValue<>(readQName(), readObject());
+            default ->
                 // FIXME: throw hard error
-                return null;
-        }
+                null;
+        };
     }
 }
