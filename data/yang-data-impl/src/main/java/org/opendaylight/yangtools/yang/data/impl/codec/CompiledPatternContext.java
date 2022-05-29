@@ -22,19 +22,14 @@ final class CompiledPatternContext {
     private final boolean invert;
 
     CompiledPatternContext(final PatternConstraint yangConstraint) {
-        this.constraint = requireNonNull(yangConstraint);
+        constraint = requireNonNull(yangConstraint);
         pattern = Pattern.compile(yangConstraint.getJavaPatternString());
 
         final Optional<ModifierKind> optModifier = yangConstraint.getModifier();
         if (optModifier.isPresent()) {
-            final ModifierKind modifier = optModifier.get();
-            switch (modifier) {
-                case INVERT_MATCH:
-                    invert = true;
-                    break;
-                default:
-                    throw new IllegalStateException("Unhandled modifier " + modifier);
-            }
+            invert = switch (optModifier.orElseThrow()) {
+                case INVERT_MATCH -> true;
+            };
         } else {
             invert = false;
         }
