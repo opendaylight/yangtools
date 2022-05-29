@@ -36,17 +36,10 @@ public class YT1193Test {
 
         for (DeclaredStatement<?> stmt : declaredRoots) {
             switch (stmt.rawArgument()) {
-                case "foo":
-                    assertFooReferences(stmt);
-                    break;
-                case "bar":
-                    assertBarReferences(stmt);
-                    break;
-                case "baz":
-                    assertBazReferences(stmt);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected statement " + stmt);
+                case "foo" -> assertFooReferences(stmt);
+                case "bar" -> assertBarReferences(stmt);
+                case "baz" -> assertBazReferences(stmt);
+                default -> throw new IllegalStateException("Unexpected statement " + stmt);
             }
         }
     }
