@@ -52,8 +52,8 @@ final class FileGeneratorTask extends GeneratorTask<FileGeneratorTaskFactory> {
 
         final Build build = project.getBuild();
         final String buildDirectory = build.getDirectory();
-        this.buildDir = new File(buildDirectory);
-        this.suffix = factory.getIdentifier();
+        buildDir = new File(buildDirectory);
+        suffix = factory.getIdentifier();
         this.project = project;
     }
 
@@ -73,21 +73,17 @@ final class FileGeneratorTask extends GeneratorTask<FileGeneratorTaskFactory> {
         for (Cell<GeneratedFileType, GeneratedFilePath, GeneratedFile> cell : generatedFiles.cellSet()) {
             final GeneratedFile file = cell.getValue();
             final String relativePath = cell.getColumnKey().getPath();
-            final File target;
-            switch (file.getLifecycle()) {
-                case PERSISTENT:
-                    target = new File(persistentPath(cell.getRowKey()), relativePath);
-                    if (target.exists()) {
-                        LOG.debug("Skipping existing persistent {}", target);
+            final File target = switch (file.getLifecycle()) {
+                case PERSISTENT -> {
+                    final File tgt = new File(persistentPath(cell.getRowKey()), relativePath);
+                    if (tgt.exists()) {
+                        LOG.debug("Skipping existing persistent {}", tgt);
                         continue;
                     }
-                    break;
-                case TRANSIENT:
-                    target = new File(transientPath(cell.getRowKey()), relativePath);
-                    break;
-                default:
-                    throw new IllegalStateException("Unsupported file type in " + file);
-            }
+                    yield tgt;
+                }
+                case TRANSIENT -> new File(transientPath(cell.getRowKey()), relativePath);
+            };
 
             dirs.put(target.getParentFile(), new WriteTask(buildContext, target, cell.getValue()));
         }
