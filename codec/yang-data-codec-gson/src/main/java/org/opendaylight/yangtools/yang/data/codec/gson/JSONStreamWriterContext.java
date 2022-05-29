@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -67,9 +65,10 @@ abstract class JSONStreamWriterContext {
         // Prepend module name if namespaces do not match
         final QNameModule module = qname.getModule();
         if (!module.getNamespace().equals(getNamespace())) {
-            final Optional<String> modules = schema.findModule(module).map(Module::getName);
-            checkArgument(modules.isPresent(), "Could not find module for namespace %s", module);
-            sb.append(modules.get()).append(':');
+            final var name = schema.findModule(module)
+                .map(Module::getName)
+                .orElseThrow(() -> new IllegalArgumentException("Could not find module for namespace " + module));
+            sb.append(name).append(':');
         }
         sb.append(qname.getLocalName());
 
