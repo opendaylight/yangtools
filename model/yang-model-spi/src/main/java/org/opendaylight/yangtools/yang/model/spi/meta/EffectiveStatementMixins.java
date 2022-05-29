@@ -202,16 +202,12 @@ public final class EffectiveStatementMixins {
         @Override
         default Optional<Boolean> effectiveConfig() {
             final int fl = flags() & FlagsBuilder.MASK_CONFIG;
-            switch (fl) {
-                case FlagsBuilder.CONFIG_FALSE:
-                    return Optional.of(Boolean.FALSE);
-                case FlagsBuilder.CONFIG_TRUE:
-                    return Optional.of(Boolean.TRUE);
-                case FlagsBuilder.CONFIG_UNDEF:
-                    return Optional.empty();
-                default:
-                    throw new IllegalStateException("Unhandled effective config flags " + fl);
-            }
+            return switch (fl) {
+                case FlagsBuilder.CONFIG_FALSE -> Optional.of(Boolean.FALSE);
+                case FlagsBuilder.CONFIG_TRUE -> Optional.of(Boolean.TRUE);
+                case FlagsBuilder.CONFIG_UNDEF -> Optional.empty();
+                default -> throw new IllegalStateException("Unhandled effective config flags " + fl);
+            };
         }
     }
 
@@ -234,16 +230,12 @@ public final class EffectiveStatementMixins {
             @Override
             default Status getStatus() {
                 final int status = flags() & FlagsBuilder.MASK_STATUS;
-                switch (status) {
-                    case FlagsBuilder.STATUS_CURRENT:
-                        return Status.CURRENT;
-                    case FlagsBuilder.STATUS_DEPRECATED:
-                        return Status.DEPRECATED;
-                    case FlagsBuilder.STATUS_OBSOLETE:
-                        return Status.OBSOLETE;
-                    default:
-                        throw new IllegalStateException("Illegal status " + status);
-                }
+                return switch (status) {
+                    case FlagsBuilder.STATUS_CURRENT -> Status.CURRENT;
+                    case FlagsBuilder.STATUS_DEPRECATED -> Status.DEPRECATED;
+                    case FlagsBuilder.STATUS_OBSOLETE -> Status.OBSOLETE;
+                    default -> throw new IllegalStateException("Illegal status " + status);
+                };
             }
         }
 
@@ -520,21 +512,11 @@ public final class EffectiveStatementMixins {
             }
 
             public FlagsBuilder setStatus(final Status status) {
-                final int bits;
-                switch (status) {
-                    case CURRENT:
-                        bits = STATUS_CURRENT;
-                        break;
-                    case DEPRECATED:
-                        bits = STATUS_DEPRECATED;
-                        break;
-                    case OBSOLETE:
-                        bits = STATUS_OBSOLETE;
-                        break;
-                    default:
-                        throw new IllegalStateException("Unhandled status " + status);
-                }
-
+                final int bits = switch (status) {
+                    case CURRENT -> STATUS_CURRENT;
+                    case DEPRECATED -> STATUS_DEPRECATED;
+                    case OBSOLETE -> STATUS_OBSOLETE;
+                };
                 flags = flags & ~MASK_STATUS | bits;
                 return this;
             }
