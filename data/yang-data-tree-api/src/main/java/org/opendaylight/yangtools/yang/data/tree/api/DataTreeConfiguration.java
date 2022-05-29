@@ -82,14 +82,10 @@ public class DataTreeConfiguration implements Immutable {
     }
 
     public static DataTreeConfiguration getDefault(final TreeType treeType) {
-        switch (requireNonNull(treeType)) {
-            case CONFIGURATION:
-                return DEFAULT_CONFIGURATION;
-            case OPERATIONAL:
-                return DEFAULT_OPERATIONAL;
-            default:
-                return new DataTreeConfiguration(treeType, YangInstanceIdentifier.empty(), false, true);
-        }
+        return switch (requireNonNull(treeType)) {
+            case CONFIGURATION -> DEFAULT_CONFIGURATION;
+            case OPERATIONAL -> DEFAULT_OPERATIONAL;
+        };
     }
 
     public static @NonNull Builder builder(final TreeType treeType) {
