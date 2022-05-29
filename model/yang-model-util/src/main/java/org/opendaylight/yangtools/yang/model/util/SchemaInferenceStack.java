@@ -223,10 +223,10 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public static @NonNull SchemaInferenceStack ofInference(final EffectiveStatementInference inference) {
         if (inference.statementPath().isEmpty()) {
             return new SchemaInferenceStack(inference.getEffectiveModelContext());
-        } else if (inference instanceof SchemaTreeInference) {
-            return ofInference((SchemaTreeInference) inference);
-        } else if (inference instanceof Inference) {
-            return ((Inference) inference).toSchemaInferenceStack();
+        } else if (inference instanceof SchemaTreeInference sti) {
+            return ofInference(sti);
+        } else if (inference instanceof Inference inf) {
+            return inf.toSchemaInferenceStack();
         } else {
             throw new IllegalArgumentException("Unsupported Inference " + inference);
         }
@@ -241,7 +241,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code inference} cannot be resolved to a valid stack
      */
     public static @NonNull SchemaInferenceStack ofInference(final SchemaTreeInference inference) {
-        return inference instanceof DefaultSchemaTreeInference ? ofInference((DefaultSchemaTreeInference) inference)
+        return inference instanceof DefaultSchemaTreeInference dsti ? ofInference(dsti)
             : of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
     }
 
@@ -437,14 +437,14 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public @NonNull ChoiceEffectiveStatement enterChoice(final QName nodeIdentifier) {
         final QName nodeId = requireNonNull(nodeIdentifier);
         final EffectiveStatement<?, ?> parent = deque.peekLast();
-        if (parent instanceof ChoiceEffectiveStatement) {
-            return enterChoice((ChoiceEffectiveStatement) parent, nodeId);
+        if (parent instanceof ChoiceEffectiveStatement choice) {
+            return enterChoice(choice, nodeId);
         }
 
         // Fall back to schema tree lookup. Note if it results in non-choice, we rewind before reporting an error
         final SchemaTreeEffectiveStatement<?> result = enterSchemaTree(nodeId);
-        if (result instanceof ChoiceEffectiveStatement) {
-            return (ChoiceEffectiveStatement) result;
+        if (result instanceof ChoiceEffectiveStatement choice) {
+            return choice;
         }
         exit();
 
@@ -458,16 +458,15 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     private @NonNull ChoiceEffectiveStatement enterChoice(final @NonNull ChoiceEffectiveStatement parent,
             final QName nodeIdentifier) {
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
-            if (stmt instanceof CaseEffectiveStatement) {
-                final Optional<ChoiceEffectiveStatement> optMatch = ((CaseEffectiveStatement) stmt)
-                    .findSchemaTreeNode(nodeIdentifier)
+            if (stmt instanceof CaseEffectiveStatement caze) {
+                final Optional<ChoiceEffectiveStatement> optMatch = caze.findSchemaTreeNode(nodeIdentifier)
                     .filter(ChoiceEffectiveStatement.class::isInstance)
                     .map(ChoiceEffectiveStatement.class::cast);
                 if (optMatch.isPresent()) {
-                    final SchemaTreeEffectiveStatement<?> match = optMatch.orElseThrow();
+                    final var match = optMatch.orElseThrow();
                     deque.addLast(match);
                     clean = false;
-                    return (ChoiceEffectiveStatement) match;
+                    return match;
                 }
             }
         }
@@ -621,9 +620,9 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final EffectiveStatement<?, ?> resolved = tmp.resolvePathExpression(current.getPathStatement());
             checkState(resolved instanceof TypeAware, "Unexpected result %s resultion of %s", resolved, type);
             final TypeDefinition<?> result = ((TypedDataSchemaNode) resolved).getType();
-            if (result instanceof LeafrefTypeDefinition) {
+            if (result instanceof LeafrefTypeDefinition leafref) {
                 checkArgument(result != type, "Resolution of %s loops back onto itself via %s", type, current);
-                current = (LeafrefTypeDefinition) result;
+                current = leafref;
             } else {
                 return result;
             }
@@ -644,10 +643,10 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull EffectiveStatement<?, ?> resolvePathExpression(final PathExpression path) {
         final Steps steps = path.getSteps();
-        if (steps instanceof LocationPathSteps) {
-            return resolveLocationPath(((LocationPathSteps) steps).getLocationPath());
-        } else if (steps instanceof DerefSteps) {
-            return resolveDeref((DerefSteps) steps);
+        if (steps instanceof LocationPathSteps location) {
+            return resolveLocationPath(location.getLocationPath());
+        } else if (steps instanceof DerefSteps deref) {
+            return resolveDeref(deref);
         } else {
             throw new VerifyException("Unhandled steps " + steps);
         }
@@ -692,20 +691,19 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         for (Step step : path.getSteps()) {
             final YangXPathAxis axis = step.getAxis();
             switch (axis) {
-                case PARENT:
+                case PARENT -> {
                     verify(step instanceof AxisStep, "Unexpected parent step %s", step);
                     try {
                         current = exitToDataTree();
                     } catch (IllegalStateException | NoSuchElementException e) {
                         throw new IllegalArgumentException("Illegal parent access in " + path, e);
                     }
-                    break;
-                case CHILD:
+                }
+                case CHILD -> {
                     verify(step instanceof QNameStep, "Unexpected child step %s", step);
                     current = enterChild((QNameStep) step, defaultNamespace);
-                    break;
-                default:
-                    throw new VerifyException("Unexpected step " + step);
+                }
+                default -> throw new VerifyException("Unexpected step " + step);
             }
         }
 
@@ -717,9 +715,9 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         final QName qname;
         if (toResolve instanceof QName) {
             qname = (QName) toResolve;
-        } else if (toResolve instanceof Unqualified) {
+        } else if (toResolve instanceof Unqualified unqual) {
             checkArgument(defaultNamespace != null, "Can not find target module of step %s", step);
-            qname = ((Unqualified) toResolve).bindTo(defaultNamespace);
+            qname = unqual.bindTo(defaultNamespace);
         } else {
             throw new VerifyException("Unexpected child step QName " + toResolve);
         }
@@ -918,16 +916,16 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         while (it.hasNext()) {
             final EffectiveStatement<?, ?> stmt = it.next();
             // Order of checks is significant
-            if (stmt instanceof DataTreeEffectiveStatement) {
-                tmp.resolveDataTreeSteps(((DataTreeEffectiveStatement<?>) stmt).argument());
-            } else if (stmt instanceof ChoiceEffectiveStatement) {
-                tmp.resolveChoiceSteps(((ChoiceEffectiveStatement) stmt).argument());
-            } else if (stmt instanceof SchemaTreeEffectiveStatement) {
-                tmp.enterSchemaTree(((SchemaTreeEffectiveStatement<?> )stmt).argument());
-            } else if (stmt instanceof GroupingEffectiveStatement) {
-                tmp.enterGrouping(((GroupingEffectiveStatement) stmt).argument());
-            } else if (stmt instanceof TypedefEffectiveStatement) {
-                tmp.enterTypedef(((TypedefEffectiveStatement) stmt).argument());
+            if (stmt instanceof DataTreeEffectiveStatement<?> dataTree) {
+                tmp.resolveDataTreeSteps(dataTree.argument());
+            } else if (stmt instanceof ChoiceEffectiveStatement choice) {
+                tmp.resolveChoiceSteps(choice.argument());
+            } else if (stmt instanceof SchemaTreeEffectiveStatement<?> schemaTree) {
+                tmp.enterSchemaTree(schemaTree.argument());
+            } else if (stmt instanceof GroupingEffectiveStatement grouping) {
+                tmp.enterGrouping(grouping.argument());
+            } else if (stmt instanceof TypedefEffectiveStatement typedef) {
+                tmp.enterTypedef(typedef.argument());
             } else {
                 throw new VerifyException("Unexpected statement " + stmt);
             }
@@ -943,8 +941,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private void resolveChoiceSteps(final @NonNull QName nodeIdentifier) {
         final EffectiveStatement<?, ?> parent = deque.peekLast();
-        if (parent instanceof ChoiceEffectiveStatement) {
-            resolveChoiceSteps((ChoiceEffectiveStatement) parent, nodeIdentifier);
+        if (parent instanceof ChoiceEffectiveStatement choice) {
+            resolveChoiceSteps(choice, nodeIdentifier);
         } else {
             enterSchemaTree(nodeIdentifier);
         }
@@ -953,8 +951,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     private void resolveChoiceSteps(final @NonNull ChoiceEffectiveStatement parent,
             final @NonNull QName nodeIdentifier) {
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
-            if (stmt instanceof CaseEffectiveStatement) {
-                final CaseEffectiveStatement caze = (CaseEffectiveStatement) stmt;
+            if (stmt instanceof CaseEffectiveStatement caze) {
                 final SchemaTreeEffectiveStatement<?> found = caze.findSchemaTreeNode(nodeIdentifier).orElse(null);
                 if (found instanceof ChoiceEffectiveStatement) {
                     deque.addLast(caze);
@@ -999,8 +996,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         // and employ a recursive match.
         final var match = new ArrayDeque<EffectiveStatement<QName, ?>>();
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
-            if (stmt instanceof ChoiceEffectiveStatement
-                && searchChoice(match, (ChoiceEffectiveStatement) stmt, nodeIdentifier)) {
+            if (stmt instanceof ChoiceEffectiveStatement choice && searchChoice(match, choice, nodeIdentifier)) {
                 deque.addAll(match);
                 return;
             }
@@ -1013,12 +1009,11 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final @NonNull CaseEffectiveStatement parent, final @NonNull QName nodeIdentifier) {
         result.addLast(parent);
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
-            if (stmt instanceof DataTreeEffectiveStatement && nodeIdentifier.equals(stmt.argument())) {
-                result.addLast((DataTreeEffectiveStatement<?>) stmt);
+            if (stmt instanceof DataTreeEffectiveStatement<?> dataTree && nodeIdentifier.equals(stmt.argument())) {
+                result.addLast(dataTree);
                 return true;
             }
-            if (stmt instanceof ChoiceEffectiveStatement
-                && searchChoice(result, (ChoiceEffectiveStatement) stmt, nodeIdentifier)) {
+            if (stmt instanceof ChoiceEffectiveStatement choice && searchChoice(result, choice, nodeIdentifier)) {
                 return true;
             }
         }
@@ -1030,8 +1025,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final @NonNull ChoiceEffectiveStatement parent, final @NonNull QName nodeIdentifier) {
         result.addLast(parent);
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
-            if (stmt instanceof CaseEffectiveStatement
-                && searchCase(result, (CaseEffectiveStatement) stmt, nodeIdentifier)) {
+            if (stmt instanceof CaseEffectiveStatement caze && searchCase(result, caze, nodeIdentifier)) {
                 return true;
             }
         }
@@ -1058,8 +1052,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             return "schema parent " + parent.argument();
         } else if (parent instanceof GroupingEffectiveStatement) {
             return "grouping " + parent.argument();
-        } else if (parent instanceof ModuleEffectiveStatement) {
-            final var module = (ModuleEffectiveStatement) parent;
+        } else if (parent instanceof ModuleEffectiveStatement module) {
             return "module " + module.argument().bindTo(module.localQNameModule());
         } else {
             // Shorthand for QNames, should provide enough context
