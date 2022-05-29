@@ -101,9 +101,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
             final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
         this.writer = requireNonNull(writer);
-        this.codecs = requireNonNull(codecFactory);
+        codecs = requireNonNull(codecFactory);
         this.tracker = requireNonNull(tracker);
-        this.context = requireNonNull(rootContext);
+        context = requireNonNull(rootContext);
     }
 
     /**
@@ -303,8 +303,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         final SchemaNode schema = tracker.startContainerNode(name);
-        final boolean isPresence = schema instanceof ContainerSchemaNode
-            ? ((ContainerSchemaNode) schema).isPresenceContainer() : DEFAULT_EMIT_EMPTY_CONTAINERS;
+        final boolean isPresence = schema instanceof ContainerSchemaNode container
+            ? container.isPresenceContainer() : DEFAULT_EMIT_EMPTY_CONTAINERS;
         context = new JSONStreamWriterNamedObjectContext(context, name, isPresence);
     }
 
@@ -405,8 +405,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
-        if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current, tracker));
+        if (current instanceof TypedDataSchemaNode typed) {
+            writeValue(value, codecs.codecFor(typed, tracker));
         } else if (current instanceof AnydataSchemaNode) {
             writeAnydataValue(value);
         } else {
@@ -428,8 +428,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private void writeAnydataValue(final Object value) throws IOException {
-        if (value instanceof NormalizedAnydata) {
-            writeNormalizedAnydata((NormalizedAnydata) value);
+        if (value instanceof NormalizedAnydata normalized) {
+            writeNormalizedAnydata(normalized);
         } else {
             throw new IllegalStateException("Unexpected anydata value " + value);
         }
@@ -533,17 +533,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
             return;
         }
         switch (childNodeText) {
-            case "null":
-                writer.nullValue();
-                break;
-            case "false":
-                writer.value(false);
-                break;
-            case "true":
-                writer.value(true);
-                break;
-            default:
-                writer.value(childNodeText);
+            case "null" -> writer.nullValue();
+            case "false" -> writer.value(false);
+            case "true" -> writer.value(true);
+            default -> writer.value(childNodeText);
         }
     }
 

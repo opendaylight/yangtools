@@ -12,8 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
@@ -22,11 +21,11 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 final class IdentityrefJSONCodec implements JSONCodec<QName> {
-    private final EffectiveModelContext schemaContext;
-    private final QNameModule parentModule;
+    private final @NonNull EffectiveModelContext context;
+    private final @NonNull QNameModule parentModule;
 
     IdentityrefJSONCodec(final EffectiveModelContext context, final QNameModule parentModule) {
-        this.schemaContext = requireNonNull(context);
+        this.context = requireNonNull(context);
         this.parentModule = requireNonNull(parentModule);
     }
 
@@ -37,12 +36,12 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
 
     @Override
     public QName parseValue(final Object ctx, final String value) {
-        return IdentityCodecUtil.parseIdentity(value, schemaContext, prefix -> {
+        return IdentityCodecUtil.parseIdentity(value, context, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;
             }
 
-            final Iterator<? extends Module> modules = schemaContext.findModules(prefix).iterator();
+            final var modules = context.findModules(prefix).iterator();
             checkArgument(modules.hasNext(), "Could not find module %s", prefix);
             return modules.next().getQNameModule();
         }).getQName();
@@ -56,11 +55,8 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
      */
     @Override
     public void writeValue(final JsonWriter writer, final QName value) throws IOException {
-        final String str = QNameCodecUtil.encodeQName(value, uri -> {
-            final Optional<String> optName = schemaContext.findModule(uri).map(Module::getName);
-            checkArgument(optName.isPresent(), "Cannot find module for %s", uri);
-            return optName.get();
-        });
+        final String str = QNameCodecUtil.encodeQName(value, uri -> context.findModule(uri)
+            .map(Module::getName).orElseThrow(() -> new IllegalArgumentException("Cannot find module for " + uri)));
         writer.value(str);
     }
 }
