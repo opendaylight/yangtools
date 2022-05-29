@@ -390,17 +390,16 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
             }
         }
 
-        switch (exceptions.size()) {
-            case 0:
-                return Optional.empty();
-            case 1:
-                return Optional.of(exceptions.get(0));
-            default:
+        return switch (exceptions.size()) {
+            case 0 -> Optional.empty();
+            case 1 -> Optional.of(exceptions.get(0));
+            default -> {
                 final String message = String.format("Yang model processing phase %s failed", identifier);
                 final InferenceException ex = new InferenceException(message, root, exceptions.get(0));
                 exceptions.listIterator(1).forEachRemaining(ex::addSuppressed);
-                return Optional.of(ex);
-        }
+                yield Optional.of(ex);
+            }
+        };
     }
 
     void loadStatements() {

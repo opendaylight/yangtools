@@ -338,8 +338,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     static final void afterAddEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         // Undeclared statements still need to have 'onDeclarationFinished()' triggered
-        if (substatement instanceof UndeclaredStmtCtx) {
-            finishDeclaration((UndeclaredStmtCtx<?, ?, ?>) substatement);
+        if (substatement instanceof UndeclaredStmtCtx<?, ?, ?> undeclared) {
+            finishDeclaration(undeclared);
         }
     }
 
@@ -424,8 +424,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     @Override
     final E createEffective() {
         final E result = createEffective(definition.getFactory());
-        if (result instanceof MutableStatement) {
-            getRoot().addMutableStmtToSeal((MutableStatement) result);
+        if (result instanceof MutableStatement mutable) {
+            getRoot().addMutableStmtToSeal(mutable);
         }
         return result;
     }
@@ -779,10 +779,10 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(stmt);
-        if (stmt instanceof StatementContextBase) {
-            return childCopyOf((StatementContextBase<?, ?, ?>) stmt, type, targetModule);
-        } else if (stmt instanceof ReplicaStatementContext) {
-            return ((ReplicaStatementContext<?, ?, ?>) stmt).replicaAsChildOf(this);
+        if (stmt instanceof StatementContextBase<?, ?, ?> base) {
+            return childCopyOf(base, type, targetModule);
+        } else if (stmt instanceof ReplicaStatementContext<?, ?, ?> replica) {
+            return replica.replicaAsChildOf(this);
         } else {
             throw new IllegalArgumentException("Unsupported statement " + stmt);
         }
