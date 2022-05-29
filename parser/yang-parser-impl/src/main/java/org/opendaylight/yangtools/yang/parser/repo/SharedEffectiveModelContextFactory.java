@@ -60,18 +60,15 @@ final class SharedEffectiveModelContextFactory implements EffectiveModelContextF
             }
 
             String prop = System.getProperty("org.opendaylight.yangtools.yang.parser.repo.shared-refs", "weak");
-            switch (prop) {
-                case "soft":
-                    REF = SoftReference::new;
-                    break;
-                case "weak":
-                    REF = WeakReference::new;
-                    break;
-                default:
+            REF = switch (prop) {
+                case "soft" -> SoftReference::new;
+                case "weak" -> WeakReference::new;
+                default -> {
                     LOG.warn("Invalid shared-refs \"{}\", defaulting to weak references", prop);
                     prop = "weak";
-                    REF = WeakReference::new;
-            }
+                    yield WeakReference::new;
+                }
+            };
             LOG.info("Using {} references", prop);
         }
 
@@ -119,7 +116,7 @@ final class SharedEffectiveModelContextFactory implements EffectiveModelContextF
     SharedEffectiveModelContextFactory(final @NonNull SharedSchemaRepository repository,
             final @NonNull SchemaContextFactoryConfiguration config) {
         this.repository = requireNonNull(repository);
-        this.assembleSources = new AssembleSources(repository.factory(), config);
+        assembleSources = new AssembleSources(repository.factory(), config);
 
     }
 
