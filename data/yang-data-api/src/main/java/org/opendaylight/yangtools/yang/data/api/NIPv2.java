@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -32,8 +31,8 @@ final class NIPv2 implements Externalizable {
         // For Externalizable
     }
 
-    NIPv2(final NodeIdentifierWithPredicates nid) {
-        this.nip = requireNonNull(nid);
+    NIPv2(final NodeIdentifierWithPredicates nip) {
+        this.nip = requireNonNull(nip);
     }
 
     @Override
@@ -51,20 +50,17 @@ final class NIPv2 implements Externalizable {
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final QName qname = QName.readFrom(in);
         final int size = in.readInt();
-        switch (size) {
-            case 0:
-                nip = NodeIdentifierWithPredicates.of(qname);
-                break;
-            case 1:
-                nip = NodeIdentifierWithPredicates.of(qname, QName.readFrom(in), in.readObject());
-                break;
-            default:
-                final Builder<QName, Object> keys = ImmutableMap.builderWithExpectedSize(size);
+        nip = switch (size) {
+            case 0 -> NodeIdentifierWithPredicates.of(qname);
+            case 1 -> NodeIdentifierWithPredicates.of(qname, QName.readFrom(in), in.readObject());
+            default -> {
+                final var keys = ImmutableMap.<QName, Object>builderWithExpectedSize(size);
                 for (int i = 0; i < size; ++i) {
                     keys.put(QName.readFrom(in), in.readObject());
                 }
-                nip = NodeIdentifierWithPredicates.of(qname, keys.build());
-        }
+                yield NodeIdentifierWithPredicates.of(qname, keys.build());
+            }
+        };
     }
 
     private Object readResolve() {
