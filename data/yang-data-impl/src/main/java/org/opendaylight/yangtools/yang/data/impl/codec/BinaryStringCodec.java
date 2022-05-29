@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
  */
 @Beta
-public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition>
+public abstract sealed class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition>
         implements BinaryCodec<String> {
     private static final class Restricted extends BinaryStringCodec {
         private final LengthConstraint lengthConstraint;
@@ -58,8 +58,8 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
     }
 
     public static BinaryStringCodec from(final BinaryTypeDefinition type) {
-        final java.util.Optional<LengthConstraint> optConstraint = type.getLengthConstraint();
-        return optConstraint.isPresent() ? new Restricted(type, optConstraint.get()) : new Unrestricted(type);
+        final var optConstraint = type.getLengthConstraint();
+        return optConstraint.isPresent() ? new Restricted(type, optConstraint.orElseThrow()) : new Unrestricted(type);
     }
 
     @Override
