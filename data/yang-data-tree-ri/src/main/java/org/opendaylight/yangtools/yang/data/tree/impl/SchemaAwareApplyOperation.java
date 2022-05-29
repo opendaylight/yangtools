@@ -52,23 +52,22 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         if (!belongsToTree(treeConfig.getTreeType(), schemaNode)) {
             throw new ExcludedDataSchemaNodeException(schemaNode + " does not belong to configuration tree");
         }
-        if (schemaNode instanceof ContainerSchemaNode) {
-            return ContainerModificationStrategy.of((ContainerSchemaNode) schemaNode, treeConfig);
-        } else if (schemaNode instanceof ListSchemaNode) {
-            return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
-        } else if (schemaNode instanceof ChoiceSchemaNode) {
-            return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeConfig);
-        } else if (schemaNode instanceof LeafListSchemaNode) {
-            return MinMaxElementsValidation.from(new LeafSetModificationStrategy((LeafListSchemaNode) schemaNode,
-                treeConfig));
-        } else if (schemaNode instanceof LeafSchemaNode) {
-            return new ValueNodeModificationStrategy<>(LeafNode.class, (LeafSchemaNode) schemaNode);
-        } else if (schemaNode instanceof AnydataSchemaNode) {
-            return new ValueNodeModificationStrategy<>(AnydataNode.class, (AnydataSchemaNode) schemaNode);
-        } else if (schemaNode instanceof AnyxmlSchemaNode) {
-            return new ValueNodeModificationStrategy<>(AnyxmlNode.class, (AnyxmlSchemaNode) schemaNode);
-        } else if (schemaNode instanceof SchemaContext) {
-            return new StructuralContainerModificationStrategy((SchemaContext) schemaNode, treeConfig);
+        if (schemaNode instanceof ContainerSchemaNode container) {
+            return ContainerModificationStrategy.of(container, treeConfig);
+        } else if (schemaNode instanceof ListSchemaNode list) {
+            return fromListSchemaNode(list, treeConfig);
+        } else if (schemaNode instanceof ChoiceSchemaNode choice) {
+            return new ChoiceModificationStrategy(choice, treeConfig);
+        } else if (schemaNode instanceof LeafListSchemaNode leafList) {
+            return MinMaxElementsValidation.from(new LeafSetModificationStrategy(leafList, treeConfig));
+        } else if (schemaNode instanceof LeafSchemaNode leaf) {
+            return new ValueNodeModificationStrategy<>(LeafNode.class, leaf);
+        } else if (schemaNode instanceof AnydataSchemaNode anydata) {
+            return new ValueNodeModificationStrategy<>(AnydataNode.class, anydata);
+        } else if (schemaNode instanceof AnyxmlSchemaNode anyxml) {
+            return new ValueNodeModificationStrategy<>(AnyxmlNode.class, anyxml);
+        } else if (schemaNode instanceof SchemaContext context) {
+            return new StructuralContainerModificationStrategy(context, treeConfig);
         } else {
             throw new IllegalStateException("Unsupported schema " + schemaNode);
         }
@@ -126,23 +125,15 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
-            case DELETE:
-                checkDeleteApplicable(modification, current);
-                break;
-            case TOUCH:
-                checkTouchApplicable(path, modification, current, version);
-                break;
-            case WRITE:
-                checkWriteApplicable(path, modification, current, version);
-                break;
-            case MERGE:
-                checkMergeApplicable(path, modification, current, version);
-                break;
-            case NONE:
-                break;
-            default:
-                throw new UnsupportedOperationException(
-                    "Suplied modification type " + modification.getOperation() + " is not supported.");
+            case DELETE -> checkDeleteApplicable(modification, current);
+            case TOUCH -> checkTouchApplicable(path, modification, current, version);
+            case WRITE -> checkWriteApplicable(path, modification, current, version);
+            case MERGE -> checkMergeApplicable(path, modification, current, version);
+            case NONE -> {
+                // No-op
+            }
+            default -> throw new UnsupportedOperationException(
+                "Suplied modification type " + modification.getOperation() + " is not supported.");
         }
     }
 
@@ -224,17 +215,19 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     @Override
     Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> currentMeta,
             final Version version) {
-        switch (modification.getOperation()) {
-            case DELETE:
+        return switch (modification.getOperation()) {
+            case DELETE -> {
                 // Deletion of a non-existing node is a no-op, report it as such
                 modification.resolveModificationType(currentMeta.isPresent() ? ModificationType.DELETE
                         : ModificationType.UNMODIFIED);
-                return modification.setSnapshot(Optional.empty());
-            case TOUCH:
+                yield modification.setSnapshot(Optional.empty());
+            }
+            case TOUCH -> {
                 checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s", modification);
-                return modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.get(),
+                yield modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.orElseThrow(),
                     version)));
-            case MERGE:
+            }
+            case MERGE -> {
                 final TreeNode result;
 
                 if (!currentMeta.isPresent()) {
@@ -248,17 +241,18 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
                     result = applyMerge(modification, currentMeta.get(), version);
                 }
 
-                return modification.setSnapshot(Optional.of(result));
-            case WRITE:
+                yield modification.setSnapshot(Optional.of(result));
+            }
+            case WRITE -> {
                 modification.resolveModificationType(ModificationType.WRITE);
-                return modification.setSnapshot(Optional.of(applyWrite(modification,
+                yield modification.setSnapshot(Optional.of(applyWrite(modification,
                     verifyNotNull(modification.getWrittenValue()), currentMeta, version)));
-            case NONE:
+            }
+            case NONE -> {
                 modification.resolveModificationType(ModificationType.UNMODIFIED);
-                return currentMeta;
-            default:
-                throw new IllegalArgumentException("Provided modification type is not supported.");
-        }
+                yield currentMeta;
+            }
+        };
     }
 
     /**
