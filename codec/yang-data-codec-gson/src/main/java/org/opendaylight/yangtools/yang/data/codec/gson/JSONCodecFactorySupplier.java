@@ -94,12 +94,12 @@ public enum JSONCodecFactorySupplier {
             int ret = 0;
             for (var entry : parent.getAll(DataTreeNamespace.class).entrySet()) {
                 final var child = entry.getValue();
-                if (child instanceof DataTreeAwareEffectiveStatement) {
+                if (child instanceof DataTreeAwareEffectiveStatement<?, ?> dataTree) {
                     stack.enterDataTree(entry.getKey());
-                    ret += codecsForChildren(lazy, stack, (DataTreeAwareEffectiveStatement<?, ?>) child);
+                    ret += codecsForChildren(lazy, stack, dataTree);
                     stack.exit();
-                } else if (child instanceof TypedDataSchemaNode) {
-                    lazy.codecFor((TypedDataSchemaNode) child, stack);
+                } else if (child instanceof TypedDataSchemaNode typed) {
+                    lazy.codecFor(typed, stack);
                     ++ret;
                 }
             }
