@@ -82,25 +82,6 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         }
     }
 
-    private enum Quoting {
-        /**
-         * No quoting necessary.
-         */
-        NONE,
-        /**
-         * Argument is empty, quote an empty string.
-         */
-        EMPTY,
-        /**
-         * Quote on the same line.
-         */
-        SIMPLE,
-        /**
-         * Quote starting on next line.
-         */
-        MULTILINE;
-    }
-
     /*
      * We normally have up to 10 strings:
      *               <indent>
@@ -227,60 +208,41 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
     private void addArgument(final StatementDefinition def, final @Nullable String arg) {
         if (arg == null) {
             // No argument, nothing to do
-            return;
-        }
+        } else if (arg.isEmpty()) {
+            // Argument is empty, quote an empty string.
+            strings.add(" \"\"");
+        } else if (QUOTE_MULTILINE_STATEMENTS.contains(def) || arg.indexOf('\n') != -1) {
+            // Quote starting on next line.
+            strings.add("\n");
+            addIndent();
+            strings.add(INDENT + '\"');
 
-        switch (quoteKind(def, arg)) {
-            case EMPTY:
-                strings.add(" \"\"");
-                break;
-            case NONE:
-                strings.add(" ");
-                strings.add(arg);
-                break;
-            case SIMPLE:
-                strings.add(" \"");
-                strings.add(DQUOT_MATCHER.replaceFrom(arg, "\\\""));
-                strings.add("\"");
-                break;
-            case MULTILINE:
+            final Iterator<String> it = NEWLINE_SPLITTER.split(DQUOT_MATCHER.replaceFrom(arg, "\\\"")).iterator();
+            final String first = it.next();
+            if (!first.isEmpty()) {
+                strings.add(first);
+            }
+
+            while (it.hasNext()) {
                 strings.add("\n");
-                addIndent();
-                strings.add(INDENT + '\"');
-
-                final Iterator<String> it = NEWLINE_SPLITTER.split(DQUOT_MATCHER.replaceFrom(arg, "\\\"")).iterator();
-                final String first = it.next();
-                if (!first.isEmpty()) {
-                    strings.add(first);
+                final String str = it.next();
+                if (!str.isEmpty()) {
+                    addIndent();
+                    strings.add(INDENT + ' ');
+                    strings.add(str);
                 }
-
-                while (it.hasNext()) {
-                    strings.add("\n");
-                    final String str = it.next();
-                    if (!str.isEmpty()) {
-                        addIndent();
-                        strings.add(INDENT + ' ');
-                        strings.add(str);
-                    }
-                }
-                strings.add("\"");
-                break;
-            default:
-                throw new IllegalStateException("Illegal quoting for " + def + " argument \"" + arg + "\"");
+            }
+            strings.add("\"");
+        } else if (NEED_QUOTE_MATCHER.matchesAnyOf(arg) || arg.contains("//") || arg.contains("/*")
+            || arg.contains("*/")) {
+            // Quote on the same line.
+            strings.add(" \"");
+            strings.add(DQUOT_MATCHER.replaceFrom(arg, "\\\""));
+            strings.add("\"");
+        } else {
+            // No quoting necessary.
+            strings.add(" ");
+            strings.add(arg);
         }
-    }
-
-    private static Quoting quoteKind(final StatementDefinition def, final String str) {
-        if (str.isEmpty()) {
-            return Quoting.EMPTY;
-        }
-        if (QUOTE_MULTILINE_STATEMENTS.contains(def) || str.indexOf('\n') != -1) {
-            return Quoting.MULTILINE;
-        }
-        if (NEED_QUOTE_MATCHER.matchesAnyOf(str) || str.contains("//") || str.contains("/*") || str.contains("*/")) {
-            return Quoting.SIMPLE;
-        }
-
-        return Quoting.NONE;
     }
 }
