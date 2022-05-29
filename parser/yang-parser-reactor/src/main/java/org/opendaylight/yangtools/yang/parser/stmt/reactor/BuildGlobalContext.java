@@ -163,11 +163,9 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
             final NamespaceBehaviour<K, V, N> potentialRaw) {
-        if (potentialRaw instanceof DerivedNamespaceBehaviour) {
-            final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(
-                    (DerivedNamespaceBehaviour) potentialRaw);
-            getNamespaceBehaviour(((DerivedNamespaceBehaviour) potentialRaw).getDerivedFrom()).addDerivedNamespace(
-                    derivedContext);
+        if (potentialRaw instanceof DerivedNamespaceBehaviour derived) {
+            final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(derived);
+            getNamespaceBehaviour(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);
             return derivedContext;
         }
         return new SimpleNamespaceContext<>(potentialRaw);

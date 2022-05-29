@@ -299,16 +299,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     private String refString() {
         final int current = refcount;
-        switch (current) {
-            case REFCOUNT_DEFUNCT:
-                return "DEFUNCT";
-            case REFCOUNT_SWEEPING:
-                return "SWEEPING";
-            case REFCOUNT_SWEPT:
-                return "SWEPT";
-            default:
-                return String.valueOf(refcount);
-        }
+        return switch (current) {
+            case REFCOUNT_DEFUNCT -> "DEFUNCT";
+            case REFCOUNT_SWEEPING -> "SWEEPING";
+            case REFCOUNT_SWEPT -> "SWEPT";
+            default -> String.valueOf(refcount);
+        };
     }
 
     /**
@@ -657,17 +653,17 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
 
         final Object argument = argument();
-        if (argument instanceof QName) {
-            return ((QName) argument).getModule();
+        if (argument instanceof QName qname) {
+            return qname.getModule();
         }
-        if (argument instanceof String) {
+        if (argument instanceof String str) {
             // FIXME: This may yield illegal argument exceptions
-            return StmtContextUtils.qnameFromArgument(getOriginalCtx().orElse(this), (String) argument).getModule();
+            return StmtContextUtils.qnameFromArgument(getOriginalCtx().orElse(this), str).getModule();
         }
-        if (argument instanceof SchemaNodeIdentifier
+        if (argument instanceof SchemaNodeIdentifier sni
                 && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
                         || producesDeclared(DeviationStatement.class))) {
-            return ((SchemaNodeIdentifier) argument).lastNodeIdentifier().getModule();
+            return sni.lastNodeIdentifier().getModule();
         }
 
         return coerceParent().effectiveNamespace();
