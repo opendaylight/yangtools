@@ -42,19 +42,9 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  * the tree.
  */
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
-    static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = input -> {
-        requireNonNull(input);
-        switch (input.getOperation()) {
-            case DELETE:
-            case MERGE:
-            case WRITE:
-                return true;
-            case TOUCH:
-            case NONE:
-                return false;
-            default:
-                throw new IllegalArgumentException("Unhandled modification type " + input.getOperation());
-        }
+    static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = input -> switch (input.getOperation()) {
+        case DELETE, MERGE, WRITE -> true;
+        case TOUCH, NONE -> false;
     };
 
     private final Map<PathArgument, ModifiedNode> children;
@@ -77,7 +67,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             final ChildTrackingPolicy childPolicy) {
         this.identifier = identifier;
         this.original = original;
-        this.children = childPolicy.createMap();
+        children = childPolicy.createMap();
     }
 
     @Override
@@ -143,20 +133,15 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     private Optional<? extends TreeNode> findOriginalMetadata(final @NonNull PathArgument child,
             final Version modVersion) {
-        switch (operation) {
-            case DELETE:
+        return switch (operation) {
+            case DELETE ->
                 // DELETE implies non-presence
-                return Optional.empty();
-            case NONE:
-            case TOUCH:
-            case MERGE:
-                return metadataFromSnapshot(child);
-            case WRITE:
+                Optional.empty();
+            case NONE, TOUCH, MERGE -> metadataFromSnapshot(child);
+            case WRITE ->
                 // WRITE implies presence based on written data
-                return metadataFromData(child, modVersion);
-            default:
-                throw new IllegalStateException("Unhandled node operation " + operation);
-        }
+                metadataFromData(child, modVersion);
+        };
     }
 
     /**
@@ -213,37 +198,15 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * Records a delete for associated node.
      */
     void delete() {
-        final LogicalOperation newType;
-
-        switch (operation) {
-            case DELETE:
-            case NONE:
-                // We need to record this delete.
-                newType = LogicalOperation.DELETE;
-                break;
-            case MERGE:
-                // In case of merge - delete needs to be recored and must not to be changed into NONE, because lazy
-                // expansion of parent MERGE node would reintroduce it again.
-                newType = LogicalOperation.DELETE;
-                break;
-            case TOUCH:
-            case WRITE:
-                /*
-                 * We are canceling a previous modification. This is a bit tricky, as the original write may have just
-                 * introduced the data, or it may have modified it.
-                 *
-                 * As documented in BUG-2470, a delete of data introduced in this transaction needs to be turned into
-                 * a no-op.
-                 */
-                newType = original.isPresent() ? LogicalOperation.DELETE : LogicalOperation.NONE;
-                break;
-            default:
-                throw new IllegalStateException("Unhandled deletion of node with " + operation);
-        }
+        final LogicalOperation newType = switch (operation) {
+            case DELETE, NONE -> LogicalOperation.DELETE;
+            case MERGE -> LogicalOperation.DELETE;
+            case TOUCH, WRITE -> original.isPresent() ? LogicalOperation.DELETE : LogicalOperation.NONE;
+        };
 
         clearSnapshot();
         children.clear();
-        this.value = null;
+        value = null;
         updateOperationType(newType);
     }
 
@@ -268,13 +231,13 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         writtenOriginal = null;
 
         switch (operation) {
-            case TOUCH:
+            case TOUCH -> {
                 // A TOUCH node without any children is a no-op
                 if (children.isEmpty()) {
                     updateOperationType(LogicalOperation.NONE);
                 }
-                break;
-            case WRITE:
+            }
+            case WRITE -> {
                 // A WRITE can collapse all of its children
                 if (!children.isEmpty()) {
                     value = schema.apply(this, getOriginal(), version).map(TreeNode::getData).orElse(null);
@@ -287,9 +250,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 } else {
                     schema.fullVerifyStructure(value);
                 }
-                break;
-            default:
-                break;
+            }
+            default -> {
+                // No-op
+            }
         }
     }
 
@@ -336,7 +300,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param newValue New node value
      */
     void updateValue(final LogicalOperation type, final NormalizedNode newValue) {
-        this.value = requireNonNull(newValue);
+        value = requireNonNull(newValue);
         updateOperationType(type);
     }
 
@@ -358,9 +322,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     void setValidatedNode(final ModificationApplyOperation op, final Optional<? extends TreeNode> current,
             final Optional<? extends TreeNode> node) {
-        this.validatedOp = requireNonNull(op);
-        this.validatedCurrent = requireNonNull(current);
-        this.validatedNode = requireNonNull(node);
+        validatedOp = requireNonNull(op);
+        validatedCurrent = requireNonNull(current);
+        validatedNode = requireNonNull(node);
     }
 
     /**
