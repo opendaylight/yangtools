@@ -231,19 +231,17 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         }
 
         switch (quoteKind(def, arg)) {
-            case EMPTY:
-                strings.add(" \"\"");
-                break;
-            case NONE:
+            case EMPTY -> strings.add(" \"\"");
+            case NONE -> {
                 strings.add(" ");
                 strings.add(arg);
-                break;
-            case SIMPLE:
+            }
+            case SIMPLE -> {
                 strings.add(" \"");
                 strings.add(DQUOT_MATCHER.replaceFrom(arg, "\\\""));
                 strings.add("\"");
-                break;
-            case MULTILINE:
+            }
+            case MULTILINE -> {
                 strings.add("\n");
                 addIndent();
                 strings.add(INDENT + '\"');
@@ -264,9 +262,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
                     }
                 }
                 strings.add("\"");
-                break;
-            default:
-                throw new IllegalStateException("Illegal quoting for " + def + " argument \"" + arg + "\"");
+            }
         }
     }
 

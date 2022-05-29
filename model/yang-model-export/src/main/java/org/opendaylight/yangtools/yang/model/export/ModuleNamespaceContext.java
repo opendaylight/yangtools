@@ -37,8 +37,8 @@ final class ModuleNamespaceContext implements NamespaceContext {
     private final Map<QNameModule, @NonNull String> moduleToPrefix;
 
     ModuleNamespaceContext(final ModuleEffectiveStatement module) {
-        this.prefixToModule = requireNonNull(module.getAll(PrefixToEffectiveModuleNamespace.class));
-        this.moduleToPrefix = requireNonNull(module.getAll(QNameModuleToPrefixNamespace.class));
+        prefixToModule = requireNonNull(module.getAll(PrefixToEffectiveModuleNamespace.class));
+        moduleToPrefix = requireNonNull(module.getAll(QNameModuleToPrefixNamespace.class));
 
         final Builder<String, String> namespaces = ImmutableListMultimap.builder();
         for (Entry<QNameModule, @NonNull String> e : moduleToPrefix.entrySet()) {
@@ -51,51 +51,43 @@ final class ModuleNamespaceContext implements NamespaceContext {
     public String getNamespaceURI(final String prefix) {
         checkArgument(prefix != null);
 
-        switch (prefix) {
-            case XMLConstants.DEFAULT_NS_PREFIX:
-                return YangConstants.RFC6020_YIN_NAMESPACE_STRING;
-            case XMLConstants.XML_NS_PREFIX:
-                return XMLConstants.XML_NS_URI;
-            case XMLConstants.XMLNS_ATTRIBUTE:
-                return XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-            default:
+        return switch (prefix) {
+            case XMLConstants.DEFAULT_NS_PREFIX ->YangConstants.RFC6020_YIN_NAMESPACE_STRING;
+            case XMLConstants.XML_NS_PREFIX -> XMLConstants.XML_NS_URI;
+            case XMLConstants.XMLNS_ATTRIBUTE -> XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
+            default -> {
                 final ModuleEffectiveStatement module = prefixToModule.get(prefix);
-                return module != null ? module.localQNameModule().getNamespace().toString()
-                        : XMLConstants.NULL_NS_URI;
-        }
+                yield module != null ? module.localQNameModule().getNamespace().toString() : XMLConstants.NULL_NS_URI;
+            }
+        };
     }
 
     @Override
     public String getPrefix(final String namespaceURI) {
         checkArgument(namespaceURI != null);
 
-        switch (namespaceURI) {
-            case YangConstants.RFC6020_YIN_NAMESPACE_STRING:
-                return XMLConstants.DEFAULT_NS_PREFIX;
-            case XMLConstants.XML_NS_URI:
-                return XMLConstants.XML_NS_PREFIX;
-            case XMLConstants.XMLNS_ATTRIBUTE_NS_URI:
-                return XMLConstants.XMLNS_ATTRIBUTE;
-            default:
+        return switch (namespaceURI) {
+            case YangConstants.RFC6020_YIN_NAMESPACE_STRING -> XMLConstants.DEFAULT_NS_PREFIX;
+            case XMLConstants.XML_NS_URI -> XMLConstants.XML_NS_PREFIX;
+            case XMLConstants.XMLNS_ATTRIBUTE_NS_URI -> XMLConstants.XMLNS_ATTRIBUTE;
+            default -> {
                 final List<@NonNull String> prefixes = namespaceToPrefix.get(namespaceURI);
-                return prefixes.isEmpty() ? null : prefixes.get(0);
-        }
+                yield prefixes.isEmpty() ? null : prefixes.get(0);
+            }
+        };
     }
 
     @Override
     public Iterator<String> getPrefixes(final String namespaceURI) {
         checkArgument(namespaceURI != null);
 
-        switch (namespaceURI) {
-            case YangConstants.RFC6020_YIN_NAMESPACE_STRING:
-                return Iterators.singletonIterator(XMLConstants.DEFAULT_NS_PREFIX);
-            case XMLConstants.XML_NS_URI:
-                return Iterators.singletonIterator(XMLConstants.XML_NS_PREFIX);
-            case XMLConstants.XMLNS_ATTRIBUTE_NS_URI:
-                return Iterators.singletonIterator(XMLConstants.XMLNS_ATTRIBUTE);
-            default:
-                return namespaceToPrefix.get(namespaceURI).iterator();
-        }
+        return switch (namespaceURI) {
+            case YangConstants.RFC6020_YIN_NAMESPACE_STRING ->
+                Iterators.singletonIterator(XMLConstants.DEFAULT_NS_PREFIX);
+            case XMLConstants.XML_NS_URI -> Iterators.singletonIterator(XMLConstants.XML_NS_PREFIX);
+            case XMLConstants.XMLNS_ATTRIBUTE_NS_URI -> Iterators.singletonIterator(XMLConstants.XMLNS_ATTRIBUTE);
+            default -> namespaceToPrefix.get(namespaceURI).iterator();
+        };
     }
 
     Entry<String, String> prefixAndNamespaceFor(final QNameModule module) {
