@@ -47,14 +47,11 @@ public abstract class ImmutableMapTemplate<K> implements Immutable {
      * @throws IllegalArgumentException if {@code keys} is empty
      */
     public static <K> @NonNull ImmutableMapTemplate<K> ordered(final Collection<K> keys) {
-        switch (keys.size()) {
-            case 0:
-                throw new IllegalArgumentException("Proposed keyset must not be empty");
-            case 1:
-                return SharedSingletonMapTemplate.ordered(keys.iterator().next());
-            default:
-                return ImmutableOffsetMapTemplate.ordered(keys);
-        }
+        return switch (keys.size()) {
+            case 0 -> throw new IllegalArgumentException("Proposed keyset must not be empty");
+            case 1 -> SharedSingletonMapTemplate.ordered(keys.iterator().next());
+            default -> ImmutableOffsetMapTemplate.ordered(keys);
+        };
     }
 
     /**
@@ -69,14 +66,11 @@ public abstract class ImmutableMapTemplate<K> implements Immutable {
      * @throws IllegalArgumentException if {@code keys} is empty
      */
     public static <K> @NonNull ImmutableMapTemplate<K> unordered(final Collection<K> keys) {
-        switch (keys.size()) {
-            case 0:
-                throw new IllegalArgumentException("Proposed keyset must not be empty");
-            case 1:
-                return SharedSingletonMapTemplate.unordered(keys.iterator().next());
-            default:
-                return ImmutableOffsetMapTemplate.unordered(keys);
-        }
+        return switch (keys.size()) {
+            case 0 -> throw new IllegalArgumentException("Proposed keyset must not be empty");
+            case 1 -> SharedSingletonMapTemplate.unordered(keys.iterator().next());
+            default -> ImmutableOffsetMapTemplate.unordered(keys);
+        };
     }
 
     /**

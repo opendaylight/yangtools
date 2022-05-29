@@ -211,24 +211,14 @@ public abstract class DurationStatisticsTracker {
     }
 
     private static String abbreviate(final TimeUnit unit) {
-        switch (unit) {
-            case NANOSECONDS:
-                return "ns";
-            case MICROSECONDS:
-                return "μs";
-            case MILLISECONDS:
-                return "ms";
-            case SECONDS:
-                return "s";
-            case MINUTES:
-                return "m";
-            case HOURS:
-                return "h";
-            case DAYS:
-                return "d";
-            default:
-                LOG.warn("Unhandled time unit {}", unit);
-                return "";
-        }
+        return switch (unit) {
+            case NANOSECONDS -> "ns";
+            case MICROSECONDS -> "μs";
+            case MILLISECONDS -> "ms";
+            case SECONDS -> "s";
+            case MINUTES -> "m";
+            case HOURS -> "h";
+            case DAYS -> "d";
+        };
     }
 }
