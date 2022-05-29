@@ -39,8 +39,7 @@ public final class JsonWriterFactory {
      */
     public static JsonWriter createJsonWriter(final Writer writer, final int indentSize) {
         JsonWriter jsonWriter = new JsonWriter(writer);
-        final String indent = " ".repeat(indentSize);
-        jsonWriter.setIndent(indent);
+        jsonWriter.setIndent(" ".repeat(indentSize));
         return jsonWriter;
     }
 }

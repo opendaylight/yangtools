@@ -91,12 +91,12 @@ public final class JsonParserStream implements Closeable, Flushable {
 
         if (!stack.isEmpty()) {
             final EffectiveStatement<?, ?> parent = stack.currentStatement();
-            if (parent instanceof DataSchemaNode) {
-                parentNode = (DataSchemaNode) parent;
-            } else if (parent instanceof OperationDefinition) {
-                parentNode = OperationAsContainer.of((OperationDefinition) parent);
-            } else if (parent instanceof NotificationDefinition) {
-                parentNode = NotificationAsContainer.of((NotificationDefinition) parent);
+            if (parent instanceof DataSchemaNode data) {
+                parentNode = data;
+            } else if (parent instanceof OperationDefinition oper) {
+                parentNode = OperationAsContainer.of(oper);
+            } else if (parent instanceof NotificationDefinition notif) {
+                parentNode = NotificationAsContainer.of(notif);
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + parent);
             }
@@ -329,8 +329,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                     final QName qname = childDataSchemaNodes.peekLast().getQName();
                     final AbstractNodeDataWithSchema<?> newChild = ((CompositeNodeDataWithSchema<?>) parent)
                             .addChild(childDataSchemaNodes, ChildReusePolicy.NOOP);
-                    if (newChild instanceof AnyXmlNodeDataWithSchema) {
-                        readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
+                    if (newChild instanceof AnyXmlNodeDataWithSchema anyxml) {
+                        readAnyXmlValue(in, anyxml, jsonElementName);
                     } else {
                         stack.enterDataTree(qname);
                         read(in, newChild);
@@ -350,10 +350,10 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private static AbstractNodeDataWithSchema<?> newArrayEntry(final AbstractNodeDataWithSchema<?> parent) {
-        if (!(parent instanceof MultipleEntryDataWithSchema)) {
-            throw new IllegalStateException("Found an unexpected array nested under " + parent.getSchema().getQName());
+        if (parent instanceof MultipleEntryDataWithSchema<?> multiple) {
+            return multiple.newChildEntry();
         }
-        return ((MultipleEntryDataWithSchema<?>) parent).newChildEntry();
+        throw new IllegalStateException("Found an unexpected array nested under " + parent.getSchema().getQName());
     }
 
     private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value) {
@@ -428,10 +428,10 @@ public final class JsonParserStream implements Closeable, Flushable {
             final DataSchemaNode dataSchemaNode) {
         final Set<XMLNamespace> potentialUris = new HashSet<>();
         final Set<ChoiceSchemaNode> choices = new HashSet<>();
-        if (dataSchemaNode instanceof DataNodeContainer) {
-            for (final DataSchemaNode childSchemaNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
-                if (childSchemaNode instanceof ChoiceSchemaNode) {
-                    choices.add((ChoiceSchemaNode)childSchemaNode);
+        if (dataSchemaNode instanceof DataNodeContainer container) {
+            for (final DataSchemaNode childSchemaNode : container.getChildNodes()) {
+                if (childSchemaNode instanceof ChoiceSchemaNode choice) {
+                    choices.add(choice);
                 } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
                     potentialUris.add(childSchemaNode.getQName().getNamespace());
                 }
