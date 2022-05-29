@@ -83,16 +83,10 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof SchemaContextFactoryConfiguration)) {
-            return false;
-        }
-        final SchemaContextFactoryConfiguration other = (SchemaContextFactoryConfiguration) obj;
-        return filter.equals(other.filter) && statementParserMode.equals(other.statementParserMode)
-                && Objects.equals(supportedFeatures, other.supportedFeatures)
-                && Objects.equals(modulesDeviatedByModules, other.modulesDeviatedByModules);
+        return this == obj || obj instanceof SchemaContextFactoryConfiguration other && filter.equals(other.filter)
+            && statementParserMode.equals(other.statementParserMode)
+            && Objects.equals(supportedFeatures, other.supportedFeatures)
+            && Objects.equals(modulesDeviatedByModules, other.modulesDeviatedByModules);
     }
 
     @Override

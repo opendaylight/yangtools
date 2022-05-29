@@ -161,16 +161,14 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     }
 
     private static @Nullable YinDomSchemaSource castSchemaSource(final YinXmlSchemaSource xmlSchemaSource) {
-        if (xmlSchemaSource instanceof YinDomSchemaSource) {
-            return (YinDomSchemaSource) xmlSchemaSource;
+        if (xmlSchemaSource instanceof YinDomSchemaSource yinDom) {
+            return yinDom;
         }
 
         final Source source = xmlSchemaSource.getSource();
-        if (source instanceof DOMSource) {
-            return create(xmlSchemaSource.getIdentifier(), (DOMSource) source,
-                xmlSchemaSource.getSymbolicName().orElse(null));
+        if (source instanceof DOMSource dom) {
+            return create(xmlSchemaSource.getIdentifier(), dom, xmlSchemaSource.getSymbolicName().orElse(null));
         }
-
         return null;
     }
 
