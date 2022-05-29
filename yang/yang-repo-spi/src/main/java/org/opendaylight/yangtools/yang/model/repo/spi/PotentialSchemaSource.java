@@ -118,14 +118,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof PotentialSchemaSource)) {
-            return false;
-        }
-        final PotentialSchemaSource<?> other = (PotentialSchemaSource<?>) obj;
-        return cost == other.cost && representation.equals(other.representation)
-                && sourceIdentifier.equals(other.sourceIdentifier);
+        return this == obj || obj instanceof PotentialSchemaSource<?> other && cost == other.cost
+            && representation.equals(other.representation) && sourceIdentifier.equals(other.sourceIdentifier);
     }
 }
