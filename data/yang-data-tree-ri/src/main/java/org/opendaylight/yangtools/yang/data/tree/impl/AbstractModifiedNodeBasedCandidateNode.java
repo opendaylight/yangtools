@@ -76,31 +76,26 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
 
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
-        switch (mod.getModificationType()) {
-            case APPEARED:
-            case DISAPPEARED:
-            case SUBTREE_MODIFIED:
-                return Collections2.transform(mod.getChildren(), this::childNode);
-            case UNMODIFIED:
+        return switch (mod.getModificationType()) {
+            case APPEARED, DISAPPEARED, SUBTREE_MODIFIED -> Collections2.transform(mod.getChildren(), this::childNode);
+            case UNMODIFIED -> {
                 // Unmodified node, but we still need to resolve potential children. canHaveChildren returns
                 // false if both arguments are null.
                 if (!canHaveChildren(oldMeta, newMeta)) {
-                    return ImmutableList.of();
+                    yield ImmutableList.of();
                 }
-
-                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).body(),
+                yield Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).body(),
                     DataTreeCandidateNodes::unmodified);
-            case DELETE:
-            case WRITE:
+            }
+            case DELETE, WRITE -> {
                 // This is unusual, the user is requesting we follow into an otherwise-terminal node.
                 // We need to fudge things based on before/after data to correctly fake the expectations.
                 if (!canHaveChildren(oldMeta, newMeta)) {
-                    return ImmutableList.of();
+                    yield ImmutableList.of();
                 }
-                return DataTreeCandidateNodes.containerDelta(getContainer(oldMeta), getContainer(newMeta));
-            default:
-                throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
-        }
+                yield DataTreeCandidateNodes.containerDelta(getContainer(oldMeta), getContainer(newMeta));
+            }
+        };
     }
 
     @Override
@@ -124,27 +119,26 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
 
     @Override
     public final Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument identifier) {
-        switch (mod.getModificationType()) {
-            case APPEARED:
-            case DISAPPEARED:
-            case SUBTREE_MODIFIED:
+        return switch (mod.getModificationType()) {
+            case APPEARED, DISAPPEARED, SUBTREE_MODIFIED -> {
                 final ModifiedNode child = mod.childByArg(identifier);
-                return child == null ? Optional.empty() : Optional.of(childNode(child));
-            case UNMODIFIED:
+                yield child == null ? Optional.empty() : Optional.of(childNode(child));
+            }
+            case UNMODIFIED -> {
                 if (!canHaveChildren(oldMeta, newMeta)) {
-                    return Optional.empty();
+                    yield Optional.empty();
                 }
-                return getContainer(newMeta != null ? newMeta : oldMeta).findChildByArg(identifier)
-                        .map(DataTreeCandidateNodes::unmodified);
-            case DELETE:
-            case WRITE:
+                yield getContainer(newMeta != null ? newMeta : oldMeta)
+                    .findChildByArg(identifier)
+                    .map(DataTreeCandidateNodes::unmodified);
+            }
+            case DELETE, WRITE -> {
                 if (!canHaveChildren(oldMeta, newMeta)) {
-                    return Optional.empty();
+                    yield Optional.empty();
                 }
-                return DataTreeCandidateNodes.containerDelta(getContainer(oldMeta), getContainer(newMeta), identifier);
-            default:
-                throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
-        }
+                yield DataTreeCandidateNodes.containerDelta(getContainer(oldMeta), getContainer(newMeta), identifier);
+            }
+        };
     }
 
     private static final class ChildNode extends AbstractModifiedNodeBasedCandidateNode {
@@ -160,7 +154,6 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{mod = " + this.mod + ", oldMeta = " + this.oldMeta + ", newMeta = "
-                + this.newMeta + "}";
+        return getClass().getSimpleName() + "{mod = " + mod + ", oldMeta = " + oldMeta + ", newMeta = " + newMeta + "}";
     }
 }
