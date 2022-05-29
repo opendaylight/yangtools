@@ -135,12 +135,13 @@ public final class ContainerSchemaNodes {
 
         @Override
         public Collection<? extends DataSchemaNode> getChildNodes() {
+            // FIXME: input/output are always present, clean this up
             final InputSchemaNode input = rpcDefinition.getInput();
             final OutputSchemaNode output = rpcDefinition.getOutput();
             if (input == null && output == null) {
                 return ImmutableList.of();
             } else if (input != null && output != null) {
-                return ImmutableList.of(input,output);
+                return ImmutableList.of(input, output);
             } else if (input != null) {
                 return ImmutableList.of(input);
             } else {
@@ -150,14 +151,12 @@ public final class ContainerSchemaNodes {
 
         @Override
         public DataSchemaNode dataChildByName(final QName name) {
-            switch (name.getLocalName()) {
-                case "input":
-                    return rpcDefinition.getInput();
-                case "output":
-                    return rpcDefinition.getOutput();
-                default:
-                    return null;
-            }
+            // FIXME: also check namespace
+            return switch (name.getLocalName()) {
+                case "input" -> rpcDefinition.getInput();
+                case "output" -> rpcDefinition.getOutput();
+                default -> null;
+            };
         }
 
         @Override

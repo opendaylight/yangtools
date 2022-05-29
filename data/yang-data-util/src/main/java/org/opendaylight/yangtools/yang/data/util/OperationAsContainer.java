@@ -63,18 +63,15 @@ public class OperationAsContainer extends AbstractAsContainer implements Operati
 
     @Override
     public final DataSchemaNode dataChildByName(final QName name) {
-        if (!name.getModule().equals(getQName().getModule())) {
-            return null;
+        if (name.getModule().equals(getQName().getModule())) {
+            return switch (name.getLocalName()) {
+                case "input" -> delegate.getInput();
+                case "output" -> delegate.getOutput();
+                default -> null;
+            };
         }
+        return null;
 
-        switch (name.getLocalName()) {
-            case "input":
-                return delegate.getInput();
-            case "output":
-                return delegate.getOutput();
-            default:
-                return null;
-        }
     }
 
     @Override
