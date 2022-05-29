@@ -58,9 +58,8 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
 
     Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final NamespaceStmtCtx parent,
             final StatementDefinition stmtDef) {
-        return support instanceof ImplicitParentAwareStatementSupport
-                ? ((ImplicitParentAwareStatementSupport) support).getImplicitParentFor(parent, stmtDef)
-                    : Optional.empty();
+        return support instanceof ImplicitParentAwareStatementSupport implicit
+                ? implicit.getImplicitParentFor(parent, stmtDef) : Optional.empty();
     }
 
     void onStatementAdded(final Mutable<A, D, E> stmt) {
