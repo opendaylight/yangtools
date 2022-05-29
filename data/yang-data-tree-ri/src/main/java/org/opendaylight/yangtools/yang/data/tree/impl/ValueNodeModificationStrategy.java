@@ -78,15 +78,10 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     @Override
     void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
         switch (node.getOperation()) {
-            // Delete performs a data dependency check on existence of the node. Performing a merge
-            // on DELETE means we
+            // Delete performs a data dependency check on existence of the node. Performing a merge on DELETE means we
             // are really performing a write.
-            case DELETE:
-            case WRITE:
-                node.write(value);
-                break;
-            default:
-                node.updateValue(LogicalOperation.MERGE, value);
+            case DELETE, WRITE -> node.write(value);
+            default -> node.updateValue(LogicalOperation.MERGE, value);
         }
     }
 
