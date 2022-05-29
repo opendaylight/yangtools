@@ -102,14 +102,13 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
             return false;
         }
 
-        switch (greatGrandParent.getRawArgument()) {
-            case "get":
-            case "get-config":
-                return true;
-            default:
+        return switch (greatGrandParent.getRawArgument()) {
+            case "get", "get-config" -> true;
+            default -> {
                 LOG.debug("Great-grandparent is not named 'get' nor 'get-config, ignoring get-filter-element-attributes"
                     + " statement");
-                return false;
-        }
+                yield false;
+            }
+        };
     }
 }
