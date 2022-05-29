@@ -625,16 +625,11 @@ public final class DeclaredStatements {
     }
 
     private static StatusStatement createStatus(final Status argument) {
-        switch (argument) {
-            case CURRENT:
-                return EmptyStatusStatement.CURRENT;
-            case DEPRECATED:
-                return EmptyStatusStatement.DEPRECATED;
-            case OBSOLETE:
-                return EmptyStatusStatement.OBSOLETE;
-            default:
-                throw new IllegalStateException("Unhandled argument " + argument);
-        }
+        return switch (argument) {
+            case CURRENT -> EmptyStatusStatement.CURRENT;
+            case DEPRECATED -> EmptyStatusStatement.DEPRECATED;
+            case OBSOLETE -> EmptyStatusStatement.OBSOLETE;
+        };
     }
 
     public static SubmoduleStatement createSubmodule(final String rawArgument, final Unqualified argument,
@@ -700,14 +695,10 @@ public final class DeclaredStatements {
     }
 
     private static YangVersionStatement createYangVersion(final YangVersion argument) {
-        switch (argument) {
-            case VERSION_1:
-                return EmptyYangVersionStatement.VERSION_1;
-            case VERSION_1_1:
-                return EmptyYangVersionStatement.VERSION_1_1;
-            default:
-                throw new IllegalStateException("Unhandled version " + argument);
-        }
+        return switch (argument) {
+            case VERSION_1 -> EmptyYangVersionStatement.VERSION_1;
+            case VERSION_1_1 -> EmptyYangVersionStatement.VERSION_1_1;
+        };
     }
 
     public static YinElementStatement createYinElement(final boolean argument) {
