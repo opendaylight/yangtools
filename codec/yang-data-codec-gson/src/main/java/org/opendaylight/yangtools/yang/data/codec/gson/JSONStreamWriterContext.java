@@ -68,7 +68,7 @@ abstract class JSONStreamWriterContext {
         final QNameModule module = qname.getModule();
         if (!module.getNamespace().equals(getNamespace())) {
             final Optional<String> modules = schema.findModule(module).map(Module::getName);
-            checkArgument(modules.isPresent(), "Could not find module for namespace {}", module);
+            checkArgument(modules.isPresent(), "Could not find module for namespace %s", module);
             sb.append(modules.get()).append(':');
         }
         sb.append(qname.getLocalName());
