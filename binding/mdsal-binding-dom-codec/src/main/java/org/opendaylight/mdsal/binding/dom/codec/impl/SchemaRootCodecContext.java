@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
-import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -178,17 +177,11 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 final var rpcName = key.firstNodeIdentifier();
                 final var context = factory().getRuntimeContext();
 
-                final Class<? extends DataContainer> container;
-                switch (key.lastNodeIdentifier().getLocalName()) {
-                    case "input":
-                        container = context.getRpcInput(rpcName);
-                        break;
-                    case "output":
-                        container = context.getRpcOutput(rpcName);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unhandled path " + key);
-                }
+                final Class<? extends DataContainer> container = switch (key.lastNodeIdentifier().getLocalName()) {
+                    case "input" -> context.getRpcInput(rpcName);
+                    case "output" -> context.getRpcOutput(rpcName);
+                    default -> throw new IllegalArgumentException("Unhandled path " + key);
+                };
 
                 return getRpc(container);
             }
@@ -276,8 +269,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     DataContainerCodecContext<?, ?> createDataTreeChildContext(final Class<? extends DataObject> key) {
         final RuntimeType childSchema = childNonNull(getType().bindingChild(JavaTypeName.create(key)), key,
             "%s is not top-level item.", key);
-        if (childSchema instanceof CompositeRuntimeType && childSchema instanceof DataRuntimeType) {
-            return DataContainerCodecPrototype.from(key, (CompositeRuntimeType) childSchema, factory()).get();
+        if (childSchema instanceof CompositeRuntimeType composite && childSchema instanceof DataRuntimeType) {
+            return DataContainerCodecPrototype.from(key, composite, factory()).get();
         }
         throw IncorrectNestingException.create("%s is not a valid data tree child of %s", key, this);
     }
@@ -322,15 +315,12 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     private static @Nullable ContainerLike getRpcDataSchema(final @NonNull RpcDefinition rpc,
             final @NonNull QName qname) {
         requireNonNull(rpc, "Rpc Schema must not be null");
-        switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
-            case "input":
-                return rpc.getInput();
-            case "output":
-                return rpc.getOutput();
-            default:
-                throw new IllegalArgumentException("Supplied qname " + qname
-                        + " does not represent rpc input or output.");
-        }
+        return switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
+            case "input" -> rpc.getInput();
+            case "output" -> rpc.getOutput();
+            default -> throw new IllegalArgumentException(
+                "Supplied qname " + qname + " does not represent rpc input or output.");
+        };
     }
 
     ChoiceNodeCodecContext<?> createChoiceDataContext(final Class<? extends DataObject> caseType) {
@@ -341,7 +331,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
         final DataContainerCodecContext<?, ChoiceRuntimeType> choice = DataContainerCodecPrototype.from(choiceClass,
             (ChoiceRuntimeType)schema, factory()).get();
-        Verify.verify(choice instanceof ChoiceNodeCodecContext);
+        verify(choice instanceof ChoiceNodeCodecContext);
         return (ChoiceNodeCodecContext<?>) choice;
     }
 
@@ -380,14 +370,12 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     private static Class<?> findCaseChoice(final Class<? extends DataObject> caseClass) {
         for (Type type : caseClass.getGenericInterfaces()) {
-            if (type instanceof Class) {
-                final Class<?> typeClass = (Class<?>) type;
+            if (type instanceof Class<?> typeClass) {
                 if (ChoiceIn.class.isAssignableFrom(typeClass)) {
                     return typeClass.asSubclass(ChoiceIn.class);
                 }
             }
         }
-
         return null;
     }
 
