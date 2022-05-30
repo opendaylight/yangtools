@@ -46,27 +46,23 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
         final var tmp = children.stream()
             .filter(child -> child.statement() instanceof SchemaTreeEffectiveStatement)
             .toArray(RuntimeType[]::new);
-        switch (tmp.length) {
-            case 0:
-                bySchemaTree = EMPTY;
-                break;
-            case 1:
-                bySchemaTree = tmp[0];
-                break;
-            default:
+        bySchemaTree = switch (tmp.length) {
+            case 0 -> EMPTY;
+            case 1 -> tmp[0];
+            default -> {
                 Arrays.sort(tmp, (o1, o2) -> {
                     final int cmp = extractQName(o1).compareTo(extractQName(o2));
                     verify(cmp != 0, "Type %s conflicts with %s on schema tree", o1, o2);
                     return cmp;
                 });
-                bySchemaTree = tmp;
-        }
+                yield tmp;
+            }
+        };
     }
 
     @Override
     public final RuntimeType schemaTreeChild(final QName qname) {
-        if (bySchemaTree instanceof RuntimeType) {
-            final var tmp = (RuntimeType) bySchemaTree;
+        if (bySchemaTree instanceof RuntimeType tmp) {
             return qname.equals(tmp.statement().argument()) ? tmp : null;
         }
 
