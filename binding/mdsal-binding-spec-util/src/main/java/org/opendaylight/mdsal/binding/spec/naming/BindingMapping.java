@@ -153,22 +153,10 @@ public final class BindingMapping {
         final char[] chars = namespace.toCharArray();
         for (int i = 0; i < chars.length; ++i) {
             switch (chars[i]) {
-                case '/':
-                case ':':
-                case '-':
-                case '@':
-                case '$':
-                case '#':
-                case '\'':
-                case '*':
-                case '+':
-                case ',':
-                case ';':
-                case '=':
-                    chars[i] = '.';
-                    break;
-                default:
+                case '/', ':', '-', '@', '$', '#', '\'', '*', '+', ',', ';', '=' -> chars[i] = '.';
+                default -> {
                     // no-op
+                }
             }
         }
 
