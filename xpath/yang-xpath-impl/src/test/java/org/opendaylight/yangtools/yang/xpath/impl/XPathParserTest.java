@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableBiMap;
 import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -41,7 +41,7 @@ public class XPathParserTest {
 
     private @Nullable AntlrXPathParser parser;
 
-    @Before
+    @BeforeEach
     public void before() {
         parser = new AntlrXPathParser.Unqualified(YangXPathMathMode.IEEE754, CONTEXT, DEFNS);
     }
