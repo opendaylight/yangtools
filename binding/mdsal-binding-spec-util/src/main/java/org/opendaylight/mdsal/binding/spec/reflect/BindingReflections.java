@@ -170,8 +170,8 @@ public final class BindingReflections {
         Type futureType = targetMethod.getGenericReturnType();
         Type rpcResultType = ClassLoaderUtils.getFirstGenericParameter(futureType).orElse(null);
         Type rpcResultArgument = ClassLoaderUtils.getFirstGenericParameter(rpcResultType).orElse(null);
-        if (rpcResultArgument instanceof Class && !Void.class.equals(rpcResultArgument)) {
-            return Optional.of((Class) rpcResultArgument);
+        if (rpcResultArgument instanceof Class cls && !Void.class.equals(rpcResultArgument)) {
+            return Optional.of(cls);
         }
         return Optional.empty();
     }
@@ -510,8 +510,8 @@ public final class BindingReflections {
     }
 
     private static Optional<Type> genericParameter(final Type type, final int offset) {
-        if (type instanceof ParameterizedType) {
-            final Type[] parameters = ((ParameterizedType) type).getActualTypeArguments();
+        if (type instanceof ParameterizedType parameterized) {
+            final Type[] parameters = parameterized.getActualTypeArguments();
             if (parameters.length > offset) {
                 return Optional.of(parameters[offset]);
             }
@@ -543,8 +543,8 @@ public final class BindingReflections {
                 }
 
                 final Object obj = field.get(null);
-                if (obj instanceof QName) {
-                    return Optional.of((QName) obj);
+                if (obj instanceof QName qname) {
+                    return Optional.of(qname);
                 }
             } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 /*
