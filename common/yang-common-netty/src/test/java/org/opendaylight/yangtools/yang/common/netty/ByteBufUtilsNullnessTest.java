@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.common.netty;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.common.Uint8;
 public class ByteBufUtilsNullnessTest {
     private ByteBuf buf;
 
-    @Before
+    @BeforeEach
     public void before() {
         buf = Unpooled.buffer();
     }
