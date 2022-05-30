@@ -132,19 +132,10 @@ public abstract class Generator implements Iterable<Generator> {
 
     final Member ensureMember() {
         if (member == null) {
-            final ClassPlacement placement = classPlacement();
-            switch (placement) {
-                case NONE:
-                    member = Optional.empty();
-                    break;
-                case MEMBER:
-                case PHANTOM:
-                case TOP_LEVEL:
-                    member = Optional.of(createMember(parentDomain()));
-                    break;
-                default:
-                    throw new IllegalStateException("Unhandled placement " + placement);
-            }
+            member = switch (classPlacement()) {
+                case NONE -> Optional.empty();
+                case MEMBER, PHANTOM, TOP_LEVEL -> Optional.of(createMember(parentDomain()));
+            };
         }
         return member.orElse(null);
     }
@@ -166,21 +157,11 @@ public abstract class Generator implements Iterable<Generator> {
             return;
         }
 
-        final ClassPlacement placement = classPlacement();
-        switch (placement) {
-            case NONE:
-            case PHANTOM:
-                result = GeneratorResult.empty();
-                break;
-            case MEMBER:
-                result = GeneratorResult.member(createTypeImpl(requireNonNull(builderFactory)));
-                break;
-            case TOP_LEVEL:
-                result = GeneratorResult.toplevel(createTypeImpl(requireNonNull(builderFactory)));
-                break;
-            default:
-                throw new IllegalStateException("Unhandled placement " + placement);
-        }
+        result = switch (classPlacement()) {
+            case NONE, PHANTOM -> GeneratorResult.empty();
+            case MEMBER -> GeneratorResult.member(createTypeImpl(requireNonNull(builderFactory)));
+            case TOP_LEVEL -> GeneratorResult.toplevel(createTypeImpl(requireNonNull(builderFactory)));
+        };
 
         for (Generator child : this) {
             child.ensureType(builderFactory);
@@ -262,8 +243,8 @@ public abstract class Generator implements Iterable<Generator> {
             }
 
             // if we into a choice we need to follow the hierararchy of that choice
-            if (ancestor instanceof AbstractAugmentGenerator) {
-                final AbstractCompositeGenerator<?, ?> target = ((AbstractAugmentGenerator) ancestor).targetGenerator();
+            if (ancestor instanceof AbstractAugmentGenerator augment) {
+                final AbstractCompositeGenerator<?, ?> target = augment.targetGenerator();
                 if (target instanceof ChoiceGenerator) {
                     ancestor = target;
                     continue;
@@ -301,25 +282,21 @@ public abstract class Generator implements Iterable<Generator> {
 
     static final void annotateDeprecatedIfNecessary(final EffectiveStatement<?, ?> stmt,
             final AnnotableTypeBuilder builder) {
-        if (stmt instanceof WithStatus) {
-            annotateDeprecatedIfNecessary((WithStatus) stmt, builder);
+        if (stmt instanceof WithStatus withStatus) {
+            annotateDeprecatedIfNecessary(withStatus, builder);
         }
     }
 
     static final void annotateDeprecatedIfNecessary(final WithStatus node, final AnnotableTypeBuilder builder) {
         switch (node.getStatus()) {
-            case DEPRECATED:
+            case DEPRECATED ->
                 // FIXME: we really want to use a pre-made annotation
                 builder.addAnnotation(DEPRECATED_ANNOTATION);
-                break;
-            case OBSOLETE:
-                builder.addAnnotation(DEPRECATED_ANNOTATION).addParameter("forRemoval", "true");
-                break;
-            case CURRENT:
+            case OBSOLETE -> builder.addAnnotation(DEPRECATED_ANNOTATION).addParameter("forRemoval", "true");
+            case CURRENT -> {
                 // No-op
-                break;
-            default:
-                throw new IllegalStateException("Unhandled status in " + node);
+            }
+            default -> throw new IllegalStateException("Unhandled status in " + node);
         }
     }
 
