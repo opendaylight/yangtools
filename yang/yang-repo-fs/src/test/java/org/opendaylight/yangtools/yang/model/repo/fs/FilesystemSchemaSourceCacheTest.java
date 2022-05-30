@@ -12,10 +12,10 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -23,23 +23,25 @@ import static org.mockito.Mockito.verify;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
-import com.google.common.io.Files;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -47,7 +49,8 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FilesystemSchemaSourceCacheTest {
     @Mock
     public SchemaSourceRegistry registry;
@@ -56,9 +59,9 @@ public class FilesystemSchemaSourceCacheTest {
 
     public File storageDir;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        storageDir = Files.createTempDir();
+        storageDir = Files.createTempDirectory(null).toFile();
         doReturn(registration).when(registry).registerSchemaSource(any(SchemaSourceProvider.class),
             any(PotentialSchemaSource.class));
     }
@@ -82,9 +85,9 @@ public class FilesystemSchemaSourceCacheTest {
 
         assertThat(fileNames, both(hasItem("test2")).and(hasItem("test@2012-12-12")));
 
-        assertThat(Files.asCharSource(storedFiles.get(0), StandardCharsets.UTF_8).read(),
+        assertThat(Files.readString(storedFiles.get(0).toPath()),
             either(containsString(content)).or(containsString(content2)));
-        assertThat(Files.asCharSource(storedFiles.get(1), StandardCharsets.UTF_8).read(),
+        assertThat(Files.readString(storedFiles.get(1).toPath()),
             either(containsString(content)).or(containsString(content2)));
 
         verify(registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class),
@@ -101,7 +104,11 @@ public class FilesystemSchemaSourceCacheTest {
     }
 
     private static Collection<String> filesToFilenamesWithoutRevision(final List<File> storedFiles) {
-        return Collections2.transform(storedFiles, input -> Files.getNameWithoutExtension(input.getName()));
+        return Collections2.transform(storedFiles, input -> {
+            final String fileName = input.getName();
+            final int dotIndex = fileName.lastIndexOf('.');
+            return dotIndex == -1 ? fileName : fileName.substring(0, dotIndex);
+        });
     }
 
     @Test
@@ -190,7 +197,6 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void test() throws Exception {
-
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(registry,
                 YangTextSchemaSource.class, storageDir);
         final String content = "content1";
@@ -199,14 +205,13 @@ public class FilesystemSchemaSourceCacheTest {
         final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2013-12-12");
         final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         assertNotNull(checked);
+        assertTrue(checked.isDone());
         final YangTextSchemaSource checkedGet = checked.get();
         assertEquals(sourceIdentifier, checkedGet.getIdentifier());
-        assertTrue(checked.isDone());
     }
 
     @Test
     public void test1() throws Exception {
-
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(registry,
                 YangTextSchemaSource.class, storageDir);
         final String content = "content1";

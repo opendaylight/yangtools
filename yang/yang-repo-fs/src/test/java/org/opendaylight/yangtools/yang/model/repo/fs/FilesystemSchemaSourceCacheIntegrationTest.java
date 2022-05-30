@@ -9,19 +9,17 @@ package org.opendaylight.yangtools.yang.model.repo.fs;
 
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -46,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class FilesystemSchemaSourceCacheIntegrationTest {
     @Test
-    public void testWithCacheStartup() throws Exception {
+    public void testWithCacheStartup() throws IOException {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
         class CountingSchemaListener implements SchemaSourceListener {
@@ -100,7 +97,7 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
     }
 
     @Test
-    public void testWithCacheRunning() throws Exception {
+    public void testWithCacheRunning() {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
         final File storageDir = Files.createTempDir();
@@ -138,30 +135,14 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
         final ListenableFuture<EffectiveModelContext> schemaFuture = sharedSchemaRepository
                 .createEffectiveModelContextFactory()
                 .createEffectiveModelContext(runningId);
-        Futures.addCallback(schemaFuture, new FutureCallback<SchemaContext>() {
-            @Override
-            public void onSuccess(final SchemaContext result) {
-                fail("Creation of schema context should fail from non-regular sources");
-            }
 
-            @Override
-            public void onFailure(final Throwable cause) {
-                // Creation of schema context fails, since we do not provide regular sources, but we just want
-                // to check cache
-                final List<File> cachedSchemas = Arrays.asList(storageDir.listFiles());
-                assertEquals(1, cachedSchemas.size());
-                assertEquals(Files.getNameWithoutExtension(cachedSchemas.get(0).getName()), "running@2012-12-12");
-            }
-        }, MoreExecutors.directExecutor());
+        final var cause = assertThrows(ExecutionException.class, () -> Futures.getDone(schemaFuture)).getCause();
+        assertThat(cause, instanceOf(MissingSchemaSourceException.class));
 
-        try {
-            schemaFuture.get();
-        } catch (final ExecutionException e) {
-            assertNotNull(e.getCause());
-            assertEquals(MissingSchemaSourceException.class, e.getCause().getClass());
-            return;
-        }
-
-        fail("Creation of schema context should fail from non-regular sources");
+        // Creation of schema context fails, since we do not provide regular sources, but we just want
+        // to check cache
+        final List<File> cachedSchemas = Arrays.asList(storageDir.listFiles());
+        assertEquals(1, cachedSchemas.size());
+        assertEquals(Files.getNameWithoutExtension(cachedSchemas.get(0).getName()), "running@2012-12-12");
     }
 }
