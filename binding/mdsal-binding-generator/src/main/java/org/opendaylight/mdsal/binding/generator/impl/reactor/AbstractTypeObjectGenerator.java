@@ -235,8 +235,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         private void resolveUnionDependencies(final GeneratorContext context, final TypeEffectiveStatement<?> union) {
             for (EffectiveStatement<?, ?> stmt : union.effectiveSubstatements()) {
-                if (stmt instanceof TypeEffectiveStatement) {
-                    final TypeEffectiveStatement<?> type = (TypeEffectiveStatement<?>) stmt;
+                if (stmt instanceof TypeEffectiveStatement<?> type) {
                     final QName typeName = type.argument();
                     if (TypeDefinitions.IDENTITYREF.equals(typeName)) {
                         if (!identityTypes.containsKey(stmt)) {
@@ -513,13 +512,12 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return baseType;
         }
 
-        if (!(baseType instanceof GeneratedTransferObject)) {
+        if (!(baseType instanceof GeneratedTransferObject gto)) {
             // This is a simple Java type, just wrap it with new restrictions
             return Types.restrictedType(baseType, restrictions);
         }
 
         // Base type is a GTO, we need to re-adjust it with new restrictions
-        final GeneratedTransferObject gto = (GeneratedTransferObject) baseType;
         final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(gto.getIdentifier());
         final GeneratedTransferObject parent = gto.getSuperType();
         if (parent != null) {
@@ -703,8 +701,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         final List<String> typeProperties = new ArrayList<>();
 
         for (EffectiveStatement<?, ?> stmt : type.effectiveSubstatements()) {
-            if (stmt instanceof TypeEffectiveStatement) {
-                final TypeEffectiveStatement<?> subType = (TypeEffectiveStatement<?>) stmt;
+            if (stmt instanceof TypeEffectiveStatement<?> subType) {
                 final QName subName = subType.argument();
                 final String localName = subName.getLocalName();
 
@@ -849,9 +846,9 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
      * @throws IllegalArgumentException if <code>typedef</code> equals null
      */
     static Map<String, String> resolveRegExpressions(final TypeDefinition<?> typedef) {
-        return typedef instanceof StringTypeDefinition
+        return typedef instanceof StringTypeDefinition stringTypedef
             // TODO: run diff against base ?
-            ? resolveRegExpressions(((StringTypeDefinition) typedef).getPatternConstraints())
+            ? resolveRegExpressions(stringTypedef.getPatternConstraints())
                 : ImmutableMap.of();
     }
 
@@ -902,12 +899,8 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private static String applyModifier(final ModifierKind modifier, final String pattern) {
-        switch (modifier) {
-            case INVERT_MATCH:
-                return RegexPatterns.negatePatternString(pattern);
-            default:
-                LOG.warn("Ignoring unhandled modifier {}", modifier);
-                return pattern;
-        }
+        return switch (modifier) {
+            case INVERT_MATCH -> RegexPatterns.negatePatternString(pattern);
+        };
     }
 }
