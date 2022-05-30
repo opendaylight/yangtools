@@ -7,33 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RefcountedRegistrationTest {
     @Mock
     public SchemaSourceRegistration<?> reg;
 
-    @Before
-    public void before() {
-        doNothing().when(reg).close();
-    }
-
     @Test
     public void refcountDecTrue() {
         final RefcountedRegistration ref = new RefcountedRegistration(reg);
+        doNothing().when(reg).close();
         assertTrue(ref.decRef());
-        verify(reg, times(1)).close();
+        verify(reg).close();
     }
 
     @Test
@@ -41,7 +36,7 @@ public class RefcountedRegistrationTest {
         final RefcountedRegistration ref = new RefcountedRegistration(reg);
         ref.incRef();
         assertFalse(ref.decRef());
-        verify(reg, times(0)).close();
+        verify(reg, never()).close();
     }
 
     @Test
@@ -49,7 +44,8 @@ public class RefcountedRegistrationTest {
         final RefcountedRegistration ref = new RefcountedRegistration(reg);
         ref.incRef();
         assertFalse(ref.decRef());
+        doNothing().when(reg).close();
         assertTrue(ref.decRef());
-        verify(reg, times(1)).close();
+        verify(reg).close();
     }
 }
