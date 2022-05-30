@@ -85,8 +85,8 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
         this.type = type;
         this.factory = factory;
 
-        if (arg instanceof AugmentationIdentifier) {
-            final var childNames = ((AugmentationIdentifier) arg).getPossibleChildNames();
+        if (arg instanceof AugmentationIdentifier augId) {
+            final var childNames = augId.getPossibleChildNames();
             verify(!childNames.isEmpty(), "Unexpected empty identifier for %s", type);
             this.namespace = childNames.iterator().next().getModule();
         } else {
@@ -101,14 +101,14 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
 
     private static ChildAddressabilitySummary computeChildAddressabilitySummary(final Object nodeSchema) {
         // FIXME: rework this to work on EffectiveStatements
-        if (nodeSchema instanceof DataNodeContainer) {
+        if (nodeSchema instanceof DataNodeContainer contaner) {
             boolean haveAddressable = false;
             boolean haveUnaddressable = false;
-            for (DataSchemaNode child : ((DataNodeContainer) nodeSchema).getChildNodes()) {
+            for (DataSchemaNode child : contaner.getChildNodes()) {
                 if (child instanceof ContainerSchemaNode || child instanceof AugmentationSchemaNode) {
                     haveAddressable = true;
-                } else if (child instanceof ListSchemaNode) {
-                    if (((ListSchemaNode) child).getKeyDefinition().isEmpty()) {
+                } else if (child instanceof ListSchemaNode list) {
+                    if (list.getKeyDefinition().isEmpty()) {
                         haveUnaddressable = true;
                     } else {
                         haveAddressable = true;
@@ -116,20 +116,15 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
                 } else if (child instanceof AnydataSchemaNode || child instanceof AnyxmlSchemaNode
                         || child instanceof TypedDataSchemaNode) {
                     haveUnaddressable = true;
-                } else if (child instanceof ChoiceSchemaNode) {
-                    switch (computeChildAddressabilitySummary(child)) {
-                        case ADDRESSABLE:
-                            haveAddressable = true;
-                            break;
-                        case MIXED:
+                } else if (child instanceof ChoiceSchemaNode choice) {
+                    switch (computeChildAddressabilitySummary(choice)) {
+                        case ADDRESSABLE -> haveAddressable = true;
+                        case UNADDRESSABLE -> haveUnaddressable = true;
+                        case MIXED -> {
                             haveAddressable = true;
                             haveUnaddressable = true;
-                            break;
-                        case UNADDRESSABLE:
-                            haveUnaddressable = true;
-                            break;
-                        default:
-                            throw new IllegalStateException("Unhandled accessibility summary for " + child);
+                        }
+                        default -> throw new IllegalStateException("Unhandled accessibility summary for " + child);
                     }
                 } else {
                     LOG.warn("Unhandled child node {}", child);
@@ -142,35 +137,39 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
             }
 
             return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
-        } else if (nodeSchema instanceof ChoiceSchemaNode) {
-            boolean haveAddressable = false;
-            boolean haveUnaddressable = false;
-            for (CaseSchemaNode child : ((ChoiceSchemaNode) nodeSchema).getCases()) {
-                switch (computeChildAddressabilitySummary(child)) {
-                    case ADDRESSABLE:
-                        haveAddressable = true;
-                        break;
-                    case UNADDRESSABLE:
-                        haveUnaddressable = true;
-                        break;
-                    case MIXED:
-                        // A child is mixed, which means we are mixed, too
-                        return ChildAddressabilitySummary.MIXED;
-                    default:
-                        throw new IllegalStateException("Unhandled accessibility summary for " + child);
-                }
-            }
-
-            if (!haveAddressable) {
-                // Empty or all are unaddressable
-                return ChildAddressabilitySummary.UNADDRESSABLE;
-            }
-
-            return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
+        } else if (nodeSchema instanceof ChoiceSchemaNode choice) {
+            return computeChildAddressabilitySummary(choice);
         }
 
         // No child nodes possible: return unaddressable
         return ChildAddressabilitySummary.UNADDRESSABLE;
+    }
+
+    private static ChildAddressabilitySummary computeChildAddressabilitySummary(final ChoiceSchemaNode choice) {
+        boolean haveAddressable = false;
+        boolean haveUnaddressable = false;
+        for (CaseSchemaNode child : choice.getCases()) {
+            switch (computeChildAddressabilitySummary(child)) {
+                case ADDRESSABLE:
+                    haveAddressable = true;
+                    break;
+                case UNADDRESSABLE:
+                    haveUnaddressable = true;
+                    break;
+                case MIXED:
+                    // A child is mixed, which means we are mixed, too
+                    return ChildAddressabilitySummary.MIXED;
+                default:
+                    throw new IllegalStateException("Unhandled accessibility summary for " + child);
+            }
+        }
+
+        if (!haveAddressable) {
+            // Empty or all are unaddressable
+            return ChildAddressabilitySummary.UNADDRESSABLE;
+        }
+
+        return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
     }
 
     static DataContainerCodecPrototype<BindingRuntimeTypes> rootPrototype(final CodecContextFactory factory) {
