@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
@@ -135,18 +134,17 @@ abstract class IdentifiableItemCodec {
         qname = schema.argument();
     }
 
-    static IdentifiableItemCodec of(final ListEffectiveStatement schema,
-            final Class<? extends Identifier<?>> keyClass, final Class<?> identifiable,
-                    final Map<QName, ValueContext> keyValueContexts) {
-        switch (keyValueContexts.size()) {
-            case 0:
-                throw new IllegalArgumentException("Key " + keyClass + " of " + identifiable + " has no components");
-            case 1:
-                final Entry<QName, ValueContext> entry = keyValueContexts.entrySet().iterator().next();
-                return new SingleKey(schema, keyClass, identifiable, entry.getKey(), entry.getValue());
-            default:
-                return new MultiKey(schema, keyClass, identifiable, keyValueContexts);
-        }
+    static IdentifiableItemCodec of(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
+            final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
+        return switch (keyValueContexts.size()) {
+            case 0 -> throw new IllegalArgumentException(
+                "Key " + keyClass + " of " + identifiable + " has no components");
+            case 1 -> {
+                final var entry = keyValueContexts.entrySet().iterator().next();
+                yield new SingleKey(schema, keyClass, identifiable, entry.getKey(), entry.getValue());
+            }
+            default -> new MultiKey(schema, keyClass, identifiable, keyValueContexts);
+        };
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
