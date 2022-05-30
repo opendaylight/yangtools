@@ -98,39 +98,23 @@ public final class BaseYangTypes {
      * @throws NullPointerException if type is null
      */
     public static Type javaTypeForYangType(final String type) {
-        switch (type) {
-            case "binary":
-                return BINARY_TYPE;
-            case "boolean":
-                return BOOLEAN_TYPE;
-            case "decimal64":
-                return DECIMAL64_TYPE;
-            case "empty":
-                return EMPTY_TYPE;
-            case "enumeration":
-                return ENUM_TYPE;
-            case "instance-identifier":
-                return INSTANCE_IDENTIFIER;
-            case "int8":
-                return INT8_TYPE;
-            case "int16":
-                return INT16_TYPE;
-            case "int32":
-                return INT32_TYPE;
-            case "int64":
-                return INT64_TYPE;
-            case "string":
-                return STRING_TYPE;
-            case "uint8":
-                return UINT8_TYPE;
-            case "uint16":
-                return UINT16_TYPE;
-            case "uint32":
-                return UINT32_TYPE;
-            case "uint64":
-                return UINT64_TYPE;
-            default:
-                return null;
-        }
+        return switch (type) {
+            case "binary" -> BINARY_TYPE;
+            case "boolean" -> BOOLEAN_TYPE;
+            case "decimal64" -> DECIMAL64_TYPE;
+            case "empty" -> EMPTY_TYPE;
+            case "enumeration" -> ENUM_TYPE;
+            case "instance-identifier" -> INSTANCE_IDENTIFIER;
+            case "int8" -> INT8_TYPE;
+            case "int16" -> INT16_TYPE;
+            case "int32" -> INT32_TYPE;
+            case "int64" -> INT64_TYPE;
+            case "string" -> STRING_TYPE;
+            case "uint8" -> UINT8_TYPE;
+            case "uint16" -> UINT16_TYPE;
+            case "uint32" -> UINT32_TYPE;
+            case "uint64" -> UINT64_TYPE;
+            default -> null;
+        };
     }
 }

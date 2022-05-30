@@ -46,16 +46,16 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
 
     AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?> builder) {
         super(builder.getIdentifier());
-        this.comment = builder.getComment();
-        this.annotations = toUnmodifiableAnnotations(builder.getAnnotations());
-        this.implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
-        this.constants = makeUnmodifiable(builder.getConstants());
-        this.enumerations = List.copyOf(builder.getEnumerations());
-        this.methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
-        this.enclosedTypes = List.copyOf(builder.getEnclosedTransferObjects());
-        this.properties = toUnmodifiableProperties(builder.getProperties());
-        this.isAbstract = builder.isAbstract();
-        this.definition = builder.getYangSourceDefinition().orElse(null);
+        comment = builder.getComment();
+        annotations = toUnmodifiableAnnotations(builder.getAnnotations());
+        implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
+        constants = makeUnmodifiable(builder.getConstants());
+        enumerations = List.copyOf(builder.getEnumerations());
+        methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
+        enclosedTypes = List.copyOf(builder.getEnclosedTransferObjects());
+        properties = toUnmodifiableProperties(builder.getProperties());
+        isAbstract = builder.isAbstract();
+        definition = builder.getYangSourceDefinition().orElse(null);
     }
 
     AbstractGeneratedType(final JavaTypeName identifier, final TypeComment comment,
@@ -66,37 +66,31 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
             final List<GeneratedPropertyBuilder> propertyBuilders) {
         super(identifier);
         this.comment = comment;
-        this.annotations = toUnmodifiableAnnotations(annotationBuilders);
+        annotations = toUnmodifiableAnnotations(annotationBuilders);
         this.implementsTypes = makeUnmodifiable(implementsTypes);
         this.constants = makeUnmodifiable(constants);
-        this.enumerations = toUnmodifiableEnumerations(enumBuilders);
-        this.methodSignatures = toUnmodifiableMethods(methodBuilders);
-        this.enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders, enclosedGenTOBuilders);
-        this.properties = toUnmodifiableProperties(propertyBuilders);
+        enumerations = toUnmodifiableEnumerations(enumBuilders);
+        methodSignatures = toUnmodifiableMethods(methodBuilders);
+        enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders, enclosedGenTOBuilders);
+        properties = toUnmodifiableProperties(propertyBuilders);
         this.isAbstract = isAbstract;
-        this.definition = null;
+        definition = null;
     }
 
     protected static final <T> List<T> makeUnmodifiable(final List<T> list) {
-        switch (list.size()) {
-            case 0:
-                return Collections.emptyList();
-            case 1:
-                return Collections.singletonList(list.get(0));
-            default:
-                return Collections.unmodifiableList(list);
-        }
+        return switch (list.size()) {
+            case 0 -> Collections.emptyList();
+            case 1 -> Collections.singletonList(list.get(0));
+            default -> Collections.unmodifiableList(list);
+        };
     }
 
     protected static <T> Set<T> makeUnmodifiable(final Set<T> set) {
-        switch (set.size()) {
-            case 0:
-                return Collections.emptySet();
-            case 1:
-                return Collections.singleton(set.iterator().next());
-            default:
-                return Collections.unmodifiableSet(set);
-        }
+        return switch (set.size()) {
+            case 0 -> Collections.emptySet();
+            case 1 -> Collections.singleton(set.iterator().next());
+            default -> Collections.unmodifiableSet(set);
+        };
     }
 
     private static List<GeneratedType> toUnmodifiableEnclosedTypes(
@@ -163,47 +157,47 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
 
     @Override
     public final TypeComment getComment() {
-        return this.comment;
+        return comment;
     }
 
     @Override
     public final List<AnnotationType> getAnnotations() {
-        return this.annotations;
+        return annotations;
     }
 
     @Override
     public final boolean isAbstract() {
-        return this.isAbstract;
+        return isAbstract;
     }
 
     @Override
     public final List<Type> getImplements() {
-        return this.implementsTypes;
+        return implementsTypes;
     }
 
     @Override
     public final List<GeneratedType> getEnclosedTypes() {
-        return this.enclosedTypes;
+        return enclosedTypes;
     }
 
     @Override
     public final List<Enumeration> getEnumerations() {
-        return this.enumerations;
+        return enumerations;
     }
 
     @Override
     public final List<Constant> getConstantDefinitions() {
-        return this.constants;
+        return constants;
     }
 
     @Override
     public final List<MethodSignature> getMethodDefinitions() {
-        return this.methodSignatures;
+        return methodSignatures;
     }
 
     @Override
     public final List<GeneratedProperty> getProperties() {
-        return this.properties;
+        return properties;
     }
 
     @Override
