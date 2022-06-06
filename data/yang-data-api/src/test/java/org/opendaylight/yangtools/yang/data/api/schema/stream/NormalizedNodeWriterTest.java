@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
@@ -19,8 +19,8 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -44,14 +44,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
 public class NormalizedNodeWriterTest {
-
     private QNameModule bazModule;
-
     private QName myKeyedList;
     private QName myKeyLeaf;
     private QName myLeafList;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
         myKeyedList = QName.create(bazModule, "my-keyed-list");

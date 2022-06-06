@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
@@ -17,9 +17,9 @@ import static org.mockito.Mockito.mock;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -28,9 +28,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class NormalizedNodesTest {
-
     @Test
     public void testGetDirectChild() {
         final PathArgument mockedPathArgument = mock(PathArgument.class);
@@ -134,7 +133,14 @@ public class NormalizedNodesTest {
 
         stringTree = NormalizedNodes.toStringTree(mockedAugmentationNode);
         assertNotNull(stringTree);
-        assertEquals("augmentation {\n    list-node {\n        list-node[key-leaf-value] {\n            leaf-node "
-                + "str-value-1\n        }\n    }\n}\n", stringTree);
+        assertEquals("""
+            augmentation {
+                list-node {
+                    list-node[key-leaf-value] {
+                        leaf-node str-value-1
+                    }
+                }
+            }
+            """, stringTree);
     }
 }
