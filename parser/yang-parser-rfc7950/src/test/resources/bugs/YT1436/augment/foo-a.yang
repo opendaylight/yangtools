@@ -1,0 +1,13 @@
+submodule foo-a {
+  belongs-to foo {
+    prefix "foo";
+  }
+
+  grouping foo-a {
+    container a {
+      leaf a1 {
+        type string;
+      }
+    }
+  }
+}

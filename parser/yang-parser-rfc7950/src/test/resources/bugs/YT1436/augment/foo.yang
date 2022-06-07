@@ -1,0 +1,11 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  include foo-a;
+  include foo-b;
+
+  container foo {
+    uses foo-b;
+  }
+}
