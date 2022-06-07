@@ -32,7 +32,6 @@ import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import java.beans.ConstructorProperties
 import java.util.ArrayList
 import java.util.Base64;
 import java.util.Collection
@@ -291,7 +290,6 @@ class ClassTemplate extends BaseTemplate {
 
     def private typedefConstructor() '''
     @«ConstructorParameters.importedName»("«TypeConstants.VALUE_PROP»")
-    @«ConstructorProperties.importedName»("«TypeConstants.VALUE_PROP»")
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
