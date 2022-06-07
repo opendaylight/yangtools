@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
@@ -42,6 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -551,20 +550,26 @@ public final class StmtContextUtils {
             return null;
         }
 
-        final StmtContext<?, ?, ?> rootCtx = ctx.getRoot();
-        final QNameModule qnameModule;
-
+        final var rootCtx = ctx.getRoot();
         if (rootCtx.producesDeclared(ModuleStatement.class)) {
-            qnameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
+            return lookupModuleQName(rootCtx, rootCtx);
         } else if (rootCtx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsToModuleName = firstAttributeOf(rootCtx.declaredSubstatements(), BelongsToStatement.class);
-            qnameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
+            final var belongsTo = rootCtx.getAllFromNamespace(BelongsToPrefixToModuleCtx.class);
+            if (belongsTo == null || belongsTo.isEmpty()) {
+                throw new IllegalArgumentException(rootCtx + " does not have belongs-to linkage resolved");
+            }
+            return lookupModuleQName(rootCtx, belongsTo.values().iterator().next());
         } else {
-            qnameModule = null;
+            throw new IllegalArgumentException("Unsupported root " + rootCtx);
         }
+    }
 
-        checkArgument(qnameModule != null, "Failed to look up root QNameModule for %s", ctx);
-        return qnameModule;
+    private static QNameModule lookupModuleQName(final NamespaceStmtCtx storage, final StmtContext<?, ?, ?> module) {
+        final var ret = storage.getFromNamespace(ModuleCtxToModuleQName.class, module);
+        if (ret == null) {
+            throw new IllegalArgumentException("Failed to look up QNameModule for " + module + " in " + storage);
+        }
+        return ret;
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
