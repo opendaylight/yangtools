@@ -1,0 +1,11 @@
+module bar {
+  namespace "urn:bar";
+  prefix "bar";
+
+  include bar-a;
+  include bar-b;
+
+  container bar {
+    uses bar-b;
+  }
+}
