@@ -1,0 +1,17 @@
+submodule foo-b {
+    belongs-to foo {
+        prefix "foo";
+    }
+
+    include foo-a;
+
+    grouping foo-b {
+        uses foo-a {
+            augment a {
+                leaf b1 {
+                    type string;
+                }
+            }
+        }
+    }
+}
