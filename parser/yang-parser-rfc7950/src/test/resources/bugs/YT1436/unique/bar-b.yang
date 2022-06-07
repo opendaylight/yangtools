@@ -1,0 +1,19 @@
+submodule bar-b {
+    belongs-to bar {
+        prefix "bar";
+    }
+
+    include bar-a;
+
+    grouping bar-b {
+        list b {
+            key b1;
+            unique a1;
+
+            uses bar-a;
+            leaf b1 {
+                type string;
+            }
+        }
+    }
+}

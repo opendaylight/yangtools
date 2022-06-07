@@ -1,0 +1,11 @@
+submodule bar-a {
+    belongs-to bar {
+        prefix "bar";
+    }
+
+    grouping bar-a {
+        leaf a1 {
+            type string;
+        }
+    }
+}
