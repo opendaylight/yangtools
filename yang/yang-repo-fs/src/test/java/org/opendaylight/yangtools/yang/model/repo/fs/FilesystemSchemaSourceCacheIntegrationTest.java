@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.repo.fs;
 
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
@@ -137,7 +137,7 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
                 .createEffectiveModelContext(runningId);
 
         final var cause = assertThrows(ExecutionException.class, () -> Futures.getDone(schemaFuture)).getCause();
-        assertThat(cause, instanceOf(MissingSchemaSourceException.class));
+        assertInstanceOf(MissingSchemaSourceException.class, cause);
 
         // Creation of schema context fails, since we do not provide regular sources, but we just want
         // to check cache
