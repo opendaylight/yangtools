@@ -22,6 +22,30 @@
       },
       "revId": "51046f9fec16ca3102981a9d9034becee104059e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25284d09_17238560",
+        "filename": "model/rfc8819-model-api/src/main/java/org/opendaylight/yangtools/rfc8819/model/api/Tag.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-06-10T05:07:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7745041b_76afbafe",
+      "range": {
+        "startLine": 62,
+        "startChar": 15,
+        "endLine": 62,
+        "endChar": 61
+      },
+      "revId": "51046f9fec16ca3102981a9d9034becee104059e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
