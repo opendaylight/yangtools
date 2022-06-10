@@ -21,11 +21,10 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
-import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.common.QName;
 
-final class IdentityCodec extends AbstractIllegalArgumentCodec<QName, BaseIdentity> implements BindingIdentityCodec {
+final class IdentityCodec extends AbstractValueCodec<QName, BaseIdentity> implements BindingIdentityCodec {
     private final LoadingCache<@NonNull QName, @NonNull BaseIdentity> values = CacheBuilder.newBuilder()
         .build(new CacheLoader<>() {
             @Override

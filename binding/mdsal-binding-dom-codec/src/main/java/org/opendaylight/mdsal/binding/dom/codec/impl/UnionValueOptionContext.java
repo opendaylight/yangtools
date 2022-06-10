@@ -14,7 +14,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +22,13 @@ final class UnionValueOptionContext {
     private static final Logger LOG = LoggerFactory.getLogger(UnionValueOptionContext.class);
 
     private final Class<?> bindingType;
-    private final IllegalArgumentCodec<Object,Object> codec;
+    private final ValueCodec<Object,Object> codec;
     private final MethodHandle getter;
     private final MethodHandle unionCtor;
 
     UnionValueOptionContext(final Class<?> unionType, final Class<?> valueType, final Method getter,
-            final IllegalArgumentCodec<Object, Object> codec) {
-        this.bindingType = requireNonNull(valueType);
+            final ValueCodec<Object, Object> codec) {
+        bindingType = requireNonNull(valueType);
         this.codec = requireNonNull(codec);
 
         try {
@@ -39,7 +38,7 @@ final class UnionValueOptionContext {
         }
 
         try {
-            this.unionCtor = MethodHandles.publicLookup().findConstructor(unionType,
+            unionCtor = MethodHandles.publicLookup().findConstructor(unionType,
                 MethodType.methodType(void.class, valueType)).asType(OBJECT_TYPE);
         } catch (IllegalAccessException | NoSuchMethodException e) {
             throw new IllegalStateException(String.format("Failed to access constructor for %s in type %s", valueType,
@@ -98,11 +97,10 @@ final class UnionValueOptionContext {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof UnionValueOptionContext)) {
+        if (!(obj instanceof UnionValueOptionContext other)) {
             return false;
         }
 
-        final UnionValueOptionContext other = (UnionValueOptionContext) obj;
         return bindingType.equals(other.bindingType);
     }
 }

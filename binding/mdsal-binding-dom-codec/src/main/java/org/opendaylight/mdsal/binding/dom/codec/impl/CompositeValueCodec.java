@@ -11,14 +11,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 // FIXME: sealed once we have JDK17+
-abstract class CompositeValueCodec extends AbstractIllegalArgumentCodec<Object, Object> {
+abstract class CompositeValueCodec extends AbstractValueCodec<Object, Object> {
     static final class OfIdentity extends CompositeValueCodec {
         private final IdentityCodec valueCodec;
 

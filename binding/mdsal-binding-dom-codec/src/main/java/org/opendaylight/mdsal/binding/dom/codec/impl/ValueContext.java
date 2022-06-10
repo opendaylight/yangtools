@@ -14,11 +14,11 @@ import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
 final class ValueContext {
     private static final MethodType OBJECT_METHOD = MethodType.methodType(Object.class, Object.class);
-    private final IllegalArgumentCodec<Object, Object> codec;
+
+    private final ValueCodec<Object, Object> codec;
     private final MethodHandle getter;
     private final Class<?> identifier;
     private final String getterName;

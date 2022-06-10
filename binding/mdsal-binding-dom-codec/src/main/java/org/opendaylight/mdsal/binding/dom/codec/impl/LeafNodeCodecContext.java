@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingTypeObjectCodecTreeNode;
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.TypeObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -31,8 +30,8 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
             implements BindingTypeObjectCodecTreeNode<T> {
         private final @NonNull Class<T> bindingClass;
 
-        OfTypeObject(final LeafSchemaNode schema, final IllegalArgumentCodec<Object, Object> codec,
-                final String getterName, final EffectiveModelContext schemaContext, final Class<T> bindingClass) {
+        OfTypeObject(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec, final String getterName,
+                final EffectiveModelContext schemaContext, final Class<T> bindingClass) {
             super(schema, codec, getterName, schemaContext);
             this.bindingClass = requireNonNull(bindingClass);
         }
@@ -53,12 +52,12 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         }
     }
 
-    LeafNodeCodecContext(final LeafSchemaNode schema, final IllegalArgumentCodec<Object, Object> codec,
-            final String getterName, final EffectiveModelContext schemaContext) {
+    LeafNodeCodecContext(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec, final String getterName,
+            final EffectiveModelContext schemaContext) {
         super(schema, codec, getterName, createDefaultObject(schema, codec, schemaContext));
     }
 
-    static LeafNodeCodecContext of(final LeafSchemaNode schema, final IllegalArgumentCodec<Object, Object> codec,
+    static LeafNodeCodecContext of(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec,
             final String getterName, final Class<?> valueType, final EffectiveModelContext schemaContext) {
         return TypeObject.class.isAssignableFrom(valueType)
                 ? new OfTypeObject<>(schema, codec, getterName, schemaContext, valueType.asSubclass(TypeObject.class))
@@ -70,9 +69,8 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         return normalizedNode != null ? getValueCodec().deserialize(normalizedNode.body()) : null;
     }
 
-    private static Object createDefaultObject(final LeafSchemaNode schema,
-                                              final IllegalArgumentCodec<Object, Object> codec,
-                                              final EffectiveModelContext schemaContext) {
+    private static Object createDefaultObject(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec,
+            final EffectiveModelContext schemaContext) {
         Optional<? extends Object> defaultValue = schema.getType().getDefaultValue();
         TypeDefinition<?> type = schema.getType();
         if (defaultValue.isPresent()) {
@@ -96,9 +94,8 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         return null;
     }
 
-    private static Object qnameDomValueFromString(final IllegalArgumentCodec<Object, Object> codec,
-                                                  final DataSchemaNode schema, final String defaultValue,
-                                                  final EffectiveModelContext schemaContext) {
+    private static Object qnameDomValueFromString(final ValueCodec<Object, Object> codec, final DataSchemaNode schema,
+            final String defaultValue, final EffectiveModelContext schemaContext) {
         int prefixEndIndex = defaultValue.indexOf(':');
         QName qname;
         if (prefixEndIndex != -1) {
@@ -125,8 +122,8 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         return codec.deserialize(qname);
     }
 
-    private static Object domValueFromString(final IllegalArgumentCodec<Object, Object> codec,
-            final TypeDefinition<?> type, final Object defaultValue) {
+    private static Object domValueFromString(final ValueCodec<Object, Object> codec, final TypeDefinition<?> type,
+            final Object defaultValue) {
         TypeDefinitionAwareCodec<?, ?> typeDefAwareCodec = TypeDefinitionAwareCodec.from(type);
         if (typeDefAwareCodec != null) {
             Object castedDefaultValue = typeDefAwareCodec.deserialize((String) defaultValue);

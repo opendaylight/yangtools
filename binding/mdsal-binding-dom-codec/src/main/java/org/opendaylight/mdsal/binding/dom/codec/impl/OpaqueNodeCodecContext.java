@@ -23,8 +23,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingOpaqueObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader;
 import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.GeneratorResult;
-import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.OpaqueData;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -83,7 +81,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     private static final Builder<CodecOpaqueObject> TEMPLATE = new ByteBuddy().subclass(CodecOpaqueObject.class)
             .modifiers(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC);
 
-    private final IllegalArgumentCodec<Object, Object> valueCodec = new AbstractIllegalArgumentCodec<>() {
+    private final AbstractValueCodec<Object, Object> valueCodec = new AbstractValueCodec<>() {
         @Override
         protected Object serializeImpl(final Object input) {
             checkArgument(bindingClass.isInstance(input), "Unexpected input %s", input);
@@ -139,7 +137,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     }
 
     @Override
-    IllegalArgumentCodec<Object, Object> getValueCodec() {
+    ValueCodec<Object, Object> getValueCodec() {
         return valueCodec;
     }
 

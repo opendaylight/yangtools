@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.function.IntFunction;
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -19,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 final class LeafSetNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     private final IntFunction<ImmutableCollection.Builder<Object>> builderFactory;
 
-    LeafSetNodeCodecContext(final LeafListSchemaNode schema, final IllegalArgumentCodec<Object, Object> codec,
+    LeafSetNodeCodecContext(final LeafListSchemaNode schema, final ValueCodec<Object, Object> codec,
             final String getterName) {
         // FIXME: add support for defaults
         super(schema, codec, getterName, null);

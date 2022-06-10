@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
-import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  * modules) they may have one static instance generated when first time needed.
  */
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
-abstract class SchemaUnawareCodec extends AbstractIllegalArgumentCodec<Object, Object> {
+abstract class SchemaUnawareCodec extends AbstractValueCodec<Object, Object> {
     /**
      * No-op Codec, Java YANG Binding uses same types as NormalizedNode model for base YANG types, representing numbers,
      * binary, strings and empty.
