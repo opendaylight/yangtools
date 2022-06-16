@@ -269,7 +269,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     @Override
-    public final GeneratorResult<T> generateClass(final CodecClassLoader loeader, final String fqcn,
+    public final GeneratorResult<T> generateClass(final CodecClassLoader loader, final String fqcn,
             final Class<?> bindingInterface) {
         LOG.trace("Generating class {}", fqcn);
 
