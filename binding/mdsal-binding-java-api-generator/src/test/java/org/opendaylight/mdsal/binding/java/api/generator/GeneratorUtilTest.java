@@ -146,6 +146,5 @@ public class GeneratorUtilTest {
 
         assertTrue(GeneratorUtil.getExplicitType(generatedType, parameterizedType,
                 createImports(generatedType)).contains(parameterizedType.getName()));
-
     }
 }
