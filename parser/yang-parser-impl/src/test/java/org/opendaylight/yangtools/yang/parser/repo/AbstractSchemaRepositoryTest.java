@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
-import org.opentest4j.AssertionFailedError;
 
 public abstract class AbstractSchemaRepositoryTest {
     static @NonNull EffectiveModelContext assertModelContext(
@@ -33,7 +32,7 @@ public abstract class AbstractSchemaRepositoryTest {
         try {
             return Futures.getDone(future);
         } catch (ExecutionException e) {
-            throw new AssertionFailedError("Failed to create context", e);
+            throw new AssertionError("Failed to create context", e);
         }
     }
 
