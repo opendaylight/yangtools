@@ -82,8 +82,9 @@ public final class CrossSourceStatementReactor {
         }
     }
 
-    public static class BuildAction {
+    public static final class BuildAction {
         private final BuildGlobalContext context;
+
         private boolean supportedFeaturesSet = false;
         private boolean modulesDeviatedByModulesSet = false;
 
@@ -214,12 +215,19 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Build the effective model context.
+         * Build the {@link ReactorDeclaredModel} view of this action.
+         *
+         * @return A declared view of selected models.
          */
         public ReactorDeclaredModel build() throws ReactorException {
             return context.build();
         }
 
+        /**
+         * Build the {@link EffectiveSchemaContext} view of this action.
+         *
+         * @return An effective view of selected models.
+         */
         public EffectiveSchemaContext buildEffective() throws ReactorException {
             return context.buildEffective();
         }
