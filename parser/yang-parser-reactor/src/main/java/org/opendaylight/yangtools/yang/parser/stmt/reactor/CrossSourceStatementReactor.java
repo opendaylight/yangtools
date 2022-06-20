@@ -82,8 +82,9 @@ public final class CrossSourceStatementReactor {
         }
     }
 
-    public static class BuildAction {
+    public static final class BuildAction {
         private final BuildGlobalContext context;
+
         private boolean supportedFeaturesSet = false;
         private boolean modulesDeviatedByModulesSet = false;
 
