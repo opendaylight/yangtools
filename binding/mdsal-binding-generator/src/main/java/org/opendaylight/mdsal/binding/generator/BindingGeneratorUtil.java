@@ -10,8 +10,6 @@ package org.opendaylight.mdsal.binding.generator;
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -48,7 +46,7 @@ public final class BindingGeneratorUtil {
 
         @Override
         public List<PatternConstraint> getPatternConstraints() {
-            return Collections.emptyList();
+            return ImmutableList.of();
         }
 
         @Override
@@ -77,8 +75,7 @@ public final class BindingGeneratorUtil {
             //
             // FIXME: looking at the generated code it looks as though we need to pass the restrictions without
             //        comparison
-            if (type instanceof DecimalTypeDefinition) {
-                final DecimalTypeDefinition decimal = (DecimalTypeDefinition) type;
+            if (type instanceof DecimalTypeDefinition decimal) {
                 final DecimalTypeBuilder tmpBuilder = BaseTypes.decimalTypeBuilder(decimal.getQName());
                 tmpBuilder.setFractionDigits(decimal.getFractionDigits());
                 final DecimalTypeDefinition tmp = tmpBuilder.build();
@@ -128,8 +125,7 @@ public final class BindingGeneratorUtil {
          *
          * FIXME: this probably not the best solution and needs further analysis.
          */
-        if (type instanceof BinaryTypeDefinition) {
-            final BinaryTypeDefinition binary = (BinaryTypeDefinition)type;
+        if (type instanceof BinaryTypeDefinition binary) {
             final BinaryTypeDefinition base = binary.getBaseType();
             if (base != null && base.getBaseType() != null) {
                 length = currentOrEmpty(binary.getLengthConstraint(), base.getLengthConstraint());
@@ -155,8 +151,7 @@ public final class BindingGeneratorUtil {
             length = Optional.empty();
             pattern = ImmutableList.of();
             range = extractRangeConstraint((RangeRestrictedTypeDefinition<?, ?>)type);
-        } else if (type instanceof StringTypeDefinition) {
-            final StringTypeDefinition string = (StringTypeDefinition)type;
+        } else if (type instanceof StringTypeDefinition string) {
             final StringTypeDefinition base = string.getBaseType();
             if (base != null && base.getBaseType() != null) {
                 length = currentOrEmpty(string.getLengthConstraint(), base.getLengthConstraint());
@@ -231,7 +226,7 @@ public final class BindingGeneratorUtil {
             return constraints;
         }
 
-        final Builder<PatternConstraint> builder = ImmutableList.builder();
+        final var builder = ImmutableList.<PatternConstraint>builder();
         boolean filtered = false;
         for (final PatternConstraint c : constraints) {
             if (containsConstraint(type.getBaseType(), c)) {
