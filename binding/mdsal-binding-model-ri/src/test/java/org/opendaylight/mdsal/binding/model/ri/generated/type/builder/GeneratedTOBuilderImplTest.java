@@ -11,17 +11,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 public class GeneratedTOBuilderImplTest {
 
@@ -94,29 +89,7 @@ public class GeneratedTOBuilderImplTest {
     public void testSetRestrictions() {
         final CodegenGeneratedTOBuilder genTOBuilder = new CodegenGeneratedTOBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
-        final Restrictions restrictions = new Restrictions() {
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public Optional<? extends RangeConstraint<?>> getRangeConstraint() {
-                return Optional.empty();
-            }
-
-            @Override
-            public List<PatternConstraint> getPatternConstraints() {
-                return null;
-            }
-
-            @Override
-            public Optional<LengthConstraint> getLengthConstraint() {
-                return Optional.empty();
-            }
-        };
-        genTOBuilder.setRestrictions(restrictions);
+        genTOBuilder.setRestrictions(Restrictions.empty());
         final GeneratedTransferObject genTO = genTOBuilder.build();
 
         assertNotNull(genTO.getRestrictions());

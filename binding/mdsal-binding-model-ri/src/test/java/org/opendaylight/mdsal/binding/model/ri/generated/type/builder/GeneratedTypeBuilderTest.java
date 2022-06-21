@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.io.Serializable;
 import java.util.List;
@@ -49,7 +48,7 @@ public class GeneratedTypeBuilderTest {
         // generatedTypeBuilder.addConstant(Types.typeForClass(String.class),
         // "myConstant", "myConstantValue");
         Constant constant2 = generatedTypeBuilder.addConstant(
-                Types.typeForClass(int.class, mock(Restrictions.class)), "myIntConstant", 1);
+                Types.typeForClass(int.class, Restrictions.empty()), "myIntConstant", 1);
 
         Constant constant3 = new ConstantImpl(Types.typeForClass(String.class), "myConstant", "myConstantValue");
         final Constant constant4 = new ConstantImpl(Types.typeForClass(String.class), "myConstant2", "myConstantValue");

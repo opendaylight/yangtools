@@ -38,28 +38,6 @@ public final class BindingGeneratorUtil {
     private static final CharMatcher LT_MATCHER = CharMatcher.is('<');
     private static final Pattern UNICODE_CHAR_PATTERN = Pattern.compile("\\\\+u");
 
-    private static final Restrictions EMPTY_RESTRICTIONS = new Restrictions() {
-        @Override
-        public Optional<LengthConstraint> getLengthConstraint() {
-            return Optional.empty();
-        }
-
-        @Override
-        public List<PatternConstraint> getPatternConstraints() {
-            return ImmutableList.of();
-        }
-
-        @Override
-        public Optional<RangeConstraint<?>> getRangeConstraint() {
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return true;
-        }
-    };
-
     private BindingGeneratorUtil() {
         // Hidden on purpose
     }
@@ -81,36 +59,13 @@ public final class BindingGeneratorUtil {
                 final DecimalTypeDefinition tmp = tmpBuilder.build();
 
                 if (!tmp.getRangeConstraint().equals(decimal.getRangeConstraint())) {
-                    return new Restrictions() {
-                        @Override
-                        public boolean isEmpty() {
-                            return false;
-                        }
-
-                        @Override
-                        public Optional<? extends RangeConstraint<?>> getRangeConstraint() {
-                            return decimal.getRangeConstraint();
-                        }
-
-                        @Override
-                        public List<PatternConstraint> getPatternConstraints() {
-                            return ImmutableList.of();
-                        }
-
-                        @Override
-                        public Optional<LengthConstraint> getLengthConstraint() {
-                            return Optional.empty();
-                        }
-                    };
+                    return Restrictions.of(decimal.getRangeConstraint().orElse(null));
                 }
             }
 
-            return EMPTY_RESTRICTIONS;
+            return Restrictions.empty();
         }
 
-        final Optional<LengthConstraint> length;
-        final List<PatternConstraint> pattern;
-        final Optional<? extends RangeConstraint<?>> range;
 
         /*
          * Take care of extended types.
@@ -127,73 +82,37 @@ public final class BindingGeneratorUtil {
          */
         if (type instanceof BinaryTypeDefinition binary) {
             final BinaryTypeDefinition base = binary.getBaseType();
+            final Optional<LengthConstraint> length;
             if (base != null && base.getBaseType() != null) {
                 length = currentOrEmpty(binary.getLengthConstraint(), base.getLengthConstraint());
             } else {
                 length = binary.getLengthConstraint();
             }
-
-            pattern = ImmutableList.of();
-            range = Optional.empty();
-        } else if (type instanceof DecimalTypeDefinition) {
-            length = Optional.empty();
-            pattern = ImmutableList.of();
-
-            final DecimalTypeDefinition decimal = (DecimalTypeDefinition)type;
+            return Restrictions.of(length.orElse(null));
+        } else if (type instanceof DecimalTypeDefinition decimal) {
             final DecimalTypeDefinition base = decimal.getBaseType();
+            final Optional<? extends RangeConstraint<?>> range;
             if (base != null && base.getBaseType() != null) {
                 range = currentOrEmpty(decimal.getRangeConstraint(), base.getRangeConstraint());
             } else {
                 range = decimal.getRangeConstraint();
             }
+            return Restrictions.of(range.orElse(null));
         } else if (type instanceof RangeRestrictedTypeDefinition) {
             // Integer-like types
-            length = Optional.empty();
-            pattern = ImmutableList.of();
-            range = extractRangeConstraint((RangeRestrictedTypeDefinition<?, ?>)type);
+            return Restrictions.of(extractRangeConstraint((RangeRestrictedTypeDefinition<?, ?>) type).orElse(null));
         } else if (type instanceof StringTypeDefinition string) {
             final StringTypeDefinition base = string.getBaseType();
+            final Optional<LengthConstraint> length;
             if (base != null && base.getBaseType() != null) {
                 length = currentOrEmpty(string.getLengthConstraint(), base.getLengthConstraint());
             } else {
                 length = string.getLengthConstraint();
             }
-
-            pattern = uniquePatterns(string);
-            range = Optional.empty();
+            return Restrictions.of(uniquePatterns(string), length.orElse(null));
         } else {
-            length = Optional.empty();
-            pattern = ImmutableList.of();
-            range = Optional.empty();
+            return Restrictions.empty();
         }
-
-        // Now, this may have ended up being empty, too...
-        if (!length.isPresent() && pattern.isEmpty() && !range.isPresent()) {
-            return EMPTY_RESTRICTIONS;
-        }
-
-        // Nope, not empty allocate a holder
-        return new Restrictions() {
-            @Override
-            public Optional<? extends RangeConstraint<?>> getRangeConstraint() {
-                return range;
-            }
-
-            @Override
-            public List<PatternConstraint> getPatternConstraints() {
-                return pattern;
-            }
-
-            @Override
-            public Optional<LengthConstraint> getLengthConstraint() {
-                return length;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-        };
     }
 
     private static <T extends RangeRestrictedTypeDefinition<?, ?>> Optional<? extends RangeConstraint<?>>

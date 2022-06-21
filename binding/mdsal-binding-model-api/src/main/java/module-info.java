@@ -11,6 +11,7 @@ module org.opendaylight.mdsal.binding.model.api {
 
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires com.google.common;
     requires org.slf4j;
 
     // Annotations
