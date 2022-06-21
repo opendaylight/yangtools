@@ -13,17 +13,12 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableRangeSet;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeSet;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -35,19 +30,15 @@ import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.WildcardType;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 public final class Types {
-    private static final CacheLoader<Class<?>, ConcreteType> TYPE_LOADER = new CacheLoader<>() {
-        @Override
-        public ConcreteType load(final Class<?> key) {
-            return new ConcreteTypeImpl(JavaTypeName.create(key), null);
-        }
-    };
-    private static final LoadingCache<Class<?>, ConcreteType> TYPE_CACHE =
-            CacheBuilder.newBuilder().weakKeys().build(TYPE_LOADER);
+    private static final LoadingCache<Class<?>, ConcreteType> TYPE_CACHE = CacheBuilder.newBuilder().weakKeys()
+        .build(new CacheLoader<>() {
+            @Override
+            public ConcreteType load(final Class<?> key) {
+                return new ConcreteTypeImpl(JavaTypeName.create(key), null);
+            }
+        });
 
     public static final @NonNull ConcreteType BOOLEAN = typeForClass(Boolean.class);
     public static final @NonNull ConcreteType BYTE_ARRAY = typeForClass(byte[].class);
@@ -161,8 +152,7 @@ public final class Types {
 
     private static @NonNull ConcreteType restrictedType(final JavaTypeName identifier,
             final @NonNull Restrictions restrictions) {
-        return restrictions instanceof DefaultRestrictions ? new ConcreteTypeImpl(identifier, restrictions)
-                : new BaseTypeWithRestrictionsImpl(identifier, restrictions);
+        return new BaseTypeWithRestrictionsImpl(identifier, restrictions);
     }
 
     /**
@@ -379,74 +369,6 @@ public final class Types {
          */
         WildcardTypeImpl(final JavaTypeName identifier) {
             super(identifier);
-        }
-    }
-
-    // FIXME: 9.0.0: remove this method
-    public static <T extends Number & Comparable<T>> Restrictions getDefaultRestrictions(final T min, final T max) {
-        return new DefaultRestrictions<>(min, max);
-    }
-
-    private static final class DefaultRestrictions<T extends Number & Comparable<T>> implements Restrictions {
-        private final RangeConstraint<?> rangeConstraint;
-
-        DefaultRestrictions(final T min, final T max) {
-            this.rangeConstraint = new DefaultRangeConstraint<>(min, max);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public Optional<? extends RangeConstraint<?>> getRangeConstraint() {
-            return Optional.of(rangeConstraint);
-        }
-
-        @Override
-        public List<PatternConstraint> getPatternConstraints() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public Optional<LengthConstraint> getLengthConstraint() {
-            return Optional.empty();
-        }
-    }
-
-    private static final class DefaultRangeConstraint<T extends Number & Comparable<T>> implements RangeConstraint<T> {
-        private final T min;
-        private final T max;
-
-        DefaultRangeConstraint(final T min, final T max) {
-            this.min = requireNonNull(min);
-            this.max = requireNonNull(max);
-        }
-
-        @Override
-        public Optional<String> getErrorAppTag() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<String> getErrorMessage() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<String> getDescription() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<String> getReference() {
-            return Optional.empty();
-        }
-
-        @Override
-        public RangeSet<@NonNull T> getAllowedRanges() {
-            return ImmutableRangeSet.of(Range.closed(min, max));
         }
     }
 }
