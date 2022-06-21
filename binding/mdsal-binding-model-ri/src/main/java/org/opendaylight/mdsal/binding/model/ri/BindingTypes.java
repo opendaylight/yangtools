@@ -55,6 +55,7 @@ public final class BindingTypes {
     public static final ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
     public static final ConcreteType TYPE_OBJECT = typeForClass(TypeObject.class);
     public static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
+    @Deprecated(since = "10.0.0", forRemoval = true)
     public static final ConcreteType NOTIFICATION_LISTENER = typeForClass(NotificationListener.class);
     public static final ConcreteType QNAME = typeForClass(QName.class);
     public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);

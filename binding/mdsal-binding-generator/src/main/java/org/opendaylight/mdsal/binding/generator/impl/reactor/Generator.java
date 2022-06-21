@@ -57,7 +57,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Overall the tree layout guides the allocation of Java package and top-level class namespaces.
  */
 public abstract class Generator implements Iterable<Generator> {
-    private static final JavaTypeName DEPRECATED_ANNOTATION = JavaTypeName.create(Deprecated.class);
+    static final JavaTypeName DEPRECATED_ANNOTATION = JavaTypeName.create(Deprecated.class);
     static final JavaTypeName OVERRIDE_ANNOTATION = JavaTypeName.create(Override.class);
 
     private final AbstractCompositeGenerator<?, ?> parent;

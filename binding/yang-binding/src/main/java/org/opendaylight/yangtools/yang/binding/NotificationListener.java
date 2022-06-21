@@ -10,20 +10,21 @@ package org.opendaylight.yangtools.yang.binding;
 import java.util.EventListener;
 
 /**
- * Marker interface for generated notification listener interfaces. This interface
- * exists solely as support for generated code. Users should never implement this
- * interface directly, but rather implement one of the sub-interfaces generated
- * from a YANG model.
+ * Marker interface for generated notification listener interfaces. This interface exists solely as support for
+ * generated code. Users should never implement this interface directly, but rather implement one of the sub-interfaces
+ * generated from a YANG model.
  *
  * <p>
- * The subclasses of this interface have callbacks for events, which are derived
- * from {@link Notification} class in form void
- * on{NotificationType}(NotificationType notification).
+ * The subclasses of this interface have callbacks for events, which are derived from {@link Notification} class in form
+ * <pre>
+ *   void on{NotificationType}(NotificationType notification)
+ * </pre>
  *
  * <p>
  * E.g. if we have notification SessionUp the callback will have signature:
- * <code>void  onSessionUp(SessionUp notification)</code>
+ * {@code void  onSessionUp(SessionUp notification)}
  */
+@Deprecated(since = "10.0.0", forRemoval = true)
 public interface NotificationListener extends EventListener {
 
 }
