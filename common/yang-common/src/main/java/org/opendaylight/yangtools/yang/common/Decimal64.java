@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -561,20 +560,22 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
 
-        final long intPart = intPart();
-        final long fracPart = fracPart();
-        final StringBuilder sb = new StringBuilder(21);
-        if (intPart == 0 && fracPart < 0) {
-            sb.append('-');
-        }
-        sb.append(intPart).append('.');
+        final var sb = new StringBuilder(21);
+        sb.append(value);
+        final var periodPosition = this.scale();
+        sb.insert(sb.length() - periodPosition, ".");
 
-        if (fracPart != 0) {
-            // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
-        } else {
-            sb.append('0');
+        // Adding '0' before period if value is between -1 and 1. For example .34 will become 0.34.
+        if (sb.length() <= periodPosition + 1 || sb.charAt(sb.length() - periodPosition - 2) == '-') {
+            sb.insert(sb.length() - periodPosition - 1, '0');
         }
+
+        // Trim excess trailing zeroes
+        int trimZeroes = sb.length();
+        while (sb.charAt(trimZeroes - 1) == '0' && sb.charAt(trimZeroes - 2) == '0') {
+            trimZeroes--;
+        }
+        sb.setLength(trimZeroes);
 
         return sb.toString();
     }
