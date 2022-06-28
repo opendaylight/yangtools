@@ -229,6 +229,16 @@ public class Decimal64Test {
     }
 
     @Test
+    public void testFractionPartToString() {
+        assertEquals("0.3", Decimal64.valueOf("0.3").toString());
+        assertEquals("0.03", Decimal64.valueOf("0.03").toString());
+        assertEquals("0.003", Decimal64.valueOf("0.003").toString());
+        assertEquals("-0.3", Decimal64.valueOf("-0.3").toString());
+        assertEquals("-0.03", Decimal64.valueOf("-0.03").toString());
+        assertEquals("-0.003", Decimal64.valueOf("-0.003").toString());
+    }
+
+    @Test
     public void testBoundaries() {
         assertEquals(-128L, Decimal64.valueOf(1, Byte.MIN_VALUE).longValue());
         assertEquals(127L, Decimal64.valueOf(1, Byte.MAX_VALUE).longValue());
