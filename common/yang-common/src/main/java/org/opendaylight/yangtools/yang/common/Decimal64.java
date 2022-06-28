@@ -560,23 +560,16 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // prohibited, subject to the rule that there MUST be at least one digit
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
-
-        final long intPart = intPart();
-        final long fracPart = fracPart();
-        final StringBuilder sb = new StringBuilder(21);
-        if (intPart == 0 && fracPart < 0) {
-            sb.append('-');
+        final var builder = new StringBuilder(21)
+                .append(Strings.padStart(Long.toString(Math.abs(value)), scale(), '0'));
+        builder.insert(builder.length() - scale(), ".");
+        if (intPart() == 0) {
+            builder.insert(0, "0");
         }
-        sb.append(intPart).append('.');
-
-        if (fracPart != 0) {
-            // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
-        } else {
-            sb.append('0');
+        if (value < 0) {
+            builder.insert(0, "-");
         }
-
-        return sb.toString();
+        return builder.toString();
     }
 
     @Override
