@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -555,28 +554,24 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     public final String toCanonicalString() {
         // https://tools.ietf.org/html/rfc6020#section-9.3.2
         //
-        // The canonical form of a positive decimal64 does not include the sign
+        // The canonical form of a positive decimal64 does not include the start
         // "+".  The decimal point is required.  Leading and trailing zeros are
         // prohibited, subject to the rule that there MUST be at least one digit
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
 
-        final long intPart = intPart();
-        final long fracPart = fracPart();
-        final StringBuilder sb = new StringBuilder(21);
-        if (intPart == 0 && fracPart < 0) {
-            sb.append('-');
+        // pad unscaled value to scale + 1 size starting after optional '-' sign
+        final var builder = new StringBuilder(21).append(value);
+        final var start = builder.indexOf("-") == -1 ? 0 : 1;
+        final var padding = scale() + 1 + start;
+        builder.insert(start, "0".repeat(Math.max(0, padding - builder.length())));
+        // insert '.' at scale point
+        builder.insert(builder.length() - scale(), ".");
+        // special case: when `fractPart` is zero it can have multiple scales with trailing '0's
+        if (fracPart() == 0) {
+            builder.setLength(builder.indexOf(".") + 2);
         }
-        sb.append(intPart).append('.');
-
-        if (fracPart != 0) {
-            // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
-        } else {
-            sb.append('0');
-        }
-
-        return sb.toString();
+        return builder.toString();
     }
 
     @Override
