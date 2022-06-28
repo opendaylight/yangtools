@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -561,20 +560,18 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
 
-        final long intPart = intPart();
-        final long fracPart = fracPart();
         final StringBuilder sb = new StringBuilder(21);
-        if (intPart == 0 && fracPart < 0) {
-            sb.append('-');
+        sb.append(value);
+        sb.reverse();
+        int periodPosition = String.valueOf(FACTOR[offset]).length() - 1;
+        sb.insert(periodPosition, ".");
+        if (sb.length() <= periodPosition + 1 || sb.charAt(periodPosition + 1) == '-') {
+            sb.insert(periodPosition + 1, '0');
         }
-        sb.append(intPart).append('.');
-
-        if (fracPart != 0) {
-            // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
-        } else {
-            sb.append('0');
+        while (sb.charAt(0) == '0' && sb.charAt(1) == '0') {
+            sb.deleteCharAt(0);
         }
+        sb.reverse();
 
         return sb.toString();
     }
