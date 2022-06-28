@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -561,22 +560,24 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
 
-        final long intPart = intPart();
-        final long fracPart = fracPart();
-        final StringBuilder sb = new StringBuilder(21);
-        if (intPart == 0 && fracPart < 0) {
-            sb.append('-');
+        // initialize builder with all components
+        final var builder = new StringBuilder(21)
+                .append(Math.abs(intPart()))
+                .append(".")
+                .append(Math.abs(fracPart()));
+        // pad fractPart to scale
+        builder.insert(builder.indexOf(".") + 1, "0".repeat(Math.max(0, scale() - (builder.length() - builder.indexOf(".") - 1))));
+        // add '-' for negative numbers
+        if (value < 0) {
+            builder.insert(0, "-");
         }
-        sb.append(intPart).append('.');
-
-        if (fracPart != 0) {
-            // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
-        } else {
-            sb.append('0');
+        // trim trailing '0's
+        var length = builder.length();
+        while (builder.charAt(length - 2) != '.' && builder.charAt(length - 1) == '0') {
+            length--;
         }
-
-        return sb.toString();
+        builder.setLength(length);
+        return builder.toString();
     }
 
     @Override
