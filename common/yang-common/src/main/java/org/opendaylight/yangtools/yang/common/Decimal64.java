@@ -561,22 +561,22 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
 
-        final long intPart = intPart();
-        final long fracPart = fracPart();
-        final StringBuilder sb = new StringBuilder(21);
-        if (intPart == 0 && fracPart < 0) {
-            sb.append('-');
+        // initialize builder with 'value' padded to (scale + 1) to have '0' before '.'
+        final var builder = new StringBuilder(21)
+                .append(Strings.padStart(Long.toString(Math.abs(value)), scale() + 1, '0'));
+        // insert '.' at scale point
+        builder.insert(builder.length() - scale(), ".");
+        // add '-' for negative numbers
+        if (value < 0) {
+            builder.insert(0, "-");
         }
-        sb.append(intPart).append('.');
-
-        if (fracPart != 0) {
-            // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
-        } else {
-            sb.append('0');
+        // trim trailing '0's
+        var length = builder.length();
+        while (builder.charAt(length - 2) != '.' && builder.charAt(length - 1) == '0') {
+            length--;
         }
-
-        return sb.toString();
+        builder.setLength(length);
+        return builder.toString();
     }
 
     @Override
