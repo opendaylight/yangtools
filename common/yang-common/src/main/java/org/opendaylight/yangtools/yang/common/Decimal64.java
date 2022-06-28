@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -561,22 +560,31 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         // before and after the decimal point.  The value zero is represented as
         // "0.0".
 
-        final long intPart = intPart();
-        final long fracPart = fracPart();
-        final StringBuilder sb = new StringBuilder(21);
-        if (intPart == 0 && fracPart < 0) {
-            sb.append('-');
-        }
-        sb.append(intPart).append('.');
-
-        if (fracPart != 0) {
-            // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(Math.abs(fracPart)), scale(), '0'));
-        } else {
-            sb.append('0');
+        // Pad unscaled value to scale + 1 size string starting after optional '-' sign
+        final var builder = new StringBuilder(21).append(value);
+        final int start = value < 0 ? 1 : 0;
+        final int scale = scale();
+        final int padding = scale + 1 + start - builder.length();
+        if (padding > 0) {
+            builder.insert(start, "0".repeat(padding));
         }
 
-        return sb.toString();
+        // The first digit of the fraction part is now 'scale' from the end. We will insert the decimal point there,
+        // but also we it is the digit we never trim.
+        final int length = builder.length();
+        final int firstDecimal = length - scale;
+
+        // Remove trailing '0's from decimal part. We walk backwards from the last character stop at firstDecimal
+        int significantLength = length;
+        for (int i = length - 1; i > firstDecimal && builder.charAt(i) == '0'; --i) {
+            significantLength = i;
+        }
+        if (significantLength != length) {
+            builder.setLength(significantLength);
+        }
+
+        // Insert '.' before the first decimal and we're done
+        return builder.insert(firstDecimal, '.').toString();
     }
 
     @Override
