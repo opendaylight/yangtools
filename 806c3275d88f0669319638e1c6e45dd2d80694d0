@@ -33,6 +33,29 @@
       "message": "IMO: We can do the work without reversing twice",
       "revId": "806c3275d88f0669319638e1c6e45dd2d80694d0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ada7dc6_ea841f0a",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 566,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-06-29T08:49:42Z",
+      "side": 1,
+      "message": "a weird way of saying \u0027scale()\u0027 ?",
+      "range": {
+        "startLine": 566,
+        "startChar": 29,
+        "endLine": 566,
+        "endChar": 73
+      },
+      "revId": "806c3275d88f0669319638e1c6e45dd2d80694d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
