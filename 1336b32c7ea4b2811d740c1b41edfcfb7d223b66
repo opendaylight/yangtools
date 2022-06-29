@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f8adca1_872071e0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-06-29T12:03:52Z",
+      "side": 1,
+      "message": "plus fails build",
+      "revId": "1336b32c7ea4b2811d740c1b41edfcfb7d223b66",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "879a47eb_a08508e1",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 568,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-06-29T12:03:52Z",
+      "side": 1,
+      "message": "this deserves a comment, it is not exactly clear what is it that we\u0027re doing",
+      "range": {
+        "startLine": 568,
+        "startChar": 8,
+        "endLine": 568,
+        "endChar": 102
+      },
+      "revId": "1336b32c7ea4b2811d740c1b41edfcfb7d223b66",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70617227_1d875252",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-06-29T12:03:52Z",
+      "side": 1,
+      "message": "is this is cutting trailing zeroes? If so, add a comment about that and I bet it can be refactored to a simpler algorithm -- like find cut-off point and do a sb.setLength().",
+      "range": {
+        "startLine": 571,
+        "startChar": 8,
+        "endLine": 571,
+        "endChar": 88
+      },
+      "revId": "1336b32c7ea4b2811d740c1b41edfcfb7d223b66",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
