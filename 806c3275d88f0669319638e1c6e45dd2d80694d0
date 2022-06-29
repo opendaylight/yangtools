@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e6d1f2b_9039f620",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-06-29T09:42:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ebc710a_eef9dc78",
+      "revId": "806c3275d88f0669319638e1c6e45dd2d80694d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5f1ef4c4_c9e4fbbe",
@@ -49,6 +67,24 @@
       "side": 1,
       "message": "yup, just work backwards",
       "parentUuid": "5f1ef4c4_c9e4fbbe",
+      "revId": "806c3275d88f0669319638e1c6e45dd2d80694d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb800f08_8ad26f6b",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-06-29T09:42:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d07544aa_b62489a1",
       "revId": "806c3275d88f0669319638e1c6e45dd2d80694d0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
