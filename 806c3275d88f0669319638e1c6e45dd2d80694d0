@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ebc710a_eef9dc78",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-06-29T07:38:55Z",
+      "side": 1,
+      "message": "We can use `final var` everywhere.",
+      "revId": "806c3275d88f0669319638e1c6e45dd2d80694d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f1ef4c4_c9e4fbbe",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-06-29T07:38:55Z",
+      "side": 1,
+      "message": "IMO: We can do the work without reversing twice",
+      "revId": "806c3275d88f0669319638e1c6e45dd2d80694d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
