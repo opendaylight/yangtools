@@ -39,7 +39,7 @@
         <module>docs</module>
         <module>features</module>
 
-        <module>benchmarks</module>
+        <!-- <module>benchmarks</module>
         <module>bnd-parent</module>
         <module>bundle-parent</module>
         <module>codec</module>
@@ -49,7 +49,7 @@
         <module>parser</module>
         <module>plugin</module>
         <module>tools</module>
-        <module>xpath</module>
+        <module>xpath</module> -->
 
         <module>yang</module>
     </modules>
