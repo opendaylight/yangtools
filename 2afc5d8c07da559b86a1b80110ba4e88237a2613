@@ -16,6 +16,23 @@
       "message": "Added Jenkinsfile",
       "revId": "2afc5d8c07da559b86a1b80110ba4e88237a2613",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11154ed4_62bf3e9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-06-30T12:02:08Z",
+      "side": 1,
+      "message": "So we have normal verify triggering on this change, but not the validation...\nWe need something in releng/buider to make that happen",
+      "revId": "2afc5d8c07da559b86a1b80110ba4e88237a2613",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
