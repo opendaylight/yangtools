@@ -45,11 +45,11 @@
         <module>codec</module>
         <module>common</module>
         <module>data</module>
-        <module>model</module>
+        <!-- <module>model</module>
         <module>parser</module>
         <module>plugin</module>
         <module>tools</module>
-        <module>xpath</module>
+        <module>xpath</module> -->
 
         <module>yang</module>
     </modules>
