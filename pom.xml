@@ -36,7 +36,7 @@
 
     <modules>
         <module>artifacts</module>
-        <module>docs</module>
+        <!-- <module>docs</module>
         <module>features</module>
 
         <module>benchmarks</module>
@@ -51,7 +51,7 @@
         <module>tools</module>
         <module>xpath</module>
 
-        <module>yang</module>
+        <module>yang</module> -->
     </modules>
 
     <properties>
