@@ -206,9 +206,9 @@ public class BitAndUnionTOEnclosingTest {
         assertNotNull("secondBit property wasn't found", secondBitProperty);
         assertNotNull("thirdBit property wasn't found", thirdBitProperty);
 
-        assertEquals("firstBit property has incorrect type", "Boolean", firstBitProperty.getReturnType().getName());
-        assertEquals("secondBit property has incorrect type", "Boolean", secondBitProperty.getReturnType().getName());
-        assertEquals("thirdBit property has incorrect type", "Boolean", thirdBitProperty.getReturnType().getName());
+        assertEquals("firstBit property has incorrect type", "boolean", firstBitProperty.getReturnType().getName());
+        assertEquals("secondBit property has incorrect type", "boolean", secondBitProperty.getReturnType().getName());
+        assertEquals("thirdBit property has incorrect type", "boolean", thirdBitProperty.getReturnType().getName());
 
         GeneratedProperty uint32Property = null;
         GeneratedProperty stringProperty = null;

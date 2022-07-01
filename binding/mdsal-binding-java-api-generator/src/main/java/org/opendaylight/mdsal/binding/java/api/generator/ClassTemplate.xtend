@@ -23,7 +23,6 @@ import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.UINT32_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.UINT64_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.UINT8_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT
-import static org.opendaylight.mdsal.binding.model.ri.Types.BOOLEAN
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isBitsType
@@ -429,7 +428,7 @@ class ClassTemplate extends BaseTemplate {
         int i = 0;
         return new «genTO.name»(
         «FOR prop : allProperties SEPARATOR ","»
-            properties.get(i++).equals(defaultValue) ? «BOOLEAN.importedName».TRUE : null
+            properties.get(i++).equals(defaultValue) ? true : false
         «ENDFOR»
         );
     '''

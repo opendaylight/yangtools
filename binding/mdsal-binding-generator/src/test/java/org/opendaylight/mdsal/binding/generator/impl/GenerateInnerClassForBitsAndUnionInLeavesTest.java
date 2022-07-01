@@ -17,6 +17,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.ri.BaseYangTypes;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class GenerateInnerClassForBitsAndUnionInLeavesTest {
@@ -53,13 +54,13 @@ public class GenerateInnerClassForBitsAndUnionInLeavesTest {
                                 for (GeneratedProperty bitLeafProperty : bitLeafProperties) {
                                     if (bitLeafProperty.getName().equals("firstBit")) {
                                         firstBitPropertyFound = true;
-                                        assertEquals(BaseYangTypes.BOOLEAN_TYPE, bitLeafProperty.getReturnType());
+                                        assertEquals(Types.primitiveBooleanType(), bitLeafProperty.getReturnType());
                                     } else if (bitLeafProperty.getName().equals("secondBit")) {
                                         secondBitPropertyFound = true;
-                                        assertEquals(BaseYangTypes.BOOLEAN_TYPE, bitLeafProperty.getReturnType());
+                                        assertEquals(Types.primitiveBooleanType(), bitLeafProperty.getReturnType());
                                     } else if (bitLeafProperty.getName().equals("thirdBit")) {
                                         thirdBitPropertyFound = true;
-                                        assertEquals(BaseYangTypes.BOOLEAN_TYPE, bitLeafProperty.getReturnType());
+                                        assertEquals(Types.primitiveBooleanType(), bitLeafProperty.getReturnType());
                                     }
                                 }
                                 assertTrue(firstBitPropertyFound);

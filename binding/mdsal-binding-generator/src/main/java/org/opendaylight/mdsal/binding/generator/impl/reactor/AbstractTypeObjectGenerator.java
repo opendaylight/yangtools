@@ -619,7 +619,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             final String name = bit.getName();
             GeneratedPropertyBuilder genPropertyBuilder = builder.addProperty(BindingMapping.getPropertyName(name));
             genPropertyBuilder.setReadOnly(true);
-            genPropertyBuilder.setReturnType(BaseYangTypes.BOOLEAN_TYPE);
+            genPropertyBuilder.setReturnType(Types.primitiveBooleanType());
 
             builder.addEqualsIdentity(genPropertyBuilder);
             builder.addHashIdentity(genPropertyBuilder);
