@@ -12,6 +12,7 @@ import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.DATA_OBJECT
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.IDENTIFIABLE_KEY_NAME
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
@@ -441,6 +442,13 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      */
     def private generateSetters() '''
         «IF keyType !== null»
+            /**
+             * Set the key value corresponding to {@link «targetType.importedName»#«IDENTIFIABLE_KEY_NAME»()} to the specified
+             * value.
+             *
+             * @param key desired value
+             * @return this builder
+             */
             public «type.getName» withKey(final «keyType.importedName» key) {
                 this.key = key;
                 return this;
