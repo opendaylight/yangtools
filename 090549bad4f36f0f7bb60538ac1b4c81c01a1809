@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bbea343b_865303ec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-07-04T08:58:41Z",
+      "side": 1,
+      "message": "`testNegative` and `testPositive` are failing",
+      "revId": "090549bad4f36f0f7bb60538ac1b4c81c01a1809",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
