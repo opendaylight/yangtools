@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "780d54d1_17b1f7d0",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-07-06T22:04:34Z",
+      "side": 1,
+      "message": "value \u003c 0",
+      "range": {
+        "startLine": 565,
+        "startChar": 26,
+        "endLine": 565,
+        "endChar": 46
+      },
+      "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "283824bc_3c626a2e",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-07-06T22:04:34Z",
+      "side": 1,
+      "message": "We should not rely on fracPart() -- that includes some amount of computation -- we really should be looking at the resulting string.\n\nWhat bugs be here is that we are cutting off at the decimal point + 2 -- I can   understand the special case, but it is not special at all:  what we want to do is cut all superfluous zeroes: in 5.0 that\u0027s none, in 5.00 that\u0027s 1, in 5.000 that are last two.",
+      "range": {
+        "startLine": 571,
+        "startChar": 0,
+        "endLine": 573,
+        "endChar": 9
+      },
+      "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
