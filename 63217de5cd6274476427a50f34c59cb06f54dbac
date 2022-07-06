@@ -16,6 +16,23 @@
       "message": "startpipe\n\n# testing pipeline Gerrit trigger",
       "revId": "63217de5cd6274476427a50f34c59cb06f54dbac",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9238fe6a_dc05463b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9117
+      },
+      "writtenOn": "2022-07-06T12:10:09Z",
+      "side": 1,
+      "message": "startpipe",
+      "revId": "63217de5cd6274476427a50f34c59cb06f54dbac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
