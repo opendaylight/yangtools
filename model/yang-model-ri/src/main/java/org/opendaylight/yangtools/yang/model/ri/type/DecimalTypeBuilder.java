@@ -9,9 +9,19 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.collect.ImmutableRangeSet;
+import com.google.common.collect.Range;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRangeStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyRangeEffectiveStatement;
 
 public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<DecimalTypeDefinition, Decimal64> {
     private Integer fractionDigits;
@@ -28,8 +38,61 @@ public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<Decimal
 
     @Override
     DecimalTypeDefinition buildType() {
-        checkState(fractionDigits != null, "Fraction digits not defined");
-        return new BaseDecimalType(getQName(), getUnknownSchemaNodes(), fractionDigits,
-            calculateRangeConstraint(BaseDecimalType.constraintsForDigits(fractionDigits)));
+        final var local = fractionDigits;
+        checkState(local != null, "Fraction digits not defined");
+        final int scale = local;
+
+        return new BaseDecimalType(getQName(), getUnknownSchemaNodes(), scale,
+            ensureResolvedScale(calculateRangeConstraint(BaseDecimalType.constraintsForDigits(scale)), scale));
+    }
+
+    private static @NonNull RangeConstraint<Decimal64> ensureResolvedScale(
+            final @NonNull RangeConstraint<Decimal64> constraint, final int scale) {
+        // Check if we need to resolve anything at all
+        final var ranges = constraint.getAllowedRanges().asRanges();
+        for (final var range : ranges) {
+            if (range.lowerEndpoint().scale() != scale || range.upperEndpoint().scale() != scale) {
+                return resolveScale(constraint, ranges, scale);
+            }
+        }
+
+        // Everything is good - return same constraint
+        return constraint;
+    }
+
+    private static @NonNull ResolvedRangeConstraint<Decimal64> resolveScale(final RangeConstraint<Decimal64> constraint,
+            final Set<Range<@NonNull Decimal64>> ranges, final int scale) {
+        final var builder = ImmutableRangeSet.<Decimal64>builder();
+        for (final var range : ranges) {
+            boolean reuse = true;
+
+            var lower = range.lowerEndpoint();
+            if (lower.scale() != scale) {
+                lower = lower.scaleTo(scale);
+                reuse = false;
+            }
+            var upper = range.upperEndpoint();
+            if (upper.scale() != scale) {
+                upper = upper.scaleTo(scale);
+                reuse = false;
+            }
+            builder.add(reuse ? range : Range.closed(lower, upper));
+        }
+
+        // Constructing new meta for scaled range constraint
+        final List<ValueRange> scaledRange = getValueRange(builder.build());
+        final String stringRange = constraint.getAllowedRanges().span().toString();
+        EmptyRangeEffectiveStatement meta = new EmptyRangeEffectiveStatement(new EmptyRangeStatement(stringRange,
+            scaledRange));
+
+        return new ResolvedRangeConstraint<>(meta, builder.build());
+    }
+
+    private static List<ValueRange> getValueRange(ImmutableRangeSet<Decimal64> rangeSet) {
+        final List<ValueRange> scaledRange = new ArrayList();
+        for (final Range<Decimal64> range: rangeSet.asRanges()) {
+            scaledRange.add(ValueRange.of(range.lowerEndpoint(), range.upperEndpoint()));
+        }
+        return List.copyOf(scaledRange);
     }
 }
