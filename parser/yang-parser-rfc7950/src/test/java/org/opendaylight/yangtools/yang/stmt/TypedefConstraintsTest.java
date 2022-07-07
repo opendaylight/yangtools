@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -57,14 +58,22 @@ public class TypedefConstraintsTest extends AbstractYangTest {
         assertTrue(type instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition decType = (DecimalTypeDefinition) type;
 
-        final Set<? extends Range<?>> decRangeConstraints = decType.getRangeConstraint().get().getAllowedRanges()
-                .asRanges();
+        final Set<? extends Range<Decimal64>> decRangeConstraints = decType.getRangeConstraint().get()
+                .getAllowedRanges().asRanges();
 
         assertEquals(1, decRangeConstraints.size());
 
-        final Range<?> range = decRangeConstraints.iterator().next();
-        assertEquals(Decimal64.valueOf("1.5"), range.lowerEndpoint());
-        assertEquals(Decimal64.valueOf("5.5"), range.upperEndpoint());
+        final Range<Decimal64> range = decRangeConstraints.iterator().next();
+        assertEquals(Decimal64.of(decType.getFractionDigits(), 15000), range.lowerEndpoint());
+        assertEquals(Decimal64.of(decType.getFractionDigits(), 55000), range.upperEndpoint());
+        assertTrue(range.contains(Decimal64.of(4, 55000)));
+        assertTrue(range.contains(Decimal64.of(4, 15000)));
+        assertFalse(range.contains(Decimal64.of(4, 55001)));
+        assertFalse(range.contains(Decimal64.of(4, 14999)));
+        assertTrue(range.contains(Decimal64.of(5, 150001)));
+        assertTrue(range.contains(Decimal64.of(5, 549999)));
+        assertTrue(range.contains(Decimal64.of(3, 1501)));
+        assertTrue(range.contains(Decimal64.of(3, 5499)));
 
         assertEquals(TypeDefinitions.DECIMAL64.bindTo(leafDecimal.getQName().getModule()), decType.getQName());
         assertNull(decType.getBaseType());
