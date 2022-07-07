@@ -140,6 +140,30 @@
       },
       "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "755b4934_516f0307",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/Decimal64Test.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-07-07T07:44:21Z",
+      "side": 1,
+      "message": "Using `0.300` here results in the same scale as using `0.3`",
+      "parentUuid": "3b9d780e_9f1000b5",
+      "range": {
+        "startLine": 232,
+        "startChar": 16,
+        "endLine": 232,
+        "endChar": 40
+      },
+      "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
