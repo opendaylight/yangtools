@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d0c7563_85ccd624",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-07-07T07:43:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "780d54d1_17b1f7d0",
+      "range": {
+        "startLine": 565,
+        "startChar": 26,
+        "endLine": 565,
+        "endChar": 46
+      },
+      "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "283824bc_3c626a2e",
@@ -47,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a757c2e_ddaf0ac3",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Decimal64.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-07-07T07:43:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "283824bc_3c626a2e",
+      "range": {
+        "startLine": 571,
+        "startChar": 0,
+        "endLine": 573,
+        "endChar": 9
+      },
+      "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "42b22877_e52e48ec",
@@ -60,6 +108,30 @@
       "writtenOn": "2022-07-06T22:05:24Z",
       "side": 1,
       "message": "also include things like \"0.300\"",
+      "range": {
+        "startLine": 232,
+        "startChar": 16,
+        "endLine": 232,
+        "endChar": 40
+      },
+      "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b9d780e_9f1000b5",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/Decimal64Test.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-07-07T07:43:26Z",
+      "side": 1,
+      "message": "Using `0.300` here results in the same scale as using `0.300`. To test trailing zeros issue in that case I have added `testScalingToString` test.",
+      "parentUuid": "42b22877_e52e48ec",
       "range": {
         "startLine": 232,
         "startChar": 16,
