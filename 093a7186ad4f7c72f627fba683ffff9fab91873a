@@ -164,6 +164,30 @@
       },
       "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddd3f4ce_44abeb71",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/Decimal64Test.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-07-07T07:44:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "755b4934_516f0307",
+      "range": {
+        "startLine": 232,
+        "startChar": 16,
+        "endLine": 232,
+        "endChar": 40
+      },
+      "revId": "093a7186ad4f7c72f627fba683ffff9fab91873a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
