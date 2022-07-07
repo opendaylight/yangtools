@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.ImmutableRangeSet.Builder;
@@ -47,17 +48,26 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
         touch();
     }
 
-    final RangeConstraint<N> calculateRangeConstraint(final RangeConstraint<N> baseRangeConstraint) {
-        if (ranges == null) {
-            return baseRangeConstraint;
-        }
+    @Override
+    final T buildType() {
+        final var localRanges = ranges;
+        return localRanges == null ? buildUnconstrainedType()
+            : buildConstrainedType(verifyNotNull(constraint), localRanges);
+    }
 
+    abstract @NonNull T buildConstrainedType(@NonNull ConstraintMetaDefinition constraint,
+        @NonNull ImmutableList<ValueRange> ranges);
+
+    abstract @NonNull T buildUnconstrainedType();
+
+    final RangeSet<N> calculateRanges(final @NonNull RangeConstraint<N> baseConstraint,
+            final @NonNull ImmutableList<ValueRange> contraintRanges) {
         // Run through alternatives and resolve them against the base type
-        final RangeSet<N> baseRangeSet = baseRangeConstraint.getAllowedRanges();
-        Verify.verify(!baseRangeSet.isEmpty(), "Base type %s does not define constraints", getBaseType());
+        final RangeSet<N> baseRangeSet = baseConstraint.getAllowedRanges();
+        verify(!baseRangeSet.isEmpty(), "Base type %s does not define constraints", getBaseType());
 
         final Range<N> baseRange = baseRangeSet.span();
-        final List<ValueRange> resolvedRanges = ensureResolvedRanges(ranges, baseRange);
+        final List<ValueRange> resolvedRanges = ensureResolvedRanges(contraintRanges, baseRange);
 
         // Next up, ensure the of boundaries match base constraints
         final RangeSet<N> typedRanges = ensureTypedRanges(resolvedRanges, baseRange.lowerEndpoint().getClass());
@@ -67,8 +77,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
             throw new InvalidRangeConstraintException(typedRanges,
                 "Range constraint %s is not a subset of parent constraint %s", typedRanges, baseRangeSet);
         }
-
-        return new ResolvedRangeConstraint<>(constraint, typedRanges);
+        return typedRanges;
     }
 
     private static <C extends Number & Comparable<C>> List<ValueRange> ensureResolvedRanges(
@@ -108,7 +117,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     @SuppressWarnings("unchecked")
     private static <T extends Number & Comparable<T>> RangeSet<T> ensureTypedRanges(final List<ValueRange> ranges,
             final Class<? extends Number> clazz) {
-        final Builder<T> builder = ImmutableRangeSet.builder();
+        final Builder<T> builder = ImmutableRangeSet.<T>builder();
         for (ValueRange range : ranges) {
             if (!clazz.isInstance(range.lowerBound()) || !clazz.isInstance(range.upperBound())) {
                 return typedRanges(ranges, clazz);
@@ -124,7 +133,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     private static <T extends Number & Comparable<T>> RangeSet<T> typedRanges(final List<ValueRange> ranges,
             final Class<? extends Number> clazz) {
         final Function<Number, ? extends Number> function = NumberUtil.converterTo(clazz);
-        Preconditions.checkArgument(function != null, "Unsupported range class %s", clazz);
+        checkArgument(function != null, "Unsupported range class %s", clazz);
 
         final Builder<T> builder = ImmutableRangeSet.builder();
 
