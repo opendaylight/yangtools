@@ -1,0 +1,11 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  typedef foo {
+    type decimal64 {
+      fraction-digits 2;
+      range 1..2.345;
+    }
+  }
+}
