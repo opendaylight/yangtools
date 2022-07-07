@@ -61,16 +61,19 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
 
         final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(stmt.argumentAsTypeQName());
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof FractionDigitsEffectiveStatement) {
-                builder.setFractionDigits(((FractionDigitsEffectiveStatement) subStmt).argument());
+            if (subStmt instanceof FractionDigitsEffectiveStatement fracDigits) {
+                builder.setFractionDigits(fracDigits.argument());
             }
-            if (subStmt instanceof RangeEffectiveStatement) {
-                final RangeEffectiveStatement range = (RangeEffectiveStatement) subStmt;
+            if (subStmt instanceof RangeEffectiveStatement range) {
                 builder.setRangeConstraint(range, range.argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        try {
+            return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        } catch (ArithmeticException e) {
+            throw new SourceException("Range constraint does not match fraction-digits: " + e.getMessage(), stmt, e);
+        }
     }
 
     private static SourceException noFracDigits(final CommonStmtCtx stmt) {

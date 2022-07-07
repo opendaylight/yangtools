@@ -9,8 +9,11 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
@@ -21,9 +24,19 @@ abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeD
     }
 
     @Override
-    final T buildType() {
-        return buildType(calculateRangeConstraint(getBaseType().getRangeConstraint().get()));
+    final T buildConstrainedType(final ConstraintMetaDefinition constraint,
+            final ImmutableList<ValueRange> ranges) {
+        return buildType(new ResolvedRangeConstraint<>(constraint, calculateRanges(getBaseRangeConstraint(), ranges)));
+    }
+
+    @Override
+    final T buildUnconstrainedType() {
+        return buildType(getBaseRangeConstraint());
     }
 
     abstract @NonNull T buildType(RangeConstraint<N> rangeConstraints);
+
+    private RangeConstraint<N> getBaseRangeConstraint() {
+        return getBaseType().getRangeConstraint().orElseThrow();
+    }
 }
