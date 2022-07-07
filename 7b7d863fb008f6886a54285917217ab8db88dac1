@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ebb04a7a_7bd601ee",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2022-07-07T11:41:03Z",
+      "side": 1,
+      "message": "Does not conform to usual ODL code style.",
+      "revId": "7b7d863fb008f6886a54285917217ab8db88dac1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
