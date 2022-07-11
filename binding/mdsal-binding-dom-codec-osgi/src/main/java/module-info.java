@@ -20,6 +20,5 @@ module org.opendaylight.mdsal.binding.dom.codec.osgi {
 
     // Annotations
     requires static org.checkerframework.checker.qual;
-    requires static org.gaul.modernizer_maven_annotations;
     requires static org.osgi.service.component.annotations;
 }

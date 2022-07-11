@@ -8,19 +8,17 @@
 package org.opendaylight.mdsal.binding.runtime.osgi.impl;
 
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.primitives.UnsignedLong;
 import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -70,13 +68,11 @@ public final class OSGiBindingRuntimeContextImpl implements OSGiBindingRuntimeCo
         LOG.info("BindingRuntimeContext generation {} deactivated", generation);
     }
 
-    @SuppressModernizer
     static Dictionary<String, ?> props(final @NonNull UnsignedLong generation, final @NonNull Integer ranking,
             final BindingRuntimeContext delegate) {
-        final Dictionary<String, Object> ret = new Hashtable<>(4);
-        ret.put(Constants.SERVICE_RANKING, ranking);
-        ret.put(GENERATION, generation);
-        ret.put(DELEGATE, requireNonNull(delegate));
-        return ret;
+        return FrameworkUtil.asDictionary(Map.of(
+            Constants.SERVICE_RANKING, ranking,
+            GENERATION, generation,
+            DELEGATE, delegate));
     }
 }
