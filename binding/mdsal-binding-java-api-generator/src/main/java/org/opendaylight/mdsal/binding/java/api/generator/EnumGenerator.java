@@ -27,8 +27,7 @@ public class EnumGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        if (type instanceof Enumeration) {
-            final Enumeration enums = (Enumeration) type;
+        if (type instanceof Enumeration enums) {
             final EnumTemplate enumTemplate = new EnumTemplate(enums);
             return enumTemplate.generate();
         }

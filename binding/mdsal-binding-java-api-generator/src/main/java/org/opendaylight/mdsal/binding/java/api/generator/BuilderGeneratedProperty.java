@@ -52,14 +52,8 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof BuilderGeneratedProperty)) {
-            return false;
-        }
-        final BuilderGeneratedProperty other = (BuilderGeneratedProperty) obj;
-        return name.equals(other.name) && getter.equals(other.getter);
+        return obj == this || obj instanceof BuilderGeneratedProperty other
+            && name.equals(other.name) && getter.equals(other.getter);
     }
 
     @Override

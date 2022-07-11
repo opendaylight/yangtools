@@ -199,7 +199,7 @@ class JavaFileTemplate {
     }
 
     final @NonNull String importedJavadocName(final @NonNull Type intype) {
-        return importedName(intype instanceof ParameterizedType ? ((ParameterizedType) intype).getRawType() : intype);
+        return importedName(intype instanceof ParameterizedType parameterized ? parameterized.getRawType() : intype);
     }
 
     final @NonNull String importedName(final @NonNull Type intype) {
@@ -241,11 +241,10 @@ class JavaFileTemplate {
     }
 
     final CharSequence generateInnerClass(final GeneratedType innerClass) {
-        if (!(innerClass instanceof GeneratedTransferObject)) {
+        if (!(innerClass instanceof GeneratedTransferObject gto)) {
             return "";
         }
 
-        final GeneratedTransferObject gto = (GeneratedTransferObject) innerClass;
         final NestedJavaGeneratedType innerJavaType = javaType.getEnclosedType(innerClass.getIdentifier());
         return gto.isUnionType() ? new UnionTemplate(innerJavaType, gto).generateAsInnerClass()
                 : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
@@ -329,8 +328,7 @@ class JavaFileTemplate {
 
         ParameterizedType augmentType = null;
         for (Type implementedIfc : implementedIfcs) {
-            if (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject)) {
-                final GeneratedType ifc = (GeneratedType) implementedIfc;
+            if (implementedIfc instanceof GeneratedType ifc && !(implementedIfc instanceof GeneratedTransferObject)) {
                 addImplMethods(methods, ifc);
 
                 final ParameterizedType t = collectImplementedMethods(type, methods, ifc.getImplements());
@@ -408,8 +406,8 @@ class JavaFileTemplate {
         type.getYangSourceDefinition().ifPresent(def -> {
             sb.append('\n');
 
-            if (def instanceof Single) {
-                final DocumentedNode node = ((Single) def).getNode();
+            if (def instanceof Single single) {
+                final DocumentedNode node = single.getNode();
 
                 sb.append("<p>\n")
                     .append("This class represents the following YANG schema fragment defined in module <b>")
@@ -418,8 +416,7 @@ class JavaFileTemplate {
                 appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).getDeclared());
                 sb.append("</pre>");
 
-                if (node instanceof SchemaNode) {
-                    final SchemaNode schema = (SchemaNode) node;
+                if (node instanceof SchemaNode schema) {
 //                    sb.append("The schema path to identify an instance is\n");
 //                    appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
 //                    sb.append("</i>\n");
@@ -439,9 +436,9 @@ class JavaFileTemplate {
                         }
                     }
                 }
-            } else if (def instanceof Multiple) {
+            } else if (def instanceof Multiple multiple) {
                 sb.append("<pre>\n");
-                for (SchemaNode node : ((Multiple) def).getNodes()) {
+                for (SchemaNode node : multiple.getNodes()) {
                     appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).getDeclared());
                 }
                 sb.append("</pre>\n");

@@ -16,7 +16,7 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 public final class InterfaceGenerator implements CodeGenerator {
 
     @Override
-    public boolean isAcceptable(Type type) {
+    public boolean isAcceptable(final Type type) {
         return type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)
                 && !(type instanceof Enumeration);
     }
@@ -27,9 +27,8 @@ public final class InterfaceGenerator implements CodeGenerator {
      * written in XTEND language.
      */
     @Override
-    public String generate(Type type) {
-        if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
-            final GeneratedType genType = (GeneratedType) type;
+    public String generate(final Type type) {
+        if (type instanceof GeneratedType genType && !(type instanceof GeneratedTransferObject)) {
             final InterfaceTemplate interfaceTemplate = new InterfaceTemplate(genType);
             return interfaceTemplate.generate();
         }
@@ -37,8 +36,7 @@ public final class InterfaceGenerator implements CodeGenerator {
     }
 
     @Override
-    public String getUnitName(Type type) {
+    public String getUnitName(final Type type) {
         return type.getName();
     }
-
 }

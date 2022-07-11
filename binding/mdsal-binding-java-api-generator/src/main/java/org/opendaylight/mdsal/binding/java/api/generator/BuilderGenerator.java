@@ -36,8 +36,8 @@ public final class BuilderGenerator implements CodeGenerator {
      */
     @Override
     public boolean isAcceptable(final Type type) {
-        if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
-            for (Type t : ((GeneratedType) type).getImplements()) {
+        if (type instanceof GeneratedType generated && !(type instanceof GeneratedTransferObject)) {
+            for (Type t : generated.getImplements()) {
                 // "rpc" and "grouping" elements do not implement Augmentable
                 final JavaTypeName name = t.getIdentifier();
                 if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION)) {
@@ -54,8 +54,8 @@ public final class BuilderGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
-            return templateForType((GeneratedType) type).generate();
+        if (type instanceof GeneratedType generated && !(type instanceof GeneratedTransferObject)) {
+            return templateForType(generated).generate();
         }
         return "";
     }

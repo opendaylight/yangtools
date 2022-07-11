@@ -118,10 +118,10 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
     private static Type getConcreteType(final Type type) {
         if (type instanceof ConcreteType) {
             return type;
-        } else if (type instanceof ParameterizedType) {
-            return ((ParameterizedType) type).getRawType();
-        } else if (type instanceof GeneratedTransferObject) {
-            GeneratedTransferObject rootGto = (GeneratedTransferObject) type;
+        } else if (type instanceof ParameterizedType generated) {
+            return generated.getRawType();
+        } else if (type instanceof GeneratedTransferObject gto) {
+            GeneratedTransferObject rootGto = gto;
             while (rootGto.getSuperType() != null) {
                 rootGto = rootGto.getSuperType();
             }
@@ -144,8 +144,8 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         if (type.equals(BindingTypes.INSTANCE_IDENTIFIER) || type.equals(BindingTypes.KEYED_INSTANCE_IDENTIFIER)) {
             return RANK_INSTANCE_IDENTIFIER;
         }
-        if (type instanceof GeneratedTransferObject) {
-            final TypeDefinition<?> typedef = topParentTransportObject((GeneratedTransferObject) type).getBaseType();
+        if (type instanceof GeneratedTransferObject gto) {
+            final TypeDefinition<?> typedef = topParentTransportObject(gto).getBaseType();
             if (typedef instanceof BitsTypeDefinition) {
                 return RANK_VARIABLE_ARRAY;
             }

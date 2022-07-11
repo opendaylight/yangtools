@@ -58,8 +58,8 @@ public final class GeneratorUtil {
         }
 
         // REGULAR EXPRESSION
-        if (genType instanceof GeneratedTransferObject
-                && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, (GeneratedTransferObject) genType)) {
+        if (genType instanceof GeneratedTransferObject gto
+                && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, gto)) {
             putTypeIntoImports(genType, PATTERN, imports);
         }
 
@@ -79,9 +79,8 @@ public final class GeneratorUtil {
         }
 
         // PROPERTIES
-        if (genType instanceof GeneratedTransferObject) {
-            final GeneratedTransferObject genTO = (GeneratedTransferObject) genType;
-            final List<GeneratedProperty> properties = genTO.getProperties();
+        if (genType instanceof GeneratedTransferObject gto) {
+            final List<GeneratedProperty> properties = gto.getProperties();
             if (properties != null) {
                 for (GeneratedProperty property : properties) {
                     final Type propertyType = property.getReturnType();
@@ -135,8 +134,7 @@ public final class GeneratorUtil {
         if (!imports.containsKey(typeName)) {
             imports.put(typeName, type.getIdentifier());
         }
-        if (type instanceof ParameterizedType) {
-            final ParameterizedType paramType = (ParameterizedType) type;
+        if (type instanceof ParameterizedType paramType) {
             final Type[] params = paramType.getActualTypeArguments();
             if (params != null) {
                 for (Type param : params) {
@@ -248,8 +246,7 @@ public final class GeneratorUtil {
      */
     private static StringBuilder addActualTypeParameters(final StringBuilder builder, final Type type,
             final GeneratedType parentGenType, final Map<String, JavaTypeName> imports) {
-        if (type instanceof ParameterizedType) {
-            final ParameterizedType pType = (ParameterizedType) type;
+        if (type instanceof ParameterizedType pType) {
             final Type[] pTypes = pType.getActualTypeArguments();
             builder.append('<').append(getParameters(parentGenType, pTypes, imports)).append('>');
         }

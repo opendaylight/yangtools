@@ -22,8 +22,7 @@ public final class TOGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        if (type instanceof GeneratedTransferObject) {
-            final GeneratedTransferObject genTO = (GeneratedTransferObject) type;
+        if (type instanceof GeneratedTransferObject genTO) {
             if (genTO.isUnionType()) {
                 final UnionTemplate template = new UnionTemplate(genTO);
                 return template.generate();

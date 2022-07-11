@@ -33,8 +33,8 @@ final class TypeUtils {
      */
     static ConcreteType getBaseYangType(final @NonNull Type type) {
         // Already the correct type
-        if (type instanceof ConcreteType) {
-            return (ConcreteType) type;
+        if (type instanceof ConcreteType concrete) {
+            return concrete;
         }
 
         checkArgument(type instanceof GeneratedTransferObject, "Unsupported type %s", type);

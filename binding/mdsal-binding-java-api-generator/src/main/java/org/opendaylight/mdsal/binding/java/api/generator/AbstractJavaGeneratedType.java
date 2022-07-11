@@ -51,8 +51,8 @@ abstract class AbstractJavaGeneratedType {
         enclosedTypes = b.build();
 
         final Set<String> cb = new HashSet<>();
-        if (genType instanceof Enumeration) {
-            ((Enumeration) genType).getValues().stream().map(Pair::getMappedName).forEach(cb::add);
+        if (genType instanceof Enumeration enumeration) {
+            enumeration.getValues().stream().map(Pair::getMappedName).forEach(cb::add);
         }
         // TODO: perhaps we can do something smarter to actually access the types
         collectAccessibleTypes(cb, genType);
@@ -62,8 +62,7 @@ abstract class AbstractJavaGeneratedType {
 
     private void collectAccessibleTypes(final Set<String> set, final GeneratedType type) {
         for (Type impl : type.getImplements()) {
-            if (impl instanceof GeneratedType) {
-                final GeneratedType genType = (GeneratedType) impl;
+            if (impl instanceof GeneratedType genType) {
                 for (GeneratedType inner : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
                     set.add(inner.getIdentifier().simpleName());
                 }
@@ -81,9 +80,8 @@ abstract class AbstractJavaGeneratedType {
     }
 
     private String annotateReference(final String ref, final Type type, final String annotation) {
-        if (type instanceof ParameterizedType) {
-            return getReferenceString(annotate(ref, annotation), type,
-                ((ParameterizedType) type).getActualTypeArguments());
+        if (type instanceof ParameterizedType parameterized) {
+            return getReferenceString(annotate(ref, annotation), type, parameterized.getActualTypeArguments());
         }
         return "byte[]".equals(ref) ? "byte @" + annotation + "[]" : annotate(ref, annotation).toString();
     }
@@ -94,8 +92,8 @@ abstract class AbstractJavaGeneratedType {
 
     final String getReferenceString(final Type type) {
         final String ref = getReferenceString(type.getIdentifier());
-        return type instanceof ParameterizedType ? getReferenceString(new StringBuilder(ref), type,
-            ((ParameterizedType) type).getActualTypeArguments())
+        return type instanceof ParameterizedType parameterized
+            ? getReferenceString(new StringBuilder(ref), type, parameterized.getActualTypeArguments())
                 : ref;
     }
 
