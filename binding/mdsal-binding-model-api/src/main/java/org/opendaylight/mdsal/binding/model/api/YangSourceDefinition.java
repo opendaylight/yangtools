@@ -20,10 +20,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 
 /**
  * DTO capturing the YANG source definition which lead to a {@link GeneratedType} being emitted.
@@ -46,8 +44,9 @@ public abstract sealed class YangSourceDefinition {
          * @return defining SchemaNodes, guaranteed to be non-empty
          */
         public List<? extends SchemaNode> getNodes() {
-            return nodes.stream().filter(node -> node instanceof EffectiveStatement
-                && ((EffectiveStatement<?, ?>) node).getDeclared() != null).collect(Collectors.toList());
+            return nodes.stream()
+                .filter(YangSourceDefinition::hasDeclaredStatement)
+                .collect(Collectors.toList());
         }
     }
 
@@ -78,11 +77,7 @@ public abstract sealed class YangSourceDefinition {
 
     public static Optional<YangSourceDefinition> of(final Module module) {
         final ModuleEffectiveStatement effective = module.asEffectiveStatement();
-        final ModuleStatement declared = effective.getDeclared();
-        if (declared != null) {
-            return Optional.of(new Single(effective, module));
-        }
-        return Optional.empty();
+        return effective.getDeclared() != null ? Optional.of(new Single(effective, module)) : Optional.empty();
     }
 
     public static Optional<YangSourceDefinition> of(final Module module, final SchemaNode node) {
@@ -90,24 +85,15 @@ public abstract sealed class YangSourceDefinition {
     }
 
     public static Optional<YangSourceDefinition> of(final ModuleEffectiveStatement module, final SchemaNode node) {
-        if (node instanceof EffectiveStatement) {
-            final DeclaredStatement<?> declared = ((EffectiveStatement<?, ?>) node).getDeclared();
-            if (declared != null) {
-                return Optional.of(new Single(module, node));
-            }
-        }
-        return Optional.empty();
+        return hasDeclaredStatement(node) ? Optional.of(new Single(module, node)) : Optional.empty();
     }
 
     public static Optional<YangSourceDefinition> of(final Module module, final Collection<? extends SchemaNode> nodes) {
         checkArgument(!nodes.isEmpty());
 
-        final boolean anyDeclared = nodes.stream().anyMatch(
-            node -> node instanceof EffectiveStatement && ((EffectiveStatement<?, ?>) node).getDeclared() != null);
-        if (anyDeclared) {
-            return Optional.of(new Multiple(module.asEffectiveStatement(), nodes));
-        }
-        return Optional.empty();
+        return nodes.stream().anyMatch(YangSourceDefinition::hasDeclaredStatement)
+            ? Optional.of(new Multiple(module.asEffectiveStatement(), nodes))
+                : Optional.empty();
     }
 
     /**
@@ -117,5 +103,9 @@ public abstract sealed class YangSourceDefinition {
      */
     public final ModuleEffectiveStatement getModule() {
         return module;
+    }
+
+    private static boolean hasDeclaredStatement(final SchemaNode schemaNode) {
+        return schemaNode instanceof EffectiveStatement<?, ?> effective && effective.getDeclared() != null;
     }
 }
