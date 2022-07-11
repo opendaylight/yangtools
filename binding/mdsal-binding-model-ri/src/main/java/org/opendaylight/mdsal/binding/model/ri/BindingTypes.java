@@ -338,4 +338,25 @@ public final class BindingTypes {
         }
         return null;
     }
+
+    /**
+     * Return the {@link Identifiable} type a parameterized {@link Identifier} type references.
+     *
+     * @param type Parameterized type
+     * @return Identifiable target, or null if {@code type} does not match the result of {@link #identifier(Type)}
+     * @throws NullPointerException if {@code type} is null
+     */
+    @Beta
+    public static @Nullable Type extractIdentifiable(final ParameterizedType type) {
+        if (IDENTIFIER.equals(type.getRawType())) {
+            final var args = type.getActualTypeArguments();
+            if (args.length == 1) {
+                final var arg = args[0];
+                if (arg != null) {
+                    return arg;
+                }
+            }
+        }
+        return null;
+    }
 }
