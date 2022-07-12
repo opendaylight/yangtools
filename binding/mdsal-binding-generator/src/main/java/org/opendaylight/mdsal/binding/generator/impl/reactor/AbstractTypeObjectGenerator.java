@@ -589,8 +589,8 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         final boolean isTypedef = this instanceof TypedefGenerator;
         final QName arg = type.argument();
         if (TypeDefinitions.BITS.equals(arg)) {
-            return createBits(builderFactory, statement(), typeName(), currentModule(), extractTypeDefinition(),
-                    isTypedef);
+            return createBits(builderFactory, statement(), typeName(), currentModule(),
+                (BitsTypeDefinition) extractTypeDefinition(), isTypedef);
         } else if (TypeDefinitions.ENUMERATION.equals(arg)) {
             return createEnumeration(builderFactory, statement(), typeName(), currentModule(),
                 (EnumTypeDefinition) extractTypeDefinition());
@@ -608,14 +608,14 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
     private static @NonNull GeneratedTransferObject createBits(final TypeBuilderFactory builderFactory,
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
-            final TypeDefinition<?> typedef, final boolean isTypedef) {
+            final BitsTypeDefinition typedef, final boolean isTypedef) {
         final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName);
         builder.setTypedef(isTypedef);
-        builder.addImplementsType(BindingTypes.TYPE_OBJECT);
+        builder.addImplementsType(BindingTypes.BITS_TYPE_OBJECT);
         builder.setBaseType(typedef);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
-        for (Bit bit : ((BitsTypeDefinition) typedef).getBits()) {
+        for (Bit bit : typedef.getBits()) {
             final String name = bit.getName();
             GeneratedPropertyBuilder genPropertyBuilder = builder.addProperty(BindingMapping.getPropertyName(name));
             genPropertyBuilder.setReadOnly(true);
@@ -625,6 +625,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             builder.addHashIdentity(genPropertyBuilder);
             builder.addToStringProperty(genPropertyBuilder);
         }
+        builder.addConstant(Types.immutableSetTypeFor(Types.STRING), TypeConstants.VALID_NAMES_NAME, typedef);
 
         // builder.setSchemaPath(typedef.getPath());
         builder.setModuleName(module.statement().argument().getLocalName());
@@ -733,7 +734,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                 } else if (TypeDefinitions.BITS.equals(subName)) {
                     final GeneratedTransferObject subBits = createBits(builderFactory, definingStatement,
                         typeName.createEnclosed(BindingMapping.getClassName(localName), "$"), module,
-                        subType.getTypeDefinition(), isTypedef);
+                        (BitsTypeDefinition) subType.getTypeDefinition(), isTypedef);
                     builder.addEnclosingTransferObject(subBits);
                     generatedType = subBits;
                 } else if (TypeDefinitions.IDENTITYREF.equals(subName)) {

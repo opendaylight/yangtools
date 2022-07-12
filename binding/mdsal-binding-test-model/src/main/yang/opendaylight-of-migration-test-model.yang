@@ -1,5 +1,5 @@
 module opendaylight-of-migration-test-model {
-
+    yang-version 1.1;
     namespace "urn:opendaylight:params:xml:ns:yang:controller:md:sal:of-migration-test-model";
     prefix of-migration-test;
 
@@ -21,6 +21,18 @@ module opendaylight-of-migration-test-model {
             bit FLAG_TWO;
             bit FLAG_THREE;
             bit FLAG_FOUR;
+            bit FLAG_FIVE;
+        }
+    }
+
+    typedef derived-bit-flags {
+        type bit-flags;
+    }
+
+    typedef restricted-bit-flags {
+        type derived-bit-flags {
+            bit FLAG_ONE;
+            bit FLAG_THREE;
             bit FLAG_FIVE;
         }
     }

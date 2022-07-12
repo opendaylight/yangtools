@@ -86,7 +86,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
     '''
 
     final protected def getterMethodName(GeneratedProperty field) {
-        return '''«BindingMapping.GETTER_PREFIX»«field.name.toFirstUpper»'''
+        return field.name.getterMethodName
+    }
+
+    final protected def getterMethodName(String propName) {
+        return '''«BindingMapping.GETTER_PREFIX»«propName.toFirstUpper»'''
     }
 
     /**

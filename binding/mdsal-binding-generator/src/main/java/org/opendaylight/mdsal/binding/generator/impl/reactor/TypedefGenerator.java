@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -19,9 +20,12 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.runtime.api.TypedefRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -92,8 +96,35 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
         addUnits(builder, typedef);
 
+        if (typedef instanceof BitsTypeDefinition bits) {
+            addValidBits(builder, bits, baseType);
+        }
+
         makeSerializable(builder);
         return builder.build();
+    }
+
+    private static void addValidBits(final GeneratedTOBuilder builder, final BitsTypeDefinition typedef,
+            final GeneratedTransferObject baseType) {
+        final var baseDef = verifyNotNull(baseBitsDefinition(baseType), "Could not find definition in %s", baseType);
+        final var myBits = typedef.getBits();
+        if (myBits.size() != baseDef.getBits().size()) {
+            builder.addConstant(Types.immutableSetTypeFor(Types.STRING), TypeConstants.VALID_NAMES_NAME, typedef);
+        }
+    }
+
+    private static BitsTypeDefinition baseBitsDefinition(final GeneratedTransferObject gto) {
+        var wlk = gto;
+        while (wlk != null) {
+            for (var constant : wlk.getConstantDefinitions()) {
+                if (TypeConstants.VALID_NAMES_NAME.equals(constant.getName())) {
+                    return (BitsTypeDefinition) constant.getValue();
+                }
+            }
+
+            wlk = wlk.getSuperType();
+        }
+        return null;
     }
 
     @Override

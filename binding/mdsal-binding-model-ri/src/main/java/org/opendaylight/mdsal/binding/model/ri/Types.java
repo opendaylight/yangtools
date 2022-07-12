@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -55,6 +56,7 @@ public final class Types {
     private static final @NonNull ConcreteType PRIMITIVE_VOID = typeForClass(void.class);
     private static final @NonNull ConcreteType SERIALIZABLE = typeForClass(Serializable.class);
     private static final @NonNull ConcreteType SET_TYPE = typeForClass(Set.class);
+    private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = typeForClass(ImmutableSet.class);
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = parameterizedTypeFor(LIST_TYPE);
     private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = parameterizedTypeFor(SET_TYPE);
 
@@ -179,6 +181,17 @@ public final class Types {
      */
     public static @NonNull ParameterizedType setTypeFor(final Type valueType) {
         return parameterizedTypeFor(SET_TYPE, valueType);
+    }
+
+    /**
+     * Returns an instance of {@link ParameterizedType} describing the typed {@link ImmutableSet}&lt;V&gt; with concrete
+     * type of value.
+     *
+     * @param valueType Value Type
+     * @return Description of generic type instance of ImmutableSet
+     */
+    public static @NonNull ParameterizedType immutableSetTypeFor(final Type valueType) {
+        return parameterizedTypeFor(IMMUTABLE_SET_TYPE, valueType);
     }
 
     /**
