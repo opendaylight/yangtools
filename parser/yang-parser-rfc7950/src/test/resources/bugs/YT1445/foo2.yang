@@ -1,0 +1,23 @@
+module foo2 {
+  namespace "urn:foo2";
+  prefix "foo2";
+
+  grouping bar-group {
+    list bar {
+      key bar;
+      unique baz;
+
+      leaf bar {
+        type string;
+      }
+
+      leaf baz {
+        type string;
+      }
+    }
+  }
+
+  container foo {
+    uses bar-group;
+  }
+}
