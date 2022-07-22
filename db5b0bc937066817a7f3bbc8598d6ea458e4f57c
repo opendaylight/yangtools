@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "21431320_2e935ac6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2022-07-22T12:48:43Z",
+      "side": 1,
+      "message": "Please add some tests, which write in-range and out-of-range values to constrained Decimal64 leafs. We need to verify the range is properly enforced after it was scaled.",
+      "revId": "db5b0bc937066817a7f3bbc8598d6ea458e4f57c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
