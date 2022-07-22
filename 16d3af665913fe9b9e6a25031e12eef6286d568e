@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27035dac_a355275d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2022-07-22T10:51:49Z",
+      "side": 1,
+      "message": "please refactore the \u0027var\u0027 types to true types.",
+      "revId": "16d3af665913fe9b9e6a25031e12eef6286d568e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
