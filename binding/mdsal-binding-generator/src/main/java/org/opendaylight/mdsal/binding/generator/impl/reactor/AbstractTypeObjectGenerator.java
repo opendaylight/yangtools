@@ -32,6 +32,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -683,6 +684,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             final UnionDependencies dependencies, final JavaTypeName typeName, final ModuleGenerator module,
             final TypeEffectiveStatement<?> type, final boolean isTypedef, final TypeDefinition<?> typedef) {
         final GeneratedUnionBuilder builder = builderFactory.newGeneratedUnionBuilder(typeName);
+        YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
         builder.addImplementsType(BindingTypes.TYPE_OBJECT);
         builder.setIsUnion(true);
 
