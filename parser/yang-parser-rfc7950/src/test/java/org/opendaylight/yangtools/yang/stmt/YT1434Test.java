@@ -19,4 +19,10 @@ public class YT1434Test extends AbstractYangTest {
     public void testUniqueViaUses() {
         assertEffectiveModel("/bugs/YT1434/bar.yang");
     }
+
+    @Test
+    public void testUniqueViaSubmoduleUses() {
+        assertEffectiveModel("/bugs/YT1434/main-module.yang", "/bugs/YT1434/submodule.yang",
+                "/bugs/YT1434/test-bug.yang");
+    }
 }
