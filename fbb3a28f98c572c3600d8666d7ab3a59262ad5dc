@@ -70,6 +70,30 @@
       },
       "revId": "fbb3a28f98c572c3600d8666d7ab3a59262ad5dc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9012ace_88bc5898",
+        "filename": "model/yang-model-ri/src/main/java/org/opendaylight/yangtools/yang/model/ri/type/DecimalTypeBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-08-01T12:22:17Z",
+      "side": 1,
+      "message": "Right, but AbstractConstraint.meta will retain the entire constraint... i.e. even if the ranges are reported correctly, the object graph will retain the old ones...",
+      "parentUuid": "2e758035_bea0e249",
+      "range": {
+        "startLine": 76,
+        "startChar": 45,
+        "endLine": 76,
+        "endChar": 55
+      },
+      "revId": "fbb3a28f98c572c3600d8666d7ab3a59262ad5dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
