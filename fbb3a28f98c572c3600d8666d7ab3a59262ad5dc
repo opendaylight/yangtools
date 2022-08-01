@@ -46,6 +46,30 @@
       },
       "revId": "fbb3a28f98c572c3600d8666d7ab3a59262ad5dc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e758035_bea0e249",
+        "filename": "model/yang-model-ri/src/main/java/org/opendaylight/yangtools/yang/model/ri/type/DecimalTypeBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-08-01T12:09:47Z",
+      "side": 1,
+      "message": "If I remember correct, this constraint required only for metadata and actual range (already rescaled by previous cycle) is in second parameter (here it\u0027s in builder.build()).",
+      "parentUuid": "1847f065_1383b86f",
+      "range": {
+        "startLine": 76,
+        "startChar": 45,
+        "endLine": 76,
+        "endChar": 55
+      },
+      "revId": "fbb3a28f98c572c3600d8666d7ab3a59262ad5dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
