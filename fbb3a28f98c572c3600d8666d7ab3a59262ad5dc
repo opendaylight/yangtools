@@ -118,6 +118,30 @@
       },
       "revId": "fbb3a28f98c572c3600d8666d7ab3a59262ad5dc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d68ab8f_0d242390",
+        "filename": "model/yang-model-ri/src/main/java/org/opendaylight/yangtools/yang/model/ri/type/DecimalTypeBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-08-02T10:07:33Z",
+      "side": 1,
+      "message": "I\u0027m not sure about string part of meta tho. I left it like it was from previous constraint because I thought it not very important. But if it also should be scaled - I can easily make it.",
+      "parentUuid": "7bfef178_254bcc5f",
+      "range": {
+        "startLine": 76,
+        "startChar": 45,
+        "endLine": 76,
+        "endChar": 55
+      },
+      "revId": "fbb3a28f98c572c3600d8666d7ab3a59262ad5dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
