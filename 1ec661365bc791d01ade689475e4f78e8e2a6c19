@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9dc4169e_f7cb26f6",
+        "filename": "parser/rfc8819-parser-support/pom.xml",
+        "patchSetId": 23
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-08-02T07:59:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a73aba1_8fa5ed06",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 52,
+        "endChar": 45
+      },
+      "revId": "1ec661365bc791d01ade689475e4f78e8e2a6c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d8276524_cbc5e347",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-07-29T21:40:31Z",
       "side": 1,
       "message": "I removed this in patchset #17, why is this back?",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 21
+      },
+      "revId": "1ec661365bc791d01ade689475e4f78e8e2a6c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1bc7e40a_2978d516",
+        "filename": "parser/yang-parser-rfc7950/pom.xml",
+        "patchSetId": 23
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-08-02T07:59:02Z",
+      "side": 1,
+      "message": "Yes, this is my mistake. Done.",
+      "parentUuid": "d8276524_cbc5e347",
       "range": {
         "startLine": 81,
         "startChar": 0,
