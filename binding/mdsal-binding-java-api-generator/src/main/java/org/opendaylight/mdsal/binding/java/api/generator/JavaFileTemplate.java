@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.processing.Generated;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.mdsal.binding.model.api.AnnotationType;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
@@ -47,6 +48,7 @@ import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single;
+import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -60,6 +62,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
@@ -402,8 +405,8 @@ class JavaFileTemplate {
         return false;
     }
 
-    static void appendSnippet(final StringBuilder sb, final GeneratedType type) {
-        type.getYangSourceDefinition().ifPresent(def -> {
+    final void appendSnippet(final StringBuilder sb, final GeneratedType genType) {
+        genType.getYangSourceDefinition().ifPresent(def -> {
             sb.append('\n');
 
             if (def instanceof Single single) {
@@ -422,7 +425,7 @@ class JavaFileTemplate {
 //                    sb.append("</i>\n");
 
                     if (hasBuilderClass(schema)) {
-                        final String builderName = type.getName() + BindingMapping.BUILDER_SUFFIX;
+                        final String builderName = genType.getName() + BindingMapping.BUILDER_SUFFIX;
 
                         sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
                         .append("}.\n")
@@ -430,10 +433,17 @@ class JavaFileTemplate {
                         if (node instanceof ListSchemaNode) {
                             final var keyDef = ((ListSchemaNode) node).getKeyDefinition();
                             if (!keyDef.isEmpty()) {
-                                sb.append("@see ").append(type.getName()).append(BindingMapping.KEY_SUFFIX);
+                                sb.append("@see ").append(genType.getName()).append(BindingMapping.KEY_SUFFIX);
                             }
                             sb.append('\n');
                         }
+                    }
+                } else if (node instanceof AugmentEffectiveStatement) {
+                    // Find target Augmentation<Foo> and reference Foo
+                    final var augType = findAugmentationArgument(genType);
+                    if (augType != null) {
+                        sb.append("\n\n")
+                        .append("@see ").append(importedName(augType));
                     }
                 }
             } else if (def instanceof Multiple multiple) {
@@ -444,6 +454,18 @@ class JavaFileTemplate {
                 sb.append("</pre>\n");
             }
         });
+    }
+
+    private static @Nullable Type findAugmentationArgument(final GeneratedType genType) {
+        for (var implType : genType.getImplements()) {
+            if (implType instanceof ParameterizedType parameterized) {
+                final var augmentType = BindingTypes.extractAugmentable(parameterized);
+                if (augmentType != null) {
+                    return augmentType;
+                }
+            }
+        }
+        return null;
     }
 
     static String encodeJavadocSymbols(final String description) {

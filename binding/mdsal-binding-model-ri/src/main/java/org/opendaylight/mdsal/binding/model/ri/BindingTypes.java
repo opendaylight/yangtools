@@ -11,8 +11,10 @@ import static org.opendaylight.mdsal.binding.model.ri.Types.parameterizedTypeFor
 import static org.opendaylight.mdsal.binding.model.ri.Types.typeForClass;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.VALUE_STATIC_FIELD_NAME;
 
+import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -314,5 +316,26 @@ public final class BindingTypes {
             }
         }
         return false;
+    }
+
+    /**
+     * Return the {@link Augmentable} type a parameterized {@link Augmentation} type references.
+     *
+     * @param type Parameterized type
+     * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentation(Type)}
+     * @throws NullPointerException if {@code type} is null
+     */
+    @Beta
+    public static @Nullable Type extractAugmentable(final ParameterizedType type) {
+        if (AUGMENTATION.equals(type.getRawType())) {
+            final var args = type.getActualTypeArguments();
+            if (args.length == 1) {
+                final var arg = args[0];
+                if (arg != null) {
+                    return arg;
+                }
+            }
+        }
+        return null;
     }
 }
