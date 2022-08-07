@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
+import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
@@ -47,10 +51,58 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * a particular {@link EffectiveModelContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
 @Beta
-public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>>
-        permits Lhotka02JSONCodecFactory, RFC7951JSONCodecFactory {
-    JSONCodecFactory(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
+public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
+    static final class Lhotka02 extends JSONCodecFactory {
+        Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
+            super(context, cache, JSONInstanceIdentifierCodec.Lhotka02::new);
+        }
+
+        @Override
+        Lhotka02 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
+            return new Lhotka02(newSchemaContext, newCache);
+        }
+
+        @Override
+        JSONCodec<?> wrapDecimalCodec(final DecimalStringCodec decimalCodec) {
+            return new NumberJSONCodec<>(decimalCodec);
+        }
+
+        @Override
+        JSONCodec<?> wrapIntegerCodec(final AbstractIntegerStringCodec<?, ?> integerCodec) {
+            return new NumberJSONCodec<>(integerCodec);
+        }
+    }
+
+    static final class RFC7951 extends JSONCodecFactory {
+        RFC7951(final @NonNull  EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
+            super(context, cache, JSONInstanceIdentifierCodec.RFC7951::new);
+        }
+
+        @Override
+        RFC7951 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
+            return new RFC7951(newSchemaContext, newCache);
+        }
+
+        @Override
+        JSONCodec<?> wrapDecimalCodec(final DecimalStringCodec decimalCodec) {
+            return new QuotedJSONCodec<>(decimalCodec);
+        }
+
+        @Override
+        JSONCodec<?> wrapIntegerCodec(final AbstractIntegerStringCodec<?, ?> integerCodec) {
+            return new QuotedJSONCodec<>(integerCodec);
+        }
+    }
+
+    private final @NonNull JSONInstanceIdentifierCodec iidCodec;
+
+    @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
+        justification = "https://github.com/spotbugs/spotbugs/issues/1867")
+    private JSONCodecFactory(final @NonNull EffectiveModelContext context,
+            final @NonNull CodecCache<JSONCodec<?>> cache,
+            final BiFunction<EffectiveModelContext, JSONCodecFactory, @NonNull JSONInstanceIdentifierCodec> iidCodec) {
         super(context, cache);
+        this.iidCodec = verifyNotNull(iidCodec.apply(context, this));
     }
 
     @Override
@@ -86,6 +138,11 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     @Override
     protected final JSONCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
         return new IdentityrefJSONCodec(getEffectiveModelContext(), module);
+    }
+
+    @Override
+    protected final JSONCodec<?> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
+        return iidCodec;
     }
 
     @Override
@@ -142,9 +199,6 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     protected final JSONCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullJSONCodec.INSTANCE;
     }
-
-    @Override
-    protected abstract JSONCodec<?> instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
 
     // Returns a one-off factory for the purposes of normalizing an anydata tree.
     //
