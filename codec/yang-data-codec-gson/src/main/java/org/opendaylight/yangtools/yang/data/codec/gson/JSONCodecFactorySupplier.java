@@ -46,7 +46,7 @@ public enum JSONCodecFactorySupplier {
     RFC7951() {
         @Override
         JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
-            return new RFC7951JSONCodecFactory(context, cache);
+            return new JSONCodecFactory.RFC7951(context, cache);
         }
     },
     /**
@@ -55,7 +55,7 @@ public enum JSONCodecFactorySupplier {
     DRAFT_LHOTKA_NETMOD_YANG_JSON_02() {
         @Override
         JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
-            return new Lhotka02JSONCodecFactory(context, cache);
+            return new JSONCodecFactory.Lhotka02(context, cache);
         }
     };
 
