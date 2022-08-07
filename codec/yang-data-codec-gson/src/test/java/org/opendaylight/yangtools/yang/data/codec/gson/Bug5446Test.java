@@ -10,15 +10,12 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.AfterClass;
@@ -58,7 +55,7 @@ public class Bug5446Test {
     }
 
     @Test
-    public void test() throws IOException, JsonIOException, JsonSyntaxException, URISyntaxException {
+    public void test() throws Exception {
         final ContainerNode rootNode = createRootNode();
 
         final Writer writer = new StringWriter();
