@@ -57,7 +57,7 @@ public class Bug4501Test {
         assertTrue(transformedInput instanceof UnkeyedListNode);
 
         final UnkeyedListNode hop = (UnkeyedListNode) transformedInput;
-        final DataContainerChild lrsBits = hop.childAt(0).childByArg(
+        final DataContainerChild lrsBits = hop.childAt(0).getChildByArg(
                 NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
         assertEquals(ImmutableSet.of("lookup", "rloc-probe", "strict"), lrsBits.body());
