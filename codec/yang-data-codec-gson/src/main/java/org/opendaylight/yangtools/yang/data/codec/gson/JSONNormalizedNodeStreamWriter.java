@@ -284,9 +284,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final JsonWriter jsonWriter, final @Nullable XMLNamespace initialNs) {
-        return new Nested(codecFactory,
-            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext()), jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
+        return new Nested(codecFactory, NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext()),
+            jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     /**
