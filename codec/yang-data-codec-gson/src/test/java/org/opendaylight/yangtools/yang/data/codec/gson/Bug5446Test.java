@@ -9,17 +9,12 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -27,49 +22,44 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5446Test {
-
     private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2015-11-05"));
     private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
     private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
-    private static EffectiveModelContext schemaContext;
+    private EffectiveModelContext schemaContext;
 
-    @BeforeClass
-    public static void init() {
-        schemaContext = YangParserTestUtils.parseYangResources(Bug5446Test.class, "/bug5446/yang/foo.yang");
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        schemaContext = null;
+    @Before
+    public void init() {
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug5446");
     }
 
     @Test
     public void test() throws Exception {
-        final ContainerNode rootNode = createRootNode();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            new StringWriter(),
+            Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
+                .withChild(ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ==")))
+                .build());
 
-        final Writer writer = new StringWriter();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, rootNode);
-
-        final JsonElement serializedJson = JsonParser.parseString(jsonOutput);
-        final JsonElement expextedJson = JsonParser.parseReader(new FileReader(new File(getClass().getResource(
-                "/bug5446/json/foo.json").toURI()), StandardCharsets.UTF_8));
-
-        assertEquals(expextedJson, serializedJson);
+        assertEquals(JsonParser.parseString("""
+            {
+              "foo:root" : {
+                "ip-address" : "fwAAAQ=="
+               }
+            }"""),
+            JsonParser.parseString(jsonOutput));
     }
 
-    private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
-            final NormalizedNode inputStructure) throws IOException {
-
+    private String normalizedNodeToJsonStreamTransformation(final Writer writer, final ContainerNode inputStructure)
+            throws IOException {
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext),
             JsonWriterFactory.createJsonWriter(writer, 2));
@@ -78,11 +68,5 @@ public class Bug5446Test {
         }
 
         return writer.toString();
-    }
-
-    private static ContainerNode createRootNode() {
-        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ=="));
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
-                .withChild(ipAddress).build();
     }
 }
