@@ -47,7 +47,8 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * a particular {@link EffectiveModelContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
 @Beta
-public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
+public sealed abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>>
+        permits Lhotka02JSONCodecFactory, RFC7951JSONCodecFactory {
     JSONCodecFactory(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
         super(context, cache);
     }
