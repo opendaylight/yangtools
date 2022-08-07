@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * Each test tests whether json output obtained after transformation contains is corect. The transformation takes
@@ -293,7 +292,7 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
             throws IOException {
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
+            lhotkaCodecFactory, JsonWriterFactory.createJsonWriter(writer, 2));
         try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
             nodeWriter.write(inputStructure);
         }
