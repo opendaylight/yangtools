@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug7246Test {
@@ -40,10 +40,9 @@ public class Bug7246Test {
         final ContainerNode inputStructure = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
                 .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value")).build();
-        final SchemaPath rootPath = SchemaPath.create(true, qN("my-name"), qN("input"));
         final Writer writer = new StringWriter();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(schemaContext, rootPath, writer,
-                inputStructure);
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(schemaContext,  writer, inputStructure,
+            qN("my-name"), qN("input"));
 
         assertEquals(JsonParser.parseReader(new FileReader(
             new File(getClass().getResource("/bug7246/json/expected-output.json").toURI()), StandardCharsets.UTF_8)),
@@ -55,11 +54,9 @@ public class Bug7246Test {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final EffectiveModelContext schemaContext,
-            final SchemaPath path, final Writer writer, final NormalizedNode inputStructure)
-            throws IOException {
-
+            final Writer writer, final NormalizedNode inputStructure, final QName... path) throws IOException {
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), path,
+                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), Absolute.of(path),
                 XMLNamespace.of(NS), JsonWriterFactory.createJsonWriter(writer, 2));
         try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
             nodeWriter.write(inputStructure);

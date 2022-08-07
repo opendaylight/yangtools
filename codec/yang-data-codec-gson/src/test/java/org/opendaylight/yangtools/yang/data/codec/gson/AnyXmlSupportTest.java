@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -73,8 +72,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final DOMSource Lf14AnyExpectedValue = createAnyXmlSimpleValue("ns:complex:json", "lf14-any", "null");
         verifyTransformedAnyXmlNodeValue(Lf14AnyExpectedValue, Lf14AnyActualValue);
 
-        final String serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext,
-                SchemaPath.ROOT);
+        final String serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext);
 
         assertEquals(JsonParser.parseString(inputJson), JsonParser.parseString(serializationResult));
     }
@@ -105,8 +103,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         verifyTransformedAnyXmlNodeValue(Lf14AnyExpectedValue, Lf14AnyActualValue);
 
         // serialization
-        final String serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext,
-                SchemaPath.ROOT);
+        final String serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext);
 
         assertEquals(JsonParser.parseString(loadTextFile("/bug8927/json/composite.json")),
             JsonParser.parseString(serializationResult));
@@ -145,7 +142,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final DataContainerChild data = ((ContainerNode) result.getResult())
                 .childByArg(new NodeIdentifier(QName.create("bug8927.test", "2017-01-01", "foo")));
         assertNotNull(data);
-        final String jsonOutput = normalizedNodesToJsonString(data, schemaContext, SchemaPath.ROOT);
+        final String jsonOutput = normalizedNodesToJsonString(data, schemaContext);
         assertEquals(JsonParser.parseReader(new FileReader(
             new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8)),
             JsonParser.parseString(jsonOutput));
