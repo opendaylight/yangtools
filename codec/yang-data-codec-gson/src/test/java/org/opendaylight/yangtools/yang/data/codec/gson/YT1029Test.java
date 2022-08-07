@@ -15,14 +15,13 @@ import java.io.Writer;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class YT1029Test extends AbstractComplexJsonTest {
     @Test
     public void testMultipleRootChildren() throws IOException {
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
+            lhotkaCodecFactory, JsonWriterFactory.createJsonWriter(writer, 2));
         try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
             nodeWriter.write(CONT1_WITH_EMPTYLEAF);
             nodeWriter.write(CONT1_WITH_EMPTYLEAF);
