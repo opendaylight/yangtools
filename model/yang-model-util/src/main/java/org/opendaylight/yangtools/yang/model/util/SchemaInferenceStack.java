@@ -308,7 +308,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
      *                                  absolute path.
      */
-    @Deprecated
+    @Deprecated(since = "7.0.0", forRemoval = true)
     public static @NonNull SchemaInferenceStack ofInstantiatedPath(final EffectiveModelContext effectiveModel,
             final SchemaPath path) {
         checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
@@ -328,7 +328,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
      *                                  absolute path.
      */
-    @Deprecated
+    @Deprecated(since = "7.0.2", forRemoval = true)
     public static @NonNull SchemaInferenceStack ofSchemaPath(final EffectiveModelContext effectiveModel,
             final SchemaPath path) {
         checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
@@ -765,7 +765,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalStateException if current state is not instantiated
      * @deprecated This method is meant only for interoperation with SchemaPath-based APIs.
      */
-    @Deprecated
+    @Deprecated(since = "5.0.0", forRemoval = true)
     public @NonNull SchemaPath toSchemaPath() {
         return SchemaPath.create(simplePathFromRoot(), true);
     }
@@ -775,8 +775,9 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * {@code toSchemaPath().getPathFromRoot().iterator()}.
      *
      * @return An unmodifiable iterator
+     * @deprecated Use {@link #toSchemaTreeInference()} instead.
      */
-    @Deprecated
+    @Deprecated(since = "5.0.0", forRemoval = true)
     public @NonNull Iterator<QName> schemaPathIterator() {
         return Iterators.unmodifiableIterator(simplePathFromRoot().iterator());
     }

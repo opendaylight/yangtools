@@ -101,7 +101,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
      * @param path root path
      * @deprecated Use either one of the alternative constructors instead.
      */
-    @Deprecated(since = "7.0.11")
+    @Deprecated(since = "7.0.11", forRemoval = true)
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
             final EffectiveModelContext schemaContext, final SchemaPath path) {
         this(writer, SchemaInferenceStack.ofSchemaPath(schemaContext, path));

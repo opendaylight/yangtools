@@ -70,7 +70,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
 
     PathArgument readPathArgument() throws IOException;
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(since = "5.0.0", forRemoval = true)
     SchemaPath readSchemaPath() throws IOException;
 
     SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException;
@@ -108,7 +108,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @return a new {@link NormalizedNodeDataInput} instance
      * @deprecated Use {@link #newDataInput(DataInput)} instead.
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(since = "5.0.0", forRemoval = true)
     static @NonNull NormalizedNodeDataInput newDataInputWithoutValidation(final @NonNull DataInput input) {
         return new VersionedNormalizedNodeDataInput(input);
     }

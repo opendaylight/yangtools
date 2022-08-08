@@ -162,7 +162,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
-    @Deprecated
+    @Deprecated(since = "7.0.0", forRemoval = true)
     public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context,
             final SchemaPath path) {
         return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.ofSchemaPath(context, path));

@@ -32,7 +32,7 @@ public interface NormalizedNodeDataOutput extends AutoCloseable, QNameAwareDataO
 
     void writeYangInstanceIdentifier(YangInstanceIdentifier identifier) throws IOException;
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(since = "5.0.0", forRemoval = true)
     void writeSchemaPath(SchemaPath path) throws IOException;
 
     void writeSchemaNodeIdentifier(SchemaNodeIdentifier path) throws IOException;
