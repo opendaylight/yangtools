@@ -20,7 +20,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -75,10 +73,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
  * is conceptually a stack, tracking {@link EffectiveStatement}s encountered along traversal.
- *
- * <p>
- * This is meant to be a replacement concept for the use of {@link SchemaPath} in various places, notably
- * in {@link SchemaContextUtil} methods.
  *
  * <p>
  * This class is designed for single-threaded uses and does not make any guarantees around concurrent access.
@@ -295,58 +289,6 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         for (QName qname : path) {
             ret.enterDataTree(qname);
         }
-        return ret;
-    }
-
-    /**
-     * Create a new stack backed by an effective model, pointing to specified schema node identified by an absolute
-     * {@link SchemaPath} and its {@link SchemaPath#getPathFromRoot()} interpreted as a schema node identifier.
-     *
-     * @param effectiveModel EffectiveModelContext to which this stack is attached
-     * @return A new stack
-     * @throws NullPointerException {@code effectiveModel} is null
-     * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
-     *                                  absolute path.
-     */
-    @Deprecated(since = "7.0.0", forRemoval = true)
-    public static @NonNull SchemaInferenceStack ofInstantiatedPath(final EffectiveModelContext effectiveModel,
-            final SchemaPath path) {
-        checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
-        final SchemaInferenceStack ret = new SchemaInferenceStack(effectiveModel);
-        path.getPathFromRoot().forEach(ret::enterSchemaTree);
-        return ret;
-    }
-
-    /**
-     * Create a new stack backed by an effective model, pointing to specified schema node identified by an absolute
-     * {@link SchemaPath} and its {@link SchemaPath#getPathFromRoot()}, interpreted as a series of steps along primarily
-     * schema tree, with grouping namespace being the alternative lookup.
-     *
-     * @param effectiveModel EffectiveModelContext to which this stack is attached
-     * @return A new stack
-     * @throws NullPointerException {@code effectiveModel} is null
-     * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
-     *                                  absolute path.
-     */
-    @Deprecated(since = "7.0.2", forRemoval = true)
-    public static @NonNull SchemaInferenceStack ofSchemaPath(final EffectiveModelContext effectiveModel,
-            final SchemaPath path) {
-        checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
-        final SchemaInferenceStack ret = new SchemaInferenceStack(effectiveModel);
-
-        for (QName step : path.getPathFromRoot()) {
-            try {
-                ret.enterSchemaTree(step);
-            } catch (IllegalArgumentException schemaEx) {
-                try {
-                    ret.enterGrouping(step);
-                } catch (IllegalArgumentException ex) {
-                    ex.addSuppressed(schemaEx);
-                    throw ex;
-                }
-            }
-        }
-
         return ret;
     }
 
@@ -756,30 +698,6 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public @NonNull Absolute toSchemaNodeIdentifier() {
         checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
         return Absolute.of(simplePathFromRoot());
-    }
-
-    /**
-     * Convert current state into a SchemaPath.
-     *
-     * @return Absolute SchemaPath representing current state
-     * @throws IllegalStateException if current state is not instantiated
-     * @deprecated This method is meant only for interoperation with SchemaPath-based APIs.
-     */
-    @Deprecated(since = "5.0.0", forRemoval = true)
-    public @NonNull SchemaPath toSchemaPath() {
-        return SchemaPath.create(simplePathFromRoot(), true);
-    }
-
-    /**
-     * Return an iterator along {@link SchemaPath#getPathFromRoot()}. This method is a faster equivalent of
-     * {@code toSchemaPath().getPathFromRoot().iterator()}.
-     *
-     * @return An unmodifiable iterator
-     * @deprecated Use {@link #toSchemaTreeInference()} instead.
-     */
-    @Deprecated(since = "5.0.0", forRemoval = true)
-    public @NonNull Iterator<QName> schemaPathIterator() {
-        return Iterators.unmodifiableIterator(simplePathFromRoot().iterator());
     }
 
     @Override
