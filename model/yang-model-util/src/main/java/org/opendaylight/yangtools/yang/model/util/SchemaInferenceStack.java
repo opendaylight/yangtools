@@ -308,7 +308,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
      *                                  absolute path.
      */
-    @Deprecated
+    @Deprecated(since = "7.0.0", forRemoval = true)
     public static @NonNull SchemaInferenceStack ofInstantiatedPath(final EffectiveModelContext effectiveModel,
             final SchemaPath path) {
         checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
@@ -328,7 +328,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
      *                                  absolute path.
      */
-    @Deprecated
+    @Deprecated(since = "7.0.2", forRemoval = true)
     public static @NonNull SchemaInferenceStack ofSchemaPath(final EffectiveModelContext effectiveModel,
             final SchemaPath path) {
         checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
