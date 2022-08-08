@@ -96,7 +96,9 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      * @param context Associated {@link EffectiveModelContext}.
      * @param path path
      * @return A new {@link NormalizedNodeStreamWriter}
+     * @deprecated Use one of the alternative overloads.
      */
+    @Deprecated(since = "9.0.1", forRemoval = true)
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context, final SchemaPath path) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
