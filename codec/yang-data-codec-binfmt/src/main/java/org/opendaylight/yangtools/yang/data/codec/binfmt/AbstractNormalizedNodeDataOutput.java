@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Iterables;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
@@ -166,21 +164,12 @@ abstract class AbstractNormalizedNodeDataOutput implements NormalizedNodeDataOut
     }
 
     @Override
-    @Deprecated
-    public final void writeSchemaPath(final SchemaPath path) throws IOException {
-        writeSchemaNodeIdentifier(path.isAbsolute(), path.getPathFromRoot());
-    }
-
-    @Override
     public final void writeSchemaNodeIdentifier(final SchemaNodeIdentifier path) throws IOException {
-        writeSchemaNodeIdentifier(path instanceof Absolute, path.getNodeIdentifiers());
-    }
-
-    private void writeSchemaNodeIdentifier(final boolean absolute, final Iterable<QName> qnames) throws IOException {
         ensureHeaderWritten();
 
-        output.writeBoolean(absolute);
-        output.writeInt(Iterables.size(qnames));
+        output.writeBoolean(path instanceof Absolute);
+        final var qnames = path.getNodeIdentifiers();
+        output.writeInt(qnames.size());
         for (QName qname : qnames) {
             writeQNameInternal(qname);
         }
