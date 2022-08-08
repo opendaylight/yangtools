@@ -19,12 +19,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamReceiver;
 import org.opendaylight.yangtools.yang.data.impl.schema.ReusableImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
  * Interface for reading {@link NormalizedNode}s, {@link YangInstanceIdentifier}s, {@link PathArgument}s
- * and {@link SchemaPath}s.
+ * and {@link SchemaNodeIdentifier}s.
  */
 @Beta
 public interface NormalizedNodeDataInput extends QNameAwareDataInput {
@@ -69,9 +68,6 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
     YangInstanceIdentifier readYangInstanceIdentifier() throws IOException;
 
     PathArgument readPathArgument() throws IOException;
-
-    @Deprecated(since = "5.0.0", forRemoval = true)
-    SchemaPath readSchemaPath() throws IOException;
 
     SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException;
 
