@@ -88,13 +88,7 @@ public abstract class ValueRange {
 
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof ValueRange)) {
-            return false;
-        }
-        final ValueRange other = (ValueRange) obj;
-        return lowerBound().equals(other.lowerBound()) && upperBound().equals(other.upperBound());
+        return this == obj || obj instanceof ValueRange other
+            && lowerBound().equals(other.lowerBound()) && upperBound().equals(other.upperBound());
     }
 }
