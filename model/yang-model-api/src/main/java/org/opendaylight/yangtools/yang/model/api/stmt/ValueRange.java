@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @author Robert Varga
  */
 @Beta
-public abstract class ValueRange {
+public abstract sealed class ValueRange {
     private static final class Singleton extends ValueRange {
         private final @NonNull Number value;
 
