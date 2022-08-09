@@ -69,11 +69,11 @@ public abstract class ValueRange {
         }
     }
 
-    public static ValueRange of(final @NonNull Number value) {
+    public static @NonNull ValueRange of(final @NonNull Number value) {
         return new Singleton(value);
     }
 
-    public static ValueRange of(final @NonNull Number lower, final @NonNull Number upper) {
+    public static @NonNull ValueRange of(final @NonNull Number lower, final @NonNull Number upper) {
         return lower.equals(upper) ? of(lower) : new Range(lower, upper);
     }
 
