@@ -30,7 +30,7 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
     @SuppressWarnings({ "unchecked", "rawtypes" })
     Item<?> createBindingArg(final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
         // FIXME: MDSAL-697: see overridden method for further guidance
-        return childSchema instanceof AddedByUsesAware && ((AddedByUsesAware) childSchema).isAddedByUses()
+        return childSchema instanceof AddedByUsesAware aware && aware.isAddedByUses()
             ? Item.of((Class)getBindingClass(), (Class)childClass)
                 : super.createBindingArg(childClass, childSchema);
     }
