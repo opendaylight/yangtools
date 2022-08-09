@@ -27,11 +27,11 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
  * Represents unique path to every schema node inside the schema node identifier namespace. This concept is defined
  * in <a href="https://tools.ietf.org/html/rfc7950#section-6.5">RFC7950</a>.
  */
-public abstract class SchemaNodeIdentifier implements Immutable {
+public abstract sealed class SchemaNodeIdentifier implements Immutable {
     /**
      * An absolute schema node identifier.
      */
-    public abstract static class Absolute extends SchemaNodeIdentifier {
+    public abstract static sealed class Absolute extends SchemaNodeIdentifier {
         private static final Interner<Absolute> INTERNER = Interners.newWeakInterner();
 
         Absolute() {
@@ -92,7 +92,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * A descendant schema node identifier.
      */
-    public abstract static class Descendant extends SchemaNodeIdentifier {
+    public abstract static sealed class Descendant extends SchemaNodeIdentifier {
         Descendant() {
             // Hidden on purpose
         }
@@ -233,10 +233,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
 
     // Cached hashCode
     private volatile int hash;
-
-    SchemaNodeIdentifier() {
-        // Hidden on purpose
-    }
 
     /**
      * Return the non-empty sequence of node identifiers which constitute this schema node identifier.
