@@ -46,10 +46,10 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         }
     };
 
-    private static final ImmutableList<RangeConstraint<Decimal64>> IMPLICIT_RANGE_STATEMENTS;
+    private static final ImmutableList<ResolvedRangeConstraint<Decimal64>> IMPLICIT_RANGE_STATEMENTS;
 
     static {
-        final var builder = ImmutableList.<RangeConstraint<Decimal64>>builderWithExpectedSize(18);
+        final var builder = ImmutableList.<ResolvedRangeConstraint<Decimal64>>builderWithExpectedSize(18);
         for (int scale = 1; scale <= 18; ++scale) {
             builder.add(new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(Range.closed(
                 Decimal64.minValueIn(scale), Decimal64.maxValueIn(scale)))));
@@ -57,7 +57,7 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         IMPLICIT_RANGE_STATEMENTS = builder.build();
     }
 
-    static RangeConstraint<Decimal64> constraintsForDigits(final int fractionDigits) {
+    static ResolvedRangeConstraint<Decimal64> constraintsForDigits(final int fractionDigits) {
         return verifyNotNull(IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1));
     }
 
