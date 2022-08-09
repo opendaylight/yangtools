@@ -52,17 +52,6 @@ public enum DeviateKind {
     }
 
     /**
-     * Returns the YANG keyword corresponding to this object.
-     *
-     * @return String that corresponds to the YANG keyword.
-     * @deprecated Use {@link #argument()} instead.
-     */
-    @Deprecated(since = "9.0.0", forRemoval = true)
-    public String getKeyword() {
-        return argument;
-    }
-
-    /**
      * Return a {@link DeviateKind} for specified {@code deviate} statement argument. This methods returns a
      * {@code null} for illegal values. See {@link #ofArgument(String)} for a version which returns non-null and throws
      * an exception for illegal values.
