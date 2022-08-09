@@ -27,16 +27,12 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
  * Represents unique path to every schema node inside the schema node identifier namespace. This concept is defined
  * in <a href="https://tools.ietf.org/html/rfc7950#section-6.5">RFC7950</a>.
  */
-public abstract class SchemaNodeIdentifier implements Immutable {
+public abstract sealed class SchemaNodeIdentifier implements Immutable {
     /**
      * An absolute schema node identifier.
      */
-    public abstract static class Absolute extends SchemaNodeIdentifier {
-        private static final Interner<Absolute> INTERNER = Interners.newWeakInterner();
-
-        Absolute() {
-            // Hidden on purpose
-        }
+    public abstract static sealed class Absolute extends SchemaNodeIdentifier {
+        private static final Interner<@NonNull Absolute> INTERNER = Interners.newWeakInterner();
 
         /**
          * Create an absolute schema node identifier composed of a single node identifier.
@@ -70,7 +66,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
         public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
-            final ImmutableList<QName> qnames = checkQNames(nodeIdentifiers);
+            final var qnames = checkQNames(nodeIdentifiers);
             return qnames.size() == 1 ? of(qnames.get(0)) : new AbsoluteMultiple(qnames);
         }
 
@@ -92,11 +88,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * A descendant schema node identifier.
      */
-    public abstract static class Descendant extends SchemaNodeIdentifier {
-        Descendant() {
-            // Hidden on purpose
-        }
-
+    public abstract static sealed class Descendant extends SchemaNodeIdentifier {
         /**
          * Create a descendant schema node identifier composed of a single node identifier.
          *
@@ -129,7 +121,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
         public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
-            final ImmutableList<QName> qnames = checkQNames(nodeIdentifiers);
+            final var qnames = checkQNames(nodeIdentifiers);
             return qnames.size() == 1 ? of(qnames.get(0)) : new DescandantMultiple(qnames);
         }
 
@@ -234,10 +226,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     // Cached hashCode
     private volatile int hash;
 
-    SchemaNodeIdentifier() {
-        // Hidden on purpose
-    }
-
     /**
      * Return the non-empty sequence of node identifiers which constitute this schema node identifier.
      *
@@ -262,7 +250,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      * @return The last node identifier
      */
     public @NonNull QName lastNodeIdentifier() {
-        final List<QName> local = getNodeIdentifiers();
+        final var local = getNodeIdentifiers();
         return local.get(local.size() - 1);
     }
 
@@ -288,22 +276,22 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     abstract @NonNull String className();
 
     private List<?> toStringQNames() {
-        final List<QName> ids = getNodeIdentifiers();
+        final var ids = getNodeIdentifiers();
         return ids.size() < 2 ? ids : simplifyQNames(ids);
     }
 
     private static ImmutableList<QName> checkQNames(final Collection<QName> qnames) {
-        final ImmutableList<QName> ret = ImmutableList.copyOf(qnames);
+        final var ret = ImmutableList.copyOf(qnames);
         checkArgument(!ret.isEmpty(), "SchemaNodeIdentifier has to have at least one node identifier");
         return ret;
     }
 
     private static List<?> simplifyQNames(final List<QName> qnames) {
-        final List<Object> ret = new ArrayList<>(qnames.size());
+        final var ret = new ArrayList<>(qnames.size());
 
         QNameModule prev = null;
-        for (QName qname : qnames) {
-            final QNameModule module = qname.getModule();
+        for (var qname : qnames) {
+            final var module = qname.getModule();
             ret.add(module.equals(prev) ? qname.getLocalName() : qname);
             prev = module;
         }
