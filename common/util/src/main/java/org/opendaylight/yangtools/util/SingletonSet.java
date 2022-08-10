@@ -28,50 +28,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * element -- which is desirable in some situations, as is the case in {@link SharedSingletonMap#entrySet()}.
  */
 @Beta
-public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable {
+public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final SingletonSet<?> NULL_SINGLETON = new SingletonSet<>() {
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        @SuppressWarnings("checkstyle:parameterName")
-        public boolean contains(final Object o) {
-            return o == null;
-        }
-
-        @Override
-        @SuppressWarnings("checkstyle:equalsHashCode")
-        public int hashCode() {
-            return 0;
-        }
-
-        @Override
-        public @Nullable Object getElement() {
-            return null;
-        }
-
-        @Override
-        public @NonNull Spliterator<Object> spliterator() {
-            return SingletonSpliterators.immutableOfNull();
-        }
-
-        @Override
-        public @NonNull String toString() {
-            return "[null]";
-        }
-
-        @Serial
-        private Object readResolve() {
-            return NULL_SINGLETON;
-        }
-    };
-
     @SuppressWarnings("unchecked")
     public static <E> @NonNull SingletonSet<E> of(final @Nullable E element) {
-        return element == null ? (SingletonSet<E>) NULL_SINGLETON : new RegularSingletonSet<>(element);
+        return element == null ? (SingletonSet<E>) NullSingletonSet.INSTANCE : new Regular<>(element);
     }
 
     /**
@@ -79,7 +42,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
      *
      * @return This set's element.
      */
-    public abstract E getElement();
+    public abstract @Nullable E getElement();
 
     @Override
     public final int size() {
@@ -183,14 +146,53 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         }
     }
 
+    private static final class NullSingletonSet<E> extends SingletonSet<E> {
+        @Serial
+        private static final long serialVersionUID = 1L;
+        static final @NonNull NullSingletonSet<?> INSTANCE = new NullSingletonSet<>();
+
+        @Override
+        @SuppressWarnings("checkstyle:parameterName")
+        public boolean contains(final Object o) {
+            return o == null;
+        }
+
+        @Override
+        @SuppressWarnings("checkstyle:equalsHashCode")
+        public int hashCode() {
+            return 0;
+        }
+
+        @Override
+        public @Nullable E getElement() {
+            return null;
+        }
+
+        @Override
+        public @NonNull Spliterator<E> spliterator() {
+            return SingletonSpliterators.immutableOfNull();
+        }
+
+        @Override
+        public @NonNull String toString() {
+            return "[null]";
+        }
+
+        @Serial
+        @SuppressWarnings("static-method")
+        private Object readResolve() {
+            return INSTANCE;
+        }
+    }
+
     @NonNullByDefault
-    private static final class RegularSingletonSet<E> extends SingletonSet<E> {
+    private static final class Regular<E> extends SingletonSet<E> {
         @Serial
         private static final long serialVersionUID = 1L;
 
-        private final E element;
+        private final @NonNull E element;
 
-        RegularSingletonSet(final E element) {
+        Regular(final E element) {
             this.element = requireNonNull(element);
         }
 
@@ -201,7 +203,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         }
 
         @Override
-        public E getElement() {
+        public @NonNull E getElement() {
             return element;
         }
 
