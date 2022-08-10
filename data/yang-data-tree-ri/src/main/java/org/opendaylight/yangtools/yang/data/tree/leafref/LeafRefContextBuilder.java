@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.tree.leafref;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class LeafRefContextBuilder implements Mutable {
     private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
@@ -26,7 +25,7 @@ final class LeafRefContextBuilder implements Mutable {
     private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
 
     private final QName currentNodeQName;
-    private final SchemaPath currentNodePath;
+    private final ImmutableList<QName> currentNodePath;
     private final EffectiveModelContext schemaContext;
 
     private LeafRefPath leafRefTargetPath = null;
@@ -36,7 +35,7 @@ final class LeafRefContextBuilder implements Mutable {
     private boolean isReferencedBy = false;
     private boolean isReferencing = false;
 
-    LeafRefContextBuilder(final QName currentNodeQName, final SchemaPath currentNodePath,
+    LeafRefContextBuilder(final QName currentNodeQName, final ImmutableList<QName> currentNodePath,
             final EffectiveModelContext schemaContext) {
         this.currentNodeQName = requireNonNull(currentNodeQName);
         this.currentNodePath = requireNonNull(currentNodePath);
@@ -86,7 +85,7 @@ final class LeafRefContextBuilder implements Mutable {
         return referencedByChildren;
     }
 
-    SchemaPath getCurrentNodePath() {
+    ImmutableList<QName> getCurrentNodePath() {
         return currentNodePath;
     }
 
@@ -128,8 +127,8 @@ final class LeafRefContextBuilder implements Mutable {
     }
 
     Module getLeafRefContextModule() {
-        final List<QName> path = currentNodePath.getPathFromRoot();
-        final QNameModule qnameModule = path.isEmpty() ? currentNodeQName.getModule() : path.get(0).getModule();
+        final QNameModule qnameModule = currentNodePath.isEmpty() ? currentNodeQName.getModule()
+            : currentNodePath.get(0).getModule();
         return schemaContext.findModule(qnameModule).orElse(null);
     }
 

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.leafref;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,14 +20,13 @@ import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 public final class LeafRefContext extends AbstractEffectiveModelContextProvider {
 
     private final QName currentNodeQName;
-    private final SchemaPath currentNodePath;
+    private final ImmutableList<QName> currentNodePath;
     private final Module module;
 
     private final LeafRefPath leafRefTargetPath;
@@ -47,17 +47,17 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
 
     LeafRefContext(final LeafRefContextBuilder leafRefContextBuilder) {
         super(leafRefContextBuilder.getSchemaContext());
-        this.currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
-        this.currentNodePath = leafRefContextBuilder.getCurrentNodePath();
-        this.leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
-        this.absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
-        this.leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
-        this.isReferencedBy = leafRefContextBuilder.isReferencedBy();
-        this.isReferencing = leafRefContextBuilder.isReferencing();
-        this.referencingChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencingChilds());
-        this.referencedByChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencedByChilds());
-        this.referencedByLeafRefCtx = ImmutableMap.copyOf(leafRefContextBuilder.getAllReferencedByLeafRefCtxs());
-        this.module = leafRefContextBuilder.getLeafRefContextModule();
+        currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
+        currentNodePath = leafRefContextBuilder.getCurrentNodePath();
+        leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
+        absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
+        leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
+        isReferencedBy = leafRefContextBuilder.isReferencedBy();
+        isReferencing = leafRefContextBuilder.isReferencing();
+        referencingChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencingChilds());
+        referencedByChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencedByChilds());
+        referencedByLeafRefCtx = ImmutableMap.copyOf(leafRefContextBuilder.getAllReferencedByLeafRefCtxs());
+        module = leafRefContextBuilder.getLeafRefContextModule();
     }
 
     public static LeafRefContext create(final EffectiveModelContext ctx) {
@@ -104,7 +104,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
         return referencedByChilds;
     }
 
-    public SchemaPath getCurrentNodePath() {
+    public ImmutableList<QName> getCurrentNodePath() {
         return currentNodePath;
     }
 
@@ -171,7 +171,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
     private Iterator<QName> descendantIterator(final SchemaNodeIdentifier node) {
         final Iterator<QName> nodeSteps = node.getNodeIdentifiers().iterator();
         if (node instanceof SchemaNodeIdentifier.Absolute) {
-            final Iterator<QName> mySteps = currentNodePath.getPathFromRoot().iterator();
+            final Iterator<QName> mySteps = currentNodePath.iterator();
             while (mySteps.hasNext()) {
                 final QName myNext = mySteps.next();
                 checkArgument(nodeSteps.hasNext(), "Node %s is an ancestor of %s", node, currentNodePath);

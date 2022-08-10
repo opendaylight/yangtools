@@ -15,7 +15,9 @@ module org.opendaylight.yangtools.yang.data.tree {
     provides DataTreeFactory with InMemoryDataTreeFactory;
 
     requires transitive org.opendaylight.yangtools.yang.data.tree.api;
+    requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
+    requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.tree.spi;
     requires org.opendaylight.yangtools.yang.data.impl;
     requires org.opendaylight.yangtools.yang.data.spi;

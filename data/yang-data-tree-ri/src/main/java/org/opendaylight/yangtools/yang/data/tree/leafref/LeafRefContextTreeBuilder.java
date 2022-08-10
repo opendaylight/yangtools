@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -20,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -36,7 +37,7 @@ final class LeafRefContextTreeBuilder {
 
     LeafRefContext buildLeafRefContextTree() throws LeafRefYangSyntaxErrorException {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(schemaContext);
-        final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(SchemaContext.NAME, SchemaPath.ROOT,
+        final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(SchemaContext.NAME, ImmutableList.of(),
             schemaContext);
 
         final Collection<? extends Module> modules = schemaContext.getModules();
@@ -71,7 +72,7 @@ final class LeafRefContextTreeBuilder {
     private LeafRefContext buildLeafRefContextReferencingTree(final DataSchemaNode node,
             final SchemaInferenceStack stack) {
         final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
-            stack.toSchemaPath(), schemaContext);
+            extractPath(stack), schemaContext);
 
         if (node instanceof DataNodeContainer container) {
             for (final DataSchemaNode childNode : container.getChildNodes()) {
@@ -120,7 +121,7 @@ final class LeafRefContextTreeBuilder {
     private LeafRefContext buildLeafRefContextReferencedByTree(final DataSchemaNode node, final Module currentModule,
             final SchemaInferenceStack stack) {
         final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
-                stack.toSchemaPath(), schemaContext);
+                extractPath(stack), schemaContext);
         if (node instanceof DataNodeContainer container) {
             for (final DataSchemaNode childNode : container.getChildNodes()) {
                 stack.enterSchemaTree(childNode.getQName());
@@ -157,7 +158,7 @@ final class LeafRefContextTreeBuilder {
     }
 
     private List<LeafRefContext> getLeafRefsFor(final Module module, final SchemaInferenceStack stack) {
-        final LeafRefPath nodeXPath = LeafRefUtils.schemaPathToLeafRefPath(stack.toSchemaPath(), module);
+        final LeafRefPath nodeXPath = LeafRefUtils.schemaPathToLeafRefPath(extractPath(stack), module);
         final List<LeafRefContext> foundLeafRefs = new LinkedList<>();
         for (final LeafRefContext leafref : leafRefs) {
             final LeafRefPath leafRefTargetPath = leafref.getAbsoluteLeafRefTargetPath();
@@ -167,5 +168,10 @@ final class LeafRefContextTreeBuilder {
         }
 
         return foundLeafRefs;
+    }
+
+    private static ImmutableList<QName> extractPath(final SchemaInferenceStack stack) {
+        return stack.isEmpty() ? ImmutableList.of()
+            : ImmutableList.copyOf(stack.toSchemaNodeIdentifier().getNodeIdentifiers());
     }
 }
