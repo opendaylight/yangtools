@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.leafref;
 import static java.util.Objects.requireNonNull;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -128,8 +128,8 @@ final class LeafRefContextBuilder implements Mutable {
     }
 
     Module getLeafRefContextModule() {
-        final Iterator<QName> it = currentNodePath.getPathFromRoot().iterator();
-        final QNameModule qnameModule = it.hasNext() ? it.next().getModule() : currentNodeQName.getModule();
+        final List<QName> path = currentNodePath.getPathFromRoot();
+        final QNameModule qnameModule = path.isEmpty() ? currentNodeQName.getModule() : path.get(0).getModule();
         return schemaContext.findModule(qnameModule).orElse(null);
     }
 
