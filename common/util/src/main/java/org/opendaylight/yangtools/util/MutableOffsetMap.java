@@ -165,15 +165,13 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
      * @throws NullPointerException if {@code map} is null
      */
     public static <K, V> @NonNull MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
-        if (map instanceof Ordered) {
-            return ((Ordered<K, V>) map).clone();
-        }
-        if (map instanceof ImmutableOffsetMap) {
-            final ImmutableOffsetMap<K, V> om = (ImmutableOffsetMap<K, V>) map;
+        if (map instanceof Ordered<K, V> ordered) {
+            return ordered.clone();
+        } else if (map instanceof ImmutableOffsetMap<K, V> om) {
             return new Ordered<>(om.offsets(), om.objects());
+        } else {
+            return new Ordered<>(map);
         }
-
-        return new Ordered<>(map);
     }
 
     /**
@@ -474,15 +472,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             return false;
         }
 
-        if (obj instanceof ImmutableOffsetMap) {
-            final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) obj;
-
+        if (obj instanceof ImmutableOffsetMap<?, ?> om) {
             if (noNewKeys() && offsets.equals(om.offsets())) {
                 return Arrays.deepEquals(objects, om.objects());
             }
-        } else if (obj instanceof MutableOffsetMap) {
-            final MutableOffsetMap<?, ?> om = (MutableOffsetMap<?, ?>) obj;
-
+        } else if (obj instanceof MutableOffsetMap<?, ?> om) {
             if (offsets.equals(om.offsets)) {
                 return Arrays.deepEquals(objects, om.objects) && equalNewKeys(om);
             }
