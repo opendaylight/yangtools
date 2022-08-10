@@ -43,5 +43,9 @@
             <groupId>org.opendaylight.mdsal.model</groupId>
             <artifactId>yang-ext</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+        </dependency>
     </dependencies>
 </project>

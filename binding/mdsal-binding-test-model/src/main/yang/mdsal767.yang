@@ -1,0 +1,16 @@
+module mdsal767 {
+  namespace mdsal767;
+  prefix mdsal767;
+
+  feature one;
+
+  feature two;
+
+  container one {
+    if-feature one;
+  }
+
+  container two {
+    if-feature two;
+  }
+}
