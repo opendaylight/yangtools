@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -372,12 +371,8 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
     }
 
     @Serial
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        out.writeInt(offsets.size());
-        for (Entry<K, V> e : entrySet()) {
-            out.writeObject(e.getKey());
-            out.writeObject(e.getValue());
-        }
+    private Object writeReplace() {
+        return new IOMv1(this);
     }
 
     // FIXME: this is ugly, use an Externalizable proxy
