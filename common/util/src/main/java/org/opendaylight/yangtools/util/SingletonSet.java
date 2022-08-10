@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Iterators;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,9 +29,11 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @Beta
 public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final SingletonSet<?> NULL_SINGLETON = new SingletonSet<>() {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -181,6 +184,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
 
     @NonNullByDefault
     private static final class RegularSingletonSet<E> extends SingletonSet<E> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final E element;
