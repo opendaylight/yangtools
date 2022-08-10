@@ -73,8 +73,8 @@ final class LeafRefContextTreeBuilder {
         final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
             stack.toSchemaPath(), schemaContext);
 
-        if (node instanceof DataNodeContainer) {
-            for (final DataSchemaNode childNode : ((DataNodeContainer) node).getChildNodes()) {
+        if (node instanceof DataNodeContainer container) {
+            for (final DataSchemaNode childNode : container.getChildNodes()) {
                 stack.enterSchemaTree(childNode.getQName());
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(childNode, stack);
                 stack.exit();
@@ -83,9 +83,9 @@ final class LeafRefContextTreeBuilder {
                         childLeafRefContext.getNodeName());
                 }
             }
-        } else if (node instanceof ChoiceSchemaNode) {
+        } else if (node instanceof ChoiceSchemaNode choice) {
             // :FIXME choice without case
-            for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
+            for (final CaseSchemaNode caseNode : choice.getCases()) {
                 stack.enterSchemaTree(caseNode.getQName());
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(caseNode, stack);
                 stack.exit();
@@ -95,13 +95,11 @@ final class LeafRefContextTreeBuilder {
                 }
             }
 
-        } else if (node instanceof TypedDataSchemaNode) {
-            final TypedDataSchemaNode typedNode = (TypedDataSchemaNode) node;
+        } else if (node instanceof TypedDataSchemaNode typedNode) {
             final TypeDefinition<?> type = typedNode.getType();
 
             // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
-            if (type instanceof LeafrefTypeDefinition) {
-                final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
+            if (type instanceof LeafrefTypeDefinition leafrefType) {
                 final PathExpression path = leafrefType.getPathStatement();
                 final LeafRefPathParserImpl leafRefPathParser = new LeafRefPathParserImpl(leafrefType, typedNode);
                 final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPath(path);
@@ -123,8 +121,8 @@ final class LeafRefContextTreeBuilder {
             final SchemaInferenceStack stack) {
         final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
                 stack.toSchemaPath(), schemaContext);
-        if (node instanceof DataNodeContainer) {
-            for (final DataSchemaNode childNode : ((DataNodeContainer) node).getChildNodes()) {
+        if (node instanceof DataNodeContainer container) {
+            for (final DataSchemaNode childNode : container.getChildNodes()) {
                 stack.enterSchemaTree(childNode.getQName());
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencedByTree(childNode,
                         currentModule, stack);
@@ -134,8 +132,8 @@ final class LeafRefContextTreeBuilder {
                         childLeafRefContext.getNodeName());
                 }
             }
-        } else if (node instanceof ChoiceSchemaNode) {
-            for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
+        } else if (node instanceof ChoiceSchemaNode choice) {
+            for (final CaseSchemaNode caseNode : choice.getCases()) {
                 stack.enterSchemaTree(caseNode.getQName());
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencedByTree(caseNode, currentModule,
                         stack);
