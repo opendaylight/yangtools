@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 final class LeafRefContextBuilder implements Mutable {
     private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
@@ -26,8 +26,7 @@ final class LeafRefContextBuilder implements Mutable {
     private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
 
     private final QName currentNodeQName;
-    private final SchemaPath currentNodePath;
-    private final EffectiveModelContext schemaContext;
+    private final Inference currentNodePath;
 
     private LeafRefPath leafRefTargetPath = null;
     private LeafRefPath absoluteLeafRefTargetPath = null;
@@ -36,11 +35,10 @@ final class LeafRefContextBuilder implements Mutable {
     private boolean isReferencedBy = false;
     private boolean isReferencing = false;
 
-    LeafRefContextBuilder(final QName currentNodeQName, final SchemaPath currentNodePath,
+    LeafRefContextBuilder(final QName currentNodeQName, final Inference currentNodePath,
             final EffectiveModelContext schemaContext) {
         this.currentNodeQName = requireNonNull(currentNodeQName);
         this.currentNodePath = requireNonNull(currentNodePath);
-        this.schemaContext = requireNonNull(schemaContext);
     }
 
     @NonNull LeafRefContext build() {
@@ -86,7 +84,7 @@ final class LeafRefContextBuilder implements Mutable {
         return referencedByChildren;
     }
 
-    SchemaPath getCurrentNodePath() {
+    Inference getCurrentNodePath() {
         return currentNodePath;
     }
 
@@ -108,10 +106,6 @@ final class LeafRefContextBuilder implements Mutable {
 
     QName getCurrentNodeQName() {
         return currentNodeQName;
-    }
-
-    EffectiveModelContext getSchemaContext() {
-        return schemaContext;
     }
 
     LeafRefPath getAbsoluteLeafRefTargetPath() {

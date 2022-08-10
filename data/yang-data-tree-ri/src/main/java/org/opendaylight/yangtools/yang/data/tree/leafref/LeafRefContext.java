@@ -18,15 +18,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
-public final class LeafRefContext extends AbstractEffectiveModelContextProvider {
+public final class LeafRefContext implements EffectiveModelContextProvider {
 
     private final QName currentNodeQName;
-    private final SchemaPath currentNodePath;
+    private final Inference currentNodePath;
     private final Module module;
 
     private final LeafRefPath leafRefTargetPath;
@@ -46,18 +46,17 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
     private volatile LeafRefPath leafRefNodePath = null;
 
     LeafRefContext(final LeafRefContextBuilder leafRefContextBuilder) {
-        super(leafRefContextBuilder.getSchemaContext());
-        this.currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
-        this.currentNodePath = leafRefContextBuilder.getCurrentNodePath();
-        this.leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
-        this.absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
-        this.leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
-        this.isReferencedBy = leafRefContextBuilder.isReferencedBy();
-        this.isReferencing = leafRefContextBuilder.isReferencing();
-        this.referencingChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencingChilds());
-        this.referencedByChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencedByChilds());
-        this.referencedByLeafRefCtx = ImmutableMap.copyOf(leafRefContextBuilder.getAllReferencedByLeafRefCtxs());
-        this.module = leafRefContextBuilder.getLeafRefContextModule();
+        currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
+        currentNodePath = leafRefContextBuilder.getCurrentNodePath();
+        leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
+        absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
+        leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
+        isReferencedBy = leafRefContextBuilder.isReferencedBy();
+        isReferencing = leafRefContextBuilder.isReferencing();
+        referencingChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencingChilds());
+        referencedByChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencedByChilds());
+        referencedByLeafRefCtx = ImmutableMap.copyOf(leafRefContextBuilder.getAllReferencedByLeafRefCtxs());
+        module = leafRefContextBuilder.getLeafRefContextModule();
     }
 
     public static LeafRefContext create(final EffectiveModelContext ctx) {
@@ -66,6 +65,11 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
         } catch (LeafRefYangSyntaxErrorException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    @Override
+    public EffectiveModelContext getEffectiveModelContext() {
+        return currentNodePath.getEffectiveModelContext();
     }
 
     public boolean hasLeafRefContextChild() {
@@ -104,7 +108,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
         return referencedByChilds;
     }
 
-    public SchemaPath getCurrentNodePath() {
+    public Inference getCurrentNodePath() {
         return currentNodePath;
     }
 

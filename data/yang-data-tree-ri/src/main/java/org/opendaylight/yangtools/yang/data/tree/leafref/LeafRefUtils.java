@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 public final class LeafRefUtils {
     private LeafRefUtils() {
@@ -56,7 +57,7 @@ public final class LeafRefUtils {
         return LeafRefPath.create(absoluteLeafRefTargetPathList, true);
     }
 
-    private static Deque<QNameWithPredicate> schemaPathToXPathQNames(final SchemaPath nodePath, final Module module) {
+    private static Deque<QNameWithPredicate> schemaPathToXPathQNames(final Inference nodePath, final Module module) {
         final Deque<QNameWithPredicate> xpath = new LinkedList<>();
         final Iterator<QName> nodePathIterator = nodePath.getPathFromRoot().iterator();
 
@@ -90,7 +91,7 @@ public final class LeafRefUtils {
         return xpath;
     }
 
-    public static LeafRefPath schemaPathToLeafRefPath(final SchemaPath nodePath, final Module module) {
+    public static LeafRefPath schemaPathToLeafRefPath(final Inference nodePath, final Module module) {
         return LeafRefPath.create(schemaPathToXPathQNames(nodePath, module), true);
     }
 }
