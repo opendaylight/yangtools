@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
@@ -54,8 +55,12 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
             super(offsets, objects);
         }
 
+        static @NonNull Ordered<?, ?> ofSerialized(final ImmutableList<Object> keys, final Object[] values) {
+            return new Ordered<>(OffsetMapCache.orderedOffsets(keys), values);
+        }
+
         @Override
-        public @NonNull MutableOffsetMap<K, V> toModifiableMap() {
+        public MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.orderedCopyOf(this);
         }
 
@@ -74,8 +79,13 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
             super(offsets, objects);
         }
 
+        static @NonNull Unordered<?, ?> ofSerialized(final ImmutableList<Object> keys, final Object[] values) {
+            final var newOffsets = OffsetMapCache.unorderedOffsets(keys);
+            return new Unordered<>(newOffsets, OffsetMapCache.adjustedArray(newOffsets, keys, values));
+        }
+
         @Override
-        public @NonNull MutableOffsetMap<K, V> toModifiableMap() {
+        public MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.unorderedCopyOf(this);
         }
 
