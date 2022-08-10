@@ -45,7 +45,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <V> the type of mapped values
  */
 @Beta
-public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
+public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
         @Serial
         private static final long serialVersionUID = 1L;
@@ -102,7 +102,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @param objects Array of value object, may not be null. The array is stored as is, the caller
      *              is responsible for ensuring its contents remain unmodified.
      */
-    ImmutableOffsetMap(final ImmutableMap<K, Integer> offsets, final V[] objects) {
+    private ImmutableOffsetMap(final ImmutableMap<K, Integer> offsets, final V[] objects) {
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
         checkArgument(offsets.size() == objects.length);

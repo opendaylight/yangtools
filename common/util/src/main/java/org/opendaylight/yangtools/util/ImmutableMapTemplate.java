@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -29,8 +28,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  *
  * @param <K> the type of keys maintained by this template
  */
-@Beta
-public abstract class ImmutableMapTemplate<K> implements Immutable {
+public abstract sealed class ImmutableMapTemplate<K> implements Immutable
+        permits ImmutableOffsetMapTemplate, SharedSingletonMapTemplate {
     ImmutableMapTemplate() {
         // Hidden on purpose
     }

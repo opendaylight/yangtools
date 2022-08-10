@@ -30,7 +30,7 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <K> the type of keys maintained by this template
  */
-public abstract class ImmutableOffsetMapTemplate<K> extends ImmutableMapTemplate<K> {
+public abstract sealed class ImmutableOffsetMapTemplate<K> extends ImmutableMapTemplate<K> {
     private static final class Ordered<K> extends ImmutableOffsetMapTemplate<K> {
         Ordered(final Collection<K> keys) {
             super(OffsetMapCache.orderedOffsets(keys));
@@ -55,7 +55,7 @@ public abstract class ImmutableOffsetMapTemplate<K> extends ImmutableMapTemplate
 
     private final @NonNull ImmutableMap<K, Integer> offsets;
 
-    ImmutableOffsetMapTemplate(final ImmutableMap<K, Integer> offsets) {
+    private ImmutableOffsetMapTemplate(final ImmutableMap<K, Integer> offsets) {
         this.offsets = requireNonNull(offsets);
     }
 

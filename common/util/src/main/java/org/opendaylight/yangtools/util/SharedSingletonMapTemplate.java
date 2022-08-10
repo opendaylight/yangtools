@@ -23,7 +23,7 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <K> the type of keys maintained by this template
  */
-public abstract class SharedSingletonMapTemplate<K> extends ImmutableMapTemplate<K> {
+public abstract sealed class SharedSingletonMapTemplate<K> extends ImmutableMapTemplate<K> {
     private static final class Ordered<K> extends SharedSingletonMapTemplate<K> {
         Ordered(final K key) {
             super(key);
@@ -48,7 +48,7 @@ public abstract class SharedSingletonMapTemplate<K> extends ImmutableMapTemplate
 
     private final @NonNull SingletonSet<K> keySet;
 
-    SharedSingletonMapTemplate(final K key) {
+    private SharedSingletonMapTemplate(final K key) {
         this.keySet = SharedSingletonMap.cachedSet(key);
     }
 
