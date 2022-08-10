@@ -186,8 +186,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
 
         // Familiar and efficient to copy
-        if (map instanceof MutableOffsetMap) {
-            return ((MutableOffsetMap<K, V>) map).toUnmodifiableMap();
+        if (map instanceof MutableOffsetMap<K, V> mop) {
+            return mop.toUnmodifiableMap();
         }
 
         if (map.isEmpty()) {
@@ -228,13 +228,11 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof Map)) {
+        if (!(obj instanceof Map<?, ?> other)) {
             return false;
         }
 
-        if (obj instanceof ImmutableOffsetMap) {
-            final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) obj;
-
+        if (obj instanceof ImmutableOffsetMap<?, ?> om) {
             // If the offset match, the arrays have to match, too
             if (offsets.equals(om.offsets)) {
                 return Arrays.deepEquals(objects, om.objects);
@@ -243,8 +241,6 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             // Let MutableOffsetMap do the actual work.
             return obj.equals(this);
         }
-
-        final Map<?, ?> other = (Map<?, ?>)obj;
 
         // Size and key sets have to match
         if (size() != other.size() || !keySet().equals(other.keySet())) {
