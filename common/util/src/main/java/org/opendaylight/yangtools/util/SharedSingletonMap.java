@@ -33,7 +33,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <V> the type of mapped values
  */
 @Beta
-public abstract class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
+public abstract sealed class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
         @Serial
         private static final long serialVersionUID = 1L;
@@ -84,12 +84,12 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     private final @NonNull V value;
     private int hashCode;
 
-    SharedSingletonMap(final SingletonSet<K> keySet, final V value) {
+    private SharedSingletonMap(final SingletonSet<K> keySet, final V value) {
         this.keySet = requireNonNull(keySet);
         this.value = requireNonNull(value);
     }
 
-    SharedSingletonMap(final K key, final V value) {
+    private SharedSingletonMap(final K key, final V value) {
         this(cachedSet(key), value);
     }
 
