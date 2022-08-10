@@ -15,12 +15,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
-import com.google.common.collect.ImmutableRangeSet.Builder;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
@@ -95,17 +93,15 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
 
     private static <T extends Number & Comparable<T>> List<ValueRange> resolveRanges(final List<ValueRange> unresolved,
             final Range<T> baseRange) {
-        final List<ValueRange> ret = new ArrayList<>(unresolved.size());
-        for (ValueRange range : unresolved) {
+        final var ret = new ArrayList<ValueRange>(unresolved.size());
+        for (var range : unresolved) {
             final Number min = range.lowerBound();
             final Number max = range.upperBound();
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
-                final @NonNull Number rMin = min instanceof UnresolvedNumber
-                        ?  ((UnresolvedNumber)min).resolveRange(baseRange) : min;
-                final @NonNull Number rMax = max instanceof UnresolvedNumber
-                        ?  ((UnresolvedNumber)max).resolveRange(baseRange) : max;
-                ret.add(ValueRange.of(rMin, rMax));
+                ret.add(ValueRange.of(
+                    min instanceof UnresolvedNumber uMin ? uMin.resolveRange(baseRange) : min,
+                    max instanceof UnresolvedNumber uMax ? uMax.resolveRange(baseRange) : max));
             } else {
                 ret.add(range);
             }
@@ -117,8 +113,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     @SuppressWarnings("unchecked")
     private static <T extends Number & Comparable<T>> RangeSet<T> ensureTypedRanges(final List<ValueRange> ranges,
             final Class<? extends Number> clazz) {
-        final Builder<T> builder = ImmutableRangeSet.<T>builder();
-        for (ValueRange range : ranges) {
+        final var builder = ImmutableRangeSet.<T>builder();
+        for (var range : ranges) {
             if (!clazz.isInstance(range.lowerBound()) || !clazz.isInstance(range.upperBound())) {
                 return typedRanges(ranges, clazz);
             }
@@ -132,12 +128,11 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     @SuppressWarnings("unchecked")
     private static <T extends Number & Comparable<T>> RangeSet<T> typedRanges(final List<ValueRange> ranges,
             final Class<? extends Number> clazz) {
-        final Function<Number, ? extends Number> function = NumberUtil.converterTo(clazz);
+        final var function = NumberUtil.converterTo(clazz);
         checkArgument(function != null, "Unsupported range class %s", clazz);
 
-        final Builder<T> builder = ImmutableRangeSet.builder();
-
-        for (ValueRange range : ranges) {
+        final var builder = ImmutableRangeSet.<T>builder();
+        for (var range : ranges) {
             if (!clazz.isInstance(range.lowerBound()) || !clazz.isInstance(range.upperBound())) {
                 final Number min;
                 final Number max;
