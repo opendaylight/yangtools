@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.util.concurrent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.io.Serial;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 
 public class ReflectiveExceptionMapperTest {
     static final class NoArgumentCtorException extends Exception {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         NoArgumentCtorException() {
@@ -22,6 +24,7 @@ public class ReflectiveExceptionMapperTest {
     }
 
     static final class PrivateCtorException extends Exception {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private PrivateCtorException(final String message, final Throwable cause) {
@@ -30,6 +33,7 @@ public class ReflectiveExceptionMapperTest {
     }
 
     static final class FailingCtorException extends Exception {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         FailingCtorException(final String message, final Throwable cause) {
@@ -38,6 +42,7 @@ public class ReflectiveExceptionMapperTest {
     }
 
     public static final class GoodException extends Exception {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         public GoodException(final String message, final Throwable cause) {

@@ -21,6 +21,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.io.Serial;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -50,8 +51,8 @@ public class DeadlockDetectingListeningExecutorServiceTest {
     static final InitialInvoker EXECUTE = Executor::execute;
 
     public static class TestDeadlockException extends Exception {
+        @Serial
         private static final long serialVersionUID = 1L;
-
     }
 
     private static final Supplier<Exception> DEADLOCK_EXECUTOR_SUPPLIER = TestDeadlockException::new;

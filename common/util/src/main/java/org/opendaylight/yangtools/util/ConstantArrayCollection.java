@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.UnmodifiableIterator;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +27,9 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <E> the type of elements in this list
  */
 final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
+
     private final E @NonNull[] array;
 
     ConstantArrayCollection(final E @NonNull[] array) {
@@ -136,8 +139,7 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        return obj == this || obj instanceof ConstantArrayCollection
-                && Arrays.equals(array, ((ConstantArrayCollection<?>) obj).array);
+        return obj == this || obj instanceof ConstantArrayCollection<?> other && Arrays.equals(array, other.array);
     }
 
     @Override

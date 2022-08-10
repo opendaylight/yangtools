@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <E> the element t.ype
  */
 public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("rawtypes")
