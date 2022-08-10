@@ -65,14 +65,14 @@ public final class LeafRefUtils {
             final QName qname = nodePathIterator.next();
             final DataSchemaNode child = currenDataNodeContainer.dataChildByName(qname);
 
-            if (child instanceof DataNodeContainer) {
+            if (child instanceof DataNodeContainer container) {
                 if (!(child instanceof CaseSchemaNode)) {
                     xpath.add(new SimpleQNameWithPredicate(qname));
                 }
-                currenDataNodeContainer = (DataNodeContainer) child;
-            } else if (child instanceof ChoiceSchemaNode) {
+                currenDataNodeContainer = container;
+            } else if (child instanceof ChoiceSchemaNode choice) {
                 if (nodePathIterator.hasNext()) {
-                    currenDataNodeContainer = ((ChoiceSchemaNode) child).findCase(nodePathIterator.next()).orElse(null);
+                    currenDataNodeContainer = choice.findCase(nodePathIterator.next()).orElse(null);
                 } else {
                     break;
                 }
