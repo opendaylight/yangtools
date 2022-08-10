@@ -30,11 +30,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @param <K> the type of keys maintained by this template
  */
 @Beta
-public abstract class ImmutableMapTemplate<K> implements Immutable {
-    ImmutableMapTemplate() {
-        // Hidden on purpose
-    }
-
+public abstract sealed class ImmutableMapTemplate<K> implements Immutable
+        permits ImmutableOffsetMapTemplate, SharedSingletonMapTemplate {
     /**
      * Create a template which produces Maps with specified keys, with iteration order matching the iteration order
      * of {@code keys}. {@link #keySet()} will return these keys in exactly the same order. The resulting map will
