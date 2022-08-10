@@ -14,6 +14,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import org.eclipse.jdt.annotation.NonNull;
 @Beta
 public abstract class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Ordered(final K key, final V value) {
@@ -51,6 +53,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     }
 
     static final class Unordered<K, V> extends SharedSingletonMap<K, V> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Unordered(final K key, final V value) {
@@ -67,6 +70,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
         }
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final LoadingCache<Object, SingletonSet<Object>> CACHE = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<Object, SingletonSet<Object>>() {

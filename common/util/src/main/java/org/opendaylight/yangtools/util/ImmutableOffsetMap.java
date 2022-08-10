@@ -17,6 +17,7 @@ import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.AbstractMap.SimpleImmutableEntry;
@@ -46,6 +47,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @Beta
 public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
@@ -65,6 +67,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     static final class Unordered<K, V> extends ImmutableOffsetMap<K, V> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
@@ -85,6 +88,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final transient @NonNull ImmutableMap<K, Integer> offsets;
@@ -367,6 +371,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
     }
 
+    @Serial
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.writeInt(offsets.size());
         for (Entry<K, V> e : entrySet()) {
@@ -375,6 +380,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
     }
 
+    // FIXME: this is ugly, use an Externalizable proxy
     private static final Field OFFSETS_FIELD = fieldFor("offsets");
     private static final Field ARRAY_FIELD = fieldFor("objects");
 
@@ -399,6 +405,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
     }
 
+    @Serial
     @SuppressWarnings("unchecked")
     private void readObject(final @NonNull ObjectInputStream in) throws IOException, ClassNotFoundException {
         final int s = in.readInt();
