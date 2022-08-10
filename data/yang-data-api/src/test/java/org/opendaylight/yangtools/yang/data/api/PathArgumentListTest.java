@@ -13,62 +13,35 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.collect.UnmodifiableIterator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class PathArgumentListTest {
-    private static final class TestClass extends PathArgumentList {
-        @Override
-        public UnmodifiableIterator<PathArgument> iterator() {
-            return new UnmodifiableIterator<>() {
-                @Override
-                public boolean hasNext() {
-                    return false;
-                }
-
-                @Override
-                public PathArgument next() {
-                    throw new NoSuchElementException();
-                }
-            };
-        }
-
-        @Override
-        public PathArgument get(final int index) {
-            return null;
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-    }
+    private static final PathArgumentList LIST = new StackedPathArguments(YangInstanceIdentifier.empty(),
+        List.of(new NodeIdentifier(QName.create("foo", "foo"))));
 
     @Test
     public void testIsEmpty() {
-        assertFalse(new TestClass().isEmpty());
+        assertFalse(LIST.isEmpty());
     }
 
     @Test
     public void testProtections() {
-        final PathArgumentList l = new TestClass();
-
-        assertThrows(UnsupportedOperationException.class, () -> l.remove(null));
-        assertThrows(UnsupportedOperationException.class, () -> l.addAll(List.of()));
-        assertThrows(UnsupportedOperationException.class, () -> l.removeAll(List.of()));
-        assertThrows(UnsupportedOperationException.class, () -> l.retainAll(List.of()));
-        assertThrows(UnsupportedOperationException.class, () -> l.clear());
-        assertThrows(UnsupportedOperationException.class, () -> l.addAll(0, null));
+        assertThrows(UnsupportedOperationException.class, () -> LIST.remove(null));
+        assertThrows(UnsupportedOperationException.class, () -> LIST.addAll(List.of()));
+        assertThrows(UnsupportedOperationException.class, () -> LIST.removeAll(List.of()));
+        assertThrows(UnsupportedOperationException.class, () -> LIST.retainAll(List.of()));
+        assertThrows(UnsupportedOperationException.class, () -> LIST.clear());
+        assertThrows(UnsupportedOperationException.class, () -> LIST.addAll(0, null));
     }
 
     @Test
