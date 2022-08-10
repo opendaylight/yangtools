@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -64,6 +63,11 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
             setField(this, OFFSETS_FIELD, OffsetMapCache.orderedOffsets(keys));
             setField(this, ARRAY_FIELD, values);
         }
+
+        @Override
+        Object writeReplace() {
+            return new OIOMv1(this);
+        }
     }
 
     static final class Unordered<K, V> extends ImmutableOffsetMap<K, V> {
@@ -85,6 +89,11 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
 
             setField(this, OFFSETS_FIELD, newOffsets);
             setField(this, ARRAY_FIELD, OffsetMapCache.adjustedArray(newOffsets, keys, values));
+        }
+
+        @Override
+        Object writeReplace() {
+            return new UIOMv1(this);
         }
     }
 
@@ -372,13 +381,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
     }
 
     @Serial
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        out.writeInt(offsets.size());
-        for (Entry<K, V> e : entrySet()) {
-            out.writeObject(e.getKey());
-            out.writeObject(e.getValue());
-        }
-    }
+    abstract Object writeReplace();
 
     // FIXME: this is ugly, use an Externalizable proxy
     private static final Field OFFSETS_FIELD = fieldFor("offsets");
