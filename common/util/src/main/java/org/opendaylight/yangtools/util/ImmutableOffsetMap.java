@@ -14,18 +14,13 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serial;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -59,12 +54,6 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         }
 
         @Override
-        void setFields(final List<K> keys, final V[] values) throws IOException {
-            setField(this, OFFSETS_FIELD, OffsetMapCache.orderedOffsets(keys));
-            setField(this, ARRAY_FIELD, values);
-        }
-
-        @Override
         Object writeReplace() {
             return new OIOMv1(this);
         }
@@ -84,14 +73,6 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         }
 
         @Override
-        void setFields(final List<K> keys, final V[] values) throws IOException {
-            final Map<K, Integer> newOffsets = OffsetMapCache.unorderedOffsets(keys);
-
-            setField(this, OFFSETS_FIELD, newOffsets);
-            setField(this, ARRAY_FIELD, OffsetMapCache.adjustedArray(newOffsets, keys, values));
-        }
-
-        @Override
         Object writeReplace() {
             return new UIOMv1(this);
         }
@@ -100,8 +81,8 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final transient @NonNull ImmutableMap<K, Integer> offsets;
-    private final transient @NonNull V[] objects;
+    private final @NonNull ImmutableMap<K, Integer> offsets;
+    private final @NonNull V[] objects;
     private transient int hashCode;
 
     /**
@@ -119,8 +100,6 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
 
     @Override
     public abstract @NonNull MutableOffsetMap<K, V> toModifiableMap();
-
-    abstract void setFields(List<K> keys, V[] values) throws IOException;
 
     /**
      * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true, as this
@@ -382,45 +361,4 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
 
     @Serial
     abstract Object writeReplace();
-
-    // FIXME: this is ugly, use an Externalizable proxy
-    private static final Field OFFSETS_FIELD = fieldFor("offsets");
-    private static final Field ARRAY_FIELD = fieldFor("objects");
-
-    private static @NonNull Field fieldFor(final @NonNull String name) {
-        final Field f;
-        try {
-            f = ImmutableOffsetMap.class.getDeclaredField(name);
-        } catch (NoSuchFieldException | SecurityException e) {
-            throw new IllegalStateException("Failed to lookup field " + name, e);
-        }
-
-        f.setAccessible(true);
-        return f;
-    }
-
-    private static void setField(final @NonNull ImmutableOffsetMap<?, ?> map, final @NonNull Field field,
-            final Object value) throws IOException {
-        try {
-            field.set(map, value);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IOException("Failed to set field " + field, e);
-        }
-    }
-
-    @Serial
-    @SuppressWarnings("unchecked")
-    private void readObject(final @NonNull ObjectInputStream in) throws IOException, ClassNotFoundException {
-        final int s = in.readInt();
-
-        final List<K> keys = new ArrayList<>(s);
-        final V[] values = (V[]) new Object[s];
-
-        for (int i = 0; i < s; ++i) {
-            keys.add((K)in.readObject());
-            values[i] = (V)in.readObject();
-        }
-
-        setFields(keys, values);
-    }
 }
