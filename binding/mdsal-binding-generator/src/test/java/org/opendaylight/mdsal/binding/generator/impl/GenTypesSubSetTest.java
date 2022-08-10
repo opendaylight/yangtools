@@ -36,7 +36,7 @@ public class GenTypesSubSetTest {
         assertEquals("Set of to Generate Modules must contain 2 modules", 2, toGenModules.size());
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
-        assertEquals(23, genTypes.size());
+        assertEquals(25, genTypes.size());
     }
 
     @Test
@@ -58,6 +58,6 @@ public class GenTypesSubSetTest {
 
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
-        assertEquals(25, genTypes.size());
+        assertEquals(27, genTypes.size());
     }
 }

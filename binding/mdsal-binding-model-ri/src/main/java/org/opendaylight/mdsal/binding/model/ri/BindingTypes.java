@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.binding.TypeObject;
+import org.opendaylight.yangtools.yang.binding.YangFeature;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -88,6 +89,7 @@ public final class BindingTypes {
     private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
     private static final ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
+    private static final ConcreteType YANG_FEATURE = typeForClass(YangFeature.class);
 
     private BindingTypes() {
 
@@ -281,6 +283,18 @@ public final class BindingTypes {
     }
 
     /**
+     * Type specializing {@link YangFeature} for a particular type.
+     *
+     * @param concreteType The concrete type of this notification
+     * @param parent Type of parent defining the notification
+     * @return A parameterized type corresponding to {@code YangFeature<Type, DataRootType>}
+     * @throws NullPointerException if any argument is is null
+     */
+    public static ParameterizedType yangFeature(final Type concreteType, final Type parent) {
+        return parameterizedTypeFor(YANG_FEATURE, concreteType, parent);
+    }
+
+    /**
      * Check if specified type is generated for a {@code type bits}.
      *
      * @param type Type to examine
@@ -354,6 +368,21 @@ public final class BindingTypes {
                 final var arg = args[0];
                 if (arg != null) {
                     return arg;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Beta
+    public static @Nullable Type extractYangFeatureDataRoot(final GeneratedTransferObject gto) {
+        if (!gto.isAbstract() && gto.getSuperType() == null) {
+            final var impls = gto.getImplements();
+            if (impls.size() == 1 && impls.get(0) instanceof ParameterizedType param
+                && YANG_FEATURE.equals(param.getRawType())) {
+                final var args = param.getActualTypeArguments();
+                if (args.length == 2) {
+                    return args[1];
                 }
             }
         }

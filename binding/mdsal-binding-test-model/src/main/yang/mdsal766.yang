@@ -1,0 +1,14 @@
+module mdsal766 {
+  namespace mdsal766;
+  prefix mdsal766;
+
+  feature global-foo;
+
+  grouping foo {
+    container foo;
+  }
+
+  uses foo {
+    if-feature global-foo;
+  }
+}

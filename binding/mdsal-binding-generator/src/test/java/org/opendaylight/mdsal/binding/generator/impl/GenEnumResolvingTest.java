@@ -28,7 +28,7 @@ public class GenEnumResolvingTest {
             "/enum-test-models/ietf-interfaces@2012-11-15.yang", "/ietf-models/iana-if-type.yang"));
         assertNotNull(genTypes);
 
-        assertEquals(7, genTypes.size());
+        assertEquals(9, genTypes.size());
 
         GeneratedType genInterface = null;
         for (final GeneratedType type : genTypes) {
@@ -100,7 +100,7 @@ public class GenEnumResolvingTest {
             "/enum-test-models/abstract-topology@2013-02-08.yang", "/enum-test-models/ietf-interfaces@2012-11-15.yang",
             "/ietf-models/iana-if-type.yang"));
         assertNotNull(genTypes);
-        assertEquals(25, genTypes.size());
+        assertEquals(27, genTypes.size());
 
         GeneratedType genInterface = null;
         for (final GeneratedType type : genTypes) {

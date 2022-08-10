@@ -35,7 +35,7 @@ public class GeneratedTypesLeafrefTest {
         assertEquals(4, context.getModules().size());
 
         final var genTypes = DefaultBindingGenerator.generateFor(context);
-        assertEquals(53, genTypes.size());
+        assertEquals(55, genTypes.size());
 
         GeneratedTransferObject gtIfcKey = null;
         GeneratedType gtIfc = null;

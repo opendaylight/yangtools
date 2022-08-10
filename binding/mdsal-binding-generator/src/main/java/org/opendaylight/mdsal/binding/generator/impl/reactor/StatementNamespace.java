@@ -13,10 +13,14 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
- * <a href="https://tools.ietf.org/html/rfc6020#section-6.2.1">YANG statement namespaces</a> which we process.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.2.1">YANG statement namespaces</a> which we process.
  */
 // FIXME: move this to 'BindingNamespace' in binding-spec-util
 enum StatementNamespace {
+    /**
+     * The namespace of all {@code feature} statements, bullet 3.
+     */
+    FEATURE("$F"),
     /**
      * The namespace of all {@code identity} statements, bullet 4.
      */

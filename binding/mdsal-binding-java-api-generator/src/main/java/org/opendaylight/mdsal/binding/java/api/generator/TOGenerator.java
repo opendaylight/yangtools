@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 
 /**
  * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA class.
@@ -24,14 +25,13 @@ public final class TOGenerator implements CodeGenerator {
     public String generate(final Type type) {
         if (type instanceof GeneratedTransferObject genTO) {
             if (genTO.isUnionType()) {
-                final UnionTemplate template = new UnionTemplate(genTO);
-                return template.generate();
+                return new UnionTemplate(genTO).generate();
             } else if (genTO.isTypedef()) {
-                final ClassTemplate template = new ClassTemplate(genTO);
-                return template.generate();
+                return new ClassTemplate(genTO).generate();
             } else {
-                final ListKeyTemplate template = new ListKeyTemplate(genTO);
-                return template.generate();
+                final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(genTO);
+                return featureDataRoot == null ? new ListKeyTemplate(genTO).generate()
+                    : new FeatureTemplate(genTO, featureDataRoot).generate();
             }
         }
         return "";

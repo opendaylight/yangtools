@@ -187,7 +187,7 @@ class ClassTemplate extends BaseTemplate {
 
     '''
 
-    def private propertyMethods() {
+    def protected propertyMethods() {
         if (properties.empty) {
             return ""
         }
