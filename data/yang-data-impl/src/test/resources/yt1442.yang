@@ -1,0 +1,11 @@
+module yt1442 {
+namespace yt1442;
+prefix yt1442;
+
+  leaf foo {
+    type decimal64 {
+      fraction-digits 2;
+        range "10.00..100.00";
+    }
+  }
+}
