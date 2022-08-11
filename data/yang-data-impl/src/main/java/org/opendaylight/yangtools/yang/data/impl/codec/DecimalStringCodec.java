@@ -12,7 +12,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
 /**
@@ -40,7 +42,13 @@ public final class DecimalStringCodec extends TypeDefinitionAwareCodec<Decimal64
             throw new IllegalArgumentException("Value '" + product + "' does not match required fraction-digits", e);
         }
 
-        // FIXME: check ranges
+        typeDef.getRangeConstraint().ifPresent(constraint -> {
+            final var ranges = constraint.getAllowedRanges();
+            if (!ranges.contains(value)) {
+                throw new YangInvalidValueException(ErrorType.APPLICATION, constraint,
+                        "Value '" + value + "' is not in required ranges " + ranges);
+            }
+        });
         return value;
     }
 
