@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 final class CollisionDomain {
-    abstract class Member {
+    abstract sealed class Member {
         private final Generator gen;
 
         private List<Secondary> secondaries = List.of();
@@ -86,7 +86,7 @@ final class CollisionDomain {
         }
     }
 
-    private class Primary extends Member {
+    private sealed class Primary extends Member {
         private ClassNamingStrategy strategy;
 
         Primary(final Generator gen, final ClassNamingStrategy strategy) {
@@ -122,8 +122,8 @@ final class CollisionDomain {
 
         @Override
         boolean equalRoot(final Member other) {
-            return other instanceof Primary && strategy.nodeIdentifier().getLocalName().equals(
-                ((Primary) other).strategy.nodeIdentifier().getLocalName());
+            return other instanceof Primary primary
+                && strategy.nodeIdentifier().getLocalName().equals(primary.strategy.nodeIdentifier().getLocalName());
         }
     }
 
@@ -133,9 +133,9 @@ final class CollisionDomain {
         }
     }
 
-    private abstract class Secondary extends Member {
+    private abstract sealed class Secondary extends Member {
         private final String classSuffix;
-        final Member classPrimary;
+        final @NonNull Member classPrimary;
 
         Secondary(final Generator gen, final Member primary, final String classSuffix) {
             super(gen);
@@ -160,11 +160,8 @@ final class CollisionDomain {
 
         @Override
         final boolean equalRoot(final Member other) {
-            if (other instanceof Secondary) {
-                final Secondary sec = (Secondary) other;
-                return classPrimary.equalRoot(sec.classPrimary) && classSuffix.equals(sec.classSuffix);
-            }
-            return false;
+            return other instanceof Secondary sec
+                && classPrimary.equalRoot(sec.classPrimary) && classSuffix.equals(sec.classSuffix);
         }
     }
 
