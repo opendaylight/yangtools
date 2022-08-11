@@ -256,8 +256,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         //   is resolved
         final List<GroupingGenerator> tmp = new ArrayList<>();
         for (EffectiveStatement<?, ?> stmt : statement().effectiveSubstatements()) {
-            if (stmt instanceof UsesEffectiveStatement) {
-                final UsesEffectiveStatement uses = (UsesEffectiveStatement) stmt;
+            if (stmt instanceof UsesEffectiveStatement uses) {
                 final GroupingGenerator grouping = context.resolveTreeScoped(GroupingGenerator.class, uses.argument());
                 tmp.add(grouping);
 
@@ -477,70 +476,66 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         final var tmpAug = new ArrayList<AbstractAugmentGenerator>();
 
         for (var stmt : statement.effectiveSubstatements()) {
-            if (stmt instanceof ActionEffectiveStatement) {
-                if (!isAugmenting(stmt)) {
-                    tmp.add(new ActionGenerator((ActionEffectiveStatement) stmt, this));
+            if (stmt instanceof ActionEffectiveStatement action) {
+                if (!isAugmenting(action)) {
+                    tmp.add(new ActionGenerator(action, this));
                 }
-            } else if (stmt instanceof AnydataEffectiveStatement) {
-                if (!isAugmenting(stmt)) {
-                    tmp.add(new OpaqueObjectGenerator.Anydata((AnydataEffectiveStatement) stmt, this));
+            } else if (stmt instanceof AnydataEffectiveStatement anydata) {
+                if (!isAugmenting(anydata)) {
+                    tmp.add(new OpaqueObjectGenerator.Anydata(anydata, this));
                 }
-            } else if (stmt instanceof AnyxmlEffectiveStatement) {
-                if (!isAugmenting(stmt)) {
-                    tmp.add(new OpaqueObjectGenerator.Anyxml((AnyxmlEffectiveStatement) stmt, this));
+            } else if (stmt instanceof AnyxmlEffectiveStatement anyxml) {
+                if (!isAugmenting(anyxml)) {
+                    tmp.add(new OpaqueObjectGenerator.Anyxml(anyxml, this));
                 }
-            } else if (stmt instanceof CaseEffectiveStatement) {
-                tmp.add(new CaseGenerator((CaseEffectiveStatement) stmt, this));
-            } else if (stmt instanceof ChoiceEffectiveStatement) {
+            } else if (stmt instanceof CaseEffectiveStatement cast) {
+                tmp.add(new CaseGenerator(cast, this));
+            } else if (stmt instanceof ChoiceEffectiveStatement choice) {
                 // FIXME: use isOriginalDeclaration() ?
-                if (!isAddedByUses(stmt)) {
-                    tmp.add(new ChoiceGenerator((ChoiceEffectiveStatement) stmt, this));
+                if (!isAddedByUses(choice)) {
+                    tmp.add(new ChoiceGenerator(choice, this));
                 }
-            } else if (stmt instanceof ContainerEffectiveStatement) {
-                if (isOriginalDeclaration(stmt)) {
-                    tmp.add(new ContainerGenerator((ContainerEffectiveStatement) stmt, this));
+            } else if (stmt instanceof ContainerEffectiveStatement container) {
+                if (isOriginalDeclaration(container)) {
+                    tmp.add(new ContainerGenerator(container, this));
                 }
-            } else if (stmt instanceof GroupingEffectiveStatement) {
-                tmp.add(new GroupingGenerator((GroupingEffectiveStatement) stmt, this));
-            } else if (stmt instanceof IdentityEffectiveStatement) {
-                tmp.add(new IdentityGenerator((IdentityEffectiveStatement) stmt, this));
-            } else if (stmt instanceof InputEffectiveStatement) {
-                final var cast = (InputEffectiveStatement) stmt;
-                // FIXME: do not generate legacy RPC layout
-                tmp.add(this instanceof RpcGenerator ? new RpcInputGenerator(cast, this)
-                    : new InputGenerator(cast, this));
-            } else if (stmt instanceof LeafEffectiveStatement) {
-                if (!isAugmenting(stmt)) {
-                    tmp.add(new LeafGenerator((LeafEffectiveStatement) stmt, this));
+            } else if (stmt instanceof GroupingEffectiveStatement grouping) {
+                tmp.add(new GroupingGenerator(grouping, this));
+            } else if (stmt instanceof IdentityEffectiveStatement identity) {
+                tmp.add(new IdentityGenerator(identity, this));
+            } else if (stmt instanceof InputEffectiveStatement input) {
+                tmp.add(this instanceof RpcGenerator ? new RpcInputGenerator(input, this)
+                    : new InputGenerator(input, this));
+            } else if (stmt instanceof LeafEffectiveStatement leaf) {
+                if (!isAugmenting(leaf)) {
+                    tmp.add(new LeafGenerator(leaf, this));
                 }
-            } else if (stmt instanceof LeafListEffectiveStatement) {
-                if (!isAugmenting(stmt)) {
-                    tmp.add(new LeafListGenerator((LeafListEffectiveStatement) stmt, this));
+            } else if (stmt instanceof LeafListEffectiveStatement leafList) {
+                if (!isAugmenting(leafList)) {
+                    tmp.add(new LeafListGenerator(leafList, this));
                 }
-            } else if (stmt instanceof ListEffectiveStatement) {
-                if (isOriginalDeclaration(stmt)) {
-                    final ListGenerator listGen = new ListGenerator((ListEffectiveStatement) stmt, this);
+            } else if (stmt instanceof ListEffectiveStatement list) {
+                if (isOriginalDeclaration(list)) {
+                    final var listGen = new ListGenerator(list, this);
                     tmp.add(listGen);
 
-                    final KeyGenerator keyGen = listGen.keyGenerator();
+                    final var keyGen = listGen.keyGenerator();
                     if (keyGen != null) {
                         tmp.add(keyGen);
                     }
                 }
-            } else if (stmt instanceof NotificationEffectiveStatement) {
-                if (!isAugmenting(stmt)) {
-                    tmp.add(new NotificationGenerator((NotificationEffectiveStatement) stmt, this));
+            } else if (stmt instanceof NotificationEffectiveStatement notification) {
+                if (!isAugmenting(notification)) {
+                    tmp.add(new NotificationGenerator(notification, this));
                 }
-            } else if (stmt instanceof OutputEffectiveStatement) {
-                final var cast = (OutputEffectiveStatement) stmt;
-                // FIXME: do not generate legacy RPC layout
-                tmp.add(this instanceof RpcGenerator ? new RpcOutputGenerator(cast, this)
-                    : new OutputGenerator(cast, this));
-            } else if (stmt instanceof RpcEffectiveStatement) {
-                tmp.add(new RpcGenerator((RpcEffectiveStatement) stmt, this));
-            } else if (stmt instanceof TypedefEffectiveStatement) {
-                tmp.add(new TypedefGenerator((TypedefEffectiveStatement) stmt, this));
-            } else if (stmt instanceof AugmentEffectiveStatement) {
+            } else if (stmt instanceof OutputEffectiveStatement output) {
+                tmp.add(this instanceof RpcGenerator ? new RpcOutputGenerator(output, this)
+                    : new OutputGenerator(output, this));
+            } else if (stmt instanceof RpcEffectiveStatement rpc) {
+                tmp.add(new RpcGenerator(rpc, this));
+            } else if (stmt instanceof TypedefEffectiveStatement typedef) {
+                tmp.add(new TypedefGenerator(typedef, this));
+            } else if (stmt instanceof AugmentEffectiveStatement augment) {
                 // FIXME: MDSAL-695: So here we are ignoring any augment which is not in a module, while the 'uses'
                 //                   processing takes care of the rest. There are two problems here:
                 //
@@ -556,13 +551,12 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 //                   retain information about this being an alias. That will serve as the base for keys
                 //                   in the augment -> original map we provide to BindingRuntimeTypes.
                 if (this instanceof ModuleGenerator) {
-                    tmpAug.add(new ModuleAugmentGenerator((AugmentEffectiveStatement) stmt, this));
+                    tmpAug.add(new ModuleAugmentGenerator(augment, this));
                 }
-            } else if (stmt instanceof UsesEffectiveStatement) {
-                final UsesEffectiveStatement uses = (UsesEffectiveStatement) stmt;
-                for (EffectiveStatement<?, ?> usesSub : uses.effectiveSubstatements()) {
-                    if (usesSub instanceof AugmentEffectiveStatement) {
-                        tmpAug.add(new UsesAugmentGenerator((AugmentEffectiveStatement) usesSub, uses, this));
+            } else if (stmt instanceof UsesEffectiveStatement uses) {
+                for (var usesSub : uses.effectiveSubstatements()) {
+                    if (usesSub instanceof AugmentEffectiveStatement usesAug) {
+                        tmpAug.add(new UsesAugmentGenerator(usesAug, uses, this));
                     }
                 }
             } else {
@@ -578,9 +572,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         tmp.addAll(tmpAug);
 
         // Compatibility FooService and FooListener interfaces, only generated for modules.
-        if (this instanceof ModuleGenerator) {
-            final ModuleGenerator moduleGen = (ModuleGenerator) this;
-
+        if (this instanceof ModuleGenerator moduleGen) {
             final List<NotificationGenerator> notifs = tmp.stream()
                 .filter(NotificationGenerator.class::isInstance)
                 .map(NotificationGenerator.class::cast)
