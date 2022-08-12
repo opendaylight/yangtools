@@ -14,7 +14,6 @@ import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAnydataRuntimeTyp
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.AnydataRuntimeType;
@@ -75,13 +74,13 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.addImplementsType(BindingTypes.opaqueObject(builder));
         addImplementsChildOf(builder);
         defaultImplementedInterace(builder);
         annotateDeprecatedIfNecessary(builder);
 
-        final ModuleGenerator module = currentModule();
+        final var module = currentModule();
         module.addQNameConstant(builder, localName());
 
         builderFactory.addCodegenInformation(module, statement(), builder);
@@ -94,11 +93,6 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
     @Override
     void constructRequire(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
-    }
-
-    @Override
-    final GeneratedType runtimeJavaType() {
-        return generatedType().orElse(null);
     }
 
     @Override

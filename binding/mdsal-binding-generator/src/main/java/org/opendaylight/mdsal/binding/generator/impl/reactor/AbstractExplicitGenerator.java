@@ -112,7 +112,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
      */
     // FIXME: this should be a generic class argument
     // FIXME: this needs a better name, but 'runtimeType' is already taken.
-    abstract @Nullable Type runtimeJavaType();
+    @Nullable Type runtimeJavaType() {
+        return generatedType().orElse(null);
+    }
 
     /**
      * Create the externally-accessible {@link RuntimeType} view of this object. The difference between

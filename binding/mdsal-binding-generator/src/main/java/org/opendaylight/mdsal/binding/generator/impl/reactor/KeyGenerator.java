@@ -10,14 +10,10 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Set;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultKeyRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.KeyRuntimeType;
@@ -47,17 +43,16 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
 
     @Override
     GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTOBuilder(typeName());
 
         builder.addImplementsType(BindingTypes.identifier(Type.of(listGen.typeName())));
 
-        final Set<QName> leafNames = statement().argument();
-        for (Generator listChild : listGen) {
-            if (listChild instanceof LeafGenerator) {
-                final LeafGenerator leafGen = (LeafGenerator) listChild;
+        final var leafNames = statement().argument();
+        for (var listChild : listGen) {
+            if (listChild instanceof LeafGenerator leafGen) {
                 final QName qname = leafGen.statement().argument();
                 if (leafNames.contains(qname)) {
-                    final GeneratedPropertyBuilder prop = builder
+                    final var prop = builder
                         .addProperty(BindingMapping.getPropertyName(qname.getLocalName()))
                         .setReturnType(leafGen.methodReturnType(builderFactory))
                         .setReadOnly(true);
@@ -75,11 +70,6 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
         addSerialVersionUID(builder);
 
         return builder.build();
-    }
-
-    @Override
-    GeneratedType runtimeJavaType() {
-        return generatedType().orElse(null);
     }
 
     @Override

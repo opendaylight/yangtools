@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultIdentityRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.runtime.api.IdentityRuntimeType;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
@@ -55,9 +54,9 @@ public final class IdentityGenerator
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         if (!baseIdentities.isEmpty()) {
-            for (IdentityGenerator baseIdentity : baseIdentities) {
+            for (var baseIdentity : baseIdentities) {
                 builder.addImplementsType(baseIdentity.getGeneratedType(builderFactory));
             }
         } else {
@@ -77,11 +76,6 @@ public final class IdentityGenerator
 //        builder.setSchemaPath(identity.getPath());
 
         return builder.build();
-    }
-
-    @Override
-    GeneratedType runtimeJavaType() {
-        return generatedType().orElse(null);
     }
 
     @Override

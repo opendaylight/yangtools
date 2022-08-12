@@ -160,11 +160,6 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         return childGenerators.iterator();
     }
 
-    @Override
-    final GeneratedType runtimeJavaType() {
-        return generatedType().orElse(null);
-    }
-
     final @NonNull List<AbstractAugmentGenerator> augments() {
         return augments;
     }
@@ -199,10 +194,10 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     final @Nullable AbstractExplicitGenerator<?, ?> findGenerator(final MatchStrategy childStrategy,
             // TODO: Wouldn't this method be nicer with Deque<EffectiveStatement<?, ?>> ?
             final List<EffectiveStatement<?, ?>> stmtPath, final int offset) {
-        final EffectiveStatement<?, ?> stmt = stmtPath.get(offset);
+        final var stmt = stmtPath.get(offset);
 
         // Try direct children first, which is simple
-        AbstractExplicitGenerator<?, ?> ret = childStrategy.findGenerator(stmt, childGenerators);
+        var ret = childStrategy.findGenerator(stmt, childGenerators);
         if (ret != null) {
             final int next = offset + 1;
             if (stmtPath.size() == next) {
@@ -254,17 +249,17 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         // - we propagate those groupings as anchors to any augment statements, which takes out some amount of guesswork
         //   from augment+uses resolution case, as groupings know about their immediate augments as soon as uses linkage
         //   is resolved
-        final List<GroupingGenerator> tmp = new ArrayList<>();
-        for (EffectiveStatement<?, ?> stmt : statement().effectiveSubstatements()) {
+        final var tmp = new ArrayList<GroupingGenerator>();
+        for (var stmt : statement().effectiveSubstatements()) {
             if (stmt instanceof UsesEffectiveStatement uses) {
-                final GroupingGenerator grouping = context.resolveTreeScoped(GroupingGenerator.class, uses.argument());
+                final var grouping = context.resolveTreeScoped(GroupingGenerator.class, uses.argument());
                 tmp.add(grouping);
 
                 // Trigger resolution of uses/augment statements. This looks like guesswork, but there may be multiple
                 // 'augment' statements in a 'uses' statement and keeping a ListMultimap here seems wasteful.
                 for (Generator gen : this) {
-                    if (gen instanceof UsesAugmentGenerator) {
-                        ((UsesAugmentGenerator) gen).resolveGrouping(uses, grouping);
+                    if (gen instanceof UsesAugmentGenerator usesGen) {
+                        usesGen.resolveGrouping(uses, grouping);
                     }
                 }
             }
@@ -273,12 +268,12 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     final void startUsesAugmentLinkage(final List<AugmentRequirement> requirements) {
-        for (Generator child : childGenerators) {
-            if (child instanceof UsesAugmentGenerator) {
-                requirements.add(((UsesAugmentGenerator) child).startLinkage());
+        for (var child : childGenerators) {
+            if (child instanceof UsesAugmentGenerator uses) {
+                requirements.add(uses.startLinkage());
             }
-            if (child instanceof AbstractCompositeGenerator) {
-                ((AbstractCompositeGenerator<?, ?>) child).startUsesAugmentLinkage(requirements);
+            if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
+                composite.startUsesAugmentLinkage(requirements);
             }
         }
     }
@@ -321,11 +316,11 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                         it.remove();
 
                         // If this is a composite generator we need to process is further
-                        if (child instanceof AbstractCompositeGenerator) {
+                        if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
                             if (unlinkedComposites.isEmpty()) {
                                 unlinkedComposites = new ArrayList<>();
                             }
-                            unlinkedComposites.add((AbstractCompositeGenerator<?, ?>) child);
+                            unlinkedComposites.add(composite);
                         }
                     }
                 }
@@ -392,7 +387,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
 
     @Override
     final AbstractExplicitGenerator<?, ?> findSchemaTreeGenerator(final QName qname) {
-        final AbstractExplicitGenerator<?, ?> found = super.findSchemaTreeGenerator(qname);
+        final var found = super.findSchemaTreeGenerator(qname);
         return found != null ? found : findInferredGenerator(qname);
     }
 
@@ -407,7 +402,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     final @Nullable GroupingGenerator findGroupingForGenerator(final QName qname) {
-        for (GroupingGenerator grouping : groupings) {
+        for (var grouping : groupings) {
             final var gen = grouping.findSchemaTreeGenerator(qname.bindTo(grouping.statement().argument().getModule()));
             if (gen != null) {
                 return grouping;
@@ -443,7 +438,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * @return The number of groupings this type uses.
      */
     final int addUsesInterfaces(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        for (GroupingGenerator grp : groupings) {
+        for (var grp : groupings) {
             builder.addImplementsType(grp.getGeneratedType(builderFactory));
         }
         return groupings.size();
@@ -454,17 +449,17 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     final void addGetterMethods(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        for (Generator child : this) {
+        for (var child : this) {
             // Only process explicit generators here
-            if (child instanceof AbstractExplicitGenerator) {
-                ((AbstractExplicitGenerator<?, ?>) child).addAsGetterMethod(builder, builderFactory);
+            if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {
+                explicit.addAsGetterMethod(builder, builderFactory);
             }
 
-            final GeneratedType enclosedType = child.enclosedType(builderFactory);
-            if (enclosedType instanceof GeneratedTransferObject) {
-                builder.addEnclosingTransferObject((GeneratedTransferObject) enclosedType);
-            } else if (enclosedType instanceof Enumeration) {
-                builder.addEnumeration((Enumeration) enclosedType);
+            final var enclosedType = child.enclosedType(builderFactory);
+            if (enclosedType instanceof GeneratedTransferObject gto) {
+                builder.addEnclosingTransferObject(gto);
+            } else if (enclosedType instanceof Enumeration enumeration) {
+                builder.addEnumeration(enumeration);
             } else {
                 verify(enclosedType == null, "Unhandled enclosed type %s in %s", enclosedType, child);
             }
@@ -596,9 +591,9 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     // Utility equivalent of (!isAddedByUses(stmt) && !isAugmenting(stmt)). Takes advantage of relationship between
     // CopyableNode and AddedByUsesAware
     private static boolean isOriginalDeclaration(final EffectiveStatement<?, ?> stmt) {
-        if (stmt instanceof AddedByUsesAware) {
-            if (((AddedByUsesAware) stmt).isAddedByUses()
-                || stmt instanceof CopyableNode && ((CopyableNode) stmt).isAugmenting()) {
+        if (stmt instanceof AddedByUsesAware aware) {
+            if (aware.isAddedByUses()
+                || stmt instanceof CopyableNode copyable && copyable.isAugmenting()) {
                 return false;
             }
         }
@@ -606,10 +601,10 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     private static boolean isAddedByUses(final EffectiveStatement<?, ?> stmt) {
-        return stmt instanceof AddedByUsesAware && ((AddedByUsesAware) stmt).isAddedByUses();
+        return stmt instanceof AddedByUsesAware aware && aware.isAddedByUses();
     }
 
     private static boolean isAugmenting(final EffectiveStatement<?, ?> stmt) {
-        return stmt instanceof CopyableNode && ((CopyableNode) stmt).isAugmenting();
+        return stmt instanceof CopyableNode copyable && copyable.isAugmenting();
     }
 }
