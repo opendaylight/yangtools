@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
@@ -96,13 +96,13 @@ public class EnumerationBuilderImplTest {
         assertEquals(moduleName, enumeration.getModuleName());
         assertEquals(packageName + '.' + name, enumeration.getFullyQualifiedName());
         assertEquals(reference, enumeration.getReference());
-        assertEquals(Collections.singletonList(qname), enumeration.getSchemaPath());
-        assertEquals(Collections.emptyList(), enumeration.getEnclosedTypes());
-        assertEquals(Collections.emptyList(), enumeration.getEnumerations());
-        assertEquals(Collections.emptyList(), enumeration.getMethodDefinitions());
-        assertEquals(Collections.emptyList(), enumeration.getConstantDefinitions());
-        assertEquals(Collections.emptyList(), enumeration.getProperties());
-        assertEquals(Collections.emptyList(), enumeration.getImplements());
+        assertEquals(List.of(qname), enumeration.getSchemaPath());
+        assertEquals(List.of(), enumeration.getEnclosedTypes());
+        assertEquals(List.of(), enumeration.getEnumerations());
+        assertEquals(List.of(), enumeration.getMethodDefinitions());
+        assertEquals(List.of(), enumeration.getConstantDefinitions());
+        assertEquals(List.of(), enumeration.getProperties());
+        assertEquals(List.of(), enumeration.getImplements());
         assertNotNull(enumeration.getValues());
         assertNotNull(enumeration.getAnnotations());
 
