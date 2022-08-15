@@ -204,9 +204,9 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 // Final step, return child
                 return ret;
             }
-            if (ret instanceof AbstractCompositeGenerator) {
+            if (ret instanceof AbstractCompositeGenerator<?, ?> composite) {
                 // We know how to descend down
-                return ((AbstractCompositeGenerator<?, ?>) ret).findGenerator(childStrategy, stmtPath, next);
+                return composite.findGenerator(childStrategy, stmtPath, next);
             }
             // Yeah, don't know how to continue here
             return null;
