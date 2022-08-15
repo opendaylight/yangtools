@@ -198,11 +198,10 @@ abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<G
         }
 
         public static final String serializeTypedef(final Type type) {
-            if (!(type instanceof ParameterizedType)) {
+            if (!(type instanceof ParameterizedType parameterizedType)) {
                 return type.getFullyQualifiedName();
             }
 
-            final ParameterizedType parameterizedType = (ParameterizedType) type;
             final StringBuilder sb = new StringBuilder();
             sb.append(parameterizedType.getRawType().getFullyQualifiedName()).append('<');
             boolean first = true;

@@ -287,7 +287,7 @@ public final class BindingTypes {
      * @return {@code true} if the type is generated for a {@code type bits}
      */
     public static boolean isBitsType(final Type type) {
-        return type instanceof GeneratedTransferObject && isBitsType((GeneratedTransferObject) type);
+        return type instanceof GeneratedTransferObject gto && isBitsType(gto);
     }
 
     /**
@@ -307,8 +307,8 @@ public final class BindingTypes {
      * @return {@code true} if the type is generated for an identity
      */
     public static boolean isIdentityType(final Type type) {
-        if (type instanceof GeneratedType) {
-            for (var constant : ((GeneratedType) type).getConstantDefinitions()) {
+        if (type instanceof GeneratedType generated) {
+            for (var constant : generated.getConstantDefinitions()) {
                 if (VALUE_STATIC_FIELD_NAME.equals(constant.getName())
                     && BaseIdentity.class.equals(constant.getValue())) {
                     return true;

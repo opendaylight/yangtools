@@ -255,10 +255,9 @@ public final class Types {
         if (!type1.equals(type2)) {
             return false;
         }
-        if (type1 instanceof ParameterizedType) {
-            if (type2 instanceof ParameterizedType) {
-                return Arrays.equals(((ParameterizedType) type1).getActualTypeArguments(),
-                    ((ParameterizedType) type2).getActualTypeArguments());
+        if (type1 instanceof ParameterizedType param1) {
+            if (type2 instanceof ParameterizedType param2) {
+                return Arrays.equals(param1.getActualTypeArguments(), param2.getActualTypeArguments());
             }
             return false;
         }
