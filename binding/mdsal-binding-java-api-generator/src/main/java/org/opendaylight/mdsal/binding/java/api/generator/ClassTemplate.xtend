@@ -40,7 +40,6 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import javax.management.ConstructorParameters
-import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
@@ -55,7 +54,6 @@ import org.opendaylight.yangtools.yang.common.Empty
 /**
  * Template for generating JAVA class.
  */
-@SuppressModernizer
 class ClassTemplate extends BaseTemplate {
     static val Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing([prop | prop.name])
     static val VALUEOF_TYPES = Set.of(
@@ -338,7 +336,7 @@ class ClassTemplate extends BaseTemplate {
 
     def private genPatternEnforcer(String ref) '''
         «FOR c : consts»
-            «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
+            «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
             «CODEHELPERS.importedName».checkPattern(«ref», «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
             «ENDIF»
         «ENDFOR»
@@ -503,7 +501,7 @@ class ClassTemplate extends BaseTemplate {
     def protected constantsDeclarations() '''
         «IF !consts.empty»
             «FOR c : consts»
-                «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
+                «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
                     «val cValue = c.value as Map<String, String>»
                     «val jurPatternRef = JUR_PATTERN.importedName»
                     public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«

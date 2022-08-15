@@ -20,7 +20,6 @@ import java.util.Map.Entry
 import java.util.StringTokenizer
 import java.util.regex.Pattern
 import org.eclipse.jdt.annotation.NonNull;
-import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
@@ -35,7 +34,6 @@ import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.BaseIdentity
 
-@SuppressModernizer
 abstract class BaseTemplate extends JavaFileTemplate {
     static final char NEW_LINE = '\n'
     static final char SPACE = ' '
@@ -263,7 +261,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
                 sb.append(lineBuilder).append(NEW_LINE)
                 lineBuilder.setLength(0)
 
-                if (nextElement == " ") {
+                if (" ".equals(nextElement)) {
                     isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
                 }
             }

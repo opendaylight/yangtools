@@ -19,7 +19,6 @@ import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isB
 import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isIdentityType
 
 import java.util.Base64;
-import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.Type
@@ -27,7 +26,6 @@ import org.opendaylight.mdsal.binding.model.api.Type
 /**
  * Template for generating JAVA class.
  */
-@SuppressModernizer
 class UnionTemplate extends ClassTemplate {
     /**
      * Creates instance of this class with concrete <code>genType</code>.
@@ -75,7 +73,7 @@ class UnionTemplate extends ClassTemplate {
                 «ENDIF»
                 this.«property.fieldName» = «property.fieldName»;
                 «FOR other : finalProperties»
-                    «IF property != other»
+                    «IF !property.equals(other)»
                          this.«other.fieldName» = null;
                     «ENDIF»
                 «ENDFOR»

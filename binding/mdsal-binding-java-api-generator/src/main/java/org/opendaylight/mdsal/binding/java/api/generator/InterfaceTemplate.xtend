@@ -41,7 +41,6 @@ import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 /**
  * Template for generating JAVA interfaces.
  */
- @SuppressModernizer
 class InterfaceTemplate extends BaseTemplate {
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
@@ -116,7 +115,7 @@ class InterfaceTemplate extends BaseTemplate {
          «val annotations = method.annotations»
          «IF annotations !== null && !annotations.empty»
              «FOR annotation : annotations»
-                  «IF method.returnType != BOOLEAN || !(annotation.identifier == OVERRIDE)»
+                  «IF !BOOLEAN.equals(method.returnType) || !OVERRIDE.equals(annotation.identifier)»
                       «annotation.generateAnnotation»
                   «ENDIF»
              «ENDFOR»
@@ -201,6 +200,7 @@ class InterfaceTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+    @SuppressModernizer
     def private generateDefaultMethod(MethodSignature method) {
         if (method.name.isNonnullMethodName) {
             generateNonnullMethod(method)
@@ -210,13 +210,14 @@ class InterfaceTemplate extends BaseTemplate {
             switch method.name {
                 case BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME : generateDefaultImplementedInterface
                 default :
-                    if (VOID == method.returnType.identifier) {
+                    if (VOID.equals(method.returnType.identifier)) {
                         generateNoopVoidInterfaceMethod(method)
                     }
             }
         }
     }
 
+    @SuppressModernizer
     def private generateStaticMethod(MethodSignature method) {
         switch method.name {
             case BINDING_EQUALS_NAME : generateBindingEquals
