@@ -69,7 +69,7 @@ public final class OSGiBindingRuntimeContextImpl implements OSGiBindingRuntimeCo
     }
 
     static Dictionary<String, ?> props(final @NonNull UnsignedLong generation, final @NonNull Integer ranking,
-            final BindingRuntimeContext delegate) {
+            final @NonNull BindingRuntimeContext delegate) {
         return FrameworkUtil.asDictionary(Map.of(
             Constants.SERVICE_RANKING, ranking,
             GENERATION, generation,
