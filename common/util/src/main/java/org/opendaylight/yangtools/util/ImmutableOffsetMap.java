@@ -55,7 +55,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         }
 
         @Override
-        public @NonNull MutableOffsetMap<K, V> toModifiableMap() {
+        public MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.orderedCopyOf(this);
         }
 
@@ -75,7 +75,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         }
 
         @Override
-        public @NonNull MutableOffsetMap<K, V> toModifiableMap() {
+        public MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.unorderedCopyOf(this);
         }
 
