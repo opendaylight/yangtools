@@ -29,7 +29,7 @@ final class UIOMv1 extends IOMv1<Unordered<?, ?>> {
     }
 
     @Override
-    Unordered<?, ?> readReplace(final ImmutableList<Object> keys, final Object[] values) {
+    Unordered<?, ?> createInstance(final ImmutableList<Object> keys, final Object[] values) {
         final var newOffsets = OffsetMapCache.unorderedOffsets(keys);
         return new Unordered<>(newOffsets, OffsetMapCache.adjustedArray(newOffsets, keys, values));
     }
