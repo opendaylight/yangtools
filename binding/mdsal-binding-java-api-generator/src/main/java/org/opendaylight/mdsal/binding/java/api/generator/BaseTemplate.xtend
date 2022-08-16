@@ -316,8 +316,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
                 @«override»
                 public boolean equals(final «objectType.importedName» obj) {
-                    return obj == this || obj instanceof «typeName»
-                        && «typeName».class.equals(((«typeName») obj).«BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»());
+                    return obj == this || obj instanceof «typeName» other
+                        && «typeName».class.equals(other.«BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»());
                 }
 
                 @«override»
