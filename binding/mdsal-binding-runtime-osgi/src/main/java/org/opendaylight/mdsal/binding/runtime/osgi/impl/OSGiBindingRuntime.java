@@ -44,7 +44,8 @@ public final class OSGiBindingRuntime {
 
         abstract void remove(OSGiModuleInfoSnapshot snapshot);
 
-        abstract @NonNull AbstractInstances toActive(BindingRuntimeGenerator generator, ComponentFactory factory);
+        abstract @NonNull AbstractInstances toActive(BindingRuntimeGenerator generator,
+            ComponentFactory<OSGiBindingRuntimeContextImpl> factory);
 
         abstract @NonNull AbstractInstances toInactive();
     }
@@ -71,7 +72,8 @@ public final class OSGiBindingRuntime {
         }
 
         @Override
-        AbstractInstances toActive(final BindingRuntimeGenerator generator, final ComponentFactory factory) {
+        AbstractInstances toActive(final BindingRuntimeGenerator generator,
+                final ComponentFactory<OSGiBindingRuntimeContextImpl> factory) {
             final ActiveInstances active = new ActiveInstances(generator, factory);
             instances.stream()
                 .sorted(Comparator.comparing(OSGiModuleInfoSnapshot::getGeneration).reversed())
@@ -86,11 +88,13 @@ public final class OSGiBindingRuntime {
     }
 
     private static final class ActiveInstances extends AbstractInstances {
-        private final Map<OSGiModuleInfoSnapshot, ComponentInstance> instances = new IdentityHashMap<>();
+        private final Map<OSGiModuleInfoSnapshot, ComponentInstance<OSGiBindingRuntimeContextImpl>> instances =
+            new IdentityHashMap<>();
         private final BindingRuntimeGenerator generator;
-        private final ComponentFactory factory;
+        private final ComponentFactory<OSGiBindingRuntimeContextImpl> factory;
 
-        ActiveInstances(final BindingRuntimeGenerator generator, final ComponentFactory factory) {
+        ActiveInstances(final BindingRuntimeGenerator generator,
+                final ComponentFactory<OSGiBindingRuntimeContextImpl> factory) {
             this.generator = requireNonNull(generator);
             this.factory = requireNonNull(factory);
         }
@@ -107,7 +111,7 @@ public final class OSGiBindingRuntime {
 
         @Override
         void remove(final OSGiModuleInfoSnapshot snapshot) {
-            final ComponentInstance instance = instances.remove(snapshot);
+            final var instance = instances.remove(snapshot);
             if (instance != null) {
                 instance.dispose();
             } else {
@@ -117,7 +121,7 @@ public final class OSGiBindingRuntime {
 
         @Override
         AbstractInstances toActive(final BindingRuntimeGenerator ignoreGenerator,
-                final ComponentFactory ignoreFactory) {
+                final ComponentFactory<OSGiBindingRuntimeContextImpl> ignoreFactory) {
             throw new IllegalStateException("Attempted to activate active instances");
         }
 
@@ -126,7 +130,6 @@ public final class OSGiBindingRuntime {
             instances.values().forEach(ComponentInstance::dispose);
             return new InactiveInstances(instances.keySet());
         }
-
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(OSGiBindingRuntime.class);
@@ -135,7 +138,7 @@ public final class OSGiBindingRuntime {
     BindingRuntimeGenerator generator = null;
 
     @Reference(target = "(component.factory=" + OSGiBindingRuntimeContextImpl.FACTORY_NAME + ")")
-    ComponentFactory contextFactory = null;
+    ComponentFactory<OSGiBindingRuntimeContextImpl> contextFactory = null;
 
     @GuardedBy("this")
     private AbstractInstances instances = new InactiveInstances();
