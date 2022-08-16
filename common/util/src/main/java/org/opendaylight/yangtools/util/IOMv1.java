@@ -22,6 +22,9 @@ import org.eclipse.jdt.annotation.NonNull;
  * Base class for {@link ImmutableOffsetMap} serialization proxies. Implements most of the serialization form at logic.
  */
 abstract sealed class IOMv1<T extends ImmutableOffsetMap<?, ?>> implements Externalizable permits OIOMv1, UIOMv1 {
+    @Serial
+    private static final long serialVersionUID = 1;
+
     private ImmutableOffsetMap<?, ?> map;
 
     IOMv1() {
@@ -53,13 +56,13 @@ abstract sealed class IOMv1<T extends ImmutableOffsetMap<?, ?>> implements Exter
             values[i] = in.readObject();
         }
 
-        map = verifyNotNull(readReplace(keysBuilder.build(), values));
+        map = verifyNotNull(createInstance(keysBuilder.build(), values));
     }
+
+    abstract @NonNull T createInstance(@NonNull ImmutableList<Object> keys, @NonNull Object[] values);
 
     @Serial
-    final Object readReplace() {
+    final Object readResolve() {
         return verifyNotNull(map);
     }
-
-    abstract @NonNull T readReplace(@NonNull ImmutableList<Object> keys, @NonNull Object[] values);
 }
