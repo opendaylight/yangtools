@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 
 /**
  * Thrown where incorrect nesting of data structures was detected and was caused by user. This typically indicates
@@ -16,6 +17,7 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public class IncorrectNestingException extends IllegalArgumentException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public IncorrectNestingException(final String message) {

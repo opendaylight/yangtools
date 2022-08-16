@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public abstract sealed class JavaTypeName implements Identifier, Immutable {
     private static final class Primitive extends JavaTypeName {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Primitive(final String simpleName) {
@@ -89,6 +91,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private abstract static sealed class Reference extends JavaTypeName {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Reference(final String simpleName) {
@@ -120,6 +123,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private static final class TopLevel extends Reference {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final String packageName;
@@ -152,7 +156,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
 
         @Override
         public List<String> localNameComponents() {
-            final List<String> ret = new ArrayList<>();
+            final var ret = new ArrayList<String>();
             ret.add(simpleName());
             return ret;
         }
@@ -169,6 +173,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private static final class Nested extends Reference {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final Reference immediatelyEnclosingClass;
@@ -222,6 +227,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaTypeName.class);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String simpleName;

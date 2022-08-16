@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
  */
 @Beta
 final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T>, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -110,6 +112,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         return member1.getName().compareTo(member2.getName());
     }
 
+    @Serial
     @SuppressWarnings("static-method")
     private Object readResolve() {
         return INSTANCE;

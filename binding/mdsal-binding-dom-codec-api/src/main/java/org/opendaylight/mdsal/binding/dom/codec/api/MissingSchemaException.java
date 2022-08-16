@@ -8,12 +8,14 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 
 /**
  * Thrown when codec was used with data which are not modeled and available in schema used by codec.
  */
 @Beta
 public class MissingSchemaException extends IllegalArgumentException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public MissingSchemaException(final String msg) {

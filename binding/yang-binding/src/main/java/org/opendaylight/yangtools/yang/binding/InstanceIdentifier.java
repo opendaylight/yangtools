@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.ObjectStreamException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
@@ -63,6 +64,7 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  */
 public class InstanceIdentifier<T extends DataObject>
         implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>> {
+    @Serial
     private static final long serialVersionUID = 3L;
 
     /*
@@ -661,6 +663,7 @@ public class InstanceIdentifier<T extends DataObject>
     }
 
     private abstract static class AbstractPathArgument<T extends DataObject> implements PathArgument, Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final @NonNull Class<T> type;
@@ -722,6 +725,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @param <T> Item type
      */
     public static class Item<T extends DataObject> extends AbstractPathArgument<T> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Item(final Class<T> type) {
@@ -771,6 +775,7 @@ public class InstanceIdentifier<T extends DataObject>
      */
     public static class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>>
             extends AbstractPathArgument<I> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final @NonNull T key;
@@ -831,6 +836,7 @@ public class InstanceIdentifier<T extends DataObject>
 
     private static final class CaseItem<C extends ChoiceIn<?> & DataObject, T extends ChildOf<? super C>>
             extends Item<T> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final Class<C> caseType;
@@ -848,6 +854,7 @@ public class InstanceIdentifier<T extends DataObject>
 
     private static final class CaseIdentifiableItem<C extends ChoiceIn<?> & DataObject,
             T extends ChildOf<? super C> & Identifiable<K>, K extends Identifier<T>> extends IdentifiableItem<T, K> {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final Class<C> caseType;
@@ -953,6 +960,7 @@ public class InstanceIdentifier<T extends DataObject>
         @NonNull InstanceIdentifier<T> build();
     }
 
+    @Serial
     private Object writeReplace() throws ObjectStreamException {
         return new InstanceIdentifierV3<>(this);
     }

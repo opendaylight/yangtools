@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 
 /**
  * Thrown when user schema for supplied binding class is available in present schema context, but
@@ -16,6 +17,7 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public class MissingClassInLoadingStrategyException extends MissingSchemaException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public MissingClassInLoadingStrategyException(final String msg, final Throwable cause) {

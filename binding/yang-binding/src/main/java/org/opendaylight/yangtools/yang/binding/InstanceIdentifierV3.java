@@ -14,12 +14,14 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 
 class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
+    @Serial
     private static final long serialVersionUID = 3L;
 
     private @Nullable Iterable<PathArgument> pathArguments;
@@ -80,6 +82,7 @@ class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
         pathArguments = ImmutableList.copyOf(args);
     }
 
+    @Serial
     Object readResolve() throws ObjectStreamException {
         return new InstanceIdentifier<>(targetType, pathArguments, wildcarded, hash);
     }

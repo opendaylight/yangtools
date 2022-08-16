@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -21,6 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 public final class MissingSchemaForClassException extends MissingSchemaException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "Documented in API contract")
@@ -28,7 +30,7 @@ public final class MissingSchemaForClassException extends MissingSchemaException
 
     public MissingSchemaForClassException(final Class<?> clz) {
         super(String.format("Schema is not available for %s", clz));
-        this.bindingClass = requireNonNull(clz);
+        bindingClass = requireNonNull(clz);
     }
 
     public @Nullable Class<?> getBindingClass() {

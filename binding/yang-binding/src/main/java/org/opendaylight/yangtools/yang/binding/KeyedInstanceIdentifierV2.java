@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
 final class KeyedInstanceIdentifierV2<T extends Identifiable<K> & DataObject, K extends Identifier<T>>
         extends InstanceIdentifierV3<T> {
+    @Serial
     private static final long serialVersionUID = 2L;
 
     private @Nullable K key;
@@ -41,6 +43,7 @@ final class KeyedInstanceIdentifierV2<T extends Identifiable<K> & DataObject, K 
         key = (K) in.readObject();
     }
 
+    @Serial
     @Override
     Object readResolve() throws ObjectStreamException {
         return new KeyedInstanceIdentifier<>(getTargetType(), getPathArguments(), isWildcarded(), getHash(), key);

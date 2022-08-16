@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Comparator;
 import org.opendaylight.mdsal.binding.model.api.TypeMember;
@@ -18,6 +19,7 @@ import org.opendaylight.mdsal.binding.model.api.TypeMember;
  * @param <T> TypeMember type
  */
 public class AlphabeticallyTypeMemberComparator<T extends TypeMember> implements Comparator<T>, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Override

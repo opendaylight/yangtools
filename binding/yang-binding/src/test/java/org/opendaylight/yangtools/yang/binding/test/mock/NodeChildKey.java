@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.binding.test.mock;
 
+import java.io.Serial;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 
 public class NodeChildKey implements Identifier<NodeChild> {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final int id;
@@ -29,19 +31,6 @@ public class NodeChildKey implements Identifier<NodeChild> {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        NodeChildKey other = (NodeChildKey) obj;
-        if (id != other.id) {
-            return false;
-        }
-        return true;
+        return this == obj || obj != null && getClass() == obj.getClass() && id == ((NodeChildKey) obj).id;
     }
 }

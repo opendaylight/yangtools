@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import java.io.ObjectStreamException;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -18,7 +19,9 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>>
         extends InstanceIdentifier<T> {
+    @Serial
     private static final long serialVersionUID = 2L;
+
     private final K key;
 
     KeyedInstanceIdentifier(final Class<@NonNull T> type, final Iterable<PathArgument> pathArguments,
@@ -55,6 +58,7 @@ public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K e
         return key == null != (kii.key == null);
     }
 
+    @Serial
     private Object writeReplace() throws ObjectStreamException {
         return new KeyedInstanceIdentifierV2<>(this);
     }

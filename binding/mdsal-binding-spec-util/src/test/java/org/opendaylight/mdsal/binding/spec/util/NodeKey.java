@@ -7,9 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.spec.util;
 
+import java.io.Serial;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 
 public class NodeKey implements Identifier<Node> {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final int id;
@@ -29,19 +31,6 @@ public class NodeKey implements Identifier<Node> {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        NodeKey other = (NodeKey) obj;
-        if (id != other.id) {
-            return false;
-        }
-        return true;
+        return this == obj || obj != null && getClass() == obj.getClass() && id == ((NodeKey) obj).id;
     }
 }
