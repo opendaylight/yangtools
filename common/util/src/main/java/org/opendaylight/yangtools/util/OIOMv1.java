@@ -27,7 +27,7 @@ final class OIOMv1 extends IOMv1<Ordered<?, ?>> {
     }
 
     @Override
-    Ordered<?, ?> readReplace(final ImmutableList<Object> keys, final Object[] values) {
+    Ordered<?, ?> createInstance(final ImmutableList<Object> keys, final Object[] values) {
         return new Ordered<>(OffsetMapCache.orderedOffsets(keys), values);
     }
 }
