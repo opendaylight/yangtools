@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -95,7 +95,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
 
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
+            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
             @Override
             StatementDefinition resolveStatement(final QNameModule module, final String localName) {
@@ -106,13 +106,13 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
+            final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(rootStatement);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule prefixes, final YangVersion yangVersion) {
+            final PrefixResolver prefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
             @Override
             QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {

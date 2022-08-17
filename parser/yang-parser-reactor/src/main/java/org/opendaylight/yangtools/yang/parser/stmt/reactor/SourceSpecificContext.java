@@ -47,8 +47,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -99,7 +98,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final SupportedStatements statementSupports = new SupportedStatements(qnameToStmtDefMap);
-    private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
+    private final HashMapPrefixResolver prefixToModuleMap = new HashMapPrefixResolver();
     private final @NonNull BuildGlobalContext globalContext;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
@@ -426,8 +425,8 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         }
     }
 
-    private PrefixToModule preLinkagePrefixes() {
-        final PrefixToModuleMap preLinkagePrefixes = new PrefixToModuleMap();
+    private PrefixResolver preLinkagePrefixes() {
+        final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
         final Map<String, XMLNamespace> prefixToNamespaceMap = getAllFromLocalStorage(ImpPrefixToNamespace.class);
         if (prefixToNamespaceMap == null) {
             //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
@@ -438,7 +437,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         return preLinkagePrefixes;
     }
 
-    private PrefixToModule prefixes() {
+    private PrefixResolver prefixes() {
         final Map<String, StmtContext<?, ?, ?>> allImports = getRoot().getAllFromNamespace(
             ImportPrefixToModuleCtx.class);
         if (allImports != null) {
