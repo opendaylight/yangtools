@@ -546,25 +546,25 @@ public final class StmtContextUtils {
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
-        if (ctx == null) {
-            return null;
-        }
+        return ctx == null ? null : getModuleQName(ctx.getRoot());
+    }
 
-        final var rootCtx = ctx.getRoot();
-        if (rootCtx.producesDeclared(ModuleStatement.class)) {
-            return lookupModuleQName(rootCtx, rootCtx);
-        } else if (rootCtx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsTo = rootCtx.getAllFromNamespace(BelongsToPrefixToModuleCtx.class);
+    public static @NonNull QNameModule getModuleQName(final @NonNull RootStmtContext<?, ?, ?> ctx) {
+        if (ctx.producesDeclared(ModuleStatement.class)) {
+            return lookupModuleQName(ctx, ctx);
+        } else if (ctx.producesDeclared(SubmoduleStatement.class)) {
+            final var belongsTo = ctx.getAllFromNamespace(BelongsToPrefixToModuleCtx.class);
             if (belongsTo == null || belongsTo.isEmpty()) {
-                throw new IllegalArgumentException(rootCtx + " does not have belongs-to linkage resolved");
+                throw new IllegalArgumentException(ctx + " does not have belongs-to linkage resolved");
             }
-            return lookupModuleQName(rootCtx, belongsTo.values().iterator().next());
+            return lookupModuleQName(ctx, belongsTo.values().iterator().next());
         } else {
-            throw new IllegalArgumentException("Unsupported root " + rootCtx);
+            throw new IllegalArgumentException("Unsupported root " + ctx);
         }
     }
 
-    private static QNameModule lookupModuleQName(final NamespaceStmtCtx storage, final StmtContext<?, ?, ?> module) {
+    private static @NonNull QNameModule lookupModuleQName(final NamespaceStmtCtx storage,
+            final StmtContext<?, ?, ?> module) {
         final var ret = storage.getFromNamespace(ModuleCtxToModuleQName.class, module);
         if (ret == null) {
             throw new IllegalArgumentException("Failed to look up QNameModule for " + module + " in " + storage);
