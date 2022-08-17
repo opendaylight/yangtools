@@ -35,13 +35,13 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     private final StatementSupportBundle parent;
     private final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions;
     private final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions;
-    private final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaceDefinitions;
+    private final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?, ?>> namespaceDefinitions;
     private final ImmutableSet<YangVersion> supportedVersions;
 
     private StatementSupportBundle(final StatementSupportBundle parent,
             final ImmutableSet<YangVersion> supportedVersions,
             final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonStatements,
-            final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces,
+            final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?, ?>> namespaces,
             final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements) {
         this.parent = parent;
         this.supportedVersions = supportedVersions;
@@ -83,7 +83,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         return versionSpecificDefinitions;
     }
 
-    public ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> getNamespaceDefinitions() {
+    public ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?, ?>> getNamespaceDefinitions() {
         return namespaceDefinitions;
     }
 
@@ -116,7 +116,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         return null;
     }
 
-    public boolean hasNamespaceBehaviour(final Class<? extends ParserNamespace<?, ?>> namespace) {
+    public boolean hasNamespaceBehaviour(final ParserNamespace<?, ?> namespace) {
         if (namespaceDefinitions.containsKey(namespace)) {
             return true;
         }
@@ -165,7 +165,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         private final Map<QName, StatementSupport<?, ?, ?>> commonStatements = new HashMap<>();
         private final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements =
             HashBasedTable.create();
-        private final Map<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces = new HashMap<>();
+        private final Map<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?, ?>> namespaces = new HashMap<>();
 
         private final ImmutableSet<YangVersion> supportedVersions;
         private StatementSupportBundle parent;

@@ -581,8 +581,8 @@ public final class StmtContextUtils {
         }
 
         if (root.producesDeclared(SubmoduleStatement.class)) {
-            final var moduleName = root.getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
-            return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
+            return ctx.getFromNamespace(ModuleNameToModuleQName.NS,
+                root.getFromNamespace(BelongsToPrefixToModuleName.NS, prefix));
         }
 
         return null;

@@ -99,7 +99,7 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E ext
         }
     }
 
-    private static final @NonNull SchemaTreeNamespace<?, ?> INSTANCE = new SchemaTreeNamespace<>();
+    private static final @NonNull SchemaTreeNamespace<?, ?> NS = new SchemaTreeNamespace<>();
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = new Behaviour<>();
 
     private SchemaTreeNamespace() {
@@ -124,16 +124,14 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E ext
 
         QName nextPath = iterator.next();
         @SuppressWarnings("unchecked")
-        StmtContext<?, ?, ?> current = (StmtContext<?, ?, ?>) root.getFromNamespace(SchemaTreeNamespace.class,
-            nextPath);
+        StmtContext<?, ?, ?> current = root.getFromNamespace(SchemaTreeNamespace.NS, nextPath);
         if (current == null) {
             return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
             @SuppressWarnings("unchecked")
-            final StmtContext<?, ?, ?> nextNodeCtx = (StmtContext<?, ?, ?>) current.getFromNamespace(
-                SchemaTreeNamespace.class, nextPath);
+            final var nextNodeCtx = current.getFromNamespace(SchemaTreeNamespace.NS, nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
             }

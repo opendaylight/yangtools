@@ -37,9 +37,10 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
  * @param <V> Value type
  * @param <N> Namespace Type
  */
-public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
-        extends AbstractSimpleIdentifiable<Class<N>> {
-
+public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> extends AbstractSimpleIdentifiable<N> {
+    /**
+     * Enumeration of known storage node types.
+     */
     public enum StorageNodeType {
         /**
          * Global storage, visible from all sources.
@@ -97,7 +98,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
          * @param value Value
          * @return Previously-stored value, or null if the key was not present
          */
-        <K, V, N extends ParserNamespace<K, V>> @Nullable V putToLocalStorage(Class<N> type, K key, V value);
+        <K, V, N extends ParserNamespace<K, V>> @Nullable V putToLocalStorage(N type, K key, V value);
 
         /**
          * Populate specified namespace with a key/value pair unless the key is already associated with a value. Similar
@@ -156,7 +157,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
      * @return global namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> global(
-            final Class<N> identifier) {
+            final N identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.GLOBAL);
     }
 
@@ -286,9 +287,8 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
         storage.putToLocalStorage(getIdentifier(), key, value);
     }
 
-    abstract static class AbstractSpecific<K, V, N extends ParserNamespace<K, V>>
-            extends NamespaceBehaviour<K, V, N> {
-        AbstractSpecific(final Class<N> identifier) {
+    abstract static class AbstractSpecific<K, V, N extends ParserNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
+        AbstractSpecific(final N identifier) {
             super(identifier);
         }
 
@@ -324,7 +324,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
     static final class StorageSpecific<K, V, N extends ParserNamespace<K, V>> extends AbstractSpecific<K, V, N> {
         private final StorageNodeType storageType;
 
-        StorageSpecific(final Class<N> identifier, final StorageNodeType type) {
+        StorageSpecific(final N identifier, final StorageNodeType type) {
             super(identifier);
             storageType = requireNonNull(type);
         }
@@ -389,6 +389,6 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("identifier", getIdentifier().getName());
+        return helper.add("identifier", getIdentifier());
     }
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -17,9 +18,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * Global mapping of modules to QNameModules.
  */
 public final class ModuleCtxToModuleQName extends ParserNamespace<StmtContext<?,?,?>, QNameModule> {
-    public static final @NonNull ModuleCtxToModuleQName INSTANCE = new ModuleCtxToModuleQName();
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.global(ModuleCtxToModuleQName.class);
+    public static final @NonNull ModuleCtxToModuleQName NS = new ModuleCtxToModuleQName();
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(NS);
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private ModuleCtxToModuleQName() {
         // Hidden on purpose
