@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 /**
  * Global mapping of modules to QNameModules.
  */
-public interface ModuleCtxToModuleQName extends ParserNamespace<StmtContext<?,?,?>, QNameModule> {
-    NamespaceBehaviour<StmtContext<?, ?, ?>, QNameModule, @NonNull ModuleCtxToModuleQName> BEHAVIOUR =
-            NamespaceBehaviour.global(ModuleCtxToModuleQName.class);
+public final class ModuleCtxToModuleQName extends ParserNamespace<StmtContext<?,?,?>, QNameModule> {
+    public static final @NonNull ModuleCtxToModuleQName INSTANCE = new ModuleCtxToModuleQName();
 
+    private ModuleCtxToModuleQName() {
+        super(NamespaceBehaviour.global(ModuleCtxToModuleQName.class));
+    }
 }

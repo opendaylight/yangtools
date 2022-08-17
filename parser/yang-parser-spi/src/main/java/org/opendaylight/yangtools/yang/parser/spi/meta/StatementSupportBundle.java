@@ -185,6 +185,16 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return this;
         }
 
+        public <K, V> @NonNull Builder addSupport(final ParserNamespace<K, V> namespace) {
+            final var namespaceSupport = namespace.behaviour();
+            // FIXME: namespace is the identifier
+            final var identifier = namespaceSupport.getIdentifier();
+            checkState(!namespaces.containsKey(identifier));
+            checkState(!parent.hasNamespaceBehaviour(identifier));
+            namespaces.put(identifier, namespaceSupport);
+            return this;
+        }
+
         public <K, V, N extends ParserNamespace<K, V>> @NonNull Builder addSupport(
                 final NamespaceBehaviour<K, V, N> namespaceSupport) {
             final Class<N> identifier = namespaceSupport.getIdentifier();
