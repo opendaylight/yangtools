@@ -130,16 +130,14 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E ext
 
         QName nextPath = iterator.next();
         @SuppressWarnings("unchecked")
-        StmtContext<?, ?, ?> current = (StmtContext<?, ?, ?>) root.getFromNamespace(SchemaTreeNamespace.class,
-            nextPath);
+        StmtContext<?, ?, ?> current = root.getFromNamespace(SchemaTreeNamespace.getInstance(), nextPath);
         if (current == null) {
             return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
             @SuppressWarnings("unchecked")
-            final StmtContext<?, ?, ?> nextNodeCtx = (StmtContext<?, ?, ?>) current.getFromNamespace(
-                SchemaTreeNamespace.class, nextPath);
+            final var nextNodeCtx = current.getFromNamespace(SchemaTreeNamespace.getInstance(), nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
             }

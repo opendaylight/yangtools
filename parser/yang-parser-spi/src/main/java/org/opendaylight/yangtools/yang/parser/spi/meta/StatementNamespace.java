@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public abstract class StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+public class StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
         extends ParserNamespace<K, StmtContext<?, D, E>> {
-    public abstract static class TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+    public static class TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
             extends StatementNamespace<K, D, E> {
 
     }

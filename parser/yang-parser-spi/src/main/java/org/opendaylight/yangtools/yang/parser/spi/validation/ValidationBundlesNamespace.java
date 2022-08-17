@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.spi.validation;
 
+import java.io.Serial;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -20,8 +21,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 public final class ValidationBundlesNamespace
         extends ParserNamespace<ValidationBundlesNamespace.ValidationBundleType, Collection<?>> {
     public static final @NonNull ValidationBundlesNamespace NS = new ValidationBundlesNamespace();
-    public static final @NonNull NamespaceBehaviour<ValidationBundleType, Collection<?>,
-        @NonNull ValidationBundlesNamespace> BEHAVIOUR = NamespaceBehaviour.global(ValidationBundlesNamespace.class);
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(NS);
+    @Serial
+    private static final long serialVersionUID = -5494354225148472333L;
 
     private ValidationBundlesNamespace() {
         // Hidden on purpose

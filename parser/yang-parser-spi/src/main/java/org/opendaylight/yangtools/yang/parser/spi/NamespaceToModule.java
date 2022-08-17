@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -20,8 +21,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 public final class NamespaceToModule
         extends StatementNamespace<QNameModule, ModuleStatement, ModuleEffectiveStatement> {
     public static final @NonNull NamespaceToModule NS = new NamespaceToModule();
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.global(NamespaceToModule.class);
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(NS);
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private NamespaceToModule() {
         // Hidden on purpose
