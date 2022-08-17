@@ -14,7 +14,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
-public interface ConfigListWarningNamespace extends ParserNamespace<StatementSourceReference, Boolean> {
-    NamespaceBehaviour<StatementSourceReference, Boolean, @NonNull ConfigListWarningNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(ConfigListWarningNamespace.class);
+public final class ConfigListWarningNamespace extends ParserNamespace<StatementSourceReference, Boolean> {
+    public static final @NonNull ConfigListWarningNamespace INSTANCE = new ConfigListWarningNamespace();
+
+    private ConfigListWarningNamespace() {
+        super(NamespaceBehaviour.global(ConfigListWarningNamespace.class));
+    }
 }

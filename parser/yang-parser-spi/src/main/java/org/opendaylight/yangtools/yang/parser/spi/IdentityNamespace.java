@@ -13,15 +13,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
  * namespace.
  */
-public interface IdentityNamespace extends
-        StatementNamespace<QName, IdentityStatement, IdentityEffectiveStatement> {
-    NamespaceBehaviour<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>,
-            @NonNull IdentityNamespace> BEHAVIOUR = NamespaceBehaviour.global(IdentityNamespace.class);
+public final class IdentityNamespace extends StatementNamespace<QName, IdentityStatement, IdentityEffectiveStatement> {
+    public static final @NonNull IdentityNamespace INSTANCE = new IdentityNamespace();
 
+    private IdentityNamespace() {
+        super(NamespaceBehaviour.global(IdentityNamespace.class));
+    }
 }

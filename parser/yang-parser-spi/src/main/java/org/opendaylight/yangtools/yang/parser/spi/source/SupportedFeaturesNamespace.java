@@ -14,7 +14,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-public interface SupportedFeaturesNamespace extends ParserNamespace<Empty, Set<QName>> {
-    NamespaceBehaviour<Empty, Set<QName>, @NonNull SupportedFeaturesNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(SupportedFeaturesNamespace.class);
+public final class SupportedFeaturesNamespace extends ParserNamespace<Empty, Set<QName>> {
+    public static final @NonNull SupportedFeaturesNamespace INSTANCE = new SupportedFeaturesNamespace();
+
+    private SupportedFeaturesNamespace() {
+        super(NamespaceBehaviour.global(SupportedFeaturesNamespace.class));
+    }
 }

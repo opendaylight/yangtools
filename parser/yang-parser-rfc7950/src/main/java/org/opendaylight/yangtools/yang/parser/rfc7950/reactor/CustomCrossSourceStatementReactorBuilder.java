@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
@@ -67,6 +68,12 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     public @NonNull CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
             final NamespaceBehaviour<?, ?, ?> namespaceSupport) {
         getBuilder(phase).addSupport(namespaceSupport);
+        return this;
+    }
+
+    public @NonNull CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
+            final ParserNamespace<?, ?> namespace) {
+        getBuilder(phase).addSupport(namespace);
         return this;
     }
 

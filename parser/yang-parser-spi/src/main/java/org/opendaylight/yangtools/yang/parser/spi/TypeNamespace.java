@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeScoped;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Derived types namespace. All derived type names defined within a parent node or at the top level of the module
@@ -27,8 +26,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * This namespace includes all type definitions implied by the language in which the current statement resides
  * (e.g. RFC6020/RFC7950 for YANG 1.0/1.1).
  */
-public interface TypeNamespace extends TreeScoped<QName, TypedefStatement, TypedefEffectiveStatement> {
-    NamespaceBehaviour<QName, StmtContext<?, TypedefStatement, TypedefEffectiveStatement>, @NonNull TypeNamespace>
-        BEHAVIOUR = NamespaceBehaviour.treeScoped(TypeNamespace.class);
+public final class TypeNamespace extends TreeScoped<QName, TypedefStatement, TypedefEffectiveStatement> {
+    public static final @NonNull TypeNamespace INSTANCE = new TypeNamespace();
 
+    private TypeNamespace() {
+        super(NamespaceBehaviour.treeScoped(TypeNamespace.class));
+    }
 }
