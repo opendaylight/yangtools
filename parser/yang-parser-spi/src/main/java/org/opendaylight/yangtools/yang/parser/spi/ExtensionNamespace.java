@@ -13,15 +13,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Extension namespace. All extension names defined in a module and its submodules share the same
- * extension identifier namespace, where each extension is identified by a QName formed from the
- * defining module's QNameModule and the identifier specified in extension statement's argument.
+ * Extension namespace. All extension names defined in a module and its submodules share the same extension identifier
+ * namespace, where each extension is identified by a QName formed from the defining module's QNameModule and the
+ * identifier specified in extension statement's argument.
  */
-public interface ExtensionNamespace extends StatementNamespace<QName, ExtensionStatement, ExtensionEffectiveStatement> {
-    NamespaceBehaviour<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>,
-            @NonNull ExtensionNamespace> BEHAVIOUR = NamespaceBehaviour.global(ExtensionNamespace.class);
+public final class ExtensionNamespace
+        extends StatementNamespace<QName, ExtensionStatement, ExtensionEffectiveStatement> {
+    public static final @NonNull ExtensionNamespace NS = new ExtensionNamespace();
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.global(ExtensionNamespace.class);
 
+    private ExtensionNamespace() {
+        // Hidden on purpose
+    }
 }
