@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.MoreObjects;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * {@link ParserNamespace} serves as common superclass for namespaces used during parser operation. Each such namespace,
@@ -18,7 +21,20 @@ import com.google.common.annotations.Beta;
  * @param <K> Identifier type
  * @param <V> Value type
  */
-@Beta
-public interface ParserNamespace<K, V> {
+@NonNullByDefault
+public abstract class ParserNamespace<K, V> {
+    private final NamespaceBehaviour<K, V, ?> behaviour;
 
+    protected ParserNamespace(final NamespaceBehaviour<K, V, ?> behaviour) {
+        this.behaviour = requireNonNull(behaviour);
+    }
+
+    public final NamespaceBehaviour<K, V, ?> behaviour() {
+        return behaviour;
+    }
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).toString();
+    }
 }
