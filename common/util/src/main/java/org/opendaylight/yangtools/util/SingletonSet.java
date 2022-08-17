@@ -162,15 +162,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     @Override
     @SuppressWarnings("checkstyle:equalsHashCode")
     public final boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof Set)) {
-            return false;
-        }
-
-        final Set<?> s = (Set<?>)obj;
-        return s.size() == 1 && otherContains(s);
+        return obj == this || obj instanceof Set<?> other && other.size() == 1 && otherContains(other);
     }
 
     @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
