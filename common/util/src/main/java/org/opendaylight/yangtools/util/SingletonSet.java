@@ -165,6 +165,11 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         return obj == this || obj instanceof Set<?> other && other.size() == 1 && otherContains(other);
     }
 
+    @Serial
+    final Object writeReplace() {
+        return new SSv1(getElement());
+    }
+
     @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
         justification = "https://github.com/spotbugs/spotbugs/issues/1954")
     private boolean otherContains(final @NonNull Collection<?> other) {
