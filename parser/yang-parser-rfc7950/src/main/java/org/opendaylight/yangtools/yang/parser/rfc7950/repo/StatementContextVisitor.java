@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameModuleResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
@@ -28,16 +28,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
 
 class StatementContextVisitor {
     private final QNameToStatementDefinition stmtDef;
+    private final QNameModuleResolver prefixes;
     private final ArgumentContextUtils utils;
     private final StatementWriter writer;
-    private final PrefixToModule prefixes;
     private final String sourceName;
 
     StatementContextVisitor(final String sourceName, final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
+            final QNameToStatementDefinition stmtDef, final QNameModuleResolver prefixes,
+            final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
-        this.utils = ArgumentContextUtils.forVersion(yangVersion);
+        utils = ArgumentContextUtils.forVersion(yangVersion);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
     }

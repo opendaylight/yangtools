@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -19,21 +18,4 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
     NamespaceBehaviour<String, QNameModule, @NonNull PrefixToModule> BEHAVIOUR =
             NamespaceBehaviour.global(PrefixToModule.class);
-
-    /**
-     * Returns QNameModule (namespace + revision) associated with supplied prefix.
-     *
-     * @param prefix Prefix
-     * @return QNameModule associated with supplied prefix, or null if prefix is not defined.
-     */
-    QNameModule get(String prefix);
-
-    /**
-     * Returns QNameModule (namespace + revision) associated with XML namespace (URI).
-     *
-     * @param namespace XML Namespace
-     * @return QNameModule associated with supplied namespace, or null if prefix is not defined.
-     * @throws IllegalArgumentException if the input string is not valid URI
-     */
-    @Nullable QNameModule getByNamespace(String namespace);
 }
