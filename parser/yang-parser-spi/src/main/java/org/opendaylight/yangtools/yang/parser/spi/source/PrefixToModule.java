@@ -15,7 +15,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
-public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
-    NamespaceBehaviour<String, QNameModule, @NonNull PrefixToModule> BEHAVIOUR =
-            NamespaceBehaviour.global(PrefixToModule.class);
+public final class PrefixToModule extends ParserNamespace<String, QNameModule> {
+    public static final @NonNull PrefixToModule INSTANCE = new PrefixToModule();
+
+    private PrefixToModule() {
+        super(NamespaceBehaviour.global(PrefixToModule.class));
+    }
 }
