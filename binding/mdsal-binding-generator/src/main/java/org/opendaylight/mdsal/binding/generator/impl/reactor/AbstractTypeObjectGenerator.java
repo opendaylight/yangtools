@@ -589,9 +589,10 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         final boolean isTypedef = this instanceof TypedefGenerator;
         final QName arg = type.argument();
         if (TypeDefinitions.BITS.equals(arg)) {
-            return createBits(builderFactory, typeName(), currentModule(), extractTypeDefinition(), isTypedef);
+            return createBits(builderFactory, statement(), typeName(), currentModule(), extractTypeDefinition(),
+                    isTypedef);
         } else if (TypeDefinitions.ENUMERATION.equals(arg)) {
-            return createEnumeration(builderFactory, typeName(), currentModule(),
+            return createEnumeration(builderFactory, statement(), typeName(), currentModule(),
                 (EnumTypeDefinition) extractTypeDefinition());
         } else if (TypeDefinitions.UNION.equals(arg)) {
             final List<GeneratedType> tmp = new ArrayList<>(1);
@@ -600,18 +601,19 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             auxiliaryGeneratedTypes = List.copyOf(tmp);
             return ret;
         } else {
-            return createSimple(builderFactory, typeName(), currentModule(),
+            return createSimple(builderFactory, statement(), typeName(), currentModule(),
                 verifyNotNull(SIMPLE_TYPES.get(arg), "Unhandled type %s", arg), extractTypeDefinition());
         }
     }
 
     private static @NonNull GeneratedTransferObject createBits(final TypeBuilderFactory builderFactory,
-            final JavaTypeName typeName, final ModuleGenerator module, final TypeDefinition<?> typedef,
-            final boolean isTypedef) {
+            final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
+            final TypeDefinition<?> typedef, final boolean isTypedef) {
         final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName);
         builder.setTypedef(isTypedef);
         builder.addImplementsType(BindingTypes.TYPE_OBJECT);
         builder.setBaseType(typedef);
+        YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
         for (Bit bit : ((BitsTypeDefinition) typedef).getBits()) {
             final String name = bit.getName();
@@ -633,9 +635,11 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private static @NonNull Enumeration createEnumeration(final TypeBuilderFactory builderFactory,
-            final JavaTypeName typeName, final ModuleGenerator module, final EnumTypeDefinition typedef) {
+            final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName,
+            final ModuleGenerator module, final EnumTypeDefinition typedef) {
         // TODO units for typedef enum
         final AbstractEnumerationBuilder builder = builderFactory.newEnumerationBuilder(typeName);
+        YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
         typedef.getDescription().map(BindingGeneratorUtil::encodeAngleBrackets)
             .ifPresent(builder::setDescription);
@@ -647,12 +651,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private static @NonNull GeneratedType createSimple(final TypeBuilderFactory builderFactory,
-            final JavaTypeName typeName, final ModuleGenerator module, final Type javaType,
-            final TypeDefinition<?> typedef) {
+            final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
+            final Type javaType, final TypeDefinition<?> typedef) {
         final String moduleName = module.statement().argument().getLocalName();
         final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName);
         builder.setTypedef(true);
         builder.addImplementsType(BindingTypes.scalarTypeObject(javaType));
+        YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
         final GeneratedPropertyBuilder genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
         genPropBuilder.setReturnType(javaType);
@@ -720,13 +725,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
                 } else if (TypeDefinitions.ENUMERATION.equals(subName)) {
-                    final Enumeration subEnumeration = createEnumeration(builderFactory,
+                    final Enumeration subEnumeration = createEnumeration(builderFactory, definingStatement,
                         typeName.createEnclosed(BindingMapping.getClassName(localName), "$"), module,
                         (EnumTypeDefinition) subType.getTypeDefinition());
                     builder.addEnumeration(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (TypeDefinitions.BITS.equals(subName)) {
-                    final GeneratedTransferObject subBits = createBits(builderFactory,
+                    final GeneratedTransferObject subBits = createBits(builderFactory, definingStatement,
                         typeName.createEnclosed(BindingMapping.getClassName(localName), "$"), module,
                         subType.getTypeDefinition(), isTypedef);
                     builder.addEnclosingTransferObject(subBits);

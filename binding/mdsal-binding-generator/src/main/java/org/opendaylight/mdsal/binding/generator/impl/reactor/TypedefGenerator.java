@@ -16,6 +16,7 @@ import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultTypedefRuntimeTyp
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.runtime.api.TypedefRuntimeType;
@@ -84,6 +85,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         builder.setExtendsType(baseType);
         builder.setIsUnion(baseType.isUnionType());
         builder.setRestrictions(computeRestrictions());
+        YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
 
         final TypeDefinition<?> typedef = statement().getTypeDefinition();
         annotateDeprecatedIfNecessary(typedef, builder);

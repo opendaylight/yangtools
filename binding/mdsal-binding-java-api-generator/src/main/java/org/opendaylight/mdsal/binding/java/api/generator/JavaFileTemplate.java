@@ -64,6 +64,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 /**
@@ -451,6 +452,13 @@ class JavaFileTemplate {
                     if (augType != null) {
                         sb.append("\n\n")
                         .append("@see ").append(importedName(augType));
+                    }
+                }
+                if (node instanceof TypedefEffectiveStatement && genType instanceof GeneratedTransferObject genTO) {
+                    final var augType = genTO.getSuperType();
+                    if (augType != null) {
+                        sb.append("\n\n")
+                        .append("@see ").append(augType.getName());
                     }
                 }
             } else if (def instanceof Multiple multiple) {

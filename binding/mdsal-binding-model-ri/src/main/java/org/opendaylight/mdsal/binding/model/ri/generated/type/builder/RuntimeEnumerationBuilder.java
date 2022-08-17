@@ -42,6 +42,11 @@ public final class RuntimeEnumerationBuilder extends AbstractEnumerationBuilder 
     }
 
     @Override
+    public void setYangSourceDefinition(final YangSourceDefinition definition) {
+        // No-op
+    }
+
+    @Override
     public Enumeration toInstance() {
         return new EnumerationImpl(this);
     }

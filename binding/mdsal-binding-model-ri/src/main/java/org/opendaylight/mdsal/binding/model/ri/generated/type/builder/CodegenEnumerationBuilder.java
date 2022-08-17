@@ -23,6 +23,7 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
     private String reference;
     private String moduleName;
     private SchemaPath schemaPath;
+    private YangSourceDefinition definition;
 
     public CodegenEnumerationBuilder(final JavaTypeName identifier) {
         super(identifier);
@@ -46,7 +47,11 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
     @Override
     public void setDescription(final String description) {
         this.description = description;
+    }
 
+    @Override
+    public void setYangSourceDefinition(final YangSourceDefinition yangSourceDefinition) {
+        this.definition = yangSourceDefinition;
     }
 
     @Override
@@ -94,13 +99,15 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
         private final String reference;
         private final String moduleName;
         private final SchemaPath schemaPath;
+        private final YangSourceDefinition definition;
 
         EnumerationImpl(final CodegenEnumerationBuilder builder) {
             super(builder);
-            this.description = builder.description;
-            this.moduleName = builder.moduleName;
-            this.schemaPath = builder.schemaPath;
-            this.reference = builder.reference;
+            description = builder.description;
+            moduleName = builder.moduleName;
+            schemaPath = builder.schemaPath;
+            reference = builder.reference;
+            definition = builder.definition;
         }
 
         @Override
@@ -110,27 +117,27 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
 
         @Override
         public String getDescription() {
-            return this.description;
+            return description;
         }
 
         @Override
         public String getReference() {
-            return this.reference;
+            return reference;
         }
 
         @Override
         public Iterable<QName> getSchemaPath() {
-            return this.schemaPath.getPathFromRoot();
+            return schemaPath.getPathFromRoot();
         }
 
         @Override
         public String getModuleName() {
-            return this.moduleName;
+            return moduleName;
         }
 
         @Override
         public Optional<YangSourceDefinition> getYangSourceDefinition() {
-            return Optional.empty();
+            return Optional.ofNullable(definition);
         }
     }
 }
