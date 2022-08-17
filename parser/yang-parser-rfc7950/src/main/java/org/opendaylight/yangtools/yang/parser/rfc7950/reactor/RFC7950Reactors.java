@@ -214,7 +214,7 @@ public final class RFC7950Reactors {
             .addSupport(TypeNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, IdentityStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, IdentityStatementSupport.rfc7950Instance(config))
-            .addSupport(IdentityNamespace.BEHAVIOUR)
+            .addSupport(IdentityNamespace.INSTANCE)
             .addSupport(new DefaultStatementSupport(config))
             .addSupport(new StatusStatementSupport(config))
             .addSupport(BaseTypeNamespace.BEHAVIOUR)

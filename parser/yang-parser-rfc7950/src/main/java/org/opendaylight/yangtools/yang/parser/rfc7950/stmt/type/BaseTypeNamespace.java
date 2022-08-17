@@ -14,7 +14,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 @Beta
-public interface BaseTypeNamespace extends ParserNamespace<Empty, Object> {
-    NamespaceBehaviour<Empty, Object, @NonNull BaseTypeNamespace> BEHAVIOUR =
+public final class BaseTypeNamespace extends ParserNamespace<Empty, Object> {
+    public static final @NonNull BaseTypeNamespace NS = new BaseTypeNamespace();
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(BaseTypeNamespace.class);
+
+    private BaseTypeNamespace() {
+        // Hidden on purpose
+    }
 }

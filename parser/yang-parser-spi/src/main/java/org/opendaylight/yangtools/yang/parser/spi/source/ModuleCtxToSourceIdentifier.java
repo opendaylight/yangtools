@@ -16,7 +16,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 /**
  * Global mapping of modules to source identifier.
  */
-public interface ModuleCtxToSourceIdentifier extends ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> {
-    NamespaceBehaviour<StmtContext<?, ?, ?>, SourceIdentifier, @NonNull ModuleCtxToSourceIdentifier> BEHAVIOUR =
-            NamespaceBehaviour.global(ModuleCtxToSourceIdentifier.class);
+public final class ModuleCtxToSourceIdentifier extends ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> {
+    public static final @NonNull ModuleCtxToSourceIdentifier NS = new ModuleCtxToSourceIdentifier();
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.global(ModuleCtxToSourceIdentifier.class);
+
+    private ModuleCtxToSourceIdentifier() {
+        // Hidden on purpose
+    }
 }

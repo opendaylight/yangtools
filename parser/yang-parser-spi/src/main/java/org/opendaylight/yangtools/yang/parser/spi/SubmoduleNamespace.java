@@ -13,15 +13,18 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Submodule equivalent of ModuleNamespace.
  */
 // FIXME: describe scoping of this namespace
-public interface SubmoduleNamespace
-    extends StatementNamespace<SourceIdentifier, SubmoduleStatement, SubmoduleEffectiveStatement> {
-    NamespaceBehaviour<SourceIdentifier, StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>,
-            @NonNull SubmoduleNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(SubmoduleNamespace.class);
+public final class SubmoduleNamespace
+        extends StatementNamespace<SourceIdentifier, SubmoduleStatement, SubmoduleEffectiveStatement> {
+    public static final @NonNull SubmoduleNamespace NS = new SubmoduleNamespace();
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.global(SubmoduleNamespace.class);
+
+    private SubmoduleNamespace() {
+        // Hidden on purpose
+    }
 }
