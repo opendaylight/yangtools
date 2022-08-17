@@ -32,20 +32,20 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * It is necessary in order to correct resolution of unknown statements used by linkage
  * phase (e.g. semantic version of yang modules).
  * </li>
- * <li>{@link #writeLinkage(StatementWriter, QNameToStatementDefinition, PrefixToModule, YangVersion)} -
+ * <li>{@link #writeLinkage(StatementWriter, QNameToStatementDefinition, QNameModuleResolver, YangVersion)} -
  * Source MUST emit only statements related in linkage, which are present in
  * supplied statement definition map. This step is used to build cross-source
  * linkage and visibility relationship, and to determine XMl namespaces and
  * prefixes.</li>
  * <li>
- * {@link #writeLinkageAndStatementDefinitions(StatementWriter, QNameToStatementDefinition, PrefixToModule,
+ * {@link #writeLinkageAndStatementDefinitions(StatementWriter, QNameToStatementDefinition, QNameModuleResolver,
  * YangVersion)}
  * - Source MUST emit only statements related to linkage and language extensions
  * definitions, which are present in supplied statement definition map. This
  * step is used to build statement definitions in order to fully processed
  * source.</li>
  * <li>
- * {@link #writeFull(StatementWriter, QNameToStatementDefinition, PrefixToModule, YangVersion)}
+ * {@link #writeFull(StatementWriter, QNameToStatementDefinition, QNameModuleResolver, YangVersion)}
  * - Source MUST emit all statements present in source. This step is used to
  * build full declared statement model of source.</li>
  * </ol>
@@ -88,8 +88,8 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes,
-            YangVersion yangVersion);
+    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef,
+        QNameModuleResolver preLinkagePrefixes, YangVersion yangVersion);
 
     /**
      * Emits only linkage and language extension statements to supplied
@@ -113,7 +113,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             failed to write statements.
      */
     void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
-            PrefixToModule prefixes, YangVersion yangVersion);
+        QNameModuleResolver prefixes, YangVersion yangVersion);
 
     /**
      * Emits every statements present in this statement source to supplied
@@ -133,6 +133,6 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes,
-            YangVersion yangVersion);
+    void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, QNameModuleResolver prefixes,
+        YangVersion yangVersion);
 }
