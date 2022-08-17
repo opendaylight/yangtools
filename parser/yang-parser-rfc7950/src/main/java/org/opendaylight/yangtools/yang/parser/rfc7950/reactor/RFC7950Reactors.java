@@ -208,7 +208,7 @@ public final class RFC7950Reactors {
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new ExtensionStatementSupport(config))
-            .addSupport(SchemaTreeNamespace.getInstance())
+            .addSupport(SchemaTreeNamespace.BEHAVIOUR)
             .addSupport(ExtensionNamespace.BEHAVIOUR)
             .addSupport(new TypedefStatementSupport(config))
             .addSupport(TypeNamespace.BEHAVIOUR)
