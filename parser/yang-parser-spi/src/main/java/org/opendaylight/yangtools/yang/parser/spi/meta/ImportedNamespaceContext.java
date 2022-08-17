@@ -7,19 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  * Special namespace which allows import of namespaces from other sources.
  *
  * <p>
- * This namespace and its subclasses are used by model processor to
- * link / import namespaces to context node from supplied {@link StmtContext}.
+ * This namespace and its subclasses are used by model processor to link / import namespaces to context node from
+ * supplied {@link StmtContext}.
  *
  * <p>
- * This abstraction allows for imports and includes be implement as derived
- * namespaces of this, but is not tied only for import and include statements.
+ * This abstraction allows for imports and includes be implement as derived namespaces of this, but is not tied only for
+ * import and include statements.
  *
  * @param <K> Imported context identifier
  */
-public interface ImportedNamespaceContext<K> extends ParserNamespace<K, StmtContext<?, ?, ?>> {
-
+public abstract class ImportedNamespaceContext<K> extends ParserNamespace<K, StmtContext<?, ?, ?>> {
+    protected ImportedNamespaceContext(final @NonNull NamespaceBehaviour<K, StmtContext<?, ?, ?>, ?> behaviour) {
+        super(behaviour);
+    }
 }
