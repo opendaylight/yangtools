@@ -111,7 +111,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
      * - modules imported via 'import' statement
      * - parent module, declared via 'belongs-to' statement
      */
-    private Collection<RootStatementContext<?, ?, ?>> importedNamespaces = ImmutableList.of();
+    private List<RootStatementContext<?, ?, ?>> importedNamespaces = ImmutableList.of();
     private RootStatementContext<?, ?, ?> root;
     // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -219,11 +219,11 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     private void updateImportedNamespaces(final Class<?> type, final Object value) {
         if (BelongsToModuleContext.class.isAssignableFrom(type) || ImportedModuleContext.class.isAssignableFrom(type)) {
+            verify(value instanceof RootStatementContext, "Unexpected imported value %s", value);
+
             if (importedNamespaces.isEmpty()) {
                 importedNamespaces = new ArrayList<>(1);
             }
-
-            verify(value instanceof RootStatementContext);
             importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
         }
     }
