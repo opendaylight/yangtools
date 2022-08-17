@@ -112,7 +112,6 @@ import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
@@ -199,7 +198,6 @@ public final class RFC7950Reactors {
             .addSupport(ImportPrefixToModuleCtx.BEHAVIOUR)
             .addSupport(BelongsToPrefixToModuleCtx.BEHAVIOUR)
             .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
-            .addSupport(BelongsToModuleContext.BEHAVIOUR)
             .addSupport(BelongsToPrefixToModuleName.BEHAVIOUR)
             .build();
     }

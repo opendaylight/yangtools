@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
@@ -218,7 +217,8 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     private void updateImportedNamespaces(final Class<?> type, final Object value) {
-        if (BelongsToModuleContext.class.isAssignableFrom(type) || ImportedModuleContext.class.isAssignableFrom(type)) {
+        if (BelongsToPrefixToModuleCtx.class.isAssignableFrom(type)
+            || ImportedModuleContext.class.isAssignableFrom(type)) {
             verify(value instanceof RootStatementContext, "Unexpected imported value %s", value);
 
             if (importedNamespaces.isEmpty()) {

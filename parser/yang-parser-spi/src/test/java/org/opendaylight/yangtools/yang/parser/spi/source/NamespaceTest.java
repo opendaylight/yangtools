@@ -16,7 +16,6 @@ public class NamespaceTest {
     public void testNamespaces() {
         // Touch behaviors
         // FIXME: add more checks/split this up when behaviours are testable
-        assertNotNull(BelongsToModuleContext.BEHAVIOUR);
         assertNotNull(BelongsToPrefixToModuleCtx.BEHAVIOUR);
         assertNotNull(BelongsToPrefixToModuleName.BEHAVIOUR);
         assertNotNull(ImpPrefixToNamespace.BEHAVIOUR);
