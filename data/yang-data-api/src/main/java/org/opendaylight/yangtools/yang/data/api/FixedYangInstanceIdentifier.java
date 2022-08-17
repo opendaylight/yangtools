@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.io.ObjectStreamException;
 import java.io.Serial;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -25,7 +24,8 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     private static final long serialVersionUID = 1L;
 
     private final ImmutableList<PathArgument> path;
-    private transient volatile YangInstanceIdentifier parent;
+
+    private transient volatile YangInstanceIdentifier parent = null;
 
     FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path) {
         this.path = requireNonNull(path, "path must not be null.");
@@ -117,11 +117,6 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
         return skipFromRoot == path.size() ? EMPTY_INSTANCE
             : new FixedYangInstanceIdentifier(path.subList(skipFromRoot, path.size()));
-    }
-
-    @Serial
-    private Object readResolve() throws ObjectStreamException {
-        return path.isEmpty() ? EMPTY_INSTANCE : this;
     }
 
     @Override
