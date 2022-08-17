@@ -14,16 +14,20 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 @Beta
-public interface YangNamespaceContextNamespace extends ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
-    NamespaceBehaviour<StmtContext<?, ?, ?>, YangNamespaceContext, @NonNull YangNamespaceContextNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(YangNamespaceContextNamespace.class);
+public final class YangNamespaceContextNamespace extends ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
+    public static final @NonNull YangNamespaceContextNamespace INSTANCE = new YangNamespaceContextNamespace();
 
-    static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
-        final StmtContext<?, ?, ?> root = ctx.getRoot();
+    private YangNamespaceContextNamespace() {
+        super(NamespaceBehaviour.global(YangNamespaceContextNamespace.class));
+    }
+
+    public static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
+        final RootStmtContext<?, ?, ?> root = ctx.getRoot();
         YangNamespaceContext ret = ctx.getFromNamespace(YangNamespaceContextNamespace.class, root);
         if (ret == null) {
             verify(ctx instanceof Mutable, "Cannot populate namespace context to %s", ctx);

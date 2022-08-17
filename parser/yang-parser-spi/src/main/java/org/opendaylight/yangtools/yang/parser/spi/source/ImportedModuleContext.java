@@ -11,9 +11,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public interface ImportedModuleContext extends ImportedNamespaceContext<SourceIdentifier> {
-    NamespaceBehaviour<SourceIdentifier, StmtContext<?, ?, ?>, @NonNull ImportedModuleContext> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(ImportedModuleContext.class);
+public final class ImportedModuleContext extends ImportedNamespaceContext<SourceIdentifier> {
+    public static final @NonNull ImportedModuleContext INSTANCE = new ImportedModuleContext();
+
+    private ImportedModuleContext() {
+        super(NamespaceBehaviour.sourceLocal(ImportedModuleContext.class));
+    }
 }

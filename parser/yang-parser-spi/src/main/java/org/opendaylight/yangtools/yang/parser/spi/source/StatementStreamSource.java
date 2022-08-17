@@ -88,8 +88,8 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes,
-            YangVersion yangVersion);
+    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef,
+        QNameModuleResolver preLinkagePrefixes, YangVersion yangVersion);
 
     /**
      * Emits only linkage and language extension statements to supplied
@@ -113,7 +113,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             failed to write statements.
      */
     void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
-            PrefixToModule prefixes, YangVersion yangVersion);
+        QNameModuleResolver prefixes, YangVersion yangVersion);
 
     /**
      * Emits every statements present in this statement source to supplied
@@ -133,6 +133,6 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes,
-            YangVersion yangVersion);
+    void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, QNameModuleResolver prefixes,
+        YangVersion yangVersion);
 }
