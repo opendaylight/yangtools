@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.io.ObjectStreamException;
+import java.io.Serial;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
         ImmutableList.of());
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final ImmutableList<PathArgument> path;
@@ -117,6 +119,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
             : new FixedYangInstanceIdentifier(path.subList(skipFromRoot, path.size()));
     }
 
+    @Serial
     private Object readResolve() throws ObjectStreamException {
         return path.isEmpty() ? EMPTY_INSTANCE : this;
     }

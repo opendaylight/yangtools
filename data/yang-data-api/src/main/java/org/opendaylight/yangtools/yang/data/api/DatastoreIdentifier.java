@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.WritableObject;
 import org.opendaylight.yangtools.util.AbstractIdentifier;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 @Beta
 @NonNullByDefault
 public final class DatastoreIdentifier extends AbstractIdentifier<QName> implements WritableObject {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final XMLNamespace IETF_DATASTORES_NAMESPACE =
@@ -71,6 +73,7 @@ public final class DatastoreIdentifier extends AbstractIdentifier<QName> impleme
         getValue().writeTo(out);
     }
 
+    @Serial
     private Object writeReplace() {
         return new DSIv1(getValue());
     }

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  */
 @Beta
 public class YangInvalidValueException extends IllegalArgumentException implements YangNetconfErrorAware {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final @NonNull ErrorType errorType;
@@ -49,8 +51,8 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
             final String message) {
         super(requireNonNull(message));
         this.errorType = requireNonNull(errorType);
-        this.errorAppTag = constraint.getErrorAppTag().orElse(null);
-        this.errorMessage = constraint.getErrorMessage().orElse(null);
+        errorAppTag = constraint.getErrorAppTag().orElse(null);
+        errorMessage = constraint.getErrorMessage().orElse(null);
     }
 
     @Override
