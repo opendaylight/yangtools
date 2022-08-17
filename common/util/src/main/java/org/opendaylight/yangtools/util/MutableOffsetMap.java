@@ -182,15 +182,13 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
      * @throws NullPointerException if {@code map} is null
      */
     public static <K, V> @NonNull MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
-        if (map instanceof Unordered) {
-            return ((Unordered<K, V>) map).clone();
-        }
-        if (map instanceof ImmutableOffsetMap) {
-            final ImmutableOffsetMap<K, V> om = (ImmutableOffsetMap<K, V>) map;
+        if (map instanceof Unordered<K, V> unordered) {
+            return unordered.clone();
+        } else if (map instanceof ImmutableOffsetMap<K, V> om) {
             return new Unordered<>(om.offsets(), om.objects());
+        } else {
+            return new Unordered<>(map);
         }
-
-        return new Unordered<>(map);
     }
 
     /**
@@ -435,9 +433,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @SuppressWarnings("unchecked")
     @Override
-    public MutableOffsetMap<K, V> clone() {
+    public @NonNull MutableOffsetMap<K, V> clone() {
         final MutableOffsetMap<K, V> ret;
-
         try {
             ret = (MutableOffsetMap<K, V>) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -476,10 +473,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             if (noNewKeys() && offsets.equals(om.offsets())) {
                 return Arrays.deepEquals(objects, om.objects());
             }
-        } else if (obj instanceof MutableOffsetMap<?, ?> om) {
-            if (offsets.equals(om.offsets)) {
-                return Arrays.deepEquals(objects, om.objects) && equalNewKeys(om);
-            }
+        } else if (obj instanceof MutableOffsetMap<?, ?> om && offsets.equals(om.offsets)) {
+            return Arrays.deepEquals(objects, om.objects) && equalNewKeys(om);
         }
 
         // Fall back to brute map compare
