@@ -13,14 +13,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * namespace class similar to {@link org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace} for storing modules
+ * Namespace class similar to {@link org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace} for storing modules
  * into Yang model storage but keyed by plain name.
  */
-public interface ModuleNamespaceForBelongsTo
+public final class ModuleNamespaceForBelongsTo
         extends StatementNamespace<Unqualified, ModuleStatement, ModuleEffectiveStatement> {
-    NamespaceBehaviour<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
-        @NonNull ModuleNamespaceForBelongsTo> BEHAVIOUR = NamespaceBehaviour.global(ModuleNamespaceForBelongsTo.class);
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.global(ModuleNamespaceForBelongsTo.class);
+
+    private ModuleNamespaceForBelongsTo() {
+        // Hidden on purpose
+    }
 }
