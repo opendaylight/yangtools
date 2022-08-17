@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameModuleResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -235,19 +235,20 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
 
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
+            final QNameModuleResolver preLinkagePrefixes, final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes,  final YangVersion yangVersion) {
+            final QNameToStatementDefinition stmtDef, final QNameModuleResolver prefixes,
+            final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule prefixes, final YangVersion yangVersion) {
+            final QNameModuleResolver prefixes, final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
     }
 }
