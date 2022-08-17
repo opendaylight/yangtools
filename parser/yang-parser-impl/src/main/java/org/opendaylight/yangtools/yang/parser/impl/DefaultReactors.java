@@ -150,7 +150,7 @@ public final class DefaultReactors {
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AnnotationStatementSupport(config))
 
             // RFC8040 yang-data support
-            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
+            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.INSTANCE)
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new YangDataStatementSupport(config))
 
             // RFC8528 mount-point support

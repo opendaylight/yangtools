@@ -20,8 +20,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 @Beta
 // FIXME: We should not be needing this namespace, as yang-data's argument is not documented anywhere to be compatible
 //        with 'identifier', hence we cannot safely form a QName.
-public interface YangDataArgumentNamespace extends ParserNamespace<Empty, QName> {
-    NamespaceBehaviour<Empty, QName, @NonNull YangDataArgumentNamespace> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(YangDataArgumentNamespace.class);
+public final class YangDataArgumentNamespace extends ParserNamespace<Empty, QName> {
+    public static final @NonNull YangDataArgumentNamespace INSTANCE = new YangDataArgumentNamespace();
 
+    private YangDataArgumentNamespace() {
+        super(NamespaceBehaviour.statementLocal(YangDataArgumentNamespace.class));
+    }
 }
