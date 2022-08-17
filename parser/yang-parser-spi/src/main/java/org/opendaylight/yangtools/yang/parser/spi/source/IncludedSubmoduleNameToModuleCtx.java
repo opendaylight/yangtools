@@ -16,7 +16,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
-public interface IncludedSubmoduleNameToModuleCtx extends ParserNamespace<Unqualified, StmtContext<?, ?, ?>> {
-    NamespaceBehaviour<Unqualified, StmtContext<?, ?, ?>, @NonNull IncludedSubmoduleNameToModuleCtx> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(IncludedSubmoduleNameToModuleCtx.class);
+public final class IncludedSubmoduleNameToModuleCtx extends ParserNamespace<Unqualified, StmtContext<?, ?, ?>> {
+    public static final @NonNull IncludedSubmoduleNameToModuleCtx INSTANCE = new IncludedSubmoduleNameToModuleCtx();
+
+    private IncludedSubmoduleNameToModuleCtx() {
+        super(NamespaceBehaviour.sourceLocal(IncludedSubmoduleNameToModuleCtx.class));
+    }
 }

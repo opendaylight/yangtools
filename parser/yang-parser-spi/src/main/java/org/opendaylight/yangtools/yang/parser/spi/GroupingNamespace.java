@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeScoped;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Grouping namespace. * All grouping names defined within a parent node or at the top level of the module
@@ -23,8 +22,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * <p>
  * This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same name.
  */
-public interface GroupingNamespace extends TreeScoped<QName, GroupingStatement, GroupingEffectiveStatement> {
-    NamespaceBehaviour<QName, StmtContext<?, GroupingStatement, GroupingEffectiveStatement>,
-            @NonNull GroupingNamespace> BEHAVIOUR = NamespaceBehaviour.treeScoped(GroupingNamespace.class);
+public final class GroupingNamespace extends TreeScoped<QName, GroupingStatement, GroupingEffectiveStatement> {
+    public static final @NonNull GroupingNamespace INSTANCE = new GroupingNamespace();
 
+    private GroupingNamespace() {
+        super(NamespaceBehaviour.treeScoped(GroupingNamespace.class));
+    }
 }

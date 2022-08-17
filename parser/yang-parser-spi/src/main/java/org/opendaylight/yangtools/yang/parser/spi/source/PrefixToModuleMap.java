@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 /**
  * Map-based {@link PrefixToModule} namespace. This class is NOT thread-safe.
  */
-public class PrefixToModuleMap implements PrefixToModule {
-    private final Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
+public class PrefixToModuleMap extends PrefixToModule {
     private final Map<XMLNamespace, QNameModule> namespaceToModuleMap = new HashMap<>();
+    private final Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
 
     public void put(final String prefix, final QNameModule module) {
         prefixToModuleMap.put(prefix, module);

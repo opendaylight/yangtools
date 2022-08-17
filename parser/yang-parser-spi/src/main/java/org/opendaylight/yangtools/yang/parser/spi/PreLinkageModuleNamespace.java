@@ -13,15 +13,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Intermediate-stage namespace equivalent to ModuleNamespace except it is keyed by module names. This namespace is
  * used to resolve inter-module references before actual linkage occurs.
  */
-public interface PreLinkageModuleNamespace
+public final class PreLinkageModuleNamespace
         extends StatementNamespace<Unqualified, ModuleStatement, ModuleEffectiveStatement> {
-    NamespaceBehaviour<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
-            @NonNull PreLinkageModuleNamespace> BEHAVIOUR = NamespaceBehaviour.global(PreLinkageModuleNamespace.class);
+    public static final @NonNull PreLinkageModuleNamespace INSTANCE = new PreLinkageModuleNamespace();
 
+    private PreLinkageModuleNamespace() {
+        super(NamespaceBehaviour.global(PreLinkageModuleNamespace.class));
+    }
 }

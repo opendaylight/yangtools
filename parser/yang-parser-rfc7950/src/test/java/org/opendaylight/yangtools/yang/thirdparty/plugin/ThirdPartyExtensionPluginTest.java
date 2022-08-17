@@ -37,7 +37,7 @@ public class ThirdPartyExtensionPluginTest {
         final BuildAction reactor = RFC7950Reactors.defaultReactorBuilder()
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                 new ThirdPartyExtensionSupport(YangParserConfiguration.DEFAULT))
-            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyNamespace.BEHAVIOR)
+            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyNamespace.INSTANCE)
             .build()
             .newBuild();
         reactor.addSource(StmtTestUtils.sourceForResource("/plugin-test/foo.yang"));
