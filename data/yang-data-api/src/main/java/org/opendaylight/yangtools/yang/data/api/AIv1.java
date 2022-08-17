@@ -14,6 +14,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serial;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
  * Externalizable proxy for {@link AugmentationIdentifier}.
  */
 final class AIv1 implements Externalizable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private AugmentationIdentifier ai;
@@ -52,6 +54,7 @@ final class AIv1 implements Externalizable {
         ai = new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
 
+    @Serial
     private Object readResolve() {
         return ai;
     }

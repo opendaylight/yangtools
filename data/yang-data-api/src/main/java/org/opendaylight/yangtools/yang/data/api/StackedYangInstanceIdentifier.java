@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -26,6 +27,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Field PARENT_FIELD;
 
@@ -169,13 +171,13 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
 
     @Override
     boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
-        if (other instanceof StackedYangInstanceIdentifier) {
-            final StackedYangInstanceIdentifier stacked = (StackedYangInstanceIdentifier) other;
+        if (other instanceof StackedYangInstanceIdentifier stacked) {
             return pathArgument.equals(stacked.pathArgument) && parent.equals(stacked.parent);
         }
         return super.pathArgumentsEqual(other);
     }
 
+    @Serial
     private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
         inputStream.defaultReadObject();
 
@@ -187,6 +189,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         }
     }
 
+    @Serial
     private void writeObject(final ObjectOutputStream outputStream) throws IOException {
         outputStream.defaultWriteObject();
 

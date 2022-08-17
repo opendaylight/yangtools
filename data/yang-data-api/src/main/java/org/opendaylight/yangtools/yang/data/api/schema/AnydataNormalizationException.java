@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 
 @Beta
 public class AnydataNormalizationException extends Exception {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public AnydataNormalizationException(final String message) {
