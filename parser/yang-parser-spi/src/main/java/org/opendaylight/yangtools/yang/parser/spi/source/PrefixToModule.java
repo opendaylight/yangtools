@@ -19,7 +19,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  *
  * @see PrefixResolver
  */
-public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
-    NamespaceBehaviour<String, QNameModule, @NonNull PrefixToModule> BEHAVIOUR =
-            NamespaceBehaviour.global(PrefixToModule.class);
+public final class PrefixToModule extends ParserNamespace<String, QNameModule> {
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.global(PrefixToModule.class);
+
+    private PrefixToModule() {
+        // Hidden on purpose
+    }
 }

@@ -18,8 +18,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * Module-local namespace holding the module's QName.
  */
 @Beta
-public interface QNameModuleNamespace extends ParserNamespace<Empty, QNameModule> {
-    NamespaceBehaviour<Empty, QNameModule, @NonNull QNameModuleNamespace> BEHAVIOUR =
+public final class QNameModuleNamespace extends ParserNamespace<Empty, QNameModule> {
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(QNameModuleNamespace.class);
 
+    private QNameModuleNamespace() {
+        // Hidden on purpose
+    }
 }

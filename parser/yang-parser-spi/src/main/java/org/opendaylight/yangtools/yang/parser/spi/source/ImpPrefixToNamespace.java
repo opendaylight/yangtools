@@ -15,7 +15,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 /**
  * Pre-linkage source-specific mapping of prefixes to module namespaces.
  */
-public interface ImpPrefixToNamespace extends ParserNamespace<String, XMLNamespace> {
-    NamespaceBehaviour<String, XMLNamespace, @NonNull ImpPrefixToNamespace> BEHAVIOUR =
-            NamespaceBehaviour.rootStatementLocal(ImpPrefixToNamespace.class);
+public final class ImpPrefixToNamespace extends ParserNamespace<String, XMLNamespace> {
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.rootStatementLocal(ImpPrefixToNamespace.class);
+
+    private ImpPrefixToNamespace() {
+        // Hidden on purpose
+    }
 }

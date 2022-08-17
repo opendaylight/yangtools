@@ -15,7 +15,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 /**
  * Source-specific mapping of prefix strings to module context.
  */
-public interface ImportPrefixToModuleCtx extends ParserNamespace<String, StmtContext<?, ?, ?>> {
-    NamespaceBehaviour<String, StmtContext<?, ?, ?>, @NonNull ImportPrefixToModuleCtx> BEHAVIOUR =
-            NamespaceBehaviour.rootStatementLocal(ImportPrefixToModuleCtx.class);
+public final class ImportPrefixToModuleCtx extends ParserNamespace<String, StmtContext<?, ?, ?>> {
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.rootStatementLocal(ImportPrefixToModuleCtx.class);
+
+    private ImportPrefixToModuleCtx() {
+        // Hidden on purpose
+    }
 }

@@ -13,15 +13,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Feature namespace. All feature names defined in a module and its submodules share the
- * same feature identifier namespace. Each feature is identified by a QName formed from
- * the defining module's QNameModule and the feature name.
+ * Feature namespace. All feature names defined in a module and its submodules share the same feature identifier
+ * namespace. Each feature is identified by a QName formed from the defining module's QNameModule and the feature name.
  */
-public interface FeatureNamespace extends StatementNamespace<QName, FeatureStatement, FeatureEffectiveStatement> {
-    NamespaceBehaviour<QName, StmtContext<?, FeatureStatement, FeatureEffectiveStatement>,
-            @NonNull FeatureNamespace> BEHAVIOUR = NamespaceBehaviour.global(FeatureNamespace.class);
+public final class FeatureNamespace extends StatementNamespace<QName, FeatureStatement, FeatureEffectiveStatement> {
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.global(FeatureNamespace.class);
 
+    private FeatureNamespace() {
+        // Hidden on purpose
+    }
 }
