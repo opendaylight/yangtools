@@ -16,7 +16,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 /**
  * Pre-linkage global mapping of module names to namespaces.
  */
-public interface ModuleNameToNamespace extends ParserNamespace<Unqualified, XMLNamespace> {
-    NamespaceBehaviour<Unqualified, XMLNamespace, @NonNull ModuleNameToNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(ModuleNameToNamespace.class);
+public final class ModuleNameToNamespace extends ParserNamespace<Unqualified, XMLNamespace> {
+    public static final @NonNull ModuleNameToNamespace NS = new ModuleNameToNamespace();
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
+        NamespaceBehaviour.global(ModuleNameToNamespace.class);
+
+    private ModuleNameToNamespace() {
+        // Hidden on purpose
+    }
 }
