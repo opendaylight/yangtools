@@ -20,7 +20,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * Map key (QNameModule) denotes a module which can be deviated by the modules specified in the Map value.
  */
 @Beta
-public interface ModulesDeviatedByModules extends ParserNamespace<Empty, SetMultimap<QNameModule, QNameModule>> {
-    NamespaceBehaviour<Empty, SetMultimap<QNameModule, QNameModule>, @NonNull ModulesDeviatedByModules>
-        BEHAVIOUR = NamespaceBehaviour.global(ModulesDeviatedByModules.class);
+public final class ModulesDeviatedByModules extends ParserNamespace<Empty, SetMultimap<QNameModule, QNameModule>> {
+    public static final @NonNull ModulesDeviatedByModules INSTANCE = new ModulesDeviatedByModules();
+
+    private ModulesDeviatedByModules() {
+        super(NamespaceBehaviour.global(ModulesDeviatedByModules.class));
+    }
 }

@@ -7,14 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public interface StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+public abstract class StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
         extends ParserNamespace<K, StmtContext<?, D, E>> {
-
-    interface TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+    public abstract static class TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
             extends StatementNamespace<K, D, E> {
+        protected TreeScoped(final @NonNull NamespaceBehaviour<K, StmtContext<?, D, E>, ?> behaviour) {
+            super(behaviour);
+        }
+    }
 
+    protected StatementNamespace(final @NonNull NamespaceBehaviour<K, StmtContext<?, D, E>, ?> behaviour) {
+        super(behaviour);
     }
 }
