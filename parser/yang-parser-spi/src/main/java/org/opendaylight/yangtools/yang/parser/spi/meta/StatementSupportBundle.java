@@ -116,7 +116,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         return null;
     }
 
-    public <K, V, N extends ParserNamespace<K, V>> boolean hasNamespaceBehaviour(final Class<N> namespace) {
+    public boolean hasNamespaceBehaviour(final Class<? extends ParserNamespace<?, ?>> namespace) {
         if (namespaceDefinitions.containsKey(namespace)) {
             return true;
         }
@@ -185,9 +185,8 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return this;
         }
 
-        public <K, V, N extends ParserNamespace<K, V>> @NonNull Builder addSupport(
-                final NamespaceBehaviour<K, V, N> namespaceSupport) {
-            final Class<N> identifier = namespaceSupport.getIdentifier();
+        public @NonNull Builder addSupport(final NamespaceBehaviour<?, ? ,?> namespaceSupport) {
+            final var identifier = namespaceSupport.getIdentifier();
             checkState(!namespaces.containsKey(identifier));
             checkState(!parent.hasNamespaceBehaviour(identifier));
             namespaces.put(identifier, namespaceSupport);

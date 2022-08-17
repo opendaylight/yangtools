@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.common.QName;
  * as {@link StatementDefinitionNamespace} and {@link StmtContext#yangVersion()} of the source root statement.
  */
 @Beta
-public interface StatementSupportNamespace extends ParserNamespace<QName, StatementSupport<?, ?, ?>> {
-
+public final class StatementSupportNamespace extends ParserNamespace<QName, StatementSupport<?, ?, ?>> {
+    StatementSupportNamespace() {
+        // FIXME: is this really used?!
+    }
 }
