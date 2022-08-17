@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -77,6 +78,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  */
 public abstract sealed class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier>
         permits FixedYangInstanceIdentifier, StackedYangInstanceIdentifier {
+    @Serial
     private static final long serialVersionUID = 4L;
     private static final VarHandle TO_STRING_CACHE;
     private static final VarHandle HASH;
@@ -393,6 +395,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
 
     abstract int computeHashCode();
 
+    @Serial
     final Object writeReplace() {
         return new YIDv1(this);
     }

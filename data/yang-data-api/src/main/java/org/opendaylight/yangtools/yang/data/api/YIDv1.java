@@ -15,6 +15,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serial;
 import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * Externalizable proxy for {@link YangInstanceIdentifier}.
  */
 final class YIDv1 implements Externalizable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private YangInstanceIdentifier yid;
@@ -56,6 +58,7 @@ final class YIDv1 implements Externalizable {
         yid = YangInstanceIdentifier.create(builder.build());
     }
 
+    @Serial
     private Object readResolve() {
         return yid;
     }
