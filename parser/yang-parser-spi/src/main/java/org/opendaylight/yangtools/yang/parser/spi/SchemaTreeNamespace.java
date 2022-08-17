@@ -36,12 +36,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 //               into yang-(parser-)reactor-api.
 @Beta
 public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-        implements StatementNamespace<QName, D, E> {
+        extends StatementNamespace<QName, D, E> {
     public static final class Behaviour<D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
             extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>> {
-
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        private Behaviour() {
+        Behaviour() {
             super((Class) SchemaTreeNamespace.class);
         }
 
@@ -81,6 +80,12 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E ext
             }
         }
 
+        private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+                StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
+            return storageNode instanceof OnDemandSchemaTreeStorageNode ondemand ? ondemand.requestSchemaTreeChild(key)
+                : null;
+        }
+
         private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
             NamespaceStorageNode current = requireNonNull(storage);
             while (!isLocalOrGlobal(current.getStorageNodeType())) {
@@ -91,12 +96,6 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E ext
 
         private static boolean isLocalOrGlobal(final StorageNodeType type) {
             return type == StorageNodeType.STATEMENT_LOCAL || type == StorageNodeType.GLOBAL;
-        }
-
-        private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-                StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
-            return storageNode instanceof OnDemandSchemaTreeStorageNode ondemand ? ondemand.requestSchemaTreeChild(key)
-                : null;
         }
     }
 
