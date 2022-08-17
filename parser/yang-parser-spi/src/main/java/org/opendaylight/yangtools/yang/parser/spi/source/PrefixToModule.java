@@ -19,8 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
     NamespaceBehaviour<String, QNameModule, @NonNull PrefixToModule> BEHAVIOUR =
             NamespaceBehaviour.global(PrefixToModule.class);
-    @Deprecated(since = "9.0.2", forRemoval = true)
-    String DEFAULT_PREFIX = "";
 
     /**
      * Returns QNameModule (namespace + revision) associated with supplied prefix.
