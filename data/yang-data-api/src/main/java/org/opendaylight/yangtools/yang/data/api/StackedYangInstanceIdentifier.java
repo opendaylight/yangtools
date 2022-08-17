@@ -14,13 +14,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serial;
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -29,23 +23,6 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final Field PARENT_FIELD;
-
-    static {
-        final Field f;
-        try {
-            f = StackedYangInstanceIdentifier.class.getDeclaredField("parent");
-        } catch (NoSuchFieldException | SecurityException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-
-        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-            f.setAccessible(true);
-            return null;
-        });
-
-        PARENT_FIELD = f;
-    }
 
     private final @NonNull YangInstanceIdentifier parent;
     private final @NonNull PathArgument pathArgument;
@@ -175,31 +152,6 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
             return pathArgument.equals(stacked.pathArgument) && parent.equals(stacked.parent);
         }
         return super.pathArgumentsEqual(other);
-    }
-
-    @Serial
-    private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
-        inputStream.defaultReadObject();
-
-        final FixedYangInstanceIdentifier p = (FixedYangInstanceIdentifier) inputStream.readObject();
-        try {
-            PARENT_FIELD.set(this, p);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IOException("Failed to set parent", e);
-        }
-    }
-
-    @Serial
-    private void writeObject(final ObjectOutputStream outputStream) throws IOException {
-        outputStream.defaultWriteObject();
-
-        final FixedYangInstanceIdentifier p;
-        if (parent instanceof FixedYangInstanceIdentifier) {
-            p = (FixedYangInstanceIdentifier) parent;
-        } else {
-            p = FixedYangInstanceIdentifier.of(parent.getPathArguments());
-        }
-        outputStream.writeObject(p);
     }
 
     @Override
