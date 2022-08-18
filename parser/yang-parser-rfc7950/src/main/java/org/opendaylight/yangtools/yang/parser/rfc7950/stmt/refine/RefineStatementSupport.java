@@ -92,7 +92,7 @@ public final class RefineStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
         return new RefineEffectiveStatementImpl(stmt.declared(), substatements,
-            (SchemaNode) verifyNotNull(stmt.namespaceItem(RefineTargetNamespace.class, Empty.value()))
+            (SchemaNode) verifyNotNull(stmt.namespaceItem(RefineTargetNamespace.INSTANCE, Empty.value()))
                 .buildEffective());
     }
 }

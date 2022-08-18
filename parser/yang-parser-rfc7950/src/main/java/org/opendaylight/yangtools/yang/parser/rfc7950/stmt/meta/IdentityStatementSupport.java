@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -82,9 +82,9 @@ public final class IdentityStatementSupport
     public void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
         final QName qname = stmt.getArgument();
-        final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(IdentityNamespace.class, qname);
+        final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(ParserNamespaces.IDENTITY, qname);
         SourceException.throwIf(prev != null, stmt, "Duplicate identity definition %s", qname);
-        stmt.addToNs(IdentityNamespace.class, qname, stmt);
+        stmt.addToNs(ParserNamespaces.IDENTITY, qname, stmt);
     }
 
     @Override
@@ -111,7 +111,7 @@ public final class IdentityStatementSupport
             if (substatement instanceof BaseEffectiveStatement) {
                 final QName qname = ((BaseEffectiveStatement) substatement).argument();
                 final IdentityEffectiveStatement identity =
-                        verifyNotNull(stmt.getFromNamespace(IdentityNamespace.class, qname),
+                        verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IDENTITY, qname),
                             "Failed to find identity %s", qname)
                         .buildEffective();
                 verify(identity instanceof IdentitySchemaNode, "%s is not a IdentitySchemaNode", identity);

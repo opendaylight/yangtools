@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class FeatureStatementSupport
         extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
@@ -55,10 +55,10 @@ public final class FeatureStatementSupport
     @Override
     public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
-        stmt.addContext(FeatureNamespace.class, stmt.getArgument(), stmt);
+        stmt.addContext(ParserNamespaces.FEATURE, stmt.getArgument(), stmt);
 
         // Do not build effective statement if supported features does not include this feature
-        final var supportedFeatures = stmt.getFromNamespace(SupportedFeaturesNamespace.class, Empty.value());
+        final var supportedFeatures = stmt.getFromNamespace(SourceParserNamespaces.SUPPORTED_FEATURES, Empty.value());
         if (supportedFeatures != null && !supportedFeatures.contains(stmt.getArgument())) {
             stmt.setUnsupported();
         }

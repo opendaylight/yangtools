@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An {@link NamespaceBehaviour} which derives keys from a different namespace.
@@ -24,14 +25,14 @@ import java.util.Map;
 public abstract class DerivedNamespaceBehaviour<K, V, L, N extends ParserNamespace<K, V>,
        O extends ParserNamespace<L, ?>> extends NamespaceBehaviour<K, V, N> {
 
-    private final Class<O> derivedFrom;
+    private final @NonNull O derivedFrom;
 
-    protected DerivedNamespaceBehaviour(final Class<N> identifier, final Class<O> derivedFrom) {
+    protected DerivedNamespaceBehaviour(final N identifier, final O derivedFrom) {
         super(identifier);
         this.derivedFrom = requireNonNull(derivedFrom);
     }
 
-    public Class<O> getDerivedFrom() {
+    public final @NonNull O getDerivedFrom() {
         return derivedFrom;
     }
 
@@ -52,6 +53,6 @@ public abstract class DerivedNamespaceBehaviour<K, V, L, N extends ParserNamespa
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("derivedFrom", derivedFrom.getName());
+        return helper.add("derivedFrom", derivedFrom);
     }
 }

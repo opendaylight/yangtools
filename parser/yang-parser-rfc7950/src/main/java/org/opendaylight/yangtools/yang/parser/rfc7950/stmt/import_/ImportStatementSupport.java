@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -44,9 +44,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 @Beta
@@ -90,7 +89,7 @@ public final class ImportStatementSupport
         final Unqualified moduleName = stmt.getArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
-                PreLinkageModuleNamespace.class, moduleName, SOURCE_PRE_LINKAGE);
+            ParserNamespaces.PRELINKAGE_MODULE, moduleName, SOURCE_PRE_LINKAGE);
         final Prerequisite<Mutable<?, ?, ?>> rootPrereq = importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
@@ -98,8 +97,8 @@ public final class ImportStatementSupport
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
                 verify(moduleName.equals(importedModuleContext.getArgument()));
-                final XMLNamespace importedModuleNamespace = verifyNotNull(
-                    importedModuleContext.getFromNamespace(ModuleNameToNamespace.class, moduleName));
+                final XMLNamespace importedModuleNamespace = verifyNotNull(importedModuleContext.getFromNamespace(
+                    SourceParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName));
                 final String impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
                     "Missing prefix statement");
@@ -114,7 +113,7 @@ public final class ImportStatementSupport
                     }
                 }
 
-                stmt.addToNs(ImpPrefixToNamespace.class, impPrefix, importedModuleNamespace);
+                stmt.addToNs(SourceParserNamespaces.IMP_PREFIX_TO_NAMESPACE, impPrefix, importedModuleNamespace);
             }
 
             @Override
@@ -147,6 +146,6 @@ public final class ImportStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");
         return EffectiveStatements.createImport(stmt.declared(), substatements,
-            verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.class, Empty.value())));
+            verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.INSTANCE, Empty.value())));
     }
 }

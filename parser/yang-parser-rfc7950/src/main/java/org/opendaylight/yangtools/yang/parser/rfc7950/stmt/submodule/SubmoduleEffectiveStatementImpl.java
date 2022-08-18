@@ -40,9 +40,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 final class SubmoduleEffectiveStatementImpl
         extends AbstractEffectiveModule<SubmoduleStatement, SubmoduleEffectiveStatement>
@@ -59,7 +58,7 @@ final class SubmoduleEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements, findSubmodulePrefix(stmt, substatements));
 
-        final QNameModule belongsToModuleQName = stmt.getFromNamespace(ModuleNameToModuleQName.class,
+        final QNameModule belongsToModuleQName = stmt.getFromNamespace(SourceParserNamespaces.MODULE_NAME_TO_QNAME,
             findBelongsTo(stmt, substatements).argument());
 
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
@@ -82,7 +81,7 @@ final class SubmoduleEffectiveStatementImpl
          * sealing of this statement.
          */
         final Map<Unqualified, StmtContext<?, ?, ?>> includedSubmodulesMap = stmt.localNamespacePortion(
-            IncludedSubmoduleNameToModuleCtx.class);
+            SourceParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
         if (includedSubmodulesMap != null) {
             final Set<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContextsInit =
                 new HashSet<>();

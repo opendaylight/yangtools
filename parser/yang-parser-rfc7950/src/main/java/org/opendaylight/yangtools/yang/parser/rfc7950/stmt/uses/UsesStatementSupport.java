@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBund
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -59,10 +59,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,9 +100,9 @@ public final class UsesStatementSupport
         final QName groupingName = usesNode.argument();
 
         final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
-                GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
+            ParserNamespaces.GROUPING, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<? extends Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
-                usesNode.getParentContext());
+            usesNode.getParentContext());
 
         usesAction.apply(new InferenceAction() {
 
@@ -114,7 +114,7 @@ public final class UsesStatementSupport
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                 resolveUsesNode(usesNode, targetNodeStmtCtx);
                 StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
-                usesNode.addToNs(SourceGroupingNamespace.class, Empty.value(), sourceGrpStmtCtx);
+                usesNode.addToNs(SourceGroupingNamespace.INSTANCE, Empty.value(), sourceGrpStmtCtx);
             }
 
             @Override
@@ -141,7 +141,7 @@ public final class UsesStatementSupport
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final EffectiveStatement<?, ?> source =
-            verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.class, Empty.value())).buildEffective();
+            verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.INSTANCE, Empty.value())).buildEffective();
         verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
         final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
 
@@ -169,8 +169,7 @@ public final class UsesStatementSupport
         final Map<Descendant, SchemaNode> refines = new LinkedHashMap<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : substatements) {
-            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
-                final RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+            if (effectiveStatement instanceof RefineEffectiveStatementImpl refineStmt) {
                 refines.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
             }
         }
@@ -257,7 +256,7 @@ public final class UsesStatementSupport
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
         if (targetCtx.getParentContext() == null) {
-            return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
+            return targetCtx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
         }
         if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
             return StmtContextUtils.getRootModuleQName(targetCtx);
@@ -317,7 +316,7 @@ public final class UsesStatementSupport
         // Target is a prerequisite for the 'refine', hence if the target is not supported, the refine is not supported
         // as well. Otherwise add a pointer to the target into refine's local namespace.
         if (refineTargetNodeCtx.isSupportedToBuildEffective()) {
-            subStmtCtx.addToNs(RefineTargetNamespace.class, Empty.value(), refineTargetNodeCtx);
+            subStmtCtx.addToNs(RefineTargetNamespace.INSTANCE, Empty.value(), refineTargetNodeCtx);
         } else {
             subStmtCtx.setUnsupported();
         }
@@ -358,7 +357,7 @@ public final class UsesStatementSupport
 
     private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {
         final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.getFromNamespace(
-                ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
+                ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
                 || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())

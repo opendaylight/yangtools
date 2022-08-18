@@ -156,7 +156,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
-        @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
+        @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context, N namespace, K key);
 
     /**
      * Action requires that the specified context completes specified phase before {@link #apply(InferenceAction)}
@@ -170,14 +170,14 @@ public interface ModelActionBuilder {
         requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
     <K, N extends StatementNamespace<K, ?, ?>> @NonNull Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-        StmtContext<?, ?, ?> context, Class<@NonNull N> namespace, K key, ModelProcessingPhase phase);
+        StmtContext<?, ?, ?> context, @NonNull N namespace, K key, ModelProcessingPhase phase);
 
     <K, N extends StatementNamespace<K, ?, ?>> @NonNull Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-            StmtContext<?, ?, ?> context, Class<@NonNull N> namespace, NamespaceKeyCriterion<K> criterion,
+            StmtContext<?, ?, ?> context, @NonNull N namespace, NamespaceKeyCriterion<K> criterion,
             ModelProcessingPhase phase);
 
     <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
-        @NonNull Prerequisite<StmtContext<?, ?, E>> requiresCtxPath(StmtContext<?, ?, ?> context, Class<N> namespace,
+        @NonNull Prerequisite<StmtContext<?, ?, E>> requiresCtxPath(StmtContext<?, ?, ?> context, N namespace,
             Iterable<K> keys, ModelProcessingPhase phase);
 
     /**
@@ -192,12 +192,11 @@ public interface ModelActionBuilder {
     }
 
     <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
-        @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace,
-                K key);
+        @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, N namespace, K key);
 
     <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
         @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(StmtContext<?, ?, ?> context,
-                Class<N> namespace, Iterable<K> keys);
+                N namespace, Iterable<K> keys);
 
     /**
      * Action mutates the specified statement in the specified phase. Target statement cannot complete specified
@@ -227,7 +226,7 @@ public interface ModelActionBuilder {
     @Deprecated
     <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
         @NonNull Prerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(StmtContext<?, ?, ?> context,
-                Class<N> namespace, K key);
+                N namespace, K key);
 
     /**
      * Create a requirement on specified statement to become effective.
@@ -245,7 +244,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>>
-        @NonNull Prerequisite<E> requiresEffective(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
+        @NonNull Prerequisite<E> requiresEffective(StmtContext<?, ?, ?> context, N namespace, K key);
 
     /**
      * Create a requirement on specified statement context to become effective.
@@ -254,8 +253,8 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>>
-        @NonNull Prerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(StmtContext<?, ?, ?> context,
-                Class<N> namespace, K key);
+        @NonNull Prerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(StmtContext<?, ?, ?> context, N namespace,
+            K key);
 
     /**
      * Mark the fact that this action is mutating a namespace.
@@ -263,6 +262,5 @@ public interface ModelActionBuilder {
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
-    <N extends ParserNamespace<?, ?>> @NonNull Prerequisite<Mutable<?,?,?>> mutatesNs(Mutable<?,?, ?> ctx,
-            Class<N> namespace);
+    <N extends ParserNamespace<?, ?>> @NonNull Prerequisite<Mutable<?,?,?>> mutatesNs(Mutable<?,?, ?> ctx, N namespace);
 }

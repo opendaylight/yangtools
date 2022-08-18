@@ -59,7 +59,7 @@ public final class YangDataStatementSupport
         // Parse and populate our argument to be picked up when we build the effective statement
         final String argument = SourceException.throwIfNull(ctx.argument(), ctx, "yang-data requires an argument");
         final QName qname = StmtContextUtils.parseIdentifier(ctx, argument);
-        ctx.addToNs(YangDataArgumentNamespace.class, Empty.value(), qname);
+        ctx.addToNs(YangDataArgumentNamespace.INSTANCE, Empty.value(), qname);
 
         // Support for 'operations' container semantics. For this we need to recognize when the model at hand matches
         // RFC8040 ietf-restconf module. In ordered to do that we hook onto this particular definition:
@@ -120,6 +120,6 @@ public final class YangDataStatementSupport
         }
 
         return new YangDataEffectiveStatementImpl(stmt, substatements,
-            verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.class, Empty.value())));
+            verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.INSTANCE, Empty.value())));
     }
 }

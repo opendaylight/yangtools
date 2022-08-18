@@ -52,8 +52,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqualified>,
@@ -209,7 +209,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
             .map(imp -> imp.findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get())
             .forEach(pfx -> {
                 final StmtContext<?, ?, ?> importedCtx =
-                        verifyNotNull(stmt.getFromNamespace(ImportPrefixToModuleCtx.class, pfx),
+                        verifyNotNull(stmt.getFromNamespace(SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
                             "Failed to resolve prefix %s", pfx);
                 builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
             });

@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -60,7 +60,7 @@ abstract class AbstractIfFeatureStatementSupport
         final ModelActionBuilder verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final Map<Prerequisite<?>, QName> backRef = new HashMap<>();
         for (QName feature : stmt.getArgument().getReferencedFeatures()) {
-            backRef.put(verifyFeatures.requiresCtx(stmt, FeatureNamespace.class, feature,
+            backRef.put(verifyFeatures.requiresCtx(stmt, ParserNamespaces.FEATURE, feature,
                 ModelProcessingPhase.EFFECTIVE_MODEL), feature);
         }
 

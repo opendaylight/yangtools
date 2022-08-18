@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
+import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME;
+import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX;
+import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.MODULECTX_TO_QNAME;
+import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.MODULE_NAME_TO_QNAME;
+
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
@@ -19,10 +24,6 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 
 /**
  * A {@link NamespaceContext} implementation based on the set of imports and local module namespace.
@@ -36,20 +37,19 @@ final class StmtNamespaceContext implements YangNamespaceContext {
 
     StmtNamespaceContext(final StmtContext<?, ?, ?> ctx) {
         // QNameModule -> prefix mappings
-        final Map<QNameModule, String> qnameToPrefix = ctx.getAllFromNamespace(ModuleQNameToPrefix.class);
+        final Map<QNameModule, String> qnameToPrefix = ctx.getAllFromNamespace(ModuleQNameToPrefix.INSTANCE);
         moduleToPrefix = qnameToPrefix == null ? ImmutableBiMap.of() : ImmutableBiMap.copyOf(qnameToPrefix);
 
         // Additional mappings
         final Map<String, QNameModule> additional = new HashMap<>();
-        final Map<String, StmtContext<?, ?, ?>> imports = ctx.getAllFromNamespace(ImportPrefixToModuleCtx.class);
+        final Map<String, StmtContext<?, ?, ?>> imports = ctx.getAllFromNamespace(IMPORT_PREFIX_TO_MODULECTX);
         if (imports != null) {
             for (Entry<String, StmtContext<?, ?, ?>> entry : imports.entrySet()) {
                 if (!moduleToPrefix.containsValue(entry.getKey())) {
-                    QNameModule qnameModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, entry.getValue());
+                    QNameModule qnameModule = ctx.getFromNamespace(MODULECTX_TO_QNAME, entry.getValue());
                     if (qnameModule == null && ctx.producesDeclared(SubmoduleStatement.class)) {
-                        final Unqualified moduleName = ctx.getFromNamespace(BelongsToPrefixToModuleName.class,
-                            entry.getKey());
-                        qnameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
+                        qnameModule = ctx.getFromNamespace(MODULE_NAME_TO_QNAME,
+                            ctx.getFromNamespace(BELONGSTO_PREFIX_TO_MODULE_NAME, entry.getKey()));
                     }
 
                     if (qnameModule != null) {
@@ -59,10 +59,10 @@ final class StmtNamespaceContext implements YangNamespaceContext {
             }
         }
         if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final Map<String, Unqualified> belongsTo = ctx.getAllFromNamespace(BelongsToPrefixToModuleName.class);
+            final Map<String, Unqualified> belongsTo = ctx.getAllFromNamespace(BELONGSTO_PREFIX_TO_MODULE_NAME);
             if (belongsTo != null) {
                 for (Entry<String, Unqualified> entry : belongsTo.entrySet()) {
-                    final QNameModule module = ctx.getFromNamespace(ModuleNameToModuleQName.class, entry.getValue());
+                    final QNameModule module = ctx.getFromNamespace(MODULE_NAME_TO_QNAME, entry.getValue());
                     if (module != null && !additional.containsKey(entry.getKey())) {
                         additional.put(entry.getKey(), module);
                     }
