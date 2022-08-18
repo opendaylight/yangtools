@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 /**
  * ThirdPartyNamespace.
  */
-public final class ThirdPartyNamespace extends ParserNamespace<Empty, String> {
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(ThirdPartyNamespace.class);
+public final class ThirdPartyNamespace {
+    public static final @NonNull ParserNamespace<Empty, String> INSTANCE = new ParserNamespace<>();
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private ThirdPartyNamespace() {
         // Hidden on purpose

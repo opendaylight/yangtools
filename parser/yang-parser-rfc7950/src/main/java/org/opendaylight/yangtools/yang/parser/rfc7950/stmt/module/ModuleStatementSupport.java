@@ -39,9 +39,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
-import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -50,16 +48,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
@@ -167,7 +155,7 @@ public final class ModuleStatementSupport
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
-                stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
+                stmt.getFromNamespace(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
             throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.getNamespace(),
                 possibleDuplicateModule.sourceReference());
@@ -176,9 +164,9 @@ public final class ModuleStatementSupport
         final Unqualified moduleName = stmt.getArgument();
         final SourceIdentifier moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
 
-        stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
+        stmt.addContext(ParserNamespaces.MODULE, moduleIdentifier, stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleName, stmt);
-        stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
+        stmt.addContext(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
 
         final String modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,

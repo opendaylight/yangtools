@@ -34,11 +34,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 // At the end of the day this feels like an under-utilized namespace: provided the contents of ExtensionNamespace and
 // StatementSupportBundles, SourceSpecificSpecificContext should be able to work its magic even without this namespace.
 @Beta
-public final class StatementDefinitionNamespace extends ParserNamespace<QName, StatementSupport<?, ?, ?>> {
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.global(StatementDefinitionNamespace.class);
+public final class StatementDefinitions {
 
-    private StatementDefinitionNamespace() {
+    public static final @NonNull ParserNamespace<QName, StatementSupport<?, ?, ?>> NAMESPACE =
+        new ParserNamespace<>("statementDefinitions");
+
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
+
+    private StatementDefinitions() {
         // Hidden on purpose
     }
 }

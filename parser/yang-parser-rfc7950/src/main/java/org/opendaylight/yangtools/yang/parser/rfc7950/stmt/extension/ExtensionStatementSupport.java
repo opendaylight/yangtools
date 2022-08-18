@@ -23,11 +23,11 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -60,14 +60,14 @@ public final class ExtensionStatementSupport
             final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
         super.onStatementDefinitionDeclared(stmt);
 
-        stmt.addContext(ExtensionNamespace.class, stmt.getArgument(), stmt);
+        stmt.addContext(ParserNamespaces.EXTENSION, stmt.getArgument(), stmt);
 
         final StmtContext<QName, ?, ?> argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
             ArgumentStatement.class);
         final StmtContext<Boolean, ?, ?> yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
             YinElementStatement.class);
 
-        stmt.addToNs(StatementDefinitionNamespace.class, stmt.argument(),
+        stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.argument(),
             new UnrecognizedStatementSupport(new ModelDefinedStatementDefinition(stmt.getArgument(),
                 argument != null ? argument.argument() : null, yinElement != null && yinElement.getArgument()),
                 config));

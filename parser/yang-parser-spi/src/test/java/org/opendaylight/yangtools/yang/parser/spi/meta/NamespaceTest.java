@@ -16,6 +16,6 @@ public class NamespaceTest {
     public void testNamespaces() {
         // Touch behaviors
         // FIXME: add more checks/split this up when behaviours are testable
-        assertNotNull(StatementDefinitionNamespace.BEHAVIOUR);
+        assertNotNull(StatementDefinitions.BEHAVIOUR);
     }
 }

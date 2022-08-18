@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -19,6 +20,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  */
 @Beta
 public final class ImportedVersionNamespace extends ParserNamespace<Empty, SourceIdentifier> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(ImportedVersionNamespace.class);
 

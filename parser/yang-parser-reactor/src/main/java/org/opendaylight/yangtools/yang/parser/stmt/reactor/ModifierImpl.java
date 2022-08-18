@@ -89,7 +89,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private <K, C extends StmtContext<?, ?, ?>, N extends StatementNamespace<K, ?, ?>> @NonNull AbstractPrerequisite<C>
-            requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,
+            requiresCtxImpl(final StmtContext<?, ?, ?> context, final N namespace, final K key,
                     final ModelProcessingPhase phase)  {
         checkNotRegistered();
 
@@ -100,7 +100,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private <K, C extends StmtContext<?, ?, ?>, N extends StatementNamespace<K, ?, ?>> @NonNull AbstractPrerequisite<C>
-            requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace,
+            requiresCtxImpl(final StmtContext<?, ?, ?> context, final N namespace,
                     final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase)  {
         checkNotRegistered();
 
@@ -121,15 +121,15 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private <K, C extends Mutable<?, ?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
-            AbstractPrerequisite<C> mutatesCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace,
-                    final K key, final ModelProcessingPhase phase) {
+    private <K, C extends Mutable<?, ?, ?>> AbstractPrerequisite<C> mutatesCtxImpl(final StmtContext<?, ?, ?> context,
+            final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace, final K key,
+            final ModelProcessingPhase phase) {
         checkNotRegistered();
 
         final PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(EFFECTIVE_MODEL);
         addReq(mod);
         addMutation(mod);
-        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, mod);
+        contextImpl(context).onNamespaceItemAddedAction((ParserNamespace) namespace, key, mod);
         return mod;
     }
 
@@ -167,22 +167,21 @@ final class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-            final StmtContext<?, ?, ?> context, final Class<@NonNull N> namespace, final K key,
-            final ModelProcessingPhase phase) {
+            final StmtContext<?, ?, ?> context, final N namespace, final K key, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, key, phase);
     }
 
     @Override
     public <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
-            final StmtContext<?, ?, ?> context, final Class<@NonNull N> namespace,
-            final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase) {
+            final StmtContext<?, ?, ?> context, final N namespace, final NamespaceKeyCriterion<K> criterion,
+            final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, criterion, phase);
     }
 
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
             Prerequisite<StmtContext<?, ?, E>> requiresCtxPath(final StmtContext<?, ?, ?> context,
-                final Class<N> namespace, final Iterable<K> keys, final ModelProcessingPhase phase) {
+                final N namespace, final Iterable<K> keys, final ModelProcessingPhase phase) {
         checkNotRegistered();
 
         final var ret = new PhaseRequirementInNamespacePath<StmtContext<?, ?, E>, K, N>(EFFECTIVE_MODEL, keys);
@@ -200,7 +199,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     @Deprecated
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D>
-            requiresDeclared(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
+            requiresDeclared(final StmtContext<?, ?, ?> context, final N namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, D, ?>> rawContext = requiresCtxImpl(context, namespace, key,
             FULL_DECLARATION);
         return rawContext.transform(StmtContext::declared);
@@ -210,7 +209,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Deprecated
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
             AbstractPrerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(final StmtContext<?, ?, ?> context,
-                    final Class<N> namespace, final K key) {
+                    final N namespace, final K key) {
         return requiresCtxImpl(context, namespace, key, FULL_DECLARATION);
     }
 
@@ -224,7 +223,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     @Deprecated
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E>
-            requiresEffective(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
+            requiresEffective(final StmtContext<?, ?, ?> context, final N namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, ?, E>> rawContext = requiresCtxImpl(context, namespace, key,
             EFFECTIVE_MODEL);
         return rawContext.transform(StmtContext::buildEffective);
@@ -234,28 +233,28 @@ final class ModifierImpl implements ModelActionBuilder {
     @Deprecated
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>>
             AbstractPrerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(final StmtContext<?, ?, ?> context,
-                    final Class<N> namespace, final K key) {
+                    final N namespace, final K key) {
         return requiresCtxImpl(contextImpl(context), namespace, key, EFFECTIVE_MODEL);
     }
 
     @Override
     @Deprecated
     public <N extends ParserNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> context,
-            final Class<N> namespace) {
+            final N namespace) {
         return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
     }
 
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(final StmtContext<?, ?, ?> context,
-                    final Class<N> namespace, final K key) {
+                    final N namespace, final K key) {
         return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
     }
 
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
-                    final Class<N> namespace, final Iterable<K> keys) {
+                    final N namespace, final Iterable<K> keys) {
         checkNotRegistered();
 
         final var ret = new PhaseModificationInNamespacePath<Mutable<?, ?, E>, K, N>(EFFECTIVE_MODEL, keys);
@@ -334,8 +333,8 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         @Override
-        public final void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
-            final Object key, final Object value) {
+        public final void namespaceItemAdded(final StatementContextBase<?, ?, ?> context,
+                final ParserNamespace<?, ?> namespace, final Object key, final Object value) {
             LOG.debug("Action for {} got key {}", keys, key);
 
             final StatementContextBase<?, ?, ?> target = contextImpl(value);
@@ -368,14 +367,15 @@ final class ModifierImpl implements ModelActionBuilder {
             return super.addToStringAttributes(toStringHelper).add("phase", modPhase).add("keys", keys);
         }
 
-        final void hookOnto(final StmtContext<?, ?, ?> context, final Class<?> namespace) {
+        final void hookOnto(final StmtContext<?, ?, ?> context, final ParserNamespace<?, ?> namespace) {
             checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
             hookOnto(contextImpl(context), namespace, it.next());
         }
 
         @SuppressWarnings("unchecked")
-        private void hookOnto(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final K key) {
-            context.onNamespaceItemAddedAction((Class) namespace, requireNonNull(key), this);
+        private void hookOnto(final StatementContextBase<?, ?, ?> context, final ParserNamespace<?, ?> namespace,
+                final K key) {
+            context.onNamespaceItemAddedAction((ParserNamespace) namespace, requireNonNull(key), this);
         }
     }
 
@@ -404,7 +404,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private final class NamespaceMutation<N extends ParserNamespace<?, ?>>
             extends AbstractPrerequisite<Mutable<?, ?, ?>>  {
-        NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
+        NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final N namespace) {
             resolvePrereq(ctx);
         }
     }
@@ -418,8 +418,8 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         @Override
-        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
-                final Object key, final Object value) {
+        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context,
+                final ParserNamespace<?, ?> namespace, final Object key, final Object value) {
             ((StatementContextBase<?, ?, ?>) value).addPhaseCompletedListener(phase, this);
         }
 
@@ -460,8 +460,8 @@ final class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
-                final Object key, final Object value) {
+        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context,
+                final ParserNamespace<?, ?> namespace, final Object key, final Object value) {
             StatementContextBase<?, ?, ?> targetCtx = contextImpl(value);
             targetCtx.addMutation(modPhase, this);
             resolvePrereq((C) targetCtx);
