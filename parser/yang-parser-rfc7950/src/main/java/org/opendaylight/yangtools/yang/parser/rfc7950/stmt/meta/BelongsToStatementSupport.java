@@ -36,8 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class BelongsToStatementSupport
         extends AbstractUnqualifiedStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
@@ -59,12 +58,13 @@ public final class BelongsToStatementSupport
         ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
         final Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
-            ModuleNamespaceForBelongsTo.class, belongsToCtx.getArgument(), ModelProcessingPhase.SOURCE_LINKAGE);
+            SourceParserNamespaces.MODULE_FOR_BELONGSTO, belongsToCtx.getArgument(),
+            ModelProcessingPhase.SOURCE_LINKAGE);
 
         belongsToAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                belongsToCtx.addToNs(BelongsToPrefixToModuleCtx.class,
+                belongsToCtx.addToNs(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX,
                     findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getArgument(),
                     belongsToPrereq.resolve(ctx));
             }

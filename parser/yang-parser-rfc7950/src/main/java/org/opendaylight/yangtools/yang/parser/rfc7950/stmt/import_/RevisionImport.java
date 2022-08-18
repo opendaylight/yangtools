@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
-import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -31,10 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 final class RevisionImport {
     private RevisionImport() {
@@ -47,11 +44,11 @@ final class RevisionImport {
         final Unqualified moduleName = stmt.getArgument();
         final Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
         if (revision == null) {
-            imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
+            imported = importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
                 NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);
         } else {
-            imported = importAction.requiresCtx(stmt, ModuleNamespace.class, new SourceIdentifier(moduleName, revision),
-                SOURCE_LINKAGE);
+            imported = importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
+                new SourceIdentifier(moduleName, revision), SOURCE_LINKAGE);
         }
 
         final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
@@ -61,18 +58,19 @@ final class RevisionImport {
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
-                final SourceIdentifier importedModuleIdentifier =
-                    stmt.getFromNamespace(ModuleCtxToSourceIdentifier.class, importedModule);
-                stmt.addToNs(ImportedVersionNamespace.class, Empty.value(), importedModuleIdentifier);
+                final SourceIdentifier importedModuleIdentifier = stmt.getFromNamespace(
+                    SourceParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
+                stmt.addToNs(ImportedVersionNamespace.INSTANCE, Empty.value(), importedModuleIdentifier);
 
-                final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
-                    ModuleCtxToModuleQName.class, importedModule), stmt, "Failed to find module of %s", importedModule);
+                final QNameModule mod = InferenceException.throwIfNull(
+                    stmt.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, importedModule), stmt,
+                    "Failed to find module of %s", importedModule);
 
-                linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class,
-                    importedModuleIdentifier, importedModule);
+                linkageTarget.resolve(ctx).addToNs(SourceParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,
+                    importedModule);
                 final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
-                stmt.addToNs(ModuleQNameToPrefix.class, mod, impPrefix);
+                stmt.addToNs(SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
+                stmt.addToNs(ModuleQNameToPrefix.INSTANCE, mod, impPrefix);
             }
 
             @Override

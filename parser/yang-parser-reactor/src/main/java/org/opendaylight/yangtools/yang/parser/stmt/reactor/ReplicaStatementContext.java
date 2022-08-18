@@ -156,7 +156,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(final Class<@NonNull N> type,
+    public <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(final @NonNull N type,
             final T key, final U value) {
         throw new UnsupportedOperationException();
     }
@@ -169,7 +169,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<@NonNull N> namespace,
+    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final @NonNull N namespace,
             final KT key, final StmtContext<?, ?, ?> stmt) {
         throw new UnsupportedOperationException();
     }

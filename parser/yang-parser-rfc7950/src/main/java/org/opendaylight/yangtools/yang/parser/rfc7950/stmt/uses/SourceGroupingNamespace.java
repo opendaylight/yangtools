@@ -15,9 +15,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public final class SourceGroupingNamespace extends ParserNamespace<Empty, StmtContext<?, ?, ?>> {
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(SourceGroupingNamespace.class);
+public final class SourceGroupingNamespace {
+    public static final @NonNull ParserNamespace<Empty, StmtContext<?, ?, ?>> INSTANCE =
+        new ParserNamespace<>("sourceGrouping");
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private SourceGroupingNamespace() {
         // Hidden on purpose

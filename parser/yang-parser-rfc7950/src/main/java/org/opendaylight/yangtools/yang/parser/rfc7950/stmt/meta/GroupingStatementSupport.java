@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
-import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -106,7 +106,7 @@ public final class GroupingStatementSupport
             // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
             // declarations and parent declarations which have already been declared.
             checkConflict(parent, stmt);
-            parent.addContext(GroupingNamespace.class, stmt.getArgument(), stmt);
+            parent.addContext(ParserNamespaces.GROUPING, stmt.getArgument(), stmt);
 
             final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
             if (grandParent != null) {
@@ -155,7 +155,7 @@ public final class GroupingStatementSupport
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
         final QName arg = stmt.getArgument();
-        final StmtContext<?, ?, ?> existing = parent.getFromNamespace(GroupingNamespace.class, arg);
+        final StmtContext<?, ?, ?> existing = parent.getFromNamespace(ParserNamespaces.GROUPING, arg);
         SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
     }
 }

@@ -7,13 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import java.io.Serial;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public abstract class StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+// FIXME: is this subclass useful at all?
+public class StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
         extends ParserNamespace<K, StmtContext<?, D, E>> {
-    public abstract static class TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
-            extends StatementNamespace<K, D, E> {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
+    public StatementNamespace(final @NonNull String name) {
+        super(name);
+    }
+
+    // FIXME: is this subclass useful at all?
+    public static class TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+            extends StatementNamespace<K, D, E> {
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        public TreeScoped(final @NonNull String name) {
+            super(name);
+        }
     }
 }

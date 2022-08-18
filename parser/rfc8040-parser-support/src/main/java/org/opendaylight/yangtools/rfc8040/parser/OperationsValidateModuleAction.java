@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 /**
  * An {@link InferenceAction} tasked with identifying when we are dealing with {@link YangDataConstants#RFC8040_SOURCE}.
@@ -54,7 +54,8 @@ final class OperationsValidateModuleAction implements InferenceAction {
         final Mutable<?, ?, ?> moduleCtx = prereq.resolve(ctx);
 
         // Check namespace and revision first
-        final QNameModule moduleQName = moduleCtx.getFromNamespace(ModuleCtxToModuleQName.class, moduleCtx);
+        final QNameModule moduleQName =
+            moduleCtx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, moduleCtx);
         if (!YangDataConstants.RFC8040_MODULE.equals(moduleQName)) {
             return;
         }

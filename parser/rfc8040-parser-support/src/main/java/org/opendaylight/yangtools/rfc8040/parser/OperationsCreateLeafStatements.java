@@ -26,13 +26,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
-import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
@@ -57,7 +56,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
 
         final var prereqs = new ArrayList<Prerequisite<? extends StmtContext<?, ?, ?>>>();
         // FIXME: this not accurate: we need all sources, not just modules
-        for (var module : ietfRestconfModule.getAllFromNamespace(ModuleNamespace.class).values()) {
+        for (var module : ietfRestconfModule.getAllFromNamespace(ParserNamespaces.MODULE).values()) {
             if (!ietfRestconfModule.equals(module)) {
                 prereqs.add(action.requiresCtx((StmtContext<?, ?, ?>)module, ModelProcessingPhase.EFFECTIVE_MODEL));
             }
@@ -99,7 +98,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
             StatementSupport<X, Y, Z> getSupport(final StatementDefinition def, final Class<Z> effectiveClass) {
-        final var tmp = verifyNotNull(operations.getFromNamespace(StatementSupportNamespace.class,
+        final var tmp = verifyNotNull(operations.getFromNamespace(StatementSupport.NAMESPACE,
             def.getStatementName()));
         final var repr = tmp.definition().getEffectiveRepresentationClass();
         verify(effectiveClass.equals(repr), "Unexpected support %s representation %s", tmp, repr);

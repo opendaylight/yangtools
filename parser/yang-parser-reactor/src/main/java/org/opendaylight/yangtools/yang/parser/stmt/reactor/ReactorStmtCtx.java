@@ -48,7 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -321,24 +321,23 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     //
 
     @Override
-    public final <K, V, T extends K, N extends ParserNamespace<K, V>> V namespaceItem(final Class<@NonNull N> type,
+    public final <K, V, T extends K, N extends ParserNamespace<K, V>> V namespaceItem(final @NonNull N type,
             final T key) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
     }
 
     @Override
-    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> namespace(final Class<@NonNull N> type) {
+    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> namespace(final @NonNull N type) {
         return getNamespace(type);
     }
 
     @Override
-    public final <K, V, N extends ParserNamespace<K, V>>
-            Map<K, V> localNamespacePortion(final Class<@NonNull N> type) {
+    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> localNamespacePortion(final @NonNull N type) {
         return getLocalNamespace(type);
     }
 
     @Override
-    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
+    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final N type, final K key,
             final V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
@@ -495,7 +494,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
          */
         if (isParentSupportedByFeatures()) {
             // If the set of supported features has not been provided, all features are supported by default.
-            final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class, Empty.value());
+            final Set<QName> supportedFeatures = getFromNamespace(SourceParserNamespaces.SUPPORTED_FEATURES,
+                Empty.value());
             if (supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures)) {
                 flags |= SET_SUPPORTED_BY_FEATURES;
                 return true;

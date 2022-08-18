@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Support work with namespace content.
  */
+// FIXME: ditch <N> parameters
 @Beta
 public interface NamespaceStmtCtx extends CommonStmtCtx {
     /**
@@ -26,7 +27,7 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @param nsType namespace type class
      * @return Namespace contents, if available
      */
-    <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> namespace(Class<@NonNull N> nsType);
+    <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> namespace(@NonNull N nsType);
 
     /**
      * Return a value associated with specified key within a namespace.
@@ -40,11 +41,11 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    <K, V, T extends K, N extends ParserNamespace<K, V>> @Nullable V namespaceItem(Class<@NonNull N> nsType, T key);
+    <K, V, T extends K, N extends ParserNamespace<K, V>> @Nullable V namespaceItem(@NonNull N nsType, T key);
 
     /**
      * Return the portion of specified namespace stored in this node. Depending on namespace behaviour this may or may
-     * not represent the complete contents of the namespace as available via {@link #namespace(Class)}.
+     * not represent the complete contents of the namespace as available via {@link #namespace(ParserNamespace)}.
      *
      * <p>
      * This partial view is useful when the need is not to perform a proper namespace lookup, but rather act on current
@@ -56,7 +57,7 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @param nsType namespace type class
      * @return Namespace portion stored in this node, if available
      */
-    <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> localNamespacePortion(Class<@NonNull N> nsType);
+    <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> localNamespacePortion(@NonNull N nsType);
 
     /**
      * Return the selected namespace.
@@ -68,7 +69,7 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @return Namespace contents, if available
      */
     // TODO: migrate users away
-    default <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromNamespace(final Class<N> nsType) {
+    default <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromNamespace(final @NonNull N nsType) {
         return namespace(nsType);
     }
 
@@ -85,8 +86,8 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
     // TODO: migrate users away
-    default <K, V, T extends K, N extends ParserNamespace<K, V>>
-            @Nullable V getFromNamespace(final Class<@NonNull N> type, final T key) {
+    default <K, V, T extends K, N extends ParserNamespace<K, V>> @Nullable V getFromNamespace(
+            final @NonNull N type, final T key) {
         return namespaceItem(type, key);
     }
 }

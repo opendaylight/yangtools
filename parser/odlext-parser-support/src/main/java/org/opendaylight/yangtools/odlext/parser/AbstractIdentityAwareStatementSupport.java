@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -47,7 +47,7 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
     @Override
     public void onStatementDefinitionDeclared(final Mutable<QName, D, E> stmt) {
         final ModelActionBuilder action = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        action.requiresCtx(stmt, IdentityNamespace.class, stmt.getArgument(), ModelProcessingPhase.EFFECTIVE_MODEL);
+        action.requiresCtx(stmt, ParserNamespaces.IDENTITY, stmt.getArgument(), ModelProcessingPhase.EFFECTIVE_MODEL);
 
         action.apply(new InferenceAction() {
             @Override
@@ -67,7 +67,7 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final QName qname = stmt.getArgument();
         final StmtContext<?, ?, IdentityEffectiveStatement> identityCtx =
-            verifyNotNull(stmt.getFromNamespace(IdentityNamespace.class, qname), "Failed to find identity %s", qname);
+            verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IDENTITY, qname), "Failed to find identity %s", qname);
         return createEffective(stmt.declared(), identityCtx.buildEffective(), substatements);
     }
 

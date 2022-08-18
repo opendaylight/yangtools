@@ -35,8 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +77,7 @@ final class AugmentInferenceAction implements InferenceAction {
         // We are targeting a context which is creating implicit nodes. In order to keep things consistent,
         // we will need to circle back when creating effective statements.
         if (augmentTargetCtx.hasImplicitParentSupport()) {
-            augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, Empty.value(), augmentTargetCtx);
+            augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), augmentTargetCtx);
         }
 
         copyFromSourceToTarget(augmentNode, augmentTargetCtx);
@@ -208,11 +208,9 @@ final class AugmentInferenceAction implements InferenceAction {
          * statement, therefore return false and skip mandatory nodes validation
          */
         final Object arg = sourceCtx.argument();
-        if (!(arg instanceof QName)) {
+        if (!(arg instanceof QName sourceStmtQName)) {
             return false;
         }
-        final QName sourceStmtQName = (QName) arg;
-
         // RootStatementContext, for example
         final Mutable<?, ?, ?> root = targetCtx.getRoot();
         do {
@@ -282,7 +280,7 @@ final class AugmentInferenceAction implements InferenceAction {
          * ignored as disallowed augment target.
          */
         final Collection<?> allowedAugmentTargets = substatementCtx.getFromNamespace(
-            ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
+            ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
 
         // if no allowed target is returned we consider all targets allowed
         return allowedAugmentTargets == null || allowedAugmentTargets.isEmpty()
