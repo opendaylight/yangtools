@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 public final class YangNamespaceContextNamespace {
     public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> INSTANCE =
         new ParserNamespace<>("yangNamespaceContext");
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(INSTANCE);
 
     private YangNamespaceContextNamespace() {
         // Hidden on purpose

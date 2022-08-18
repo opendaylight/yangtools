@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 public final class ConfigListWarningNamespace {
     public static final @NonNull ParserNamespace<StatementSourceReference, Boolean> INSTANCE =
         new ParserNamespace<>("configListWarning");
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(INSTANCE);
 
     private ConfigListWarningNamespace() {
         // Hidden on purpose

@@ -12,16 +12,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-final class SimpleNamespaceContext<K, V, N extends ParserNamespace<K, V>>
-        extends NamespaceBehaviourWithListeners<K, V, N> {
+final class SimpleNamespaceContext<K, V> extends NamespaceBehaviourWithListeners<K, V> {
     // FIXME: Change this to Multimap, once issue with modules is resolved.
     private List<KeyedValueAddedListener<K>> listeners;
 
     private Collection<PredicateValueAddedListener<K, V>> predicateListeners;
 
-    SimpleNamespaceContext(final NamespaceBehaviour<K, V, N> delegate) {
+    SimpleNamespaceContext(final NamespaceBehaviour<K, V> delegate) {
         super(delegate);
     }
 

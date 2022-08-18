@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 @Beta
 public final class QNameModuleNamespace {
     public static final @NonNull ParserNamespace<Empty, QNameModule> INSTANCE = new ParserNamespace<>("QNameModule");
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private QNameModuleNamespace() {
         // Hidden on purpose

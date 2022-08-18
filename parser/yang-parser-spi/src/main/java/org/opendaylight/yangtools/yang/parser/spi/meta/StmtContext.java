@@ -189,12 +189,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @param value value
          * @param <K> namespace key type
          * @param <V> namespace value type
-         * @param <N> namespace type
          * @param <T> key type
          * @param <U> value type
          * @throws NamespaceNotAvailableException when the namespace is not available.
          */
-        <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(@NonNull N type, T key, U value);
+        <K, V, T extends K, U extends V> void addToNs(@NonNull ParserNamespace<K, V> type, T key, U value);
 
         @Override
         RootStmtContext.Mutable<?, ?, ?> getRoot();
@@ -265,7 +264,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @param stmt
          *            to be added to namespace map
          */
-        <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(@NonNull N namespace, KT key,
+        <K, KT extends K> void addContext(@NonNull StatementNamespace<K, ?, ?> namespace, KT key,
                 StmtContext<?, ?, ?> stmt);
 
         /**
