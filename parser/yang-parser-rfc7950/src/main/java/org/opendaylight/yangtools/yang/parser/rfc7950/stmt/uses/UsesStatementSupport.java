@@ -60,7 +60,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.slf4j.Logger;
@@ -256,7 +255,7 @@ public final class UsesStatementSupport
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
         if (targetCtx.getParentContext() == null) {
-            return targetCtx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
+            return targetCtx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
         }
         if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
             return StmtContextUtils.getRootModuleQName(targetCtx);

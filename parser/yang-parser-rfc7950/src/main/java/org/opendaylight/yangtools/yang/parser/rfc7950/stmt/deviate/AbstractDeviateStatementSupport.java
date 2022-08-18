@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -48,7 +49,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,12 +233,12 @@ abstract class AbstractDeviateStatementSupport
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
         final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
-                SourceParserNamespaces.MODULES_DEVIATED_BY, Empty.value());
+                ParserNamespaces.MODULES_DEVIATED_BY, Empty.value());
         if (modulesDeviatedByModules == null) {
             return true;
         }
 
-        final QNameModule currentModule = deviateStmtCtx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME,
+        final QNameModule currentModule = deviateStmtCtx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME,
                 deviateStmtCtx.getRoot());
         final QNameModule targetModule = Iterables.getLast(deviationTarget.getNodeIdentifiers()).getModule();
 

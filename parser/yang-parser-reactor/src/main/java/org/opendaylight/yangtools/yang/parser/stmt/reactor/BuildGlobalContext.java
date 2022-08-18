@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -56,7 +57,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
@@ -113,12 +113,11 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     void setSupportedFeatures(final Set<QName> supportedFeatures) {
-        addToNamespace(SourceParserNamespaces.SUPPORTED_FEATURES, Empty.value(),
-            ImmutableSet.copyOf(supportedFeatures));
+        addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), ImmutableSet.copyOf(supportedFeatures));
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
-        addToNamespace(SourceParserNamespaces.MODULES_DEVIATED_BY, Empty.value(),
+        addToNamespace(ParserNamespaces.MODULES_DEVIATED_BY, Empty.value(),
             ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
     }
 
@@ -235,7 +234,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     private static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
-        final QNameModule qNameModule = root.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, root);
+        final QNameModule qNameModule = root.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, root);
         final Object arg = root.getArgument();
         verify(arg instanceof Unqualified, "Unexpected argument %s", arg);
 

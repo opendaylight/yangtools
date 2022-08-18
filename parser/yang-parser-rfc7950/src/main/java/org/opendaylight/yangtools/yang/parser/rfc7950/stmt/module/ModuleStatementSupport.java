@@ -49,7 +49,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 @Beta
 public final class ModuleStatementSupport
@@ -131,19 +130,19 @@ public final class ModuleStatementSupport
         final XMLNamespace moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", moduleName);
-        stmt.addToNs(SourceParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName, moduleNs);
+        stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName, moduleNs);
 
         final String modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", moduleName);
-        stmt.addToNs(SourceParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
+        stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
 
         stmt.addContext(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
 
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
 
-        stmt.addToNs(SourceParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
+        stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
         stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
     }
 
@@ -166,7 +165,7 @@ public final class ModuleStatementSupport
         final SourceIdentifier moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
 
         stmt.addContext(ParserNamespaces.MODULE, moduleIdentifier, stmt);
-        stmt.addContext(SourceParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
+        stmt.addContext(ParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
         stmt.addContext(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
 
         final String modulePrefix = SourceException.throwIfNull(
@@ -174,12 +173,12 @@ public final class ModuleStatementSupport
             "Prefix of the module [%s] is missing", stmt.argument());
 
         stmt.addToNs(QNameModuleNamespace.INSTANCE, Empty.value(), qNameModule);
-        stmt.addToNs(SourceParserNamespaces.PREFIX_TO_MODULE, modulePrefix, qNameModule);
-        stmt.addToNs(SourceParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
-        stmt.addToNs(SourceParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
-        stmt.addToNs(SourceParserNamespaces.MODULECTX_TO_SOURCE, stmt, moduleIdentifier);
-        stmt.addToNs(SourceParserNamespaces.MODULE_NAMESPACE_TO_NAME, qNameModule, moduleName);
-        stmt.addToNs(SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, modulePrefix, stmt);
+        stmt.addToNs(ParserNamespaces.PREFIX_TO_MODULE, modulePrefix, qNameModule);
+        stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
+        stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
+        stmt.addToNs(ParserNamespaces.MODULECTX_TO_SOURCE, stmt, moduleIdentifier);
+        stmt.addToNs(ParserNamespaces.MODULE_NAMESPACE_TO_NAME, qNameModule, moduleName);
+        stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, modulePrefix, stmt);
     }
 
     @Override
@@ -248,7 +247,7 @@ public final class ModuleStatementSupport
 
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
         final Map<Unqualified, StmtContext<?, ?, ?>> submodules = stmt.localNamespacePortion(
-            SourceParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
+            ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
         return submodules == null ? List.of() : submodules.values();
     }
 

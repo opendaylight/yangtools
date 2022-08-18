@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +121,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        if (SourceParserNamespaces.INCLUDED_MODULE.equals(type)) {
+        if (ParserNamespaces.INCLUDED_MODULE.equals(type)) {
             if (includedContexts.isEmpty()) {
                 includedContexts = new ArrayList<>(1);
             }

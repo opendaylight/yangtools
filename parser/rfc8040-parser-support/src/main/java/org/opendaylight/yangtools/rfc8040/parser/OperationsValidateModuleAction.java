@@ -17,12 +17,12 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 /**
  * An {@link InferenceAction} tasked with identifying when we are dealing with {@link YangDataConstants#RFC8040_SOURCE}.
@@ -55,7 +55,7 @@ final class OperationsValidateModuleAction implements InferenceAction {
 
         // Check namespace and revision first
         final QNameModule moduleQName =
-            moduleCtx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, moduleCtx);
+            moduleCtx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, moduleCtx);
         if (!YangDataConstants.RFC8040_MODULE.equals(moduleQName)) {
             return;
         }

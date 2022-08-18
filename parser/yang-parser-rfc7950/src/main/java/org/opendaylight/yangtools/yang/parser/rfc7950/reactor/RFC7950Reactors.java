@@ -104,7 +104,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceNamespaceBehaviours;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -121,8 +120,8 @@ public final class RFC7950Reactors {
 
     private static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle.builder(SUPPORTED_VERSIONS)
         .addSupport(ValidationBundles.BEHAVIOUR)
-        .addSupport(SourceNamespaceBehaviours.SUPPORTED_FEATURES)
-        .addSupport(SourceNamespaceBehaviours.MODULES_DEVIATED_BY)
+        .addSupport(NamespaceBehaviours.SUPPORTED_FEATURES)
+        .addSupport(NamespaceBehaviours.MODULES_DEVIATED_BY)
         .build();
 
     private RFC7950Reactors() {
@@ -145,10 +144,10 @@ public final class RFC7950Reactors {
             .addSupport(new YangVersionStatementSupport(config))
             .addSupport(new RevisionStatementSupport(config))
             .addSupport(new RevisionDateStatementSupport(config))
-            .addSupport(SourceNamespaceBehaviours.MODULE_NAME_TO_NAMESPACE)
+            .addSupport(NamespaceBehaviours.MODULE_NAME_TO_NAMESPACE)
             .addSupport(NamespaceBehaviours.PRELINKAGE_MODULE)
-            .addSupport(SourceNamespaceBehaviours.IMP_PREFIX_TO_NAMESPACE)
-            .addSupport(SourceNamespaceBehaviours.MODULECTX_TO_QNAME)
+            .addSupport(NamespaceBehaviours.IMP_PREFIX_TO_NAMESPACE)
+            .addSupport(NamespaceBehaviours.MODULECTX_TO_QNAME)
             .addSupport(QNameModuleNamespace.BEHAVIOUR)
             .addSupport(ImportedVersionNamespace.BEHAVIOUR)
             .build();
@@ -162,20 +161,20 @@ public final class RFC7950Reactors {
             .addSupport(new ContactStatementSupport(config))
             .addSupport(new OrganizationStatementSupport(config))
             .addSupport(NamespaceBehaviours.MODULE)
-            .addSupport(SourceNamespaceBehaviours.MODULE_FOR_BELONGSTO)
+            .addSupport(NamespaceBehaviours.MODULE_FOR_BELONGSTO)
             .addSupport(NamespaceBehaviours.SUBMODULE)
             .addSupport(NamespaceBehaviours.NAMESPACE_TO_MODULE)
-            .addSupport(SourceNamespaceBehaviours.MODULE_NAME_TO_QNAME)
-            .addSupport(SourceNamespaceBehaviours.MODULECTX_TO_SOURCE)
-            .addSupport(SourceNamespaceBehaviours.MODULE_NAMESPACE_TO_NAME)
-            .addSupport(SourceNamespaceBehaviours.PREFIX_TO_MODULE)
-            .addSupport(SourceNamespaceBehaviours.IMPORTED_MODULE)
-            .addSupport(SourceNamespaceBehaviours.INCLUDED_MODULE)
-            .addSupport(SourceNamespaceBehaviours.INCLUDED_SUBMODULE_NAME_TO_MODULECTX)
-            .addSupport(SourceNamespaceBehaviours.IMPORT_PREFIX_TO_MODULECTX)
-            .addSupport(SourceNamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULECTX)
+            .addSupport(NamespaceBehaviours.MODULE_NAME_TO_QNAME)
+            .addSupport(NamespaceBehaviours.MODULECTX_TO_SOURCE)
+            .addSupport(NamespaceBehaviours.MODULE_NAMESPACE_TO_NAME)
+            .addSupport(NamespaceBehaviours.PREFIX_TO_MODULE)
+            .addSupport(NamespaceBehaviours.IMPORTED_MODULE)
+            .addSupport(NamespaceBehaviours.INCLUDED_MODULE)
+            .addSupport(NamespaceBehaviours.INCLUDED_SUBMODULE_NAME_TO_MODULECTX)
+            .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_MODULECTX)
+            .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULECTX)
             .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
-            .addSupport(SourceNamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULE_NAME)
+            .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULE_NAME)
             .build();
     }
 

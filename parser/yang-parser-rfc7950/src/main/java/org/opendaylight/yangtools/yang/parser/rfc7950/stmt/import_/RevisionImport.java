@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 final class RevisionImport {
     private RevisionImport() {
@@ -61,17 +60,17 @@ final class RevisionImport {
                 final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
                 final SourceIdentifier importedModuleIdentifier = stmt.getFromNamespace(
-                    SourceParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
+                    ParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
                 stmt.addToNs(ImportedVersionNamespace.INSTANCE, Empty.value(), importedModuleIdentifier);
 
                 final QNameModule mod = InferenceException.throwIfNull(
-                    stmt.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, importedModule), stmt,
+                    stmt.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, importedModule), stmt,
                     "Failed to find module of %s", importedModule);
 
-                linkageTarget.resolve(ctx).addToNs(SourceParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,
+                linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,
                     importedModule);
                 final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                stmt.addToNs(SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
+                stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
                 stmt.addToNs(ModuleQNameToPrefix.INSTANCE, mod, impPrefix);
             }
 
