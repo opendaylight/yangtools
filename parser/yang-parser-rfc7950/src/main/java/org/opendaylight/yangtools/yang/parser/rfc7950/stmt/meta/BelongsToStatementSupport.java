@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -57,9 +59,9 @@ public final class BelongsToStatementSupport
             final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
         ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
-        final Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
-            SourceParserNamespaces.MODULE_FOR_BELONGSTO, belongsToCtx.getArgument(),
-            ModelProcessingPhase.SOURCE_LINKAGE);
+        final Prerequisite<StmtContext<?, ModuleStatement, ModuleEffectiveStatement>> belongsToPrereq =
+            belongsToAction.requiresCtx(belongsToCtx, SourceParserNamespaces.MODULE_FOR_BELONGSTO,
+                belongsToCtx.getArgument(), ModelProcessingPhase.SOURCE_LINKAGE);
 
         belongsToAction.apply(new InferenceAction() {
             @Override

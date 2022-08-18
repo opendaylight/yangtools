@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 //               into yang-(parser-)reactor-api.
 @Beta
 public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-        extends StatementNamespace<QName, D, E> {
+        extends ParserNamespace<QName, StmtContext<?, D, E>> {
     @Serial
     private static final long serialVersionUID = 1L;
     private static final @NonNull SchemaTreeNamespace<?, ?> INSTANCE = new SchemaTreeNamespace<>();

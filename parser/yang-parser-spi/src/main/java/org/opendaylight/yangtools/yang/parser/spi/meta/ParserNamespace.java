@@ -14,6 +14,7 @@ import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 
 /**
  * {@link ParserNamespace} serves as common superclass for namespaces used during parser operation. Each such namespace,
@@ -25,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Identifier;
  * @param <V> Value type
  */
 @NonNullByDefault
-public class ParserNamespace<K, V> implements Identifier {
+public sealed class ParserNamespace<K, V> implements Identifier permits SchemaTreeNamespace {
     @Serial
     private static final long serialVersionUID = 1L;
 

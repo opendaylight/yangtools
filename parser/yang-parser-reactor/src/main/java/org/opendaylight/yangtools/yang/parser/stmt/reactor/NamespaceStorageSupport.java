@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -105,7 +104,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
     public final <K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>> void addContextToNamespace(
-            final StatementNamespace<K, D, E> type, final K key, final StmtContext<?, D, E> value) {
+            final ParserNamespace<K, StmtContext<?, D, E>> type, final K key, final StmtContext<?, D, E> value) {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 
