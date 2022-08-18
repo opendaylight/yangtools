@@ -11,7 +11,7 @@
  * Currently, this package contains an interface which represents a namespace used
  * by the validation process. This namespace contains different types of validation
  * bundles or collections. Allowed types of validation bundles are defined by the
- * enumeration {@link ValidationBundlesNamespace.ValidationBundleType} which is
+ * enumeration {@link ValidationBundles.ValidationBundleType} which is
  * provided by this package.
  */
 package org.opendaylight.yangtools.yang.parser.spi.validation;

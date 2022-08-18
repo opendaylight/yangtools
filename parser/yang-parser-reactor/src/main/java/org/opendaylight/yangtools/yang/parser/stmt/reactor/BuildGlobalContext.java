@@ -55,13 +55,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +77,8 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
-    private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
+    private final Map<ParserNamespace<?, ?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces =
+        new HashMap<>();
     private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
@@ -93,7 +92,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
-        addToNamespace(ValidationBundlesNamespace.class, supportedValidation);
+        addToNamespace(ValidationBundles.NAMESPACE, supportedValidation);
 
         supportedVersions = ImmutableSet.copyOf(
             verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
@@ -114,12 +113,13 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     void setSupportedFeatures(final Set<QName> supportedFeatures) {
-        addToNamespace(SupportedFeaturesNamespace.class, Empty.value(), ImmutableSet.copyOf(supportedFeatures));
+        addToNamespace(SourceParserNamespaces.SUPPORTED_FEATURES, Empty.value(),
+            ImmutableSet.copyOf(supportedFeatures));
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
-        addToNamespace(ModulesDeviatedByModules.class, Empty.value(),
-                    ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
+        addToNamespace(SourceParserNamespaces.MODULES_DEVIATED_BY, Empty.value(),
+            ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
     }
 
     @Override
@@ -139,7 +139,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     @Override
     public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(
-            final Class<N> type) {
+            final N type) {
         NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             final var potentialRaw = verifyNotNull(supports.get(currentPhase)).getNamespaceBehaviour(type);
@@ -236,7 +236,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     private static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
-        final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
+        final QNameModule qNameModule = root.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, root);
         final Object arg = root.getArgument();
         verify(arg instanceof Unqualified, "Unexpected argument %s", arg);
 

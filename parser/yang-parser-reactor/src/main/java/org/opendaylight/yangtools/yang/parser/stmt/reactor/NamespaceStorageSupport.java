@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     private static final Logger LOG = LoggerFactory.getLogger(NamespaceStorageSupport.class);
 
-    private Map<Class<?>, Map<?, ?>> namespaces = ImmutableMap.of();
+    private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = ImmutableMap.of();
 
     /**
      * {@inheritDoc}
@@ -51,7 +51,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     public abstract @NonNull Registry getBehaviourRegistry();
 
     // FIXME: 8.0.0: do we really need this method?
-    final void checkLocalNamespaceAllowed(final Class<? extends ParserNamespace<?, ?>> type) {
+    final void checkLocalNamespaceAllowed(final ParserNamespace<?, ?> type) {
         // Always no-op. We used to route this towards StatementDefinitionContext, but this method remained
         // unimplemented even there.
     }
@@ -61,32 +61,32 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      *
      * @throws SourceException instance of SourceException
      */
-    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
+    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final N type, final K key,
             final V value) {
         // NOOP
     }
 
-    public final <K, V, N extends ParserNamespace<K, V>> Optional<Entry<K, V>> getFromNamespace(
-            final Class<N> type, final NamespaceKeyCriterion<K> criterion) {
+    public final <K, V, N extends ParserNamespace<K, V>> Optional<Entry<K, V>> getFromNamespace(final N type,
+            final NamespaceKeyCriterion<K> criterion) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
     }
 
-    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> getNamespace(final Class<N> type) {
+    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> getNamespace(final N type) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
     @SuppressWarnings("unchecked")
-    final <K, V, N extends ParserNamespace<K, V>> Map<K, V> getLocalNamespace(final Class<N> type) {
+    final <K, V, N extends ParserNamespace<K, V>> Map<K, V> getLocalNamespace(final N type) {
         return (Map<K, V>) accessNamespaces().get(type);
     }
 
-    final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNamespace(
-            final Class<N> type, final T key, final U value) {
+    final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final T key,
+            final U value) {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 
-    final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNamespace(
-            final Class<N> type, final Map<T, U> map) {
+    final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNamespace(final N type,
+            final Map<T, U> map) {
         final NamespaceBehaviour<K, V, N> behavior = getBehaviourRegistry().getNamespaceBehaviour(type);
         for (final Entry<T, U> validationBundle : map.entrySet()) {
             behavior.addTo(this, validationBundle.getKey(), validationBundle.getValue());
@@ -104,35 +104,34 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public final <K, N extends StatementNamespace<K, ?,?>> void addContextToNamespace(final Class<N> type, final K key,
+    public final <K, N extends StatementNamespace<K, ?,?>> void addContextToNamespace(final N type, final K key,
             final StmtContext<?, ?, ?> value) {
-        getBehaviourRegistry().getNamespaceBehaviour((Class)type).addTo(this, key, value);
+        getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
+    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final N type, final K key) {
         final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace == null ? null : localNamespace.get(key);
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final N type) {
         @SuppressWarnings("unchecked")
         final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace;
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
-            final V value) {
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final N type, final K key, final V value) {
         final V ret = ensureLocalNamespace(type).put(key, value);
         onNamespaceElementAdded(type, key, value);
         return ret;
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorageIfAbsent(final N type, final K key,
             final V value) {
         final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
         if (ret == null) {
@@ -146,7 +145,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         LOG.trace("Swept namespace storages of {}", this);
     }
 
-    void sweepNamespaces(final Map<Class<?>, SweptNamespace> toWipe) {
+    void sweepNamespaces(final Map<ParserNamespace<?, ?>, SweptNamespace> toWipe) {
         switch (namespaces.size()) {
             case 0:
                 namespaces = ImmutableMap.copyOf(toWipe);
@@ -162,11 +161,11 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         LOG.trace("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
     }
 
-    private Map<Class<?>, Map<?, ?>> accessNamespaces() {
+    private Map<ParserNamespace<?, ?>, Map<?, ?>> accessNamespaces() {
         return verifyNotNull(namespaces, "Attempted to access swept namespaces of %s", this);
     }
 
-    private <K, V, N extends ParserNamespace<K, V>> Map<K, V> ensureLocalNamespace(final Class<N> type) {
+    private <K, V, N extends ParserNamespace<K, V>> Map<K, V> ensureLocalNamespace(final N type) {
         @SuppressWarnings("unchecked")
         Map<K, V> ret = (Map<K,V>) accessNamespaces().get(type);
         if (ret == null) {
@@ -180,8 +179,8 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
                     break;
                 case 1:
                     // Alright, time to grow to a full HashMap
-                    final Map<Class<?>, Map<?,?>> newNamespaces = new HashMap<>(4);
-                    final Entry<Class<?>, Map<?, ?>> entry = namespaces.entrySet().iterator().next();
+                    final Map<ParserNamespace<?, ?>, Map<?,?>> newNamespaces = new HashMap<>(4);
+                    final Entry<ParserNamespace<?, ?>, Map<?, ?>> entry = namespaces.entrySet().iterator().next();
                     newNamespaces.put(entry.getKey(), entry.getValue());
                     namespaces = newNamespaces;
                     // fall through
