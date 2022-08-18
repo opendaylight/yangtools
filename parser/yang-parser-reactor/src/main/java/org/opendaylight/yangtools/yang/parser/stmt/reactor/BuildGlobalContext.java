@@ -77,7 +77,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
-    private final Map<ParserNamespace<?, ?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces =
+    private final Map<ParserNamespace<?, ?>, NamespaceBehaviourWithListeners<?, ?>> supportedNamespaces =
         new HashMap<>();
     private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
@@ -138,9 +138,8 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(
-            final N type) {
-        NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
+    public <K, V> NamespaceBehaviourWithListeners<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
+        NamespaceBehaviourWithListeners<?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             final var potentialRaw = verifyNotNull(supports.get(currentPhase)).getNamespaceBehaviour(type);
             if (potentialRaw != null) {
@@ -157,12 +156,12 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
          * Safe cast, previous checkState checks equivalence of key from which
          * type argument are derived
          */
-        return (NamespaceBehaviourWithListeners<K, V, N>) potential;
+        return (NamespaceBehaviourWithListeners<K, V>) potential;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
-            final NamespaceBehaviour<K, V, N> potentialRaw) {
+    private <K, V> NamespaceBehaviourWithListeners<K, V> createNamespaceContext(
+            final NamespaceBehaviour<K, V> potentialRaw) {
         if (potentialRaw instanceof DerivedNamespaceBehaviour derived) {
             final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(derived);
             getNamespaceBehaviour(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);

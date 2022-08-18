@@ -16,11 +16,8 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-abstract class NamespaceBehaviourWithListeners<K, V, N extends ParserNamespace<K, V>>
-        extends NamespaceBehaviour<K, V, N> {
-
+abstract class NamespaceBehaviourWithListeners<K, V> extends NamespaceBehaviour<K, V> {
     abstract static class ValueAddedListener<K> {
         private final NamespaceStorageNode ctxNode;
 
@@ -45,8 +42,8 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends ParserNamespace<K
             return key;
         }
 
-        final <V> boolean isRequestedValue(final NamespaceBehaviour<K, ? , ?> behavior,
-                final NamespaceStorageNode storage, final V value) {
+        final <V> boolean isRequestedValue(final NamespaceBehaviour<K, ?> behavior, final NamespaceStorageNode storage,
+                final V value) {
             return value == behavior.getFrom(getCtxNode(), key);
         }
 
@@ -61,11 +58,11 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends ParserNamespace<K
         abstract boolean onValueAdded(@NonNull K key, @NonNull V value);
     }
 
-    protected final NamespaceBehaviour<K, V, N> delegate;
+    protected final NamespaceBehaviour<K, V> delegate;
 
-    private List<VirtualNamespaceContext<?, V, ?, K>> derivedNamespaces;
+    private List<VirtualNamespaceContext<?, V, K>> derivedNamespaces;
 
-    protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V, N> delegate) {
+    protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V> delegate) {
         super(delegate.getIdentifier());
         this.delegate = delegate;
     }
@@ -94,13 +91,13 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends ParserNamespace<K
 
     protected void notifyDerivedNamespaces(final NamespaceStorageNode storage, final K key, final V value) {
         if (derivedNamespaces != null) {
-            for (VirtualNamespaceContext<?, V, ?, K> derived : derivedNamespaces) {
+            for (VirtualNamespaceContext<?, V, K> derived : derivedNamespaces) {
                 derived.addedToSourceNamespace(storage, key, value);
             }
         }
     }
 
-    final void addDerivedNamespace(final VirtualNamespaceContext<?, V, ?, K> namespace) {
+    final void addDerivedNamespace(final VirtualNamespaceContext<?, V, K> namespace) {
         if (derivedNamespaces == null) {
             derivedNamespaces = new ArrayList<>();
         }

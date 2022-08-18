@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -156,8 +155,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(final @NonNull N type,
-            final T key, final U value) {
+    public <K, V, T extends K, U extends V> void addToNs(final ParserNamespace<K, V> type, final T key, final U value) {
         throw new UnsupportedOperationException();
     }
 
@@ -169,8 +167,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final @NonNull N namespace,
-            final KT key, final StmtContext<?, ?, ?> stmt) {
+    public <K, KT extends K> void addContext(final StatementNamespace<K, ?, ?> namespace, final KT key,
+            final StmtContext<?, ?, ?> stmt) {
         throw new UnsupportedOperationException();
     }
 

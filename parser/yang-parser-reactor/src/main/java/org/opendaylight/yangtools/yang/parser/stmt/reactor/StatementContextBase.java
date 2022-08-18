@@ -264,8 +264,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(final @NonNull N type,
-            final T key, final U value) {
+    public final <K, V, T extends K, U extends V> void addToNs(final ParserNamespace<K, V> type, final T key,
+            final U value) {
         addToNamespace(type, key, value);
     }
 
@@ -594,7 +594,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return definition;
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void onNamespaceItemAddedAction(final N type, final K key,
+    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type, final K key,
             final OnNamespaceItemAdded listener) {
         final Object potential = getFromNamespace(type, key);
         if (potential != null) {
@@ -611,7 +611,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         });
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void onNamespaceItemAddedAction(final N type,
+    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> existing = getFromNamespace(type, criterion);
@@ -622,7 +622,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             return;
         }
 
-        final NamespaceBehaviourWithListeners<K, V, N> behaviour = getBehaviour(type);
+        final NamespaceBehaviourWithListeners<K, V> behaviour = getBehaviour(type);
         behaviour.addListener(new PredicateValueAddedListener<K, V>(this) {
             @Override
             boolean onValueAdded(final K key, final V value) {
@@ -637,8 +637,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         });
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void selectMatch(final N type,
-            final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
+    final <K, V> void selectMatch(final ParserNamespace<K, V> type, final NamespaceKeyCriterion<K> criterion,
+            final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> optMatch = getFromNamespace(type, criterion);
         checkState(optMatch.isPresent(), "Failed to find a match for criterion %s in namespace %s node %s", criterion,
             type, this);
@@ -646,7 +646,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void waitForPhase(final Object value, final N type,
+    final <K, V> void waitForPhase(final Object value, final ParserNamespace<K, V> type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         ((StatementContextBase<?, ? ,?>) value).addPhaseCompletedListener(phase,
@@ -656,13 +656,12 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             });
     }
 
-    private <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
-            final N type) {
-        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
+    private <K, V> NamespaceBehaviourWithListeners<K, V> getBehaviour(final ParserNamespace<K, V> type) {
+        final NamespaceBehaviour<K, V> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",
             type);
 
-        return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
+        return (NamespaceBehaviourWithListeners<K, V>) behaviour;
     }
 
     private static <T> Multimap<ModelProcessingPhase, T> newMultimap() {
@@ -719,8 +718,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final @NonNull N namespace,
-            final KT key, final StmtContext<?, ?, ?> stmt) {
+    public final <K, KT extends K> void addContext(final StatementNamespace<K, ?, ?> namespace, final KT key,
+            final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, key, stmt);
     }
 

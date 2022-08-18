@@ -120,8 +120,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final N type, final K key,
-            final V value) {
+    public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
         if (IncludedModuleContext.class.isAssignableFrom(type)) {
             if (includedContexts.isEmpty()) {
                 includedContexts = new ArrayList<>(1);
@@ -133,7 +132,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final N type, final K key) {
+    public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
         return getFromLocalStorage(type, key, new HashSet<>());
     }
 
@@ -162,7 +161,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final N type) {
+    public <K, V> Map<K, V> getAllFromLocalStorage(final ParserNamespace<K, V> type) {
         return getAllFromLocalStorage(type, new HashSet<>());
     }
 
