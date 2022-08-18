@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeScoped;
 
 /**
  * Baseline {@link ParserNamespace}s mostly derived from YANG specification.
@@ -58,8 +57,8 @@ public final class ParserNamespaces {
      * <p>
      * This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same name.
      */
-    public static final @NonNull TreeScoped<QName, GroupingStatement, GroupingEffectiveStatement> GROUPING =
-        new TreeScoped<>("grouping");
+    public static final @NonNull StatementNamespace<QName, GroupingStatement, GroupingEffectiveStatement> GROUPING =
+        new StatementNamespace<>("grouping");
 
     /**
      * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
@@ -93,8 +92,8 @@ public final class ParserNamespaces {
      * This namespace includes all type definitions implied by the language in which the current statement resides
      * (e.g. RFC6020/RFC7950 for YANG 1.0/1.1).
      */
-    public static final @NonNull TreeScoped<QName, TypedefStatement, TypedefEffectiveStatement> TYPE =
-        new TreeScoped<>("typedef");
+    public static final @NonNull StatementNamespace<QName, TypedefStatement, TypedefEffectiveStatement> TYPE =
+        new StatementNamespace<>("typedef");
 
     /**
      * A derived namespace allowing lookup of modules based on their {@link QNameModule}.

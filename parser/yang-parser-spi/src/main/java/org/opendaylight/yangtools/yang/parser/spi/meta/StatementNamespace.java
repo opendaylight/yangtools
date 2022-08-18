@@ -21,15 +21,4 @@ public class StatementNamespace<K, D extends DeclaredStatement<?>, E extends Eff
     public StatementNamespace(final @NonNull String name) {
         super(name);
     }
-
-    // FIXME: is this subclass useful at all?
-    public static class TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
-            extends StatementNamespace<K, D, E> {
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        public TreeScoped(final @NonNull String name) {
-            super(name);
-        }
-    }
 }
