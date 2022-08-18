@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextMutation;
@@ -89,8 +88,8 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private <K, C extends StmtContext<?, ?, ?>> @NonNull AbstractPrerequisite<C> requiresCtxImpl(
-            final StmtContext<?, ?, ?> context, final StatementNamespace<K, ?, ?> namespace, final K key,
-            final ModelProcessingPhase phase)  {
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace,
+            final K key, final ModelProcessingPhase phase)  {
         checkNotRegistered();
 
         AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
@@ -100,7 +99,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private <K, C extends StmtContext<?, ?, ?>> @NonNull AbstractPrerequisite<C> requiresCtxImpl(
-            final StmtContext<?, ?, ?> context, final StatementNamespace<K, ?, ?> namespace,
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, StmtContext<?, ?, ?>> namespace,
             final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase)  {
         checkNotRegistered();
 
@@ -167,13 +166,13 @@ final class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <K> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(final StmtContext<?, ?, ?> context,
-            final StatementNamespace<K, ?, ?> namespace, final K key, final ModelProcessingPhase phase) {
+            final ParserNamespace<K, StmtContext<?, ?, ?>> namespace, final K key, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, key, phase);
     }
 
     @Override
     public <K> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(final StmtContext<?, ?, ?> context,
-            final StatementNamespace<K, ?, ?> namespace, final NamespaceKeyCriterion<K> criterion,
+            final ParserNamespace<K, StmtContext<?, ?, ?>> namespace, final NamespaceKeyCriterion<K> criterion,
             final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, criterion, phase);
     }
@@ -199,7 +198,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     @Deprecated
     public <K, D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(final StmtContext<?, ?, ?> context,
-            final StatementNamespace<K, ? extends D, ?> namespace, final K key) {
+            final ParserNamespace<K, StmtContext<?, ? extends D, ?>> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, D, ?>> rawContext = requiresCtxImpl(context, namespace, key,
             FULL_DECLARATION);
         return rawContext.transform(StmtContext::declared);
@@ -208,7 +207,8 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     @Deprecated
     public <K, D extends DeclaredStatement<?>> AbstractPrerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(
-            final StmtContext<?, ?, ?> context, final StatementNamespace<K, ? extends D, ?> namespace, final K key) {
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, StmtContext<?, ? extends D, ?>> namespace,
+            final K key) {
         return requiresCtxImpl(context, namespace, key, FULL_DECLARATION);
     }
 
@@ -222,7 +222,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     @Deprecated
     public <K, E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(final StmtContext<?, ?, ?> context,
-            final StatementNamespace<K, ?, ? extends E> namespace, final K key) {
+            final ParserNamespace<K, StmtContext<?, ?, ? extends E>> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, ?, E>> rawContext = requiresCtxImpl(context, namespace, key,
             EFFECTIVE_MODEL);
         return rawContext.transform(StmtContext::buildEffective);
@@ -231,7 +231,8 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     @Deprecated
     public <K, E extends EffectiveStatement<?, ?>> AbstractPrerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(
-            final StmtContext<?, ?, ?> context, final StatementNamespace<K, ?, ? extends E> namespace, final K key) {
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, StmtContext<?, ?, ? extends E>> namespace,
+            final K key) {
         return requiresCtxImpl(contextImpl(context), namespace, key, EFFECTIVE_MODEL);
     }
 

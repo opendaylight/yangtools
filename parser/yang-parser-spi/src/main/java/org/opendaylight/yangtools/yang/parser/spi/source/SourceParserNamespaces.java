@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
@@ -47,8 +46,8 @@ public final class SourceParserNamespaces {
      * plain name.
      */
     // FIXME: Better name?
-    public static final @NonNull StatementNamespace<Unqualified, ModuleStatement, ModuleEffectiveStatement>
-        MODULE_FOR_BELONGSTO = new StatementNamespace<>("module-belongsto");
+    public static final @NonNull ParserNamespace<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>>
+        MODULE_FOR_BELONGSTO = new ParserNamespace<>("module-belongsto");
 
     /**
      * Pre-linkage source-specific mapping of prefixes to module namespaces.
