@@ -37,16 +37,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
@@ -215,7 +209,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         LOG.debug("Source {} started phase {}", source, phase);
     }
 
-    private void updateImportedNamespaces(final Class<?> type, final Object value) {
+    private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
         if (BelongsToPrefixToModuleCtx.class.isAssignableFrom(type)
             || ImportedModuleContext.class.isAssignableFrom(type)) {
             verify(value instanceof RootStatementContext, "Unexpected imported value %s", value);
@@ -228,8 +222,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
-           final V value) {
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final N type, final K key, final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
         final V ret = getRoot().putToLocalStorage(type, key, value);
         // FIXME: what about duplicates?
@@ -238,7 +231,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorageIfAbsent(final N type, final K key,
            final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
         final V ret = getRoot().putToLocalStorageIfAbsent(type, key, value);
@@ -254,7 +247,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
+    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final N type, final K key) {
         final V potentialLocal = getRoot().getFromLocalStorage(type, key);
         if (potentialLocal != null) {
             return potentialLocal;
@@ -270,7 +263,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final N type) {
         final Map<K, V> potentialLocal = getRoot().getAllFromLocalStorage(type);
         if (potentialLocal != null) {
             return potentialLocal;
@@ -288,8 +281,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     @Override
     @SuppressWarnings("unchecked")
-    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
-            final Class<N> type) {
+    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(final N type) {
         if (StatementSupportNamespace.class.equals(type)) {
             return (NamespaceBehaviour<K, V, N>) statementSupports;
         }

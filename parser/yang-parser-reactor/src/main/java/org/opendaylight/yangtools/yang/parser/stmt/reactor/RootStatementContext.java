@@ -27,9 +27,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -37,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +50,10 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     private static final Logger LOG = LoggerFactory.getLogger(RootStatementContext.class);
     // These namespaces are well-known and not needed after the root is cleaned up
-    private static final Map<Class<?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
-        GroupingNamespace.class, new SweptNamespace(GroupingNamespace.class),
-        SchemaTreeNamespace.class, new SweptNamespace(SchemaTreeNamespace.class),
-        TypeNamespace.class, new SweptNamespace(TypeNamespace.class));
+    private static final Map<ParserNamespace<?, ?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
+        ParserNamespaces.GROUPING, new SweptNamespace(ParserNamespaces.GROUPING),
+        SchemaTreeNamespace.instance(), new SweptNamespace(SchemaTreeNamespace.instance()),
+        ParserNamespaces.TYPE, new SweptNamespace(ParserNamespaces.TYPE));
 
     private final @NonNull SourceSpecificContext sourceContext;
     private final A argument;
@@ -80,8 +78,8 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
             final StatementSourceReference ref, final String rawArgument, final YangVersion version,
             final SourceIdentifier identifier) {
         this(sourceContext, def, ref, rawArgument);
-        this.setRootVersion(version);
-        this.setRootIdentifier(identifier);
+        setRootVersion(version);
+        setRootIdentifier(identifier);
     }
 
     @Override
@@ -122,7 +120,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final N type, final K key,
             final V value) {
         if (IncludedModuleContext.class.isAssignableFrom(type)) {
             if (includedContexts.isEmpty()) {
@@ -135,7 +133,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
+    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final N type, final K key) {
         return getFromLocalStorage(type, key, new HashSet<>());
     }
 
@@ -143,7 +141,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
      * We need to track already checked RootStatementContexts due to possible
      * circular chains of includes between submodules
      */
-    private <K, V, N extends ParserNamespace<K, V>> @Nullable V getFromLocalStorage(final Class<N> type,
+    private <K, V, N extends ParserNamespace<K, V>> @Nullable V getFromLocalStorage(final N type,
             final K key, final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
         final V potentialLocal = super.getFromLocalStorage(type, key);
         if (potentialLocal != null) {
@@ -164,7 +162,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final N type) {
         return getAllFromLocalStorage(type, new HashSet<>());
     }
 
@@ -172,7 +170,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
      * We need to track already checked RootStatementContexts due to possible
      * circular chains of includes between submodules
      */
-    private <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> getAllFromLocalStorage(final Class<N> type,
+    private <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> getAllFromLocalStorage(final N type,
             final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
         final Map<K, V> potentialLocal = super.getAllFromLocalStorage(type);
         if (potentialLocal != null) {

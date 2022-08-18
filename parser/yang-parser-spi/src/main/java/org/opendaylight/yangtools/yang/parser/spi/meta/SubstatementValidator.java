@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class SubstatementValidator {
     private final ImmutableMap<StatementDefinition, Cardinality> cardinalityMap;
@@ -24,9 +24,9 @@ public final class SubstatementValidator {
     private final StatementDefinition currentStatement;
 
     private SubstatementValidator(final Builder builder) {
-        this.cardinalityMap = builder.cardinalityMap.build();
-        this.currentStatement = builder.currentStatement;
-        this.mandatoryStatements = ImmutableMap.copyOf(Maps.filterValues(cardinalityMap, c -> c.getMin() > 0));
+        cardinalityMap = builder.cardinalityMap.build();
+        currentStatement = builder.currentStatement;
+        mandatoryStatements = ImmutableMap.copyOf(Maps.filterValues(cardinalityMap, c -> c.getMin() > 0));
     }
 
     public static Builder builder(final StatementDefinition currentStatement) {
@@ -129,10 +129,11 @@ public final class SubstatementValidator {
             final int value = entry.getValue().getValue();
 
             if (cardinality == null) {
-                if (ctx.getFromNamespace(ExtensionNamespace.class, key.getStatementName()) == null) {
+                if (ctx.getFromNamespace(ParserNamespaces.EXTENSION, key.getStatementName()) == null) {
                     final StmtContext<?, ?, ?> root = ctx.getRoot();
                     throw new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", key,
-                        currentStatement, root.rawArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
+                        currentStatement, root.rawArgument(),
+                        ctx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, root));
                 }
 
                 continue;
@@ -144,7 +145,7 @@ public final class SubstatementValidator {
                     throw new InvalidSubstatementException(ctx,
                         "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
                         cardinality.getMin(), value, root.rawArgument(),
-                        ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
+                        ctx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, root));
                 }
 
                 // Encountered a mandatory statement, hence we are not missing it
@@ -155,7 +156,7 @@ public final class SubstatementValidator {
                 throw new InvalidSubstatementException(ctx,
                     "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
                     cardinality.getMax(), value, root.rawArgument(),
-                    ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
+                    ctx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, root));
             }
         }
 
@@ -166,7 +167,8 @@ public final class SubstatementValidator {
 
             throw new MissingSubstatementException(ctx,
                 "%s is missing %s. Minimal count is %s. Error in module %s (%s)", currentStatement, e.getKey(),
-                e.getValue().getMin(), root.rawArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
+                e.getValue().getMin(), root.rawArgument(),
+                ctx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, root));
         }
     }
 
