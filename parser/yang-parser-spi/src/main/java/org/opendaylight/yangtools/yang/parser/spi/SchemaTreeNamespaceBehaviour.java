@@ -24,8 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * {@link NamespaceBehaviour} handling {@link SchemaTreeNamespace}.
  */
 public final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>,
-            E extends SchemaTreeEffectiveStatement<D>>
-        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>> {
+            E extends SchemaTreeEffectiveStatement<D>> extends NamespaceBehaviour<QName, StmtContext<?, D, E>> {
     public static final @NonNull SchemaTreeNamespaceBehaviour<?, ?> INSTANCE = new SchemaTreeNamespaceBehaviour<>();
 
     private SchemaTreeNamespaceBehaviour() {

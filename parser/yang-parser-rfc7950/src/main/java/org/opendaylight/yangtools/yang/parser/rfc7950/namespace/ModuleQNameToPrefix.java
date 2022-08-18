@@ -21,8 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 public final class ModuleQNameToPrefix {
     public static final @NonNull ParserNamespace<QNameModule, String> INSTANCE =
         new ParserNamespace<>("module-qname-to-prefix");
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.rootStatementLocal(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.rootStatementLocal(INSTANCE);
 
     private ModuleQNameToPrefix() {
         // Hidden on purpose

@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 //        with 'identifier', hence we cannot safely form a QName.
 public final class YangDataArgumentNamespace {
     public static final @NonNull ParserNamespace<Empty, QName> INSTANCE = new ParserNamespace<>("yangDataArgument");
-    public static final @NonNull NamespaceBehaviour<?, ? ,?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<? ,?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private YangDataArgumentNamespace() {
         // Hidden on purpose

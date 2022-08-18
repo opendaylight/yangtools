@@ -23,11 +23,10 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      *
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param <N> namespace type
      * @param nsType namespace type class
      * @return Namespace contents, if available
      */
-    <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> namespace(@NonNull N nsType);
+    <K, V> @Nullable Map<K, V> namespace(@NonNull ParserNamespace<K, V> nsType);
 
     /**
      * Return a value associated with specified key within a namespace.
@@ -36,12 +35,11 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @param key Key
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param <N> namespace type
      * @param <T> key type
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    <K, V, T extends K, N extends ParserNamespace<K, V>> @Nullable V namespaceItem(@NonNull N nsType, T key);
+    <K, V, T extends K> @Nullable V namespaceItem(@NonNull ParserNamespace<K, V> nsType, T key);
 
     /**
      * Return the portion of specified namespace stored in this node. Depending on namespace behaviour this may or may
@@ -53,23 +51,21 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      *
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param <N> namespace type
      * @param nsType namespace type class
      * @return Namespace portion stored in this node, if available
      */
-    <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> localNamespacePortion(@NonNull N nsType);
+    <K, V> @Nullable Map<K, V> localNamespacePortion(@NonNull ParserNamespace<K, V> nsType);
 
     /**
      * Return the selected namespace.
      *
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param <N> namespace type
      * @param nsType namespace type class
      * @return Namespace contents, if available
      */
     // TODO: migrate users away
-    default <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromNamespace(final @NonNull N nsType) {
+    default <K, V> Map<K, V> getAllFromNamespace(final @NonNull ParserNamespace<K, V> nsType) {
         return namespace(nsType);
     }
 
@@ -80,14 +76,12 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @param key Key
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param <N> namespace type
      * @param <T> key type
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
     // TODO: migrate users away
-    default <K, V, T extends K, N extends ParserNamespace<K, V>> @Nullable V getFromNamespace(
-            final @NonNull N type, final T key) {
+    default <K, V, T extends K> @Nullable V getFromNamespace(final @NonNull ParserNamespace<K, V> type, final T key) {
         return namespaceItem(type, key);
     }
 }

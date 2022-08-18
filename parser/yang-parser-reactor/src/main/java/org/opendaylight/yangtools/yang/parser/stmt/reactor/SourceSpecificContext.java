@@ -56,8 +56,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         FINISHED
     }
 
-    private static final class SupportedStatements extends NamespaceBehaviour<QName, StatementSupport<?, ?, ?>,
-                ParserNamespace<QName, StatementSupport<?, ?, ?>>> {
+    private static final class SupportedStatements extends NamespaceBehaviour<QName, StatementSupport<?, ?, ?>> {
         private final QNameToStatementDefinitionMap statementDefinitions;
 
         SupportedStatements(final QNameToStatementDefinitionMap statementDefinitions) {
@@ -221,7 +220,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final N type, final K key, final V value) {
+    public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
         final V ret = getRoot().putToLocalStorage(type, key, value);
         // FIXME: what about duplicates?
@@ -230,8 +229,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorageIfAbsent(final N type, final K key,
-           final V value) {
+    public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
         final V ret = getRoot().putToLocalStorageIfAbsent(type, key, value);
         if (ret == null) {
@@ -246,7 +244,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final N type, final K key) {
+    public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
         final V potentialLocal = getRoot().getFromLocalStorage(type, key);
         if (potentialLocal != null) {
             return potentialLocal;
@@ -262,7 +260,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final N type) {
+    public <K, V> Map<K, V> getAllFromLocalStorage(final ParserNamespace<K, V> type) {
         final Map<K, V> potentialLocal = getRoot().getAllFromLocalStorage(type);
         if (potentialLocal != null) {
             return potentialLocal;
@@ -280,9 +278,9 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     @Override
     @SuppressWarnings("unchecked")
-    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(final N type) {
+    public <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
         if (StatementSupport.NAMESPACE.equals(type)) {
-            return (NamespaceBehaviour<K, V, N>) statementSupports;
+            return (NamespaceBehaviour<K, V>) statementSupports;
         }
         return globalContext.getNamespaceBehaviour(type);
     }

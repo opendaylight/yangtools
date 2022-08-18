@@ -35,10 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespaceBehaviour;
  *
  * @param <K> Key type
  * @param <V> Value type
- * @param <N> Namespace Type
  */
-// FIXME: remove the 'N' parameter?
-public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> extends AbstractSimpleIdentifiable<N> {
+public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiable<ParserNamespace<K, V>> {
 
     public enum StorageNodeType {
         /**
@@ -64,14 +62,13 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
         /**
          * Get a namespace behavior.
          *
-         * @param type Namespace type class
+         * @param type Namespace type
          * @param <K> key type
          * @param <V> value type
-         * @param <N> namespace type
          * @return Namespace behaviour
          * @throws NamespaceNotAvailableException when the namespace is not available
          */
-        <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(N type);
+        <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(ParserNamespace<K, V> type);
     }
 
     public interface NamespaceStorageNode {
@@ -84,9 +81,9 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
 
         @Nullable NamespaceStorageNode getParentNamespaceStorage();
 
-        <K, V, N extends ParserNamespace<K, V>> @Nullable V getFromLocalStorage(N type, K key);
+        <K, V> @Nullable V getFromLocalStorage(ParserNamespace<K, V> type, K key);
 
-        <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> getAllFromLocalStorage(N type);
+        <K, V> @Nullable Map<K, V> getAllFromLocalStorage(ParserNamespace<K, V> type);
 
         /**
          * Populate specified namespace with a key/value pair, overwriting previous contents. Similar to
@@ -97,7 +94,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
          * @param value Value
          * @return Previously-stored value, or null if the key was not present
          */
-        <K, V, N extends ParserNamespace<K, V>> @Nullable V putToLocalStorage(N type, K key, V value);
+        <K, V> @Nullable V putToLocalStorage(ParserNamespace<K, V> type, K key, V value);
 
         /**
          * Populate specified namespace with a key/value pair unless the key is already associated with a value. Similar
@@ -108,7 +105,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
          * @param value Value
          * @return Preexisting value or null if there was no previous mapping
          */
-        <K, V, N extends ParserNamespace<K, V>> @Nullable V putToLocalStorageIfAbsent(N type, K key, V value);
+        <K, V> @Nullable V putToLocalStorageIfAbsent(ParserNamespace<K, V> type, K key, V value);
     }
 
     /**
@@ -141,7 +138,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
             @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
     }
 
-    protected NamespaceBehaviour(final N identifier) {
+    protected NamespaceBehaviour(final ParserNamespace<K, V> identifier) {
         super(identifier);
     }
 
@@ -152,11 +149,9 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
      * @param identifier Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
-     * @param <N> type parameter
      * @return global namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> global(
-            final N identifier) {
+    public static <K, V> @NonNull NamespaceBehaviour<K, V> global(final ParserNamespace<K, V> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.GLOBAL);
     }
 
@@ -168,16 +163,13 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
      * @param identifier Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
-     * @param <N> type parameter
      * @return source-local namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> sourceLocal(
-            final N identifier) {
+    public static <K, V> @NonNull NamespaceBehaviour<K, V> sourceLocal(final ParserNamespace<K, V> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.SOURCE_LOCAL_SPECIAL);
     }
 
-    public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> statementLocal(
-           final N identifier) {
+    public static <K, V> @NonNull NamespaceBehaviour<K, V> statementLocal(final ParserNamespace<K, V> identifier) {
         return new StatementLocal<>(identifier);
     }
 
@@ -189,11 +181,9 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
      * @param identifier Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
-     * @param <N> type parameter
      * @return root-statement-local namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> rootStatementLocal(
-            final N identifier) {
+    public static <K, V> @NonNull NamespaceBehaviour<K, V> rootStatementLocal(final ParserNamespace<K, V> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.ROOT_STATEMENT_LOCAL);
     }
 
@@ -205,11 +195,9 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
      *            Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
-     * @param <N> type parameter
      * @return tree-scoped namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> treeScoped(
-            final N identifier) {
+    public static <K, V> @NonNull NamespaceBehaviour<K, V> treeScoped(final ParserNamespace<K, V> identifier) {
         return new TreeScoped<>(identifier);
     }
 
@@ -286,8 +274,8 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
         storage.putToLocalStorage(getIdentifier(), key, value);
     }
 
-    abstract static class AbstractSpecific<K, V, N extends ParserNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
-        AbstractSpecific(final N identifier) {
+    abstract static class AbstractSpecific<K, V> extends NamespaceBehaviour<K, V> {
+        AbstractSpecific(final ParserNamespace<K, V> identifier) {
             super(identifier);
         }
 
@@ -309,8 +297,8 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
         abstract NamespaceStorageNode findStorageNode(NamespaceStorageNode storage);
     }
 
-    static final class StatementLocal<K, V, N extends ParserNamespace<K, V>> extends AbstractSpecific<K, V, N> {
-        StatementLocal(final N identifier) {
+    static final class StatementLocal<K, V> extends AbstractSpecific<K, V> {
+        StatementLocal(final ParserNamespace<K, V> identifier) {
             super(identifier);
         }
 
@@ -320,10 +308,10 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
         }
     }
 
-    static final class StorageSpecific<K, V, N extends ParserNamespace<K, V>> extends AbstractSpecific<K, V, N> {
+    static final class StorageSpecific<K, V> extends AbstractSpecific<K, V> {
         private final StorageNodeType storageType;
 
-        StorageSpecific(final N identifier, final StorageNodeType type) {
+        StorageSpecific(final ParserNamespace<K, V> identifier, final StorageNodeType type) {
             super(identifier);
             storageType = requireNonNull(type);
         }
@@ -339,8 +327,8 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>> 
         }
     }
 
-    static final class TreeScoped<K, V, N extends ParserNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
-        TreeScoped(final N identifier) {
+    static final class TreeScoped<K, V> extends NamespaceBehaviour<K, V> {
+        TreeScoped(final ParserNamespace<K, V> identifier) {
             super(identifier);
         }
 

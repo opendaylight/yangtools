@@ -50,7 +50,7 @@ public final class ValidationBundles {
     public static final @NonNull ParserNamespace<ValidationBundleType, Collection<?>> NAMESPACE =
         new ParserNamespace<>("validationBundles");
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
 
     private ValidationBundles() {
         // Hidden on purpose

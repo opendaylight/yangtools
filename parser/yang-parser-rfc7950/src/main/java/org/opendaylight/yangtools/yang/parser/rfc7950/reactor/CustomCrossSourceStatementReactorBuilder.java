@@ -65,7 +65,7 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     }
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
-            final NamespaceBehaviour<?, ?, ?> namespaceSupport) {
+            final NamespaceBehaviour<?, ?> namespaceSupport) {
         getBuilder(phase).addSupport(namespaceSupport);
         return this;
     }
@@ -85,9 +85,9 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     }
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addAllNamespaceSupports(final ModelProcessingPhase phase,
-            final Collection<NamespaceBehaviour<?, ?, ?>> namespaceSupports) {
+            final Collection<NamespaceBehaviour<?, ?>> namespaceSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
-        for (final NamespaceBehaviour<?, ?, ?> namespaceSupport : namespaceSupports) {
+        for (final NamespaceBehaviour<?, ?> namespaceSupport : namespaceSupports) {
             stmtBundleBuilder.addSupport(namespaceSupport);
         }
         return this;
