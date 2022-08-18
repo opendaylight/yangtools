@@ -39,9 +39,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
-import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -50,17 +48,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 @Beta
 public final class ModuleStatementSupport
@@ -142,19 +131,19 @@ public final class ModuleStatementSupport
         final XMLNamespace moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", moduleName);
-        stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs);
+        stmt.addToNs(SourceParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName, moduleNs);
 
         final String modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", moduleName);
-        stmt.addToNs(ImpPrefixToNamespace.class, modulePrefix, moduleNs);
+        stmt.addToNs(SourceParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
 
-        stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
+        stmt.addContext(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
 
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
 
-        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
+        stmt.addToNs(SourceParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
         stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
     }
 
@@ -167,7 +156,7 @@ public final class ModuleStatementSupport
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
-                stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
+                stmt.getFromNamespace(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
             throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.getNamespace(),
                 possibleDuplicateModule.sourceReference());
@@ -176,21 +165,21 @@ public final class ModuleStatementSupport
         final Unqualified moduleName = stmt.getArgument();
         final SourceIdentifier moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
 
-        stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
-        stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleName, stmt);
-        stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
+        stmt.addContext(ParserNamespaces.MODULE, moduleIdentifier, stmt);
+        stmt.addContext(SourceParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
+        stmt.addContext(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
 
         final String modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", stmt.argument());
 
-        stmt.addToNs(QNameModuleNamespace.class, Empty.value(), qNameModule);
-        stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
-        stmt.addToNs(ModuleNameToModuleQName.class, moduleName, qNameModule);
-        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.addToNs(ModuleCtxToSourceIdentifier.class, stmt, moduleIdentifier);
-        stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, moduleName);
-        stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
+        stmt.addToNs(QNameModuleNamespace.INSTANCE, Empty.value(), qNameModule);
+        stmt.addToNs(SourceParserNamespaces.PREFIX_TO_MODULE, modulePrefix, qNameModule);
+        stmt.addToNs(SourceParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
+        stmt.addToNs(SourceParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
+        stmt.addToNs(SourceParserNamespaces.MODULECTX_TO_SOURCE, stmt, moduleIdentifier);
+        stmt.addToNs(SourceParserNamespaces.MODULE_NAMESPACE_TO_NAME, qNameModule, moduleName);
+        stmt.addToNs(SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, modulePrefix, stmt);
     }
 
     @Override
@@ -249,7 +238,7 @@ public final class ModuleStatementSupport
             submodules.add((Submodule) submodule);
         }
 
-        final QNameModule qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.class, Empty.value()));
+        final QNameModule qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.INSTANCE, Empty.value()));
         try {
             return new ModuleEffectiveStatementImpl(stmt, substatements, submodules, qnameModule);
         } catch (SubstatementIndexingException e) {
@@ -259,7 +248,7 @@ public final class ModuleStatementSupport
 
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
         final Map<Unqualified, StmtContext<?, ?, ?>> submodules = stmt.localNamespacePortion(
-            IncludedSubmoduleNameToModuleCtx.class);
+            SourceParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
         return submodules == null ? List.of() : submodules.values();
     }
 

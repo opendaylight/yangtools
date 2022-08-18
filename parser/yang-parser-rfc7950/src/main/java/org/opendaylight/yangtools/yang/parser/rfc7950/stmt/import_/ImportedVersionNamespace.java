@@ -18,9 +18,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * Statement-local namespace carrying the versioning information about how the import was satisfied.
  */
 @Beta
-public final class ImportedVersionNamespace extends ParserNamespace<Empty, SourceIdentifier> {
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(ImportedVersionNamespace.class);
+public final class ImportedVersionNamespace {
+    public static final @NonNull ParserNamespace<Empty, SourceIdentifier> INSTANCE =
+        new ParserNamespace<>("imported-version");
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private ImportedVersionNamespace() {
         // Hidden on purpose

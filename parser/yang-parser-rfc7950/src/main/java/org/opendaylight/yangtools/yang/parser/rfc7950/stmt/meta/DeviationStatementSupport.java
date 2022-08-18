@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class DeviationStatementSupport
         extends AbstractStatementSupport<Absolute, DeviationStatement, DeviationEffectiveStatement> {
@@ -52,7 +52,8 @@ public final class DeviationStatementSupport
     @Override
     public void onFullDefinitionDeclared(
             final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
-        final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot());
+        final QNameModule currentModule = ctx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME,
+            ctx.getRoot());
         final QNameModule targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
 
         if (currentModule.equals(targetModule)) {

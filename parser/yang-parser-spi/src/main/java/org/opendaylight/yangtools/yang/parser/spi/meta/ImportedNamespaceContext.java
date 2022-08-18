@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import java.io.Serial;
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  * Special namespace which allows import of namespaces from other sources.
  *
@@ -20,6 +23,11 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
  *
  * @param <K> Imported context identifier
  */
-public abstract class ImportedNamespaceContext<K> extends ParserNamespace<K, StmtContext<?, ?, ?>> {
+public final class ImportedNamespaceContext<K> extends ParserNamespace<K, StmtContext<?, ?, ?>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
+    public ImportedNamespaceContext(final @NonNull String name) {
+        super(name);
+    }
 }

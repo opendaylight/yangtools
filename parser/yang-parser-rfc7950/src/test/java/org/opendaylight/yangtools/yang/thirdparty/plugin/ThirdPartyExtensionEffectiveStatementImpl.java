@@ -22,7 +22,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     ThirdPartyExtensionEffectiveStatementImpl(final Current<String, ThirdPartyExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
-        valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, Empty.value());
+        valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.INSTANCE, Empty.value());
     }
 
     @Override

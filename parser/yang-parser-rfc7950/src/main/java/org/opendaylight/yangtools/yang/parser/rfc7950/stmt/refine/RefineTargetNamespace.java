@@ -15,9 +15,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public final class RefineTargetNamespace extends ParserNamespace<Empty, StmtContext<?, ?, ?>> {
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(RefineTargetNamespace.class);
+public final class RefineTargetNamespace {
+    public static final @NonNull ParserNamespace<Empty, StmtContext<?, ?, ?>> INSTANCE =
+        new ParserNamespace<>("refineTarget");
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private RefineTargetNamespace() {
         // Hidden on purpose

@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -42,8 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 @Beta
@@ -87,10 +86,10 @@ public final class IncludeStatementSupport
         final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite;
         if (revision == null) {
-            requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
+            requiresCtxPrerequisite = includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
                 NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
         } else {
-            requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
+            requiresCtxPrerequisite = includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
                 new SourceIdentifier(submoduleName, revision.argument()), SOURCE_LINKAGE);
         }
 
@@ -105,10 +104,11 @@ public final class IncludeStatementSupport
                         "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
                 }
 
-                stmt.addToNs(IncludedModuleContext.class,
+                stmt.addToNs(SourceParserNamespaces.INCLUDED_MODULE,
                     new SourceIdentifier(submoduleName, revision != null ? revision.getArgument() : null),
                     includedSubModuleContext);
-                stmt.addToNs(IncludedSubmoduleNameToModuleCtx.class, stmt.argument(), includedSubModuleContext);
+                stmt.addToNs(SourceParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX, stmt.argument(),
+                    includedSubModuleContext);
             }
 
             @Override

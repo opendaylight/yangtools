@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -36,8 +36,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 @Beta
 public final class SubmoduleStatementSupport
@@ -124,13 +124,13 @@ public final class SubmoduleStatementSupport
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null));
 
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
-            possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+            possibleDuplicateSubmodule = stmt.getFromNamespace(ParserNamespaces.SUBMODULE, submoduleIdentifier);
         if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
             throw new SourceException(stmt, "Submodule name collision: %s. At %s", stmt.rawArgument(),
                 possibleDuplicateSubmodule.sourceReference());
         }
 
-        stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
+        stmt.addContext(ParserNamespaces.SUBMODULE, submoduleIdentifier, stmt);
 
         final Unqualified belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(),
             BelongsToStatement.class);
@@ -139,7 +139,7 @@ public final class SubmoduleStatementSupport
             "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());
 
         final String prefix = prefixSubStmtCtx.rawArgument();
-        stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
+        stmt.addToNs(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix, belongsToModuleName);
     }
 
     @Override

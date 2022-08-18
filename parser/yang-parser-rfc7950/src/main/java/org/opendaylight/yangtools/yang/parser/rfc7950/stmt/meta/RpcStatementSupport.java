@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -101,6 +101,6 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
     private static void appendImplicitSubstatement(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt,
             final QName substatementName) {
         stmt.addEffectiveSubstatement(stmt.createUndeclaredSubstatement(
-            verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null));
+            verifyNotNull(stmt.getFromNamespace(StatementSupport.NAMESPACE, substatementName)), null));
     }
 }

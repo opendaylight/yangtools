@@ -72,7 +72,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         /**
          * Invoked whenever a new item is added to a namespace.
          */
-        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key, Object value);
+        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, ParserNamespace<?, ?> namespace, Object key,
+            Object value);
     }
 
     /**
@@ -263,8 +264,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(
-            final Class<@NonNull N> type, final T key, final U value) {
+    public final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(final @NonNull N type,
+            final T key, final U value) {
         addToNamespace(type, key, value);
     }
 
@@ -593,7 +594,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return definition;
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
+    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type, final K key,
             final OnNamespaceItemAdded listener) {
         final Object potential = getFromNamespace(type, key);
         if (potential != null) {
@@ -610,7 +611,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         });
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
+    final <K, V, N extends ParserNamespace<K, V>> void onNamespaceItemAddedAction(final N type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> existing = getFromNamespace(type, criterion);
@@ -636,7 +637,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         });
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void selectMatch(final Class<N> type,
+    final <K, V, N extends ParserNamespace<K, V>> void selectMatch(final N type,
             final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> optMatch = getFromNamespace(type, criterion);
         checkState(optMatch.isPresent(), "Failed to find a match for criterion %s in namespace %s node %s", criterion,
@@ -645,7 +646,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
     }
 
-    final <K, V, N extends ParserNamespace<K, V>> void waitForPhase(final Object value, final Class<N> type,
+    final <K, V, N extends ParserNamespace<K, V>> void waitForPhase(final Object value, final N type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         ((StatementContextBase<?, ? ,?>) value).addPhaseCompletedListener(phase,
@@ -656,7 +657,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     private <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
-            final Class<N> type) {
+            final N type) {
         final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",
             type);
@@ -718,8 +719,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
-            final Class<@NonNull N> namespace, final KT key,final StmtContext<?, ?, ?> stmt) {
+    public final <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final @NonNull N namespace,
+            final KT key, final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, key, stmt);
     }
 

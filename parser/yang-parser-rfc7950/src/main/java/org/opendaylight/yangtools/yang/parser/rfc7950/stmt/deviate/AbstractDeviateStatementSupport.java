@@ -47,9 +47,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +131,7 @@ abstract class AbstractDeviateStatementSupport
 
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
                 deviateAction.mutatesEffectiveCtxPath(deviateStmtCtx.getRoot(),
-                    SchemaTreeNamespace.class, deviationTarget.getNodeIdentifiers());
+                    SchemaTreeNamespace.instance(), deviationTarget.getNodeIdentifiers());
 
         deviateAction.apply(new InferenceAction() {
             @Override
@@ -234,12 +233,12 @@ abstract class AbstractDeviateStatementSupport
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
         final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
-                ModulesDeviatedByModules.class, Empty.value());
+                SourceParserNamespaces.MODULES_DEVIATED_BY, Empty.value());
         if (modulesDeviatedByModules == null) {
             return true;
         }
 
-        final QNameModule currentModule = deviateStmtCtx.getFromNamespace(ModuleCtxToModuleQName.class,
+        final QNameModule currentModule = deviateStmtCtx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME,
                 deviateStmtCtx.getRoot());
         final QNameModule targetModule = Iterables.getLast(deviationTarget.getNodeIdentifiers()).getModule();
 

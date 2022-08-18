@@ -100,7 +100,7 @@ abstract class AbstractAugmentStatementSupport
         final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtxPath(
-            getSearchRoot(augmentNode), SchemaTreeNamespace.class, augmentNode.getArgument().getNodeIdentifiers());
+            getSearchRoot(augmentNode), SchemaTreeNamespace.instance(), augmentNode.getArgument().getNodeIdentifiers());
 
         augmentAction.apply(new AugmentInferenceAction(this, augmentNode, target));
     }
@@ -123,7 +123,7 @@ abstract class AbstractAugmentStatementSupport
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
         // children through target's implicit wrapping.
-        final var implicitDef = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.class, Empty.value());
+        final var implicitDef = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value());
         return implicitDef == null ? substatements
             : Lists.transform(substatements, subCtx -> implicitDef.wrapWithImplicit(subCtx));
     }

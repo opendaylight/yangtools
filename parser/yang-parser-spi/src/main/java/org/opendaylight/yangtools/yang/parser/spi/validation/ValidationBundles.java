@@ -17,15 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * Namespace used for validating whether a node is of some type, e.g. usable target for some operation or has other
  * significant properties.
  */
-public final class ValidationBundlesNamespace
-        extends ParserNamespace<ValidationBundlesNamespace.ValidationBundleType, Collection<?>> {
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
-        NamespaceBehaviour.global(ValidationBundlesNamespace.class);
-
-    private ValidationBundlesNamespace() {
-        // Hidden on purpose
-    }
-
+public final class ValidationBundles {
     public enum ValidationBundleType {
         /**
          * Whether a node is suitable refine substatement.
@@ -53,5 +45,14 @@ public final class ValidationBundlesNamespace
          * Whether a node is data node.
          */
         SUPPORTED_DATA_NODES
+    }
+
+    public static final @NonNull ParserNamespace<ValidationBundleType, Collection<?>> NAMESPACE =
+        new ParserNamespace<>("validationBundles");
+
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
+
+    private ValidationBundles() {
+        // Hidden on purpose
     }
 }
