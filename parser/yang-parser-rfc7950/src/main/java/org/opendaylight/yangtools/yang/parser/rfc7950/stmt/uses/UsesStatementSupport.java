@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBund
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -59,10 +59,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,9 +99,9 @@ public final class UsesStatementSupport
         final QName groupingName = usesNode.argument();
 
         final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
-                GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
+            ParserNamespaces.GROUPING, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<? extends Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
-                usesNode.getParentContext());
+            usesNode.getParentContext());
 
         usesAction.apply(new InferenceAction() {
 
@@ -169,8 +168,7 @@ public final class UsesStatementSupport
         final Map<Descendant, SchemaNode> refines = new LinkedHashMap<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : substatements) {
-            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
-                final RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+            if (effectiveStatement instanceof RefineEffectiveStatementImpl refineStmt) {
                 refines.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
             }
         }
@@ -358,7 +356,7 @@ public final class UsesStatementSupport
 
     private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {
         final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.getFromNamespace(
-                ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
+                ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
                 || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())

@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
-import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -31,10 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
 
 final class RevisionImport {
     private RevisionImport() {

@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -44,8 +43,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 

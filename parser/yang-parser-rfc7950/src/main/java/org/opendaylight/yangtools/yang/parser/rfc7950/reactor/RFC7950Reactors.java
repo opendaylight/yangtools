@@ -99,37 +99,14 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.SourceGroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.UsesStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
-import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceNamespaceBehaviours;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
@@ -143,9 +120,9 @@ public final class RFC7950Reactors {
     private static final ImmutableSet<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
 
     private static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle.builder(SUPPORTED_VERSIONS)
-        .addSupport(ValidationBundlesNamespace.BEHAVIOUR)
-        .addSupport(SupportedFeaturesNamespace.BEHAVIOUR)
-        .addSupport(ModulesDeviatedByModules.BEHAVIOUR)
+        .addSupport(ValidationBundles.BEHAVIOUR)
+        .addSupport(SourceNamespaceBehaviours.SUPPORTED_FEATURES)
+        .addSupport(SourceNamespaceBehaviours.MODULES_DEVIATED_BY)
         .build();
 
     private RFC7950Reactors() {
@@ -184,10 +161,10 @@ public final class RFC7950Reactors {
             .addSupport(new ReferenceStatementSupport(config))
             .addSupport(new ContactStatementSupport(config))
             .addSupport(new OrganizationStatementSupport(config))
-            .addSupport(ModuleNamespace.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.MODULE)
             .addSupport(ModuleNamespaceForBelongsTo.BEHAVIOUR)
-            .addSupport(SubmoduleNamespace.BEHAVIOUR)
-            .addSupport(NamespaceToModule.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.SUBMODULE)
+            .addSupport(NamespaceBehaviours.NAMESPACE_TO_MODULE)
             .addSupport(ModuleNameToModuleQName.BEHAVIOUR)
             .addSupport(ModuleCtxToSourceIdentifier.BEHAVIOUR)
             .addSupport(ModuleQNameToModuleName.BEHAVIOUR)
@@ -208,13 +185,13 @@ public final class RFC7950Reactors {
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new ExtensionStatementSupport(config))
-            .addSupport(SchemaTreeNamespace.BEHAVIOUR)
-            .addSupport(ExtensionNamespace.BEHAVIOUR)
+            .addSupport(SchemaTreeNamespaceBehaviour.INSTANCE)
+            .addSupport(NamespaceBehaviours.EXTENSION)
             .addSupport(new TypedefStatementSupport(config))
-            .addSupport(TypeNamespace.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.TYPE)
             .addVersionSpecificSupport(VERSION_1, IdentityStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, IdentityStatementSupport.rfc7950Instance(config))
-            .addSupport(IdentityNamespace.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.IDENTITY)
             .addSupport(new DefaultStatementSupport(config))
             .addSupport(new StatusStatementSupport(config))
             .addSupport(BaseTypeNamespace.BEHAVIOUR)
@@ -252,7 +229,7 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRFC7950Support(config))
             .addSupport(new FractionDigitsStatementSupport(config))
             .addSupport(new BaseStatementSupport(config))
-            .addSupport(StatementDefinitionNamespace.BEHAVIOUR)
+            .addSupport(StatementDefinitions.BEHAVIOUR)
             .build();
     }
 
@@ -372,10 +349,10 @@ public final class RFC7950Reactors {
             .addSupport(new MandatoryStatementSupport(config))
             .addSupport(new AnyxmlStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementSupport(config))
-            .addSupport(FeatureNamespace.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.FEATURE)
             .addVersionSpecificSupport(VERSION_1, new IfFeatureStatementRFC6020Support(config))
             .addVersionSpecificSupport(VERSION_1_1, new IfFeatureStatementRFC7950Support(config))
-            .addSupport(GroupingNamespace.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.GROUPING)
             .addSupport(SourceGroupingNamespace.BEHAVIOUR)
             .addSupport(new UsesStatementSupport(config))
             .addSupport(new ErrorMessageStatementSupport(config))

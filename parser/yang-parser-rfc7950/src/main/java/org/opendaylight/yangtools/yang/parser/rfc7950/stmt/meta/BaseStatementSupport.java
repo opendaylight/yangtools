@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -56,7 +56,7 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
             final QName baseIdentityQName = baseStmtCtx.getArgument();
             final ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(
                 ModelProcessingPhase.STATEMENT_DEFINITION);
-            baseIdentityAction.requiresCtx(baseStmtCtx, IdentityNamespace.class, baseIdentityQName,
+            baseIdentityAction.requiresCtx(baseStmtCtx, ParserNamespaces.IDENTITY, baseIdentityQName,
                 ModelProcessingPhase.STATEMENT_DEFINITION);
             baseIdentityAction.mutatesCtx(baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
 

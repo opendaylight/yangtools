@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -16,6 +17,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
 public final class SourceGroupingNamespace extends ParserNamespace<Empty, StmtContext<?, ?, ?>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(SourceGroupingNamespace.class);
 

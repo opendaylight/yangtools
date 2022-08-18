@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class DeviationStatementSupport
         extends AbstractStatementSupport<Absolute, DeviationStatement, DeviationEffectiveStatement> {

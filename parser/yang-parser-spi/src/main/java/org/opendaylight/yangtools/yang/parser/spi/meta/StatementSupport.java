@@ -195,6 +195,16 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
             @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
     }
 
+    /**
+     * Projection of {@link StatementSupport}s available within a particular source. This namespace is purely virtual
+     * and its behaviour corresponds to {@link NamespaceBehaviour#rootStatementLocal(ParserNamespace)} and is always
+     * available.
+     * Its contents are derived from {@link StatementSupportBundle}s active in the current {@link ModelProcessingPhase}
+     * as well as {@link StatementDefinitions} and {@link StmtContext#yangVersion()} of the source root statement.
+     */
+    @Beta
+    public static final @NonNull ParserNamespace<QName, StatementSupport<?, ?, ?>> NAMESPACE = new ParserNamespace<>();
+
     private final @NonNull StatementPolicy<A, D> policy;
     private final @NonNull StatementDefinition publicDefinition;
     private final @NonNull CopyPolicy copyPolicy;

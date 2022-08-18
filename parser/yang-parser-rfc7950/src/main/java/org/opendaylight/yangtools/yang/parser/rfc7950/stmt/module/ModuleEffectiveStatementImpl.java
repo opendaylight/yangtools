@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
         implements Module, ModuleEffectiveStatement {

@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefS
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -65,7 +65,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
                 StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class);
         for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
             final QName baseIdentity = baseStmt.getArgument();
-            final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
+            final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(ParserNamespaces.IDENTITY, baseIdentity);
             InferenceException.throwIfNull(stmtCtx, stmt,
                 "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
                 baseIdentity.getLocalName());
@@ -100,7 +100,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
             if (subStmt instanceof BaseEffectiveStatement) {
                 final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();
                 final IdentityEffectiveStatement baseIdentity =
-                    verifyNotNull(stmt.getFromNamespace(IdentityNamespace.class, identityQName)).buildEffective();
+                    verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IDENTITY, identityQName)).buildEffective();
                 verify(baseIdentity instanceof IdentitySchemaNode, "Statement %s is not an IdentitySchemaNode",
                     baseIdentity);
                 builder.addIdentity((IdentitySchemaNode) baseIdentity);

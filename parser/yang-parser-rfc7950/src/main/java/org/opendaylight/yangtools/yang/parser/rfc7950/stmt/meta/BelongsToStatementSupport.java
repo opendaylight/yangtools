@@ -36,8 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 
 public final class BelongsToStatementSupport
         extends AbstractUnqualifiedStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
