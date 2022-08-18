@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 public final class AugmentImplicitHandlingNamespace {
     public static final @NonNull ParserNamespace<Empty, Mutable<?, ?, ?>> INSTANCE =
         new ParserNamespace<>("augment-implicit-handling");
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private AugmentImplicitHandlingNamespace() {
         // Hidden on purpose

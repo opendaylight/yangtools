@@ -14,31 +14,28 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
  * {@link NamespaceBehaviour}s corresponding to {@link ParserNamespaces}.
  */
 public final class NamespaceBehaviours {
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> EXTENSION =
+    public static final @NonNull NamespaceBehaviour<?, ?> EXTENSION =
         NamespaceBehaviour.global(ParserNamespaces.EXTENSION);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> FEATURE =
-        NamespaceBehaviour.global(ParserNamespaces.FEATURE);
+    public static final @NonNull NamespaceBehaviour<?, ?> FEATURE = NamespaceBehaviour.global(ParserNamespaces.FEATURE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> GROUPING =
+    public static final @NonNull NamespaceBehaviour<?, ?> GROUPING =
         NamespaceBehaviour.treeScoped(ParserNamespaces.GROUPING);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> IDENTITY =
+    public static final @NonNull NamespaceBehaviour<?, ?> IDENTITY =
         NamespaceBehaviour.global(ParserNamespaces.IDENTITY);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> MODULE =
-        NamespaceBehaviour.global(ParserNamespaces.MODULE);
+    public static final @NonNull NamespaceBehaviour<?, ?> MODULE = NamespaceBehaviour.global(ParserNamespaces.MODULE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> SUBMODULE =
+    public static final @NonNull NamespaceBehaviour<?, ?> SUBMODULE =
         NamespaceBehaviour.global(ParserNamespaces.SUBMODULE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> TYPE =
-        NamespaceBehaviour.treeScoped(ParserNamespaces.TYPE);
+    public static final @NonNull NamespaceBehaviour<?, ?> TYPE = NamespaceBehaviour.treeScoped(ParserNamespaces.TYPE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> NAMESPACE_TO_MODULE =
+    public static final @NonNull NamespaceBehaviour<?, ?> NAMESPACE_TO_MODULE =
         NamespaceBehaviour.global(ParserNamespaces.NAMESPACE_TO_MODULE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> PRELINKAGE_MODULE =
+    public static final @NonNull NamespaceBehaviour<?, ?> PRELINKAGE_MODULE =
         NamespaceBehaviour.global(ParserNamespaces.PRELINKAGE_MODULE);
 
     private NamespaceBehaviours() {

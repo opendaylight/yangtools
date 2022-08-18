@@ -321,24 +321,22 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     //
 
     @Override
-    public final <K, V, T extends K, N extends ParserNamespace<K, V>> V namespaceItem(final @NonNull N type,
-            final T key) {
+    public final <K, V, T extends K> V namespaceItem(final ParserNamespace<K, V> type, final T key) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
     }
 
     @Override
-    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> namespace(final @NonNull N type) {
+    public final <K, V> Map<K, V> namespace(final ParserNamespace<K, V> type) {
         return getNamespace(type);
     }
 
     @Override
-    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> localNamespacePortion(final @NonNull N type) {
+    public final <K, V> Map<K, V> localNamespacePortion(final ParserNamespace<K, V> type) {
         return getLocalNamespace(type);
     }
 
     @Override
-    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final N type, final K key,
-            final V value) {
+    protected <K, V> void onNamespaceElementAdded(final ParserNamespace<K, V> type, final K key, final V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 

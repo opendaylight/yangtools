@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 @Beta
 public final class BaseTypeNamespace {
     public static final @NonNull ParserNamespace<Empty, Object> INSTANCE = new ParserNamespace<>("baseType");
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private BaseTypeNamespace() {
         // Hidden on purpose

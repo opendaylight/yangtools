@@ -153,6 +153,7 @@ public final class UniqueStatementSupport
                     // ... require that each schema node identifier resolves against the schema tree
                     Maps.uniqueIndex(unique.getArgument(),
                         desc -> action.requiresCtxPath(list,
+                            // FIXME: why do we need this cast?
                             (SchemaTreeNamespace) SchemaTreeNamespace.instance(), desc.getNodeIdentifiers(),
                             ModelProcessingPhase.EFFECTIVE_MODEL))));
             }

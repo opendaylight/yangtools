@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 public final class ImportedVersionNamespace {
     public static final @NonNull ParserNamespace<Empty, SourceIdentifier> INSTANCE =
         new ParserNamespace<>("imported-version");
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private ImportedVersionNamespace() {
         // Hidden on purpose
