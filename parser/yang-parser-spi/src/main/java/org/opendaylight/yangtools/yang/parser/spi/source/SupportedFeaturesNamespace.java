@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -15,6 +16,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 public final class SupportedFeaturesNamespace extends ParserNamespace<Empty, Set<QName>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(SupportedFeaturesNamespace.class);
 

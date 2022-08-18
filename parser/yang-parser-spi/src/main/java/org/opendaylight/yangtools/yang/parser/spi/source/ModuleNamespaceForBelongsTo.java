@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -20,6 +21,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
  */
 public final class ModuleNamespaceForBelongsTo
         extends StatementNamespace<Unqualified, ModuleStatement, ModuleEffectiveStatement> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(ModuleNamespaceForBelongsTo.class);
 

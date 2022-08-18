@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class SubstatementValidator {
@@ -24,9 +24,9 @@ public final class SubstatementValidator {
     private final StatementDefinition currentStatement;
 
     private SubstatementValidator(final Builder builder) {
-        this.cardinalityMap = builder.cardinalityMap.build();
-        this.currentStatement = builder.currentStatement;
-        this.mandatoryStatements = ImmutableMap.copyOf(Maps.filterValues(cardinalityMap, c -> c.getMin() > 0));
+        cardinalityMap = builder.cardinalityMap.build();
+        currentStatement = builder.currentStatement;
+        mandatoryStatements = ImmutableMap.copyOf(Maps.filterValues(cardinalityMap, c -> c.getMin() > 0));
     }
 
     public static Builder builder(final StatementDefinition currentStatement) {
@@ -129,7 +129,7 @@ public final class SubstatementValidator {
             final int value = entry.getValue().getValue();
 
             if (cardinality == null) {
-                if (ctx.getFromNamespace(ExtensionNamespace.class, key.getStatementName()) == null) {
+                if (ctx.getFromNamespace(ParserNamespaces.EXTENSION, key.getStatementName()) == null) {
                     final StmtContext<?, ?, ?> root = ctx.getRoot();
                     throw new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", key,
                         currentStatement, root.rawArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -35,6 +36,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 // StatementSupportBundles, SourceSpecificSpecificContext should be able to work its magic even without this namespace.
 @Beta
 public final class StatementDefinitionNamespace extends ParserNamespace<QName, StatementSupport<?, ?, ?>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(StatementDefinitionNamespace.class);
 

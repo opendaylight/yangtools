@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -16,6 +17,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * Source-specific mapping of prefix strings to module context.
  */
 public final class ImportPrefixToModuleCtx extends ParserNamespace<String, StmtContext<?, ?, ?>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.rootStatementLocal(ImportPrefixToModuleCtx.class);
 

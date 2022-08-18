@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -20,6 +21,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * @see PrefixResolver
  */
 public final class PrefixToModule extends ParserNamespace<String, QNameModule> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(PrefixToModule.class);
 

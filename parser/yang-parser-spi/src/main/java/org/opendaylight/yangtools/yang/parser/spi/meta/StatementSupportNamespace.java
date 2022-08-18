@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -18,6 +19,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 @Beta
 public final class StatementSupportNamespace extends ParserNamespace<QName, StatementSupport<?, ?, ?>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     StatementSupportNamespace() {
         // FIXME: is this really used?!
     }

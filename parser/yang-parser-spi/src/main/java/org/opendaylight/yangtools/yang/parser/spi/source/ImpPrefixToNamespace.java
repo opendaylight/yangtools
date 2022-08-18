@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -16,6 +17,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * Pre-linkage source-specific mapping of prefixes to module namespaces.
  */
 public final class ImpPrefixToNamespace extends ParserNamespace<String, XMLNamespace> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.rootStatementLocal(ImpPrefixToNamespace.class);
 

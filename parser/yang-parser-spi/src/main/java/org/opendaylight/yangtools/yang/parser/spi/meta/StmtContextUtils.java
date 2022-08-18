@@ -40,12 +40,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class StmtContextUtils {
     private StmtContextUtils() {
@@ -553,7 +551,7 @@ public final class StmtContextUtils {
         if (ctx.producesDeclared(ModuleStatement.class)) {
             return lookupModuleQName(ctx, ctx);
         } else if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsTo = ctx.getAllFromNamespace(BelongsToPrefixToModuleCtx.class);
+            final var belongsTo = ctx.getAllFromNamespace(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
             if (belongsTo == null || belongsTo.isEmpty()) {
                 throw new IllegalArgumentException(ctx + " does not have belongs-to linkage resolved");
             }
@@ -581,8 +579,8 @@ public final class StmtContextUtils {
         }
 
         if (root.producesDeclared(SubmoduleStatement.class)) {
-            final var moduleName = root.getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
-            return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
+            final var moduleName = root.getFromNamespace(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix);
+            return ctx.getFromNamespace(SourceParserNamespaces.MODULE_NAME_TO_QNAME, moduleName);
         }
 
         return null;

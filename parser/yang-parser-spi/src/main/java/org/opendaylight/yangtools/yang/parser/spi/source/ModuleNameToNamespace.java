@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -17,6 +18,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * Pre-linkage global mapping of module names to namespaces.
  */
 public final class ModuleNameToNamespace extends ParserNamespace<Unqualified, XMLNamespace> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(ModuleNameToNamespace.class);
 

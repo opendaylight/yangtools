@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -17,6 +18,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * Source-specific mapping of prefixes to namespaces.
  */
 public final class IncludedSubmoduleNameToModuleCtx extends ParserNamespace<Unqualified, StmtContext<?, ?, ?>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.sourceLocal(IncludedSubmoduleNameToModuleCtx.class);
 

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -17,6 +18,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * Global mapping of modules to source identifier.
  */
 public final class ModuleCtxToSourceIdentifier extends ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(ModuleCtxToSourceIdentifier.class);
 

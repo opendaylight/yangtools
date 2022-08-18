@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.MoreObjects;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Identifier;
 
 /**
  * {@link ParserNamespace} serves as common superclass for namespaces used during parser operation. Each such namespace,
@@ -21,7 +23,10 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <V> Value type
  */
 @NonNullByDefault
-public abstract class ParserNamespace<K, V> {
+public class ParserNamespace<K, V> implements Identifier {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Override
     public final int hashCode() {
         return super.hashCode();
