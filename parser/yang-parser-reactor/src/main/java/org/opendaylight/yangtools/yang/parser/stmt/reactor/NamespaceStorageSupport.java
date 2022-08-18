@@ -61,17 +61,16 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      *
      * @throws SourceException instance of SourceException
      */
-    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final N type, final K key,
-            final V value) {
+    protected <K, V> void onNamespaceElementAdded(final ParserNamespace<K, V> type, final K key, final V value) {
         // NOOP
     }
 
-    public final <K, V, N extends ParserNamespace<K, V>> Optional<Entry<K, V>> getFromNamespace(final N type,
+    public final <K, V> Optional<Entry<K, V>> getFromNamespace(final ParserNamespace<K, V> type,
             final NamespaceKeyCriterion<K> criterion) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
     }
 
-    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> getNamespace(final N type) {
+    public final <K, V> Map<K, V> getNamespace(final ParserNamespace<K, V> type) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
@@ -85,9 +84,8 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 
-    final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNamespace(final N type,
-            final Map<T, U> map) {
-        final NamespaceBehaviour<K, V, N> behavior = getBehaviourRegistry().getNamespaceBehaviour(type);
+    final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final Map<T, U> map) {
+        final NamespaceBehaviour<K, V> behavior = getBehaviourRegistry().getNamespaceBehaviour(type);
         for (final Entry<T, U> validationBundle : map.entrySet()) {
             behavior.addTo(this, validationBundle.getKey(), validationBundle.getValue());
         }
@@ -111,28 +109,27 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final N type, final K key) {
+    public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
         final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace == null ? null : localNamespace.get(key);
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final N type) {
+    public <K, V> Map<K, V> getAllFromLocalStorage(final ParserNamespace<K, V> type) {
         @SuppressWarnings("unchecked")
         final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace;
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final N type, final K key, final V value) {
+    public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
         final V ret = ensureLocalNamespace(type).put(key, value);
         onNamespaceElementAdded(type, key, value);
         return ret;
     }
 
     @Override
-    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorageIfAbsent(final N type, final K key,
-            final V value) {
+    public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
         final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
         if (ret == null) {
             onNamespaceElementAdded(type, key, value);
