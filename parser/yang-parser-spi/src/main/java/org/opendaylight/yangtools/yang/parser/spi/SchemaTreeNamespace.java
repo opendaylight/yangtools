@@ -35,63 +35,75 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 // FIXME: 7.0.0: this contract seems to fall on the reactor side of things rather than parser-spi. Consider moving this
 //               into yang-(parser-)reactor-api.
 @Beta
-public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
-            E extends SchemaTreeEffectiveStatement<D>>
-        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>>
+public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
         implements StatementNamespace<QName, D, E> {
-    private static final @NonNull SchemaTreeNamespace<?, ?> INSTANCE = new SchemaTreeNamespace<>();
+    public static final class Behaviour<D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+            extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>> {
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private SchemaTreeNamespace() {
-        super((Class) SchemaTreeNamespace.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-            @NonNull SchemaTreeNamespace<D, E> getInstance() {
-        return (SchemaTreeNamespace<D, E>) INSTANCE;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
-     */
-    @Override
-    public StmtContext<?, D, E> getFrom(final NamespaceStorageNode storage, final QName key) {
-        // Get the backing storage node for the requested storage
-        final NamespaceStorageNode storageNode = globalOrStatementSpecific(storage);
-        // Check try to look up existing node
-        final StmtContext<?, D, E> existing = storageNode.getFromLocalStorage(getIdentifier(), key);
-
-        // An existing node takes precedence, if it does not exist try to request it
-        return existing != null ? existing : requestFrom(storageNode, key);
-    }
-
-    private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-            StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
-        return storageNode instanceof OnDemandSchemaTreeStorageNode
-            ? ((OnDemandSchemaTreeStorageNode) storageNode).requestSchemaTreeChild(key) : null;
-    }
-
-    @Override
-    public Map<QName, StmtContext<?, D, E>> getAllFrom(final NamespaceStorageNode storage) {
-        // FIXME: 7.0.0: this method needs to be well-defined
-        return null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
-        final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
-            SchemaTreeNamespace.class, key, value);
-
-        if (prev != null) {
-            throw new SourceException(value,
-                "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
-                value.getRoot().rawArgument(), key, prev.argument(), prev.sourceReference());
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        private Behaviour() {
+            super((Class) SchemaTreeNamespace.class);
         }
+
+        /**
+         * {@inheritDoc}
+         *
+         * <p>
+         * This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
+         */
+        @Override
+        public StmtContext<?, D, E> getFrom(final NamespaceStorageNode storage, final QName key) {
+            // Get the backing storage node for the requested storage
+            final NamespaceStorageNode storageNode = globalOrStatementSpecific(storage);
+            // Check try to look up existing node
+            final StmtContext<?, D, E> existing = storageNode.getFromLocalStorage(getIdentifier(), key);
+
+            // An existing node takes precedence, if it does not exist try to request it
+            return existing != null ? existing : requestFrom(storageNode, key);
+        }
+
+        @Override
+        public Map<QName, StmtContext<?, D, E>> getAllFrom(final NamespaceStorageNode storage) {
+            // FIXME: 7.0.0: this method needs to be well-defined
+            return null;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
+            final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
+                SchemaTreeNamespace.class, key, value);
+
+            if (prev != null) {
+                throw new SourceException(value,
+                    "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
+                    value.getRoot().rawArgument(), key, prev.argument(), prev.sourceReference());
+            }
+        }
+
+        private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
+            NamespaceStorageNode current = requireNonNull(storage);
+            while (!isLocalOrGlobal(current.getStorageNodeType())) {
+                current = verifyNotNull(current.getParentNamespaceStorage());
+            }
+            return current;
+        }
+
+        private static boolean isLocalOrGlobal(final StorageNodeType type) {
+            return type == StorageNodeType.STATEMENT_LOCAL || type == StorageNodeType.GLOBAL;
+        }
+
+        private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+                StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
+            return storageNode instanceof OnDemandSchemaTreeStorageNode ondemand ? ondemand.requestSchemaTreeChild(key)
+                : null;
+        }
+    }
+
+    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = new Behaviour<>();
+
+    private SchemaTreeNamespace() {
+        // Hidden on purpose
     }
 
     /**
@@ -141,17 +153,5 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
             }
         }
         return null;
-    }
-
-    private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
-        NamespaceStorageNode current = requireNonNull(storage);
-        while (!isLocalOrGlobal(current.getStorageNodeType())) {
-            current = verifyNotNull(current.getParentNamespaceStorage());
-        }
-        return current;
-    }
-
-    private static boolean isLocalOrGlobal(final StorageNodeType type) {
-        return type == StorageNodeType.STATEMENT_LOCAL || type == StorageNodeType.GLOBAL;
     }
 }
