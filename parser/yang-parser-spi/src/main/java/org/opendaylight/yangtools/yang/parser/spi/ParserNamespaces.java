@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Baseline {@link ParserNamespace}s mostly derived from YANG specification.
@@ -38,16 +38,16 @@ public final class ParserNamespaces {
      * identifier namespace, where each extension is identified by a QName formed from the defining module's QNameModule
      * and the identifier specified in extension statement's argument.
      */
-    public static final @NonNull StatementNamespace<QName, ExtensionStatement, ExtensionEffectiveStatement> EXTENSION =
-        new StatementNamespace<>("extension");
+    public static final @NonNull ParserNamespace<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>>
+        EXTENSION = new ParserNamespace<>("extension");
 
     /**
      * Feature namespace. All feature names defined in a module and its submodules share the same feature identifier
      * namespace. Each feature is identified by a QName formed from the defining module's QNameModule and the feature
      * name.
      */
-    public static final @NonNull StatementNamespace<QName, FeatureStatement, FeatureEffectiveStatement> FEATURE =
-        new StatementNamespace<>("feature");
+    public static final @NonNull ParserNamespace<QName,
+        StmtContext<?, FeatureStatement, FeatureEffectiveStatement>> FEATURE = new ParserNamespace<>("feature");
 
     /**
      * Grouping namespace. * All grouping names defined within a parent node or at the top level of the module
@@ -57,28 +57,28 @@ public final class ParserNamespaces {
      * <p>
      * This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same name.
      */
-    public static final @NonNull StatementNamespace<QName, GroupingStatement, GroupingEffectiveStatement> GROUPING =
-        new StatementNamespace<>("grouping");
+    public static final @NonNull ParserNamespace<QName,
+        StmtContext<?, GroupingStatement, GroupingEffectiveStatement>> GROUPING = new ParserNamespace<>("grouping");
 
     /**
      * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
      * namespace.
      */
-    public static final @NonNull StatementNamespace<QName, IdentityStatement, IdentityEffectiveStatement> IDENTITY =
-        new StatementNamespace<>("identity");
+    public static final @NonNull ParserNamespace<QName,
+        StmtContext<?, IdentityStatement, IdentityEffectiveStatement>> IDENTITY = new ParserNamespace<>("identity");
 
     /**
      * Module namespace. All modules known to the reactor are populated to this namespace. Each module is identified
      * by a {@link SourceIdentifier}.
      */
-    public static final @NonNull StatementNamespace<SourceIdentifier, ModuleStatement, ModuleEffectiveStatement> MODULE
-        = new StatementNamespace<>("module");
+    public static final @NonNull ParserNamespace<SourceIdentifier,
+        StmtContext<?, ModuleStatement, ModuleEffectiveStatement>> MODULE = new ParserNamespace<>("module");
 
     /**
      * Submodule equivalent of {@link #MODULE}.
      */
-    public static final @NonNull StatementNamespace<SourceIdentifier, SubmoduleStatement, SubmoduleEffectiveStatement>
-        SUBMODULE = new StatementNamespace<>("submodule");
+    public static final @NonNull ParserNamespace<SourceIdentifier,
+        StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> SUBMODULE = new ParserNamespace<>("submodule");
 
     /**
      * Derived types namespace. All derived type names defined within a parent node or at the top level of the module
@@ -92,21 +92,21 @@ public final class ParserNamespaces {
      * This namespace includes all type definitions implied by the language in which the current statement resides
      * (e.g. RFC6020/RFC7950 for YANG 1.0/1.1).
      */
-    public static final @NonNull StatementNamespace<QName, TypedefStatement, TypedefEffectiveStatement> TYPE =
-        new StatementNamespace<>("typedef");
+    public static final @NonNull ParserNamespace<QName,
+        StmtContext<?, TypedefStatement, TypedefEffectiveStatement>> TYPE = new ParserNamespace<>("typedef");
 
     /**
      * A derived namespace allowing lookup of modules based on their {@link QNameModule}.
      */
-    public static final @NonNull StatementNamespace<QNameModule, ModuleStatement, ModuleEffectiveStatement>
-        NAMESPACE_TO_MODULE = new StatementNamespace<>("namespace-to-module");
+    public static final @NonNull ParserNamespace<QNameModule, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>>
+        NAMESPACE_TO_MODULE = new ParserNamespace<>("namespace-to-module");
 
     /**
      * Intermediate-stage namespace equivalent to {@link #MODULE} except it is keyed by module names. This namespace is
      * used to resolve inter-module references before actual linkage occurs.
      */
-    public static final @NonNull StatementNamespace<Unqualified, ModuleStatement, ModuleEffectiveStatement>
-        PRELINKAGE_MODULE = new StatementNamespace<>("prelinkage-module");
+    public static final @NonNull ParserNamespace<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>>
+        PRELINKAGE_MODULE = new ParserNamespace<>("prelinkage-module");
 
     private ParserNamespaces() {
         // Hidden on purpose

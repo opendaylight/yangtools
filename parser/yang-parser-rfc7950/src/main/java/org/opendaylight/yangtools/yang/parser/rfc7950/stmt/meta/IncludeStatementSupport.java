@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -84,7 +86,7 @@ public final class IncludeStatementSupport
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
 
         final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-        final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite;
+        final Prerequisite<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> requiresCtxPrerequisite;
         if (revision == null) {
             requiresCtxPrerequisite = includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
                 NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);

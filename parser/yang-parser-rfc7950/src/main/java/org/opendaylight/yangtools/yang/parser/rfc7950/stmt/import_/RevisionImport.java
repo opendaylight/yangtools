@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -40,9 +42,9 @@ final class RevisionImport {
 
     static void onLinkageDeclared(final Mutable<Unqualified, ImportStatement, ImportEffectiveStatement> stmt) {
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-        final Prerequisite<StmtContext<?, ?, ?>> imported;
         final Unqualified moduleName = stmt.getArgument();
         final Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+        final Prerequisite<StmtContext<?, ModuleStatement, ModuleEffectiveStatement>> imported;
         if (revision == null) {
             imported = importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
                 NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);

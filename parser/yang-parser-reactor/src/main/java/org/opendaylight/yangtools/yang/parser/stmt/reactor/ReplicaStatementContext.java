@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -168,7 +167,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     @Override
     @Deprecated
     public <K, KT extends K, Y extends DeclaredStatement<?>, Z extends EffectiveStatement<?, Y>> void addContext(
-            final StatementNamespace<K, Y, Z> namespace, final KT key, final StmtContext<?, Y, Z> stmt) {
+            final ParserNamespace<K, StmtContext<?, Y, Z>> namespace, final KT key, final StmtContext<?, Y, Z> stmt) {
         throw new UnsupportedOperationException();
     }
 

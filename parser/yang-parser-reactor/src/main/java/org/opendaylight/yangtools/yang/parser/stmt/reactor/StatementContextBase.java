@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -719,7 +718,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public final <K, KT extends K, Y extends DeclaredStatement<?>, Z extends EffectiveStatement<?, Y>> void addContext(
-            final StatementNamespace<K, Y, Z> namespace, final KT key, final StmtContext<?, Y, Z> stmt) {
+            final ParserNamespace<K, StmtContext<?, Y, Z>> namespace, final KT key, final StmtContext<?, Y, Z> stmt) {
         addContextToNamespace(namespace, key, stmt);
     }
 
