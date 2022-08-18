@@ -38,7 +38,7 @@ public final class StatementDefinitions {
 
     public static final @NonNull ParserNamespace<QName, StatementSupport<?, ?, ?>> NAMESPACE = new ParserNamespace<>();
 
-    public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
+    public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
 
     private StatementDefinitions() {
         // Hidden on purpose
