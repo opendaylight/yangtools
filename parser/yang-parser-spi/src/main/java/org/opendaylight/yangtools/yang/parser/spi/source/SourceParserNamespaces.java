@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -33,8 +32,8 @@ public final class SourceParserNamespaces {
      * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
      * statement.
      */
-    public static final @NonNull ImportedNamespaceContext<String> BELONGSTO_PREFIX_TO_MODULECTX =
-        new ImportedNamespaceContext<>("belongsto-prefix-to-module");
+    public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
+        new ParserNamespace<>("belongsto-prefix-to-module");
 
     /**
      * Source-specific mapping of prefixes to namespaces.
@@ -65,13 +64,13 @@ public final class SourceParserNamespaces {
         new ParserNamespace<>("import-prefix-to-modulectx");
 
     // FIXME: document this
-    public static final @NonNull ImportedNamespaceContext<SourceIdentifier> IMPORTED_MODULE =
-        new ImportedNamespaceContext<>("imported-module");
+    public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> IMPORTED_MODULE =
+        new ParserNamespace<>("imported-module");
 
     // FIXME: document this
     // FIXME: is this 'included submodule' instead?
-    public static final @NonNull ImportedNamespaceContext<SourceIdentifier> INCLUDED_MODULE =
-        new ImportedNamespaceContext<>("included-module");
+    public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> INCLUDED_MODULE =
+        new ParserNamespace<>("included-module");
 
     /**
      * Source-specific mapping of prefixes to namespaces.
