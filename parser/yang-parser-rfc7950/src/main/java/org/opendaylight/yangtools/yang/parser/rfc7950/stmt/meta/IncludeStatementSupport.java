@@ -86,7 +86,8 @@ public final class IncludeStatementSupport
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
 
         final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-        final Prerequisite<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> requiresCtxPrerequisite;
+        final Prerequisite<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
+            requiresCtxPrerequisite;
         if (revision == null) {
             requiresCtxPrerequisite = includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
                 NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);

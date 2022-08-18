@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -99,12 +97,11 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      * @param key Key
      * @param value Context value
      * @param <K> namespace key type
-     * @param <D> declared statement type
-     * @param <E> effective statement type
+     * @param <C> context type
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    public final <K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>> void addContextToNamespace(
-            final ParserNamespace<K, StmtContext<?, D, E>> type, final K key, final StmtContext<?, D, E> value) {
+    public final <K, C extends StmtContext<?, ?, ?>> void addContextToNamespace(
+            final ParserNamespace<K, ? super C> type, final K key, final C value) {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 

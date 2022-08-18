@@ -44,7 +44,7 @@ final class RevisionImport {
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Unqualified moduleName = stmt.getArgument();
         final Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
-        final Prerequisite<StmtContext<?, ModuleStatement, ModuleEffectiveStatement>> imported;
+        final Prerequisite<StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> imported;
         if (revision == null) {
             imported = importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
                 NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);

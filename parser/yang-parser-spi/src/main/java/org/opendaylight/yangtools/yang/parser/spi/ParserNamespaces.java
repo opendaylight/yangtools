@@ -38,8 +38,9 @@ public final class ParserNamespaces {
      * identifier namespace, where each extension is identified by a QName formed from the defining module's QNameModule
      * and the identifier specified in extension statement's argument.
      */
-    public static final @NonNull ParserNamespace<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>>
-        EXTENSION = new ParserNamespace<>("extension");
+    public static final @NonNull ParserNamespace<QName,
+        StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement>> EXTENSION =
+        new ParserNamespace<>("extension");
 
     /**
      * Feature namespace. All feature names defined in a module and its submodules share the same feature identifier
@@ -47,7 +48,7 @@ public final class ParserNamespaces {
      * name.
      */
     public static final @NonNull ParserNamespace<QName,
-        StmtContext<?, FeatureStatement, FeatureEffectiveStatement>> FEATURE = new ParserNamespace<>("feature");
+        StmtContext<QName, FeatureStatement, FeatureEffectiveStatement>> FEATURE = new ParserNamespace<>("feature");
 
     /**
      * Grouping namespace. * All grouping names defined within a parent node or at the top level of the module
@@ -58,27 +59,28 @@ public final class ParserNamespaces {
      * This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same name.
      */
     public static final @NonNull ParserNamespace<QName,
-        StmtContext<?, GroupingStatement, GroupingEffectiveStatement>> GROUPING = new ParserNamespace<>("grouping");
+        StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>> GROUPING = new ParserNamespace<>("grouping");
 
     /**
      * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
      * namespace.
      */
     public static final @NonNull ParserNamespace<QName,
-        StmtContext<?, IdentityStatement, IdentityEffectiveStatement>> IDENTITY = new ParserNamespace<>("identity");
+        StmtContext<QName, IdentityStatement, IdentityEffectiveStatement>> IDENTITY = new ParserNamespace<>("identity");
 
     /**
      * Module namespace. All modules known to the reactor are populated to this namespace. Each module is identified
      * by a {@link SourceIdentifier}.
      */
     public static final @NonNull ParserNamespace<SourceIdentifier,
-        StmtContext<?, ModuleStatement, ModuleEffectiveStatement>> MODULE = new ParserNamespace<>("module");
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE = new ParserNamespace<>("module");
 
     /**
      * Submodule equivalent of {@link #MODULE}.
      */
     public static final @NonNull ParserNamespace<SourceIdentifier,
-        StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> SUBMODULE = new ParserNamespace<>("submodule");
+        StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> SUBMODULE =
+        new ParserNamespace<>("submodule");
 
     /**
      * Derived types namespace. All derived type names defined within a parent node or at the top level of the module
@@ -93,20 +95,22 @@ public final class ParserNamespaces {
      * (e.g. RFC6020/RFC7950 for YANG 1.0/1.1).
      */
     public static final @NonNull ParserNamespace<QName,
-        StmtContext<?, TypedefStatement, TypedefEffectiveStatement>> TYPE = new ParserNamespace<>("typedef");
+        StmtContext<QName, TypedefStatement, TypedefEffectiveStatement>> TYPE = new ParserNamespace<>("typedef");
 
     /**
      * A derived namespace allowing lookup of modules based on their {@link QNameModule}.
      */
-    public static final @NonNull ParserNamespace<QNameModule, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>>
-        NAMESPACE_TO_MODULE = new ParserNamespace<>("namespace-to-module");
+    public static final @NonNull ParserNamespace<QNameModule,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> NAMESPACE_TO_MODULE =
+        new ParserNamespace<>("namespace-to-module");
 
     /**
      * Intermediate-stage namespace equivalent to {@link #MODULE} except it is keyed by module names. This namespace is
      * used to resolve inter-module references before actual linkage occurs.
      */
-    public static final @NonNull ParserNamespace<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>>
-        PRELINKAGE_MODULE = new ParserNamespace<>("prelinkage-module");
+    public static final @NonNull ParserNamespace<Unqualified,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> PRELINKAGE_MODULE =
+        new ParserNamespace<>("prelinkage-module");
 
     private ParserNamespaces() {
         // Hidden on purpose

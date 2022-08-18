@@ -717,8 +717,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final <K, KT extends K, Y extends DeclaredStatement<?>, Z extends EffectiveStatement<?, Y>> void addContext(
-            final ParserNamespace<K, StmtContext<?, Y, Z>> namespace, final KT key, final StmtContext<?, Y, Z> stmt) {
+    public final <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
+            final ParserNamespace<K, ? super C> namespace, final KT key, final C stmt) {
         addContextToNamespace(namespace, key, stmt);
     }
 

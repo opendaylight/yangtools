@@ -178,12 +178,11 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
-    public <K, E extends EffectiveStatement<?, ?>> Prerequisite<StmtContext<?, ?, E>> requiresCtxPath(
-            final StmtContext<?, ?, ?> context, final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace,
-            final Iterable<K> keys, final ModelProcessingPhase phase) {
+    public <K, C extends StmtContext<?, ?, ?>> Prerequisite<C> requiresCtxPath(final StmtContext<?, ?, ?> context,
+            final ParserNamespace<K, C> namespace, final Iterable<K> keys, final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        final var ret = new PhaseRequirementInNamespacePath<StmtContext<?, ?, E>, K>(EFFECTIVE_MODEL, keys);
+        final var ret = new PhaseRequirementInNamespacePath<C, K>(EFFECTIVE_MODEL, keys);
         addReq(ret);
         addBootstrap(() -> ret.hookOnto(context, namespace));
         return ret;

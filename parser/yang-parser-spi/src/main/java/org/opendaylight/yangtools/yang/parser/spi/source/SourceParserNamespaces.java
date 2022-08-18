@@ -46,8 +46,9 @@ public final class SourceParserNamespaces {
      * plain name.
      */
     // FIXME: Better name?
-    public static final @NonNull ParserNamespace<Unqualified, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>>
-        MODULE_FOR_BELONGSTO = new ParserNamespace<>("module-belongsto");
+    public static final @NonNull ParserNamespace<Unqualified,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE_FOR_BELONGSTO =
+        new ParserNamespace<>("module-belongsto");
 
     /**
      * Pre-linkage source-specific mapping of prefixes to module namespaces.
@@ -88,7 +89,7 @@ public final class SourceParserNamespaces {
     /**
      * Global mapping of modules to QNameModules.
      */
-    public static final @NonNull ParserNamespace<StmtContext<?,?,?>, QNameModule> MODULECTX_TO_QNAME =
+    public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, QNameModule> MODULECTX_TO_QNAME =
         new ParserNamespace<>("modulectx-to-qnamemodule");
 
     public static final @NonNull ParserNamespace<Empty, Set<QName>> SUPPORTED_FEATURES =
