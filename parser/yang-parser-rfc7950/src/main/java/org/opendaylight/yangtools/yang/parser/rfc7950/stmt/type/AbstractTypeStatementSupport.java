@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -152,8 +151,8 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         }
 
         final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Prerequisite<StmtContext<?, TypedefStatement, TypedefEffectiveStatement>> typePrereq =
-            typeAction.requiresCtx(stmt, ParserNamespaces.TYPE, typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var typePrereq = typeAction.requiresCtx(stmt, ParserNamespaces.TYPE, typeQName,
+            ModelProcessingPhase.EFFECTIVE_MODEL);
         typeAction.mutatesEffectiveCtx(stmt.getParentContext());
 
         /*

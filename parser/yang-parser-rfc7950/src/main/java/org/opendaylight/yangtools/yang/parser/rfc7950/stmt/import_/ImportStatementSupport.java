@@ -26,8 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -90,8 +88,8 @@ public final class ImportStatementSupport
 
         final Unqualified moduleName = stmt.getArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
-        final Prerequisite<StmtContext<?, ModuleStatement, ModuleEffectiveStatement>> imported =
-            importAction.requiresCtx(stmt, ParserNamespaces.PRELINKAGE_MODULE, moduleName, SOURCE_PRE_LINKAGE);
+        final var imported = importAction.requiresCtx(stmt, ParserNamespaces.PRELINKAGE_MODULE, moduleName,
+            SOURCE_PRE_LINKAGE);
         final Prerequisite<Mutable<?, ?, ?>> rootPrereq = importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
 
         importAction.apply(new InferenceAction() {

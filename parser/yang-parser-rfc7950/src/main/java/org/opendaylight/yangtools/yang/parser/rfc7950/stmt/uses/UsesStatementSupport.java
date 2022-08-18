@@ -29,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -101,8 +99,7 @@ public final class UsesStatementSupport
         final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final QName groupingName = usesNode.argument();
 
-        final Prerequisite<StmtContext<?, GroupingStatement, GroupingEffectiveStatement>> sourceGroupingPre =
-            usesAction.requiresCtx(usesNode, ParserNamespaces.GROUPING, groupingName,
+        final var sourceGroupingPre = usesAction.requiresCtx(usesNode, ParserNamespaces.GROUPING, groupingName,
                 ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<? extends Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
             usesNode.getParentContext());

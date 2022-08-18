@@ -264,9 +264,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @param stmt
          *            to be added to namespace map
          */
-        // FIXME: cleanup the capture here: we really want to capture 'StmtContext<?, Y, Z>'
-        <K, KT extends K, Y extends DeclaredStatement<?>, Z extends EffectiveStatement<?, Y>> void addContext(
-            @NonNull ParserNamespace<K, StmtContext<?, Y, Z>> namespace, KT key, StmtContext<?, Y, Z> stmt);
+        <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
+            @NonNull ParserNamespace<K, ? super C> namespace, KT key, C stmt);
 
         /**
          * Set version of root statement context.
