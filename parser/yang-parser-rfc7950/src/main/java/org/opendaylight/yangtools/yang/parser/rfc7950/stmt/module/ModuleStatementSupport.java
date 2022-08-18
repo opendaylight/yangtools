@@ -39,9 +39,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
-import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -50,16 +47,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta

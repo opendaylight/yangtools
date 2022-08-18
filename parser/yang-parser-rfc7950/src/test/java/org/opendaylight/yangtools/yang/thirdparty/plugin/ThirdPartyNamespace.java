@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -16,6 +17,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * ThirdPartyNamespace.
  */
 public final class ThirdPartyNamespace extends ParserNamespace<Empty, String> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(ThirdPartyNamespace.class);
 

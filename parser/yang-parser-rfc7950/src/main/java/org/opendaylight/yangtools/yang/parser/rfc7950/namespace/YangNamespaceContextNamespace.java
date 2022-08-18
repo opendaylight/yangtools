@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -20,6 +21,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 @Beta
 public final class YangNamespaceContextNamespace extends ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(YangNamespaceContextNamespace.class);
 

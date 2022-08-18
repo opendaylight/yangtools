@@ -12,15 +12,16 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.VerifyException;
 import java.util.AbstractMap;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Placeholder namespace map which does not allow access and acts as a sentinel for namespaces which have been
  * explicitly removed from {@link NamespaceStorageSupport}.
  */
 final class SweptNamespace extends AbstractMap<Object, Object> {
-    private final Class<?> name;
+    private final ParserNamespace<?, ?> name;
 
-    SweptNamespace(final Class<?> name) {
+    SweptNamespace(final ParserNamespace<?, ?> name) {
         this.name = requireNonNull(name);
     }
 

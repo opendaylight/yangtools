@@ -59,10 +59,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,8 +168,7 @@ public final class UsesStatementSupport
         final Map<Descendant, SchemaNode> refines = new LinkedHashMap<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : substatements) {
-            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
-                final RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+            if (effectiveStatement instanceof RefineEffectiveStatementImpl refineStmt) {
                 refines.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
             }
         }
@@ -358,7 +356,7 @@ public final class UsesStatementSupport
 
     private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {
         final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.getFromNamespace(
-                ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
+                ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
                 || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())

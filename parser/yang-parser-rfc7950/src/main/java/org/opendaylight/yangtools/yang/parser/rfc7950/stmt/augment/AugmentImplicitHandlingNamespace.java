@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -20,6 +21,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  */
 @Beta
 public final class AugmentImplicitHandlingNamespace extends ParserNamespace<Empty, Mutable<?, ?, ?>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(AugmentImplicitHandlingNamespace.class);
 

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -15,6 +16,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 
 @Beta
 public final class ConfigListWarningNamespace extends ParserNamespace<StatementSourceReference, Boolean> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final @NonNull NamespaceBehaviour<?, ?, ?> BEHAVIOUR =
         NamespaceBehaviour.global(ConfigListWarningNamespace.class);
 

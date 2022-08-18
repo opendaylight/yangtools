@@ -69,7 +69,7 @@ import org.opendaylight.yangtools.yang.model.ri.type.RequireInstanceRestrictedTy
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -151,7 +151,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         }
 
         final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
+        final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, ParserNamespaces.TYPE,
                 typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
         typeAction.mutatesEffectiveCtx(stmt.getParentContext());
 
@@ -314,9 +314,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
                 RestrictedTypes.newBinaryBuilder(baseType, typeEffectiveQName(ctx));
 
         for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof LengthEffectiveStatement) {
-                final LengthEffectiveStatement length = (LengthEffectiveStatement)stmt;
-
+            if (stmt instanceof LengthEffectiveStatement length) {
                 try {
                     builder.setLengthConstraint(length, length.argument());
                 } catch (IllegalStateException e) {
@@ -361,8 +359,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
                 RestrictedTypes.newDecima64Builder(baseType, typeEffectiveQName(ctx));
 
         for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RangeEffectiveStatement) {
-                final RangeEffectiveStatement range = (RangeEffectiveStatement) stmt;
+            if (stmt instanceof RangeEffectiveStatement range) {
                 builder.setRangeConstraint(range, range.argument());
             }
             if (stmt instanceof FractionDigitsEffectiveStatement) {
@@ -427,8 +424,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
                 final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
                 final RangeRestrictedTypeBuilder<T, N> builder) {
         for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RangeEffectiveStatement) {
-                final RangeEffectiveStatement rangeStmt = (RangeEffectiveStatement)stmt;
+            if (stmt instanceof RangeEffectiveStatement rangeStmt) {
                 builder.setRangeConstraint(rangeStmt, rangeStmt.argument());
             }
         }
@@ -461,9 +457,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             AbstractTypeStatementSupport.typeEffectiveQName(ctx));
 
         for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof LengthEffectiveStatement) {
-                final LengthEffectiveStatement length = (LengthEffectiveStatement)stmt;
-
+            if (stmt instanceof LengthEffectiveStatement length) {
                 try {
                     builder.setLengthConstraint(length, length.argument());
                 } catch (IllegalStateException e) {
