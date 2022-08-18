@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
-import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME;
-import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX;
-import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.MODULECTX_TO_QNAME;
-import static org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces.MODULE_NAME_TO_QNAME;
+import static org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME;
+import static org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX;
+import static org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces.MODULECTX_TO_QNAME;
+import static org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces.MODULE_NAME_TO_QNAME;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;

@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 @Beta
@@ -98,7 +97,7 @@ public final class ImportStatementSupport
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
                 verify(moduleName.equals(importedModuleContext.getArgument()));
                 final XMLNamespace importedModuleNamespace = verifyNotNull(importedModuleContext.getFromNamespace(
-                    SourceParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName));
+                    ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName));
                 final String impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
                     "Missing prefix statement");
@@ -113,7 +112,7 @@ public final class ImportStatementSupport
                     }
                 }
 
-                stmt.addToNs(SourceParserNamespaces.IMP_PREFIX_TO_NAMESPACE, impPrefix, importedModuleNamespace);
+                stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, impPrefix, importedModuleNamespace);
             }
 
             @Override

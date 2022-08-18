@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -43,7 +44,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
@@ -208,8 +208,8 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
-        if (SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX.equals(type)
-            || SourceParserNamespaces.IMPORTED_MODULE.equals(type)) {
+        if (ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX.equals(type)
+            || ParserNamespaces.IMPORTED_MODULE.equals(type)) {
             verify(value instanceof RootStatementContext, "Unexpected imported value %s", value);
 
             if (importedNamespaces.isEmpty()) {
@@ -416,7 +416,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     private PrefixResolver preLinkagePrefixes() {
         final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
-        final var prefixToNamespaceMap = getAllFromLocalStorage(SourceParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
+        final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
         if (prefixToNamespaceMap == null) {
             //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
             return null;
@@ -427,16 +427,16 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     private PrefixResolver prefixes() {
-        final var allImports = root.getAllFromNamespace(SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        final var allImports = root.getAllFromNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
         if (allImports != null) {
             allImports.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, value)));
+                prefixToModuleMap.put(key, root.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, value)));
         }
 
-        final var allBelongsTo = root.getAllFromNamespace(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+        final var allBelongsTo = root.getAllFromNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
         if (allBelongsTo != null) {
             allBelongsTo.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, value)));
+                prefixToModuleMap.put(key, root.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, value)));
         }
 
         return prefixToModuleMap;

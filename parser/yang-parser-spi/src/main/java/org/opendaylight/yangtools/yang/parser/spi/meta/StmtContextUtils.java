@@ -36,12 +36,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class StmtContextUtils {
     private StmtContextUtils() {
@@ -549,7 +549,7 @@ public final class StmtContextUtils {
         if (ctx.producesDeclared(ModuleStatement.class)) {
             return lookupModuleQName(ctx, ctx);
         } else if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsTo = ctx.getAllFromNamespace(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+            final var belongsTo = ctx.getAllFromNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
             if (belongsTo == null || belongsTo.isEmpty()) {
                 throw new IllegalArgumentException(ctx + " does not have belongs-to linkage resolved");
             }
@@ -561,7 +561,7 @@ public final class StmtContextUtils {
 
     private static @NonNull QNameModule lookupModuleQName(final NamespaceStmtCtx storage,
             final StmtContext<?, ?, ?> module) {
-        final var ret = storage.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, module);
+        final var ret = storage.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, module);
         if (ret == null) {
             throw new IllegalArgumentException("Failed to look up QNameModule for " + module + " in " + storage);
         }
@@ -571,15 +571,15 @@ public final class StmtContextUtils {
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
         final StmtContext<?, ?, ?> root = ctx.getRoot();
         final StmtContext<?, ?, ?> importedModule = root.getFromNamespace(
-            SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
-        final QNameModule qnameModule = ctx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME, importedModule);
+            ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
+        final QNameModule qnameModule = ctx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
         if (qnameModule != null) {
             return qnameModule;
         }
 
         if (root.producesDeclared(SubmoduleStatement.class)) {
-            return ctx.getFromNamespace(SourceParserNamespaces.MODULE_NAME_TO_QNAME,
-                root.getFromNamespace(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
+            return ctx.getFromNamespace(ParserNamespaces.MODULE_NAME_TO_QNAME,
+                root.getFromNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
         }
 
         return null;

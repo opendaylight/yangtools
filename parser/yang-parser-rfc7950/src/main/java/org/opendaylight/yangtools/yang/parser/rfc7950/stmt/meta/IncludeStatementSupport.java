@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 @Beta
@@ -107,10 +106,10 @@ public final class IncludeStatementSupport
                         "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
                 }
 
-                stmt.addToNs(SourceParserNamespaces.INCLUDED_MODULE,
+                stmt.addToNs(ParserNamespaces.INCLUDED_MODULE,
                     new SourceIdentifier(submoduleName, revision != null ? revision.getArgument() : null),
                     includedSubModuleContext);
-                stmt.addToNs(SourceParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX, stmt.argument(),
+                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX, stmt.argument(),
                     includedSubModuleContext);
             }
 

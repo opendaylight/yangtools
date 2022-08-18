@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 @Beta
 public final class SubmoduleStatementSupport
@@ -139,7 +138,7 @@ public final class SubmoduleStatementSupport
             "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());
 
         final String prefix = prefixSubStmtCtx.rawArgument();
-        stmt.addToNs(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix, belongsToModuleName);
+        stmt.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix, belongsToModuleName);
     }
 
     @Override

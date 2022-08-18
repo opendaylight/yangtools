@@ -37,9 +37,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
         implements Module, ModuleEffectiveStatement {
@@ -73,7 +73,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
         final Map<Unqualified, StmtContext<?, ?, ?>> includedSubmodules =
-                stmt.localNamespacePortion(SourceParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
+                stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
         nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -29,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class DeviationStatementSupport
         extends AbstractStatementSupport<Absolute, DeviationStatement, DeviationEffectiveStatement> {
@@ -52,8 +52,7 @@ public final class DeviationStatementSupport
     @Override
     public void onFullDefinitionDeclared(
             final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
-        final QNameModule currentModule = ctx.getFromNamespace(SourceParserNamespaces.MODULECTX_TO_QNAME,
-            ctx.getRoot());
+        final QNameModule currentModule = ctx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, ctx.getRoot());
         final QNameModule targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
 
         if (currentModule.equals(targetModule)) {

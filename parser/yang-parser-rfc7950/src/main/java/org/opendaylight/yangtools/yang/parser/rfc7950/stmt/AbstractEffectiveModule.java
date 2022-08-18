@@ -49,11 +49,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqualified>,
@@ -208,9 +207,9 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         streamEffectiveSubstatements(ImportEffectiveStatement.class)
             .map(imp -> imp.findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get())
             .forEach(pfx -> {
-                final StmtContext<?, ?, ?> importedCtx =
-                        verifyNotNull(stmt.getFromNamespace(SourceParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
-                            "Failed to resolve prefix %s", pfx);
+                final var importedCtx =
+                    verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
+                        "Failed to resolve prefix %s", pfx);
                 builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
             });
     }

@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -35,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceParserNamespaces;
 
 public final class BelongsToStatementSupport
         extends AbstractUnqualifiedStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
@@ -56,14 +56,13 @@ public final class BelongsToStatementSupport
             final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
         ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
-        final var belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
-            SourceParserNamespaces.MODULE_FOR_BELONGSTO, belongsToCtx.getArgument(),
-            ModelProcessingPhase.SOURCE_LINKAGE);
+        final var belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx, ParserNamespaces.MODULE_FOR_BELONGSTO,
+            belongsToCtx.getArgument(), ModelProcessingPhase.SOURCE_LINKAGE);
 
         belongsToAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                belongsToCtx.addToNs(SourceParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX,
+                belongsToCtx.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX,
                     findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getArgument(),
                     belongsToPrereq.resolve(ctx));
             }
