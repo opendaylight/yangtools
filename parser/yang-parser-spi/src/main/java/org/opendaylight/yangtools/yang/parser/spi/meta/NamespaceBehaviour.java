@@ -131,7 +131,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
          * <p>
          * The results produced by this method are expected to be consistent with
          * {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)} and
-         * {@link SchemaTreeNamespace#getFrom(NamespaceStorageNode, QName)}.
+         * {@link SchemaTreeNamespace.Behaviour#getFrom(NamespaceStorageNode, QName)}.
          *
          * @param qname node identifier of the child being requested
          * @return Requested child, if it is present.
