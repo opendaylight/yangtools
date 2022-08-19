@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.spi;
 
 import com.google.common.collect.SetMultimap;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -25,13 +28,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 
 /**
@@ -223,6 +229,51 @@ public final class ParserNamespaces {
      */
     public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> MODULECTX_TO_SOURCE =
         new ParserNamespace<>("modulectx-to-source");
+
+    /**
+     * Find statement context identified by interpreting specified {@link SchemaNodeIdentifier} starting at specified
+     * {@link StmtContext}.
+     *
+     * @param root Search root context
+     * @param identifier {@link SchemaNodeIdentifier} relative to search root
+     * @return Matching statement context, if present.
+     * @throws NullPointerException if any of the arguments is null
+     */
+    public static Optional<StmtContext<?, ?, ?>> findSchemaTreeStatement(final StmtContext<?, ?, ?> root,
+            final SchemaNodeIdentifier identifier) {
+        final Iterator<QName> iterator = identifier.getNodeIdentifiers().iterator();
+        if (!iterator.hasNext()) {
+            return Optional.of(root);
+        }
+
+        QName nextPath = iterator.next();
+        StmtContext<?, ?, ?> current = root.getFromNamespace(SchemaTreeNamespace.instance(), nextPath);
+        if (current == null) {
+            return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
+        }
+        while (current != null && iterator.hasNext()) {
+            nextPath = iterator.next();
+            final StmtContext<?, ?, ?> nextNodeCtx = current.getFromNamespace(SchemaTreeNamespace.instance(), nextPath);
+            if (nextNodeCtx == null) {
+                return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
+            }
+            current = nextNodeCtx;
+        }
+        return Optional.ofNullable(current);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static StmtContext<?, ?, ?> tryToFindUnknownStatement(final String localName,
+            final StmtContext<?, ?, ?> current) {
+        final Collection<? extends StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
+            current, UnknownStatement.class);
+        for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
+            if (localName.equals(unknownSubstatement.rawArgument())) {
+                return unknownSubstatement;
+            }
+        }
+        return null;
+    }
 
     private ParserNamespaces() {
         // Hidden on purpose
