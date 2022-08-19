@@ -15,6 +15,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @param <K> Identifier type
  * @param <V> Value type
  */
+// FIXME: make this class final and switch addressing to using objects instances instead of
+//        Class<? extends IdentifierNamespace>
+// FIXME: also consider renaming this to a friendlier name, like YangNamespace or similar
 @NonNullByDefault
 public abstract class IdentifierNamespace<K, V> {
     protected IdentifierNamespace() {
