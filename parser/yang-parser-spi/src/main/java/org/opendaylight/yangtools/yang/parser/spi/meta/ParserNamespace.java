@@ -12,9 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 
 /**
  * {@link ParserNamespace} serves as common superclass for namespaces used during parser operation. Each such namespace,
@@ -26,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
  * @param <V> Value type
  */
 @NonNullByDefault
-public sealed class ParserNamespace<K, V> implements Identifier permits SchemaTreeNamespace {
+public final class ParserNamespace<K, V> implements Identifier {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -38,17 +36,7 @@ public sealed class ParserNamespace<K, V> implements Identifier permits SchemaTr
     }
 
     @Override
-    public final int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    public final String toString() {
+    public String toString() {
         return MoreObjects.toStringHelper(this).add("name", name).toString();
     }
 }

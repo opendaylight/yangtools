@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi;
 
 import com.google.common.collect.SetMultimap;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -18,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -230,6 +232,27 @@ public final class ParserNamespaces {
     public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> MODULECTX_TO_SOURCE =
         new ParserNamespace<>("modulectx-to-source");
 
+    private static final @NonNull ParserNamespace<?, ?> SCHEMA_TREE = new ParserNamespace<>("schemaTree");
+
+    /**
+     * Statement local namespace, which holds direct schema node descendants. This corresponds to the contents of the
+     * schema tree as exposed through {@link SchemaTreeAwareEffectiveStatement}.
+     *
+     * <p>
+     * Unlike all other namespaces this namespaces is polymorphic, hence it is exposed throught this method.
+     *
+     * @return Schema tree namespace
+     */
+    @SuppressWarnings("unchecked")
+    public static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+            @NonNull ParserNamespace<QName, StmtContext<QName, D, E>> schemaTree() {
+        return (ParserNamespace<QName, StmtContext<QName, D, E>>) SCHEMA_TREE;
+    }
+
+    private ParserNamespaces() {
+        // Hidden on purpose
+    }
+
     /**
      * Find statement context identified by interpreting specified {@link SchemaNodeIdentifier} starting at specified
      * {@link StmtContext}.
@@ -241,19 +264,19 @@ public final class ParserNamespaces {
      */
     public static Optional<StmtContext<?, ?, ?>> findSchemaTreeStatement(final StmtContext<?, ?, ?> root,
             final SchemaNodeIdentifier identifier) {
-        final Iterator<QName> iterator = identifier.getNodeIdentifiers().iterator();
+        final var iterator = identifier.getNodeIdentifiers().iterator();
         if (!iterator.hasNext()) {
             return Optional.of(root);
         }
 
         QName nextPath = iterator.next();
-        StmtContext<?, ?, ?> current = root.getFromNamespace(SchemaTreeNamespace.instance(), nextPath);
+        var current = root.getFromNamespace(schemaTree(), nextPath);
         if (current == null) {
             return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
-            final StmtContext<?, ?, ?> nextNodeCtx = current.getFromNamespace(SchemaTreeNamespace.instance(), nextPath);
+            final var nextNodeCtx = current.getFromNamespace(schemaTree(), nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
             }
@@ -267,15 +290,11 @@ public final class ParserNamespaces {
             final StmtContext<?, ?, ?> current) {
         final Collection<? extends StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
             current, UnknownStatement.class);
-        for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
+        for (final var unknownSubstatement : unknownSubstatements) {
             if (localName.equals(unknownSubstatement.rawArgument())) {
                 return unknownSubstatement;
             }
         }
         return null;
-    }
-
-    private ParserNamespaces() {
-        // Hidden on purpose
     }
 }

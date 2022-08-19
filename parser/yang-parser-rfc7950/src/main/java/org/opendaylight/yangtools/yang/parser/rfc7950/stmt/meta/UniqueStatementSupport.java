@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -154,7 +155,7 @@ public final class UniqueStatementSupport
                     Maps.uniqueIndex(unique.getArgument(),
                         desc -> action.requiresCtxPath(list,
                             // FIXME: why do we need this cast?
-                            (SchemaTreeNamespace) SchemaTreeNamespace.instance(), desc.getNodeIdentifiers(),
+                            (ParserNamespace) ParserNamespaces.schemaTree(), desc.getNodeIdentifiers(),
                             ModelProcessingPhase.EFFECTIVE_MODEL))));
             }
         }

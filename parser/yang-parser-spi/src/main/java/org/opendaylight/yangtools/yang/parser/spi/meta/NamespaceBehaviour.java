@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
 
 /**
  * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
@@ -128,7 +128,7 @@ public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiabl
          * <p>
          * The results produced by this method are expected to be consistent with
          * {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)} and
-         * {@link SchemaTreeNamespaceBehaviour#getFrom(NamespaceStorageNode, QName)}.
+         * {@link NamespaceBehaviours#SCHEMA_TREE}'s {@code getFrom(NamespaceStorageNode, QName)}.
          *
          * @param qname node identifier of the child being requested
          * @return Requested child, if it is present.

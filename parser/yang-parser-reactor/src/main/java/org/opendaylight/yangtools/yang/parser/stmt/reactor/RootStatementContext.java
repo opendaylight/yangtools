@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -52,7 +51,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     // These namespaces are well-known and not needed after the root is cleaned up
     private static final Map<ParserNamespace<?, ?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
         ParserNamespaces.GROUPING, new SweptNamespace(ParserNamespaces.GROUPING),
-        SchemaTreeNamespace.instance(), new SweptNamespace(SchemaTreeNamespace.instance()),
+        ParserNamespaces.schemaTree(), new SweptNamespace(ParserNamespaces.schemaTree()),
         ParserNamespaces.TYPE, new SweptNamespace(ParserNamespaces.TYPE));
 
     private final @NonNull SourceSpecificContext sourceContext;
