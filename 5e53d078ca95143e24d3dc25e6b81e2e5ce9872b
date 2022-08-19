@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d0e923b_6f80d040",
+        "filename": "data/yang-data-impl/src/test/resources/yt1442.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-08-19T05:48:22Z",
+      "side": 1,
+      "message": "This file should contain copyright as well.",
+      "revId": "5e53d078ca95143e24d3dc25e6b81e2e5ce9872b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
