@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -293,7 +292,7 @@ public final class UsesStatementSupport
 
         // FIXME: this really should be handled via separate inference, i.e. we first instantiate the template and when
         //        it appears, this refine will trigger on it. This reinforces the FIXME below.
-        final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = SchemaTreeNamespace.findNode(
+        final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = ParserNamespaces.findSchemaTreeStatement(
             usesParentCtx, (SchemaNodeIdentifier) refineArgument);
         InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx, "Refine target node %s not found.",
             refineArgument);
