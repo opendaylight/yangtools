@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -96,7 +96,7 @@ final class AugmentInferenceAction implements InferenceAction {
             }
 
             final SchemaNodeIdentifier augmentArg = augmentNode.getArgument();
-            final Optional<StmtContext<?, ?, ?>> targetNode = SchemaTreeNamespace.findNode(
+            final Optional<StmtContext<?, ?, ?>> targetNode = ParserNamespaces.findSchemaTreeStatement(
                 AbstractAugmentStatementSupport.getSearchRoot(augmentNode), augmentArg);
             if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
                 augmentNode.setUnsupported();
