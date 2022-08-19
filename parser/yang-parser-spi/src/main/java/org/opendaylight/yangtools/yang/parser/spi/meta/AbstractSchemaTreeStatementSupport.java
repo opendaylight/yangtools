@@ -15,9 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
@@ -112,7 +113,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      */
     @Override
     public void onStatementAdded(final Mutable<QName, D, E> stmt) {
-        stmt.coerceParentContext().addToNs(SchemaTreeNamespace.instance(), stmt.getArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ParserNamespaces.schemaTree(), stmt.getArgument(), stmt);
     }
 
     // Non-final because {@code input} and {@code output} are doing their own thing.

@@ -100,7 +100,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.SourceGroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.UsesStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -184,7 +183,7 @@ public final class RFC7950Reactors {
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new ExtensionStatementSupport(config))
-            .addSupport(SchemaTreeNamespaceBehaviour.INSTANCE)
+            .addSupport(NamespaceBehaviours.SCHEMA_TREE)
             .addSupport(NamespaceBehaviours.EXTENSION)
             .addSupport(new TypedefStatementSupport(config))
             .addSupport(NamespaceBehaviours.TYPE)

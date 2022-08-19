@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.E
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -100,7 +100,7 @@ abstract class AbstractAugmentStatementSupport
         final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtxPath(
-            getSearchRoot(augmentNode), SchemaTreeNamespace.instance(), augmentNode.getArgument().getNodeIdentifiers());
+            getSearchRoot(augmentNode), ParserNamespaces.schemaTree(), augmentNode.getArgument().getNodeIdentifiers());
 
         augmentAction.apply(new AugmentInferenceAction(this, augmentNode, target));
     }

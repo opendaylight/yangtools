@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -130,8 +129,8 @@ abstract class AbstractDeviateStatementSupport
                 deviateAction.requiresCtx(deviateStmtCtx, ModelProcessingPhase.EFFECTIVE_MODEL);
 
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
-                deviateAction.mutatesEffectiveCtxPath(deviateStmtCtx.getRoot(),
-                    SchemaTreeNamespace.instance(), deviationTarget.getNodeIdentifiers());
+                deviateAction.mutatesEffectiveCtxPath(deviateStmtCtx.getRoot(), ParserNamespaces.schemaTree(),
+                    deviationTarget.getNodeIdentifiers());
 
         deviateAction.apply(new InferenceAction() {
             @Override

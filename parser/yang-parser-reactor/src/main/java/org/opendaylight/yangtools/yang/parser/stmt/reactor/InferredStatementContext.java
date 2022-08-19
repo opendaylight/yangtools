@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -443,7 +443,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         if (prototype instanceof InferredStatementContext) {
             // Note: we need to access namespace here, as the target statement may have already been populated, in which
             //       case we want to obtain the statement in local namespace storage.
-            template = ((InferredStatementContext<?, ?, ?>) prototype).getFromNamespace(SchemaTreeNamespace.instance(),
+            template = ((InferredStatementContext<?, ?, ?>) prototype).getFromNamespace(ParserNamespaces.schemaTree(),
                 templateQName);
         } else {
             template = prototype.allSubstatementsStream()
