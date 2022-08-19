@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 /**
  * {@link NamespaceBehaviour} handling {@link SchemaTreeNamespace}.
  */
+// FIXME: 11.0.0: this contract seems to fall on the reactor side of things rather than parser-spi. Consider moving this
+//                into yang-(parser-)reactor-api.
 final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
         extends NamespaceBehaviour<QName, StmtContext<QName, D, E>> {
     SchemaTreeNamespaceBehaviour() {
