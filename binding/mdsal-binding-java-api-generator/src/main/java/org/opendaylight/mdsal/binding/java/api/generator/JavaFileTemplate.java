@@ -137,6 +137,13 @@ class JavaFileTemplate {
      * {@code org.eclipse.jdt.annotation.NonNull} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull");
+
+    /**
+     * {@code org.eclipse.jdt.annotation.NonNullByDefault} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName NONNULL_BY_DEFAULT =
+        JavaTypeName.create("org.eclipse.jdt.annotation", "NonNullByDefault");
+
     /**
      * {@code org.eclipse.jdt.annotation.Nullable} as a JavaTypeName.
      */

@@ -33,7 +33,8 @@ final class FeatureTemplate extends ClassTemplate {
     protected String generateClassDeclaration(final boolean isInnerClass) {
         final var typeName = type().getName();
 
-        return "public final class " + typeName + " extends " + importedName(YANG_FEATURE) + '<' + typeName + ", "
+        return "@" + importedName(NONNULL_BY_DEFAULT) + '\n'
+            + "public final class " + typeName + " extends " + importedName(YANG_FEATURE) + '<' + typeName + ", "
             + importedName(dataRoot) + '>';
     }
 
@@ -58,7 +59,7 @@ final class FeatureTemplate extends ClassTemplate {
         return "/**\n"
             + " * {@link " + typeName + "} singleton instance.\n"
             + " */\n"
-            + "public static final " + importedNonNull(type) + ' ' + BindingMapping.VALUE_STATIC_FIELD_NAME + " = new "
+            + "public static final " + importedName(type) + ' ' + BindingMapping.VALUE_STATIC_FIELD_NAME + " = new "
             + type.getName() + "();";
     }
 
