@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  */
 @NonNullByDefault
 public abstract sealed class AbstractQName implements Identifier, WritableObject permits QName, UnresolvedQName {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String localName;
@@ -75,7 +76,13 @@ public abstract sealed class AbstractQName implements Identifier, WritableObject
         return str != null && !str.isEmpty() && checkContent(str);
     }
 
+    @Serial
     abstract Object writeReplace();
+
+    @Serial
+    final void readObject(final @Nullable ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Use Serialization Proxy instead.");
+    }
 
     static final String checkLocalName(final @Nullable String localName) {
         checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");

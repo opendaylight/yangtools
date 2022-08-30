@@ -186,7 +186,13 @@ public final class ErrorTag implements Serializable {
         return elementBody;
     }
 
-    Object writeReplace() {
+    @Serial
+    private void readObject(final @Nullable ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Use Serialization Proxy instead.");
+    }
+
+    @Serial
+    private Object writeReplace() {
         return new ETv1(this);
     }
 }
