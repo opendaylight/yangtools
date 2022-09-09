@@ -63,6 +63,8 @@ public final class IdentityGenerator
             builder.addImplementsType(BASE_IDENTITY);
         }
 
+        annotateDeprecatedIfNecessary(statement(), builder);
+
         narrowImplementedInterface(builder);
 
         final ModuleGenerator module = currentModule();
