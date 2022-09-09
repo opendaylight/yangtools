@@ -53,6 +53,8 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
         final var builder = builderFactory.newGeneratedTOBuilder(typeName());
         builder.addImplementsType(BindingTypes.yangFeature(builder, Type.of(getParent().typeName())));
 
+        annotateDeprecatedIfNecessary(statement(), builder);
+
         final var module = currentModule();
         module.addQNameConstant(builder, localName());
 
