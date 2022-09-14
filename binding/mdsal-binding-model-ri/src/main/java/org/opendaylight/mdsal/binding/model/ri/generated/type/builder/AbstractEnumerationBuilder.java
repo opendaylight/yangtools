@@ -12,11 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.opendaylight.mdsal.binding.model.api.AbstractType;
 import org.opendaylight.mdsal.binding.model.api.AnnotationType;
@@ -101,51 +98,35 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
 
         @Override
         public final String getName() {
-            return this.name;
+            return name;
         }
 
         @Override
         public final String getMappedName() {
-            return this.mappedName;
+            return mappedName;
         }
 
         @Override
         public final int getValue() {
-            return this.value;
+            return value;
         }
 
         @Override
         public final int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + Objects.hashCode(this.name);
-            result = prime * result + Objects.hashCode(this.value);
-            return result;
+            return name.hashCode() * 31 + value;
         }
 
         @Override
         public final boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof AbstractPair)) {
-                return false;
-            }
-            final AbstractPair other = (AbstractPair) obj;
-            return Objects.equals(this.name, other.name) && Objects.equals(this.value, other.value);
+            return obj == this || obj instanceof AbstractPair other && name.equals(other.name) && value == other.value;
         }
 
         @Override
         public final String toString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append("EnumPair [name=");
-            builder.append(this.name);
-            builder.append(", mappedName=");
-            builder.append(getMappedName());
-            builder.append(", value=");
-            builder.append(this.value);
-            builder.append("]");
-            return builder.toString();
+            return new StringBuilder().append("EnumPair [name=").append(name)
+                .append(", mappedName=").append(getMappedName())
+                .append(", value=").append(value)
+                .append("]").toString();
         }
     }
 
@@ -155,50 +136,33 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
 
         AbstractEnumeration(final AbstractEnumerationBuilder builder) {
             super(builder.getIdentifier());
-            this.values = ImmutableList.copyOf(builder.values);
-
-            final ArrayList<AnnotationType> a = new ArrayList<>();
-            for (final AnnotationTypeBuilder b : builder.annotationBuilders) {
-                a.add(b.build());
-            }
-            this.annotations = ImmutableList.copyOf(a);
+            values = ImmutableList.copyOf(builder.values);
+            annotations = builder.annotationBuilders.stream()
+                .map(AnnotationTypeBuilder::build)
+                .collect(ImmutableList.toImmutableList());
         }
 
         @Override
         public final List<Pair> getValues() {
-            return this.values;
+            return values;
         }
 
         @Override
         public final List<AnnotationType> getAnnotations() {
-            return this.annotations;
+            return annotations;
         }
 
         @Override
         public final String toFormattedString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append("public enum");
-            builder.append(" ");
-            builder.append(getName());
-            builder.append(" {");
-            builder.append("\n");
+            final var sb = new StringBuilder().append("public enum ").append(getName()).append(" {\n");
 
             int offset = 0;
-            for (final Enumeration.Pair valPair : this.values) {
-                builder.append("\t ");
-                builder.append(valPair.getMappedName());
-                builder.append(" (");
-                builder.append(valPair.getValue());
-
-                if (offset == this.values.size() - 1) {
-                    builder.append(" );");
-                } else {
-                    builder.append(" ),");
-                }
+            for (var valPair : values) {
+                sb.append("\t ").append(valPair.getMappedName()).append(" (").append(valPair.getValue()).append(" )")
+                    .append(offset == values.size() - 1 ? ';' : ',');
                 ++offset;
             }
-            builder.append("\n}");
-            return builder.toString();
+            return sb.append("\n}").toString();
         }
 
         @Override
@@ -213,32 +177,32 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
 
         @Override
         public final List<Type> getImplements() {
-            return Collections.emptyList();
+            return List.of();
         }
 
         @Override
         public final List<GeneratedType> getEnclosedTypes() {
-            return Collections.emptyList();
+            return List.of();
         }
 
         @Override
         public final List<Enumeration> getEnumerations() {
-            return Collections.emptyList();
+            return List.of();
         }
 
         @Override
         public final List<Constant> getConstantDefinitions() {
-            return Collections.emptyList();
+            return List.of();
         }
 
         @Override
         public final List<MethodSignature> getMethodDefinitions() {
-            return Collections.emptyList();
+            return List.of();
         }
 
         @Override
         public final List<GeneratedProperty> getProperties() {
-            return Collections.emptyList();
+            return List.of();
         }
     }
 }
