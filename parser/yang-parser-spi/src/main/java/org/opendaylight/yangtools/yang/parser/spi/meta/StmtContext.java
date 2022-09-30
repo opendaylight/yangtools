@@ -158,7 +158,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @NonNull Mutable<A, D, E> replicaAsChildOf(Mutable<?, ?, ?> parent);
 
     @Beta
-    @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
+    @NonNull Optional<Mutable<A, D, E>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
             @Nullable QNameModule targetModule);
 
     ModelProcessingPhase getCompletedPhase();

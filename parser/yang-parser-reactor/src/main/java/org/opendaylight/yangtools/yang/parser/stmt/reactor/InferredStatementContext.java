@@ -460,9 +460,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
 
         @SuppressWarnings("unchecked")
-        final Mutable<QName, Y, Z> ret = (Mutable<QName, Y, Z>) copySubstatement((Mutable<?, ?, ?>) template)
-            .orElseThrow(
-                () -> new InferenceException(this, "Failed to materialize child %s template %s", qname, template));
+        final var ret = (Mutable<QName, Y, Z>) copySubstatement(template).orElseThrow(
+            () -> new InferenceException(this, "Failed to materialize child %s template %s", qname, template));
         addMaterialized(template, ensureCompletedPhase(ret));
 
         LOG.debug("Child {} materialized", qname);
@@ -592,7 +591,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
     }
 
-    private Optional<? extends Mutable<?, ?, ?>> copySubstatement(final Mutable<?, ?, ?> substatement) {
+    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Optional<Mutable<X, Y, Z>>
+            copySubstatement(final StmtContext<X, Y, Z> substatement) {
         return substatement.copyAsChildOf(this, childCopyType(), targetModule);
     }
 
