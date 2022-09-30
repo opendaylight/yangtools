@@ -724,7 +724,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
+    public final Optional<Mutable<A, D, E>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(this);
         return Optional.ofNullable(copyAsChildOfImpl(parent, type, targetModule));

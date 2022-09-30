@@ -124,7 +124,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> newParent, final CopyType type,
+    public Optional<Mutable<A, D, E>> copyAsChildOf(final Mutable<?, ?, ?> newParent, final CopyType type,
             final QNameModule targetModule) {
         return source.copyAsChildOf(newParent, type, targetModule);
     }
