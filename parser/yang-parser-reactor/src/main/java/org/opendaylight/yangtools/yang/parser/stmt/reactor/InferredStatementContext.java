@@ -340,19 +340,18 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private static boolean sameSubstatements(final Collection<?> original, final EffectiveStatement<?, ?> effective) {
-        final Collection<?> copied = effective.effectiveSubstatements();
+        final var copied = effective.effectiveSubstatements();
         if (copied != effective.effectiveSubstatements() || original.size() != copied.size()) {
             // Do not bother if result is treating substatements as transient
             return false;
         }
 
-        final Iterator<?> oit = original.iterator();
-        final Iterator<?> cit = copied.iterator();
-        while (oit.hasNext()) {
+        final var cit = copied.iterator();
+        for (var origChild : original) {
             verify(cit.hasNext());
             // Identity comparison on purpose to side-step whatever equality there might be. We want to reuse instances
             // after all.
-            if (oit.next() != cit.next()) {
+            if (origChild != cit.next()) {
                 return false;
             }
         }
