@@ -11,6 +11,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.APPEARED;
+import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.DELETE;
+import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.DISAPPEARED;
+import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.SUBTREE_MODIFIED;
+import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.UNMODIFIED;
+import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.WRITE;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,19 +44,17 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode normalizedNode2 = normalizedNode("value1");
         NormalizedNode normalizedNode3 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, UNMODIFIED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value1", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals(UNMODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
@@ -59,19 +63,17 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode normalizedNode2 = normalizedNode("value1");
         NormalizedNode normalizedNode3 = normalizedNode("value2");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3,
-                ModificationType.WRITE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, WRITE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
@@ -79,29 +81,25 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode normalizedNode1 = normalizedNode("value1");
         NormalizedNode normalizedNode2 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, null, DELETE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals(DELETE, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
     @Test
     public void testLeafUnmodifiedDeleteWithoutDataBefore() {
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DELETE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
@@ -110,12 +108,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testLeafUnmodifiedSubtreeModifiedWithoutDataBefore() {
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.SUBTREE_MODIFIED);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
@@ -127,19 +123,17 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode normalizedNode1 = normalizedNode("value1");
         NormalizedNode normalizedNode2 = normalizedNode("value2");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
-                ModificationType.WRITE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode2,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode2, UNMODIFIED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
@@ -148,36 +142,32 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode normalizedNode2 = normalizedNode("value2");
         NormalizedNode normalizedNode3 = normalizedNode("value3");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
-                ModificationType.WRITE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3,
-                ModificationType.WRITE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, WRITE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value3", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value3", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
     public void testLeafWriteDeleteWithoutChanges() {
         NormalizedNode normalizedNode = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, normalizedNode,
-                ModificationType.WRITE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, normalizedNode, WRITE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode, null, DELETE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(UNMODIFIED, aggregationResult.getRootNode().getModificationType());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataBefore());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
@@ -187,18 +177,16 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode normalizedNode1 = normalizedNode("value1");
         NormalizedNode normalizedNode2 = normalizedNode("value2");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
-                ModificationType.WRITE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, null, DELETE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals(DELETE, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
@@ -206,18 +194,16 @@ public class DataTreeCandidatesAggregateTest {
     public void testLeafDeleteUnmodified() {
         NormalizedNode normalizedNode = normalizedNode("value");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode, null, DELETE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals(DELETE, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
@@ -226,31 +212,27 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode normalizedNode1 = normalizedNode("value1");
         NormalizedNode normalizedNode2 = normalizedNode("value2");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, normalizedNode2,
-                ModificationType.WRITE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, normalizedNode2, WRITE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
     public void testLeafDeleteDelete() {
         NormalizedNode normalizedNode1 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DELETE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
@@ -261,12 +243,10 @@ public class DataTreeCandidatesAggregateTest {
     public void testLeafDeleteDisappear() {
         NormalizedNode normalizedNode1 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.DISAPPEARED);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DISAPPEARED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
@@ -277,12 +257,10 @@ public class DataTreeCandidatesAggregateTest {
     public void testLeafDeleteSubtreeModified() {
         NormalizedNode normalizedNode1 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
-                ModificationType.DELETE);
+        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.SUBTREE_MODIFIED);
+        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
@@ -294,22 +272,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, childNode, ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(UNMODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -317,23 +292,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null, DELETE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DELETE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -343,23 +314,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode2 = normalizedNode("container2");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -367,17 +334,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -393,23 +356,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode2 = normalizedNode("container1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -419,17 +378,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode2 = normalizedNode("container1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, APPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -443,23 +398,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, APPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.APPEARED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(APPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -467,17 +418,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, DISAPPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -490,23 +437,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container1");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DISAPPEARED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DISAPPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -514,23 +457,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, null, DELETE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DELETE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -540,23 +479,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DELETE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -566,23 +501,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DELETE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -590,23 +521,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, childNode,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -614,23 +541,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null, DELETE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(UNMODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -640,23 +563,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null, DELETE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DELETE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -666,23 +585,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -694,23 +609,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode1,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode1, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -721,17 +632,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode2 = normalizedNode("child2");
         NormalizedNode childNode3 = normalizedNode("child3");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, parentNode2,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, childNode3,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, parentNode2, APPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, childNode3, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -744,23 +651,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode = normalizedNode("container");
         NormalizedNode childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(UNMODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -770,23 +673,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DISAPPEARED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DISAPPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -796,23 +695,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, parentNode2,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, childNode2,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, parentNode2, UNMODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, childNode2, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -822,23 +717,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null, DELETE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DELETE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -849,23 +740,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -875,23 +762,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -902,17 +785,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -926,23 +805,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode = normalizedNode("childNode");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DISAPPEARED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DISAPPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -950,23 +825,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode1,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.APPEARED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(APPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -974,23 +845,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DELETE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(UNMODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -1000,23 +867,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -1025,23 +888,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.APPEARED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(APPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -1049,17 +908,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -1072,23 +927,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(UNMODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -1096,23 +947,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null,
-                ModificationType.UNMODIFIED);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.DISAPPEARED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(DISAPPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -1120,17 +967,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DELETE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -1145,23 +988,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2,
-                ModificationType.WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, WRITE);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
+        assertEquals(WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -1170,17 +1009,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -1195,23 +1030,19 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode childNode1 = normalizedNode("child1");
         NormalizedNode childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2,
-                ModificationType.APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2,
-                ModificationType.WRITE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
+        assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
     @Test
@@ -1219,17 +1050,13 @@ public class DataTreeCandidatesAggregateTest {
         NormalizedNode parentNode1 = normalizedNode("container");
         NormalizedNode childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
         DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null,
-                ModificationType.DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null,
-                ModificationType.DELETE);
+        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DISAPPEARED);
+        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, DELETE);
         setChildNodes(node2, List.of(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
@@ -1257,9 +1084,7 @@ public class DataTreeCandidatesAggregateTest {
     private static void setChildNodes(final TerminalDataTreeCandidateNode parentNode,
                                       final List<DataTreeCandidateNode> childNodes) {
         doReturn(null).when(parentNode).getIdentifier();
-        childNodes.forEach(child -> {
-            doReturn(CHILD_ID).when(child).getIdentifier();
-        });
+        childNodes.forEach(child -> doReturn(CHILD_ID).when(child).getIdentifier());
         doReturn(childNodes).when(parentNode).getChildNodes();
     }
 }
