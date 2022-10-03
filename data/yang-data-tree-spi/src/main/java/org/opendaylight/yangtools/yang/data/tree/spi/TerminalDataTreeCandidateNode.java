@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,10 +15,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
+// Non-final for mocking
 class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
     private ModificationType modificationType;
     private final PathArgument identifier;
@@ -28,18 +29,18 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
     private final HashMap<PathArgument, TerminalDataTreeCandidateNode> childNodes = new HashMap<>();
     private TerminalDataTreeCandidateNode parentNode;
 
-    TerminalDataTreeCandidateNode(PathArgument identifier, NormalizedNode data,
-                                  TerminalDataTreeCandidateNode parentNode) {
+    TerminalDataTreeCandidateNode(final PathArgument identifier, final NormalizedNode data,
+                                  final TerminalDataTreeCandidateNode parentNode) {
         this(identifier, data);
         this.parentNode = requireNonNull(parentNode);
     }
 
-    TerminalDataTreeCandidateNode(PathArgument identifier, NormalizedNode data) {
+    TerminalDataTreeCandidateNode(final PathArgument identifier, final NormalizedNode data) {
         this(identifier, ModificationType.UNMODIFIED, data, data);
     }
 
-    TerminalDataTreeCandidateNode(PathArgument identifier, ModificationType modificationType,
-                                  NormalizedNode before, NormalizedNode after) {
+    TerminalDataTreeCandidateNode(final PathArgument identifier, final ModificationType modificationType,
+                                  final NormalizedNode before, final NormalizedNode after) {
         this.modificationType = modificationType;
         this.identifier = identifier;
         this.before = before;
@@ -57,8 +58,7 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
     }
 
     @Override
-    public Optional<DataTreeCandidateNode> getModifiedChild(
-            PathArgument childIdentifier) {
+    public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childIdentifier) {
         return Optional.ofNullable(childNodes.get(identifier));
     }
 
@@ -72,7 +72,7 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
         return Optional.ofNullable(after);
     }
 
-    @NonNull Optional<NormalizedNode> getDataAfter(PathArgument id) {
+    @NonNull Optional<NormalizedNode> getDataAfter(final PathArgument id) {
         return getNode(id).flatMap(TerminalDataTreeCandidateNode::getDataAfter);
     }
 
@@ -81,56 +81,46 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
         return Optional.ofNullable(before);
     }
 
-    @NonNull Optional<NormalizedNode> getDataBefore(PathArgument id) {
-        Optional<TerminalDataTreeCandidateNode> node = getNode(id);
-        if (node.isPresent()) {
-            return node.get().getDataBefore();
-        }
-        return Optional.empty();
+    @NonNull Optional<NormalizedNode> getDataBefore(final PathArgument id) {
+        return getNode(id).flatMap(TerminalDataTreeCandidateNode::getDataBefore);
     }
 
-    void setAfter(NormalizedNode after) {
+    void setAfter(final NormalizedNode after) {
         this.after = after;
     }
 
-    void addChildNode(TerminalDataTreeCandidateNode node) {
+    void addChildNode(final TerminalDataTreeCandidateNode node) {
         childNodes.put(node.getIdentifier(), node);
     }
 
-    void setModification(PathArgument id, ModificationType modification) {
-        Optional<TerminalDataTreeCandidateNode> node = getNode(id);
-        if (node.isEmpty()) {
-            throw new IllegalArgumentException("No node with " + id + " id was found");
-        }
-        node.get().setModification(modification);
+    void setModification(final PathArgument id, final ModificationType modification) {
+        getNode(id)
+            .orElseThrow(() -> new IllegalArgumentException("No node with " + id + " id was found"))
+            .setModification(modification);
     }
 
-    private void setModification(ModificationType modification) {
-        this.modificationType = modification;
+    private void setModification(final ModificationType modification) {
+        modificationType = modification;
     }
 
-    ModificationType getModification(PathArgument id) {
-        Optional<TerminalDataTreeCandidateNode> node = getNode(id);
-        return (node.isEmpty() ? ModificationType.UNMODIFIED : node.get().getModificationType());
+    ModificationType getModification(final PathArgument id) {
+        return getNode(id).map(TerminalDataTreeCandidateNode::getModificationType).orElse(ModificationType.UNMODIFIED);
     }
 
-    void deleteNode(PathArgument id) {
-        if (id == null) {
+    void deleteNode(final PathArgument id) {
+        if (id != null) {
+            getNode(id).orElseThrow(() -> new IllegalArgumentException("No node with " + id + " id was found"))
+                .parentNode.deleteChild(id);
+        } else {
             modificationType = ModificationType.UNMODIFIED;
-            return;
         }
-        Optional<TerminalDataTreeCandidateNode> node = getNode(id);
-        if (node.isEmpty()) {
-            throw new IllegalArgumentException("No node with " + id + " id was found");
-        }
-        node.get().parentNode.deleteChild(id);
     }
 
-    private void deleteChild(PathArgument id) {
+    private void deleteChild(final PathArgument id) {
         childNodes.remove(id);
     }
 
-    @NonNull Optional<TerminalDataTreeCandidateNode> getNode(PathArgument id) {
+    @NonNull Optional<TerminalDataTreeCandidateNode> getNode(final PathArgument id) {
         if (id == null) {
             return Optional.of(this);
         }
@@ -143,12 +133,11 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
         return findNode(id);
     }
 
-    void setData(PathArgument id, NormalizedNode node) {
-        TerminalDataTreeCandidateNode terminalDataTreeCandidateNode = getNode(id).get();
-        terminalDataTreeCandidateNode.setAfter(node);
+    void setData(final PathArgument id, final NormalizedNode node) {
+        getNode(id).orElseThrow().setAfter(node);
     }
 
-    private @NonNull Optional<TerminalDataTreeCandidateNode> findNode(PathArgument id) {
+    private @NonNull Optional<TerminalDataTreeCandidateNode> findNode(final PathArgument id) {
         Collection<HashMap<PathArgument, TerminalDataTreeCandidateNode>> nodes = new HashSet<>();
         childNodes.forEach((childIdentifier, childNode) -> {
             nodes.add(childNode.childNodes);
@@ -157,8 +146,7 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
     }
 
     private @NonNull Optional<TerminalDataTreeCandidateNode> findNode(
-            Collection<HashMap<PathArgument, TerminalDataTreeCandidateNode>> nodes,
-            PathArgument id) {
+            final Collection<HashMap<PathArgument, TerminalDataTreeCandidateNode>> nodes, final PathArgument id) {
         if (nodes.isEmpty()) {
             return Optional.empty();
         }
