@@ -228,13 +228,12 @@ public final class DataTreeCandidateNodes {
 
     @SuppressWarnings("unchecked")
     private static @NonNull DataTreeCandidateNode deleteNode(final NormalizedNode data) {
-        if (data instanceof NormalizedNodeContainer) {
+        if (data instanceof DistinctNodeContainer) {
             return new RecursiveDeleteCandidateNode(
                 (DistinctNodeContainer<PathArgument, NormalizedNode>) data);
         }
         return new DeleteLeafCandidateNode(data);
     }
-
 
     @SuppressWarnings("unchecked")
     private static @NonNull DataTreeCandidateNode replaceNode(final NormalizedNode oldData,
