@@ -231,9 +231,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private @NonNull E tryToReusePrototype(final @NonNull StatementFactory<A, D, E> factory) {
-        final E origEffective = prototype.buildEffective();
-        final Collection<? extends @NonNull EffectiveStatement<?, ?>> origSubstatements =
-            origEffective.effectiveSubstatements();
+        final var origEffective = prototype.buildEffective();
+        final var origSubstatements = origEffective.effectiveSubstatements();
 
         // First check if we can reuse the entire prototype
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
@@ -258,14 +257,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
 
         // ... copy-sensitive check
-        final List<EffectiveCopy> declCopy = prototype.streamDeclared()
-            .map(this::effectiveCopy)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toUnmodifiableList());
-        final List<EffectiveCopy> effCopy = prototype.streamEffective()
-            .map(this::effectiveCopy)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toUnmodifiableList());
+        final var declCopy = effectiveCopy(prototype.streamDeclared());
+        final var effCopy = effectiveCopy(prototype.streamEffective());
 
         // ... are any copy-sensitive?
         if (allReused(declCopy) && allReused(effCopy)) {
@@ -278,12 +271,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
 
         // *sigh*, ok, heavy lifting through a shallow copy
-        final List<ReactorStmtCtx<?, ?, ?>> declared = declCopy.stream()
-            .map(copy -> copy.toChildContext(this))
-            .collect(ImmutableList.toImmutableList());
-        final List<ReactorStmtCtx<?, ?, ?>> effective = effCopy.stream()
-            .map(copy -> copy.toChildContext(this))
-            .collect(ImmutableList.toImmutableList());
+        final var declared = adoptSubstatements(declCopy);
+        final var effective = adoptSubstatements(effCopy);
         substatements = declared.isEmpty() ? effective
             : Streams.concat(declared.stream(), effective.stream()).collect(ImmutableList.toImmutableList());
         prototype.decRef();
@@ -568,6 +557,19 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     // Statement copy mess starts here. As it turns out, it's not that much of a mess, but it does make your head spin
     // sometimes. Tread softly because you tread on my dreams.
     //
+
+    private ImmutableList<ReactorStmtCtx<?, ?, ?>> adoptSubstatements(final List<EffectiveCopy> list) {
+        return list.stream()
+            .map(copy -> copy.toChildContext(this))
+            .collect(ImmutableList.toImmutableList());
+    }
+
+    private List<EffectiveCopy> effectiveCopy(final Stream<? extends ReactorStmtCtx<?, ?, ?>> stream) {
+        return stream
+            .map(this::effectiveCopy)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toUnmodifiableList());
+    }
 
     private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
         final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, childCopyType(), targetModule);
