@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.ImmutableContainerNode;
 
 public final class ImmutableContainerNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ContainerNode> {
@@ -47,17 +45,5 @@ public final class ImmutableContainerNodeBuilder
     @Override
     public ContainerNode build() {
         return new ImmutableContainerNode(getNodeIdentifier(), buildValue());
-    }
-
-    protected static final class ImmutableContainerNode
-            extends AbstractImmutableDataContainerNode<NodeIdentifier, ContainerNode> implements ContainerNode {
-        ImmutableContainerNode(final NodeIdentifier nodeIdentifier, final Map<PathArgument, Object> children) {
-            super(children, nodeIdentifier);
-        }
-
-        @Override
-        protected Class<ContainerNode> implementedType() {
-            return ContainerNode.class;
-        }
     }
 }

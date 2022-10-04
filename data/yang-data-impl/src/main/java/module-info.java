@@ -11,7 +11,6 @@ module org.opendaylight.yangtools.yang.data.impl {
     exports org.opendaylight.yangtools.yang.data.impl.schema;
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
-    exports org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
     requires transitive java.xml;
     requires transitive com.google.common;

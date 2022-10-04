@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -15,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.ImmutableAugmentationNode;
 
 public final class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> {
@@ -71,20 +70,5 @@ public final class ImmutableAugmentationNodeBuilder
     @Override
     public AugmentationNode build() {
         return new ImmutableAugmentationNode(getNodeIdentifier(), buildValue());
-    }
-
-    private static final class ImmutableAugmentationNode
-            extends AbstractImmutableDataContainerNode<AugmentationIdentifier, AugmentationNode>
-            implements AugmentationNode {
-
-        ImmutableAugmentationNode(final AugmentationIdentifier nodeIdentifier,
-                final Map<PathArgument, Object> children) {
-            super(children, nodeIdentifier);
-        }
-
-        @Override
-        protected Class<AugmentationNode> implementedType() {
-            return AugmentationNode.class;
-        }
     }
 }
