@@ -100,7 +100,7 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     }
 
     @Override
-    final Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective() {
+    final Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamEffective() {
         return effective.stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 

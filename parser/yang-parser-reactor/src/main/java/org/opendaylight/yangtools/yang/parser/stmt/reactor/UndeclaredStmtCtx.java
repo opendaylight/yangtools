@@ -94,7 +94,7 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
     }
 
     @Override
-    Stream<? extends @NonNull StmtContext<?, ?, ?>> streamDeclared() {
+    Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamDeclared() {
         return Stream.empty();
     }
 
@@ -123,8 +123,8 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
 
     @Override
     E createInferredEffective(final StatementFactory<A, D, E> factory, final InferredStatementContext<A, D, E> ctx,
-            final Stream<? extends StmtContext<?, ?, ?>> declared,
-            final Stream<? extends StmtContext<?, ?, ?>> effective) {
+            final Stream<? extends ReactorStmtCtx<?, ?, ?>> declared,
+            final Stream<? extends ReactorStmtCtx<?, ?, ?>> effective) {
         final long declaredCount = declared.count();
         verify(declaredCount == 0, "Unexpected non-empty declared statements in %s", ctx);
         return createEffective(factory, new ForwardingUndeclaredCurrent<>(ctx), effective);
