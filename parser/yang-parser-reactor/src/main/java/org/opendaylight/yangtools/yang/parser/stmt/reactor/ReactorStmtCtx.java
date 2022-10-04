@@ -405,8 +405,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * @return Built effective stateue
      */
     abstract @NonNull E createInferredEffective(@NonNull StatementFactory<A, D, E> factory,
-        @NonNull InferredStatementContext<A, D, E> ctx, Stream<? extends StmtContext<?, ?, ?>> declared,
-        Stream<? extends StmtContext<?, ?, ?>> effective);
+        @NonNull InferredStatementContext<A, D, E> ctx, Stream<? extends ReactorStmtCtx<?, ?, ?>> declared,
+        Stream<? extends ReactorStmtCtx<?, ?, ?>> effective);
 
     /**
      * Attach an effective copy of this statement. This essentially acts as a map, where we make a few assumptions:
