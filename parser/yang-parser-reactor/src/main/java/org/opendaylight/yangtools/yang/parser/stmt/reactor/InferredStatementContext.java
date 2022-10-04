@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -567,9 +568,28 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     // sometimes. Tread softly because you tread on my dreams.
     //
 
-    private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
-        final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, childCopyType(), targetModule);
-        return effective == null ? null : new EffectiveCopy(stmt, effective);
+    /**
+     * Create an effective copy of a prototype's substatement as a child of this statement. This is a bit tricky, as
+     * we are called from {@link #tryToReusePrototype(StatementFactory)} and we are creating copies of prototype
+     * statements -- which triggers {@link StatementSupport#onStatementAdded(Mutable)}, which in turn can loop around
+     * to {@link #requestSchemaTreeChild(QName)} -- which creates the statement and hence we can end up performing two
+     * copies.
+     *
+     * @param template Prototype substatement
+     * @return An {@link EffectiveCopy}, or {@code null} if not applicable
+     */
+    private @Nullable EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> template) {
+        if (substatements instanceof HashMap) {
+            // we have partial materialization by requestSchemaTreeChild() after we started tryToReusePrototype(), check
+            // if the statement has already been copied -- we need to pick it up in that case.
+            final var copy = castMaterialized(substatements).get(template);
+            if (copy != null) {
+                return new EffectiveCopy(template, copy);
+            }
+        }
+
+        final var copy = template.asEffectiveChildOf(this, childCopyType(), targetModule);
+        return copy == null ? null : new EffectiveCopy(template, copy);
     }
 
     private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<ReactorStmtCtx<?, ?, ?>> buffer,
