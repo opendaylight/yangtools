@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
-public class ImmutableLeafSetEntryNodeBuilder<T>
+public final class ImmutableLeafSetEntryNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> {
 
     public static <T> @NonNull ImmutableLeafSetEntryNodeBuilder<T> create() {

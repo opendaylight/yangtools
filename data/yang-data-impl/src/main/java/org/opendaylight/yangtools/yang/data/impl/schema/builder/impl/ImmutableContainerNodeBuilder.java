@@ -15,17 +15,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableContainerNodeBuilder
+public final class ImmutableContainerNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ContainerNode> {
-    protected ImmutableContainerNodeBuilder() {
+    ImmutableContainerNodeBuilder() {
 
     }
 
-    protected ImmutableContainerNodeBuilder(final int sizeHint) {
+    ImmutableContainerNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 
-    protected ImmutableContainerNodeBuilder(final ImmutableContainerNode node) {
+    ImmutableContainerNodeBuilder(final ImmutableContainerNode node) {
         super(node);
     }
 

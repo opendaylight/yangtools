@@ -15,16 +15,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
-    protected ImmutableChoiceNodeBuilder() {
+public final class ImmutableChoiceNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
+    ImmutableChoiceNodeBuilder() {
 
     }
 
-    protected ImmutableChoiceNodeBuilder(final int sizeHint) {
+    ImmutableChoiceNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 
-    protected ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
+    ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
         super(node);
     }
 

@@ -22,22 +22,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeCon
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
-public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
+public final class ImmutableUnkeyedListNodeBuilder
+        implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
     private List<UnkeyedListEntryNode> value;
     private NodeIdentifier nodeIdentifier;
     private boolean dirty;
 
-    protected ImmutableUnkeyedListNodeBuilder() {
-        this.value = new LinkedList<>();
-        this.dirty = false;
+    ImmutableUnkeyedListNodeBuilder() {
+        value = new LinkedList<>();
+        dirty = false;
     }
 
-    protected ImmutableUnkeyedListNodeBuilder(final ImmutableUnkeyedListNode node) {
-        this.nodeIdentifier = node.getIdentifier();
+    ImmutableUnkeyedListNodeBuilder(final ImmutableUnkeyedListNode node) {
+        nodeIdentifier = node.getIdentifier();
         // FIXME: clean this up, notably reuse unmodified lists
-        this.value = new LinkedList<>();
+        value = new LinkedList<>();
         Iterables.addAll(value, node.body());
-        this.dirty = true;
+        dirty = true;
     }
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
@@ -67,7 +68,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withChild(final UnkeyedListEntryNode child) {
         checkDirty();
-        this.value.add(child);
+        value.add(child);
         return this;
     }
 
@@ -92,7 +93,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withNodeIdentifier(
             final NodeIdentifier withNodeIdentifier) {
-        this.nodeIdentifier = withNodeIdentifier;
+        nodeIdentifier = withNodeIdentifier;
         return this;
     }
 

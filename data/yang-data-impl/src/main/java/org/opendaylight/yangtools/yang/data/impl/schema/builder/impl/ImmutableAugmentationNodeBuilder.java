@@ -17,13 +17,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableAugmentationNodeBuilder
+public final class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> {
 
-    protected ImmutableAugmentationNodeBuilder() {
+    ImmutableAugmentationNodeBuilder() {
     }
 
-    protected ImmutableAugmentationNodeBuilder(final int sizeHint) {
+    ImmutableAugmentationNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 

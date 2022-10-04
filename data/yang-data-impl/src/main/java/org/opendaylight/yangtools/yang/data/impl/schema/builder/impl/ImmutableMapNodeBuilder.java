@@ -25,28 +25,28 @@ import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
-public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, SystemMapNode> {
+public final class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, SystemMapNode> {
     private static final int DEFAULT_CAPACITY = 4;
 
     private final Map<NodeIdentifierWithPredicates, MapEntryNode> value;
 
     private @Nullable NodeIdentifier nodeIdentifier = null;
 
-    protected ImmutableMapNodeBuilder() {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+    ImmutableMapNodeBuilder() {
+        value = new HashMap<>(DEFAULT_CAPACITY);
     }
 
-    protected ImmutableMapNodeBuilder(final int sizeHint) {
+    ImmutableMapNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
-            this.value = Maps.newHashMapWithExpectedSize(sizeHint);
+            value = Maps.newHashMapWithExpectedSize(sizeHint);
         } else {
-            this.value = new HashMap<>(DEFAULT_CAPACITY);
+            value = new HashMap<>(DEFAULT_CAPACITY);
         }
     }
 
-    protected ImmutableMapNodeBuilder(final SystemMapNode node) {
-        this.nodeIdentifier = node.getIdentifier();
-        this.value = MapAdaptor.getDefaultInstance().takeSnapshot(
+    ImmutableMapNodeBuilder(final SystemMapNode node) {
+        nodeIdentifier = node.getIdentifier();
+        value = MapAdaptor.getDefaultInstance().takeSnapshot(
             node instanceof ImmutableMapNode ? ((ImmutableMapNode) node).children : node.asMap());
     }
 
@@ -64,13 +64,13 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
     @Override
     public ImmutableMapNodeBuilder withChild(final MapEntryNode child) {
-        this.value.put(child.getIdentifier(), child);
+        value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
     public ImmutableMapNodeBuilder withoutChild(final PathArgument key) {
-        this.value.remove(key);
+        value.remove(key);
         return this;
     }
 
@@ -86,7 +86,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
     @Override
     public ImmutableMapNodeBuilder withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
-        this.nodeIdentifier = withNodeIdentifier;
+        nodeIdentifier = withNodeIdentifier;
         return this;
     }
 
