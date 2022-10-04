@@ -53,8 +53,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     E createInferredEffective(final StatementFactory<A, D, E> factory, final InferredStatementContext<A, D, E> ctx,
-            final Stream<? extends StmtContext<?, ?, ?>> declared,
-            final Stream<? extends StmtContext<?, ?, ?>> effective) {
+            final Stream<? extends ReactorStmtCtx<?, ?, ?>> declared,
+            final Stream<? extends ReactorStmtCtx<?, ?, ?>> effective) {
         return source.createInferredEffective(factory, ctx, declared, effective);
     }
 

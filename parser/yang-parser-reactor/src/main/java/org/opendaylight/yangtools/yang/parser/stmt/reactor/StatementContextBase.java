@@ -452,7 +452,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      * @return Stream of supported declared statements.
      */
     // FIXME: we really want to unify this with streamEffective(), under its name
-    abstract Stream<? extends @NonNull StmtContext<?, ?, ?>> streamDeclared();
+    abstract Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamDeclared();
 
     /**
      * Return a stream of inferred statements which can be built into an {@link EffectiveStatement}, as per
@@ -461,7 +461,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      * @return Stream of supported effective statements.
      */
     // FIXME: this method is currently a misnomer, but unifying with streamDeclared() would make this accurate again
-    abstract Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective();
+    abstract Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamEffective();
 
     @Override
     final boolean doTryToCompletePhase(final byte targetOrder) {
