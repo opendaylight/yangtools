@@ -225,8 +225,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     E createInferredEffective(final StatementFactory<A, D, E> factory, final InferredStatementContext<A, D, E> ctx,
-            final Stream<? extends StmtContext<?, ?, ?>> declared,
-            final Stream<? extends StmtContext<?, ?, ?>> effective) {
+            final Stream<? extends ReactorStmtCtx<?, ?, ?>> declared,
+            final Stream<? extends ReactorStmtCtx<?, ?, ?>> effective) {
         return originalCtx.createInferredEffective(factory, ctx, declared, effective);
     }
 
@@ -259,11 +259,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // ... copy-sensitive check
         final List<EffectiveCopy> declCopy = prototype.streamDeclared()
-            .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
+            .map(this::effectiveCopy)
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
         final List<EffectiveCopy> effCopy = prototype.streamEffective()
-            .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
+            .map(this::effectiveCopy)
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
 
@@ -329,10 +329,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return reusePrototypeReplicas(Streams.concat(prototype.streamDeclared(), prototype.streamEffective()));
     }
 
-    private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas(final Stream<StmtContext<?, ?, ?>> stream) {
+    private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas(final Stream<ReactorStmtCtx<?, ?, ?>> stream) {
         return stream
             .map(stmt -> {
-                final ReplicaStatementContext<?, ?, ?> ret = ((ReactorStmtCtx<?, ?, ?>) stmt).replicaAsChildOf(this);
+                final var ret = stmt.replicaAsChildOf(this);
                 ret.buildEffective();
                 return ret;
             })
@@ -493,12 +493,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    Stream<? extends @NonNull StmtContext<?, ?, ?>> streamDeclared() {
+    Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamDeclared() {
         return Stream.empty();
     }
 
     @Override
-    Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective() {
+    Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamEffective() {
         return ensureEffectiveSubstatements().stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 
