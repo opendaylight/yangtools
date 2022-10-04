@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +32,17 @@ public class ImmutableMapEntryNodeBuilder
     protected final Map<QName, PathArgument> childrenQNamesToPaths;
 
     protected ImmutableMapEntryNodeBuilder() {
-        this.childrenQNamesToPaths = new LinkedHashMap<>();
+        childrenQNamesToPaths = new LinkedHashMap<>();
     }
 
     protected ImmutableMapEntryNodeBuilder(final int sizeHint) {
         super(sizeHint);
-        this.childrenQNamesToPaths = new LinkedHashMap<>(sizeHint);
+        childrenQNamesToPaths = new LinkedHashMap<>(sizeHint);
     }
 
     protected ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
         super(node);
-        this.childrenQNamesToPaths = new LinkedHashMap<>();
+        childrenQNamesToPaths = new LinkedHashMap<>();
         fillQNames(node.body(), childrenQNamesToPaths);
     }
 
@@ -63,12 +62,6 @@ public class ImmutableMapEntryNodeBuilder
         }
 
         return new ImmutableMapEntryNodeBuilder((ImmutableMapEntryNode)node);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
-            final ListSchemaNode schema) {
-        return new SchemaAwareImmutableMapEntryNodeBuilder(schema);
     }
 
     private static void fillQNames(final Iterable<DataContainerChild> iterable, final Map<QName, PathArgument> out) {

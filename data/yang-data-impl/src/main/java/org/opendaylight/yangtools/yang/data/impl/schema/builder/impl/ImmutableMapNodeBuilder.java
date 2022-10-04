@@ -21,11 +21,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, SystemMapNode> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -62,20 +60,6 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
     public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create(final SystemMapNode node) {
         return new ImmutableMapNodeBuilder(node);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create(final ListSchemaNode schema) {
-        return new SchemaAwareImmutableMapNodeBuilder(schema);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create(final ListSchemaNode schema,
-            final MapNode node) {
-        if (node instanceof ImmutableMapNode) {
-            return new SchemaAwareImmutableMapNodeBuilder(schema, (ImmutableMapNode) node);
-        }
-        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     @Override
