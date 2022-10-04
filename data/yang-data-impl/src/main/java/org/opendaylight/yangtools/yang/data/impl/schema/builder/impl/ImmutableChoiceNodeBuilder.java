@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 
 public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
     protected ImmutableChoiceNodeBuilder() {
@@ -43,11 +42,6 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         }
 
         return new ImmutableChoiceNodeBuilder((ImmutableChoiceNode)node);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceSchemaNode schema) {
-        return new SchemaAwareImmutableChoiceNodeBuilder(schema);
     }
 
     @Override

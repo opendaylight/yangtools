@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
 public class ImmutableContainerNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ContainerNode> {
@@ -43,20 +42,6 @@ public class ImmutableContainerNodeBuilder
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
         return new ImmutableContainerNodeBuilder((ImmutableContainerNode) node);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerLike schema) {
-        return new SchemaAwareImmutableContainerNodeBuilder(schema);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerLike schema,
-            final ContainerNode node) {
-        if (!(node instanceof ImmutableContainerNode)) {
-            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
-        }
-        return new SchemaAwareImmutableContainerNodeBuilder(schema, (ImmutableContainerNode)node);
     }
 
     @Override
