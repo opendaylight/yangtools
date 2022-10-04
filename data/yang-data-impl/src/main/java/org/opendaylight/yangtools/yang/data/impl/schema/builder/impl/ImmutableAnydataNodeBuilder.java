@@ -9,15 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
-@Beta
-public class ImmutableAnydataNodeBuilder<V>
+public final class ImmutableAnydataNodeBuilder<V>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, V, AnydataNode<V>> {
     private final @NonNull Class<V> objectModel;
 

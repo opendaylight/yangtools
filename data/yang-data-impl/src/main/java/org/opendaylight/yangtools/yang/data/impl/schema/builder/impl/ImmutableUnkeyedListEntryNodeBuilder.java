@@ -15,18 +15,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableUnkeyedListEntryNodeBuilder
+public final class ImmutableUnkeyedListEntryNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> {
 
-    protected ImmutableUnkeyedListEntryNodeBuilder() {
+    ImmutableUnkeyedListEntryNodeBuilder() {
 
     }
 
-    protected ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
+    ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 
-    protected ImmutableUnkeyedListEntryNodeBuilder(final ImmutableUnkeyedListEntryNode node) {
+    ImmutableUnkeyedListEntryNodeBuilder(final ImmutableUnkeyedListEntryNode node) {
         super(node);
     }
 

@@ -26,21 +26,22 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImmutableMapEntryNodeBuilder
+public final class ImmutableMapEntryNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ImmutableMapEntryNodeBuilder.class);
+
     protected final Map<QName, PathArgument> childrenQNamesToPaths;
 
-    protected ImmutableMapEntryNodeBuilder() {
+    ImmutableMapEntryNodeBuilder() {
         childrenQNamesToPaths = new LinkedHashMap<>();
     }
 
-    protected ImmutableMapEntryNodeBuilder(final int sizeHint) {
+    ImmutableMapEntryNodeBuilder(final int sizeHint) {
         super(sizeHint);
         childrenQNamesToPaths = new LinkedHashMap<>(sizeHint);
     }
 
-    protected ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
+    ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
         super(node);
         childrenQNamesToPaths = new LinkedHashMap<>();
         fillQNames(node.body(), childrenQNamesToPaths);
