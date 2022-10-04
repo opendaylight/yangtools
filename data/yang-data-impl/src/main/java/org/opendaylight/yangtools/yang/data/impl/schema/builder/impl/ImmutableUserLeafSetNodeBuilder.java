@@ -18,23 +18,21 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, UserLeafSetNode<T>> {
+public final class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, UserLeafSetNode<T>> {
     private Map<NodeWithValue, LeafSetEntryNode<T>> value;
     private NodeIdentifier nodeIdentifier;
     private boolean dirty;
 
-    ImmutableUserLeafSetNodeBuilder() {
+    private ImmutableUserLeafSetNodeBuilder() {
         value = new LinkedHashMap<>();
         dirty = false;
     }
 
-    ImmutableUserLeafSetNodeBuilder(final ImmutableUserLeafSetNode<T> node) {
+    private ImmutableUserLeafSetNodeBuilder(final ImmutableUserLeafSetNode<T> node) {
         nodeIdentifier = node.getIdentifier();
         value = node.getChildren();
         dirty = true;
@@ -51,20 +49,6 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
         }
 
         return new ImmutableUserLeafSetNodeBuilder<>((ImmutableUserLeafSetNode<T>) node);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static <T> @NonNull ListNodeBuilder<T, UserLeafSetNode<T>> create(final LeafListSchemaNode schema) {
-        return new SchemaAwareImmutableOrderedLeafSetNodeBuilder<>(schema);
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static <T> @NonNull ListNodeBuilder<T, UserLeafSetNode<T>> create(final LeafListSchemaNode schema,
-            final LeafSetNode<T> node) {
-        if (node instanceof ImmutableUserLeafSetNode<?>) {
-            return new SchemaAwareImmutableOrderedLeafSetNodeBuilder<>(schema, (ImmutableUserLeafSetNode<T>) node);
-        }
-        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     private void checkDirty() {

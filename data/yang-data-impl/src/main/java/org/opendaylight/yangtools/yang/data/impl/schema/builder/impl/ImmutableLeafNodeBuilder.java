@@ -13,19 +13,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 public class ImmutableLeafNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
 
     public static <T> @NonNull NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> create() {
         return new ImmutableLeafNodeBuilder<>();
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static <T> @NonNull NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> create(
-            final LeafSchemaNode schema) {
-        return new SchemaAwareImmutableLeafNodeBuilder<>(schema);
     }
 
     @Beta

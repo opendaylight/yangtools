@@ -13,19 +13,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
 public class ImmutableAnyXmlNodeBuilder
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> {
 
     public static @NonNull NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> create() {
         return new ImmutableAnyXmlNodeBuilder();
-    }
-
-    @Deprecated(since = "6.0.7", forRemoval = true)
-    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> create(
-            final AnyxmlSchemaNode schema) {
-        return new SchemaAwareImmutableAnyXmlNodeBuilder(schema);
     }
 
     @Override
