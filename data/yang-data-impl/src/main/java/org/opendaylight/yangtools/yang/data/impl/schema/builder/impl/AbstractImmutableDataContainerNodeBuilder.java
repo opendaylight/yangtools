@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode>
         implements DataContainerNodeBuilder<I, R> {
-
     private static final Logger LOG = LoggerFactory.getLogger(AbstractImmutableDataContainerNodeBuilder.class);
     private static final int DEFAULT_CAPACITY = 4;
 
@@ -55,12 +54,12 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
      */
     private boolean dirty;
 
-    protected AbstractImmutableDataContainerNodeBuilder() {
+    AbstractImmutableDataContainerNodeBuilder() {
         this.value = newHashMap();
         this.dirty = false;
     }
 
-    protected AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
+    AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
             this.value = newHashMap(sizeHint);
         } else {
@@ -69,15 +68,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
         this.dirty = false;
     }
 
-    protected AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I, R> node) {
+    AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I, R> node) {
         this.nodeIdentifier = node.getIdentifier();
 
         /*
-         * This quite awkward. What we actually want to be saying here is: give me
-         * a copy-on-write view of your children. The API involved in that could be
-         * a bit hairy, so we do the next best thing and rely on the fact that the
-         * returned object implements a specific interface, which leaks the functionality
-         * we need.
+         * This quite awkward. What we actually want to be saying here is: give me a copy-on-write view of your
+         * children. The API involved in that could be a bit hairy, so we do the next best thing and rely on the fact
+         * that the returned object implements a specific interface, which leaks the functionality we need.
          */
         this.value = node.getChildren();
         this.dirty = true;
