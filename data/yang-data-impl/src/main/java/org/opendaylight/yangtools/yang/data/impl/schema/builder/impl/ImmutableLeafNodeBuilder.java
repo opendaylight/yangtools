@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.ImmutableLeafNode;
 
 public class ImmutableLeafNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
@@ -21,40 +20,8 @@ public class ImmutableLeafNodeBuilder<T>
         return new ImmutableLeafNodeBuilder<>();
     }
 
-    @Beta
-    @SuppressWarnings("unchecked")
-    public static <T> @NonNull LeafNode<T> createNode(final NodeIdentifier identifier, final T value) {
-        if (value instanceof byte[]) {
-            return (LeafNode<T>) new ImmutableBinaryLeafNode(identifier, (byte[]) value);
-        }
-        return new ImmutableLeafNode<>(identifier, value);
-    }
-
     @Override
     public LeafNode<T> build() {
-        return createNode(getNodeIdentifier(), getValue());
-    }
-
-    private static class ImmutableLeafNode<T>
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, LeafNode<?>, T> implements LeafNode<T> {
-        ImmutableLeafNode(final NodeIdentifier nodeIdentifier, final T value) {
-            super(nodeIdentifier, value);
-        }
-
-        @Override
-        protected final Class<LeafNode<?>> implementedType() {
-            return (Class) LeafNode.class;
-        }
-    }
-
-    private static final class ImmutableBinaryLeafNode extends ImmutableLeafNode<byte[]> {
-        ImmutableBinaryLeafNode(final NodeIdentifier nodeIdentifier, final byte[] value) {
-            super(nodeIdentifier, value);
-        }
-
-        @Override
-        protected byte[] wrapValue(final byte[] valueToWrap) {
-            return valueToWrap.clone();
-        }
+        return ImmutableLeafNode.of(getNodeIdentifier(), getValue());
     }
 }
