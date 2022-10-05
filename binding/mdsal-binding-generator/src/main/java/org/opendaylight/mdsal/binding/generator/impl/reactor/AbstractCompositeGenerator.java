@@ -548,8 +548,8 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 //                   So here is where we should decide how to handle this augment, and make sure we
                 //                   retain information about this being an alias. That will serve as the base for keys
                 //                   in the augment -> original map we provide to BindingRuntimeTypes.
-                if (this instanceof ModuleGenerator) {
-                    tmpAug.add(new ModuleAugmentGenerator(augment, this));
+                if (this instanceof ModuleGenerator module) {
+                    tmpAug.add(new ModuleAugmentGenerator(augment, module));
                 }
             } else if (stmt instanceof UsesEffectiveStatement uses) {
                 for (var usesSub : uses.effectiveSubstatements()) {
