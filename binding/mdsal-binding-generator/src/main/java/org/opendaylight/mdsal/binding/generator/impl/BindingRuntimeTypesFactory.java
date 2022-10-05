@@ -82,21 +82,19 @@ final class BindingRuntimeTypesFactory implements Mutable {
 
             // index module's identities and RPC input/outputs
             for (var gen : modGen) {
-                if (gen instanceof IdentityGenerator) {
-                    ((IdentityGenerator) gen).runtimeType().ifPresent(identity -> {
+                if (gen instanceof IdentityGenerator idGen) {
+                    idGen.runtimeType().ifPresent(identity -> {
                         safePut(identities, "identities", identity.statement().argument(), identity);
                     });
                 }
                 // FIXME: do not collect these once we they generate a proper RuntimeType
-                if (gen instanceof RpcGenerator) {
-                    final QName rpcName = ((RpcGenerator) gen).statement().argument();
+                if (gen instanceof RpcGenerator rpcGen) {
+                    final QName rpcName = rpcGen.statement().argument();
                     for (var subgen : gen) {
-                        if (subgen instanceof RpcInputGenerator) {
-                            ((RpcInputGenerator) subgen).runtimeType()
-                                .ifPresent(input -> rpcInputs.put(rpcName, input));
-                        } else if (subgen instanceof RpcOutputGenerator) {
-                            ((RpcOutputGenerator) subgen).runtimeType()
-                                .ifPresent(output -> rpcOutputs.put(rpcName, output));
+                        if (subgen instanceof RpcInputGenerator inputGen) {
+                            inputGen.runtimeType().ifPresent(input -> rpcInputs.put(rpcName, input));
+                        } else if (subgen instanceof RpcOutputGenerator outputGen) {
+                            outputGen.runtimeType().ifPresent(output -> rpcOutputs.put(rpcName, output));
                         }
                     }
                 }
@@ -108,11 +106,10 @@ final class BindingRuntimeTypesFactory implements Mutable {
 
     private void indexRuntimeTypes(final Iterable<? extends Generator> generators) {
         for (Generator gen : generators) {
-            if (gen instanceof AbstractExplicitGenerator && gen.generatedType().isPresent()) {
-                final var type = ((AbstractExplicitGenerator<?, ?>) gen).runtimeType().orElseThrow();
-                final var javaType = type.javaType();
-                if (javaType instanceof GeneratedType) {
-                    final var name = javaType.getIdentifier();
+            if (gen instanceof AbstractExplicitGenerator<?, ?> explicitGen && gen.generatedType().isPresent()) {
+                final var type = explicitGen.runtimeType().orElseThrow();
+                if (type.javaType() instanceof GeneratedType genType) {
+                    final var name = genType.getIdentifier();
                     final var prev = allTypes.put(name, type);
                     verify(prev == null || prev == type, "Conflict on runtime type mapping of %s between %s and %s",
                         name, prev, type);
@@ -120,12 +117,12 @@ final class BindingRuntimeTypesFactory implements Mutable {
                     // Global indexing of cases generated for a particular choice. We look at the Generated type
                     // and make assumptions about its shape -- which works just fine without touching the
                     // ChoiceRuntimeType for cases.
-                    if (type instanceof CaseRuntimeType) {
-                        final var ifaces = ((GeneratedType) javaType).getImplements();
+                    if (type instanceof CaseRuntimeType caseType) {
+                        final var ifaces = genType.getImplements();
                         // The appropriate choice and DataObject at the very least. The choice interface is the first
                         // one mentioned.
                         verify(ifaces.size() >= 2, "Unexpected implemented interfaces %s", ifaces);
-                        choiceToCases.put(ifaces.get(0).getIdentifier(), (CaseRuntimeType) type);
+                        choiceToCases.put(ifaces.get(0).getIdentifier(), caseType);
                     }
                 }
             }
