@@ -30,8 +30,6 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class GeneratedTypeBuilderTest {
 
@@ -286,7 +284,6 @@ public class GeneratedTypeBuilderTest {
         generatedTypeBuilder.setDescription("My description ...");
         generatedTypeBuilder.setModuleName("myModuleName");
         generatedTypeBuilder.setReference("myReference");
-        generatedTypeBuilder.setSchemaPath(SchemaPath.create(true, QName.create("test", "path")));
         assertNotNull(generatedTypeBuilder.addComment(() -> "My comment.."));
 
         assertEquals("CodegenGeneratedTypeBuilder{identifier=my.package.MyName, comment=My comment.., constants=[], "
@@ -297,8 +294,6 @@ public class GeneratedTypeBuilderTest {
         assertEquals("My description ...", instance.getDescription());
         assertEquals("myModuleName", instance.getModuleName());
         assertEquals("myReference", instance.getReference());
-        assertEquals(SchemaPath.create(true, QName.create("test", "path")).getPathFromRoot(),
-            instance.getSchemaPath());
         assertEquals("My comment..", instance.getComment().getJavadoc());
     }
 }

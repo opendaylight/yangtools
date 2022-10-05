@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -48,7 +47,6 @@ public class EnumerationBuilderImplTest {
         enumerationBuilder.setDescription(DESCRIPTION);
         enumerationBuilder.setModuleName(moduleName);
         enumerationBuilder.setReference(reference);
-        enumerationBuilder.setSchemaPath(SchemaPath.create(true, qname));
         enumerationBuilder.addValue(valueName, valueName, value, Status.CURRENT, valueDescription, null);
         enumerationBuilder.addAnnotation(packageName, "TestAnnotation");
         enumerationBuilderSame = new CodegenEnumerationBuilder(JavaTypeName.create(packageName, name));
@@ -96,7 +94,6 @@ public class EnumerationBuilderImplTest {
         assertEquals(moduleName, enumeration.getModuleName());
         assertEquals(packageName + '.' + name, enumeration.getFullyQualifiedName());
         assertEquals(reference, enumeration.getReference());
-        assertEquals(List.of(qname), enumeration.getSchemaPath());
         assertEquals(List.of(), enumeration.getEnclosedTypes());
         assertEquals(List.of(), enumeration.getEnumerations());
         assertEquals(List.of(), enumeration.getMethodDefinitions());

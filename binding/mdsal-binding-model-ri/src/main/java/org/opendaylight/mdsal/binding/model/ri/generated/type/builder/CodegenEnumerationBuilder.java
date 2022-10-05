@@ -14,15 +14,12 @@ import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.TypeComment;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder {
     private String description;
     private String reference;
     private String moduleName;
-    private SchemaPath schemaPath;
     private YangSourceDefinition definition;
 
     public CodegenEnumerationBuilder(final JavaTypeName identifier) {
@@ -40,18 +37,13 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
     }
 
     @Override
-    public void setSchemaPath(final SchemaPath schemaPath) {
-        this.schemaPath = schemaPath;
-    }
-
-    @Override
     public void setDescription(final String description) {
         this.description = description;
     }
 
     @Override
     public void setYangSourceDefinition(final YangSourceDefinition yangSourceDefinition) {
-        this.definition = yangSourceDefinition;
+        definition = yangSourceDefinition;
     }
 
     @Override
@@ -98,14 +90,12 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
         private final String description;
         private final String reference;
         private final String moduleName;
-        private final SchemaPath schemaPath;
         private final YangSourceDefinition definition;
 
         EnumerationImpl(final CodegenEnumerationBuilder builder) {
             super(builder);
             description = builder.description;
             moduleName = builder.moduleName;
-            schemaPath = builder.schemaPath;
             reference = builder.reference;
             definition = builder.definition;
         }
@@ -123,11 +113,6 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
         @Override
         public String getReference() {
             return reference;
-        }
-
-        @Override
-        public Iterable<QName> getSchemaPath() {
-            return schemaPath.getPathFromRoot();
         }
 
         @Override

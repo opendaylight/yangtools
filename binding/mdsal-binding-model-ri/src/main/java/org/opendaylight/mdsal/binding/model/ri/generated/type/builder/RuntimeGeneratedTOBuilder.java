@@ -12,8 +12,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     public RuntimeGeneratedTOBuilder(final JavaTypeName identifier) {
@@ -37,11 +35,6 @@ public class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
 
     @Override
     public final void setModuleName(final String moduleName) {
-        // No-op
-    }
-
-    @Override
-    public final void setSchemaPath(final SchemaPath schemaPath) {
         // No-op
     }
 
@@ -77,11 +70,6 @@ public class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
 
         @Override
         public final String getReference() {
-            throw unsupported();
-        }
-
-        @Override
-        public final Iterable<QName> getSchemaPath() {
             throw unsupported();
         }
 

@@ -12,8 +12,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private Restrictions restrictions;
@@ -21,7 +19,6 @@ public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private String reference;
     private String description;
     private String moduleName;
-    private SchemaPath schemaPath;
 
     public CodegenGeneratedTOBuilder(final JavaTypeName identifier) {
         super(identifier);
@@ -34,7 +31,7 @@ public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
 
     @Override
     public final void setSUID(final GeneratedPropertyBuilder newSuid) {
-        this.suid = newSuid;
+        suid = newSuid;
     }
 
     @Override
@@ -45,11 +42,6 @@ public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     @Override
     public final void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
-    }
-
-    @Override
-    public final void setSchemaPath(final SchemaPath schemaPath) {
-        this.schemaPath = schemaPath;
     }
 
     @Override
@@ -68,51 +60,44 @@ public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
         private final String reference;
         private final String description;
         private final String moduleName;
-        private final SchemaPath schemaPath;
 
         GTO(final CodegenGeneratedTOBuilder builder) {
             super(builder);
-            this.restrictions = builder.restrictions;
-            this.reference = builder.reference;
-            this.description = builder.description;
-            this.moduleName = builder.moduleName;
-            this.schemaPath = builder.schemaPath;
+            restrictions = builder.restrictions;
+            reference = builder.reference;
+            description = builder.description;
+            moduleName = builder.moduleName;
 
             if (builder.suid == null) {
-                this.suid = null;
+                suid = null;
             } else {
-                this.suid = builder.suid.toInstance();
+                suid = builder.suid.toInstance();
             }
         }
 
         @Override
         public Restrictions getRestrictions() {
-            return this.restrictions;
+            return restrictions;
         }
 
         @Override
         public GeneratedProperty getSUID() {
-            return this.suid;
+            return suid;
         }
 
         @Override
         public String getDescription() {
-            return this.description;
+            return description;
         }
 
         @Override
         public String getReference() {
-            return this.reference;
-        }
-
-        @Override
-        public Iterable<QName> getSchemaPath() {
-            return this.schemaPath.getPathFromRoot();
+            return reference;
         }
 
         @Override
         public String getModuleName() {
-            return this.moduleName;
+            return moduleName;
         }
     }
 }

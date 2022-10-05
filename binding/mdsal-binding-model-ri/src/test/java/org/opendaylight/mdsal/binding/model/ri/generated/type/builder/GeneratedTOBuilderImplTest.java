@@ -16,7 +16,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class GeneratedTOBuilderImplTest {
 
@@ -122,7 +121,6 @@ public class GeneratedTOBuilderImplTest {
         genTOBuilder.setDescription("test description");
         genTOBuilder.setModuleName("test-module");
         genTOBuilder.setReference("http://tools.ietf.org/html/rfc6020");
-        genTOBuilder.setSchemaPath(SchemaPath.ROOT);
 
         final GeneratedTransferObject genTO = genTOBuilder.build();
 
@@ -131,7 +129,6 @@ public class GeneratedTOBuilderImplTest {
         assertEquals("test description", genTO.getDescription());
         assertEquals("test-module", genTO.getModuleName());
         assertEquals("http://tools.ietf.org/html/rfc6020", genTO.getReference());
-        assertEquals(SchemaPath.ROOT.getPathFromRoot(), genTO.getSchemaPath());
     }
 
     @Test
