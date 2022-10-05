@@ -57,7 +57,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -517,7 +516,7 @@ class JavaFileTemplate {
 
     private static boolean hasBuilderClass(final SchemaNode schemaNode) {
         return schemaNode instanceof ContainerSchemaNode || schemaNode instanceof ListSchemaNode
-                || schemaNode instanceof RpcDefinition || schemaNode instanceof NotificationDefinition;
+                || schemaNode instanceof NotificationDefinition;
     }
 
     private static boolean isSameProperty(final String getterName1, final String getterName2) {

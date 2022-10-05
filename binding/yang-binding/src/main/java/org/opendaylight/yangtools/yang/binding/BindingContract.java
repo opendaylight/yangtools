@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.NonNull;
 @Beta
 // FIXME: evaluate integrating with BindingObject
 public sealed interface BindingContract<T extends BindingContract<T>>
-        permits Action, BaseIdentity, DataContainer, YangFeature {
+        permits Action, BaseIdentity, DataContainer, Rpc, YangFeature {
     /**
      * Return the interface implemented by this object. This method differs from {@link Object#getClass()} in that it
      * returns the interface contract, not a concrete implementation class.

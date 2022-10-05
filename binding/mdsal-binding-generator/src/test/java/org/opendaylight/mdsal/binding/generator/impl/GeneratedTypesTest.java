@@ -222,7 +222,7 @@ public class GeneratedTypesTest {
         String getListChildContainerMethodReturnTypeName = "";
 
         for (final GeneratedType genType : genTypes) {
-            if (!(genType instanceof GeneratedTransferObject)) {
+            if (!(genType instanceof GeneratedTransferObject genTO)) {
                 if (genType.getName().equals("ListParentContainer")) {
                     listParentContainerMethodsCount = genType.getMethodDefinitions().size();
                 } else if (genType.getName().equals("SimpleList")) {
@@ -260,7 +260,6 @@ public class GeneratedTypesTest {
                     listChildContainerMethodsCount = genType.getMethodDefinitions().size();
                 }
             } else {
-                final GeneratedTransferObject genTO = (GeneratedTransferObject) genType;
                 final List<GeneratedProperty> properties = genTO.getProperties();
                 final List<GeneratedProperty> hashProps = genTO.getHashCodeIdentifiers();
                 final List<GeneratedProperty> equalProps = genTO.getEqualsIdentifiers();
@@ -318,25 +317,21 @@ public class GeneratedTypesTest {
         int innerListKeyPropertyCount = 0;
 
         for (final GeneratedType type : genTypes) {
-            if (!(type instanceof GeneratedTransferObject)) {
+            if (!(type instanceof GeneratedTransferObject genTO)) {
                 genTypesCount++;
-            } else {
-                final GeneratedTransferObject genTO = (GeneratedTransferObject) type;
-
-                if (genTO.getName().equals("CompositeKeyListKey")) {
-                    compositeKeyListKeyCount++;
-                    final List<GeneratedProperty> properties = genTO.getProperties();
-                    for (final GeneratedProperty prop : properties) {
-                        if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
-                            compositeKeyListKeyPropertyCount++;
-                        }
+            } else if (genTO.getName().equals("CompositeKeyListKey")) {
+                compositeKeyListKeyCount++;
+                final List<GeneratedProperty> properties = genTO.getProperties();
+                for (final GeneratedProperty prop : properties) {
+                    if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
+                        compositeKeyListKeyPropertyCount++;
                     }
-                    genTOsCount++;
-                } else if (genTO.getName().equals("InnerListKey")) {
-                    final List<GeneratedProperty> properties = genTO.getProperties();
-                    innerListKeyPropertyCount = properties.size();
-                    genTOsCount++;
                 }
+                genTOsCount++;
+            } else if (genTO.getName().equals("InnerListKey")) {
+                final List<GeneratedProperty> properties = genTO.getProperties();
+                innerListKeyPropertyCount = properties.size();
+                genTOsCount++;
             }
         }
         assertEquals(1, compositeKeyListKeyCount);
@@ -374,6 +369,6 @@ public class GeneratedTypesTest {
     public void testAugmentRpcInput() {
         final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/augment-rpc-input.yang"));
-        assertEquals(6, genTypes.size());
+        assertEquals(7, genTypes.size());
     }
 }

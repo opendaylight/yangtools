@@ -207,7 +207,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
         final var ex = assertThrows(IncorrectNestingException.class,
             () -> codecContext.fromYangInstanceIdentifier(yiid));
         assertThat(ex.getMessage(), startsWith("Argument (urn:opendaylight:params:xml:ns:yang:md:sal:knock-knock"
-            + "?revision=2018-07-23)knock-knock is not valid child of "));
+            + "?revision=2018-07-23)knock-knock is not valid data tree child of "));
     }
 
     @Test

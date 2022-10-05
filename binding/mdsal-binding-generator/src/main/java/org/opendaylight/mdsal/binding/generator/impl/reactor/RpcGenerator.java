@@ -7,46 +7,44 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import java.util.List;
+import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultRpcRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
+import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.RpcRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Generator corresponding to a {@code rpc} statement.
  */
 // FIXME: hide this once we have RpcRuntimeType
-public final class RpcGenerator extends CompositeSchemaTreeGenerator<RpcEffectiveStatement, RpcRuntimeType> {
-    RpcGenerator(final RpcEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+public final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatement, RpcRuntimeType> {
+    RpcGenerator(final RpcEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);
     }
 
     @Override
-    void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterSchemaTree(statement().argument());
-    }
-
-    @Override
-    // FIXME: switch to the same thing we are using for 'action'
     ClassPlacement classPlacement() {
-        return ClassPlacement.PHANTOM;
+        return ClassPlacement.TOP_LEVEL;
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
-        // RPCs are a separate concept
+    ParameterizedType implementedType(final TypeBuilderFactory builderFactory, final GeneratedType input,
+            final GeneratedType output) {
+        return BindingTypes.rpc(input, output);
     }
 
     @Override
     CompositeRuntimeTypeBuilder<RpcEffectiveStatement, RpcRuntimeType> createBuilder(
             final RpcEffectiveStatement statement) {
-        // RPCs do not have a dedicated interface
-        throw new UnsupportedOperationException("Should never be called");
+        return new InvokableRuntimeTypeBuilder<>(statement) {
+            @Override
+            RpcRuntimeType build(final GeneratedType generatedType, final RpcEffectiveStatement statement,
+                    final List<RuntimeType> childTypes) {
+                return new DefaultRpcRuntimeType(generatedType, statement, childTypes);
+            }
+        };
     }
 }

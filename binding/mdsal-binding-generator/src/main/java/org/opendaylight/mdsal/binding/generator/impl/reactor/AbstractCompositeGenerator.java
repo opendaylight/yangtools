@@ -530,7 +530,9 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 tmp.add(this instanceof RpcGenerator ? new RpcOutputGenerator(output, this)
                     : new OutputGenerator(output, this));
             } else if (stmt instanceof RpcEffectiveStatement rpc) {
-                tmp.add(new RpcGenerator(rpc, this));
+                if (this instanceof ModuleGenerator module) {
+                    tmp.add(new RpcGenerator(rpc, module));
+                }
             } else if (stmt instanceof TypedefEffectiveStatement typedef) {
                 tmp.add(new TypedefGenerator(typedef, this));
             } else if (stmt instanceof AugmentEffectiveStatement augment) {

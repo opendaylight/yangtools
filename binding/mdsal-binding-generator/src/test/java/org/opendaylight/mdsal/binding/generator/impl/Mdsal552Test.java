@@ -30,7 +30,7 @@ public class Mdsal552Test {
         final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
                 YangParserTestUtils.parseYangResource("/mdsal552.yang"));
         assertNotNull(types);
-        assertEquals(5, types.size());
+        assertEquals(6, types.size());
 
         final GeneratedType baz = types.stream()
                 .filter(type -> BAZ.equals(type.getIdentifier()))

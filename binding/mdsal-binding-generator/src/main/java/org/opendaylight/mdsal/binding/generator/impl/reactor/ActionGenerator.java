@@ -7,38 +7,22 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
-
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Generator corresponding to a {@code action} statement.
  */
-final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffectiveStatement, ActionRuntimeType> {
-    private static final JavaTypeName FUNCTIONAL_INTERFACE_ANNOTATION = JavaTypeName.create(FunctionalInterface.class);
-
+final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveStatement, ActionRuntimeType> {
     ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-    }
-
-    @Override
-    void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterSchemaTree(statement().getIdentifier());
     }
 
     @Override
@@ -50,54 +34,26 @@ final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffective
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
-        builder.addImplementsType(implementedType(builderFactory));
-        builder.addAnnotation(FUNCTIONAL_INTERFACE_ANNOTATION);
-        defaultImplementedInterace(builder);
-
-        final ModuleGenerator module = currentModule();
-        module.addQNameConstant(builder, statement().argument());
-
-//        addGetterMethods(builder, builderFactory);
-
-        annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(module, statement(), builder);
-
-        return builder.build();
-    }
-
-    private @NonNull Type implementedType(final TypeBuilderFactory builderFactory) {
-        final GeneratedType input = getChild(this, InputEffectiveStatement.class).getOriginal()
-            .getGeneratedType(builderFactory);
-        final GeneratedType output = getChild(this, OutputEffectiveStatement.class).getOriginal()
-            .getGeneratedType(builderFactory);
-
-        final AbstractCompositeGenerator<?, ?> parent = getParent();
-        if (parent instanceof ListGenerator) {
-            final KeyGenerator keyGen = ((ListGenerator) parent).keyGenerator();
+    ParameterizedType implementedType(final TypeBuilderFactory builderFactory, final GeneratedType input,
+            final GeneratedType output) {
+        final var parent = getParent();
+        final var parentType = Type.of(parent.typeName());
+        if (parent instanceof ListGenerator list) {
+            final var keyGen = list.keyGenerator();
             if (keyGen != null) {
-                return BindingTypes.keyedListAction(Type.of(parent.typeName()), keyGen.getGeneratedType(builderFactory),
-                    input, output);
+                return BindingTypes.keyedListAction(parentType, keyGen.getGeneratedType(builderFactory), input, output);
             }
         }
-
-        return BindingTypes.action(Type.of(parent.typeName()), input, output);
-    }
-
-    @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
-        // actions are a separate concept
+        return BindingTypes.action(parentType, input, output);
     }
 
     @Override
     CompositeRuntimeTypeBuilder<ActionEffectiveStatement, ActionRuntimeType> createBuilder(
             final ActionEffectiveStatement statement) {
-        return new CompositeRuntimeTypeBuilder<>(statement) {
+        return new InvokableRuntimeTypeBuilder<>(statement) {
             @Override
             ActionRuntimeType build(final GeneratedType generatedType, final ActionEffectiveStatement statement,
-                    final List<RuntimeType> childTypes, final List<AugmentRuntimeType> augmentTypes) {
-                verify(augmentTypes.isEmpty(), "Unexpected augments %s", augmentTypes);
+                    final List<RuntimeType> childTypes) {
                 return new DefaultActionRuntimeType(generatedType, statement, childTypes);
             }
         };

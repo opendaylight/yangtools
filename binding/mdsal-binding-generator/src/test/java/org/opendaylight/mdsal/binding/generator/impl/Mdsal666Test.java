@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.generator.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -28,13 +27,13 @@ public class Mdsal666Test {
         final var generatedNames = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal666.yang")).stream().map(GeneratedType::getIdentifier)
             .collect(Collectors.toUnmodifiableList());
-        assertEquals(10, generatedNames.size());
+        assertEquals(11, generatedNames.size());
 
-        // Reserved for future use
-        assertEquals(Optional.empty(), generatedNames.stream().filter(FOO::equals).findAny());
-        // Grouping is relocated for 'rpc foo' ...
-        assertTrue(generatedNames.stream().filter(FOO_GRP::equals).findAny().isPresent());
+        // 'rpc foo' ...
+        assertTrue(generatedNames.stream().anyMatch(FOO::equals));
+        // ... grouping is relocated for 'rpc foo' ...
+        assertTrue(generatedNames.stream().anyMatch(FOO_GRP::equals));
         // .. and 'action baz'
-        assertTrue(generatedNames.stream().filter(BAZ_GRP::equals).findAny().isPresent());
+        assertTrue(generatedNames.stream().anyMatch(BAZ_GRP::equals));
     }
 }

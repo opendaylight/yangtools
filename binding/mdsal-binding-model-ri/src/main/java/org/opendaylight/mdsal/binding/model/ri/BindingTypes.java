@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.binding.KeyedListNotification;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.NotificationListener;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
+import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.binding.RpcService;
@@ -88,6 +89,7 @@ public final class BindingTypes {
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
     private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
+    private static final ConcreteType RPC = typeForClass(Rpc.class);
     private static final ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
     private static final ConcreteType YANG_FEATURE = typeForClass(YangFeature.class);
 
@@ -258,6 +260,18 @@ public final class BindingTypes {
      */
     public static ParameterizedType opaqueObject(final Type type) {
         return parameterizedTypeFor(OPAQUE_OBJECT, type);
+    }
+
+    /**
+     * Type specializing {@link Rpc} for a particular type.
+     *
+     * @param input Type input type
+     * @param output Type output type
+     * @return A parameterized type corresponding to {@code Rpc<Input, Output>}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public static @NonNull ParameterizedType rpc(final Type input, final Type output) {
+        return parameterizedTypeFor(RPC, input, output);
     }
 
     /**
