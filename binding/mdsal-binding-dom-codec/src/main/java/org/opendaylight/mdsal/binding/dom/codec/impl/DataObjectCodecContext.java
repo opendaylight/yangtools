@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -393,7 +394,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         //        declaration site
         final var possibleChildren = augment.statement()
             .streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class)
-            .map(SchemaTreeEffectiveStatement::getIdentifier)
+            .map(stmt -> (QName) stmt.argument())
             .collect(ImmutableSet.toImmutableSet());
         if (possibleChildren.isEmpty()) {
             return null;
@@ -431,8 +432,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         final Map map = new HashMap<>();
 
         for (final NormalizedNode childValue : data.body()) {
-            if (childValue instanceof AugmentationNode) {
-                final AugmentationNode augDomNode = (AugmentationNode) childValue;
+            if (childValue instanceof AugmentationNode augDomNode) {
                 final DataContainerCodecPrototype<?> codecProto = augmentationByYang.get(augDomNode.getIdentifier());
                 if (codecProto != null) {
                     final DataContainerCodecContext<?, ?> codec = codecProto.get();

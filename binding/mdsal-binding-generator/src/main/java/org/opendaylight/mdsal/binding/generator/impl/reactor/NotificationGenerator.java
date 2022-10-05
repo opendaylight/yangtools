@@ -32,7 +32,7 @@ final class NotificationGenerator
 
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterSchemaTree(statement().getIdentifier());
+        dataTree.enterSchemaTree(statement().argument());
     }
 
     @Override

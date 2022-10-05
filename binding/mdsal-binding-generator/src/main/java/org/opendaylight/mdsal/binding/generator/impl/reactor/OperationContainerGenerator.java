@@ -31,7 +31,7 @@ abstract class OperationContainerGenerator<S extends DataTreeEffectiveStatement<
 
     @Override
     final void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterSchemaTree(statement().getIdentifier());
+        dataTree.enterSchemaTree(statement().argument());
     }
 
     @Override

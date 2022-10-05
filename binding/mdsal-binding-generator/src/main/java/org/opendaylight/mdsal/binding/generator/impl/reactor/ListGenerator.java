@@ -48,7 +48,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterDataTree(statement().getIdentifier());
+        dataTree.enterDataTree(statement().argument());
     }
 
     @Override

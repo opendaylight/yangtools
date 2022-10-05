@@ -69,7 +69,7 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
 
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterDataTree(statement().getIdentifier());
+        dataTree.enterDataTree(statement().argument());
     }
 
     @Override

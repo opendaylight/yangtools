@@ -38,7 +38,7 @@ abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?
 
     @Override
     final void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterDataTree(statement().getIdentifier());
+        dataTree.enterDataTree(statement().argument());
     }
 
     @Override

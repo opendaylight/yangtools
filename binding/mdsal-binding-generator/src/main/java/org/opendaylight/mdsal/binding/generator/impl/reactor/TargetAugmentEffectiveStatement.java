@@ -15,7 +15,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,12 +27,12 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement, AugmentationSchemaNode {
@@ -70,18 +69,22 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace, final K identifier) {
-        return Optional.empty();
-    }
-
-    @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        return Map.of();
-    }
-
-    @Override
     public List<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return substatements;
+    }
+
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Collection<SchemaTreeEffectiveStatement<?>> schemaTreeNodes() {
+        return (Collection) collectEffectiveSubstatements(SchemaTreeEffectiveStatement.class);
+    }
+
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final QName qname) {
+        return (Optional) streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class)
+            .filter(stmt -> qname.equals(stmt.argument()))
+            .findAny();
     }
 
     @Override

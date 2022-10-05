@@ -27,7 +27,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
-        dataTree.enterDataTree(statement().getIdentifier());
+        dataTree.enterDataTree(statement().argument());
     }
 
     @Override

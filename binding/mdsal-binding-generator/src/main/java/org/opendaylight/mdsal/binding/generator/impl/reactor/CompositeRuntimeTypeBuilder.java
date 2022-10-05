@@ -109,7 +109,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
                 // such in the schema tree.
                 //
                 // That is in general -- 'choice' statements are doing their own thing separately.
-                if (!isAugmentedChild(child.getIdentifier())) {
+                if (!isAugmentedChild(child.argument())) {
                     final var childGen = verifyNotNull(findChildGenerator(generator, child.argument().getLocalName()),
                         "Cannot find child for %s in %s", child, generator);
                     final var childRuntimeType = childGen.createInternalRuntimeType(resolver, child);

@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -178,10 +177,10 @@ abstract class AbstractAugmentGenerator
         final var stmts = augment.effectiveSubstatements();
         final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
         for (var child : stmts) {
-            if (child instanceof SchemaTreeEffectiveStatement) {
-                final var qname = ((SchemaTreeEffectiveStatement<?>) child).getIdentifier();
+            if (child instanceof SchemaTreeEffectiveStatement<?> schemaTreeChild) {
+                final var qname = schemaTreeChild.argument();
                 // Note: a match in target may be missing -- for example if it was 'deviate unsupported'
-                target.get(SchemaTreeNamespace.class, transform.apply(qname)).ifPresent(builder::add);
+                target.findSchemaTreeNode(transform.apply(qname)).ifPresent(builder::add);
             } else {
                 builder.add(child);
             }
