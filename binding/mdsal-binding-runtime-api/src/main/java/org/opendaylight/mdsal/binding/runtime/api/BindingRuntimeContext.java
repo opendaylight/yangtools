@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
+import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -80,6 +81,8 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
     @Nullable CompositeRuntimeType getSchemaDefinition(Class<?> cls);
 
     @Nullable ActionRuntimeType getActionDefinition(Class<? extends Action<?, ?, ?>> cls);
+
+    @Nullable RpcRuntimeType getRpcDefinition(Class<? extends Rpc<?, ?>> cls);
 
     /**
      * Returns schema ({@link DataSchemaNode}, {@link AugmentationSchemaNode} or {@link TypeDefinition})

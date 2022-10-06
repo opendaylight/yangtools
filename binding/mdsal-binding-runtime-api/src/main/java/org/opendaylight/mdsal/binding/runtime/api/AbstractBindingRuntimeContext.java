@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -70,6 +71,11 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     @Override
     public final ActionRuntimeType getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
         return (ActionRuntimeType) getTypes().findSchema(JavaTypeName.create(cls)).orElse(null);
+    }
+
+    @Override
+    public final RpcRuntimeType getRpcDefinition(final Class<? extends Rpc<?, ?>> cls) {
+        return (RpcRuntimeType) getTypes().findSchema(JavaTypeName.create(cls)).orElse(null);
     }
 
     @Override
