@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -29,6 +30,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Generator corresponding to a {@code action} statement.
  */
 final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffectiveStatement, ActionRuntimeType> {
+    private static final JavaTypeName FUNCTIONAL_INTERFACE_ANNOTATION = JavaTypeName.create(FunctionalInterface.class);
+
     ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
@@ -50,6 +53,8 @@ final class ActionGenerator extends CompositeSchemaTreeGenerator<ActionEffective
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.addImplementsType(implementedType(builderFactory));
+        builder.addAnnotation(FUNCTIONAL_INTERFACE_ANNOTATION);
+        defaultImplementedInterace(builder);
 
         final ModuleGenerator module = currentModule();
         module.addQNameConstant(builder, statement().argument());

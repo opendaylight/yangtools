@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import org.eclipse.jdt.annotation.NonNull;
@@ -18,9 +17,8 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
  *
  * @author Robert Varga
  */
-@Beta
-@FunctionalInterface
-public interface Action<P extends InstanceIdentifier<?>, I extends RpcInput, O extends RpcOutput> {
+public non-sealed interface Action<P extends InstanceIdentifier<?>, I extends RpcInput, O extends RpcOutput>
+        extends BindingContract<Action<P, I, O>> {
     /**
      * Invoke the action.
      *

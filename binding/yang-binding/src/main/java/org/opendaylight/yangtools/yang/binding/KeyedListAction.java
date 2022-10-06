@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -17,8 +16,6 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
  *
  * @author Robert Varga
  */
-@Beta
-@FunctionalInterface
 public interface KeyedListAction<K extends Identifier<T>, T extends DataObject & Identifiable<K>,
         I extends RpcInput, O extends RpcOutput> extends Action<KeyedInstanceIdentifier<T, K>, I, O> {
     @Override
