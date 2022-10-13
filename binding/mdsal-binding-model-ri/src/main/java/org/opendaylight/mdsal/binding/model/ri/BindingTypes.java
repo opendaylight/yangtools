@@ -64,6 +64,7 @@ public final class BindingTypes {
     public static final ConcreteType QNAME = typeForClass(QName.class);
     public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
+    @Deprecated(since = "11.0.0", forRemoval = true)
     public static final ConcreteType RPC_SERVICE = typeForClass(RpcService.class);
     public static final ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
     public static final ConcreteType BITS_TYPE_OBJECT = typeForClass(BitsTypeObject.class);

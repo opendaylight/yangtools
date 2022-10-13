@@ -59,6 +59,7 @@ public final class BindingMapping {
         "record");
 
     public static final @NonNull String DATA_ROOT_SUFFIX = "Data";
+    @Deprecated(since = "11.0.0", forRemoval = true)
     public static final @NonNull String RPC_SERVICE_SUFFIX = "Service";
     @Deprecated(since = "10.0.3", forRemoval = true)
     public static final @NonNull String NOTIFICATION_LISTENER_SUFFIX = "Listener";

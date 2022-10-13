@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
  * Aggregate service for top-level {@code rpc} statements for a particular module.
  */
 // FIXME: eventually remove this generator
+@Deprecated(since = "11.0.0", forRemoval = true)
 final class RpcServiceGenerator extends AbstractImplicitGenerator {
     private static final JavaTypeName CHECK_RETURN_VALUE_ANNOTATION =
         // Do not refer to annotation class, as it may not be available at runtime
