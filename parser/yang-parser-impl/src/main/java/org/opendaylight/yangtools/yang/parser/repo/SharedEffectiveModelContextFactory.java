@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFacto
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

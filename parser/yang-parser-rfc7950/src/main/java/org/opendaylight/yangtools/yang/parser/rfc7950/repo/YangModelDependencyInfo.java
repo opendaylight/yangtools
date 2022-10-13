@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;

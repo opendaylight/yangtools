@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
