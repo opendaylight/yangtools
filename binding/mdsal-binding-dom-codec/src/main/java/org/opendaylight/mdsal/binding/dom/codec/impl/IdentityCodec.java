@@ -87,6 +87,6 @@ final class IdentityCodec extends AbstractValueCodec<QName, BaseIdentity> implem
 
     @Override
     public QName fromBinding(final BaseIdentity bindingValue) {
-        return BindingReflections.getQName(bindingValue.implementedInterface());
+        return BindingReflections.getQName(bindingValue);
     }
 }

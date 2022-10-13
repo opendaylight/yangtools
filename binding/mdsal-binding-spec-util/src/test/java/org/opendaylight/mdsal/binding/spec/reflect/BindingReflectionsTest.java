@@ -56,12 +56,15 @@ public class BindingReflectionsTest {
         assertFalse(BindingReflections.resolveRpcOutputClass(
                 TestImplementation.class.getDeclaredMethod("rpcMethodTest2")).isPresent());
 
-        assertEquals(QName.create("test", "test"), BindingReflections.getQName(TestIdentity.class));
+        assertEquals(QName.create("test", "test"), BindingReflections.getQName(TestIdentity.VALUE));
     }
 
     interface TestIdentity extends BaseIdentity {
         QName QNAME = QName.create("test", "test");
+        TestIdentity VALUE = () -> TestIdentity.class;
 
+        @Override
+        Class<? extends TestIdentity> implementedInterface();
     }
 
     static final class TestImplementation implements Augmentation<TestImplementation>, RpcService {
