@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
+package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -17,7 +17,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 
 @Beta
 public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdentifier>
@@ -51,7 +53,7 @@ public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdent
     }
 
     @Override
-    public Class<@NonNull IRSchemaSource> getType() {
+    public Class<IRSchemaSource> getType() {
         return IRSchemaSource.class;
     }
 

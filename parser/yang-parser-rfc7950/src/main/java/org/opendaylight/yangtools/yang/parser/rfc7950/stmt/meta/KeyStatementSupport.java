@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
+import org.opendaylight.yangtools.yang.parser.antlr.GrammarUtils;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -36,26 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class KeyStatementSupport
         extends AbstractStatementSupport<Set<QName>, KeyStatement, KeyEffectiveStatement> {
-    /**
-     * This is equivalent to {@link YangStatementLexer#SEP}'s definition. Currently equivalent to the non-repeating
-     * part of:
-     *
-     * <p>
-     * {@code SEP: [ \n\r\t]+ -> type(SEP);}.
-     */
-    private static final CharMatcher SEP = CharMatcher.anyOf(" \n\r\t").precomputed();
-
-    /**
-     * Splitter corresponding to {@code key-arg} ABNF as defined
-     * in <a href="https://tools.ietf.org/html/rfc6020#section-12">RFC6020, section 12</a>:
-     *
-     * <p>
-     * {@code key-arg             = node-identifier *(sep node-identifier)}
-     *
-     * <p>
-     * We also account for {@link #SEP} not handling repetition by ignoring empty strings.
-     */
-    private static final Splitter KEY_ARG_SPLITTER = Splitter.on(SEP).omitEmptyStrings();
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.KEY).build();
@@ -69,15 +46,15 @@ public final class KeyStatementSupport
 
     @Override
     public ImmutableSet<QName> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final Builder<QName> builder = ImmutableSet.builder();
+        final var builder = ImmutableSet.<QName>builder();
         int tokens = 0;
-        for (String keyToken : KEY_ARG_SPLITTER.split(value)) {
+        for (var keyToken : GrammarUtils.splitKeyArg(value)) {
             builder.add(StmtContextUtils.parseNodeIdentifier(ctx, keyToken));
             tokens++;
         }
 
         // Throws NPE on nulls, retains first inserted value, cannot be modified
-        final ImmutableSet<QName> ret = builder.build();
+        final var ret = builder.build();
         SourceException.throwIf(ret.size() != tokens, ctx, "Key argument '%s' contains duplicates", value);
         return ret;
     }
@@ -85,12 +62,11 @@ public final class KeyStatementSupport
     @Override
     public Set<QName> adaptArgumentValue(final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx,
             final QNameModule targetModule) {
-        final Builder<QName> builder = ImmutableSet.builder();
+        final var builder = ImmutableSet.<QName>builder();
         boolean replaced = false;
-        for (final QName qname : ctx.getArgument()) {
+        for (var qname : ctx.getArgument()) {
             if (!targetModule.equals(qname.getModule())) {
-                final QName newQname = qname.bindTo(targetModule).intern();
-                builder.add(newQname);
+                builder.add(qname.bindTo(targetModule).intern());
                 replaced = true;
             } else {
                 builder.add(qname);

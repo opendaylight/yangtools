@@ -1,21 +1,14 @@
 /*
- * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2022 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
+module org.opendaylight.yangtools.yang.parser.antlr {
+    exports org.opendaylight.yangtools.yang.parser.antlr;
+    exports org.opendaylight.yangtools.yang.parser.antlr.gen;
 
-module org.opendaylight.yangtools.yang.parser.rfc7950 {
-    // FIXME: audit these, potentially lowering them to their sole user if reasonable
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.ir;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.repo;
-
-    uses YangXPathParserFactory;
-
-    requires transitive java.xml;
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.common;
@@ -28,9 +21,10 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires transitive org.opendaylight.yangtools.yang.repo.spi;
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
 
-    requires org.antlr.antlr4.runtime;
+    // Needed as long as antlr.file is exposed
+    requires transitive org.antlr.antlr4.runtime;
+
     requires org.opendaylight.yangtools.yang.model.ri;
-    requires org.opendaylight.yangtools.yang.parser.antlr;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 

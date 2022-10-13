@@ -16,13 +16,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
-import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionLexer;
-import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser;
-import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.Identifier_ref_argContext;
-import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.If_feature_exprContext;
-import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.If_feature_factorContext;
-import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureExpressionParser.If_feature_termContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.SourceExceptionParser;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.IfFeatureExpressionLexer;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.IfFeatureExpressionParser;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.IfFeatureExpressionParser.Identifier_ref_argContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.IfFeatureExpressionParser.If_feature_exprContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.IfFeatureExpressionParser.If_feature_factorContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.IfFeatureExpressionParser.If_feature_termContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SourceExceptionErrorListener;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -38,8 +38,8 @@ final class IfFeaturePredicateParser {
     static IfFeatureExpr parseIfFeatureExpression(final StmtContext<?, ?, ?> stmt, final String value) {
         final var lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
         final var parser = new IfFeatureExpressionParser(new CommonTokenStream(lexer));
-        final var ifFeatureExprContext =
-                SourceExceptionParser.parse(lexer, parser, parser::if_feature_expr, stmt.sourceReference());
+        final var ifFeatureExprContext = SourceExceptionErrorListener.parse(lexer, parser, parser::if_feature_expr,
+            stmt.sourceReference());
         return new IfFeaturePredicateParser(stmt).parseIfFeatureExpr(ifFeatureExprContext);
     }
 
