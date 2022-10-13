@@ -85,32 +85,22 @@ public final class AntlrSupport {
         verify(keywordStart instanceof TerminalNode, "Unexpected keyword start %s", keywordStart);
         final Token keywordToken = ((TerminalNode) keywordStart).getSymbol();
 
-        final IRKeyword keyword;
-        switch (firstChild.getChildCount()) {
-            case 1:
-                keyword = uqualKeywords.computeIfAbsent(strOf(keywordToken), Unqualified::new);
-                break;
-            case 3:
-                keyword = qualKeywords.computeIfAbsent(Map.entry(strOf(keywordToken), strOf(firstChild.getChild(2))),
-                    entry -> new Qualified(entry.getKey(), entry.getValue()));
-                break;
-            default:
-                throw new VerifyException("Unexpected keyword " + firstChild);
-        }
-
+        final IRKeyword keyword = switch (firstChild.getChildCount()) {
+            case 1 -> uqualKeywords.computeIfAbsent(strOf(keywordToken), Unqualified::new);
+            case 3 -> qualKeywords.computeIfAbsent(Map.entry(strOf(keywordToken), strOf(firstChild.getChild(2))),
+                entry -> new Qualified(entry.getKey(), entry.getValue()));
+            default -> throw new VerifyException("Unexpected keyword " + firstChild);
+        };
         final IRArgument argument = createArgument(stmt);
         final ImmutableList<IRStatement> statements = createStatements(stmt);
         final int line = keywordToken.getLine();
         final int column = keywordToken.getCharPositionInLine();
 
-        switch (statements.size()) {
-            case 0:
-                return statementOf(keyword, argument, line, column);
-            case 1:
-                return new IRStatement144(keyword, argument, statements.get(0), line, column);
-            default:
-                return new IRStatementL44(keyword, argument, statements, line, column);
-        }
+        return switch (statements.size()) {
+            case 0 -> statementOf(keyword, argument, line, column);
+            case 1 -> new IRStatement144(keyword, argument, statements.get(0), line, column);
+            default -> new IRStatementL44(keyword, argument, statements, line, column);
+        };
     }
 
     private static @NonNull IRStatement statementOf(final IRKeyword keyword, final IRArgument argument,
@@ -131,16 +121,12 @@ public final class AntlrSupport {
         if (argument == null) {
             return null;
         }
-        switch (argument.getChildCount()) {
-            case 0:
-                throw new VerifyException("Unexpected shape of " + argument);
-            case 1:
-                return createSimple(argument);
-            case 2:
-                return createQuoted(argument);
-            default:
-                return createConcatenation(argument);
-        }
+        return switch (argument.getChildCount()) {
+            case 0 -> throw new VerifyException("Unexpected shape of " + argument);
+            case 1 -> createSimple(argument);
+            case 2 -> createQuoted(argument);
+            default -> createConcatenation(argument);
+        };
     }
 
     private IRArgument createConcatenation(final ArgumentContext argument) {
@@ -170,34 +156,28 @@ public final class AntlrSupport {
             }
         }
 
-        switch (parts.size()) {
-            case 0:
-                // A concatenation of empty strings, fall back to a single unquoted string
-                return SingleQuoted.EMPTY;
-            case 1:
-                // A single string concatenated with empty string(s), use just the significant portion
-                return parts.get(0);
-            default:
-                // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as
-                //       nice, but for single-quoted strings we do not need further validation in in the reactor and can
-                //       use them as raw literals. This saves some indirection overhead (on memory side) and can
-                //       slightly improve execution speed when we process the same IR multiple times.
-                return new Concatenation(parts);
-        }
+        return switch (parts.size()) {
+            // A concatenation of empty strings, fall back to a single unquoted string
+            case 0 -> SingleQuoted.EMPTY;
+            // A single string concatenated with empty string(s), use just the significant portion
+            case 1 -> parts.get(0);
+            // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as nice,
+            //       but for single-quoted strings we do not need further validation in in the reactor and can use them
+            //       as raw literals. This saves some indirection overhead (on memory side) and can slightly improve
+            //       execution speed when we process the same IR multiple times.
+            default -> new Concatenation(parts);
+        };
     }
 
     private Single createQuoted(final ArgumentContext argument) {
         final ParseTree child = argument.getChild(0);
         verify(child instanceof TerminalNode, "Unexpected literal %s", child);
         final Token token = ((TerminalNode) child).getSymbol();
-        switch (token.getType()) {
-            case YangStatementParser.DQUOT_STRING:
-                return createDoubleQuoted(token);
-            case YangStatementParser.SQUOT_STRING:
-                return createSingleQuoted(token);
-            default:
-                throw new VerifyException("Unexpected token " + token);
-        }
+        return switch (token.getType()) {
+            case YangStatementParser.DQUOT_STRING -> createDoubleQuoted(token);
+            case YangStatementParser.SQUOT_STRING -> createSingleQuoted(token);
+            default -> throw new VerifyException("Unexpected token " + token);
+        };
     }
 
     private DoubleQuoted createDoubleQuoted(final Token token) {
@@ -214,20 +194,16 @@ public final class AntlrSupport {
 
     private IRArgument createSimple(final ArgumentContext argument) {
         final ParseTree child = argument.getChild(0);
-        if (child instanceof TerminalNode) {
-            final Token token = ((TerminalNode) child).getSymbol();
-            switch (token.getType()) {
-                case YangStatementParser.IDENTIFIER:
-                    // This is as simple as it gets: we are dealing with an identifier here.
-                    return idenArguments.computeIfAbsent(strOf(token), Identifier::new);
-                case YangStatementParser.DQUOT_END:
-                case YangStatementParser.SQUOT_END:
-                    // This is an empty string, the difference between double and single quotes does not exist. Single
-                    // quotes have more stringent semantics, hence use those.
-                    return SingleQuoted.EMPTY;
-                default:
-                    throw new VerifyException("Unexpected token " + token);
-            }
+        if (child instanceof TerminalNode terminal) {
+            final Token token = terminal.getSymbol();
+            return switch (token.getType()) {
+                // This is as simple as it gets: we are dealing with an identifier here.
+                case YangStatementParser.IDENTIFIER -> idenArguments.computeIfAbsent(strOf(token), Identifier::new);
+                // This is an empty string, the difference between double and single quotes does not exist. Single
+                // quotes have more stringent semantics, hence use those.
+                case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> SingleQuoted.EMPTY;
+                default -> throw new VerifyException("Unexpected token " + token);
+            };
         }
 
         verify(child instanceof UnquotedStringContext, "Unexpected shape of %s", argument);
