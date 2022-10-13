@@ -116,6 +116,11 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-parser-antlr</artifactId>
+                <version>10.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-api</artifactId>
                 <version>10.0.0-SNAPSHOT</version>
             </dependency>

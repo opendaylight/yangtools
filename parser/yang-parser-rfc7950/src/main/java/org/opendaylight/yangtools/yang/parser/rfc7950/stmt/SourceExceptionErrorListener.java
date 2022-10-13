@@ -1,15 +1,14 @@
 /*
- * Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2022 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.function.Supplier;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
@@ -17,34 +16,16 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.parser.antlr.AbstractParserErrorListener;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
-/**
- * Utility class for converting ANTLRErrorListener errors to SourceExceptions. This class is NOT thread-safe.
- *
- * @author Robert Varga
- */
-@Beta
 @NonNullByDefault
-public final class SourceExceptionParser {
-    private static final class Listener extends AbstractParserErrorListener<SourceException> {
-        private final StatementSourceReference ref;
+public final class SourceExceptionErrorListener extends AbstractParserErrorListener<SourceException> {
+    private final StatementSourceReference ref;
 
-        private Listener(final StatementSourceReference ref) {
-            this.ref = requireNonNull(ref);
-        }
-
-        @Override
-        protected SourceException createException(final Recognizer<?, ?> recognizer,
-                final @Nullable Object offendingSymbol, final int line, final int charPositionInLine,
-                final String msg, final @Nullable RecognitionException cause) {
-            return new SourceException(ref, cause, "%s at %s:%s", msg, line, charPositionInLine);
-        }
-    }
-
-    private SourceExceptionParser() {
-        // Hidden on purpose
+    SourceExceptionErrorListener(final StatementSourceReference ref) {
+        this.ref = requireNonNull(ref);
     }
 
     /**
@@ -59,13 +40,7 @@ public final class SourceExceptionParser {
      */
     public static <T> T parse(final Recognizer<?, ?> recognizer, final Supplier<T> parseMethod,
             final StatementSourceReference ref) {
-        final var listener = new Listener(ref);
-        recognizer.removeErrorListeners();
-        recognizer.addErrorListener(listener);
-
-        final var ret = parseMethod.get();
-        listener.validate();
-        return ret;
+        return new SourceExceptionErrorListener(ref).parseImpl(recognizer, parseMethod, ref);
     }
 
     /**
@@ -81,14 +56,13 @@ public final class SourceExceptionParser {
      */
     public static <T> T parse(final Lexer lexer, final Parser parser, final Supplier<T> parseMethod,
             final StatementSourceReference ref) {
-        final Listener listener = new Listener(ref);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(listener);
-        parser.removeErrorListeners();
-        parser.addErrorListener(listener);
+        return new SourceExceptionErrorListener(ref).parseImpl(lexer, parser, parseMethod, ref);
+    }
 
-        final T ret = parseMethod.get();
-        listener.validate();
-        return ret;
+    @Override
+    protected SourceException createException(final Recognizer<?, ?> recognizer,
+            final @Nullable Object offendingSymbol, final int line, final int charPositionInLine,
+            final String msg, final @Nullable RecognitionException cause) {
+        return new SourceException(ref, cause, "%s at %s:%s", msg, line, charPositionInLine);
     }
 }
