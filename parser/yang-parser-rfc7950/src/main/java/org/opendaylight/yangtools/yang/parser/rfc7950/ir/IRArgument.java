@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -43,7 +42,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * </ul>
  */
 @Beta
-public abstract class IRArgument extends AbstractIRObject {
+public abstract sealed class IRArgument extends AbstractIRObject {
     /**
      * An argument composed of multiple concatenated parts.
      */
@@ -64,8 +63,18 @@ public abstract class IRArgument extends AbstractIRObject {
         }
 
         @Override
+        public int hashCode() {
+            return parts.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return this == obj || obj instanceof Concatenation other && parts.equals(other.parts);
+        }
+
+        @Override
         StringBuilder toYangFragment(final StringBuilder sb) {
-            final Iterator<Single> it = parts.iterator();
+            final var it = parts.iterator();
             it.next().toYangFragment(sb);
             while (it.hasNext()) {
                 it.next().toYangFragment(sb.append(" + "));
@@ -87,7 +96,7 @@ public abstract class IRArgument extends AbstractIRObject {
      * The subclasses may very much change, in terms of both naming and function, to support whatever StatementFactory
      * ends up doing.
      */
-    public abstract static class Single extends IRArgument {
+    public abstract sealed static class Single extends IRArgument {
         private final @NonNull String string;
 
         Single(final String string) {
@@ -151,6 +160,17 @@ public abstract class IRArgument extends AbstractIRObject {
          */
         public final boolean isValidIdentifier() {
             return this instanceof Identifier;
+        }
+
+        @Override
+        public final int hashCode() {
+            return string.hashCode();
+        }
+
+        @Override
+        public final boolean equals(final Object obj) {
+            return this == obj || obj != null && getClass().equals(obj.getClass())
+                && string.equals(((Single) obj).string);
         }
 
         @Override

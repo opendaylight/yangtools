@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
 
-class IRStatement044 extends IRStatement {
+sealed class IRStatement044 extends IRStatement permits IRStatement144, IRStatementL44 {
     private final int startLine;
     private final int startColumn;
 

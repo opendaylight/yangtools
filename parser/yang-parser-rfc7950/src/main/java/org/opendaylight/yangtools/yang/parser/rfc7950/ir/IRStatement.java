@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -24,7 +25,8 @@ import org.eclipse.jdt.annotation.Nullable;
  * </ul>
  */
 @Beta
-public abstract class IRStatement extends AbstractIRObject {
+public abstract sealed class IRStatement extends AbstractIRObject
+        permits IRStatement022, IRStatement031, IRStatement044 {
     private final @NonNull IRKeyword keyword;
     private final IRArgument argument;
 
@@ -83,7 +85,7 @@ public abstract class IRStatement extends AbstractIRObject {
             argument.toYangFragment(sb.append(' '));
         }
 
-        final List<? extends IRStatement> statements = statements();
+        final var statements = statements();
         if (statements.isEmpty()) {
             return sb.append(';');
         }
@@ -93,5 +95,17 @@ public abstract class IRStatement extends AbstractIRObject {
             stmt.toYangFragment(sb).append('\n');
         }
         return sb.append('}');
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(keyword, argument, statements()) ^ startLine() ^ startColumn();
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return obj == this || obj instanceof IRStatement other && keyword.equals(other.keyword)
+            && Objects.equals(argument, other.argument) && startLine() == other.startLine()
+            && startColumn() == other.startColumn() && statements().equals(other.statements());
     }
 }
