@@ -14,7 +14,7 @@ import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.misc.Pair;
 
-abstract class AbstractSourceToken extends AbstractToken {
+abstract sealed class AbstractSourceToken extends AbstractToken permits Token12122, Token12144, Token44444 {
     private final Pair<TokenSource, CharStream> source;
 
     AbstractSourceToken(final Pair<TokenSource, CharStream> source) {

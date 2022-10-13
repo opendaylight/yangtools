@@ -44,7 +44,7 @@ public final class SourceExceptionParser {
     }
 
     private SourceExceptionParser() {
-
+        // Hidden on purpose
     }
 
     /**
@@ -59,11 +59,11 @@ public final class SourceExceptionParser {
      */
     public static <T> T parse(final Recognizer<?, ?> recognizer, final Supplier<T> parseMethod,
             final StatementSourceReference ref) {
-        final Listener listener = new Listener(ref);
+        final var listener = new Listener(ref);
         recognizer.removeErrorListeners();
         recognizer.addErrorListener(listener);
 
-        final T ret = parseMethod.get();
+        final var ret = parseMethod.get();
         listener.validate();
         return ret;
     }

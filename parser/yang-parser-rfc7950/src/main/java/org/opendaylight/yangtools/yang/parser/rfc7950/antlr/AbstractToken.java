@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import org.antlr.v4.runtime.WritableToken;
 
-abstract class AbstractToken implements WritableToken {
+abstract sealed class AbstractToken implements WritableToken permits AbstractSourceToken, ExplicitTextToken {
     private int tokenIndex = -1;
 
     @Override

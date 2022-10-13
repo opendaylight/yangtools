@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
@@ -48,8 +47,8 @@ public abstract class AbstractParserErrorListener<E extends Exception> extends B
 
     public final void validate() throws E {
         if (!exceptions.isEmpty()) {
-            final Iterator<E> it = exceptions.iterator();
-            final E exception = it.next();
+            final var it = exceptions.iterator();
+            final var exception = it.next();
             it.forEachRemaining(exception::addSuppressed);
             throw exception;
         }

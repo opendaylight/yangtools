@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
  * specification.
  */
 @Beta
-public class CompactYangStatementLexer extends YangStatementLexer {
+public final class CompactYangStatementLexer extends YangStatementLexer {
     public CompactYangStatementLexer(final CharStream input) {
         super(input);
         setTokenFactory(CompactTokenFactory.INSTANCE);
