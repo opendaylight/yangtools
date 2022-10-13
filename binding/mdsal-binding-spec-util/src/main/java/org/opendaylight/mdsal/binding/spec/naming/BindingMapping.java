@@ -60,6 +60,7 @@ public final class BindingMapping {
 
     public static final @NonNull String DATA_ROOT_SUFFIX = "Data";
     public static final @NonNull String RPC_SERVICE_SUFFIX = "Service";
+    @Deprecated(since = "10.0.3", forRemoval = true)
     public static final @NonNull String NOTIFICATION_LISTENER_SUFFIX = "Listener";
     public static final @NonNull String BUILDER_SUFFIX = "Builder";
     public static final @NonNull String KEY_SUFFIX = "Key";
