@@ -10,7 +10,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
 import com.google.common.base.MoreObjects;
 import org.opendaylight.yangtools.concepts.Immutable;
 
-abstract class AbstractIRObject implements Immutable {
+abstract sealed class AbstractIRObject implements Immutable permits IRArgument, IRKeyword, IRStatement {
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(Object obj);
+
     @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("fragment", toYangFragment(new StringBuilder())).toString();
