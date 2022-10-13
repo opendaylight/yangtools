@@ -194,9 +194,8 @@ public final class BindingReflections {
     }
 
     public static @NonNull QName getQName(final Class<? extends BaseIdentity> bindingClass) {
-        final Optional<QName> qname = CLASS_TO_QNAME.getUnchecked(requireNonNull(bindingClass));
-        checkState(qname.isPresent(), "Failed to resolve QName of %s", bindingClass);
-        return qname.get();
+        return CLASS_TO_QNAME.getUnchecked(requireNonNull(bindingClass))
+            .orElseThrow(() -> new IllegalStateException("Failed to resolve QName of " + bindingClass));
     }
 
     /**
