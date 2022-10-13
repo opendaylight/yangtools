@@ -24,21 +24,21 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathLexer;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Absolute_pathContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Deref_exprContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Deref_function_invocationContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Descendant_pathContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Node_identifierContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Path_argContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Path_equality_exprContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Path_key_exprContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Path_predicateContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Path_strContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Rel_path_keyexprContext;
-import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Relative_pathContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.SourceExceptionParser;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathLexer;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Absolute_pathContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Deref_exprContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Deref_function_invocationContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Descendant_pathContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Node_identifierContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Path_argContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Path_equality_exprContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Path_key_exprContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Path_predicateContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Path_strContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Rel_path_keyexprContext;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.LeafRefPathParser.Relative_pathContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SourceExceptionErrorListener;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -79,7 +79,7 @@ class PathExpressionParser {
     PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
         final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromString(pathArg));
         final LeafRefPathParser parser = new LeafRefPathParser(new CommonTokenStream(lexer));
-        final Path_argContext path = SourceExceptionParser.parse(lexer, parser, parser::path_arg,
+        final Path_argContext path = SourceExceptionErrorListener.parse(lexer, parser, parser::path_arg,
             ctx.sourceReference());
 
         final ParseTree childPath = path.getChild(0);
@@ -218,26 +218,20 @@ class PathExpressionParser {
     }
 
     private static YangQNameExpr createChildExpr(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
-        switch (qname.getChildCount()) {
-            case 1:
-                return YangQNameExpr.of(Unqualified.of(qname.getText()).intern());
-            case 3:
-                return YangQNameExpr.of(parseQName(ctx, qname));
-            default:
-                throw new IllegalStateException("Unexpected shape " + qname.getText());
-        }
+        return switch (qname.getChildCount()) {
+            case 1 -> YangQNameExpr.of(Unqualified.of(qname.getText()).intern());
+            case 3 -> YangQNameExpr.of(parseQName(ctx, qname));
+            default -> throw new IllegalStateException("Unexpected shape " + qname.getText());
+        };
     }
 
     private static QNameStep createChildStep(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname,
             final List<YangExpr> predicates) {
-        switch (qname.getChildCount()) {
-            case 1:
-                return YangXPathAxis.CHILD.asStep(Unqualified.of(qname.getText()).intern(), predicates);
-            case 3:
-                return YangXPathAxis.CHILD.asStep(parseQName(ctx, qname), predicates);
-            default:
-                throw new IllegalStateException("Unexpected shape " + qname.getText());
-        }
+        return switch (qname.getChildCount()) {
+            case 1 -> YangXPathAxis.CHILD.asStep(Unqualified.of(qname.getText()).intern(), predicates);
+            case 3 -> YangXPathAxis.CHILD.asStep(parseQName(ctx, qname), predicates);
+            default -> throw new IllegalStateException("Unexpected shape " + qname.getText());
+        };
     }
 
     private static @NonNull QName parseQName(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {

@@ -5,11 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
+package org.opendaylight.yangtools.yang.parser.antlr;
 
 import com.google.common.annotations.Beta;
 import org.antlr.v4.runtime.CharStream;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
+import org.opendaylight.yangtools.yang.parser.antlr.gen.YangStatementLexer;
+import org.opendaylight.yangtools.yang.parser.antlr.token.CompactTokenFactory;
 
 /**
  * A {@link YangStatementLexer} backed by more efficient token factory. Exact details are explicitly outside of

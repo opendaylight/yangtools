@@ -39,8 +39,10 @@
         <module>yang-parser-spi</module>
         <module>yang-parser-reactor</module>
 
-        <!-- Combined RFC6020/RFC7960 metamodel implementation. Also includes support
-             for OpenConfig's semantic-version extension. -->
+        <!-- Baseline YANG/ANTL4v4 integration -->
+        <module>yang-parser-antlr</module>
+
+        <!-- Combined RFC6020/RFC7960 metamodel implementation -->
         <module>yang-parser-rfc7950</module>
 
         <!-- Support for IETF YANG extensions -->

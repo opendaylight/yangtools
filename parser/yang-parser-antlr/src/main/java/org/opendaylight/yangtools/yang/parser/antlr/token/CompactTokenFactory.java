@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
+package org.opendaylight.yangtools.yang.parser.antlr.token;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenFactory;
@@ -19,8 +19,8 @@ import org.eclipse.jdt.annotation.NonNull;
  * A token factory which is more memory-efficient than {@link CommonTokenFactory}. We try to mimic behavior of common
  * tokens, but do so at lower memory overheads, potentially sacrificing some performance.
  */
-final class CompactTokenFactory implements TokenFactory<Token> {
-    static final @NonNull CompactTokenFactory INSTANCE = new CompactTokenFactory();
+public final class CompactTokenFactory implements TokenFactory<Token> {
+    public static final @NonNull CompactTokenFactory INSTANCE = new CompactTokenFactory();
 
     private CompactTokenFactory() {
         // Hidden on purpose
