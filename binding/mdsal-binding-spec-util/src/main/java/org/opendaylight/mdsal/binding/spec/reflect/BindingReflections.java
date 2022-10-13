@@ -43,10 +43,12 @@ import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
+import org.opendaylight.yangtools.yang.binding.BindingContract;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
@@ -193,8 +195,16 @@ public final class BindingReflections {
     }
 
     public static @NonNull QName getQName(final BaseIdentity identity) {
-        return CLASS_TO_QNAME.getUnchecked(identity.implementedInterface())
-            .orElseThrow(() -> new IllegalStateException("Failed to resolve QName of " + identity));
+        return getContractQName(identity);
+    }
+
+    public static @NonNull QName getQName(final Rpc<?, ?> rpc) {
+        return getContractQName(rpc);
+    }
+
+    private static @NonNull QName getContractQName(final BindingContract<?> contract) {
+        return CLASS_TO_QNAME.getUnchecked(contract.implementedInterface())
+            .orElseThrow(() -> new IllegalStateException("Failed to resolve QName of " + contract));
     }
 
     /**
