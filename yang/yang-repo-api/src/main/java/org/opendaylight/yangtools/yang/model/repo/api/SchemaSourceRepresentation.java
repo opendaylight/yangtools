@@ -37,7 +37,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * Implementations of this interface expected to comply with the {@link Immutable} contract.
  */
 @Beta
-public interface SchemaSourceRepresentation extends Identifiable<SourceIdentifier>, Immutable {
+public sealed interface SchemaSourceRepresentation extends Identifiable<SourceIdentifier>, Immutable
+        permits YangSchemaSourceRepresentation, YinSchemaSourceRepresentation {
     @Override
     SourceIdentifier getIdentifier();
 

@@ -144,7 +144,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     }
 
     @Override
-    public Class<? extends YangTextSchemaSource> getType() {
+    public final Class<YangTextSchemaSource> getType() {
         return YangTextSchemaSource.class;
     }
 

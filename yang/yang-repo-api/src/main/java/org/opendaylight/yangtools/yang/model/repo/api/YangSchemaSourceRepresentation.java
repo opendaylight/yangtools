@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 /**
  * A YANG {@link SchemaSourceRepresentation}.
  */
-public interface YangSchemaSourceRepresentation extends SchemaSourceRepresentation {
+public non-sealed interface YangSchemaSourceRepresentation extends SchemaSourceRepresentation {
     @Override
     Class<? extends YangSchemaSourceRepresentation> getType();
 }

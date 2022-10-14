@@ -133,7 +133,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     public abstract DOMSource getSource();
 
     @Override
-    public final Class<? extends YinXmlSchemaSource> getType() {
+    public final Class<YinDomSchemaSource> getType() {
         return YinDomSchemaSource.class;
     }
 

@@ -17,13 +17,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class PotentialSchemaSourceTest {
-    private interface TestSchemaSourceRepresentation extends SchemaSourceRepresentation {
-
+    private interface TestSchemaSourceRepresentation extends YangSchemaSourceRepresentation {
+        @Override
+        default Class<TestSchemaSourceRepresentation> getType() {
+            return TestSchemaSourceRepresentation.class;
+        }
     }
 
     public final SourceIdentifier sourceIdentifier = new SourceIdentifier("foo");

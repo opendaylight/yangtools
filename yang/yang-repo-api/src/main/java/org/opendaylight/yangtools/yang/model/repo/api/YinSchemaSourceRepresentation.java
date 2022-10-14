@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 /**
  * A YIN {@link SchemaSourceRepresentation}.
  */
-public interface YinSchemaSourceRepresentation extends SchemaSourceRepresentation {
+public non-sealed interface YinSchemaSourceRepresentation extends SchemaSourceRepresentation {
     @Override
     Class<? extends YinSchemaSourceRepresentation> getType();
 }
