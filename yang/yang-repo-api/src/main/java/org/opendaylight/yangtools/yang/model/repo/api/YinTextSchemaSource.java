@@ -60,7 +60,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     }
 
     @Override
-    public Class<? extends YinTextSchemaSource> getType() {
+    public final Class<YinTextSchemaSource> getType() {
         return YinTextSchemaSource.class;
     }
 
