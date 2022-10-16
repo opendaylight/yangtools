@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileCont
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactYangStatementLexer;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
@@ -68,7 +68,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     public static YangStatementStreamSource create(final YangTextSchemaSource source) throws IOException,
             YangSyntaxErrorException {
         return new YangStatementStreamSource(source.getIdentifier(),
-            AntlrSupport.createStatement(parseYangSource(source)), source.getSymbolicName().orElse(null));
+            IRSupport.createStatement(parseYangSource(source)), source.getSymbolicName().orElse(null));
     }
 
     /**
