@@ -49,7 +49,7 @@ public abstract sealed class IRArgument extends AbstractIRObject {
     public static final class Concatenation extends IRArgument {
         private final @NonNull ImmutableList<Single> parts;
 
-        Concatenation(final List<Single> parts) {
+        private Concatenation(final List<Single> parts) {
             this.parts = ImmutableList.copyOf(parts);
         }
 
@@ -99,7 +99,7 @@ public abstract sealed class IRArgument extends AbstractIRObject {
     public abstract static sealed class Single extends IRArgument {
         private final @NonNull String string;
 
-        Single(final String string) {
+        private Single(final String string) {
             this.string = requireNonNull(string);
         }
 
@@ -179,8 +179,8 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
     }
 
-    static final class DoubleQuoted extends Single {
-        DoubleQuoted(final String string) {
+    private static final class DoubleQuoted extends Single {
+        private DoubleQuoted(final String string) {
             super(string);
         }
 
@@ -192,10 +192,10 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
     }
 
-    static final class SingleQuoted extends Single {
+    private static final class SingleQuoted extends Single {
         static final @NonNull SingleQuoted EMPTY = new SingleQuoted("");
 
-        SingleQuoted(final String string) {
+        private SingleQuoted(final String string) {
             super(string);
         }
 
@@ -205,19 +205,53 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
     }
 
-    static final class Identifier extends Single {
-        Identifier(final String string) {
+    private static final class Identifier extends Single {
+        private Identifier(final String string) {
             super(string);
         }
     }
 
-    static final class Unquoted extends Single {
-        Unquoted(final String string) {
+    private static final class Unquoted extends Single {
+        private Unquoted(final String string) {
             super(string);
         }
     }
 
-    IRArgument() {
+    private IRArgument() {
         // Hidden on purpose
+    }
+
+    public static @NonNull Single empty() {
+        return SingleQuoted.EMPTY;
+    }
+
+    public static @NonNull Single identifier(final String string) {
+        return new Identifier(string);
+    }
+
+    public static @NonNull Single singleQuoted(final String string) {
+        return new SingleQuoted(string);
+    }
+
+    public static @NonNull Single doubleQuoted(final String string) {
+        return new DoubleQuoted(string);
+    }
+
+    public static @NonNull Single unquoted(final String string) {
+        return new Unquoted(string);
+    }
+
+    public static @NonNull IRArgument of(final List<Single> parts) {
+        return switch (parts.size()) {
+            // A concatenation of empty strings, fall back to a single unquoted string
+            case 0 -> empty();
+            // A single string concatenated with empty string(s), use just the significant portion
+            case 1 -> parts.get(0);
+            // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as nice,
+            //       but for single-quoted strings we do not need further validation in in the reactor and can use them
+            //       as raw literals. This saves some indirection overhead (on memory side) and can slightly improve
+            //       execution speed when we process the same IR multiple times.
+            default -> new Concatenation(parts);
+        };
     }
 }

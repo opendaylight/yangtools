@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
@@ -24,15 +23,123 @@ import org.eclipse.jdt.annotation.Nullable;
  *   <li>zero or more nested statements</li>
  * </ul>
  */
-@Beta
-public abstract sealed class IRStatement extends AbstractIRObject
-        permits IRStatement022, IRStatement031, IRStatement044 {
+public abstract sealed class IRStatement extends AbstractIRObject {
+    private static final class Z22 extends IRStatement {
+        private final short startLine;
+        private final short startColumn;
+
+        Z22(final IRKeyword keyword, final IRArgument argument, final int startLine, final int startColumn) {
+            super(keyword, argument);
+            this.startLine = (short) startLine;
+            this.startColumn = (short) startColumn;
+        }
+
+        @Override
+        public int startLine() {
+            return Short.toUnsignedInt(startLine);
+        }
+
+        @Override
+        public int startColumn() {
+            return Short.toUnsignedInt(startColumn);
+        }
+    }
+
+    private static final class Z31 extends IRStatement {
+        private final int value;
+
+        Z31(final IRKeyword keyword, final IRArgument argument, final int startLine, final int startColumn) {
+            super(keyword, argument);
+            value = startLine << 8 | startColumn & 0xFF;
+        }
+
+        @Override
+        public int startLine() {
+            return value >>> 8;
+        }
+
+        @Override
+        public int startColumn() {
+            return value & 0xFF;
+        }
+    }
+
+    private static sealed class Z44 extends IRStatement permits O44, L44 {
+        private final int startLine;
+        private final int startColumn;
+
+        Z44(final IRKeyword keyword, final IRArgument argument, final int startLine, final int startColumn) {
+            super(keyword, argument);
+            this.startLine = startLine;
+            this.startColumn = startColumn;
+        }
+
+        @Override
+        public final int startLine() {
+            return startLine;
+        }
+
+        @Override
+        public final int startColumn() {
+            return startColumn;
+        }
+    }
+
+    private static final class O44 extends Z44 {
+        private final @NonNull IRStatement statement;
+
+        O44(final IRKeyword keyword, final IRArgument argument, final IRStatement statement, final int startLine,
+                final int startColumn) {
+            super(keyword, argument, startLine, startColumn);
+            this.statement = requireNonNull(statement);
+        }
+
+        @Override
+        public ImmutableList<IRStatement> statements() {
+            return ImmutableList.of(statement);
+        }
+    }
+
+    private static final class L44 extends Z44 {
+        private final @NonNull ImmutableList<IRStatement> statements;
+
+        L44(final IRKeyword keyword, final IRArgument argument, final ImmutableList<IRStatement> statements,
+                final int startLine, final int startColumn) {
+            super(keyword, argument, startLine, startColumn);
+            this.statements = requireNonNull(statements);
+        }
+
+        @Override
+        public ImmutableList<IRStatement> statements() {
+            return statements;
+        }
+    }
+
     private final @NonNull IRKeyword keyword;
     private final IRArgument argument;
 
     IRStatement(final IRKeyword keyword, final IRArgument argument) {
         this.keyword = requireNonNull(keyword);
         this.argument = argument;
+    }
+
+    public static @NonNull IRStatement of(final IRKeyword keyword, final IRArgument argument, final int line,
+            final int column, final ImmutableList<IRStatement> statements) {
+        return switch (statements.size()) {
+            case 0 -> {
+                if (line >= 0 && column >= 0) {
+                    if (line <= 65535 && column <= 65535) {
+                        yield new Z22(keyword, argument, line, column);
+                    }
+                    if (line <= 16777215 && column <= 255) {
+                        yield new Z31(keyword, argument, line, column);
+                    }
+                }
+                yield new Z44(keyword, argument, line, column);
+            }
+            case 1 -> new O44(keyword, argument, statements.get(0), line, column);
+            default -> new L44(keyword, argument, statements, line, column);
+        };
     }
 
     /**
