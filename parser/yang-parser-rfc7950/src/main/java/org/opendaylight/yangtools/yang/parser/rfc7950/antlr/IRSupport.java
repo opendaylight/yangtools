@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
+package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
 import static com.google.common.base.Verify.verify;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
@@ -30,12 +29,14 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileCont
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Single;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
+import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 
-@Beta
-public final class AntlrSupport {
+public final class IRSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
 
     private final Map<String, Single> dquotArguments = new HashMap<>();
@@ -46,7 +47,7 @@ public final class AntlrSupport {
     private final Map<Entry<String, String>, Qualified> qualKeywords = new HashMap<>();
     private final Map<String, String> strings = new HashMap<>();
 
-    private AntlrSupport() {
+    private IRSupport() {
         // Hidden on purpose
     }
 
@@ -69,7 +70,7 @@ public final class AntlrSupport {
      * @throws NullPointerException if {@code stmt} is null
      */
     public static @NonNull IRStatement createStatement(@SuppressWarnings("exports") final StatementContext stmt) {
-        return new AntlrSupport().statementOf(stmt);
+        return new IRSupport().statementOf(stmt);
     }
 
     private @NonNull IRStatement statementOf(final StatementContext stmt) {
