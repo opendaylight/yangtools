@@ -11,11 +11,8 @@
  * is not required for the purposes of statement inference.
  *
  * <p>
- * The main entry point into this package is {@link org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement},
+ * The main entry point into this package is {@link org.opendaylight.yangtools.yang.ir.IRStatement},
  * which represents a single YANG statement. Every YANG file is required to contain exactly one top-level statement,
  * {@code module} or {@code submodule}, hence an IRStatement also represents the significant contents of a YANG file.
- * One way of creating an IRStatement is through
- * {@link org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport#createStatement(
- * org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext)}.
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
+package org.opendaylight.yangtools.yang.ir;

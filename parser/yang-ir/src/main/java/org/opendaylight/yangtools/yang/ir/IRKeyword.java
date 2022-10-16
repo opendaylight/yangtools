@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
+package org.opendaylight.yangtools.yang.ir;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 /**
  * A YANG keyword, as defined, as defined by section 6.1.2 of both
@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
  * Naming in this class prefers the formal ABNF specification and draws value-space and type-safety implications from
  * that connection, rather than following the RFC-assigned names.
  */
+@Beta
 public abstract sealed class IRKeyword extends AbstractIRObject {
     public static final class Qualified extends IRKeyword {
         private final @NonNull String prefix;
@@ -90,8 +91,7 @@ public abstract sealed class IRKeyword extends AbstractIRObject {
      * {@code language extension keyword}.
      *
      * <p>
-     * Note the returned string is guaranteed to conform to rules of {@code identifier} ABNF and therefore
-     * is directly usable as a {@code localName} in an {@link AbstractQName}.
+     * Note the returned string is guaranteed to conform to rules of {@code identifier} ABNF..
      *
      * @return This keyword's identifier part.
      */
@@ -105,8 +105,7 @@ public abstract sealed class IRKeyword extends AbstractIRObject {
      * the language extension.
      *
      * <p>
-     * Note the returned string, if non-null, is guaranteed to conform to rules of {@code identifier} ABNF and therefore
-     * is directly usable as a {@code localName} in an {@link AbstractQName}.
+     * Note the returned string, if non-null, is guaranteed to conform to rules of {@code identifier} ABNF.
      *
      * @return This keyword's prefix, or null if this keyword references a YANG keyword.
      */

@@ -5,10 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
+package org.opendaylight.yangtools.yang.ir;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
  *   <li>zero or more nested statements</li>
  * </ul>
  */
+@Beta
 public abstract sealed class IRStatement extends AbstractIRObject {
     private static final class Z22 extends IRStatement {
         private final short startLine;

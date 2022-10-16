@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
+package org.opendaylight.yangtools.yang.ir;
 
 import com.google.common.base.MoreObjects;
 import org.opendaylight.yangtools.concepts.Immutable;
