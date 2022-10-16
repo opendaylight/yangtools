@@ -23,18 +23,18 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.ir.IRArgument;
+import org.opendaylight.yangtools.yang.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
+import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
+import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Single;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 
 public final class IRSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
