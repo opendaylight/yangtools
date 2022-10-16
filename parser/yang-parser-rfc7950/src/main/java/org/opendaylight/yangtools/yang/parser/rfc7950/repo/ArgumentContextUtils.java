@@ -14,9 +14,9 @@ import com.google.common.base.CharMatcher;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Concatenation;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Single;
+import org.opendaylight.yangtools.yang.ir.IRArgument;
+import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
+import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
