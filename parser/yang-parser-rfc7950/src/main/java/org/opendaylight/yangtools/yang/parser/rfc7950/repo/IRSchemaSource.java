@@ -15,11 +15,11 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
+import org.opendaylight.yangtools.yang.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 
 @Beta
 public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdentifier>

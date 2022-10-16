@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -29,8 +31,6 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.Statemen
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactYangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
