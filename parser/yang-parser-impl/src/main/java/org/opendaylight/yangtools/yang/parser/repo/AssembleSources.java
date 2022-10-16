@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;

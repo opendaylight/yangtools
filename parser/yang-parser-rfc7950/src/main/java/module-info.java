@@ -9,7 +9,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 module org.opendaylight.yangtools.yang.parser.rfc7950 {
     // FIXME: audit these, potentially lowering them to their sole user if reasonable
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.ir;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 

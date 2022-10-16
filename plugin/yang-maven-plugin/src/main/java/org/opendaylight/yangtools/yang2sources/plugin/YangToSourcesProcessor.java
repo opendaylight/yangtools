@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +84,7 @@ class YangToSourcesProcessor {
         this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
         //FIXME multiple FileGeneratorArg entries of same identifier became one here
-        this.fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
+        fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);

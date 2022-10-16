@@ -49,7 +49,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactYangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
