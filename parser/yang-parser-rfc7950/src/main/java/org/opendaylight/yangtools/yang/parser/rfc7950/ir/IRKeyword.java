@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.ir;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -26,15 +25,17 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
  * Naming in this class prefers the formal ABNF specification and draws value-space and type-safety implications from
  * that connection, rather than following the RFC-assigned names.
  */
-@Beta
 public abstract sealed class IRKeyword extends AbstractIRObject {
-    @Beta
     public static final class Qualified extends IRKeyword {
         private final @NonNull String prefix;
 
-        Qualified(final String prefix, final String localName) {
+        private Qualified(final String prefix, final String localName) {
             super(localName);
             this.prefix = requireNonNull(prefix);
+        }
+
+        public static @NonNull Qualified of(final String prefix, final String localName) {
+            return new Qualified(prefix, localName);
         }
 
         @Override
@@ -53,10 +54,13 @@ public abstract sealed class IRKeyword extends AbstractIRObject {
         }
     }
 
-    @Beta
     public static final class Unqualified extends IRKeyword {
-        Unqualified(final String localName) {
+        private Unqualified(final String localName) {
             super(localName);
+        }
+
+        public static @NonNull Unqualified of(final String localName) {
+            return new Unqualified(localName);
         }
 
         @Override

@@ -30,12 +30,7 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileCont
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Concatenation;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.DoubleQuoted;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Identifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Single;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.SingleQuoted;
-import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument.Unquoted;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
 
@@ -43,10 +38,10 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
 public final class AntlrSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
 
-    private final Map<String, DoubleQuoted> dquotArguments = new HashMap<>();
-    private final Map<String, SingleQuoted> squotArguments = new HashMap<>();
-    private final Map<String, Unquoted> uquotArguments = new HashMap<>();
-    private final Map<String, Identifier> idenArguments = new HashMap<>();
+    private final Map<String, Single> dquotArguments = new HashMap<>();
+    private final Map<String, Single> squotArguments = new HashMap<>();
+    private final Map<String, Single> uquotArguments = new HashMap<>();
+    private final Map<String, Single> idenArguments = new HashMap<>();
     private final Map<String, Unqualified> uqualKeywords = new HashMap<>();
     private final Map<Entry<String, String>, Qualified> qualKeywords = new HashMap<>();
     private final Map<String, String> strings = new HashMap<>();
@@ -86,9 +81,9 @@ public final class AntlrSupport {
         final Token keywordToken = ((TerminalNode) keywordStart).getSymbol();
 
         final IRKeyword keyword = switch (firstChild.getChildCount()) {
-            case 1 -> uqualKeywords.computeIfAbsent(strOf(keywordToken), Unqualified::new);
+            case 1 -> uqualKeywords.computeIfAbsent(strOf(keywordToken), Unqualified::of);
             case 3 -> qualKeywords.computeIfAbsent(Map.entry(strOf(keywordToken), strOf(firstChild.getChild(2))),
-                entry -> new Qualified(entry.getKey(), entry.getValue()));
+                entry -> Qualified.of(entry.getKey(), entry.getValue()));
             default -> throw new VerifyException("Unexpected keyword " + firstChild);
         };
         final IRArgument argument = createArgument(stmt);
@@ -96,24 +91,7 @@ public final class AntlrSupport {
         final int line = keywordToken.getLine();
         final int column = keywordToken.getCharPositionInLine();
 
-        return switch (statements.size()) {
-            case 0 -> statementOf(keyword, argument, line, column);
-            case 1 -> new IRStatement144(keyword, argument, statements.get(0), line, column);
-            default -> new IRStatementL44(keyword, argument, statements, line, column);
-        };
-    }
-
-    private static @NonNull IRStatement statementOf(final IRKeyword keyword, final IRArgument argument,
-            final int line, final int column) {
-        if (line >= 0 && column >= 0) {
-            if (line <= 65535 && column <= 65535) {
-                return new IRStatement022(keyword, argument, line, column);
-            }
-            if (line <= 16777215 && column <= 255) {
-                return new IRStatement031(keyword, argument, line, column);
-            }
-        }
-        return new IRStatement044(keyword, argument, line, column);
+        return IRStatement.of(keyword, argument, line, column, statements);
     }
 
     private IRArgument createArgument(final StatementContext stmt) {
@@ -156,17 +134,7 @@ public final class AntlrSupport {
             }
         }
 
-        return switch (parts.size()) {
-            // A concatenation of empty strings, fall back to a single unquoted string
-            case 0 -> SingleQuoted.EMPTY;
-            // A single string concatenated with empty string(s), use just the significant portion
-            case 1 -> parts.get(0);
-            // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as nice,
-            //       but for single-quoted strings we do not need further validation in in the reactor and can use them
-            //       as raw literals. This saves some indirection overhead (on memory side) and can slightly improve
-            //       execution speed when we process the same IR multiple times.
-            default -> new Concatenation(parts);
-        };
+        return IRArgument.of(parts);
     }
 
     private Single createQuoted(final ArgumentContext argument) {
@@ -180,7 +148,7 @@ public final class AntlrSupport {
         };
     }
 
-    private DoubleQuoted createDoubleQuoted(final Token token) {
+    private Single createDoubleQuoted(final Token token) {
         // Whitespace normalization happens irrespective of further handling and has no effect on the result
         final String str = intern(trimWhitespace(token.getText(), token.getCharPositionInLine() - 1));
 
@@ -189,19 +157,20 @@ public final class AntlrSupport {
         //       This may look unimportant, but there are scenarios where we process the same AST multiple times
         //       and remembering this detail saves a string scan.
 
-        return dquotArguments.computeIfAbsent(str, DoubleQuoted::new);
+        return dquotArguments.computeIfAbsent(str, IRArgument::doubleQuoted);
     }
 
-    private IRArgument createSimple(final ArgumentContext argument) {
+    private Single createSimple(final ArgumentContext argument) {
         final ParseTree child = argument.getChild(0);
         if (child instanceof TerminalNode terminal) {
             final Token token = terminal.getSymbol();
             return switch (token.getType()) {
                 // This is as simple as it gets: we are dealing with an identifier here.
-                case YangStatementParser.IDENTIFIER -> idenArguments.computeIfAbsent(strOf(token), Identifier::new);
+                case YangStatementParser.IDENTIFIER -> idenArguments.computeIfAbsent(strOf(token),
+                    IRArgument::identifier);
                 // This is an empty string, the difference between double and single quotes does not exist. Single
                 // quotes have more stringent semantics, hence use those.
-                case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> SingleQuoted.EMPTY;
+                case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> IRArgument.empty();
                 default -> throw new VerifyException("Unexpected token " + token);
             };
         }
@@ -209,11 +178,11 @@ public final class AntlrSupport {
         verify(child instanceof UnquotedStringContext, "Unexpected shape of %s", argument);
         // TODO: check non-presence of quotes and create a different subclass, so that ends up treated as if it
         //       was single-quoted, i.e. bypass the check implied by IRArgument.Single#needQuoteCheck().
-        return uquotArguments.computeIfAbsent(strOf(child), Unquoted::new);
+        return uquotArguments.computeIfAbsent(strOf(child), IRArgument::unquoted);
     }
 
-    private SingleQuoted createSingleQuoted(final Token token) {
-        return squotArguments.computeIfAbsent(strOf(token), SingleQuoted::new);
+    private Single createSingleQuoted(final Token token) {
+        return squotArguments.computeIfAbsent(strOf(token), IRArgument::singleQuoted);
     }
 
     private ImmutableList<IRStatement> createStatements(final StatementContext stmt) {
