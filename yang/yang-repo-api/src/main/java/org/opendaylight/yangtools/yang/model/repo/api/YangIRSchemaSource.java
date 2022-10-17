@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -18,16 +18,14 @@ import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 
 @Beta
-public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdentifier>
+public final class YangIRSchemaSource extends AbstractSimpleIdentifiable<SourceIdentifier>
         implements YangSchemaSourceRepresentation {
     private final @NonNull IRStatement rootStatement;
     private final @Nullable String symbolicName;
 
-    public IRSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull IRStatement rootStatement,
+    public YangIRSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull IRStatement rootStatement,
             final @Nullable String symbolicName) {
         super(identifier);
         this.rootStatement = requireNonNull(rootStatement);
@@ -53,8 +51,8 @@ public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdent
     }
 
     @Override
-    public Class<IRSchemaSource> getType() {
-        return IRSchemaSource.class;
+    public Class<YangIRSchemaSource> getType() {
+        return YangIRSchemaSource.class;
     }
 
     /**

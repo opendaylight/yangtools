@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
@@ -131,7 +132,7 @@ public abstract class YangModelDependencyInfo {
      * @return {@link YangModelDependencyInfo}
      * @throws IllegalArgumentException If the root statement is not a valid YANG module/submodule
      */
-    public static @NonNull YangModelDependencyInfo forIR(final IRSchemaSource source) {
+    public static @NonNull YangModelDependencyInfo forIR(final YangIRSchemaSource source) {
         return forIR(source.getRootStatement(), source.getIdentifier());
     }
 
