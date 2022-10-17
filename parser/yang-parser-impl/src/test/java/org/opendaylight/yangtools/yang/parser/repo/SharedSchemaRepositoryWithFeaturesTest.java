@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class SharedSchemaRepositoryWithFeaturesTest {
@@ -37,7 +37,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<IRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<YangIRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
             "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
@@ -73,7 +73,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<IRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<YangIRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
             "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
@@ -109,7 +109,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<IRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+        final SettableSchemaProvider<YangIRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
             "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
@@ -131,11 +131,11 @@ public class SharedSchemaRepositoryWithFeaturesTest {
                 QName.create(module.getQNameModule(), "test-leaf-c"));
     }
 
-    private static SettableSchemaProvider<IRSchemaSource> getImmediateYangSourceProviderFromResource(
+    private static SettableSchemaProvider<YangIRSchemaSource> getImmediateYangSourceProviderFromResource(
             final String resourceName) throws Exception {
         final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
         return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
-            IRSchemaSource.class);
+            YangIRSchemaSource.class);
     }
 
     private static void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {

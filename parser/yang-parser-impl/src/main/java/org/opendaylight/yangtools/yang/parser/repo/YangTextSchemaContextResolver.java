@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.GuavaSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -49,7 +50,6 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
-    private final GuavaSchemaSourceCache<IRSchemaSource> cache;
+    private final GuavaSchemaSourceCache<YangIRSchemaSource> cache;
     private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
@@ -76,7 +76,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         final TextToIRTransformer t = TextToIRTransformer.create(repository, registry);
         transReg = registry.registerSchemaSourceListener(t);
 
-        cache = GuavaSchemaSourceCache.createSoftCache(registry, IRSchemaSource.class, SOURCE_LIFETIME);
+        cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSchemaSource.class, SOURCE_LIFETIME);
     }
 
     public static @NonNull YangTextSchemaContextResolver create(final String name) {
@@ -102,7 +102,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(source != null);
 
-        final IRSchemaSource ast = TextToIRTransformer.transformText(source);
+        final YangIRSchemaSource ast = TextToIRTransformer.transformText(source);
         LOG.trace("Resolved source {} to source {}", source, ast);
 
         // AST carries an accurate identifier, check if it matches the one supplied by the source. If it

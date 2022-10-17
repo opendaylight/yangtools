@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
@@ -73,7 +73,7 @@ public class SharedEffectiveModelContextFactoryTest {
         s1 = source1.getIdentifier();
         s2 = source2.getIdentifier();
 
-        final SettableSchemaProvider<IRSchemaSource> provider =
+        final SettableSchemaProvider<YangIRSchemaSource> provider =
                 SharedSchemaRepositoryTest.getImmediateYangSourceProviderFromResource(
                     "/no-revision/imported@2012-12-12.yang");
         provider.setResult();
@@ -82,7 +82,7 @@ public class SharedEffectiveModelContextFactoryTest {
         // Register the same provider under source id without revision
         final SourceIdentifier sIdWithoutRevision = new SourceIdentifier(provider.getId().name());
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(
-                sIdWithoutRevision, IRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
+                sIdWithoutRevision, YangIRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
         final SharedEffectiveModelContextFactory sharedSchemaContextFactory =
             new SharedEffectiveModelContextFactory(repository, config);
