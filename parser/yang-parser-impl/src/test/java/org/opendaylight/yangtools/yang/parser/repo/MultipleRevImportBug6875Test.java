@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class MultipleRevImportBug6875Test {
@@ -38,13 +38,13 @@ public class MultipleRevImportBug6875Test {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-multiple-rev-import-test");
 
-        final SettableSchemaProvider<IRSchemaSource> foo = getSourceProvider(
+        final SettableSchemaProvider<YangIRSchemaSource> foo = getSourceProvider(
             "/rfc7950/bug6875/yang1-1/foo.yang");
-        final SettableSchemaProvider<IRSchemaSource> bar1 = getSourceProvider(
+        final SettableSchemaProvider<YangIRSchemaSource> bar1 = getSourceProvider(
             "/rfc7950/bug6875/yang1-1/bar@1999-01-01.yang");
-        final SettableSchemaProvider<IRSchemaSource> bar2 = getSourceProvider(
+        final SettableSchemaProvider<YangIRSchemaSource> bar2 = getSourceProvider(
             "/rfc7950/bug6875/yang1-1/bar@2017-02-06.yang");
-        final SettableSchemaProvider<IRSchemaSource> bar3 = getSourceProvider(
+        final SettableSchemaProvider<YangIRSchemaSource> bar3 = getSourceProvider(
             "/rfc7950/bug6875/yang1-1/bar@1970-01-01.yang");
 
         setAndRegister(sharedSchemaRepository, foo);
@@ -82,11 +82,11 @@ public class MultipleRevImportBug6875Test {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-multiple-rev-import-test");
 
-        final SettableSchemaProvider<IRSchemaSource> foo = getSourceProvider(
+        final SettableSchemaProvider<YangIRSchemaSource> foo = getSourceProvider(
             "/rfc7950/bug6875/yang1-0/foo.yang");
-        final SettableSchemaProvider<IRSchemaSource> bar1 = getSourceProvider(
+        final SettableSchemaProvider<YangIRSchemaSource> bar1 = getSourceProvider(
             "/rfc7950/bug6875/yang1-0/bar@1999-01-01.yang");
-        final SettableSchemaProvider<IRSchemaSource> bar2 = getSourceProvider(
+        final SettableSchemaProvider<YangIRSchemaSource> bar2 = getSourceProvider(
             "/rfc7950/bug6875/yang1-0/bar@2017-02-06.yang");
 
         setAndRegister(sharedSchemaRepository, foo);
@@ -105,16 +105,16 @@ public class MultipleRevImportBug6875Test {
     }
 
     private static void setAndRegister(final SharedSchemaRepository sharedSchemaRepository,
-            final SettableSchemaProvider<IRSchemaSource> source) {
+            final SettableSchemaProvider<YangIRSchemaSource> source) {
         source.register(sharedSchemaRepository);
         source.setResult();
     }
 
-    private static SettableSchemaProvider<IRSchemaSource> getSourceProvider(final String resourceName)
+    private static SettableSchemaProvider<YangIRSchemaSource> getSourceProvider(final String resourceName)
             throws Exception {
         final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
         return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
-            IRSchemaSource.class);
+            YangIRSchemaSource.class);
     }
 
     private static QName foo(final String localName) {

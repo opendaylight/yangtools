@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
@@ -29,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
 
 final class DefaultYangParser implements YangParser {
     static final @NonNull Collection<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS =
-            ImmutableList.of(IRSchemaSource.class, YangTextSchemaSource.class, YinDomSchemaSource.class,
+            ImmutableList.of(YangIRSchemaSource.class, YangTextSchemaSource.class, YinDomSchemaSource.class,
                 YinXmlSchemaSource.class, YinTextSchemaSource.class);
 
     private final BuildAction buildAction;
@@ -107,8 +107,8 @@ final class DefaultYangParser implements YangParser {
     static StatementStreamSource sourceToStatementStream(final SchemaSourceRepresentation source)
             throws IOException, YangSyntaxErrorException {
         requireNonNull(source);
-        if (source instanceof IRSchemaSource) {
-            return YangStatementStreamSource.create((IRSchemaSource) source);
+        if (source instanceof YangIRSchemaSource) {
+            return YangStatementStreamSource.create((YangIRSchemaSource) source);
         } else if (source instanceof YangTextSchemaSource) {
             return YangStatementStreamSource.create((YangTextSchemaSource) source);
         } else if (source instanceof YinDomSchemaSource) {

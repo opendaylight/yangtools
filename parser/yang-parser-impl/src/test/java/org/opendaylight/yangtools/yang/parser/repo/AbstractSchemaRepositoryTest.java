@@ -20,9 +20,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public abstract class AbstractSchemaRepositoryTest {
@@ -61,13 +61,13 @@ public abstract class AbstractSchemaRepositoryTest {
             .createEffectiveModelContext(requiredSources);
     }
 
-    private static SettableSchemaProvider<IRSchemaSource> assertYangTextResource(final String resourceName) {
-        final IRSchemaSource yangSource;
+    private static SettableSchemaProvider<YangIRSchemaSource> assertYangTextResource(final String resourceName) {
+        final YangIRSchemaSource yangSource;
         try {
             yangSource = TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName));
         } catch (YangSyntaxErrorException | IOException e) {
             throw new AssertionError("Failed to parse " + resourceName, e);
         }
-        return SettableSchemaProvider.createImmediate(yangSource, IRSchemaSource.class);
+        return SettableSchemaProvider.createImmediate(yangSource, YangIRSchemaSource.class);
     }
 }
