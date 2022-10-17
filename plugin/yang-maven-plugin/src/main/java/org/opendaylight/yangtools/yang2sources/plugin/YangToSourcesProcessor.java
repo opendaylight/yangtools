@@ -37,13 +37,13 @@ import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,7 +172,7 @@ class YangToSourcesProcessor {
         }
 
         final Stopwatch watch = Stopwatch.createStarted();
-        final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed = yangFilesInProject.parallelStream()
+        final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
             .map(file -> {
                 final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
                 try {
@@ -269,14 +269,14 @@ class YangToSourcesProcessor {
     @SuppressWarnings("checkstyle:illegalCatch")
     private Optional<ProcessorModuleReactor> createReactor(final List<File> yangFilesInProject,
             final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
-            final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed) throws MojoExecutionException {
+            final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
 
         try {
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             final YangParser parser = parserFactory.createParser(parserConfig);
-            for (final Entry<YangTextSchemaSource, IRSchemaSource> entry : parsed) {
+            for (final Entry<YangTextSchemaSource, YangIRSchemaSource> entry : parsed) {
                 final YangTextSchemaSource textSource = entry.getKey();
-                final IRSchemaSource astSource = entry.getValue();
+                final YangIRSchemaSource astSource = entry.getValue();
                 parser.addSource(astSource);
 
                 if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
