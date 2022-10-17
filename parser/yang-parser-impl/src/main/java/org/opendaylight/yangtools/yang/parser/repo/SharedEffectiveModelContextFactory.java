@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFacto
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,8 +179,8 @@ final class SharedEffectiveModelContextFactory implements EffectiveModelContextF
         final Stopwatch sw = Stopwatch.createStarted();
 
         // Request all sources be loaded
-        ListenableFuture<List<IRSchemaSource>> sf = Futures.allAsList(Collections2.transform(sources,
-            identifier -> repository.getSchemaSource(identifier, IRSchemaSource.class)));
+        ListenableFuture<List<YangIRSchemaSource>> sf = Futures.allAsList(Collections2.transform(sources,
+            identifier -> repository.getSchemaSource(identifier, YangIRSchemaSource.class)));
 
         // Detect mismatch between requested Source IDs and IDs that are extracted from parsed source
         // Also remove duplicates if present

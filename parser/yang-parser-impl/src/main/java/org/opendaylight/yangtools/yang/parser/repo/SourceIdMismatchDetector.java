@@ -18,12 +18,12 @@ import java.util.Map;
 import java.util.Set;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressModernizer
-final class SourceIdMismatchDetector implements Function<List<IRSchemaSource>, List<IRSchemaSource>> {
+final class SourceIdMismatchDetector implements Function<List<YangIRSchemaSource>, List<YangIRSchemaSource>> {
     private static final Logger LOG = LoggerFactory.getLogger(SourceIdMismatchDetector.class);
 
     private final Set<SourceIdentifier> sourceIdentifiers;
@@ -33,13 +33,10 @@ final class SourceIdMismatchDetector implements Function<List<IRSchemaSource>, L
     }
 
     @Override
-    public List<IRSchemaSource> apply(final List<IRSchemaSource> input) {
+    public List<YangIRSchemaSource> apply(final List<YangIRSchemaSource> input) {
         final Iterator<SourceIdentifier> srcIt = sourceIdentifiers.iterator();
-        final Iterator<IRSchemaSource> it = input.iterator();
-
-        final Map<SourceIdentifier, IRSchemaSource> filtered = new LinkedHashMap<>();
-        while (it.hasNext()) {
-            final IRSchemaSource irSchemaSource = it.next();
+        final Map<SourceIdentifier, YangIRSchemaSource> filtered = new LinkedHashMap<>();
+        for (YangIRSchemaSource irSchemaSource : input) {
             final SourceIdentifier realSId = irSchemaSource.getIdentifier();
             if (srcIt.hasNext()) {
                 final SourceIdentifier expectedSId = srcIt.next();
@@ -49,7 +46,7 @@ final class SourceIdMismatchDetector implements Function<List<IRSchemaSource>, L
                 }
             }
 
-            final IRSchemaSource prev = filtered.put(realSId, irSchemaSource);
+            final YangIRSchemaSource prev = filtered.put(realSId, irSchemaSource);
             if (prev != null) {
                 LOG.warn("Duplicate source for module {} detected in reactor", realSId);
             }
