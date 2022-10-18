@@ -27,6 +27,6 @@ public final class EmptyDeserializer extends StdDeserializer<Empty> {
             JsonProcessingException {
         // FIXME: read according to
         // https://tools.ietf.org/html/rfc7951#section-6.9
-        return Empty.getInstance();
+        return Empty.value();
     }
 }
