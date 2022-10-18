@@ -23,5 +23,6 @@ module org.opendaylight.yangtools.yang.common.jackson {
     requires org.opendaylight.yangtools.yang.common;
 
     // Annotations
-    requires static metainf.services;
+    //requires static metainf_services;
+    requires static org.kohsuke.metainf_services;
 }
