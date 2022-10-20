@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "27f25c35_5472656f",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/Decimal64DeserializerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-10-20T11:44:49Z",
+      "side": 1,
+      "message": "These variables can be final.",
+      "range": {
+        "startLine": 23,
+        "startChar": 6,
+        "endLine": 27,
+        "endChar": 84
+      },
+      "revId": "896e1bd3300e92d4241eeb6080d9b22f948789ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4918b158_c1c7047c",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/Decimal64DeserializerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-10-20T11:44:49Z",
+      "side": 1,
+      "message": "Can be final as well and please do it in every file you added.",
+      "revId": "896e1bd3300e92d4241eeb6080d9b22f948789ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
