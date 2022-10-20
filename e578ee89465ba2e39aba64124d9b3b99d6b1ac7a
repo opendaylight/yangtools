@@ -39,6 +39,75 @@
       },
       "revId": "e578ee89465ba2e39aba64124d9b3b99d6b1ac7a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f0414fe_b6e709c5",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/RevisionDeserializerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-20T23:14:09Z",
+      "side": 1,
+      "message": "okay, there is a ton of copy\u0026pasting going and for very low usability value. Let\u0027s start with coalescing all tests into yang.common.jackson.",
+      "range": {
+        "startLine": 18,
+        "startChar": 13,
+        "endLine": 18,
+        "endChar": 37
+      },
+      "revId": "e578ee89465ba2e39aba64124d9b3b99d6b1ac7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "27561555_f4a14d4c",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/RevisionDeserializerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-20T23:14:09Z",
+      "side": 1,
+      "message": "yeah, so YangModule should be a SimpleModule with all the serialializers/deserializers added and we should have:\n\n  private static ObjectMapper MAPPER;\n  \n  @BeforeClass\n  public void beforeClass() {\n      MAPPER \u003d new ObjectMapper().registerModule(new YangModule());\n  }",
+      "range": {
+        "startLine": 24,
+        "startChar": 9,
+        "endLine": 26,
+        "endChar": 90
+      },
+      "revId": "e578ee89465ba2e39aba64124d9b3b99d6b1ac7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "586e0991_41c5ba00",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/RevisionDeserializerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-20T23:14:09Z",
+      "side": 1,
+      "message": "this is losing information, the correct assertion is:\n\n  assertEquals(Revision.of(\"2022-10-18\"\"), objectMapper.readValue(\"2022-10-18\", Revision.class));\n  \nthat\u0027s for low-level tests.\n\nWe also want a full object mapping test case, similar to https://www.baeldung.com/java-serialization-approaches#jackson-api",
+      "range": {
+        "startLine": 29,
+        "startChar": 70,
+        "endLine": 29,
+        "endChar": 81
+      },
+      "revId": "e578ee89465ba2e39aba64124d9b3b99d6b1ac7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
