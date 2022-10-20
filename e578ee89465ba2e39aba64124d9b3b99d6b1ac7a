@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "747dbf27_09349f3c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-20T17:30:47Z",
+      "side": 1,
+      "message": "Also squash this patch into the previous -- these are not GH PRs 😊",
+      "revId": "e578ee89465ba2e39aba64124d9b3b99d6b1ac7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9222a795_d24ce081",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/Decimal64DeserializerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-20T17:30:47Z",
+      "side": 1,
+      "message": "just declare \u0027throws Exception\u0027",
+      "range": {
+        "startLine": 35,
+        "startChar": 8,
+        "endLine": 39,
+        "endChar": 9
+      },
+      "revId": "e578ee89465ba2e39aba64124d9b3b99d6b1ac7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
