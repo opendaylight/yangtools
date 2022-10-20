@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d3312884_8169567c",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/Decimal64DeserializerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-10-20T11:51:09Z",
+      "side": 1,
+      "message": "It is just a small thing, but adjust this year in every file as well.",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "896e1bd3300e92d4241eeb6080d9b22f948789ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "27f25c35_5472656f",
         "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/Decimal64DeserializerTest.java",
         "patchSetId": 5
@@ -14,6 +37,30 @@
       "writtenOn": "2022-10-20T11:44:49Z",
       "side": 1,
       "message": "These variables can be final.",
+      "range": {
+        "startLine": 23,
+        "startChar": 6,
+        "endLine": 27,
+        "endChar": 84
+      },
+      "revId": "896e1bd3300e92d4241eeb6080d9b22f948789ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "79c40911_2fe12692",
+        "filename": "common/yang-common-jackson/src/test/java/org/opendaylight/yangtools/yang/common/jackson/deser/Decimal64DeserializerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 9048
+      },
+      "writtenOn": "2022-10-20T11:51:09Z",
+      "side": 1,
+      "message": "Also, our convention is to use \"final var\" for objects. For instance \"SimpleModule simpleModule\" will be \"final var simpleModule\". Regarding String objects, you can leave them as it is now.",
+      "parentUuid": "27f25c35_5472656f",
       "range": {
         "startLine": 23,
         "startChar": 6,
