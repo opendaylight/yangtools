@@ -87,7 +87,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
@@ -158,13 +157,13 @@ public final class XmlParserStream implements Closeable, Flushable {
         this.strictParsing = strictParsing;
 
         if (!stack.isEmpty()) {
-            final EffectiveStatement<?, ?> stmt = stack.currentStatement();
-            if (stmt instanceof DataSchemaNode) {
-                parentNode = (DataSchemaNode) stmt;
-            } else if (stmt instanceof OperationDefinition) {
-                parentNode = OperationAsContainer.of((OperationDefinition) stmt);
-            } else if (stmt instanceof NotificationDefinition) {
-                parentNode = NotificationAsContainer.of((NotificationDefinition) stmt);
+            final var stmt = stack.currentStatement();
+            if (stmt instanceof DataSchemaNode data) {
+                parentNode = data;
+            } else if (stmt instanceof OperationDefinition oper) {
+                parentNode = OperationAsContainer.of(oper);
+            } else if (stmt instanceof NotificationDefinition notif) {
+                parentNode = NotificationAsContainer.of(notif);
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + stmt);
             }
@@ -335,18 +334,18 @@ public final class XmlParserStream implements Closeable, Flushable {
         if (reader.hasNext()) {
             reader.nextTag();
             final AbstractNodeDataWithSchema<?> nodeDataWithSchema;
-            if (parentNode instanceof ContainerLike) {
-                nodeDataWithSchema = new ContainerNodeDataWithSchema((ContainerLike) parentNode);
-            } else if (parentNode instanceof ListSchemaNode) {
-                nodeDataWithSchema = new ListNodeDataWithSchema((ListSchemaNode) parentNode);
-            } else if (parentNode instanceof AnyxmlSchemaNode) {
-                nodeDataWithSchema = new AnyXmlNodeDataWithSchema((AnyxmlSchemaNode) parentNode);
-            } else if (parentNode instanceof LeafSchemaNode) {
-                nodeDataWithSchema = new LeafNodeDataWithSchema((LeafSchemaNode) parentNode);
-            } else if (parentNode instanceof LeafListSchemaNode) {
-                nodeDataWithSchema = new LeafListNodeDataWithSchema((LeafListSchemaNode) parentNode);
-            } else if (parentNode instanceof AnydataSchemaNode) {
-                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnydataSchemaNode) parentNode);
+            if (parentNode instanceof ContainerLike containerLike) {
+                nodeDataWithSchema = new ContainerNodeDataWithSchema(containerLike);
+            } else if (parentNode instanceof ListSchemaNode list) {
+                nodeDataWithSchema = new ListNodeDataWithSchema(list);
+            } else if (parentNode instanceof AnyxmlSchemaNode anyxml) {
+                nodeDataWithSchema = new AnyXmlNodeDataWithSchema(anyxml);
+            } else if (parentNode instanceof LeafSchemaNode leaf) {
+                nodeDataWithSchema = new LeafNodeDataWithSchema(leaf);
+            } else if (parentNode instanceof LeafListSchemaNode leafList) {
+                nodeDataWithSchema = new LeafListNodeDataWithSchema(leafList);
+            } else if (parentNode instanceof AnydataSchemaNode anydata) {
+                nodeDataWithSchema = new AnydataNodeDataWithSchema(anydata);
             } else {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
@@ -486,8 +485,8 @@ public final class XmlParserStream implements Closeable, Flushable {
             return;
         }
 
-        if (parent instanceof AnyXmlNodeDataWithSchema) {
-            setValue((AnyXmlNodeDataWithSchema) parent, readAnyXmlValue(in), in.getNamespaceContext());
+        if (parent instanceof AnyXmlNodeDataWithSchema anyxml) {
+            setValue(anyxml, readAnyXmlValue(in), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -499,8 +498,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             return;
         }
 
-        if (parent instanceof AnydataNodeDataWithSchema) {
-            final AnydataNodeDataWithSchema anydata = (AnydataNodeDataWithSchema) parent;
+        if (parent instanceof AnydataNodeDataWithSchema anydata) {
             anydata.setObjectModel(DOMSourceAnydata.class);
             anydata.setAttributes(getElementAttributes(in));
             setValue(anydata, readAnyXmlValue(in), in.getNamespaceContext());
@@ -573,13 +571,13 @@ public final class XmlParserStream implements Closeable, Flushable {
                         continue;
                     }
 
-                    if (parent instanceof AbstractMountPointDataWithSchema) {
+                    if (parent instanceof AbstractMountPointDataWithSchema<?> mountParent) {
                         // Parent can potentially hold a mount point, let's see if there is a label present
                         final Optional<MountPointSchemaNode> optMount;
-                        if (parentSchema instanceof ContainerSchemaNode) {
-                            optMount = MountPointSchemaNode.streamAll((ContainerSchemaNode) parentSchema).findFirst();
-                        } else if (parentSchema instanceof ListSchemaNode) {
-                            optMount = MountPointSchemaNode.streamAll((ListSchemaNode) parentSchema).findFirst();
+                        if (parentSchema instanceof ContainerSchemaNode container) {
+                            optMount = MountPointSchemaNode.streamAll(container).findFirst();
+                        } else if (parentSchema instanceof ListSchemaNode list) {
+                            optMount = MountPointSchemaNode.streamAll(list).findFirst();
                         } else {
                             throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema,
                                 in.getLocation());
@@ -593,8 +591,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                             final Optional<MountPointContextFactory> optFactory = codecs.mountPointContext()
                                     .findMountPoint(mountId);
                             if (optFactory.isPresent()) {
-                                final MountPointData mountData = ((AbstractMountPointDataWithSchema<?>) parent)
-                                        .getMountPointData(mountId, optFactory.get());
+                                final MountPointData mountData =
+                                    mountParent.getMountPointData(mountId, optFactory.get());
                                 addMountPointChild(mountData, nsUri, xmlElementName,
                                     new DOMSource(readAnyXmlValue(in).getDocumentElement()));
                                 continue;
