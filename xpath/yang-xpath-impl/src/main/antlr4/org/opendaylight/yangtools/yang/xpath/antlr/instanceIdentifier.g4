@@ -16,7 +16,7 @@ instanceIdentifier : ('/' pathArgument)+
 pathArgument : nodeIdentifier predicate?
   ;
 
-nodeIdentifier : Identifier ':' Identifier
+nodeIdentifier : Identifier (':' Identifier)?
   ;
 
 predicate : keyPredicate+
