@@ -22,6 +22,9 @@ final class ParseTreeUtils {
         // Hidden on purpose
     }
 
+    // FIXME:
+    //  if there is at least one optional child before requested one then offset reference is no longer reliable;
+    //  refactor to use occurrence instead of offset (see getToken method below)
     static <T extends ParseTree> T getChild(final ParseTree parent, final Class<T> type, final int offset) {
         return verifyTree(type, parent.getChild(offset));
     }
@@ -64,5 +67,27 @@ final class ParseTreeUtils {
 
     static VerifyException illegalShape(final ParseTree tree) {
         return new VerifyException("Invalid parser shape of '%s'".formatted(tree.getText()));
+    }
+
+    /**
+     * Gets token by type and occurrence.
+     *
+     * @param tree       current node
+     * @param type       token type
+     * @param occurrence token occurrence index (first is 0)
+     * @return token found
+     */
+    static Token getToken(final ParseTree tree, final int type, final int occurrence) {
+        int index = -1;
+        for (int i = 0; i < tree.getChildCount(); i++) {
+            var child = tree.getChild(i);
+            if (child instanceof TerminalNode
+                    && ((TerminalNode) child).getSymbol().getType() == type
+                    && ++index == occurrence) {
+                return ((TerminalNode) child).getSymbol();
+            }
+        }
+        throw new VerifyException(String.format("'%s' does not have token type %s occurred %s times",
+                tree.getText(), type, occurrence + 1));
     }
 }
