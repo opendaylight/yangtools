@@ -71,6 +71,15 @@
                     <listener>false</listener>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        --add-exports org.opendaylight.yangtools.yang.xpath.impl/org.opendaylight.yangtools.yang.xpath.impl=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
