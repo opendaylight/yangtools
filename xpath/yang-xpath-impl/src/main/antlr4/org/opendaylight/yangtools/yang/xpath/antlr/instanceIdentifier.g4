@@ -10,13 +10,14 @@ grammar instanceIdentifier;
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 instanceIdentifier : ('/' pathArgument)+
   ;
 
 pathArgument : nodeIdentifier predicate?
   ;
 
-nodeIdentifier : Identifier ':' Identifier
+nodeIdentifier : IDENTIFIER ( ':' IDENTIFIER )?
   ;
 
 predicate : keyPredicate+
@@ -37,26 +38,28 @@ leafListPredicateExpr : '.' eqQuotedString
   ;
 
 // Common tail of leafListPredicateExpr and keyPredicateExpr
-eqQuotedString : WSP? '=' WSP? quotedString
+eqQuotedString : WSP? '=' WSP? QUOTED_STRING
   ;
 
-pos : '[' WSP? PositiveIntegerValue WSP? ']'
+pos : '[' WSP? POS_INDEX WSP? ']'
   ;
 
-quotedString : '\'' STRING '\''
+QUOTED_STRING : '\'' STRING '\''
   | '"' STRING '"'
   ;
 
-Identifier : [a-zA-Z][a-zA-Z0-9_\-.]*
+IDENTIFIER : [a-zA-Z][a-zA-Z0-9_\-.]*
   ;
 
-PositiveIntegerValue : [1-9][0-9]*
-  ;
-
-STRING : YANGCHAR+
+// TODO to clarify conflict with RFC-6020 which allows zero
+POS_INDEX : [1-9][0-9]*
   ;
 
 WSP : [ \t]+
+  ;
+
+fragment
+STRING : YANGCHAR*
   ;
 
 fragment
