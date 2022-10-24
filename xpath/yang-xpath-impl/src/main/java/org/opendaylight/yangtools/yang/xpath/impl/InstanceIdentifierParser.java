@@ -55,8 +55,18 @@ abstract class InstanceIdentifierParser {
         }
 
         @Override
+        YangQNameExpr createExpr(final String localName) {
+            return YangQNameExpr.of(UnresolvedQName.unqualified(localName));
+        }
+
+        @Override
         YangQNameExpr createExpr(final String prefix, final String localName) {
             return YangQNameExpr.of(UnresolvedQName.qualified(prefix, localName));
+        }
+
+        @Override
+        QNameStep createChildStep(final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified(localName), predicates);
         }
 
         @Override
@@ -66,7 +76,7 @@ abstract class InstanceIdentifierParser {
     }
 
     static final class Qualified extends InstanceIdentifierParser {
-        final YangNamespaceContext namespaceContext;
+        private final YangNamespaceContext namespaceContext;
 
         Qualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
             super(mathMode);
@@ -74,16 +84,24 @@ abstract class InstanceIdentifierParser {
         }
 
         @Override
-        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
-            return YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+        YangQNameExpr createExpr(final String localName) {
+            return YangQNameExpr.of(UnresolvedQName.unqualified(localName));
         }
-
 
         @Override
         YangQNameExpr createExpr(final String prefix, final String localName) {
             return YangQNameExpr.of(namespaceContext.createQName(prefix, localName));
         }
 
+        @Override
+        QNameStep createChildStep(final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified(localName), predicates);
+        }
+
+        @Override
+        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+        }
     }
 
     private final YangXPathMathSupport mathSupport;
@@ -113,22 +131,37 @@ abstract class InstanceIdentifierParser {
         return YangLocationPath.absolute(steps);
     }
 
+    abstract YangQNameExpr createExpr(String localName);
+
     abstract YangQNameExpr createExpr(String prefix, String localName);
+
+    abstract QNameStep createChildStep(String localName, Collection<YangExpr> predicates);
 
     abstract QNameStep createChildStep(String prefix, String localName, Collection<YangExpr> predicates);
 
     private QNameStep parsePathArgument(final PathArgumentContext expr) {
-        final NodeIdentifierContext childExpr = getChild(expr, NodeIdentifierContext.class, 0);
-        final String prefix = verifyIdentifier(childExpr, 0);
-        final String localName = verifyIdentifier(childExpr, 2);
-
+        final Collection<YangExpr> predicates;
         switch (expr.getChildCount()) {
             case 1:
-                return createChildStep(prefix, localName, ImmutableSet.of());
+                predicates = ImmutableSet.of();
+                break;
             case 2:
-                return createChildStep(prefix, localName, parsePredicate(getChild(expr, PredicateContext.class, 1)));
+                predicates = parsePredicate(getChild(expr, PredicateContext.class, 1));
+                break;
             default:
                 throw illegalShape(expr);
+        }
+
+        final NodeIdentifierContext childExpr = getChild(expr, NodeIdentifierContext.class, 0);
+        final String first = verifyIdentifier(childExpr, 0);
+
+        switch (childExpr.getChildCount()) {
+            case 1:
+                return createChildStep(first, predicates);
+            case 3:
+                return createChildStep(first, verifyIdentifier(childExpr, 2), predicates);
+            default:
+                throw illegalShape(childExpr);
         }
     }
 
@@ -159,7 +192,15 @@ abstract class InstanceIdentifierParser {
     }
 
     private YangQNameExpr createChildExpr(final NodeIdentifierContext expr) {
-        return createExpr(verifyIdentifier(expr, 0), verifyIdentifier(expr, 2));
+        final var first = verifyIdentifier(expr, 0);
+         switch (expr.getChildCount()) {
+            case 1:
+                return createExpr(first);
+            case 3:
+                return createExpr(first, verifyIdentifier(expr, 2));
+            default:
+                throw illegalShape(expr);
+        }
     }
 
     private static String verifyIdentifier(final NodeIdentifierContext expr, final int child) {
