@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-yangtools-data">
     <feature name="odl-yangtools-data">
-        <feature version="[11,12)">odl-antlr4</feature>
+        <feature version="[12,13)">odl-antlr4</feature>
     </feature>
 </features>
