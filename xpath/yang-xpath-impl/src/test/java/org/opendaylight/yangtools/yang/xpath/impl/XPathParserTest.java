@@ -10,18 +10,15 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.opendaylight.yangtools.yang.xpath.impl.TestUtils.DEFAULT_NS;
+import static org.opendaylight.yangtools.yang.xpath.impl.TestUtils.NAMESPACE_CONTEXT;
 
-import com.google.common.collect.ImmutableBiMap;
 import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
@@ -33,17 +30,12 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 @SuppressWarnings("null")
 public class XPathParserTest {
-    private static final QNameModule DEFNS = QNameModule.create(XMLNamespace.of("defaultns"));
-    private static final YangNamespaceContext CONTEXT = new BiMapYangNamespaceContext(ImmutableBiMap.of(
-        "def", DEFNS,
-        "foo", QNameModule.create(XMLNamespace.of("foo")),
-        "bar", QNameModule.create(XMLNamespace.of("bar"))));
 
     private @Nullable AntlrXPathParser parser;
 
     @BeforeEach
     public void before() {
-        parser = new AntlrXPathParser.Unqualified(YangXPathMathMode.IEEE754, CONTEXT, DEFNS);
+        parser = new AntlrXPathParser.Unqualified(YangXPathMathMode.IEEE754, NAMESPACE_CONTEXT, DEFAULT_NS);
     }
 
     @Test
@@ -120,7 +112,7 @@ public class XPathParserTest {
         assertEquals(YangBinaryOperator.GTE, binary.getOperator());
         assertEquals(YangLocationPath.self(), binary.getLeftExpr());
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
-            YangXPathAxis.CHILD.asStep(QName.create(DEFNS, "lower-port"))), binary.getRightExpr());
+            YangXPathAxis.CHILD.asStep(QName.create(DEFAULT_NS, "lower-port"))), binary.getRightExpr());
     }
 
     @Test
@@ -135,7 +127,7 @@ public class XPathParserTest {
     private void assertRelative(final String str) throws XPathExpressionException {
         final YangExpr expr = parseExpr(str);
         assertThat(expr, isA(Relative.class));
-        assertEquals(List.of(YangXPathAxis.CHILD.asStep(QName.create(DEFNS, str))), ((Relative) expr).getSteps());
+        assertEquals(List.of(YangXPathAxis.CHILD.asStep(QName.create(DEFAULT_NS, str))), ((Relative) expr).getSteps());
     }
 
     private YangExpr parseExpr(final String xpath) throws XPathExpressionException {
