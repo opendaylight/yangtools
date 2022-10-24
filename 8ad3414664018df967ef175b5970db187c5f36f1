@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fef4357f_049f3a9e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-24T15:57:22Z",
+      "side": 1,
+      "message": "Why do we need to change the grammar?!",
+      "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fdb59b63_7af5b371",
+        "filename": "xpath/yang-xpath-impl/src/main/antlr4/org/opendaylight/yangtools/yang/xpath/antlr/instanceIdentifier.g4",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-24T15:57:22Z",
+      "side": 1,
+      "message": "this references RFC7950:\n\n   positive-integer-value \u003d (non-zero-digit *DIGIT)\n\nI do not believe the change is corred",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 29
+      },
+      "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}

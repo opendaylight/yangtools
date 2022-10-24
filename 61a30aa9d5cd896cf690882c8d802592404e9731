@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48013c22_eb826558",
+        "filename": "xpath/yang-xpath-impl/src/main/antlr4/org/opendaylight/yangtools/yang/xpath/antlr/instanceIdentifier.g4",
+        "patchSetId": 6
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-24T15:57:22Z",
+      "side": 0,
+      "message": "this is an exact spec, I do not believe the lexer inlining is equivalent",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 30
+      },
+      "revId": "61a30aa9d5cd896cf690882c8d802592404e9731",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
