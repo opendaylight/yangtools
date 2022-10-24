@@ -39,6 +39,29 @@
       },
       "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "873e1502_219d03a2",
+        "filename": "xpath/yang-xpath-impl/src/main/java/org/opendaylight/yangtools/yang/xpath/impl/InstanceIdentifierParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-10-24T15:58:59Z",
+      "side": 1,
+      "message": "please do not make this change: ImmutableSet has predictable iteration order, Set.of() does not -- leading to bad user experience",
+      "range": {
+        "startLine": 144,
+        "startChar": 19,
+        "endLine": 144,
+        "endChar": 22
+      },
+      "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
