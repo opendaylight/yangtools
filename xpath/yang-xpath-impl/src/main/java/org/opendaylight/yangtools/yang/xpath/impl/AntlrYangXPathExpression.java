@@ -63,7 +63,7 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
         }
 
         @Override
-        final InstanceIdentifierParser createInstanceIdentifierParser() throws XPathExpressionException {
+        InstanceIdentifierParser createInstanceIdentifierParser() throws XPathExpressionException {
             return new InstanceIdentifierParser.Qualified(getMathMode(), namespaceContext());
         }
     }
@@ -81,6 +81,11 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
         @Override
         public Resolved interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
             return Utils.interpretAsQName(namespaceContext(), defaultNamespace, expr);
+        }
+
+        @Override
+        InstanceIdentifierParser createInstanceIdentifierParser() throws XPathExpressionException {
+            return new InstanceIdentifierParser.Unqualified(getMathMode(), namespaceContext(), defaultNamespace);
         }
     }
 

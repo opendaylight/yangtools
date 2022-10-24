@@ -20,7 +20,7 @@ instanceIdentifier : (SLASH pathArgument)+ EOF
 pathArgument : nodeIdentifier predicate?
   ;
 
-nodeIdentifier : Identifier COLON Identifier
+nodeIdentifier : (Identifier COLON)? Identifier
   ;
 
 predicate : keyPredicate+
