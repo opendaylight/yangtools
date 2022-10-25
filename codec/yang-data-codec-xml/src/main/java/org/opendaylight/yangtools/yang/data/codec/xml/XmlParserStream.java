@@ -54,6 +54,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.ParserStreamResult;
 import org.opendaylight.yangtools.yang.data.util.AbstractMountPointDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -329,7 +330,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      * @throws SAXException
      *              if an error occurs while parsing the value of an anyxml node
      */
-    public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
+    public ParserStreamResult parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
             IOException, SAXException {
         if (reader.hasNext()) {
             reader.nextTag();
@@ -375,7 +376,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *              if an error occurs while parsing the value of an anyxml node
      */
     @Beta
-    public XmlParserStream traverse(final DOMSource src) throws XMLStreamException, URISyntaxException, IOException,
+    public ParserStreamResult traverse(final DOMSource src) throws XMLStreamException, URISyntaxException, IOException,
             SAXException {
         return parse(new DOMSourceXMLStreamReader(src));
     }

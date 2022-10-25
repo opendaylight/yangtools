@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.ParserStreamResult;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
@@ -179,7 +180,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new JsonParserStream(writer, codecFactory, SchemaInferenceStack.ofInference(parentNode), true);
     }
 
-    public JsonParserStream parse(final JsonReader reader) {
+    public ParserStreamResult parse(final JsonReader reader) {
         // code copied from gson's JsonParser and Stream classes
 
         final boolean readerLenient = reader.isLenient();
