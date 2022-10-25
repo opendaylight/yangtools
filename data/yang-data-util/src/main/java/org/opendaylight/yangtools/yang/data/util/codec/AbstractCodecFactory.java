@@ -77,7 +77,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
          *
          * We assume prevalence is in above order and that caching is effective.
          */
-        final TypeDefinition<?> type = schema.getType();
+        final var type = schema.getType();
         T ret = cache.lookupSimple(type);
         if (ret != null) {
             LOG.trace("Type {} hit simple {}", type, ret);
@@ -144,51 +144,50 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
 
     private T getSimpleCodecFor(final TypeDefinition<?> type) {
         // These types are expected to be fully-shared
-        if (type instanceof EmptyTypeDefinition) {
-            return emptyCodec((EmptyTypeDefinition) type);
-        } else if (type instanceof UnknownTypeDefinition) {
-            return unknownCodec((UnknownTypeDefinition) type);
+        if (type instanceof EmptyTypeDefinition emptyType) {
+            return emptyCodec(emptyType);
+        } else if (type instanceof UnknownTypeDefinition unknownType) {
+            return unknownCodec(unknownType);
         }
 
         // Now deal with simple types. Note we consider union composed of purely simple types a simple type itself.
         // The checks here are optimized for common types.
         final T ret;
-        if (type instanceof StringTypeDefinition) {
-            ret = stringCodec((StringTypeDefinition) type);
-        } else if (type instanceof Int8TypeDefinition) {
-            ret = int8Codec((Int8TypeDefinition) type);
-        } else if (type instanceof Int16TypeDefinition) {
-            ret = int16Codec((Int16TypeDefinition) type);
-        } else if (type instanceof Int32TypeDefinition) {
-            ret = int32Codec((Int32TypeDefinition) type);
-        } else if (type instanceof Int64TypeDefinition) {
-            ret = int64Codec((Int64TypeDefinition) type);
-        } else if (type instanceof Uint8TypeDefinition) {
-            ret = uint8Codec((Uint8TypeDefinition) type);
-        } else if (type instanceof Uint16TypeDefinition) {
-            ret = uint16Codec((Uint16TypeDefinition) type);
-        } else if (type instanceof Uint32TypeDefinition) {
-            ret = uint32Codec((Uint32TypeDefinition) type);
-        } else if (type instanceof Uint64TypeDefinition) {
-            ret = uint64Codec((Uint64TypeDefinition) type);
-        } else if (type instanceof BooleanTypeDefinition) {
-            ret = booleanCodec((BooleanTypeDefinition) type);
-        } else if (type instanceof DecimalTypeDefinition) {
-            ret = decimalCodec((DecimalTypeDefinition) type);
-        } else if (type instanceof EnumTypeDefinition) {
-            ret = enumCodec((EnumTypeDefinition) type);
-        } else if (type instanceof BitsTypeDefinition) {
-            ret = bitsCodec((BitsTypeDefinition) type);
-        } else if (type instanceof UnionTypeDefinition) {
-            final UnionTypeDefinition union = (UnionTypeDefinition) type;
-            if (!isSimpleUnion(union)) {
+        if (type instanceof StringTypeDefinition stringType) {
+            ret = stringCodec(stringType);
+        } else if (type instanceof Int8TypeDefinition int8type) {
+            ret = int8Codec(int8type);
+        } else if (type instanceof Int16TypeDefinition int16type) {
+            ret = int16Codec(int16type);
+        } else if (type instanceof Int32TypeDefinition int32type) {
+            ret = int32Codec(int32type);
+        } else if (type instanceof Int64TypeDefinition int64type) {
+            ret = int64Codec(int64type);
+        } else if (type instanceof Uint8TypeDefinition uint8type) {
+            ret = uint8Codec(uint8type);
+        } else if (type instanceof Uint16TypeDefinition uint16type) {
+            ret = uint16Codec(uint16type);
+        } else if (type instanceof Uint32TypeDefinition uint32type) {
+            ret = uint32Codec(uint32type);
+        } else if (type instanceof Uint64TypeDefinition uint64type) {
+            ret = uint64Codec(uint64type);
+        } else if (type instanceof BooleanTypeDefinition booleanType) {
+            ret = booleanCodec(booleanType);
+        } else if (type instanceof DecimalTypeDefinition decimalType) {
+            ret = decimalCodec(decimalType);
+        } else if (type instanceof EnumTypeDefinition enumType) {
+            ret = enumCodec(enumType);
+        } else if (type instanceof BitsTypeDefinition bitsType) {
+            ret = bitsCodec(bitsType);
+        } else if (type instanceof UnionTypeDefinition unionType) {
+            if (!isSimpleUnion(unionType)) {
                 return null;
             }
-            ret = createSimpleUnion(union);
-        } else if (type instanceof BinaryTypeDefinition) {
-            ret = binaryCodec((BinaryTypeDefinition) type);
-        } else if (type instanceof InstanceIdentifierTypeDefinition) {
-            return instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+            ret = createSimpleUnion(unionType);
+        } else if (type instanceof BinaryTypeDefinition binaryType) {
+            ret = binaryCodec(binaryType);
+        } else if (type instanceof InstanceIdentifierTypeDefinition iidType) {
+            return instanceIdentifierCodec(iidType);
         } else {
             return null;
         }
@@ -197,9 +196,9 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
     }
 
     private static boolean isSimpleUnion(final UnionTypeDefinition union) {
-        for (TypeDefinition<?> t : union.getTypes()) {
+        for (var t : union.getTypes()) {
             if (t instanceof IdentityrefTypeDefinition || t instanceof LeafrefTypeDefinition
-                    || t instanceof UnionTypeDefinition && !isSimpleUnion((UnionTypeDefinition) t)) {
+                || t instanceof UnionTypeDefinition unionType && !isSimpleUnion(unionType)) {
                 LOG.debug("Type {} has non-simple subtype", t);
                 return false;
             }
@@ -211,24 +210,24 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
 
     private T createComplexCodecFor(final SchemaNode schema, final TypeDefinition<?> type,
             final LeafrefResolver resolver) {
-        if (type instanceof UnionTypeDefinition) {
-            return createComplexUnion(schema, (UnionTypeDefinition) type, resolver);
-        } else if (type instanceof LeafrefTypeDefinition) {
-            final TypeDefinition<?> target = resolver.resolveLeafref((LeafrefTypeDefinition) type);
+        if (type instanceof UnionTypeDefinition union) {
+            return createComplexUnion(schema, union, resolver);
+        } else if (type instanceof LeafrefTypeDefinition leafref) {
+            final var target = resolver.resolveLeafref(leafref);
             final T ret = getSimpleCodecFor(target);
             return ret != null ? ret : createComplexCodecFor(schema, target, resolver);
-        } else if (type instanceof IdentityrefTypeDefinition) {
-            return identityRefCodec((IdentityrefTypeDefinition) type, schema.getQName().getModule());
+        } else if (type instanceof IdentityrefTypeDefinition identityref) {
+            return identityRefCodec(identityref, schema.getQName().getModule());
         } else {
             throw new IllegalArgumentException("Unsupported type " + type);
         }
     }
 
     private T createSimpleUnion(final UnionTypeDefinition union) {
-        final List<TypeDefinition<?>> types = union.getTypes();
-        final List<T> codecs = new ArrayList<>(types.size());
+        final var types = union.getTypes();
+        final var codecs = new ArrayList<T>(types.size());
 
-        for (TypeDefinition<?> type : types) {
+        for (var type : types) {
             T codec = cache.lookupSimple(type);
             if (codec == null) {
                 codec = verifyNotNull(getSimpleCodecFor(type), "Type %s did not resolve to a simple codec", type);
@@ -242,10 +241,10 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
 
     private T createComplexUnion(final SchemaNode schema, final UnionTypeDefinition union,
             final LeafrefResolver resolver) {
-        final List<TypeDefinition<?>> types = union.getTypes();
-        final List<T> codecs = new ArrayList<>(types.size());
+        final var types = union.getTypes();
+        final var codecs = new ArrayList<T>(types.size());
 
-        for (TypeDefinition<?> type : types) {
+        for (var type : types) {
             T codec = cache.lookupSimple(type);
             if (codec == null) {
                 codec = getSimpleCodecFor(type);
