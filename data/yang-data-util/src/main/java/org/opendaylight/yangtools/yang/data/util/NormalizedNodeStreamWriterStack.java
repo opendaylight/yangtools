@@ -189,8 +189,8 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         verify(stmt instanceof SchemaNode, "Unexpected result %s", stmt);
         final SchemaNode ret = (SchemaNode) stmt;
         final Object parent = getParent();
-        if (parent instanceof ChoiceSchemaNode) {
-            final DataSchemaNode check = ((ChoiceSchemaNode) parent).findDataSchemaChild(qname).orElse(null);
+        if (parent instanceof ChoiceSchemaNode choice) {
+            final DataSchemaNode check = choice.findDataSchemaChild(qname).orElse(null);
             verify(check == ret, "Data tree result %s does not match choice result %s", ret, check);
         }
         return ret;
@@ -223,8 +223,8 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
 
     public LeafListSchemaNode leafSetEntryNode(final QName qname) {
         final Object parent = getParent();
-        if (parent instanceof LeafListSchemaNode) {
-            return (LeafListSchemaNode) parent;
+        if (parent instanceof LeafListSchemaNode leafList) {
+            return leafList;
         }
         checkArgument(parent instanceof DataNodeContainer, "Cannot lookup %s in parent %s", qname, parent);
         final DataSchemaNode child = ((DataNodeContainer) parent).dataChildByName(qname);
@@ -250,12 +250,12 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         LOG.debug("Enter container {}", name);
 
         final SchemaNode schema;
-        if (schemaStack.isEmpty() && root instanceof NotificationDefinition) {
+        if (schemaStack.isEmpty() && root instanceof NotificationDefinition notification) {
             // Special case for stacks initialized at notification. We pretend the first container is contained within
             // itself.
             // FIXME: 8.0.0: factor this special case out to something more reasonable, like being initialized at the
             //               Notification's parent and knowing to enterSchemaTree() instead of enterDataTree().
-            schema = (NotificationDefinition) root;
+            schema = notification;
         } else {
             schema = enterDataTree(name);
             checkArgument(schema instanceof ContainerLike, "Node %s is not a container", schema);
@@ -292,9 +292,9 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         Object parent = getParent();
 
         checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
-        if (parent instanceof ChoiceSchemaNode) {
+        if (parent instanceof ChoiceSchemaNode choice) {
             final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
-            parent = findCaseByChild((ChoiceSchemaNode) parent, name);
+            parent = findCaseByChild(choice, name);
         }
         checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
         final AugmentationSchemaNode schema = findSchemaForAugment((AugmentationTarget) parent,
