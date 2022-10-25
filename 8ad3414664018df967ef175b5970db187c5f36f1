@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "011357fa_bd5a7f98",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-10-25T10:01:33Z",
+      "side": 1,
+      "message": "at least two important updates there:\n- optional fragment in node identifier\n- zero-length string is eligible: YANGCHAR* instead of YANGCHAR+",
+      "parentUuid": "fef4357f_049f3a9e",
+      "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "fdb59b63_7af5b371",
         "filename": "xpath/yang-xpath-impl/src/main/antlr4/org/opendaylight/yangtools/yang/xpath/antlr/instanceIdentifier.g4",
         "patchSetId": 6
@@ -31,6 +49,30 @@
       "writtenOn": "2022-10-24T15:57:22Z",
       "side": 1,
       "message": "this references RFC7950:\n\n   positive-integer-value \u003d (non-zero-digit *DIGIT)\n\nI do not believe the change is corred",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 29
+      },
+      "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e50c7648_f0d018a2",
+        "filename": "xpath/yang-xpath-impl/src/main/antlr4/org/opendaylight/yangtools/yang/xpath/antlr/instanceIdentifier.g4",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-10-25T10:01:33Z",
+      "side": 1,
+      "message": "reverted, provided a note on conflict with RFC-6020",
+      "parentUuid": "fdb59b63_7af5b371",
       "range": {
         "startLine": 54,
         "startChar": 0,
@@ -54,6 +96,30 @@
       "writtenOn": "2022-10-24T15:58:59Z",
       "side": 1,
       "message": "please do not make this change: ImmutableSet has predictable iteration order, Set.of() does not -- leading to bad user experience",
+      "range": {
+        "startLine": 144,
+        "startChar": 19,
+        "endLine": 144,
+        "endChar": 22
+      },
+      "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "267bdf3f_e9ec8feb",
+        "filename": "xpath/yang-xpath-impl/src/main/java/org/opendaylight/yangtools/yang/xpath/impl/InstanceIdentifierParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-10-25T10:01:33Z",
+      "side": 1,
+      "message": "reverted, no difference for 1 element collections",
+      "parentUuid": "873e1502_219d03a2",
       "range": {
         "startLine": 144,
         "startChar": 19,
