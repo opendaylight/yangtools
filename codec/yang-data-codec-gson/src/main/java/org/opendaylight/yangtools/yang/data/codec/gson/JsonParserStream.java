@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.data.util.NotificationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.codec.ParserStreamRoot;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -179,7 +180,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new JsonParserStream(writer, codecFactory, SchemaInferenceStack.ofInference(parentNode), true);
     }
 
-    public JsonParserStream parse(final JsonReader reader) {
+    public ParserStreamRoot parse(final JsonReader reader) {
         // code copied from gson's JsonParser and Stream classes
 
         final boolean readerLenient = reader.isLenient();

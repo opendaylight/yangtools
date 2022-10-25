@@ -73,6 +73,7 @@ import org.opendaylight.yangtools.yang.data.util.NotificationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.codec.ParserStreamRoot;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -329,7 +330,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      * @throws SAXException
      *              if an error occurs while parsing the value of an anyxml node
      */
-    public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
+    public ParserStreamRoot parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
             IOException, SAXException {
         if (reader.hasNext()) {
             reader.nextTag();
@@ -375,7 +376,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *              if an error occurs while parsing the value of an anyxml node
      */
     @Beta
-    public XmlParserStream traverse(final DOMSource src) throws XMLStreamException, URISyntaxException, IOException,
+    public ParserStreamRoot traverse(final DOMSource src) throws XMLStreamException, URISyntaxException, IOException,
             SAXException {
         return parse(new DOMSourceXMLStreamReader(src));
     }
