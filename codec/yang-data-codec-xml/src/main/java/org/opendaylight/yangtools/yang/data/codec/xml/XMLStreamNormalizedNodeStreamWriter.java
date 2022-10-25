@@ -51,8 +51,9 @@ import org.w3c.dom.Node;
  * attributes, which uses the proper namespace, but will not bind to a proper module revision. This caveat will be
  * removed in a future version.
  */
-public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamWriter,
-        StreamWriterMetadataExtension {
+public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
+        implements NormalizedNodeStreamWriter, StreamWriterMetadataExtension
+        permits SchemaAwareXMLStreamNormalizedNodeStreamWriter, SchemalessXMLStreamNormalizedNodeStreamWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
     private static final Set<String> BROKEN_ATTRIBUTES = ConcurrentHashMap.newKeySet();
 
