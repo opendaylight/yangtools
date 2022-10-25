@@ -11,11 +11,8 @@ package org.opendaylight.yangtools.yang.data.util;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -35,15 +32,15 @@ public final class ParserStreamUtils {
      */
     public static Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
             final String childName, final XMLNamespace namespace) {
-        final Deque<DataSchemaNode> result = new ArrayDeque<>();
-        final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
+        final var result = new ArrayDeque<DataSchemaNode>();
+        final var childChoices = new ArrayList<ChoiceSchemaNode>();
         DataSchemaNode potentialChildNode = null;
-        if (dataSchemaNode instanceof DataNodeContainer) {
-            for (final DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
-                if (childNode instanceof ChoiceSchemaNode) {
-                    childChoices.add((ChoiceSchemaNode) childNode);
+        if (dataSchemaNode instanceof DataNodeContainer dataContainer) {
+            for (final var childNode : dataContainer.getChildNodes()) {
+                if (childNode instanceof ChoiceSchemaNode choice) {
+                    childChoices.add(choice);
                 } else {
-                    final QName childQName = childNode.getQName();
+                    final var childQName = childNode.getQName();
                     if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)
                             && (potentialChildNode == null || Revision.compare(childQName.getRevision(),
                                 potentialChildNode.getQName().getRevision()) > 0)) {
@@ -58,10 +55,9 @@ public final class ParserStreamUtils {
         }
 
         // try to find data schema node in choice (looking for first match)
-        for (final ChoiceSchemaNode choiceNode : childChoices) {
-            for (final CaseSchemaNode concreteCase : choiceNode.getCases()) {
-                final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase,
-                        childName, namespace);
+        for (final var choiceNode : childChoices) {
+            for (final var concreteCase : choiceNode.getCases()) {
+                final var resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase, childName, namespace);
                 if (!resultFromRecursion.isEmpty()) {
                     resultFromRecursion.push(concreteCase);
                     resultFromRecursion.push(choiceNode);
