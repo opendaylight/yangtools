@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -32,24 +31,21 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
  * Semantically a {@link PathExpression} is similar to a {@link YangXPathExpression} with guarantees around what
  * subexpressions it can contain:
  * <ul>
- * <li>the root expression must be a {@link YangLocationPath}</li>
- * <li>it can contain steps only along {@link YangXPathAxis#CHILD} and {@link YangXPathAxis#PARENT} axis</li>
- * <li>all steps along {@link YangXPathAxis#CHILD} axis are {@link QNameStep}</li>
- * <li>the only function invocation is {@link YangFunction#CURRENT}</li>
- * <li>only {@link YangBinaryOperator#EQUALS} is allowed</li>
- * <li>no literals nor numbers are allowed</li>
- * <li>all qualified node identifiers must me resolved</li>
+ *   <li>the root expression must be a {@link YangLocationPath}</li>
+ *   <li>it can contain steps only along {@link YangXPathAxis#CHILD} and {@link YangXPathAxis#PARENT} axis</li>
+ *   <li>all steps along {@link YangXPathAxis#CHILD} axis are {@link QNameStep}</li>
+ *   <li>the only function invocation is {@link YangFunction#CURRENT}</li>
+ *   <li>only {@link YangBinaryOperator#EQUALS} is allowed</li>
+ *   <li>no literals nor numbers are allowed</li>
+ *   <li>all qualified node identifiers must me resolved</li>
  * </ul>
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public interface PathExpression extends Immutable {
     /**
      * Abstract base class for expressing steps of a PathExpression.
      */
-    abstract class Steps {
+    abstract sealed class Steps {
         Steps() {
             // Prevent external subclassing
         }
@@ -89,8 +85,7 @@ public interface PathExpression extends Immutable {
 
         @Override
         public boolean equals(final @Nullable Object obj) {
-            return this == obj
-                    || obj instanceof LocationPathSteps && locationPath.equals(((LocationPathSteps) obj).locationPath);
+            return this == obj || obj instanceof LocationPathSteps other && locationPath.equals(other.locationPath);
         }
 
         @Override
@@ -127,14 +122,8 @@ public interface PathExpression extends Immutable {
 
         @Override
         public boolean equals(@Nullable final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof DerefSteps)) {
-                return false;
-            }
-            final DerefSteps other = (DerefSteps) obj;
-            return derefArgument.equals(other.derefArgument) && relativePath.equals(other.relativePath);
+            return this == obj || obj instanceof DerefSteps other
+                && derefArgument.equals(other.derefArgument) && relativePath.equals(other.relativePath);
         }
 
         @Override
@@ -167,7 +156,6 @@ public interface PathExpression extends Immutable {
      * @return <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>
      */
     default boolean isAbsolute() {
-        final Steps steps = getSteps();
-        return steps instanceof LocationPathSteps && ((LocationPathSteps) steps).getLocationPath().isAbsolute();
+        return getSteps() instanceof LocationPathSteps locationSteps && locationSteps.getLocationPath().isAbsolute();
     }
 }

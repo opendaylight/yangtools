@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
  * model for anydata content to become known through protocol signaling or other means that are outside the scope
  * of this document.
  */
-@Beta
 public interface AnydataSchemaNode extends DataSchemaNode, MandatoryAware, MustConstraintAware,
         EffectiveStatementEquivalent<AnydataEffectiveStatement> {
     /**

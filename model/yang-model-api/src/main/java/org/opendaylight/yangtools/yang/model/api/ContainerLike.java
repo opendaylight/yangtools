@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
-
 /**
- * Common interface for common container-like constructs.
+ * Common interface for common container-like constructs. This includes {@link ContainerSchemaNode},
+ * {@link InputSchemaNode}, {@link OutputSchemaNode} and, for legacy reasons, {@link SchemaContext}.
  */
-@Beta
 public interface ContainerLike extends DataNodeContainer,
         AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer, MustConstraintAware {
 
