@@ -459,7 +459,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     }
 
     public final @Nullable QName argumentName() {
-        return publicDefinition.getArgumentDefinition().map(ArgumentDefinition::getArgumentName).orElse(null);
+        return publicDefinition.getArgumentDefinition().map(ArgumentDefinition::argumentName).orElse(null);
     }
 
     public final @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {

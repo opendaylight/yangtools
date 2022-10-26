@@ -144,7 +144,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
             if (optArgDef.isPresent()) {
                 final ArgumentDefinition argDef = optArgDef.get();
-                argName = argDef.getArgumentName();
+                argName = argDef.argumentName();
                 allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;
             } else {
@@ -164,7 +164,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
             if (optArgDef.isPresent()) {
                 final ArgumentDefinition argDef = optArgDef.get();
-                argName = argDef.getArgumentName();
+                argName = argDef.argumentName();
                 allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;
 

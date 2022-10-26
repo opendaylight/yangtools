@@ -59,7 +59,7 @@ final class UnrecognizedStatementSupport
         final Optional<ArgumentDefinition> optArgDef = childDef.getArgumentDefinition();
         if (optArgDef.isPresent()) {
             final ArgumentDefinition argDef = optArgDef.orElseThrow();
-            def = new ModelDefinedStatementDefinition(statementName, argDef.getArgumentName(), argDef.isYinElement());
+            def = new ModelDefinedStatementDefinition(statementName, argDef.argumentName(), argDef.isYinElement());
         } else {
             def = new ModelDefinedStatementDefinition(statementName);
         }
