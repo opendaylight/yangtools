@@ -170,11 +170,10 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         addIndent();
 
         // Add statement prefixed with namespace if needed
-        final var prefix = resolver.findPrefix(stmt);
-        if (prefix.isPresent()) {
-            strings.add(prefix.get());
+        resolver.findPrefix(stmt).ifPresent(prefix -> {
+            strings.add(prefix);
             strings.add(":");
-        }
+        });
         strings.add(def.getStatementName().getLocalName());
 
         // Add argument, quoted and properly indented if need be
