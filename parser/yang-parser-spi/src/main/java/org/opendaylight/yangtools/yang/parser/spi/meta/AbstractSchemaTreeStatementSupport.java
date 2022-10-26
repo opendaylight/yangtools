@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
  * Specialization of {@link AbstractQNameStatementSupport} for {@link SchemaTreeEffectiveStatement} implementations.
- * Every statement automatically participates in {@link SchemaTreeNamespace}.
+ * Every statement automatically participates in {@link ParserNamespaces#schemaTree()}.
  *
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
@@ -109,7 +108,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      * {@inheritDoc}
      *
      * <p>
-     * This method ensures the statement is added to its parent {@link SchemaTreeNamespace}.
+     * This method ensures the statement is added to its parent {@link ParserNamespaces#schemaTree()}.
      */
     @Override
     public void onStatementAdded(final Mutable<QName, D, E> stmt) {

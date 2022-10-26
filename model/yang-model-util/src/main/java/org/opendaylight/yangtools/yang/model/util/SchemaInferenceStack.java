@@ -57,8 +57,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference;
@@ -788,10 +788,13 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull EffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
-        final TypedefEffectiveStatement ret = parent.get(TypedefNamespace.class, nodeIdentifier)
-            .orElseThrow(() -> notPresent(parent, "Typedef", nodeIdentifier));
-        deque.addLast(ret);
-        return ret;
+        if (parent instanceof TypedefAwareEffectiveStatement<?, ?> aware) {
+            final TypedefEffectiveStatement ret = aware.findTypedef(nodeIdentifier)
+                .orElseThrow(() -> notPresent(parent, "Typedef", nodeIdentifier));
+            deque.addLast(ret);
+            return ret;
+        }
+        throw notPresent(parent, "Typedef", nodeIdentifier);
     }
 
     private @NonNull TypedefEffectiveStatement pushFirstTypedef(final @NonNull QName nodeIdentifier) {
@@ -831,9 +834,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     private SchemaInferenceStack reconstructSchemaInferenceStack() {
         // Let's walk all statements and decipher them into a temporary stack
         final SchemaInferenceStack tmp = new SchemaInferenceStack(effectiveModel, deque.size());
-        final Iterator<EffectiveStatement<?, ?>> it = deque.iterator();
-        while (it.hasNext()) {
-            final EffectiveStatement<?, ?> stmt = it.next();
+        for (EffectiveStatement<?, ?> stmt : deque) {
             // Order of checks is significant
             if (stmt instanceof DataTreeEffectiveStatement<?> dataTree) {
                 tmp.resolveDataTreeSteps(dataTree.argument());
