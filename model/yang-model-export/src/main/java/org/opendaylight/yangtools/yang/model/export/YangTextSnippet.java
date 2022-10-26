@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 import static org.eclipse.jdt.annotation.DefaultLocation.PARAMETER;
 import static org.eclipse.jdt.annotation.DefaultLocation.RETURN_TYPE;
 
-import com.google.common.annotations.Beta;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Spliterator;
@@ -36,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  *
  * @author Robert Varga
  */
-@Beta
 @NonNullByDefault({ PARAMETER, RETURN_TYPE })
 public final class YangTextSnippet implements Immutable, Iterable<@NonNull String> {
     private final Set<@NonNull StatementDefinition> ignoredStatements;
