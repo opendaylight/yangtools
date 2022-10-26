@@ -11,7 +11,8 @@ package org.opendaylight.yangtools.yang.model.api;
  * Common interface for common container-like constructs. This includes {@link ContainerSchemaNode},
  * {@link InputSchemaNode}, {@link OutputSchemaNode} and, for legacy reasons, {@link SchemaContext}.
  */
-public interface ContainerLike extends DataNodeContainer,
-        AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer, MustConstraintAware {
+public sealed interface ContainerLike extends DataNodeContainer,
+        AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer, MustConstraintAware
+        permits ContainerSchemaNode, InputSchemaNode, OutputSchemaNode, SchemaContext {
 
 }

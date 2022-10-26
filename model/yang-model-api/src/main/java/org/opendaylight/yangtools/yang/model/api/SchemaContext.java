@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 // FIXME: 7.0.0: ContainerLike is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
 //               and possibly DataSchemaNode would reflect SchemaContext traits better.
 // FIXME: 7.0.0: consider deprecating this class in favor of EffectiveModelContext
-public interface SchemaContext extends ContainerLike, Immutable {
+public non-sealed interface SchemaContext extends ContainerLike, Immutable {
     /**
      * QName of NETCONF top-level data node.
      */

@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 /**
  * An {@link InputSchemaNode} defines inputs of an {@link RpcDefinition} or an {@link ActionDefinition}.
  */
-public interface InputSchemaNode extends ContainerLike, EffectiveStatementEquivalent<InputEffectiveStatement> {
+public non-sealed interface InputSchemaNode
+        extends ContainerLike, EffectiveStatementEquivalent<InputEffectiveStatement> {
 
 }

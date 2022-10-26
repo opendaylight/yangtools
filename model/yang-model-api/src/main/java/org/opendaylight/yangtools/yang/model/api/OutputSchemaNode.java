@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 /**
  * An {@link InputSchemaNode} defines outputs of an {@link RpcDefinition} or an {@link ActionDefinition}.
  */
-public interface OutputSchemaNode extends ContainerLike, EffectiveStatementEquivalent<OutputEffectiveStatement> {
+public non-sealed interface OutputSchemaNode
+        extends ContainerLike, EffectiveStatementEquivalent<OutputEffectiveStatement> {
 
 }
