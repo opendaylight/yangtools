@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code unique} statement.
+ */
 public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Descendant>> {
     @Override
     default StatementDefinition statementDefinition() {
