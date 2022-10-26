@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -170,14 +171,16 @@ final class StatementPrefixResolver {
     }
 
     private static Optional<String> decodeEntry(final Object entry, final DeclaredStatement<?> stmt) {
-        if (entry instanceof String) {
-            return Optional.of((String)entry);
+        if (entry instanceof String str) {
+            return Optional.of(str);
+        } else if (entry instanceof Conflict conflict) {
+            final var prefix = conflict.findPrefix(stmt);
+            checkArgument(prefix != null, "Failed to find prefix for statement %s", stmt);
+            verify(!prefix.isEmpty(), "Empty prefix for statement %s", stmt);
+            return Optional.of(prefix);
+        } else {
+            throw new VerifyException("Unexpected entry " + entry);
         }
-        verify(entry instanceof Conflict, "Unexpected entry %s", entry);
-        final String prefix = ((Conflict) entry).findPrefix(stmt);
-        checkArgument(prefix != null, "Failed to find prefix for statement %s", stmt);
-        verify(!prefix.isEmpty(), "Empty prefix for statement %s", stmt);
-        return Optional.of(prefix);
     }
 
     private static void indexPrefixes(final Map<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> map,

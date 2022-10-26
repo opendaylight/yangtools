@@ -125,10 +125,10 @@ final class YinXMLEventReader implements XMLEventReader {
         }
 
         current = next();
-        if (!(current instanceof Characters)) {
+        if (!(current instanceof Characters chars)) {
             throw new XMLStreamException("Encountered non-text event " + current);
         }
-        final String ret = ((Characters)current).getData();
+        final String ret = chars.getData();
 
         current = next();
         if (!(current instanceof EndElement)) {
