@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code extension} statement.
+ */
 public interface ExtensionStatement extends DocumentedDeclaredStatement.WithStatus<QName> {
     @Override
     default StatementDefinition statementDefinition() {
@@ -20,7 +22,7 @@ public interface ExtensionStatement extends DocumentedDeclaredStatement.WithStat
     }
 
     default @Nullable ArgumentStatement getArgument() {
-        final Optional<ArgumentStatement> opt = findFirstDeclaredSubstatement(ArgumentStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(ArgumentStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

@@ -98,7 +98,7 @@ public class DeclaredStatementsTest {
         final var ifFeatureStatements = anyxmlStatement.getIfFeatures();
         assertNotNull(ifFeatureStatements);
         assertEquals(1, ifFeatureStatements.size());
-        final Predicate<Set<QName>> ifFeaturePredicate = ifFeatureStatements.iterator().next().getIfFeaturePredicate();
+        final Predicate<Set<QName>> ifFeaturePredicate = ifFeatureStatements.iterator().next().argument();
         assertNotNull(ifFeaturePredicate);
 
         final var mustStatements = anyxmlStatement.getMustStatements();

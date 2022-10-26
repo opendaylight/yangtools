@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code pattern} statement.
+ */
 public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternExpression> {
     @Override
     default StatementDefinition statementDefinition() {
@@ -25,7 +27,7 @@ public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement
      * @return modifier statement, null if not present.
      */
     default @Nullable ModifierStatement getModifierStatement() {
-        final Optional<ModifierStatement> opt = findFirstDeclaredSubstatement(ModifierStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(ModifierStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

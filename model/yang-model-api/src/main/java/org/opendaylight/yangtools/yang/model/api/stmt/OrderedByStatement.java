@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code ordered-by} statement.
+ */
 public interface OrderedByStatement extends DeclaredStatement<Ordering> {
     @Override
     default StatementDefinition statementDefinition() {

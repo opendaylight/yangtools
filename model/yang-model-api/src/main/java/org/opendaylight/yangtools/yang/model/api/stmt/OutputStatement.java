@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code output} statement.
+ */
 public interface OutputStatement extends DeclaredStatement<QName>,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
         MustStatementAwareDeclaredStatement<QName> {

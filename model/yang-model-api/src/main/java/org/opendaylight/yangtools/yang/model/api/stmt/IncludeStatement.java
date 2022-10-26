@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code include} statement.
+ */
 public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualified> {
     @Override
     default StatementDefinition statementDefinition() {
@@ -20,7 +22,7 @@ public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualifie
     }
 
     default @Nullable RevisionDateStatement getRevisionDate() {
-        final Optional<RevisionDateStatement> opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

@@ -11,12 +11,16 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code require-instance} statement.
+ */
 public interface RequireInstanceStatement extends DeclaredStatement<Boolean> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.REQUIRE_INSTANCE;
     }
 
+    @Deprecated(since = "10.0.0", forRemoval = true)
     default boolean getValue() {
         return argument().booleanValue();
     }

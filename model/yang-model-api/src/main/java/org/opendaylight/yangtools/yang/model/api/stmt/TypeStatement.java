@@ -16,6 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code type} statement.
+ */
 @Rfc6020AbnfRule("type-stmt")
 public interface TypeStatement extends DeclaredStatement<QName> {
     @Override

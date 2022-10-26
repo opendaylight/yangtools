@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code module} statement.
+ */
 public interface ModuleStatement extends MetaDeclaredStatement<Unqualified>, ModuleHeaderGroup,
         LinkageDeclaredStatement, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
     @Override
@@ -22,16 +25,16 @@ public interface ModuleStatement extends MetaDeclaredStatement<Unqualified>, Mod
     @Override
     default YangVersionStatement getYangVersion() {
         final Optional<YangVersionStatement> opt = findFirstDeclaredSubstatement(YangVersionStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
     @Override
     default NamespaceStatement getNamespace() {
-        return findFirstDeclaredSubstatement(NamespaceStatement.class).get();
+        return findFirstDeclaredSubstatement(NamespaceStatement.class).orElseThrow();
     }
 
     @Override
     default PrefixStatement getPrefix() {
-        return findFirstDeclaredSubstatement(PrefixStatement.class).get();
+        return findFirstDeclaredSubstatement(PrefixStatement.class).orElseThrow();
     }
 }

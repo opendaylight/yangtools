@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,10 +29,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  * <p>
  * The set of features referenced in this expression is available through {@link #getReferencedFeatures()}.
- *
- * @author Robert Varga
  */
-@Beta
 public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<QName>> {
     private abstract static sealed class Single extends IfFeatureExpr {
         final @NonNull QName qname;

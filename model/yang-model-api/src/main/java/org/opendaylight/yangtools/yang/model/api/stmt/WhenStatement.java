@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
+/**
+ * Declared representation of a {@code when} statement.
+ */
 public interface WhenStatement extends DocumentedDeclaredStatement<QualifiedBound> {
     @Override
     default StatementDefinition statementDefinition() {

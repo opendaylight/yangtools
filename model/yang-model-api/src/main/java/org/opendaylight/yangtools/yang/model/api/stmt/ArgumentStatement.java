@@ -14,6 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code argument} statement.
+ */
 @Rfc6020AbnfRule("argument-stmt")
 public interface ArgumentStatement extends DeclaredStatement<QName> {
     @Override

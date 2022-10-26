@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code notification} statement.
+ */
 public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>, IfFeatureAwareDeclaredStatement<QName>,
         MustStatementAwareDeclaredStatement<QName> {
