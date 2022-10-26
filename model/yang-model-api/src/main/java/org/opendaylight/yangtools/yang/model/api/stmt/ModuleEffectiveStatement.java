@@ -7,49 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective view of a {@code module} statement.
  */
-public interface ModuleEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<Unqualified, ModuleStatement>, SchemaTreeRoot {
-    /**
-     * Namespace mapping all known prefixes in a module to their modules. Note this namespace includes the module
-     * in which it is instantiated.
-     */
-    abstract class PrefixToEffectiveModuleNamespace
-            extends IdentifierNamespace<String, @NonNull ModuleEffectiveStatement> {
-        private PrefixToEffectiveModuleNamespace() {
-            // This class should never be subclassed
-        }
-    }
-
-    /**
-     * Namespace mapping all known {@link QNameModule}s to their encoding prefixes. This includes the declaration
-     * from prefix/namespace/revision and all imports as they were resolved.
-     */
-    abstract class QNameModuleToPrefixNamespace extends IdentifierNamespace<QNameModule, @NonNull String> {
-        private QNameModuleToPrefixNamespace() {
-            // This class should never be subclassed
-        }
-    }
-
+public non-sealed interface ModuleEffectiveStatement
+        extends DataTreeAwareEffectiveStatement<Unqualified, ModuleStatement>,
+                RootEffectiveStatement<ModuleStatement>,
+                TypedefAwareEffectiveStatement<Unqualified, ModuleStatement>,
+                SchemaTreeRoot {
     /**
      * Namespace mapping all included submodules. The namespaces is keyed by submodule name.
      */
-    abstract class NameToEffectiveSubmoduleNamespace
-            extends IdentifierNamespace<Unqualified, @NonNull SubmoduleEffectiveStatement> {
-        private NameToEffectiveSubmoduleNamespace() {
-            // This class should never be subclassed
-        }
-    }
+    @NonNull Optional<SubmoduleEffectiveStatement> findSubmodule(@NonNull Unqualified submoduleName);
+
+    Collection<SubmoduleEffectiveStatement> includedSubmodules();
 
     /**
      * Conformance type, as defined by <a href="https://datatracker.ietf.org/doc/html/rfc7895#page-9">RFC7895</a> and
@@ -122,4 +102,58 @@ public interface ModuleEffectiveStatement
      * @return Conformance type.
      */
     @NonNull ConformanceType conformance();
+
+    /**
+     * Namespace of available extensions. According to RFC7950 section 6.2.1:
+     * <pre>
+     *     All extension names defined in a module and its submodules share
+     *     the same extension identifier namespace.
+     * </pre>
+     */
+    default @NonNull Collection<ExtensionEffectiveStatement> extensions() {
+        return collectEffectiveSubstatements(ExtensionEffectiveStatement.class);
+    }
+
+    /**
+     * Lookup an {@link ExtensionEffectiveStatement} by its {@link QName}.
+     */
+    // FIXME: qname is implied to implied to have the same namespace as localQNameModule(), hence this should be driven
+    //        through getLocalName()
+    @NonNull Optional<ExtensionEffectiveStatement> findExtension(@NonNull QName qname);
+
+    /**
+     * Namespace of available features. According to RFC7950 section 6.2.1:
+     * <pre>
+     *     All feature names defined in a module and its submodules share the
+     *     same feature identifier namespace.
+     * </pre>
+     */
+    default @NonNull Collection<FeatureEffectiveStatement> features() {
+        return collectEffectiveSubstatements(FeatureEffectiveStatement.class);
+    }
+
+    /**
+     * Lookup an {@link FeatureEffectiveStatement} by its {@link QName}.
+     */
+    // FIXME: qname is implied to implied to have the same namespace as localQNameModule(), hence this should be driven
+    //        through getLocalName()
+    @NonNull Optional<FeatureEffectiveStatement> findFeature(@NonNull QName qname);
+
+    /**
+     * Namespace of available identities. According to RFC7950 section 6.2.1:
+     * <pre>
+     *     All identity names defined in a module and its submodules share
+     *     the same identity identifier namespace.
+     * </pre>
+     */
+    default @NonNull Collection<IdentityEffectiveStatement> identities() {
+        return collectEffectiveSubstatements(IdentityEffectiveStatement.class);
+    }
+
+    /**
+     * Lookup an {@link IdentityEffectiveStatement} by its {@link QName}.
+     */
+    // FIXME: qname is implied to implied to have the same namespace as localQNameModule(), hence this should be driven
+    //        through getLocalName()
+    @NonNull Optional<IdentityEffectiveStatement> findIdentity(@NonNull QName qname);
 }
