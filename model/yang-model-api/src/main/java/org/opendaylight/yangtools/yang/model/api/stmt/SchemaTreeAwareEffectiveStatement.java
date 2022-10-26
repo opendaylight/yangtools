@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelpers.filterOptional;
 
-import com.google.common.annotations.Beta;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  * @param <A> Argument type
  * @param <D> Class representing declared version of this statement.
  */
-@Beta
 public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
     /**
      * Namespace of {@code schema node}s defined within this node.
@@ -105,13 +103,13 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
         final Iterator<QName> it = qnames.iterator();
         SchemaTreeAwareEffectiveStatement<?, ?> parent = this;
         while (true) {
-            final Optional<SchemaTreeEffectiveStatement<?>> found = parent.findSchemaTreeNode(it.next());
+            final var found = parent.findSchemaTreeNode(it.next());
             if (!it.hasNext() || found.isEmpty()) {
                 return found;
             }
             final SchemaTreeEffectiveStatement<?> node = found.orElseThrow();
-            if (node instanceof SchemaTreeAwareEffectiveStatement) {
-                parent = (SchemaTreeAwareEffectiveStatement<?, ?>) node;
+            if (node instanceof SchemaTreeAwareEffectiveStatement<?, ?> aware) {
+                parent = aware;
             } else {
                 return Optional.empty();
             }

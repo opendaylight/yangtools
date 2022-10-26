@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-@Beta
+/**
+ * Effective representation of a {@code length} statement.
+ */
 public interface LengthEffectiveStatement extends EffectiveStatement<List<ValueRange>, LengthStatement>,
-        // FIXME: 7.0.0: reconsider this interface extension
-        // FIXME: 7.0.0: if we are keeping it, consider a default implementation (shared with others effective
+        // FIXME: 11.0.0: reconsider this interface extension
+        // FIXME: 11.0.0: if we are keeping it, consider a default implementation (shared with others effective
         //               statements)
         ConstraintMetaDefinition {
     @Override

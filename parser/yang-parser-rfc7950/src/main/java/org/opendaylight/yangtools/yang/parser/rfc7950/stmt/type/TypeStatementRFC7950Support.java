@@ -52,7 +52,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     @Override
     Bit addRestrictedBit(final EffectiveStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
         // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
-        final Optional<Uint32> declaredPosition = bit.getDeclaredPosition();
+        final Optional<Uint32> declaredPosition = bit.findDeclaredPosition();
         final Uint32 effectivePos;
         if (declaredPosition.isEmpty()) {
             effectivePos = getBaseTypeBitPosition(bit.argument(), base, stmt);

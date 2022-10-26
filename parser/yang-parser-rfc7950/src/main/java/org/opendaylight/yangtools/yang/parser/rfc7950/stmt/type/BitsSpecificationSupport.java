@@ -64,7 +64,7 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
             if (subStmt instanceof BitEffectiveStatement) {
                 final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) subStmt;
 
-                final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
+                final Optional<Uint32> declaredPosition = bitSubStmt.findDeclaredPosition();
                 final Uint32 effectivePos;
                 if (declaredPosition.isEmpty()) {
                     if (highestPosition != null) {
