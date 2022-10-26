@@ -20,4 +20,13 @@ public interface KeyEffectiveStatement extends EffectiveStatement<Set<QName>, Ke
     default  StatementDefinition statementDefinition() {
         return YangStmtMapping.KEY;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Iteration order of the returned set is required to match the order in which key components were declared.
+     */
+    @Override
+    Set<QName> argument();
 }
