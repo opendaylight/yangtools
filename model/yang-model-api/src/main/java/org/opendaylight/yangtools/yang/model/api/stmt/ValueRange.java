@@ -9,17 +9,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * YANG specification of a numeric value range. This object is used for {@link LengthStatement} and
  * {@link RangeStatement}.
- *
- * @author Robert Varga
  */
-@Beta
 public abstract sealed class ValueRange {
     private static final class Singleton extends ValueRange {
         private final @NonNull Number value;
