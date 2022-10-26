@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
 import org.eclipse.jdt.annotation.NonNull;
@@ -17,12 +16,10 @@ import org.eclipse.jdt.annotation.NonNull;
  * <a href="https://docs.microsoft.com/en-us/dotnet/framework/wcf/extending/extensible-objects">Extensible Object</a>
  * pattern.
  *
- * @param <T> Type of extensible object
+ * @param <O> Type of extensible object
  * @param <E> Extension marker interface
- * @author Robert Varga
  */
-@Beta
-public interface ExtensibleObject<T extends ExtensibleObject<T, E>, E extends ObjectExtension<T, E>> {
+public interface ExtensibleObject<O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> {
     /**
      * Return a map of currently-supported extensions, along with accessor objects which provide access to the specific
      * functionality bound to this object.

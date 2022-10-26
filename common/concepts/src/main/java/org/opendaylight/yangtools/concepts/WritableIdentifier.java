@@ -7,14 +7,9 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.annotations.Beta;
-
 /**
  * A combination of both {@link Identifier} and {@link WritableObject}.
- *
- * @author Robert Varga
  */
-@Beta
 public interface WritableIdentifier extends Identifier, WritableObject {
 
 }
