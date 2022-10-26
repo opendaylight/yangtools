@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.concepts;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.annotations.Beta;
 import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -28,11 +27,10 @@ import org.eclipse.jdt.annotation.NonNull;
  *   </code>
  * </pre>
  */
-@Beta
 public abstract class PrettyTree implements Supplier<String> {
     @Override
     public @NonNull String get() {
-        final StringBuilder sb = new StringBuilder();
+        final var sb = new StringBuilder();
         appendTo(sb, 0);
         return sb.toString();
     }

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.annotations.Beta;
-
 /**
  * An extension to a concrete {@link ExtensibleObject}. This is a marker interface to introduce type safety and unlike
  * full Extensible Objects, does not specify how extensions are attached to an extensible object.
@@ -17,11 +15,9 @@ import com.google.common.annotations.Beta;
  * {@link ObjectExtension} instances are attached to their host object and share its state, which means they work in
  * concert and care must be taken to ensure consistency, such as thread safety and observable effects.
  *
- * @param <T> Extensible object type
+ * @param <O> Extensible object type
  * @param <E> Extension type
- * @author Robert Varga
  */
-@Beta
-public interface ObjectExtension<T extends ExtensibleObject<T, E>, E extends ObjectExtension<T, E>> {
+public interface ObjectExtension<O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> {
 
 }

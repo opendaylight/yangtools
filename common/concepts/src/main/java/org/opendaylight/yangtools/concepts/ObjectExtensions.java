@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.concepts;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
@@ -29,15 +28,13 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <O> Type of extensible object
  * @param <E> Extension marker interface
- * @author Robert Varga
  */
-@Beta
 public final class ObjectExtensions<O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>>
         extends AbstractMap<Class<? extends E>, E> implements ClassToInstanceMap<E> {
     private final class EntrySet extends AbstractSet<Entry<Class<? extends E>, E>> {
         @Override
         public Iterator<Entry<Class<? extends E>, E>> iterator() {
-            return Iterators.transform(extensions.iterator(), ext -> new SimpleImmutableEntry<>(ext, ext.cast(object)));
+            return Iterators.transform(extensions.iterator(), ext -> Map.entry(ext, ext.cast(object)));
         }
 
         @Override
@@ -91,10 +88,10 @@ public final class ObjectExtensions<O extends ExtensibleObject<O, E>, E extends 
     }
 
     @SafeVarargs
-    public static <T, O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> @NonNull Factory<T, O, E>
-            factory(final Class<T> objClass, final Class<? extends E>... extensions) {
-        final ImmutableSet<Class<? extends E>> set = ImmutableSet.copyOf(extensions);
-        for (Class<? extends E> extension : set) {
+    public static <T, O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>>
+            @NonNull Factory<T, O, E> factory(final Class<T> objClass, final Class<? extends E>... extensions) {
+        final var set = ImmutableSet.copyOf(extensions);
+        for (var extension : set) {
             checkArgument(extension.isAssignableFrom(objClass), "%s is not a valid extension %s", objClass, extension);
         }
         return new Factory<>(set);
@@ -121,6 +118,7 @@ public final class ObjectExtensions<O extends ExtensibleObject<O, E>, E extends 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public E get(final Object key) {
         return containsKey(key) ? ((Class<? extends E>) key).cast(object) : null;
     }

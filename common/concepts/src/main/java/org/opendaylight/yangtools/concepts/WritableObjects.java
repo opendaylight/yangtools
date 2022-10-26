@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.concepts;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.annotations.Beta;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -17,10 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Utility methods for working with {@link WritableObject}s.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public final class WritableObjects {
     private WritableObjects() {
@@ -33,7 +29,7 @@ public final class WritableObjects {
      * @param out Data output
      * @param value long value to write
      * @throws IOException if an I/O error occurs
-     * @throws NullPointerException if output is null
+     * @throws NullPointerException if {@code out} is {@code null}
      */
     public static void writeLong(final DataOutput out, final long value) throws IOException {
         writeLong(out, value, 0);
@@ -44,18 +40,20 @@ public final class WritableObjects {
      * serializing counters and similar, which have a wide range, but typically do not use it. The value provided is
      * treated as unsigned.
      *
-     * <p>This methods writes the number of trailing non-zero in the value. It then writes the minimum required bytes
+     * <p>
+     * This methods writes the number of trailing non-zero in the value. It then writes the minimum required bytes
      * to reconstruct the value by left-padding zeroes. Inverse operation is performed by {@link #readLong(DataInput)}
      * or a combination of {@link #readLongHeader(DataInput)} and {@link #readLongBody(DataInput, byte)}.
      *
-     * <p>Additionally the caller can use the top four bits (i.e. 0xF0) for caller-specific flags. These will be
+     * <p>
+     * Additionally the caller can use the top four bits (i.e. {@code 0xF0}) for caller-specific flags. These will be
      * ignored by {@link #readLong(DataInput)}, but can be extracted via {@link #readLongHeader(DataInput)}.
      *
      * @param out Data output
      * @param value long value to write
      * @param flags flags to store
      * @throws IOException if an I/O error occurs
-     * @throws NullPointerException if output is null
+     * @throws NullPointerException if {@code out} is {@code null}
      */
     public static void writeLong(final DataOutput out, final long value, final int flags) throws IOException {
         checkArgument((flags & 0xFFFFFF0F) == 0, "Invalid flags %s", flags);
@@ -70,7 +68,7 @@ public final class WritableObjects {
      * @param in Data input
      * @return long value extracted from the data input
      * @throws IOException if an I/O error occurs
-     * @throws NullPointerException if input is null
+     * @throws NullPointerException if {@code in} is {@code null}
      */
     public static long readLong(final DataInput in) throws IOException {
         return readLongBody(in, readLongHeader(in));
@@ -83,15 +81,15 @@ public final class WritableObjects {
      * @param in Data input
      * @return Header of next value
      * @throws IOException if an I/O error occurs
-     * @throws NullPointerException if input is null
+     * @throws NullPointerException if {@code in} is {@code null}
      */
     public static byte readLongHeader(final DataInput in) throws IOException {
         return in.readByte();
     }
 
     /**
-     * Extract user-defined flags from a compressed long header. This will return 0 if the long value originates from
-     * {@link #writeLong(DataOutput, long)}.
+     * Extract user-defined flags from a compressed long header. This will return {code 0} if the long value originates
+     * from {@link #writeLong(DataOutput, long)}.
      *
      * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
      * @return User-defined flags
@@ -107,7 +105,7 @@ public final class WritableObjects {
      * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
      * @return long value
      * @throws IOException if an I/O error occurs
-     * @throws NullPointerException if input is null
+     * @throws NullPointerException if {@code in} is {@code null}
      */
     public static long readLongBody(final DataInput in, final byte header) throws IOException {
         int bytes = header & 0xF;
@@ -145,7 +143,7 @@ public final class WritableObjects {
      * @param value0 first long value to write
      * @param value1 second long value to write
      * @throws IOException if an I/O error occurs
-     * @throws NullPointerException if output is null
+     * @throws NullPointerException if {@code out} is {@code null}
      */
     public static void writeLongs(final DataOutput out, final long value0, final long value1) throws IOException {
         final int clen = WritableObjects.valueBytes(value1);
@@ -173,7 +171,7 @@ public final class WritableObjects {
      * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
      * @return Second long specified in {@link #writeLongs(DataOutput, long, long)}
      * @throws IOException if an I/O error occurs
-     * @throws NullPointerException if input is null
+     * @throws NullPointerException if {@code in} is {@code null}
      */
     public static long readSecondLong(final DataInput in, final byte header) throws IOException {
         return WritableObjects.readLongBody(in, (byte)(header >> 4));
