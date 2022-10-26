@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement.DataTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
@@ -92,10 +91,9 @@ public enum JSONCodecFactorySupplier {
         private static int codecsForChildren(final JSONCodecFactory lazy, final SchemaInferenceStack stack,
                 final DataTreeAwareEffectiveStatement<?, ?> parent) {
             int ret = 0;
-            for (var entry : parent.getAll(DataTreeNamespace.class).entrySet()) {
-                final var child = entry.getValue();
+            for (var child : parent.dataTreeNodes()) {
                 if (child instanceof DataTreeAwareEffectiveStatement<?, ?> dataTree) {
-                    stack.enterDataTree(entry.getKey());
+                    stack.enterDataTree(child.argument());
                     ret += codecsForChildren(lazy, stack, dataTree);
                     stack.exit();
                 } else if (child instanceof TypedDataSchemaNode typed) {
