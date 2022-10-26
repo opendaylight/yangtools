@@ -22,8 +22,6 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 
@@ -64,23 +62,6 @@ public final class YinExportUtils {
      * {@link ModuleEffectiveStatement} trait.
      *
      * @param module Module to be exported
-     * @throws IllegalArgumentException if the module is not an ModuleEffectiveStatement or if it declared
-     *                                  representation is not available.
-     * @throws NullPointerException if any of of the parameters is null
-     * @throws XMLStreamException if an input-output error occurs
-     * @deprecated Prefer {@link #writeModuleAsYinText(ModuleEffectiveStatement, OutputStream)}.
-     */
-    @Beta
-    @Deprecated(forRemoval = true)
-    public static void writeModuleAsYinText(final Module module, final OutputStream output) throws XMLStreamException {
-        writeModuleAsYinText(module.asEffectiveStatement(), output);
-    }
-
-    /**
-     * Write a module as a YIN text into specified {@link OutputStream}. Supplied module must have the
-     * {@link ModuleEffectiveStatement} trait.
-     *
-     * @param module Module to be exported
      * @throws IllegalArgumentException if the module's declared representation is not available.
      * @throws NullPointerException if any of of the parameters is null
      * @throws XMLStreamException if an input-output error occurs
@@ -89,26 +70,6 @@ public final class YinExportUtils {
     public static void writeModuleAsYinText(final ModuleEffectiveStatement module, final OutputStream output)
             throws XMLStreamException {
         writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(module), output);
-    }
-
-    /**
-     * Write a submodule as a YIN text into specified {@link OutputStream}. Supplied submodule must have the
-     * {@link SubmoduleEffectiveStatement} trait.
-     *
-     * @param parentModule Parent module
-     * @param submodule Submodule to be exported
-     * @throws IllegalArgumentException if the parent module is not a ModuleEffectiveStatement, if the submodule is not
-     *                                  a SubmoduleEffectiveStatement or if its declared representation is not available
-     * @throws NullPointerException if any of of the parameters is null
-     * @throws XMLStreamException if an input-output error occurs
-     * @deprecated Prefer {@link #writeSubmoduleAsYinText(ModuleEffectiveStatement, SubmoduleEffectiveStatement,
-     *             OutputStream)}.
-     */
-    @Beta
-    @Deprecated(forRemoval = true)
-    public static void writeSubmoduleAsYinText(final Module parentModule, final Submodule submodule,
-            final OutputStream output) throws XMLStreamException {
-        writeSubmoduleAsYinText(parentModule.asEffectiveStatement(), submodule.asEffectiveStatement(), output);
     }
 
     /**
