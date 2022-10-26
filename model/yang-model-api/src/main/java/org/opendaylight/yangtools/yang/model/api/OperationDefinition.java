@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * Common interface for an operation, such as an {@link RpcDefinition} or an {@link ActionDefinition}.
  */
-public interface OperationDefinition extends SchemaNode {
+public sealed interface OperationDefinition extends SchemaNode permits ActionDefinition, RpcDefinition {
     /**
      * Returns the set of type definitions declared under this operation.
      *
