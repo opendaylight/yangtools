@@ -11,9 +11,9 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class ModuleStatementImpl extends AbstractDeclaredEffectiveRootStatement<ModuleStatement>
-        implements ModuleStatement {
+public final class ModuleStatementImpl extends WithSubstatements<Unqualified> implements ModuleStatement {
     public ModuleStatementImpl(final String rawArgument, final Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
