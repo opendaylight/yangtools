@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
  *
  * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public final class DeclaredStatementFormatter implements Immutable {
     private static final DeclaredStatementFormatter DEFAULT = new DeclaredStatementFormatter(ImmutableSet.of(), true);
@@ -81,13 +79,12 @@ public final class DeclaredStatementFormatter implements Immutable {
     /**
      * Builder class for instantiation of a customized {@link DeclaredStatementFormatter}.
      */
-    @Beta
     public static final class Builder implements Mutable {
         private final Set<StatementDefinition> ignoredStatements = new HashSet<>(4);
         private boolean retainDefaultStatements;
 
-        Builder() {
-
+        private Builder() {
+            // Hidden on purpose
         }
 
         /**

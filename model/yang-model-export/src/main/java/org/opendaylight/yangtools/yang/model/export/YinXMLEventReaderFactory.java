@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.export;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
  * Factory for creating {@link XMLEventReader} instances reporting events equivalent to reading a YIN document defining
  * a specified {@link ModuleEffectiveStatement}. This class is thread-safe.
  */
-@Beta
 public final class YinXMLEventReaderFactory {
     private static final Location DUMMY_LOCATION = new Location() {
 

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.io.OutputStream;
 import java.util.Optional;
 import javax.xml.stream.XMLEventReader;
@@ -65,7 +64,6 @@ public final class YinExportUtils {
      * @throws NullPointerException if any of of the parameters is null
      * @throws XMLStreamException if an input-output error occurs
      */
-    @Beta
     public static void writeModuleAsYinText(final ModuleEffectiveStatement module, final OutputStream output)
             throws XMLStreamException {
         writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(module), output);
@@ -81,7 +79,6 @@ public final class YinExportUtils {
      * @throws NullPointerException if any of of the parameters is null
      * @throws XMLStreamException if an input-output error occurs
      */
-    @Beta
     public static void writeSubmoduleAsYinText(final ModuleEffectiveStatement parentModule,
             final SubmoduleEffectiveStatement submodule, final OutputStream output) throws XMLStreamException {
         writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(parentModule, submodule),
