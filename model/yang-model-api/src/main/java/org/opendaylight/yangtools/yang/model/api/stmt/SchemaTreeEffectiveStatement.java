@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Common interface grouping all {@link EffectiveStatement}s which are accessible via
- * {@link SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace}. This such statement corresponds to a
+ * {@link SchemaTreeAwareEffectiveStatement#schemaTreeNodes()}. This such statement corresponds to a
  * {@code schema node}.
  *
  * <p>
@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @param <D> Declared statement type
  */
-public interface SchemaTreeEffectiveStatement<D extends DeclaredStatement<QName>>
-    extends NamespacedEffectiveStatement<D> {
+public interface SchemaTreeEffectiveStatement<D extends DeclaredStatement<QName>> extends EffectiveStatement<QName, D> {
 
 }

@@ -9,14 +9,17 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective model statement which should be used to derive application behaviour related to {@code typedef}s.
- * All statements form the {@link TypedefNamespace}.
+ * All statements form the a tree-scoped namespace across {@link TypedefAwareEffectiveStatement}s, each of which hold
+ * one level of this namespace.
  */
-public interface TypedefEffectiveStatement extends NamespacedEffectiveStatement<TypedefStatement>, TypeDefinitionAware {
+public interface TypedefEffectiveStatement extends EffectiveStatement<QName, TypedefStatement>, TypeDefinitionAware {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.TYPEDEF;

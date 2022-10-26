@@ -41,7 +41,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return child case node of this Choice if child with given name is present, empty otherwise.
      * @throws NullPointerException if qname is null
      */
-    default Optional<? extends CaseSchemaNode> findCase(final QName qname) {
+    default Optional<? extends CaseSchemaNode> findCaseNode(final QName qname) {
         requireNonNull(qname);
         return getCases().stream().filter(node -> qname.equals(node.getQName())).findFirst();
     }

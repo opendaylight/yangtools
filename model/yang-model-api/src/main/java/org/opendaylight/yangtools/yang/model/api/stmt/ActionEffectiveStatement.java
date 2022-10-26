@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Effective representation of a {@code action} statement.
  */
 public interface ActionEffectiveStatement extends SchemaTreeEffectiveStatement<ActionStatement>,
-        DataTreeAwareEffectiveStatement<QName, ActionStatement> {
+        DataTreeAwareEffectiveStatement<QName, ActionStatement>,
+        TypedefAwareEffectiveStatement<QName, ActionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ACTION;

@@ -12,12 +12,12 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
- * Representation of {@code submodule} statement. Note that implementations of this interface are required to provide
- * {@link ModuleEffectiveStatement.PrefixToEffectiveModuleNamespace} and
- * {@link ModuleEffectiveStatement.QNameModuleToPrefixNamespace} namespaces.
+ * Representation of {@code submodule} statement.
  */
-public interface SubmoduleEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<Unqualified, SubmoduleStatement> {
+public non-sealed interface SubmoduleEffectiveStatement
+        extends DataTreeAwareEffectiveStatement<Unqualified, SubmoduleStatement>,
+                RootEffectiveStatement<SubmoduleStatement>,
+                TypedefAwareEffectiveStatement<Unqualified, SubmoduleStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.SUBMODULE;

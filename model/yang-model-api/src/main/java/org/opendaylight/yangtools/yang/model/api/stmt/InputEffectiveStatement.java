@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code input} statement.
  */
-public interface InputEffectiveStatement
-        extends DataTreeEffectiveStatement<InputStatement>, DataTreeAwareEffectiveStatement<QName, InputStatement> {
+public interface InputEffectiveStatement extends DataTreeEffectiveStatement<InputStatement>,
+        DataTreeAwareEffectiveStatement<QName, InputStatement>, TypedefAwareEffectiveStatement<QName, InputStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.INPUT;
