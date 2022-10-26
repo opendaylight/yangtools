@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
+import java.util.Map;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 
@@ -31,5 +35,14 @@ public abstract non-sealed class AbstractEffectiveStatement<A, D extends Declare
     protected static final @NonNull ImmutableList<? extends @NonNull EffectiveStatement<?, ?>> unmaskList(
             final @NonNull Object masked) {
         return (ImmutableList) unmaskList(masked, EffectiveStatement.class);
+    }
+
+    protected static final <E> @NonNull Optional<E> filterOptional(final @NonNull Optional<?> optional,
+            final @NonNull Class<E> type) {
+        return optional.filter(type::isInstance).map(type::cast);
+    }
+
+    protected static final <K, V> @NonNull Optional<V> findValue(final Map<K, V> map, final K key) {
+        return Optional.ofNullable(map.get(requireNonNull(key)));
     }
 }

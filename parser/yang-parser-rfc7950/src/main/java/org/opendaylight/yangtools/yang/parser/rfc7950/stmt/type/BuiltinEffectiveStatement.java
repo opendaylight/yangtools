@@ -10,14 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -54,19 +50,6 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     @Override
     public final TypeStatement getDeclared() {
         return null;
-    }
-
-    @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace,
-            final K identifier) {
-        // FIXME: 8.0.0: implement this
-        return Optional.empty();
-    }
-
-    @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        // FIXME: 8.0.0: implement this
-        return ImmutableMap.of();
     }
 
     @Override

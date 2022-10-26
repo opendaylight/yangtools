@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
@@ -19,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
@@ -47,9 +44,8 @@ public abstract class AbstractChoiceEffectiveStatement extends DefaultWithDataTr
     }
 
     @Override
-    public final Optional<? extends CaseSchemaNode> findCase(final QName qname) {
-        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(qname));
-        return child instanceof CaseSchemaNode ? Optional.of((CaseSchemaNode) child) : Optional.empty();
+    public final Optional<? extends CaseSchemaNode> findCaseNode(final QName qname) {
+        return filterOptional(findSchemaTreeNode(qname), CaseSchemaNode.class);
     }
 
     @Override

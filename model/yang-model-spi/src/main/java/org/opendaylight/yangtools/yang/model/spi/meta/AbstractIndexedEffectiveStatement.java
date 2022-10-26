@@ -7,26 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.AbstractEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NamespacedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
@@ -46,31 +41,8 @@ abstract sealed class AbstractIndexedEffectiveStatement<A, D extends DeclaredSta
         extends AbstractEffectiveStatement<A, D>
         permits AbstractDeclaredEffectiveStatement, AbstractUndeclaredEffectiveStatement {
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace,
-            final K identifier) {
-        return Optional.ofNullable(getAll(namespace).get(requireNonNull(identifier)));
-    }
-
-    @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        final Optional<? extends Map<K, V>> ret = getNamespaceContents(requireNonNull(namespace));
-        return ret.isPresent() ? ret.get() : ImmutableMap.of();
-    }
-
-    @Override
     public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return ImmutableList.of();
-    }
-
-    /**
-     * Return the statement-specific contents of specified namespace, if available.
-     *
-     * @param namespace Requested namespace
-     * @return Namespace contents, if available.
-     */
-    protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
-            final @NonNull Class<N> namespace) {
-        return Optional.empty();
     }
 
     // TODO: below methods need to find a better place, this is just a temporary hideout as their public class is on
@@ -145,10 +117,10 @@ abstract sealed class AbstractIndexedEffectiveStatement<A, D extends DeclaredSta
         return false;
     }
 
-    private static <T extends NamespacedEffectiveStatement<?>> void putChild(final Map<QName, T> map, final T child,
+    private static <A, E extends EffectiveStatement<A, ?>> void putChild(final Map<A, E> map, final E child,
             final String namespace) {
-        final QName id = child.getIdentifier();
-        final T prev = map.putIfAbsent(id, child);
+        final A id = child.argument();
+        final E prev = map.putIfAbsent(id, child);
         if (prev != null) {
             throw new SubstatementIndexingException(
                 "Cannot add " + namespace + " child with name " + id + ", a conflicting child already exists");

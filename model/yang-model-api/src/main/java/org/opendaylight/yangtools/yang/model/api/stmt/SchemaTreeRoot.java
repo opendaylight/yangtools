@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelpers.filterOptional;
-
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -43,6 +41,6 @@ public interface SchemaTreeRoot {
      */
     default <T> @NonNull Optional<T> findSchemaTreeNode(final @NonNull Class<T> type,
             final @NonNull SchemaNodeIdentifier path) {
-        return filterOptional(type, findSchemaTreeNode(path));
+        return DefaultMethodHelpers.filterOptional(findSchemaTreeNode(path), type);
     }
 }

@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code rpc} statement.
  */
-public interface RpcEffectiveStatement
-        extends SchemaTreeEffectiveStatement<RpcStatement>, DataTreeAwareEffectiveStatement<QName, RpcStatement> {
+public interface RpcEffectiveStatement extends SchemaTreeEffectiveStatement<RpcStatement>,
+        DataTreeAwareEffectiveStatement<QName, RpcStatement>, TypedefAwareEffectiveStatement<QName, RpcStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.RPC;

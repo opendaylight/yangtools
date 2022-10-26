@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -19,5 +21,16 @@ public interface ChoiceEffectiveStatement
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.CHOICE;
+    }
+
+    /**
+     * Namespace of available cases in a choice node. According to RFC7950 section 6.2.1:
+     * <pre>
+     *     All cases within a choice share the same case identifier
+     *     namespace.  This namespace is scoped to the parent choice node.
+     * </pre>
+     */
+    default @NonNull Optional<CaseEffectiveStatement> findCase(final @NonNull QName qname) {
+        return DefaultMethodHelpers.filterOptional(findSchemaTreeNode(qname), CaseEffectiveStatement.class);
     }
 }

@@ -14,13 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.NamespacedEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-final class SingletonNamespace<T extends NamespacedEffectiveStatement<?>> implements Map<QName, T> {
-    private final @NonNull T item;
+final class SingletonNamespace<A, E extends EffectiveStatement<A, ?>> implements Map<A, E> {
+    private final @NonNull E item;
 
-    SingletonNamespace(final T item) {
+    SingletonNamespace(final E item) {
         this.item = requireNonNull(item);
     }
 
@@ -45,23 +44,23 @@ final class SingletonNamespace<T extends NamespacedEffectiveStatement<?>> implem
     }
 
     @Override
-    public T get(final Object key) {
+    public E get(final Object key) {
         return containsKey(key) ? item : null;
     }
 
     @Override
-    public T put(final QName key, final T value) {
+    public E put(final A key, final E value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public T remove(final Object key) {
+    public E remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public void putAll(final Map<? extends QName, ? extends T> m) {
+    public void putAll(final Map<? extends A, ? extends E> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -71,23 +70,23 @@ final class SingletonNamespace<T extends NamespacedEffectiveStatement<?>> implem
     }
 
     @Override
-    public Set<QName> keySet() {
+    public Set<A> keySet() {
         return Set.of(item.argument());
     }
 
     @Override
-    public Collection<T> values() {
+    public Collection<E> values() {
         return List.of(item);
     }
 
     @Override
-    public Set<Entry<QName, T>> entrySet() {
+    public Set<Entry<A, E>> entrySet() {
         return Set.of(Map.entry(item.argument(), item));
     }
 
     @Override
     public int hashCode() {
-        return item.getIdentifier().hashCode() ^ item.hashCode();
+        return item.argument().hashCode() ^ item.hashCode();
     }
 
     @Override
@@ -95,11 +94,11 @@ final class SingletonNamespace<T extends NamespacedEffectiveStatement<?>> implem
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SingletonNamespace) {
-            return item.equals(((SingletonNamespace<?>) obj).item);
+        if (obj instanceof SingletonNamespace<?, ?> singleton) {
+            return item.equals(singleton.item);
         }
-        if (obj instanceof Map) {
-            final var it = ((Map<?, ?>) obj).entrySet().iterator();
+        if (obj instanceof Map<?, ?> map) {
+            final var it = map.entrySet().iterator();
             if (it.hasNext()) {
                 final var entry = it.next();
                 if (!it.hasNext() && item.argument().equals(entry.getKey()) && item.equals(entry.getValue())) {
