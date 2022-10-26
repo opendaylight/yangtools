@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,23 +23,19 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.PrefixToEffectiveModuleNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.QNameModuleToPrefixNamespace;
 
 final class ModuleNamespaceContext implements NamespaceContext {
     private static final Entry<String, String> YIN_PREFIX_AND_NAMESPACE =
             Map.entry(XMLConstants.DEFAULT_NS_PREFIX, YangConstants.RFC6020_YIN_NAMESPACE_STRING);
 
     private final ListMultimap<@NonNull String, @NonNull String> namespaceToPrefix;
-    private final Map<String, @NonNull ModuleEffectiveStatement> prefixToModule;
-    private final Map<QNameModule, @NonNull String> moduleToPrefix;
+    private final ModuleEffectiveStatement module;
 
     ModuleNamespaceContext(final ModuleEffectiveStatement module) {
-        prefixToModule = requireNonNull(module.getAll(PrefixToEffectiveModuleNamespace.class));
-        moduleToPrefix = requireNonNull(module.getAll(QNameModuleToPrefixNamespace.class));
+        this.module = requireNonNull(module);
 
         final var namespaces = ImmutableListMultimap.<String, String>builder();
-        for (var entry : moduleToPrefix.entrySet()) {
+        for (var entry : module.importedNamespaces()) {
             namespaces.put(entry.getKey().getNamespace().toString(), entry.getValue());
         }
         namespaceToPrefix = namespaces.build();
@@ -53,10 +49,9 @@ final class ModuleNamespaceContext implements NamespaceContext {
             case XMLConstants.DEFAULT_NS_PREFIX -> YangConstants.RFC6020_YIN_NAMESPACE_STRING;
             case XMLConstants.XML_NS_PREFIX -> XMLConstants.XML_NS_URI;
             case XMLConstants.XMLNS_ATTRIBUTE -> XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-            default -> {
-                final var module = prefixToModule.get(prefix);
-                yield module != null ? module.localQNameModule().getNamespace().toString() : XMLConstants.NULL_NS_URI;
-            }
+            default -> module.findImportedModule(prefix)
+                .map(importedModule -> importedModule.localQNameModule().getNamespace().toString())
+                .orElse(XMLConstants.NULL_NS_URI);
         };
     }
 
@@ -88,17 +83,17 @@ final class ModuleNamespaceContext implements NamespaceContext {
         };
     }
 
-    Entry<String, String> prefixAndNamespaceFor(final QNameModule module) {
-        if (YangConstants.RFC6020_YIN_MODULE.equals(module)) {
+    Entry<String, String> prefixAndNamespaceFor(final QNameModule namespace) {
+        if (YangConstants.RFC6020_YIN_MODULE.equals(namespace)) {
             return YIN_PREFIX_AND_NAMESPACE;
         }
 
-        final String prefix = moduleToPrefix.get(module);
-        checkArgument(prefix != null, "Module %s does not map to a prefix", module);
-        return Map.entry(prefix, module.getNamespace().toString());
+        final String prefix = module.findNamespacePrefix(namespace)
+            .orElseThrow(() -> new IllegalArgumentException("Module " + namespace +" does not map to a prefix"));
+        return Map.entry(prefix, namespace.getNamespace().toString());
     }
 
-    Map<String, String> prefixesAndNamespaces() {
-        return Maps.transformValues(prefixToModule, module -> module.localQNameModule().getNamespace().toString());
+    Collection<Entry<String, ModuleEffectiveStatement>> importedModules() {
+        return module.importedModules();
     }
 }
