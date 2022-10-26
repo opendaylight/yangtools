@@ -15,7 +15,6 @@ import java.util.Optional;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stax.StAXSource;
@@ -92,7 +91,7 @@ public final class YinExportUtils {
     private static void writeReaderToOutput(final XMLEventReader reader, final OutputStream output)
             throws XMLStreamException {
         try {
-            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+            final var transformer = TRANSFORMER_FACTORY.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
             transformer.transform(new StAXSource(reader), new StreamResult(output));

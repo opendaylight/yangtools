@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -56,7 +55,7 @@ final class StatementPrefixResolver {
             if (haystack == needle) {
                 return true;
             }
-            for (DeclaredStatement<?> child : haystack.declaredSubstatements()) {
+            for (var child : haystack.declaredSubstatements()) {
                 if (contains(child, needle)) {
                     return true;
                 }
@@ -76,25 +75,24 @@ final class StatementPrefixResolver {
     }
 
     static StatementPrefixResolver forModule(final ModuleEffectiveStatement module) {
-        final Map<QNameModule, String> imports = module.getAll(QNameModuleToPrefixNamespace.class);
-        final Collection<SubmoduleEffectiveStatement> submodules = module.getAll(
-            NameToEffectiveSubmoduleNamespace.class).values();
+        final var imports = module.getAll(QNameModuleToPrefixNamespace.class);
+        final var submodules = module.getAll(NameToEffectiveSubmoduleNamespace.class).values();
         if (submodules.isEmpty()) {
             // Simple: it's just the module
             return new StatementPrefixResolver(imports);
         }
 
         // Stage one: check what everyone thinks about imports
-        final Map<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> prefixToNamespaces = new HashMap<>();
+        final var prefixToNamespaces = new HashMap<String, Multimap<QNameModule, EffectiveStatement<?, ?>>>();
         indexPrefixes(prefixToNamespaces, imports, module);
-        for (SubmoduleEffectiveStatement submodule : submodules) {
+        for (var submodule : submodules) {
             indexPrefixes(prefixToNamespaces, submodule.getAll(QNameModuleToPrefixNamespace.class), submodule);
         }
 
         // Stage two: see what QNameModule -> prefix mappings there are. We will need to understand this in step three
-        final Multimap<QNameModule, String> namespaceToPrefixes = HashMultimap.create();
-        for (Entry<String, Multimap<QNameModule, EffectiveStatement<?,?>>> entry : prefixToNamespaces.entrySet()) {
-            for (QNameModule namespace : entry.getValue().keySet()) {
+        final var namespaceToPrefixes = HashMultimap.<QNameModule, String>create();
+        for (var entry : prefixToNamespaces.entrySet()) {
+            for (var namespace : entry.getValue().keySet()) {
                 namespaceToPrefixes.put(namespace, entry.getKey());
             }
         }
@@ -103,14 +101,13 @@ final class StatementPrefixResolver {
         final Builder<QNameModule, Object> builder = ImmutableMap.builderWithExpectedSize(prefixToNamespaces.size());
 
         // ... first resolve unambiguous mappings ...
-        final Iterator<Entry<String, Multimap<QNameModule, EffectiveStatement<?, ?>>>> it =
-                prefixToNamespaces.entrySet().iterator();
+        final var it = prefixToNamespaces.entrySet().iterator();
         while (it.hasNext()) {
-            final Entry<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> entry = it.next();
-            final Multimap<QNameModule, EffectiveStatement<?, ?>> modules = entry.getValue();
+            final var entry = it.next();
+            final var modules = entry.getValue();
             if (modules.size() == 1) {
                 // Careful now: the namespace needs to be unambiguous
-                final QNameModule namespace = modules.keys().iterator().next();
+                final var namespace = modules.keys().iterator().next();
                 if (namespaceToPrefixes.get(namespace).size() == 1) {
                     builder.put(namespace, entry.getKey());
                     it.remove();
@@ -120,11 +117,11 @@ final class StatementPrefixResolver {
 
         // .. check for any remaining conflicts ...
         if (!prefixToNamespaces.isEmpty()) {
-            final Multimap<QNameModule, Entry<DeclaredStatement<?>, String>> conflicts = ArrayListMultimap.create();
-            for (Entry<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> entry : prefixToNamespaces.entrySet()) {
-                for (Entry<QNameModule, EffectiveStatement<?, ?>> namespace : entry.getValue().entries()) {
-                    conflicts.put(namespace.getKey(), new SimpleImmutableEntry<>(namespace.getValue().getDeclared(),
-                            entry.getKey()));
+            final var conflicts = ArrayListMultimap.<QNameModule, Entry<DeclaredStatement<?>, String>>create();
+            for (var entry : prefixToNamespaces.entrySet()) {
+                for (var namespaceEntry : entry.getValue().entries()) {
+                    conflicts.put(namespaceEntry.getKey(),
+                        new SimpleImmutableEntry<>(namespaceEntry.getValue().getDeclared(), entry.getKey()));
                 }
             }
 
@@ -139,12 +136,12 @@ final class StatementPrefixResolver {
     }
 
     Optional<String> findPrefix(final DeclaredStatement<?> stmt) {
-        final QNameModule module = stmt.statementDefinition().getStatementName().getModule();
+        final var module = stmt.statementDefinition().getStatementName().getModule();
         if (YangConstants.RFC6020_YIN_MODULE.equals(module)) {
             return Optional.empty();
         }
 
-        final Object obj = lookup.get(module);
+        final var obj = lookup.get(module);
         if (obj != null) {
             return decodeEntry(obj, stmt);
         }
@@ -159,8 +156,8 @@ final class StatementPrefixResolver {
         //        - or DeclaredStatement should provide the prefix?
         //        The second one seems cleaner, as that means we would not have perform any lookup at all...
         Entry<QNameModule, ?> match = null;
-        for (Entry<QNameModule, ?> entry : lookup.entrySet()) {
-            final QNameModule ns = entry.getKey();
+        for (var entry : lookup.entrySet()) {
+            final var ns = entry.getKey();
             if (module.equals(ns.withoutRevision()) && (match == null
                     || Revision.compare(match.getKey().getRevision(), ns.getRevision()) < 0)) {
                 match = entry;
@@ -185,7 +182,7 @@ final class StatementPrefixResolver {
 
     private static void indexPrefixes(final Map<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> map,
             final Map<QNameModule, String> imports, final EffectiveStatement<?, ?> stmt) {
-        for (Entry<QNameModule, String> entry : imports.entrySet()) {
+        for (var entry : imports.entrySet()) {
             map.computeIfAbsent(entry.getValue(), key -> ArrayListMultimap.create()).put(entry.getKey(), stmt);
         }
     }

@@ -17,10 +17,8 @@ import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -153,12 +151,12 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      * @return True if the statement was pushed. False if the statement was suppressed.
      */
     private boolean pushStatement(final DeclaredStatement<?> stmt) {
-        final StatementDefinition def = stmt.statementDefinition();
+        final var def = stmt.statementDefinition();
         if (ignoredStatements.contains(def)) {
             return false;
         }
 
-        final Collection<? extends DeclaredStatement<?>> children = stmt.declaredSubstatements();
+        final var children = stmt.declaredSubstatements();
         if (omitDefaultStatements && children.isEmpty()) {
             // This statement does not have substatements, check if its value matches the declared default, like
             // "config true", "mandatory false", etc.
@@ -172,7 +170,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         addIndent();
 
         // Add statement prefixed with namespace if needed
-        final Optional<String> prefix = resolver.findPrefix(stmt);
+        final var prefix = resolver.findPrefix(stmt);
         if (prefix.isPresent()) {
             strings.add(prefix.get());
             strings.add(":");

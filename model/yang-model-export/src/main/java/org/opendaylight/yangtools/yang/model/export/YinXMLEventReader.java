@@ -17,9 +17,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Queue;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLEventFactory;
@@ -116,7 +114,7 @@ final class YinXMLEventReader implements XMLEventReader {
 
     @Override
     public String getElementText() throws XMLStreamException {
-        XMLEvent current = peek();
+        var current = peek();
         if (current == null) {
             throw new XMLStreamException("End of event stream");
         }
@@ -139,7 +137,7 @@ final class YinXMLEventReader implements XMLEventReader {
 
     @Override
     public XMLEvent nextTag() throws XMLStreamException {
-        final XMLEvent next = next();
+        final var next = next();
         if (next instanceof Characters) {
             throw new XMLStreamException("Significant characters encountered: " + next);
         }
@@ -158,23 +156,23 @@ final class YinXMLEventReader implements XMLEventReader {
     }
 
     private Attribute attribute(final QName qname, final String value) {
-        final Entry<String, String> ns = namespaceContext.prefixAndNamespaceFor(qname.getModule());
+        final var ns = namespaceContext.prefixAndNamespaceFor(qname.getModule());
         return eventFactory.createAttribute(ns.getKey(), ns.getValue(), qname.getLocalName(), value);
     }
 
     private StartElement startElement(final QName qname) {
-        final Entry<String, String> ns = namespaceContext.prefixAndNamespaceFor(qname.getModule());
+        final var ns = namespaceContext.prefixAndNamespaceFor(qname.getModule());
         return eventFactory.createStartElement(ns.getKey(), ns.getValue(), qname.getLocalName(), emptyIterator(),
             emptyIterator(), namespaceContext);
     }
 
     private EndElement endElement(final QName qname) {
-        final Entry<String, String> ns = namespaceContext.prefixAndNamespaceFor(qname.getModule());
+        final var ns = namespaceContext.prefixAndNamespaceFor(qname.getModule());
         return eventFactory.createEndElement(ns.getKey(), ns.getValue(), qname.getLocalName());
     }
 
     private void nextStatement() {
-        final OpenElement current = stack.peek();
+        final var current = stack.peek();
         if (current == null) {
             return;
         }
@@ -196,17 +194,17 @@ final class YinXMLEventReader implements XMLEventReader {
     }
 
     private void addStatement(final DeclaredStatement<?> statement) {
-        final StatementDefinition def = statement.statementDefinition();
-        final QName name = def.getStatementName();
-        final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
+        final var def = statement.statementDefinition();
+        final var name = def.getStatementName();
+        final var optArgDef = def.getArgumentDefinition();
         if (optArgDef.isPresent()) {
-            final ArgumentDefinition argDef = optArgDef.get();
-            final QName argName = argDef.getArgumentName();
+            final var argDef = optArgDef.orElseThrow();
+            final var argName = argDef.getArgumentName();
             if (argDef.isYinElement()) {
                 events.addAll(Arrays.asList(startElement(name), startElement(argName),
                     eventFactory.createCharacters(statement.rawArgument()), endElement(argName)));
             } else {
-                final Entry<String, String> ns = namespaceContext.prefixAndNamespaceFor(name.getModule());
+                final var ns = namespaceContext.prefixAndNamespaceFor(name.getModule());
                 events.add(eventFactory.createStartElement(ns.getKey(), ns.getValue(), name.getLocalName(),
                     singletonIterator(attribute(argName, statement.rawArgument())), emptyIterator(), namespaceContext));
             }

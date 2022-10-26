@@ -11,12 +11,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableListMultimap.Builder;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.xml.XMLConstants;
@@ -40,9 +38,9 @@ final class ModuleNamespaceContext implements NamespaceContext {
         prefixToModule = requireNonNull(module.getAll(PrefixToEffectiveModuleNamespace.class));
         moduleToPrefix = requireNonNull(module.getAll(QNameModuleToPrefixNamespace.class));
 
-        final Builder<String, String> namespaces = ImmutableListMultimap.builder();
-        for (Entry<QNameModule, @NonNull String> e : moduleToPrefix.entrySet()) {
-            namespaces.put(e.getKey().getNamespace().toString(), e.getValue());
+        final var namespaces = ImmutableListMultimap.<String, String>builder();
+        for (var entry : moduleToPrefix.entrySet()) {
+            namespaces.put(entry.getKey().getNamespace().toString(), entry.getValue());
         }
         namespaceToPrefix = namespaces.build();
     }
@@ -56,7 +54,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
             case XMLConstants.XML_NS_PREFIX -> XMLConstants.XML_NS_URI;
             case XMLConstants.XMLNS_ATTRIBUTE -> XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
             default -> {
-                final ModuleEffectiveStatement module = prefixToModule.get(prefix);
+                final var module = prefixToModule.get(prefix);
                 yield module != null ? module.localQNameModule().getNamespace().toString() : XMLConstants.NULL_NS_URI;
             }
         };
@@ -71,7 +69,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
             case XMLConstants.XML_NS_URI -> XMLConstants.XML_NS_PREFIX;
             case XMLConstants.XMLNS_ATTRIBUTE_NS_URI -> XMLConstants.XMLNS_ATTRIBUTE;
             default -> {
-                final List<@NonNull String> prefixes = namespaceToPrefix.get(namespaceURI);
+                final var prefixes = namespaceToPrefix.get(namespaceURI);
                 yield prefixes.isEmpty() ? null : prefixes.get(0);
             }
         };

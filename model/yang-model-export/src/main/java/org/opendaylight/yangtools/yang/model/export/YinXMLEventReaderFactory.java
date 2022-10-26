@@ -15,9 +15,7 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 
 /**
  * Factory for creating {@link XMLEventReader} instances reporting events equivalent to reading a YIN document defining
@@ -56,7 +54,7 @@ public final class YinXMLEventReaderFactory {
     private static final YinXMLEventReaderFactory DEFAULT;
 
     static {
-        final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
+        final var eventFactory = XMLEventFactory.newFactory();
         eventFactory.setLocation(DUMMY_LOCATION);
         DEFAULT = new YinXMLEventReaderFactory(eventFactory);
     }
@@ -89,9 +87,8 @@ public final class YinXMLEventReaderFactory {
      * @throws IllegalArgumentException if the specified module does not expose declared model
      */
     public XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module) {
-        final ModuleStatement declared = module.getDeclared();
+        final var declared = module.getDeclared();
         checkArgument(declared != null, "Module %s does not expose declared model", module);
-
         return new YinXMLEventReader(eventFactory, new ModuleNamespaceContext(module), declared);
     }
 
@@ -106,7 +103,7 @@ public final class YinXMLEventReaderFactory {
      */
     public XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module,
             final SubmoduleEffectiveStatement submodule) {
-        final SubmoduleStatement declared = submodule.getDeclared();
+        final var declared = submodule.getDeclared();
         checkArgument(declared != null, "Submodule %s does not expose declared model", submodule);
         return new YinXMLEventReader(eventFactory, new ModuleNamespaceContext(module), declared);
     }
