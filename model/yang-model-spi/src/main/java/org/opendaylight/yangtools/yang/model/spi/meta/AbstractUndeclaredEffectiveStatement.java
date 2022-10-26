@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,12 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement.DataTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 @Beta
@@ -46,28 +44,16 @@ public abstract non-sealed class AbstractUndeclaredEffectiveStatement<A, D exten
      * @param <D> Class representing declared version of this statement.
      */
     public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>>
-            extends AbstractUndeclaredEffectiveStatement<A, D> {
-        @Override
-        @SuppressWarnings("unchecked")
-        protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
-                final Class<N> namespace) {
-            if (SchemaTreeNamespace.class.equals(namespace)) {
-                return Optional.of((Map<K, V>) schemaTreeNamespace());
-            }
-            return super.getNamespaceContents(namespace);
-        }
-
+            extends AbstractUndeclaredEffectiveStatement<A, D> implements SchemaTreeAwareEffectiveStatement<A, D> {
         /**
          * Indexing support for {@link DataNodeContainer#findDataChildByName(QName)}.
          */
         protected final @Nullable DataSchemaNode dataSchemaNode(final QName name) {
             // Only DataNodeContainer subclasses should be calling this method
             verify(this instanceof DataNodeContainer);
-            final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(name));
-            return child instanceof DataSchemaNode ? (DataSchemaNode) child : null;
+            final var child = findSchemaTreeNode(name).orElse(null);
+            return child instanceof DataSchemaNode dataChild ? dataChild : null;
         }
-
-        protected abstract Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace();
     }
 
     /**
@@ -77,18 +63,9 @@ public abstract non-sealed class AbstractUndeclaredEffectiveStatement<A, D exten
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>> extends WithSchemaTree<A, D> {
-        @Override
-        @SuppressWarnings("unchecked")
-        protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
-                final Class<N> namespace) {
-            if (DataTreeNamespace.class.equals(namespace)) {
-                return Optional.of((Map<K, V>) dataTreeNamespace());
-            }
-            return super.getNamespaceContents(namespace);
-        }
-
-        protected abstract Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace();
+    public abstract static class WithDataTree<A, D extends DeclaredStatement<A>> extends WithSchemaTree<A, D>
+            implements DataTreeAwareEffectiveStatement<A, D> {
+        // Nothing else
     }
 
     /**
@@ -117,8 +94,8 @@ public abstract non-sealed class AbstractUndeclaredEffectiveStatement<A, D exten
         }
 
         @Override
-        protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
-            return schemaTree;
+        public final Collection<SchemaTreeEffectiveStatement<?>> schemaTreeNodes() {
+            return schemaTree.values();
         }
     }
 
@@ -153,13 +130,23 @@ public abstract non-sealed class AbstractUndeclaredEffectiveStatement<A, D exten
         }
 
         @Override
-        protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
-            return schemaTree;
+        public final Collection<SchemaTreeEffectiveStatement<?>> schemaTreeNodes() {
+            return schemaTree.values();
         }
 
         @Override
-        protected final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
-            return dataTree;
+        public final Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(QName qname) {
+            return Optional.ofNullable(schemaTree.get(requireNonNull(qname)));
+        }
+
+        @Override
+        public final Collection<DataTreeEffectiveStatement<?>> dataTreeNodes() {
+            return dataTree.values();
+        }
+
+        @Override
+        public final Optional<DataTreeEffectiveStatement<?>> findDataTreeNode(QName qname) {
+            return Optional.ofNullable(dataTree.get(requireNonNull(qname)));
         }
     }
 }

@@ -19,11 +19,11 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
 
 /**
- * A filter-based implementation of a Map to serve with {@link TypedefNamespace}.
+ * A filter-based implementation of a Map to serve with {@link TypedefAwareEffectiveStatement#typedefNamespace()}.
  */
 final class LinearTypedefNamespace extends AbstractMap<QName, TypedefEffectiveStatement> implements Immutable {
     private final Collection<TypedefEffectiveStatement> values;

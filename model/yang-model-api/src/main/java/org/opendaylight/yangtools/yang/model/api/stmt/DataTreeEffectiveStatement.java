@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Common interface grouping all {@link EffectiveStatement}s which are accessible via
- * {@link DataTreeAwareEffectiveStatement.DataTreeNamespace}. This such statement corresponds to a {@code data node}.
+ * {@link DataTreeAwareEffectiveStatement#dataTreeNodes()}. This such statement corresponds to a {@code data node}.
  *
  * <p>
  * This interface could be named {@code SchemaNodeEffectiveStatement}, but that could induce a notion that it has
