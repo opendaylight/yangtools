@@ -27,6 +27,7 @@ import java.lang.annotation.RetentionPolicy;
  * and does not affect any runtime behaviour.
  * </p>
  */
+@Deprecated(since = "9.0.2", forRemoval = true)
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @interface Rfc6020AbnfRule {
