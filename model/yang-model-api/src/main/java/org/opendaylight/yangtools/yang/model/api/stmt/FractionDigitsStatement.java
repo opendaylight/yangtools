@@ -11,12 +11,16 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code fraction-digits} statement.
+ */
 public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.FRACTION_DIGITS;
     }
 
+    @Deprecated(since = "10.0.0", forRemoval = true)
     default int getValue() {
         return argument().intValue();
     }

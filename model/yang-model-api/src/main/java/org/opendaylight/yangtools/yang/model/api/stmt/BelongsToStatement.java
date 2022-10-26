@@ -13,6 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code belongs-to} statement.
+ */
 public interface BelongsToStatement extends DeclaredStatement<Unqualified> {
     @Override
     default StatementDefinition statementDefinition() {

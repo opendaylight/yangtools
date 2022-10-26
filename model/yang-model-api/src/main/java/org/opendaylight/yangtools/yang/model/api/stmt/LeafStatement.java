@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code leaf} statement.
+ */
 public interface LeafStatement extends DataDefinitionStatement, TypeAwareDeclaredStatement,
         ConfigStatementAwareDeclaredStatement<QName>, DefaultStatementAwareDeclaredStatement,
         MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {

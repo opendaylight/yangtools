@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code error-app-tag} statement.
+ */
 public interface ErrorAppTagStatement extends DeclaredStatement<String> {
     @Override
     default StatementDefinition statementDefinition() {

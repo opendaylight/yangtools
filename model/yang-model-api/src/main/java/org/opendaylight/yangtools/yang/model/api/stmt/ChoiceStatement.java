@@ -13,6 +13,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code choice} statement.
+ */
 public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
         DefaultStatementAwareDeclaredStatement, MandatoryStatementAwareDeclaredStatement<QName> {
     @Override

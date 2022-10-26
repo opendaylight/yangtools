@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code base} statement.
+ */
 public interface BaseStatement extends DeclaredStatement<QName> {
     @Override
     default StatementDefinition statementDefinition() {

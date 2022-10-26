@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code import} statement.
+ */
 public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified> {
     @Override
     default StatementDefinition statementDefinition() {
@@ -25,7 +27,7 @@ public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified
     }
 
     default @Nullable RevisionDateStatement getRevisionDate() {
-        final Optional<RevisionDateStatement> opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

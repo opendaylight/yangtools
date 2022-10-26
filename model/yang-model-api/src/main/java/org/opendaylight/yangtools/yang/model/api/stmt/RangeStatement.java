@@ -8,16 +8,15 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code range} statement.
+ */
 public interface RangeStatement extends ConstrainedDocumentedDeclaredStatement<List<ValueRange>> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.RANGE;
     }
-
-    @Override
-    @NonNull List<ValueRange> argument();
 }
