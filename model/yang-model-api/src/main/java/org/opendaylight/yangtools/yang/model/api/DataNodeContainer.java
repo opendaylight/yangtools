@@ -112,19 +112,15 @@ public interface DataNodeContainer {
      * @throws NullPointerException if any argument is null
      */
     default Optional<DataSchemaNode> findDataChildByName(final QName first, final QName... others) {
-        Optional<DataSchemaNode> optCurrent = findDataChildByName(first);
-        for (QName qname : others) {
-            if (optCurrent.isPresent()) {
-                final DataSchemaNode current = optCurrent.get();
-                if (current instanceof DataNodeContainer) {
-                    optCurrent = ((DataNodeContainer) current).findDataChildByName(qname);
-                    continue;
-                }
+        var current = dataChildByName(first);
+        for (var qname : others) {
+            if (current instanceof DataNodeContainer container) {
+                current = container.dataChildByName(qname);
+            } else {
+                return Optional.empty();
             }
-
-            return Optional.empty();
         }
-        return optCurrent;
+        return Optional.ofNullable(current);
     }
 
     /**
