@@ -34,18 +34,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 final class YinXMLEventReader implements XMLEventReader {
-    private static final class OpenElement {
-        final Iterator<? extends DeclaredStatement<?>> children;
-        final QName name;
-
-        OpenElement(final Iterator<? extends DeclaredStatement<?>> children) {
-            this.children = requireNonNull(children);
-            name = null;
-        }
-
-        OpenElement(final QName name, final Iterator<? extends DeclaredStatement<?>> children) {
-            this.children = requireNonNull(children);
-            this.name = requireNonNull(name);
+    private static record OpenElement(QName name, Iterator<? extends DeclaredStatement<?>> children) {
+        OpenElement {
+            requireNonNull(name);
+            requireNonNull(children);
         }
     }
 
