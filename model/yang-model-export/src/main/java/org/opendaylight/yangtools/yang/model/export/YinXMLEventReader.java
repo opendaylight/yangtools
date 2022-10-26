@@ -59,8 +59,9 @@ final class YinXMLEventReader implements XMLEventReader {
 
         events.add(eventFactory.createStartElement(XMLConstants.DEFAULT_NS_PREFIX, name.getNamespace().toString(),
             name.getLocalName(), singletonIterator(attribute(arg.argumentName(), root.rawArgument())),
-            transform(namespaceContext.prefixesAndNamespaces().entrySet().iterator(),
-                e -> eventFactory.createNamespace(e.getKey(), e.getValue())),
+            transform(namespaceContext.importedModules().iterator(),
+                e -> eventFactory.createNamespace(e.getKey(),
+                    e.getValue().localQNameModule().getNamespace().toString())),
             namespaceContext));
 
         stack.push(new OpenElement(name, root.declaredSubstatements().iterator()));

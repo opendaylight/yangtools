@@ -18,7 +18,7 @@ final class DefaultMethodHelpers {
         // Hidden on purpose
     }
 
-    static <E> @NonNull Optional<E> filterOptional(final @NonNull Class<E> type, final @NonNull Optional<?> optional) {
+    static <E> @NonNull Optional<E> filterOptional(final @NonNull Optional<?> optional, final @NonNull Class<E> type) {
         return optional.filter(type::isInstance).map(type::cast);
     }
 }

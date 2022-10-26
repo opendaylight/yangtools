@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelpers.filterOptional;
-
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,14 +29,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  */
 public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
     /**
-     * Namespace of {@code schema node}s defined within this node.
+     * Enumerate all {@code schema node}s defined within this node.
+     *
+     * @return All substatements participating on the {@code schema tree}
      */
-    @NonNullByDefault
-    abstract class SchemaTreeNamespace extends EffectiveStatementNamespace<SchemaTreeEffectiveStatement<?>> {
-        private SchemaTreeNamespace() {
-            // Should never be instantiated
-        }
-    }
+    @NonNull Collection<SchemaTreeEffectiveStatement<?>> schemaTreeNodes();
 
     /**
      * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
@@ -48,9 +42,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * @return Schema tree child, or empty
      * @throws NullPointerException if {@code qname} is null
      */
-    default @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final @NonNull QName qname) {
-        return get(SchemaTreeNamespace.class, requireNonNull(qname));
-    }
+    @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(@NonNull QName qname);
 
     /**
      * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
@@ -62,7 +54,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * @throws NullPointerException if any argument is null
      */
     default <E> @NonNull Optional<E> findSchemaTreeNode(final @NonNull Class<E> type, final @NonNull QName qname) {
-        return filterOptional(type, findSchemaTreeNode(qname));
+        return DefaultMethodHelpers.filterOptional(findSchemaTreeNode(qname), type);
     }
 
     /**
@@ -88,7 +80,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * @throws NoSuchElementException if {@code qnames} is empty
      */
     default <E> @NonNull Optional<E> findSchemaTreeNode(final @NonNull Class<E> type, final @NonNull QName... qnames) {
-        return filterOptional(type, findSchemaTreeNode(Arrays.asList(qnames)));
+        return DefaultMethodHelpers.filterOptional(findSchemaTreeNode(Arrays.asList(qnames)), type);
     }
 
     /**
@@ -128,7 +120,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      */
     default <E> @NonNull Optional<E> findSchemaTreeNode(final @NonNull Class<E> type,
             final @NonNull List<QName> qnames) {
-        return filterOptional(type, findSchemaTreeNode(qnames));
+        return DefaultMethodHelpers.filterOptional(findSchemaTreeNode(qnames), type);
     }
 
     /**
