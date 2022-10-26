@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 
 public class YT1262Test extends AbstractYangTest {
     @Test
@@ -47,6 +49,8 @@ public class YT1262Test extends AbstractYangTest {
     }
 
     private static void assertTypedef(final EffectiveStatement<?, ?> parent, final String typedefName) {
-        assertTrue(parent.get(TypedefNamespace.class, QName.create("foo", typedefName)).isPresent());
+        assertThat(parent, instanceOf(TypedefAwareEffectiveStatement.class));
+        assertNotNull(((TypedefAwareEffectiveStatement<?, ?>) parent).typedefNamespace()
+            .get(QName.create("foo", typedefName)));
     }
 }

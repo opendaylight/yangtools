@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * {@link ModuleEffectiveStatement.PrefixToEffectiveModuleNamespace} and
  * {@link ModuleEffectiveStatement.QNameModuleToPrefixNamespace} namespaces.
  */
-public interface SubmoduleEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<Unqualified, SubmoduleStatement> {
+public non-sealed interface SubmoduleEffectiveStatement
+        extends DataTreeAwareEffectiveStatement<Unqualified, SubmoduleStatement>,
+                RootEffectiveStatement<SubmoduleStatement>,
+                TypedefAwareEffectiveStatement<Unqualified, SubmoduleStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.SUBMODULE;

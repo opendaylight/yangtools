@@ -48,10 +48,10 @@ public class Bug6183Test extends AbstractYangTest {
 
         assertEquals(4, myChoice.getCases().size());
 
-        final CaseSchemaNode implCase = myChoice.findCase(foo("implicit-case-container")).get();
-        final CaseSchemaNode declCaseOne = myChoice.findCase(foo("declared-case-one")).get();
-        final CaseSchemaNode secondImplCase = myChoice.findCase(foo("second-implicit-case-container")).get();
-        final CaseSchemaNode declCaseTwo = myChoice.findCase(foo("declared-case-two")).get();
+        final CaseSchemaNode implCase = myChoice.findCaseNode(foo("implicit-case-container")).orElseThrow();
+        final CaseSchemaNode declCaseOne = myChoice.findCaseNode(foo("declared-case-one")).orElseThrow();
+        final CaseSchemaNode secondImplCase = myChoice.findCaseNode(foo("second-implicit-case-container")).orElseThrow();
+        final CaseSchemaNode declCaseTwo = myChoice.findCaseNode(foo("declared-case-two")).orElseThrow();
 
         assertEquals(1, declCaseOne.getChildNodes().size());
         assertFalse(getLeafSchemaNode(declCaseOne, "leaf-in-declare-case-one").isAugmenting());
