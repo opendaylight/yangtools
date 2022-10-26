@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code argument} statement.
  */
-@Rfc6020AbnfRule("argument-stmt")
 public interface ArgumentStatement extends DeclaredStatement<QName> {
     @Override
     default StatementDefinition statementDefinition() {
@@ -25,8 +23,8 @@ public interface ArgumentStatement extends DeclaredStatement<QName> {
     }
 
     default @Nullable YinElementStatement getYinElement() {
-        final Optional<YinElementStatement> opt = findFirstDeclaredSubstatement(YinElementStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(YinElementStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
 

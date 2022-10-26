@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-@Rfc6020AbnfRule("module-header-stmts")
 public interface ModuleHeaderGroup {
 
     @Nullable YangVersionStatement getYangVersion();
