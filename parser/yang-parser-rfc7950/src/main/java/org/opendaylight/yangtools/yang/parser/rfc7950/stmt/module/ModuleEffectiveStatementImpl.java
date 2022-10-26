@@ -25,13 +25,9 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
@@ -119,27 +115,62 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
-            final @NonNull Class<N> namespace) {
-        if (PrefixToEffectiveModuleNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) prefixToModule);
-        }
-        if (QNameModuleToPrefixNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) namespaceToPrefix);
-        }
-        if (NameToEffectiveSubmoduleNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) nameToSubmodule);
-        }
-        if (ExtensionEffectiveStatementNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) qnameToExtension);
-        }
-        if (FeatureEffectiveStatementNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) qnameToFeature);
-        }
-        if (IdentityEffectiveStatementNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) qnameToIdentity);
-        }
-        return super.getNamespaceContents(namespace);
+    public Map<QName, ExtensionEffectiveStatement> extensionNamespace() {
+        return qnameToExtension;
+    }
+
+    @Override
+    public Optional<ExtensionEffectiveStatement> findExtension(QName qname) {
+        return findValue(qnameToExtension, qname);
+    }
+
+    @Override
+    public Map<QName, FeatureEffectiveStatement> featureNamespace() {
+        return qnameToFeature;
+    }
+
+    @Override
+    public Optional<FeatureEffectiveStatement> findFeature(final QName qname) {
+        return findValue(qnameToFeature, qname);
+    }
+
+    @Override
+    public Map<QName, IdentityEffectiveStatement> identityNamespace() {
+        return qnameToIdentity;
+    }
+
+    @Override
+    public Optional<IdentityEffectiveStatement> findIdentity(final QName qname) {
+        return findValue(qnameToIdentity, qname);
+    }
+
+    @Override
+    public Collection<Entry<String, ModuleEffectiveStatement>> importedModules() {
+        return prefixToModule.entrySet();
+    }
+
+    @Override
+    public Optional<ModuleEffectiveStatement> findImportedModule(final String prefix) {
+        return findValue(prefixToModule, prefix);
+    }
+
+    @Override
+    public Optional<String> findNamespacePrefix(QNameModule namespace) {
+        return findValue(namespaceToPrefix, namespace);
+    }
+
+    @Override
+    public Collection<Entry<QNameModule, String>> importedNamespaces() {
+        return namespaceToPrefix.entrySet();
+    }
+
+    @Override
+    public Collection<SubmoduleEffectiveStatement> includedSubmodules() {
+        return nameToSubmodule.values();
+    }
+
+    @Override
+    public Optional<SubmoduleEffectiveStatement> findSubmodule(Unqualified submoduleName) {
+        return findValue(nameToSubmodule, submoduleName);
     }
 }

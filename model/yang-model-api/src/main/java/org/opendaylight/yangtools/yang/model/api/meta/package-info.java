@@ -42,11 +42,7 @@
  *
  * <h2>Identifiers and Namespaces</h2>
  * Effective model of YANG has several identifier types and namespaces, which behaves differently
- * and are mostly used during processing data and/or during computing effective (semantic) model.
- *
- * <p>
- * Common abstraction for various types of namespaces is
- * {@link org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace}
- * from which concrete effective model namespaces are derived.
+ * and are mostly used during data processing and transformation. Namespaces are typically exposed as a pair of methods
+ * in an appropriate {@code SomethingAwareEffectiveStatement} -- one for enumeration and one for lookups.
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
