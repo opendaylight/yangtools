@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Effective representation of a {@code config} statement.
+ */
 public interface ConfigEffectiveStatement extends EffectiveStatement<Boolean, ConfigStatement> {
     @Override
     default  StatementDefinition statementDefinition() {

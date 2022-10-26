@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -17,9 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
- * Effective view of a {@link ModuleStatement}.
+ * Effective view of a {@code module} statement.
  */
-@Beta
 public interface ModuleEffectiveStatement
         extends DataTreeAwareEffectiveStatement<Unqualified, ModuleStatement>, SchemaTreeRoot {
     /**
