@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code rpc} statement.
  */
-public interface RpcStatement extends OperationDeclaredStatement {
+public non-sealed interface RpcStatement extends OperationDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.RPC;
