@@ -41,10 +41,7 @@ public final class LeafRefUtils {
 
         final Deque<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
                 contextNodeSchemaPath, module);
-        final Iterator<QNameWithPredicate> leafRefTgtPathFromRootIterator = leafRefPath.getPathFromRoot().iterator();
-
-        while (leafRefTgtPathFromRootIterator.hasNext()) {
-            final QNameWithPredicate qname = leafRefTgtPathFromRootIterator.next();
+        for (QNameWithPredicate qname : leafRefPath.getPathFromRoot()) {
             if (qname.equals(QNameWithPredicate.UP_PARENT)) {
                 absoluteLeafRefTargetPathList.removeLast();
             } else {
@@ -72,7 +69,7 @@ public final class LeafRefUtils {
                 currenDataNodeContainer = container;
             } else if (child instanceof ChoiceSchemaNode choice) {
                 if (nodePathIterator.hasNext()) {
-                    currenDataNodeContainer = choice.findCase(nodePathIterator.next()).orElse(null);
+                    currenDataNodeContainer = choice.findCaseNode(nodePathIterator.next()).orElse(null);
                 } else {
                     break;
                 }

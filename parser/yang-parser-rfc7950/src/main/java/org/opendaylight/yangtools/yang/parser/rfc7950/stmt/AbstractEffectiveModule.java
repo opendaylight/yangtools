@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -199,6 +200,10 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
             .map(prefix -> ((PrefixEffectiveStatement) prefix).argument())
             .findAny()
             .orElseThrow(() -> new SourceException(stmt, "Unable to resolve prefix for %s %s.", type, name));
+    }
+
+    protected static final <K, V> @NonNull Optional<V> findValue(final Map<K, V> map, final K key) {
+        return Optional.ofNullable(map.get(requireNonNull(key)));
     }
 
     // Alright. this is quite ugly

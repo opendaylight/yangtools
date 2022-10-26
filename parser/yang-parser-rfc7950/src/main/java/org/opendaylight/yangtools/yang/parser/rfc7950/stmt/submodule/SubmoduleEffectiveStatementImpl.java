@@ -27,11 +27,8 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.PrefixToEffectiveModuleNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.QNameModuleToPrefixNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -108,16 +105,23 @@ final class SubmoduleEffectiveStatementImpl
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
-            final @NonNull Class<N> namespace) {
-        if (PrefixToEffectiveModuleNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) prefixToModule);
-        }
-        if (QNameModuleToPrefixNamespace.class.equals(namespace)) {
-            return Optional.of((Map<K, V>) namespaceToPrefix);
-        }
-        return super.getNamespaceContents(namespace);
+    public Collection<Entry<String, ModuleEffectiveStatement>> reachableModules() {
+        return prefixToModule.entrySet();
+    }
+
+    @Override
+    public Optional<ModuleEffectiveStatement> findReachableModule(final String prefix) {
+        return findValue(prefixToModule, prefix);
+    }
+
+    @Override
+    public Collection<Entry<QNameModule, String>> importedNamespaces() {
+        return namespaceToPrefix.entrySet();
+    }
+
+    @Override
+    public Optional<String> findNamespacePrefix(QNameModule namespace) {
+        return findValue(namespaceToPrefix, namespace);
     }
 
     @Override
