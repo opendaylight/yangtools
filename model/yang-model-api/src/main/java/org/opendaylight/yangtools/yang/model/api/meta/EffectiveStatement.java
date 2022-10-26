@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -46,31 +45,6 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
      *         statement or null if statement was inferred from context.
      */
     @Nullable D getDeclared();
-
-    /**
-     * Returns value associated with supplied identifier.
-     *
-     * @param <K> Identifier type
-     * @param <V> Value type
-     * @param <N> Namespace identifier type
-     * @param namespace Namespace type
-     * @param identifier Identifier of element.
-     * @return Value if present
-     */
-    <K, V, N extends IdentifierNamespace<K, V>> @NonNull Optional<V> get(@NonNull Class<N> namespace,
-        @NonNull K identifier);
-
-    /**
-     * Returns all local values from supplied namespace.
-     *
-     * @param <K> Identifier type
-     * @param <V> Value type
-     * @param <N> Namespace identifier type
-     * @param namespace Namespace type
-     * @return Key-value mappings, empty if the namespace does not exist.
-     * @throws NullPointerException if namespace is null
-     */
-    <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> getAll(@NonNull Class<N> namespace);
 
     /**
      * Returns a collection of all effective substatements.
