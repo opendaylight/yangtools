@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -137,22 +134,21 @@ public interface DataNodeContainer {
      *
      * @param name QName identifier of the data node
      * @return Direct or indirect child of this DataNodeContainer which is a {@code data node}, empty otherwise
-     * @throws NullPointerException if {@code name} is null
+     * @throws NullPointerException if {@code name} is {@code null}
      */
-    @Beta
     default Optional<DataSchemaNode> findDataTreeChild(final QName name) {
         // First we try to find a direct child and check if it is a data node (as per RFC7950)
-        final Optional<DataSchemaNode> optDataChild = findDataChildByName(name);
-        if (isDataNode(optDataChild)) {
-            return optDataChild;
+        final var dataChild = dataChildByName(name);
+        if (isDataNode(dataChild)) {
+            return Optional.of(dataChild);
         }
 
         // There either is no such node present, or there are Choice/CaseSchemaNodes with the same name involved,
         // hence we have to resort to a full search.
-        for (DataSchemaNode child : getChildNodes()) {
-            if (child instanceof ChoiceSchemaNode) {
-                for (CaseSchemaNode choiceCase : ((ChoiceSchemaNode) child).getCases()) {
-                    final Optional<DataSchemaNode> caseChild = choiceCase.findDataTreeChild(name);
+        for (var child : getChildNodes()) {
+            if (child instanceof ChoiceSchemaNode choice) {
+                for (var choiceCase : choice.getCases()) {
+                    final var caseChild = choiceCase.findDataTreeChild(name);
                     if (caseChild.isPresent()) {
                         return caseChild;
                     }
@@ -171,9 +167,8 @@ public interface DataNodeContainer {
      * @return Direct or indirect child of this DataNodeContainer which is a {@code data node}, empty otherwise
      * @throws IllegalArgumentException if {@code path} is determined to go beyond a not-container-nor-list node.
      * @throws NoSuchElementException if {@code path} is empty
-     * @throws NullPointerException if {@code path} is null or contains a null
+     * @throws NullPointerException if {@code path} is {@code null} or contains a {@code null} element
      */
-    @Beta
     default Optional<DataSchemaNode> findDataTreeChild(final QName... path) {
         return findDataTreeChild(Arrays.asList(path));
     }
@@ -186,31 +181,28 @@ public interface DataNodeContainer {
      * @return Direct or indirect child of this DataNodeContainer which is a {@code data node}, empty otherwise
      * @throws IllegalArgumentException if {@code path} is determined to go beyond a not-container-nor-list node.
      * @throws NoSuchElementException if {@code path} is empty
-     * @throws NullPointerException if {@code path} is null or contains a null
+     * @throws NullPointerException if {@code path} is {@code null} or contains a {@code null} element
      */
-    @Beta
     default Optional<DataSchemaNode> findDataTreeChild(final Iterable<QName> path) {
-        final Iterator<QName> it = path.iterator();
+        final var it = path.iterator();
         DataNodeContainer parent = this;
         do {
-            final Optional<DataSchemaNode> optChild = parent.findDataTreeChild(requireNonNull(it.next()));
+            final var optChild = parent.findDataTreeChild(requireNonNull(it.next()));
             if (optChild.isEmpty() || !it.hasNext()) {
                 return optChild;
             }
 
-            final DataSchemaNode child = optChild.get();
-            checkArgument(child instanceof DataNodeContainer, "Path %s extends beyond terminal child %s", path, child);
-            parent = (DataNodeContainer) child;
+            final var child = optChild.orElseThrow();
+            if (!(child instanceof DataNodeContainer container)) {
+                throw new IllegalArgumentException("Path " + path + " extends beyond terminal child " + child);
+            }
+            parent = container;
         } while (true);
-    }
-
-    private static boolean isDataNode(final Optional<DataSchemaNode> optNode) {
-        return optNode.isPresent() && isDataNode(optNode.orElseThrow());
     }
 
     private static boolean isDataNode(final DataSchemaNode node) {
         return node instanceof ContainerSchemaNode || node instanceof LeafSchemaNode
-                || node instanceof LeafListSchemaNode || node instanceof ListSchemaNode
-                || node instanceof AnydataSchemaNode || node instanceof AnyxmlSchemaNode;
+            || node instanceof LeafListSchemaNode || node instanceof ListSchemaNode
+            || node instanceof AnydataSchemaNode || node instanceof AnyxmlSchemaNode;
     }
 }
