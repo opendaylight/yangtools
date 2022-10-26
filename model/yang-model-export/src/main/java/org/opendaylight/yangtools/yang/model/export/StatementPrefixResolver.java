@@ -15,7 +15,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import java.util.AbstractMap.SimpleImmutableEntry;
@@ -31,8 +30,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.NameToEffectiveSubmoduleNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.QNameModuleToPrefixNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.RootEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 
 /**
@@ -74,19 +72,22 @@ final class StatementPrefixResolver {
         lookup = requireNonNull(map);
     }
 
+    private StatementPrefixResolver(final RootEffectiveStatement<?> stmt) {
+        lookup = ImmutableMap.copyOf(stmt.namespacePrefixes());
+    }
+
     static StatementPrefixResolver forModule(final ModuleEffectiveStatement module) {
-        final var imports = module.getAll(QNameModuleToPrefixNamespace.class);
-        final var submodules = module.getAll(NameToEffectiveSubmoduleNamespace.class).values();
+        final var submodules = module.submodules();
         if (submodules.isEmpty()) {
             // Simple: it's just the module
-            return new StatementPrefixResolver(imports);
+            return new StatementPrefixResolver(module);
         }
 
         // Stage one: check what everyone thinks about imports
         final var prefixToNamespaces = new HashMap<String, Multimap<QNameModule, EffectiveStatement<?, ?>>>();
-        indexPrefixes(prefixToNamespaces, imports, module);
+        indexPrefixes(prefixToNamespaces, module);
         for (var submodule : submodules) {
-            indexPrefixes(prefixToNamespaces, submodule.getAll(QNameModuleToPrefixNamespace.class), submodule);
+            indexPrefixes(prefixToNamespaces, submodule);
         }
 
         // Stage two: see what QNameModule -> prefix mappings there are. We will need to understand this in step three
@@ -98,7 +99,7 @@ final class StatementPrefixResolver {
         }
 
         // Stage three: resolve first order of conflicts, potentially completely resolving mappings...
-        final Builder<QNameModule, Object> builder = ImmutableMap.builderWithExpectedSize(prefixToNamespaces.size());
+        final var builder = ImmutableMap.<QNameModule, Object>builderWithExpectedSize(prefixToNamespaces.size());
 
         // ... first resolve unambiguous mappings ...
         final var it = prefixToNamespaces.entrySet().iterator();
@@ -132,7 +133,7 @@ final class StatementPrefixResolver {
     }
 
     static StatementPrefixResolver forSubmodule(final SubmoduleEffectiveStatement submodule) {
-        return new StatementPrefixResolver(submodule.getAll(QNameModuleToPrefixNamespace.class));
+        return new StatementPrefixResolver(submodule);
     }
 
     Optional<String> findPrefix(final DeclaredStatement<?> stmt) {
@@ -181,8 +182,8 @@ final class StatementPrefixResolver {
     }
 
     private static void indexPrefixes(final Map<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> map,
-            final Map<QNameModule, String> imports, final EffectiveStatement<?, ?> stmt) {
-        for (var entry : imports.entrySet()) {
+            final RootEffectiveStatement<?> stmt) {
+        for (var entry : stmt.namespacePrefixes()) {
             map.computeIfAbsent(entry.getValue(), key -> ArrayListMultimap.create()).put(entry.getKey(), stmt);
         }
     }

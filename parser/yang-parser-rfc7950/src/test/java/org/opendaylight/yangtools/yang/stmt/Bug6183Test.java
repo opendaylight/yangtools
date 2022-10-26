@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -48,10 +47,10 @@ public class Bug6183Test extends AbstractYangTest {
 
         assertEquals(4, myChoice.getCases().size());
 
-        final CaseSchemaNode implCase = myChoice.findCase(foo("implicit-case-container")).get();
-        final CaseSchemaNode declCaseOne = myChoice.findCase(foo("declared-case-one")).get();
-        final CaseSchemaNode secondImplCase = myChoice.findCase(foo("second-implicit-case-container")).get();
-        final CaseSchemaNode declCaseTwo = myChoice.findCase(foo("declared-case-two")).get();
+        final var implCase = myChoice.findCaseNode(foo("implicit-case-container")).orElseThrow();
+        final var declCaseOne = myChoice.findCaseNode(foo("declared-case-one")).orElseThrow();
+        final var secondImplCase = myChoice.findCaseNode(foo("second-implicit-case-container")).orElseThrow();
+        final var declCaseTwo = myChoice.findCaseNode(foo("declared-case-two")).orElseThrow();
 
         assertEquals(1, declCaseOne.getChildNodes().size());
         assertFalse(getLeafSchemaNode(declCaseOne, "leaf-in-declare-case-one").isAugmenting());
