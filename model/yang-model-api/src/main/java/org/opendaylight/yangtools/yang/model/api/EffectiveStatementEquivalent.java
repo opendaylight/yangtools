@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @param <E> Type of equivalent {@link EffectiveStatement}.
  */
-@Beta
 public interface EffectiveStatementEquivalent<E extends EffectiveStatement<?, ?>> {
     /**
      * Return {@link EffectiveStatement} representation of this object.

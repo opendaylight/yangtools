@@ -9,16 +9,14 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * Node which can contain action nodes.
+ * Node which can contain {@link ActionDefinition}.
  */
-@Beta
 public interface ActionNodeContainer {
     /**
      * Return the set of actions.
@@ -32,11 +30,11 @@ public interface ActionNodeContainer {
      *
      * @param qname Action's QName
      * @return Action definition, if found
-     * @throws NullPointerException if qname is null
+     * @throws NullPointerException if {@code qname} is {@code null}
      */
     default Optional<ActionDefinition> findAction(final QName qname) {
         requireNonNull(qname);
-        for (ActionDefinition action : getActions()) {
+        for (var action : getActions()) {
             if (qname.equals(action.getQName())) {
                 return Optional.of(action);
             }

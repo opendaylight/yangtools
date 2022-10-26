@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Trait interface for {@link SchemaNode}s, which have the {@link #isAddedByUses()} method.
  *
  * @deprecated The only user of this trait is MD-SAL's binding component. As such, we provide enough information in
  *             EffectiveStatement tree to reconstruct this information.
  */
-@Beta
 @Deprecated(since = "7.0.9", forRemoval = true)
 public interface AddedByUsesAware {
     /**

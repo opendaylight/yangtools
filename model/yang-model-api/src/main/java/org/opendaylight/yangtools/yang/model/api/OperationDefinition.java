@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
- * Common interface for an operation.
+ * Common interface for an operation, such as an {@link RpcDefinition} or an {@link ActionDefinition}.
  */
-@Beta
 public interface OperationDefinition extends SchemaNode {
     /**
      * Returns the set of type definitions declared under this operation.
@@ -36,7 +34,7 @@ public interface OperationDefinition extends SchemaNode {
      * @return Definition of input parameters for this operation.
      *         The substatements of input define nodes under the operation's input node.
      */
-    InputSchemaNode getInput();
+    @NonNull InputSchemaNode getInput();
 
     /**
      * Returns definition of output parameters for this operation.
@@ -44,5 +42,5 @@ public interface OperationDefinition extends SchemaNode {
      * @return Definition of output parameters for this operation. The
      *         substatements of output define nodes under the operation's output node.
      */
-    OutputSchemaNode getOutput();
+    @NonNull OutputSchemaNode getOutput();
 }

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
-@Beta
+/**
+ * An {@link InputSchemaNode} defines outputs of an {@link RpcDefinition} or an {@link ActionDefinition}.
+ */
 public interface OutputSchemaNode extends ContainerLike, EffectiveStatementEquivalent<OutputEffectiveStatement> {
 
 }

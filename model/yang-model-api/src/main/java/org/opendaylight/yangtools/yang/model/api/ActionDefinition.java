@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
- * Represents YANG action statement.
+ * Represents YANG {@code action} statement.
  *
  * <p>
  * The "action" statement is used to define an operation connected to a
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  * is an identifier, followed by a block of substatements that holds
  * detailed action information.  The argument is the name of the action.
  */
-@Beta
 public interface ActionDefinition
         extends OperationDefinition, CopyableNode, EffectiveStatementEquivalent<ActionEffectiveStatement> {
 
