@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code revision} statement.
+ */
 public interface RevisionStatement extends DocumentedDeclaredStatement<Revision> {
     @Override
     default StatementDefinition statementDefinition() {

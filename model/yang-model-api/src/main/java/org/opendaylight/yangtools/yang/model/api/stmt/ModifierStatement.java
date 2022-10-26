@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
  * the string "invert-match". If a pattern has the "invert-match" modifier present, the type is restricted to values
  * that do not match the pattern.
  */
-@Beta
 public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
     @Override
     default StatementDefinition statementDefinition() {

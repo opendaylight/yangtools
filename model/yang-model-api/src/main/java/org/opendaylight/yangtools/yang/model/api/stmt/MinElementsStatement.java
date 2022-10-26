@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code min-elements} statement.
+ */
 public interface MinElementsStatement extends DeclaredStatement<Integer> {
     @Override
     default StatementDefinition statementDefinition() {

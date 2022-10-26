@@ -13,6 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
 
+/**
+ * Declared representation of a {@code augment} statement.
+ */
 public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
         DataDefinitionAwareDeclaredStatement<SchemaNodeIdentifier>,
         NotificationStatementAwareDeclaredStatement<SchemaNodeIdentifier>,

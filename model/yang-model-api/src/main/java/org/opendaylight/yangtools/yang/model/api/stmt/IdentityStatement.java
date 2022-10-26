@@ -13,6 +13,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code identity} statement.
+ */
 public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
     @Override

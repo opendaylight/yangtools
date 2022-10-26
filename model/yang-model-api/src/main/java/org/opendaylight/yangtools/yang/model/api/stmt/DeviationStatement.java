@@ -13,13 +13,16 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
+/**
+ * Declared representation of a {@code deviation} statement.
+ */
 public interface DeviationStatement extends DocumentedDeclaredStatement<Absolute> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.DEVIATION;
     }
 
-    // FIXME: 7.0.0: evaluate usefulness of this
+    // FIXME: 11.0.0: evaluate usefulness of this
     default @NonNull Collection<? extends DeviateStatement> getDeviateStatements() {
         return declaredSubstatements(DeviateStatement.class);
     }

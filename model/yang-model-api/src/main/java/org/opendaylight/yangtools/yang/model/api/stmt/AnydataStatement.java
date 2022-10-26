@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * model for anydata content to become known through protocol signaling or other means that are outside the scope
  * of this document.
  */
-@Beta
 public interface AnydataStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
         MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
     @Override

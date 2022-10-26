@@ -11,6 +11,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code grouping} statement.
+ */
 public interface GroupingStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
         NotificationStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName> {

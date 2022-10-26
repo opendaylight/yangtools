@@ -12,6 +12,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code uses} statement.
+ */
 public interface UsesStatement extends DataDefinitionStatement {
     @Override
     default StatementDefinition statementDefinition() {

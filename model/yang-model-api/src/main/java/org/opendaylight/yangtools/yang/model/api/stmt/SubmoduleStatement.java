@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code submodule} statement.
+ */
 public interface SubmoduleStatement extends MetaDeclaredStatement<Unqualified>, LinkageDeclaredStatement,
         RevisionAwareDeclaredStatement, BodyDeclaredStatement {
     @Override
@@ -22,12 +24,12 @@ public interface SubmoduleStatement extends MetaDeclaredStatement<Unqualified>, 
     }
 
     default @Nullable YangVersionStatement getYangVersion() {
-        final Optional<YangVersionStatement> opt = findFirstDeclaredSubstatement(YangVersionStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(YangVersionStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
     default @NonNull BelongsToStatement getBelongsTo() {
-        return findFirstDeclaredSubstatement(BelongsToStatement.class).get();
+        return findFirstDeclaredSubstatement(BelongsToStatement.class).orElseThrow();
     }
 }
 

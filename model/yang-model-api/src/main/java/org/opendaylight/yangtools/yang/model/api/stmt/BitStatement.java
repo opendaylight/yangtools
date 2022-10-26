@@ -12,6 +12,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code bit} statement.
+ */
 public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<String>,
         IfFeatureAwareDeclaredStatement<String> {
     @Override

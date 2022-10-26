@@ -11,13 +11,17 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code yin-element} statement.
+ */
 public interface YinElementStatement extends DeclaredStatement<Boolean> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.YIN_ELEMENT;
     }
 
+    @Deprecated(since = "10.0.0", forRemoval = true)
     default boolean getValue() {
-        return argument();
+        return argument().booleanValue();
     }
 }

@@ -8,13 +8,15 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code list} statement.
+ */
 public interface ListStatement extends MultipleElementsDeclaredStatement,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
         ConfigStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName>,
@@ -25,8 +27,8 @@ public interface ListStatement extends MultipleElementsDeclaredStatement,
     }
 
     default @Nullable KeyStatement getKey() {
-        final Optional<KeyStatement> opt = findFirstDeclaredSubstatement(KeyStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(KeyStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
     default @NonNull Collection<? extends UniqueStatement> getUnique() {
