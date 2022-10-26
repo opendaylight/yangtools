@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of an {@code extension} statement.
  */
-public interface ExtensionEffectiveStatement extends NamespacedEffectiveStatement<ExtensionStatement> {
+public interface ExtensionEffectiveStatement extends EffectiveStatement<QName, ExtensionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.EXTENSION;
