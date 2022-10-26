@@ -71,7 +71,7 @@ public class ExtensionStmtTest {
         final UnrecognizedStatement extensionUse = unknownNodes.iterator().next();
         assertEquals(extensionDefinition.getQName(), extensionUse.statementDefinition().getStatementName());
         assertEquals(extensionDefinition.getArgument(), extensionUse.statementDefinition().getArgumentDefinition()
-            .orElseThrow().getArgumentName().getLocalName());
+            .orElseThrow().argumentName().getLocalName());
 
         assertEquals("key:value", extensionUse.argument());
     }

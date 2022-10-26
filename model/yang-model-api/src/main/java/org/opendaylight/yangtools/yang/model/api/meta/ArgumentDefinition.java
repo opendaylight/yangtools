@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -17,7 +16,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
-@Beta
+/**
+ * Definition of an argument to a YANG statement.
+ */
 public abstract sealed class ArgumentDefinition implements Immutable {
     private static final class YinAttribute extends ArgumentDefinition {
         YinAttribute(final QName argumentName) {
@@ -56,7 +57,7 @@ public abstract sealed class ArgumentDefinition implements Immutable {
         return argumentName == null ? Optional.empty() : Optional.of(of(argumentName, yinElement));
     }
 
-    public final @NonNull QName getArgumentName() {
+    public final @NonNull QName argumentName() {
         return argumentName;
     }
 
@@ -75,19 +76,15 @@ public abstract sealed class ArgumentDefinition implements Immutable {
 
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof ArgumentDefinition)) {
-            return false;
-        }
-        final ArgumentDefinition other = (ArgumentDefinition) obj;
-        return isYinElement() == other.isYinElement() && argumentName.equals(other.argumentName);
+        return this == obj || obj instanceof ArgumentDefinition other && isYinElement() == other.isYinElement()
+            && argumentName.equals(other.argumentName);
     }
 
     @Override
     public final String toString() {
-        return MoreObjects.toStringHelper(ArgumentDefinition.class).add("argumentName", argumentName)
-                .add("yinElement", isYinElement()).toString();
+        return MoreObjects.toStringHelper(ArgumentDefinition.class)
+            .add("argumentName", argumentName)
+            .add("yinElement", isYinElement())
+            .toString();
     }
 }

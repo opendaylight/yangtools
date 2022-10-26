@@ -40,8 +40,10 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinDomSchemaSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     private static final QName REVISION_STMT = REVISION.getStatementName();
-    private static final String MODULE_ARG = MODULE.getArgumentDefinition().get().getArgumentName().getLocalName();
-    private static final String REVISION_ARG = REVISION.getArgumentDefinition().get().getArgumentName().getLocalName();
+    private static final String MODULE_ARG = MODULE.getArgumentDefinition().orElseThrow()
+        .argumentName().getLocalName();
+    private static final String REVISION_ARG = REVISION.getArgumentDefinition().orElseThrow()
+        .argumentName().getLocalName();
 
     YinDomSchemaSource() {
         // Prevent outside instantiation
