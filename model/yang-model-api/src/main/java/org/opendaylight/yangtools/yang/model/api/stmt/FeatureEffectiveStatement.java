@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-@Beta
+/**
+ * Effective representation of a {@code feature} statement.
+ */
 public interface FeatureEffectiveStatement extends NamespacedEffectiveStatement<FeatureStatement> {
     @Override
     default StatementDefinition statementDefinition() {
