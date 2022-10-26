@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Common interface for action and rpc statements.
  */
 @Beta
-public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        IfFeatureAwareDeclaredStatement<QName> {
+public sealed interface OperationDeclaredStatement
+        extends DocumentedDeclaredStatement.WithStatus<QName>, IfFeatureAwareDeclaredStatement<QName>
+        permits ActionStatement, RpcStatement {
     default @NonNull Optional<InputStatement> getInput() {
         return findFirstDeclaredSubstatement(InputStatement.class);
     }

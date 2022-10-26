@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * is an identifier, followed by a block of substatements that holds
  * detailed action information.  The argument is the name of the action.
  */
-public interface ActionStatement extends OperationDeclaredStatement {
+public non-sealed interface ActionStatement extends OperationDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ACTION;
