@@ -9,15 +9,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code submodule} statement.
  */
-public interface SubmoduleStatement extends MetaDeclaredStatement<Unqualified>, LinkageDeclaredStatement,
-        RevisionAwareDeclaredStatement, BodyDeclaredStatement {
+public non-sealed interface SubmoduleStatement extends RootDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.SUBMODULE;
