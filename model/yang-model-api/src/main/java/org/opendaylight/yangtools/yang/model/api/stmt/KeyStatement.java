@@ -13,9 +13,20 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * Declared representation of a {@code key} statement.
+ */
 public interface KeyStatement extends DeclaredStatement<Set<QName>> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.KEY;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Iteration order of the returned set is required to match the order in which key components were declared.
+     */
+    @Override
+    Set<QName> argument();
 }
