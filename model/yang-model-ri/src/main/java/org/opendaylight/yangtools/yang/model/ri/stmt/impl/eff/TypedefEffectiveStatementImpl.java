@@ -11,14 +11,11 @@ import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.VarHandle;
-import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
@@ -124,17 +121,6 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
         @Override
         public TypeStatement getDeclared() {
             return null;
-        }
-
-        @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace,
-                final K identifier) {
-            return TypedefEffectiveStatementImpl.this.get(namespace, identifier);
-        }
-
-        @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-            return TypedefEffectiveStatementImpl.this.getAll(namespace);
         }
 
         @Override

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.export;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter.defaultInstance;
 
 import java.util.Collection;
@@ -16,7 +15,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.NameToEffectiveSubmoduleNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -35,11 +33,10 @@ public class YangTextSnippetTest {
 
     private static void assertFormat(final Collection<? extends Module> modules) {
         for (Module module : modules) {
-            assertTrue(module instanceof ModuleEffectiveStatement);
-            final ModuleEffectiveStatement stmt = (ModuleEffectiveStatement) module;
+            final ModuleEffectiveStatement stmt = module.asEffectiveStatement();
             assertNotNull(formatModule(stmt));
 
-            for (SubmoduleEffectiveStatement substmt : stmt.getAll(NameToEffectiveSubmoduleNamespace.class).values()) {
+            for (SubmoduleEffectiveStatement substmt : stmt.includedSubmodules()) {
                 assertNotNull(formatSubmodule(substmt));
             }
         }
