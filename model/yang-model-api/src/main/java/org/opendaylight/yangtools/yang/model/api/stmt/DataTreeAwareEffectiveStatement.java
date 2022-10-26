@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelpers.filterOptional;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -23,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * @param <A> Argument type
  * @param <D> Class representing declared version of this statement.
  */
-@Beta
 public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<A>>
         extends SchemaTreeAwareEffectiveStatement<A, D> {
     /**
@@ -47,7 +45,7 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
      *
      * @param qname Child identifier
      * @return Data tree child, or empty
-     * @throws NullPointerException if {@code qname} is null
+     * @throws NullPointerException if {@code qname} is {@code null}
      */
     default @NonNull Optional<DataTreeEffectiveStatement<?>> findDataTreeNode(final @NonNull QName qname) {
         return get(DataTreeNamespace.class, requireNonNull(qname));
@@ -60,7 +58,7 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
      * @param type Effective substatement class
      * @param qname Child identifier
      * @return Data tree child, or empty
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     default <E> @NonNull Optional<E> findDataTreeNode(final Class<E> type, final @NonNull QName qname) {
         return filterOptional(type, findDataTreeNode(qname));

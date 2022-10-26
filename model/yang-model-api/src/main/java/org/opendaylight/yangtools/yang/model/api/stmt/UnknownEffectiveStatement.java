@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-@Beta
 // FIXME: remove this interface once UnknownSchemaNode is gone
 public interface UnknownEffectiveStatement<A, D extends UnknownStatement<A>> extends EffectiveStatement<A, D> {
 
