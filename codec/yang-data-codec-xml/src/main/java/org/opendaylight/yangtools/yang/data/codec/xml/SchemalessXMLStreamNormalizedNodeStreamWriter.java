@@ -15,7 +15,6 @@ import java.util.Deque;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -71,11 +70,6 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         nodeTypeStack.push(NodeType.CHOICE);
-    }
-
-    @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        nodeTypeStack.push(NodeType.AUGMENTATION);
     }
 
     @Override

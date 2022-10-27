@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.StringReader;
@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -97,10 +96,11 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
     }
 
     private void streamAugmentation(final NormalizedNodeStreamWriter writer) throws IOException {
-        final AugmentationIdentifier augIdentifier = readAugmentationIdentifier();
+        final var augIdentifier = readAugmentationIdentifier();
         LOG.trace("Streaming augmentation node {}", augIdentifier);
-        writer.startAugmentationNode(augIdentifier);
-        commonStreamContainer(writer);
+        for (byte nodeType = input.readByte(); nodeType != LithiumNode.END_NODE; nodeType = input.readByte()) {
+            streamNormalizedNode(writer, nodeType);
+        }
     }
 
     private void streamChoice(final NormalizedNodeStreamWriter writer) throws IOException {
@@ -273,22 +273,22 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
         };
     }
 
-    private Set<QName> readQNameSet() throws IOException {
+    private ImmutableSet<QName> readQNameSet() throws IOException {
         // Read the children count
         final int count = input.readInt();
-        final Set<QName> children = Sets.newHashSetWithExpectedSize(count);
+        final var children = ImmutableSet.<QName>builderWithExpectedSize(count);
         for (int i = 0; i < count; i++) {
             children.add(readQName());
         }
-        return children;
+        return children.build();
     }
 
-    abstract @NonNull AugmentationIdentifier readAugmentationIdentifier() throws IOException;
+    abstract @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier() throws IOException;
 
     abstract @NonNull NodeIdentifier readNodeIdentifier() throws IOException;
 
-    final @NonNull AugmentationIdentifier defaultReadAugmentationIdentifier() throws IOException {
-        return AugmentationIdentifier.create(readQNameSet());
+    final @NonNull LegacyAugmentationIdentifier defaultReadAugmentationIdentifier() throws IOException {
+        return new LegacyAugmentationIdentifier(readQNameSet());
     }
 
     private @NonNull NodeIdentifierWithPredicates readNormalizedNodeWithPredicates() throws IOException {
@@ -374,21 +374,18 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
     }
 
     @Override
-    public final PathArgument readPathArgument() throws IOException {
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public final Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
         // read Type
         int type = input.readByte();
         return switch (type) {
-            case LithiumPathArgument.AUGMENTATION_IDENTIFIER -> readAugmentationIdentifier();
-            case LithiumPathArgument.NODE_IDENTIFIER -> readNodeIdentifier();
-            case LithiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES -> readNormalizedNodeWithPredicates();
-            case LithiumPathArgument.NODE_IDENTIFIER_WITH_VALUE -> new NodeWithValue<>(readQName(), readObject());
+            case LithiumPathArgument.AUGMENTATION_IDENTIFIER -> Either.ofSecond(readAugmentationIdentifier());
+            case LithiumPathArgument.NODE_IDENTIFIER -> Either.ofFirst(readNodeIdentifier());
+            case LithiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES ->
+                Either.ofFirst(readNormalizedNodeWithPredicates());
+            case LithiumPathArgument.NODE_IDENTIFIER_WITH_VALUE ->
+                Either.ofFirst(new NodeWithValue<>(readQName(), readObject()));
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument type " + type);
         };
-    }
-
-    @Override
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    public final Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
-        return Either.ofFirst(readPathArgument());
     }
 }

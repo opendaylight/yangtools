@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -86,11 +85,6 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startChoiceNode(name, childSizeHint);
-    }
-
-    @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        delegate().startAugmentationNode(identifier);
     }
 
     @Override

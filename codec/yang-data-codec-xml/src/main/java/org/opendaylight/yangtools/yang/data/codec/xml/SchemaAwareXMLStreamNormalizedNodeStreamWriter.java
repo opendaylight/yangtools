@@ -19,7 +19,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -127,11 +126,6 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         tracker.startChoiceNode(name);
-    }
-
-    @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) {
-        tracker.startAugmentationNode(identifier);
     }
 
     @Override

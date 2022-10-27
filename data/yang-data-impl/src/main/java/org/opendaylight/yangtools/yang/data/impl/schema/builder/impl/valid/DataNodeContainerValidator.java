@@ -12,12 +12,9 @@ import static java.util.Objects.requireNonNull;
 import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 
@@ -25,31 +22,20 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
  * General validator for container like statements, e.g. container, list-entry, choice, augment
  */
 public class DataNodeContainerValidator {
-    private final Set<AugmentationIdentifier> augments = new HashSet<>();
     private final DataNodeContainer schema;
     private final Set<QName> childNodes;
 
     public DataNodeContainerValidator(final DataNodeContainer schema) {
         this.schema = requireNonNull(schema, "Schema was null");
         childNodes = getChildNodes(schema);
-
-        if (schema instanceof AugmentationTarget target) {
-            for (var augmentation : target.getAvailableAugmentations()) {
-                augments.add(DataSchemaContextNode.augmentationIdentifierFrom(augmentation));
-            }
-        }
     }
 
     private boolean isKnownChild(final PathArgument child) {
-        if (child instanceof AugmentationIdentifier) {
-            return augments.contains(child);
-        }
-
         return childNodes.contains(child.getNodeType());
     }
 
     public void validateChild(final PathArgument child) {
-        DataValidationException.checkLegalChild(isKnownChild(child), child, schema, childNodes, augments);
+        DataValidationException.checkLegalChild(isKnownChild(child), child, schema, childNodes);
     }
 
     public DataContainerChild validateChild(final DataContainerChild child) {
