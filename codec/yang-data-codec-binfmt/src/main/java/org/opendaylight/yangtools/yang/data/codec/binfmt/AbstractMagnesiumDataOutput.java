@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -70,7 +69,6 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
     private final Deque<Object> stack = new ArrayDeque<>();
 
     // Coding maps
-    private final Map<AugmentationIdentifier, Integer> aidCodeMap = new HashMap<>();
     private final Map<QNameModule, Integer> moduleCodeMap = new HashMap<>();
     private final Map<String, Integer> stringCodeMap = new HashMap<>();
     private final Map<QName, Integer> qnameCodeMap = new HashMap<>();
@@ -164,23 +162,6 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
     }
 
     @Override
-    public final void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        final Integer code = aidCodeMap.get(identifier);
-        if (code == null) {
-            aidCodeMap.put(identifier, aidCodeMap.size());
-            output.writeByte(MagnesiumNode.NODE_AUGMENTATION | MagnesiumNode.ADDR_DEFINE);
-            final Set<QName> qnames = identifier.getPossibleChildNames();
-            output.writeInt(qnames.size());
-            for (QName qname : qnames) {
-                writeQNameInternal(qname);
-            }
-        } else {
-            writeNodeType(MagnesiumNode.NODE_AUGMENTATION, code);
-        }
-        stack.push(identifier);
-    }
-
-    @Override
     public final boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             startSimpleNode(MagnesiumNode.NODE_ANYXML, name);
@@ -233,36 +214,12 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
             writeNodeIdentifier(nid);
         } else if (pathArgument instanceof NodeIdentifierWithPredicates nip) {
             writeNodeIdentifierWithPredicates(nip);
-        } else if (pathArgument instanceof AugmentationIdentifier augid) {
-            writeAugmentationIdentifier(augid);
         } else if (pathArgument instanceof NodeWithValue<?> niv) {
             writeNodeWithValue(niv);
         } else if (pathArgument instanceof MountPointIdentifier mpid) {
             writeMountPointIdentifier(mpid);
         } else {
             throw new IOException("Unhandled PathArgument " + pathArgument);
-        }
-    }
-
-    private void writeAugmentationIdentifier(final AugmentationIdentifier identifier) throws IOException {
-        final Set<QName> qnames = identifier.getPossibleChildNames();
-        final int size = qnames.size();
-        if (size < 29) {
-            output.writeByte(MagnesiumPathArgument.AUGMENTATION_IDENTIFIER
-                | size << MagnesiumPathArgument.AID_COUNT_SHIFT);
-        } else if (size < 256) {
-            output.writeByte(MagnesiumPathArgument.AUGMENTATION_IDENTIFIER | MagnesiumPathArgument.AID_COUNT_1B);
-            output.writeByte(size);
-        } else if (size < 65536) {
-            output.writeByte(MagnesiumPathArgument.AUGMENTATION_IDENTIFIER | MagnesiumPathArgument.AID_COUNT_2B);
-            output.writeShort(size);
-        } else {
-            output.writeByte(MagnesiumPathArgument.AUGMENTATION_IDENTIFIER | MagnesiumPathArgument.AID_COUNT_4B);
-            output.writeInt(size);
-        }
-
-        for (QName qname : qnames) {
-            writeQNameInternal(qname);
         }
     }
 

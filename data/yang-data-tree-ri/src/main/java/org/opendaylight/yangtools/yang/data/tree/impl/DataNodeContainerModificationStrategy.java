@@ -14,11 +14,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.AbstractNodeContainerModificationStrategy.Visible;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.slf4j.Logger;
@@ -68,10 +66,6 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
     private ModificationApplyOperation resolveChild(final PathArgument identifier) {
         final T schema = getSchema();
-        if (identifier instanceof AugmentationIdentifier augId && schema instanceof AugmentationTarget augTarget) {
-            return SchemaAwareApplyOperation.from(schema, augTarget, augId, treeConfig);
-        }
-
         final var qname = identifier.getNodeType();
         final var child = schema.dataChildByName(qname);
         if (child == null) {

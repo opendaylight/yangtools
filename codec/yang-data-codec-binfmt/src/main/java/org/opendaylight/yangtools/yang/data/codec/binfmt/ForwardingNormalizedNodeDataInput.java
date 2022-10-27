@@ -48,8 +48,8 @@ abstract class ForwardingNormalizedNodeDataInput extends ForwardingDataInput imp
     }
 
     @Override
-    public final PathArgument readPathArgument() throws IOException {
-        return delegate().readPathArgument();
+    public final PathArgument readLegacyPathArgument() throws IOException {
+        return delegate().readLegacyPathArgument();
     }
 
     @Override

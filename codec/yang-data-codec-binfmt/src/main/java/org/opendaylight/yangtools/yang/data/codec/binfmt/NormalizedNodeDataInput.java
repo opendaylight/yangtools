@@ -79,7 +79,13 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @return A PathArgument
      * @throws IOException if an error occurs
      */
-    @NonNull PathArgument readPathArgument() throws IOException;
+    default @NonNull PathArgument readPathArgument() throws IOException {
+        final var result = readLegacyPathArgument();
+        if (result == null) {
+            throw new InvalidNormalizedNodeStreamException("AugmentationIdentifier is not supported in this runtime");
+        }
+        return result;
+    }
 
     /**
      * Read a {@link PathArgument} from the reader, or {@code null} if the result would have been an
@@ -89,9 +95,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @throws IOException if an error occurs
      */
     @Deprecated(since = "11.0.0")
-    default @Nullable PathArgument readLegacyPathArgument() throws IOException {
-        return readPathArgument();
-    }
+    @Nullable PathArgument readLegacyPathArgument() throws IOException;
 
     @NonNull SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException;
 
