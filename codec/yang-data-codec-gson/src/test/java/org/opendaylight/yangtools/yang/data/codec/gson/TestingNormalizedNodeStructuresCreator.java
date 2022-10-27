@@ -15,11 +15,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -82,16 +80,6 @@ public final class TestingNormalizedNodeStructuresCreator {
                 .withValue("lf17 value").build();
     }
 
-    private static AugmentationNode externalAugmentC11AWithLf15_11AndLf15_12Node() {
-        return Builders.augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(
-                    QName.create(COMPLEX_JSON_AUG, "lf15_11"),
-                    QName.create(COMPLEX_JSON_AUG, "lf15_12"))))
-                .withChild(lf15_11NodeExternal())
-                .withChild(lf15_12NodeExternal())
-                .build();
-    }
-
     private static LeafNode<Object> lf15_12NodeExternal() {
         return Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON_AUG, "lf15_12")))
@@ -122,26 +110,10 @@ public final class TestingNormalizedNodeStructuresCreator {
                 .withValue("lf13 value").build();
     }
 
-    private static AugmentationNode augmentC11AWithLf15_21Node() {
-        return Builders.augmentationBuilder().withNodeIdentifier(
-            new AugmentationIdentifier(ImmutableSet.of(QName.create(COMPLEX_JSON, "lf15_21"))))
-                .withChild(lf15_21Node()).build();
-    }
-
     private static LeafNode<Object> lf15_21Node() {
         return Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf15_21")))
                 .withValue("lf15_21 value").build();
-    }
-
-    private static AugmentationNode augmentC11AWithLf15_11AndLf15_12Node() {
-        return Builders.augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(
-                    QName.create(COMPLEX_JSON, "lf15_11"),
-                    QName.create(COMPLEX_JSON, "lf15_12"))))
-                .withChild(lf15_11Node())
-                .withChild(lf15_12Node())
-                .build();
     }
 
     private static LeafNode<Object> lf15_12Node() {
@@ -154,17 +126,6 @@ public final class TestingNormalizedNodeStructuresCreator {
         return Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf15_11")))
                 .withValue(ImmutableSet.of("one", "two")).build();
-    }
-
-    private static AugmentationNode lf12_1Node() {
-        return Builders.augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(
-                    QName.create(COMPLEX_JSON, "lf12_1"),
-                    QName.create(COMPLEX_JSON, "lf12_2"))))
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf12_1")))
-                    .withValue("lf12 value").build())
-                .build();
     }
 
     private static SystemMapNode childLst11() {
@@ -243,7 +204,10 @@ public final class TestingNormalizedNodeStructuresCreator {
     }
 
     public static ContainerNode leafNodeViaAugmentationInContainer() {
-        return cont1Node(lf12_1Node());
+        return cont1Node(Builders.leafBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf12_1")))
+            .withValue("lf12 value")
+            .build());
     }
 
     public static ContainerNode choiceNodeInContainer() {
@@ -254,12 +218,12 @@ public final class TestingNormalizedNodeStructuresCreator {
      * choc11 contains lf13, lf15_11 and lf15_12 are added via external augmentation.
      */
     public static ContainerNode caseNodeAugmentationInChoiceInContainer() {
-        return cont1Node(choc11Node(augmentC11AWithLf15_11AndLf15_12Node(), lf13Node(), augmentC11AWithLf15_21Node()));
+        return cont1Node(choc11Node(lf15_11Node(), lf15_12Node(), lf13Node(), lf15_21Node()));
     }
 
     public static ContainerNode caseNodeExternalAugmentationInChoiceInContainer() {
-        return cont1Node(choc11Node(lf13Node(), augmentC11AWithLf15_11AndLf15_12Node(),
-            externalAugmentC11AWithLf15_11AndLf15_12Node()));
+        return cont1Node(choc11Node(lf13Node(), lf15_11Node(), lf15_12Node(),
+            lf15_11NodeExternal(), lf15_12NodeExternal()));
     }
 
     public static ContainerNode choiceNodeAugmentationInContainer() {
@@ -275,11 +239,8 @@ public final class TestingNormalizedNodeStructuresCreator {
     }
 
     public static ContainerNode emptyContainerInContainer() {
-        return cont1Node(Builders.augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(QName.create(COMPLEX_JSON, "cont11"))))
-                .withChild(Builders.containerBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont11")))
-                    .build())
-                .build());
+        return cont1Node(Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont11")))
+            .build());
     }
 }

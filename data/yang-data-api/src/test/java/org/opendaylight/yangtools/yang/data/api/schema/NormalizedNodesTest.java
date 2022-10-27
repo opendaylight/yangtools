@@ -14,7 +14,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -113,15 +111,11 @@ public class NormalizedNodesTest {
         assertNotNull(stringTree);
         assertEquals("leaf-node str-value-1\n", stringTree);
 
-        final AugmentationNode mockedAugmentationNode = mock(AugmentationNode.class);
         final QName listQName = QName.create("test-ns", "2016-09-16", "list-node");
-        final AugmentationIdentifier augNodeId = new AugmentationIdentifier(ImmutableSet.of(listQName));
-        doReturn(augNodeId).when(mockedAugmentationNode).getIdentifier();
 
         final SystemMapNode mockedMapNode = mock(SystemMapNode.class);
         final NodeIdentifier listNodeId = new NodeIdentifier(listQName);
         doReturn(listNodeId).when(mockedMapNode).getIdentifier();
-        doReturn(List.of(mockedMapNode)).when(mockedAugmentationNode).body();
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         final NodeIdentifierWithPredicates listEntryNodeId = NodeIdentifierWithPredicates.of(listQName,
@@ -131,14 +125,12 @@ public class NormalizedNodesTest {
 
         doReturn(List.of(mockedLeafNode)).when(mockedMapEntryNode).body();
 
-        stringTree = NormalizedNodes.toStringTree(mockedAugmentationNode);
+        stringTree = NormalizedNodes.toStringTree(mockedMapNode);
         assertNotNull(stringTree);
         assertEquals("""
-            augmentation {
-                list-node {
-                    list-node[key-leaf-value] {
-                        leaf-node str-value-1
-                    }
+            list-node {
+                list-node[key-leaf-value] {
+                    leaf-node str-value-1
                 }
             }
             """, stringTree);

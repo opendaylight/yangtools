@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -221,12 +220,6 @@ public final class LeafRefValidation {
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
         for (final DataContainerChild child : node.body()) {
-            if (child instanceof AugmentationNode) {
-                validateNodeData(child, referencedByCtx, referencingCtx, modificationType, current.node(
-                    child.getIdentifier()));
-                return;
-            }
-
             validateChildNodeData(child, referencedByCtx, referencingCtx, modificationType, current);
         }
     }
@@ -237,12 +230,6 @@ public final class LeafRefValidation {
         for (final MapEntryNode mapEntry : node.asMap().values()) {
             final YangInstanceIdentifier mapEntryIdentifier = current.node(mapEntry.getIdentifier());
             for (final DataContainerChild child : mapEntry.body()) {
-                if (child instanceof AugmentationNode) {
-                    validateNodeData(child, referencedByCtx, referencingCtx, modificationType, current.node(
-                        child.getIdentifier()));
-                    return;
-                }
-
                 validateChildNodeData(child, referencedByCtx, referencingCtx, modificationType, mapEntryIdentifier);
             }
         }
@@ -390,11 +377,11 @@ public final class LeafRefValidation {
         final DataContainerChild child = parent.childByArg(arg);
         if (child == null) {
             // FIXME: YANGTOOLS-901. We have SchemaContext nearby, hence we should be able to cache how to get
-            //        to the leaf with with specified QName, without having to iterate through Choices/Augmentations.
+            //        to the leaf with with specified QName, without having to iterate through Choices.
             //        That perhaps means we should not have QNameWithPredicates, but NodeIdentifierWithPredicates as
             //        the path specification.
             for (final DataContainerChild mixin : parent.body()) {
-                if (mixin instanceof AugmentationNode || mixin instanceof ChoiceNode) {
+                if (mixin instanceof ChoiceNode) {
                     addValues(values, mixin, nodePredicates, path, current);
                 }
             }
