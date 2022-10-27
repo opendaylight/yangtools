@@ -18,7 +18,6 @@ import static org.mockito.Mockito.verify;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
@@ -32,7 +31,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -63,7 +61,6 @@ public class Bug8083Test {
             .node(TOP_QNAME)
             .node(FOOLIST_QNAME)
             .node(NodeIdentifierWithPredicates.of(FOOLIST_QNAME, ImmutableMap.of(NAME_QNAME, "key-value")))
-            .node(new AugmentationIdentifier(ImmutableSet.of(BARCONTAINER_QNAME)))
             .node(BARCONTAINER_QNAME)
             .node(QName.create(BARMOD, "bar-leaf"))
             .build();

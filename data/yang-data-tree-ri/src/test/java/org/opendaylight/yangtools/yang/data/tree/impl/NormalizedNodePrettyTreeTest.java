@@ -53,18 +53,8 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     public void testChoicePrettyTree() {
         assertEquals(String.join("\n",
             "choiceNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)choice = {",
-            "    augmentationNode = {",
-            "        leafNode augment = \"Augmented leaf value\"",
-            "    }",
-            "}"), createChoiceNode().prettyTree().get());
-    }
-
-    @Test
-    public void testAugmentationPrettyTree() {
-        assertEquals(String.join("\n",
-            "augmentationNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13) = {",
             "    leafNode augment = \"Augmented leaf value\"",
-            "}"), createAugmentationNode().prettyTree().get());
+            "}"), createChoiceNode().prettyTree().get());
     }
 
     @Test
@@ -168,9 +158,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
             "        }",
             "    }",
             "    choiceNode choice = {",
-            "        augmentationNode = {",
-            "            leafNode augment = \"Augmented leaf value\"",
-            "        }",
+            "        leafNode augment = \"Augmented leaf value\"",
             "    }",
             "    anydataNode any-data = (java.lang.String)",
             "    unkeyedListNode unkeyed-list = {",

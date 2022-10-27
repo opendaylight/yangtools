@@ -13,15 +13,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -29,8 +26,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -80,7 +75,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
      * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
      * one of
      * <ul>
-     *   <li>{@link AugmentationNode} backed by an {@link AugmentationSchemaNode}, or</li>
      *   <li>{@link ChoiceNode} backed by a {@link ChoiceSchemaNode}, or</li>
      *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}, or</li>
      *   <li>{@link MapNode} backed by a {@link ListSchemaNode} with a non-empty
@@ -211,12 +205,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     }
 
     static DataSchemaContextNode<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
-        final DataSchemaNode result = findChildSchemaNode(schema, child);
-        // We try to look up if this node was added by augmentation
-        if (result != null && schema instanceof DataSchemaNode && result.isAugmenting()) {
-            return fromAugmentation(schema, (AugmentationTarget) schema, result);
-        }
-        return lenientOf(result);
+        return lenientOf(findChildSchemaNode(schema, child));
     }
 
     // FIXME: this looks like it should be a Predicate on a stream with findFirst()
@@ -230,18 +219,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
             }
         }
         return null;
-    }
-
-    /**
-     * Create AugmentationIdentifier from an AugmentationSchemaNode.
-     *
-     * @param schema Augmentation schema
-     * @return AugmentationIdentifier for the schema
-     * @throws NullPointerException if {@code schema} is null
-     */
-    public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode schema) {
-        return new AugmentationIdentifier(schema.getChildNodes().stream().map(DataSchemaNode::getQName)
-            .collect(Collectors.toSet()));
     }
 
     static @NonNull DataSchemaContextNode<?> of(final @NonNull DataSchemaNode schema) {
@@ -283,23 +260,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         } else {
             return null;
         }
-    }
-
-    /**
-     * Returns a DataContextNodeOperation for provided child node
-     *
-     * <p>
-     * If supplied child is added by Augmentation this operation returns a DataSchemaContextNode for augmentation,
-     * otherwise returns a DataSchemaContextNode for child as call for {@link #lenientOf(DataSchemaNode)}.
-     */
-    static @Nullable DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
-            final AugmentationTarget parentAug, final DataSchemaNode child) {
-        for (AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
-            if (aug.dataChildByName(child.getQName()) != null) {
-                return new AugmentationContextNode(aug, parent);
-            }
-        }
-        return lenientOf(child);
     }
 
     /**

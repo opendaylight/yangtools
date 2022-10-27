@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -73,9 +72,7 @@ public class ImmutableMapEntryNodeBuilder
     private static void putQName(final Map<QName, PathArgument> map, final DataContainerChild child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
         final PathArgument identifier = child.getIdentifier();
-        if (!(identifier instanceof AugmentationIdentifier)) {
-            map.put(identifier.getNodeType(), identifier);
-        }
+        map.put(identifier.getNodeType(), identifier);
     }
 
     @Override
