@@ -70,7 +70,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
         if (typeDefinition instanceof BinaryTypeDefinition) {
             return BinaryStringCodec.from((BinaryTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof BitsTypeDefinition) {
-            return BitsStringCodec.from((BitsTypeDefinition)typeDefinition);
+            return AbstractBitsNumberCodec.from((BitsTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof BooleanTypeDefinition) {
             return BooleanStringCodec.from((BooleanTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof DecimalTypeDefinition) {
