@@ -14,11 +14,9 @@ import static org.junit.Assert.assertEquals;
 import com.google.gson.stream.JsonReader;
 import java.io.StringReader;
 import java.util.Map;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -61,7 +59,6 @@ public class YT1411Test extends AbstractComplexJsonTest {
         final QName augmentChoice1 = QName.create(CONT_1, "augment-choice1");
         assertEquals(YangInstanceIdentifier.create(
             CONT_1_NODEID,
-            AugmentationIdentifier.create(Set.of(augmentChoice1)),
             new NodeIdentifier(augmentChoice1),
             new NodeIdentifier(QName.create(CONT_1, "augment-choice2")),
             new NodeIdentifier(QName.create(CONT_1, "case11-choice-case-container"))),

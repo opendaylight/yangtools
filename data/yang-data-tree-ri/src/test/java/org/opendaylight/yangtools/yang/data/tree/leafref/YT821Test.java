@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import com.google.common.collect.ImmutableSet;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -120,10 +118,7 @@ public class YT821Test {
                         .withChild(ImmutableNodes.leafNode(NAME, "bar1"))
                         .withChild(Builders.containerBuilder()
                             .withNodeIdentifier(new NodeIdentifier(CONTAINER_IN_LIST))
-                            .withChild(Builders.augmentationBuilder()
-                                .withNodeIdentifier(AugmentationIdentifier.create(ImmutableSet.of(REF_FROM_AUG)))
-                                .withChild(ImmutableNodes.leafNode(REF_FROM_AUG, refValue))
-                                .build())
+                            .withChild(ImmutableNodes.leafNode(REF_FROM_AUG, refValue))
                             .build())
                         .build())
                     .build())
@@ -145,12 +140,9 @@ public class YT821Test {
                     .withChild(Builders.mapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAR, NAME, "bar1"))
                         .withChild(ImmutableNodes.leafNode(NAME, "bar1"))
-                        .withChild(Builders.augmentationBuilder()
-                            .withNodeIdentifier(AugmentationIdentifier.create(ImmutableSet.of(CONTAINER_FROM_AUG)))
-                            .withChild(Builders.containerBuilder()
-                                .withNodeIdentifier(new NodeIdentifier(CONTAINER_FROM_AUG))
-                                .withChild(ImmutableNodes.leafNode(REF_IN_CONTAINER, refValue))
-                                .build())
+                        .withChild(Builders.containerBuilder()
+                            .withNodeIdentifier(new NodeIdentifier(CONTAINER_FROM_AUG))
+                            .withChild(ImmutableNodes.leafNode(REF_IN_CONTAINER, refValue))
                             .build())
                         .build())
                     .build())

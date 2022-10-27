@@ -42,8 +42,6 @@
  * which represents a leaf, which occurs mostly once per parent node, but
  * possible values could have different types. Maps to <i>choice</i> statement.
  * Types maps to the <i>case</i> statements for that <i>choice</i>.</li>
- * <li> {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode}
- * - Node which represents a leaf, which occurs mostly once per parent node.</li>
  * </ul>
  * </li>
  * <li> {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode} - Node
@@ -81,13 +79,11 @@
  *    {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier}
  *    | {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates}
  *    | {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue}
- *    | {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier}
  *
  *  TreeRoot = {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
  *  {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode} =
  *    ( {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode}
  *     | {@link org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode}
- *     | {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode}
  *     | {@link org.opendaylight.yangtools.yang.data.api.schema.MapNode}
  *     | {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode})*
  *  ContainerDataNode =
@@ -96,9 +92,6 @@
  *
  *  {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode} =
  *    {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier} SimpleValue
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode} =
- *    {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier}
- *    {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
  *  {@link org.opendaylight.yangtools.yang.data.api.schema.MapNode} =
  *    {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier}
  *    {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode}
@@ -148,11 +141,6 @@
  * </li>
  * </ul>
  * </li>
- * <li>(0..n) AugmentationNode
- * <ul>
- * <li>(Same as DataContainerNode)</li>
- * </ul>
- * </li>
  * </ul>
  * </li>
  * </ul>
@@ -171,6 +159,5 @@
  * allows for more efficient implementations. If such ordering is required by
  * clients for serialization / debugability it SHOULD be done externally in
  * code using these interfaces.
- *
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
