@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -96,10 +95,11 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
     }
 
     private void streamAugmentation(final NormalizedNodeStreamWriter writer) throws IOException {
-        final AugmentationIdentifier augIdentifier = readAugmentationIdentifier();
+        final Set<QName> augIdentifier = readAugmentationIdentifier();
         LOG.trace("Streaming augmentation node {}", augIdentifier);
-        writer.startAugmentationNode(augIdentifier);
-        commonStreamContainer(writer);
+        for (byte nodeType = input.readByte(); nodeType != LithiumNode.END_NODE; nodeType = input.readByte()) {
+            streamNormalizedNode(writer, nodeType);
+        }
     }
 
     private void streamChoice(final NormalizedNodeStreamWriter writer) throws IOException {
@@ -282,12 +282,12 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
         return children;
     }
 
-    abstract @NonNull AugmentationIdentifier readAugmentationIdentifier() throws IOException;
+    abstract Set<QName> readAugmentationIdentifier() throws IOException;
 
     abstract @NonNull NodeIdentifier readNodeIdentifier() throws IOException;
 
-    final @NonNull AugmentationIdentifier defaultReadAugmentationIdentifier() throws IOException {
-        return AugmentationIdentifier.create(readQNameSet());
+    final Set<QName> defaultReadAugmentationIdentifier() throws IOException {
+        return readQNameSet();
     }
 
     private @NonNull NodeIdentifierWithPredicates readNormalizedNodeWithPredicates() throws IOException {
@@ -373,11 +373,14 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
     }
 
     @Override
-    public final PathArgument readPathArgument() throws IOException {
+    public final PathArgument readLegacyPathArgument() throws IOException {
         // read Type
         int type = input.readByte();
         return switch (type) {
-            case LithiumPathArgument.AUGMENTATION_IDENTIFIER -> readAugmentationIdentifier();
+            case LithiumPathArgument.AUGMENTATION_IDENTIFIER -> {
+                readAugmentationIdentifier();
+                yield null;
+            }
             case LithiumPathArgument.NODE_IDENTIFIER -> readNodeIdentifier();
             case LithiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES -> readNormalizedNodeWithPredicates();
             case LithiumPathArgument.NODE_IDENTIFIER_WITH_VALUE -> new NodeWithValue<>(readQName(), readObject());
