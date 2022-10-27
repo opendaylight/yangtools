@@ -13,12 +13,10 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -109,8 +107,6 @@ public final class TestModel {
                 YangInstanceIdentifier.create(new NodeIdentifier(QName.create(TEST_QNAME, "qname")),
                     NodeIdentifierWithPredicates.of(QName.create(TEST_QNAME, "list-entry"),
                         QName.create(TEST_QNAME, "key"), 10),
-                    new AugmentationIdentifier(ImmutableSet.of(
-                        QName.create(TEST_QNAME, "aug1"), QName.create(TEST_QNAME, "aug2"))),
                     new NodeWithValue<>(QName.create(TEST_QNAME, "leaf-list-entry"), "foo"))))
             .withChild(leafNode(MYIDENTITY_QNAME, DESC_QNAME))
             .withChild(Builders.unkeyedListBuilder()
@@ -183,12 +179,9 @@ public final class TestModel {
         return Builders.mapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(AUGMENTED_LIST_QNAME, ID_QNAME, id))
             .withChild(leafNode(ID_QNAME, id))
-            .withChild(Builders.augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(Set.of(AUG_CONT_QNAME)))
-                .withChild(Builders.containerBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(AUG_CONT_QNAME))
-                    .withChild(leafNode(AUG_NAME_QNAME, name))
-                    .build())
+            .withChild(Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(AUG_CONT_QNAME))
+                .withChild(leafNode(AUG_NAME_QNAME, name))
                 .build())
             .build();
     }

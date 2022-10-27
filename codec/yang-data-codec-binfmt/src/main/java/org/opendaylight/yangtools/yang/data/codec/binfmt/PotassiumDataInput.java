@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Either;
 import org.opendaylight.yangtools.concepts.WritableObjects;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.Decimal64;
@@ -356,6 +357,12 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             }
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument header " + header);
         };
+    }
+
+    @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
+        return Either.ofFirst(readPathArgument());
     }
 
     private @NonNull NodeIdentifier readNodeIdentifier() throws IOException {

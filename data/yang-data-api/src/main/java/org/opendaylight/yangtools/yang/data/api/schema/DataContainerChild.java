@@ -14,7 +14,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * This interface should not be implemented directly, but rather using one of its subinterfaces:
  *
  * <ul>
- *   <li>{@link AugmentationNode}</li>
  *   <li>{@link ChoiceNode}</li>
  *   <li>{@link ContainerNode}</li>
  *   <li>{@link ForeignDataNode}</li>

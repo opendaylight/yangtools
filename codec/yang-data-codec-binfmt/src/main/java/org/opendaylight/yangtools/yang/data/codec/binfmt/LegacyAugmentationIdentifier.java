@@ -12,10 +12,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 
 /**
- * Representation of legacy {@link AugmentationIdentifier}.
+ * Representation of legacy {@code yang.data.api.YangInstanceIdentifier.AugmentationIdentifier}.
  */
 @Deprecated(since = "11.0.0")
 public record LegacyAugmentationIdentifier(@NonNull ImmutableSet<QName> childNames) implements LegacyPathArgument {
