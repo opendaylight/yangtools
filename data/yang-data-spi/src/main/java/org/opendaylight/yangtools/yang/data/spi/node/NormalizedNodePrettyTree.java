@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -46,20 +45,10 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
         appendIndent(sb, depth);
         sb.append(simpleName.toLowerCase(Locale.ROOT).charAt(0)).append(simpleName, 1, simpleName.length()).append(' ');
 
-        final QNameModule currentNamespace;
-        if (node instanceof AugmentationNode) {
-            // Add identifier, but augmentations are special enough
-            currentNamespace = ((AugmentationNode) node).getIdentifier().getPossibleChildNames().iterator().next()
-                .getModule();
-            if (appendNamespace(sb, parentNamespace, currentNamespace)) {
-                sb.append(' ');
-            }
-        } else {
-            final QName qname = node.getIdentifier().getNodeType();
-            currentNamespace = qname.getModule();
-            appendNamespace(sb, parentNamespace, currentNamespace);
-            sb.append(qname.getLocalName()).append(' ');
-        }
+        final QName qname = node.getIdentifier().getNodeType();
+        final QNameModule currentNamespace = qname.getModule();
+        appendNamespace(sb, parentNamespace, currentNamespace);
+        sb.append(qname.getLocalName()).append(' ');
 
         if (node instanceof NormalizedNodeContainer) {
             final NormalizedNodeContainer<?> container = (NormalizedNodeContainer<?>) node;

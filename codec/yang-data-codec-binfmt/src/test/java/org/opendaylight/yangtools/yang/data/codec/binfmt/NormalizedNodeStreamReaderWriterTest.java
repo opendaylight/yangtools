@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,7 +19,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,11 +35,9 @@ import org.junit.runners.Parameterized.Parameters;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -59,8 +55,8 @@ public class NormalizedNodeStreamReaderWriterTest {
     @Parameters(name = "{0} {1}")
     public static Iterable<Object[]> data() {
         return List.of(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 1_049_618, 2_289_103, 139, 825, 103, 229, 99 },
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 1_049_618, 2_289_103, 139, 825, 103, 229, 99 });
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 1_049_589, 2_289_103, 139, 796, 103, 229, 99 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 1_049_589, 2_289_103, 139, 796, 103, 229, 99 });
     }
 
     @Parameter(0)
@@ -296,36 +292,6 @@ public class NormalizedNodeStreamReaderWriterTest {
 
         NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
         assertEquals(expected, nnin.readNormalizedNode());
-    }
-
-    @Test
-    public void testAugmentationIdentifier() throws IOException {
-        final List<QName> qnames = new ArrayList<>();
-        for (int i = 0; i < 257; ++i) {
-            qnames.add(QName.create(TestModel.TEST_QNAME, "a" + Integer.toHexString(i)));
-        }
-
-        for (int i = 0; i < qnames.size(); ++i) {
-            assertAugmentationIdentifier(AugmentationIdentifier.create(ImmutableSet.copyOf(qnames.subList(0, i))));
-        }
-
-        for (int i = qnames.size(); i < 65536; ++i) {
-            qnames.add(QName.create(TestModel.TEST_QNAME, "a" + Integer.toHexString(i)));
-        }
-        assertAugmentationIdentifier(AugmentationIdentifier.create(ImmutableSet.copyOf(qnames)));
-    }
-
-    private void assertAugmentationIdentifier(final AugmentationIdentifier expected) throws IOException {
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
-            nnout.writePathArgument(expected);
-        }
-
-        final byte[] bytes = bos.toByteArray();
-
-        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-        PathArgument arg = nnin.readPathArgument();
-        assertEquals(expected, arg);
     }
 
     private static <T extends Serializable> T clone(final T obj) {
