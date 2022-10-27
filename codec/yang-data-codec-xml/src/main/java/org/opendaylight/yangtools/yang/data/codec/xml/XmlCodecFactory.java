@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.rfc8528.data.util.EmptyMountPointContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
-import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.BitsHexStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
@@ -93,7 +93,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<?> bitsCodec(final BitsTypeDefinition type) {
-        return new QuotedXmlCodec<>(BitsStringCodec.from(type));
+        return new QuotedXmlCodec<>(BitsHexStringCodec.from(type));
     }
 
     @Override
