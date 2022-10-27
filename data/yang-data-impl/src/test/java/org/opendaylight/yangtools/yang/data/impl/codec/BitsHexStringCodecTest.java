@@ -21,7 +21,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.data.api.codec.BitsHexCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.BitBuilder;
@@ -32,7 +32,7 @@ public class BitsHexStringCodecTest {
     @ParameterizedTest(name = "Deserialize \"{1}\" -> \"{2}\"")
     @MethodSource("bitsSerializationArgs")
     void deserialization(int bitsTotal, final String input, final String output) {
-        final BitsHexCodec<String> codec = getCodec(buildBitsTypeDefinition(bitsTotal), BitsHexCodec.class);
+        final BitsCodec<String> codec = getCodec(buildBitsTypeDefinition(bitsTotal), BitsCodec.class);
         assertEquals(output, codec.deserialize(input));
     }
 
