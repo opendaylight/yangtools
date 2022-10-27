@@ -10,16 +10,13 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -46,25 +43,9 @@ final class MandatoryDescendant implements Immutable {
     }
 
     static @NonNull MandatoryDescendant create(final YangInstanceIdentifier parentId,
-            final DataNodeContainer parentSchema, final DataSchemaNode childSchema, final boolean inAugmentedSubtree) {
-        final NodeIdentifier childId = NodeIdentifier.create(childSchema.getQName());
-
-        if (childSchema.isAugmenting()) {
-            if (!inAugmentedSubtree) {
-                final AugmentationSchemaNode aug = getAugIdentifierOfChild(parentSchema, childSchema);
-                return new MandatoryDescendant(
-                    parentId.node(DataSchemaContextNode.augmentationIdentifierFrom(aug)).node(childId).toOptimized(),
-                    parentId.node(childId).toOptimized());
-            }
-
-            final List<PathArgument> augSubtreePath = parentId.getPathArguments();
-            // in case of augmented choice-case the pathArguments might be empty
-            final YangInstanceIdentifier legacyPath = !augSubtreePath.isEmpty()
-                ? YangInstanceIdentifier.create(augSubtreePath.subList(1, augSubtreePath.size())) : null;
-            return new MandatoryDescendant(parentId.node(childId).toOptimized(), legacyPath);
-        }
-
-        return new MandatoryDescendant(parentId.node(childId).toOptimized(), null);
+            final DataNodeContainer parentSchema, final DataSchemaNode childSchema) {
+        return new MandatoryDescendant(parentId.node(NodeIdentifier.create(childSchema.getQName())).toOptimized(),
+            null);
     }
 
     void enforceOnData(final NormalizedNode data) {

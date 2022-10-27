@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutionException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.WritableObjects;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -343,7 +342,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     }
 
     @Override
-    public PathArgument readPathArgument() throws IOException {
+    public PathArgument readLegacyPathArgument() throws IOException {
         final byte header = input.readByte();
         return switch (header & PotassiumPathArgument.TYPE_MASK) {
             case PotassiumPathArgument.NODE_IDENTIFIER -> {
@@ -354,10 +353,6 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             case PotassiumPathArgument.NODE_WITH_VALUE -> {
                 verifyPathIdentifierOnly(header);
                 yield readNodeWithValue(header);
-            }
-            case PotassiumPathArgument.MOUNTPOINT_IDENTIFIER -> {
-                verifyPathIdentifierOnly(header);
-                yield MountPointIdentifier.create(readNodeIdentifier(header).getNodeType());
             }
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument header " + header);
         };

@@ -5,13 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
@@ -23,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -194,20 +191,14 @@ public class ImmutableNormalizedNodeStreamWriterTest {
                     .withValue(anyxmlDomSource)
                     .build())
                 .build())
-            .withChild(Builders.augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(myContainer3)))
-                .withChild(Builders.containerBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(myContainer3))
-                    .withChild(Builders.augmentationBuilder()
-                        .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(myDoublyKeyedList)))
-                        .withChild(Builders.mapBuilder()
-                            .withNodeIdentifier(new NodeIdentifier(myDoublyKeyedList))
-                            .withChild(Builders.mapEntryBuilder()
-                                .withNodeIdentifier(NodeIdentifierWithPredicates.of(myDoublyKeyedList,
-                                    Map.of(myFirstKeyLeaf, "listkeyvalue1", mySecondKeyLeaf, "listkeyvalue2")))
-                                .withChild(ImmutableNodes.leafNode(myLeafInList3, "listleafvalue1"))
-                                .build())
-                            .build())
+            .withChild(Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(myContainer3))
+                .withChild(Builders.mapBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(myDoublyKeyedList))
+                    .withChild(Builders.mapEntryBuilder()
+                        .withNodeIdentifier(NodeIdentifierWithPredicates.of(myDoublyKeyedList,
+                            Map.of(myFirstKeyLeaf, "listkeyvalue1", mySecondKeyLeaf, "listkeyvalue2")))
+                        .withChild(ImmutableNodes.leafNode(myLeafInList3, "listleafvalue1"))
                         .build())
                     .build())
                 .build())

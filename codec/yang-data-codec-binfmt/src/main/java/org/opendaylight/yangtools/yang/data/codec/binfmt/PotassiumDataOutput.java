@@ -27,7 +27,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.WritableObjects;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -38,7 +37,6 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -166,12 +164,6 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     }
 
     @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        // Ignored except for stack tracking
-        stack.push(identifier);
-    }
-
-    @Override
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             startSimpleNode(PotassiumNode.NODE_ANYXML, name);
@@ -224,10 +216,6 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
             writeNodeIdentifierWithPredicates(nip);
         } else if (pathArgument instanceof NodeWithValue<?> niv) {
             writeNodeWithValue(niv);
-        } else if (pathArgument instanceof MountPointIdentifier mpid) {
-            writeMountPointIdentifier(mpid);
-        } else if (pathArgument instanceof AugmentationIdentifier augid) {
-            // Ignored
         } else {
             throw new IOException("Unhandled PathArgument " + pathArgument);
         }
@@ -235,10 +223,6 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
 
     private void writeNodeIdentifier(final NodeIdentifier identifier) throws IOException {
         writePathArgumentQName(identifier.getNodeType(), PotassiumPathArgument.NODE_IDENTIFIER);
-    }
-
-    private void writeMountPointIdentifier(final MountPointIdentifier identifier) throws IOException {
-        writePathArgumentQName(identifier.getNodeType(), PotassiumPathArgument.MOUNTPOINT_IDENTIFIER);
     }
 
     private void writeNodeIdentifierWithPredicates(final NodeIdentifierWithPredicates identifier) throws IOException {

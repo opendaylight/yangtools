@@ -18,7 +18,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -141,12 +140,9 @@ public final class NormalizedNodes {
     }
 
     private static void appendPathArgument(final StringBuilder sb, final PathArgument arg) {
+        sb.append(arg.getNodeType().getLocalName());
         if (arg instanceof NodeIdentifierWithPredicates nip) {
-            sb.append(arg.getNodeType().getLocalName()).append(nip.values());
-        } else if (arg instanceof AugmentationIdentifier) {
-            sb.append("augmentation");
-        } else {
-            sb.append(arg.getNodeType().getLocalName());
+            sb.append(nip.values());
         }
     }
 }

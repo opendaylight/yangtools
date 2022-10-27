@@ -57,12 +57,11 @@ final class PotassiumPathArgument {
     static final byte NODE_IDENTIFIER                 = 0x01;
     static final byte NODE_IDENTIFIER_WITH_PREDICATES = 0x02;
     static final byte NODE_WITH_VALUE                 = 0x03;
-    // FIXME: remove this
-    static final byte MOUNTPOINT_IDENTIFIER           = 0x04;
 
     // ... leaving four values currently unused
     // FIXME: this means we can use only two bits for type and improve
     // 0x00 reserved (former AUGMENTATION_IDENTIFIER)
+    // 0x04 reserved (former MOUNTPOINT_IDENTIFIER)
     // 0x05 reserved
     // 0x06 reserved
     // 0x07 reserved
