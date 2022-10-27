@@ -19,7 +19,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -130,9 +129,9 @@ public final class NormalizedNodes {
     private static void toStringTree(final StringBuilder sb, final NormalizedNode node, final int offset) {
         final String prefix = " ".repeat(offset);
         appendPathArgument(sb.append(prefix), node.getIdentifier());
-        if (node instanceof NormalizedNodeContainer) {
+        if (node instanceof NormalizedNodeContainer<?> container) {
             sb.append(" {\n");
-            for (NormalizedNode child : ((NormalizedNodeContainer<?>) node).body()) {
+            for (NormalizedNode child : container.body()) {
                 toStringTree(sb, child, offset + STRINGTREE_INDENT);
             }
             sb.append(prefix).append('}');
@@ -143,12 +142,9 @@ public final class NormalizedNodes {
     }
 
     private static void appendPathArgument(final StringBuilder sb, final PathArgument arg) {
-        if (arg instanceof NodeIdentifierWithPredicates) {
-            sb.append(arg.getNodeType().getLocalName()).append(((NodeIdentifierWithPredicates) arg).values());
-        } else if (arg instanceof AugmentationIdentifier) {
-            sb.append("augmentation");
-        } else {
-            sb.append(arg.getNodeType().getLocalName());
+        sb.append(arg.getNodeType().getLocalName());
+        if (arg instanceof NodeIdentifierWithPredicates nip) {
+            sb.append(nip.values());
         }
     }
 }

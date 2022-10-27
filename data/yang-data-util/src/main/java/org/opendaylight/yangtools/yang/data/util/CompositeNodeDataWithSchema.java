@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -260,18 +259,12 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         for (AbstractNodeDataWithSchema<?> child : children) {
             child.write(writer, metaWriter);
         }
-        for (Entry<AugmentationSchemaNode, Collection<AbstractNodeDataWithSchema<?>>> augmentationToChild
-                : augmentationsToChild.asMap().entrySet()) {
-            final Collection<AbstractNodeDataWithSchema<?>> childsFromAgumentation = augmentationToChild.getValue();
+        for (var augmentationToChild : augmentationsToChild.asMap().entrySet()) {
+            final var childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
-                // FIXME: can we get the augmentation schema?
-                writer.startAugmentationNode(DataSchemaContextNode.augmentationIdentifierFrom(
-                    augmentationToChild.getKey()));
-
-                for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childsFromAgumentation) {
+                for (var nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer, metaWriter);
                 }
-
                 writer.endNode();
             }
         }

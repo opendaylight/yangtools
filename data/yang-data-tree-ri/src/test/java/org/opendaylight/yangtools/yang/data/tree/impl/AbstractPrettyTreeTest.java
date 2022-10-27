@@ -13,13 +13,10 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import java.util.List;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -135,14 +132,6 @@ public abstract class AbstractPrettyTreeTest {
     protected static ChoiceNode createChoiceNode() {
         return Builders.choiceBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(CHOICE_QNAME))
-                .withChild(createAugmentationNode())
-                .build();
-    }
-
-    protected static AugmentationNode createAugmentationNode() {
-        return Builders.augmentationBuilder()
-                .withNodeIdentifier(AugmentationIdentifier
-                        .create(Set.of(AUGMENT_QNAME)))
                 .withChild(createAugmentedLeafNode())
                 .build();
     }

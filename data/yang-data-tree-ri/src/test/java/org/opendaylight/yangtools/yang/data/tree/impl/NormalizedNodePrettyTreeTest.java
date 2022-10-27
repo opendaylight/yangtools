@@ -60,14 +60,6 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testAugmentationPrettyTree() {
-        assertEquals(String.join("\n",
-            "augmentationNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13) = {",
-            "    leafNode augment = \"Augmented leaf value\"",
-            "}"), createAugmentationNode().prettyTree().get());
-    }
-
-    @Test
     public void testLeafPrettyTree() {
         assertEquals("leafNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)leaf = \"Leaf value\"",
             createLeafNode().prettyTree().get());
