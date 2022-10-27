@@ -23,12 +23,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.codec.BitsHexCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 public class BitsHexStringCodec extends TypeDefinitionAwareCodec<String, BitsTypeDefinition>
-        implements BitsHexCodec<String> {
+        implements BitsCodec<String> {
 
     private static final Comparator<Bit> BIT_COMPARATOR = (a, b) -> a.getPosition().compareTo(b.getPosition());
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
