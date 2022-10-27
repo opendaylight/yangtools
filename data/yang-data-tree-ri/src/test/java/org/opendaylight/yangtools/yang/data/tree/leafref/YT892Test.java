@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -116,55 +114,41 @@ public class YT892Test {
                                     .withChild(ImmutableNodes.leafNode(IDENTIFIER, BGP_POLICY))
                                     .withChild(ImmutableNodes.leafNode(NAME, "test-bgp-instance"))
                                     .build())
-                                .withChild(Builders.augmentationBuilder()
-                                    .withNodeIdentifier(
-                                        AugmentationIdentifier.create(ImmutableSet.of(TEST_BGP)))
+                                .withChild(Builders.containerBuilder()
+                                    .withNodeIdentifier(new NodeIdentifier(TEST_BGP))
                                     .withChild(Builders.containerBuilder()
-                                        .withNodeIdentifier(new NodeIdentifier(TEST_BGP))
-                                        .withChild(Builders.containerBuilder()
-                                            .withNodeIdentifier(new NodeIdentifier(NEIGHBORS))
-                                            .withChild(Builders.mapBuilder()
-                                                .withNodeIdentifier(new NodeIdentifier(NEIGHBOR))
-                                                .withChild(Builders.mapEntryBuilder()
-                                                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(NEIGHBOR,
-                                                        NEIGHBOR_ADDRESS, "10.25.1.9"))
-                                                    .withChild(ImmutableNodes.leafNode(NEIGHBOR_ADDRESS,
-                                                            "10.25.1.9"))
-                                                    .withChild(Builders.containerBuilder()
-                                                        .withNodeIdentifier(new NodeIdentifier(TEST_CONFIG))
-                                                        .withChild(Builders.augmentationBuilder()
-                                                            .withNodeIdentifier(AugmentationIdentifier.create(
-                                                                ImmutableSet.of(TEST_PEER_GROUP)))
-                                                            .withChild(ImmutableNodes.leafNode(TEST_PEER_GROUP,
-                                                                    "application-peers"))
-                                                            .build())
-                                                        .build())
-                                                    .withChild(Builders.containerBuilder()
-                                                        .withNodeIdentifier(new NodeIdentifier(AFI_SAFIS))
-                                                        .withChild(Builders.mapBuilder()
-                                                            .withNodeIdentifier(new NodeIdentifier(AFI_SAFI))
-                                                            .withChild(Builders.mapEntryBuilder()
-                                                                .withNodeIdentifier(NodeIdentifierWithPredicates.of(
-                                                                    AFI_SAFI,
-                                                                    ImmutableMap.of(AFI_SAFI_NAME, IPV4_UNICAST)))
-                                                                .withChild(ImmutableNodes.leafNode(AFI_SAFI_NAME,
-                                                                    IPV4_UNICAST))
-                                                                .withChild(Builders.containerBuilder()
-                                                                    .withNodeIdentifier(
-                                                                        new NodeIdentifier(TEST_CONFIG))
-                                                                    .withChild(ImmutableNodes.leafNode(
-                                                                        AFI_SAFI_NAME, IPV4_UNICAST))
-                                                                    .build())
-                                                                .withChild(Builders.augmentationBuilder()
-                                                                    .withNodeIdentifier(
-                                                                        AugmentationIdentifier.create(
-                                                                            ImmutableSet.of(RECEIVE, SEND_MAX)))
-                                                                    .withChild(ImmutableNodes.leafNode(RECEIVE,
-                                                                        Boolean.TRUE))
-                                                                    .withChild(ImmutableNodes.leafNode(SEND_MAX,
-                                                                        Uint8.ZERO))
-                                                                    .build())
+                                        .withNodeIdentifier(new NodeIdentifier(NEIGHBORS))
+                                        .withChild(Builders.mapBuilder()
+                                            .withNodeIdentifier(new NodeIdentifier(NEIGHBOR))
+                                            .withChild(Builders.mapEntryBuilder()
+                                                .withNodeIdentifier(NodeIdentifierWithPredicates.of(NEIGHBOR,
+                                                    NEIGHBOR_ADDRESS, "10.25.1.9"))
+                                                .withChild(ImmutableNodes.leafNode(NEIGHBOR_ADDRESS, "10.25.1.9"))
+                                                .withChild(Builders.containerBuilder()
+                                                    .withNodeIdentifier(new NodeIdentifier(TEST_CONFIG))
+                                                    .withChild(ImmutableNodes.leafNode(TEST_PEER_GROUP,
+                                                        "application-peers"))
+                                                    .build())
+                                                .withChild(Builders.containerBuilder()
+                                                    .withNodeIdentifier(new NodeIdentifier(AFI_SAFIS))
+                                                    .withChild(Builders.mapBuilder()
+                                                        .withNodeIdentifier(new NodeIdentifier(AFI_SAFI))
+                                                        .withChild(Builders.mapEntryBuilder()
+                                                            .withNodeIdentifier(NodeIdentifierWithPredicates.of(
+                                                                AFI_SAFI,
+                                                                ImmutableMap.of(AFI_SAFI_NAME, IPV4_UNICAST)))
+                                                            .withChild(ImmutableNodes.leafNode(AFI_SAFI_NAME,
+                                                                IPV4_UNICAST))
+                                                            .withChild(Builders.containerBuilder()
+                                                                .withNodeIdentifier(
+                                                                    new NodeIdentifier(TEST_CONFIG))
+                                                                .withChild(ImmutableNodes.leafNode(
+                                                                    AFI_SAFI_NAME, IPV4_UNICAST))
                                                                 .build())
+                                                            .withChild(ImmutableNodes.leafNode(RECEIVE,
+                                                                Boolean.TRUE))
+                                                            .withChild(ImmutableNodes.leafNode(SEND_MAX,
+                                                                Uint8.ZERO))
                                                             .build())
                                                         .build())
                                                     .build())

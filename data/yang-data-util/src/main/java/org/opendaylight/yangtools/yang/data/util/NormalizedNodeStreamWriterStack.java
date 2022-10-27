@@ -13,16 +13,12 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -31,8 +27,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -53,7 +47,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
@@ -285,48 +278,5 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
             dataTree.exit();
         }
         return ret;
-    }
-
-    public AugmentationSchemaNode startAugmentationNode(final AugmentationIdentifier identifier) {
-        LOG.debug("Enter augmentation {}", identifier);
-        Object parent = getParent();
-
-        checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
-        if (parent instanceof ChoiceSchemaNode choice) {
-            final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
-            parent = findCaseByChild(choice, name);
-        }
-        checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
-        final AugmentationSchemaNode schema = findSchemaForAugment((AugmentationTarget) parent,
-            identifier.getPossibleChildNames());
-        final AugmentationSchemaNode resolvedSchema = new EffectiveAugmentationSchema(schema,
-            (DataNodeContainer) parent);
-        schemaStack.push(resolvedSchema);
-        return resolvedSchema;
-    }
-
-    // FIXME: 7.0.0: can we get rid of this?
-    private static @NonNull AugmentationSchemaNode findSchemaForAugment(final AugmentationTarget schema,
-            final Set<QName> qnames) {
-        for (final AugmentationSchemaNode augment : schema.getAvailableAugmentations()) {
-            if (qnames.equals(augment.getChildNodes().stream()
-                .map(DataSchemaNode::getQName)
-                .collect(Collectors.toUnmodifiableSet()))) {
-                return augment;
-            }
-        }
-
-        throw new IllegalStateException(
-            "Unknown augmentation node detected, identified by: " + qnames + ", in: " + schema);
-    }
-
-    // FIXME: 7.0.0: can we get rid of this?
-    private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
-        for (final CaseSchemaNode caze : parent.getCases()) {
-            if (caze.dataChildByName(qname) != null) {
-                return caze;
-            }
-        }
-        return null;
     }
 }

@@ -15,12 +15,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.AbstractNodeContainerModificationStrategy.Visible;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
@@ -64,13 +61,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
     private ModificationApplyOperation resolveChild(final PathArgument identifier) {
         final T schema = getSchema();
-        if (identifier instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
-            return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema,
-                (AugmentationIdentifier) identifier, treeConfig);
-        }
-
-        final QName qname = identifier.getNodeType();
-        final Optional<DataSchemaNode> child = schema.findDataChildByName(qname);
+        final Optional<DataSchemaNode> child = schema.findDataChildByName(identifier.getNodeType());
         if (!child.isPresent()) {
             LOG.trace("Child {} not present in container schema {} children {}", identifier, this,
                 schema.getChildNodes());

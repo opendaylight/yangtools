@@ -10,13 +10,11 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Set;
 import java.util.function.Consumer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -59,10 +57,7 @@ public class YT1276Test {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(FOO), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
-                .withChild(Builders.augmentationBuilder()
-                    .withNodeIdentifier(new AugmentationIdentifier(Set.of(BAR)))
-                    .withChild(ImmutableNodes.leafNode(BAR, "xyzzy"))
-                    .build())
+                .withChild(ImmutableNodes.leafNode(BAR, "xyzzy"))
                 .build());
         });
     }
@@ -98,15 +93,12 @@ public class YT1276Test {
                 .withChild(Builders.choiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_LEAF, "xyzzy"))
-                    .withChild(Builders.augmentationBuilder()
-                        .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT, XYZZY_AUGMENT_CONT)))
-                        .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
+                    .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
+                    .withChild(ImmutableContainerNodeBuilder.create()
+                        .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT))
                         .withChild(ImmutableContainerNodeBuilder.create()
-                            .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT))
-                            .withChild(ImmutableContainerNodeBuilder.create()
-                                .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT_INNER))
-                                .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
-                                .build())
+                            .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT_INNER))
+                            .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                             .build())
                         .build())
                     .build())
@@ -203,15 +195,12 @@ public class YT1276Test {
                 .withNodeIdentifier(new NodeIdentifier(BAR))
                 .withChild(Builders.choiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
-                    .withChild(Builders.augmentationBuilder()
-                        .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT, XYZZY_AUGMENT_CONT)))
-                        .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
+                    .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
+                    .withChild(ImmutableContainerNodeBuilder.create()
+                        .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
                         .withChild(ImmutableContainerNodeBuilder.create()
-                            .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
-                            .withChild(ImmutableContainerNodeBuilder.create()
-                                .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
-                                .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
-                                .build())
+                            .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
+                            .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                             .build())
                         .build())
                     .build())

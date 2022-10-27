@@ -15,7 +15,6 @@ import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -195,17 +194,10 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     }
 
     private static void putChild(final Multimap<QName, NormalizedNode> qnameToNodes, final NormalizedNode child) {
-        if (child instanceof AugmentationNode) {
-            for (DataContainerChild grandChild : ((AugmentationNode) child).body()) {
-                putChild(qnameToNodes, grandChild);
-            }
-        } else {
-            qnameToNodes.put(child.getIdentifier().getNodeType(), child);
-        }
+        qnameToNodes.put(child.getIdentifier().getNodeType(), child);
     }
 
     private final class SchemaNodeSetter implements AutoCloseable {
-
         private final SchemaNode previousSchemaNode;
 
         /**

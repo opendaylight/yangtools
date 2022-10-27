@@ -17,7 +17,6 @@ import java.util.Map;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -114,12 +113,6 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         super.startChoiceNode(name, childSizeHint);
         enterMetadataNode(name);
-    }
-
-    @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        super.startAugmentationNode(identifier);
-        enterMetadataNode(identifier);
     }
 
     @Override

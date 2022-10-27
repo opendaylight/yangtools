@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -70,10 +69,6 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
     }
 
     private DataSchemaContextNode<?> fromLocalSchema(final PathArgument child) {
-        if (child instanceof AugmentationIdentifier) {
-            return fromSchemaAndQNameChecked(container, ((AugmentationIdentifier) child).getPossibleChildNames()
-                    .iterator().next());
-        }
         return fromSchemaAndQNameChecked(container, child.getNodeType());
     }
 

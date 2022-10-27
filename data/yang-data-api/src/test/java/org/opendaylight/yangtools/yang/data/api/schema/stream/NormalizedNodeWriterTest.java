@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
@@ -97,8 +96,6 @@ public class NormalizedNodeWriterTest {
 
         assertNotNull(orderedNormalizedNodeWriter.write(mock(ChoiceNode.class)));
 
-        assertNotNull(orderedNormalizedNodeWriter.write(mock(AugmentationNode.class)));
-
         final UnkeyedListNode mockedUnkeyedListNode = mock(UnkeyedListNode.class);
         final Set<?> value = Set.of(mockedUnkeyedListEntryNode);
         doReturn(value).when(mockedUnkeyedListNode).body();
@@ -115,12 +112,8 @@ public class NormalizedNodeWriterTest {
         orderedNormalizedNodeWriter.flush();
         orderedNormalizedNodeWriter.close();
 
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-                loggingNormalizedNodeStreamWriter, false);
-
-        assertNotNull(normalizedNodeWriter.write(mockedMapEntryNode));
-
-        normalizedNodeWriter.flush();
-        normalizedNodeWriter.close();
+        try (var nnWriter = NormalizedNodeWriter.forStreamWriter(loggingNormalizedNodeStreamWriter, false)) {
+            assertNotNull(nnWriter.write(mockedMapEntryNode));
+        }
     }
 }
