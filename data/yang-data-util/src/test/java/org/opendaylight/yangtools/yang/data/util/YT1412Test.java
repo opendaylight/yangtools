@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -73,10 +71,7 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var augment = assertInstanceOf(AugmentationContextNode.class, one.enterChild(FIVE, stack));
-        assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
-
-        final var five = assertInstanceOf(UnkeyedListMixinContextNode.class, augment.enterChild(FIVE, stack));
+        final var five = assertInstanceOf(UnkeyedListMixinContextNode.class, one.enterChild(FIVE, stack));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
         assertInstanceOf(UnkeyedListItemContextNode.class, five.enterChild(FIVE, stack));
@@ -119,7 +114,6 @@ class YT1412Test {
     void testEnterAugmentPath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
             new NodeIdentifier(ONE),
-            new AugmentationIdentifier(Set.of(FIVE)),
             new NodeIdentifier(FIVE),
             new NodeIdentifier(FIVE)))
             .orElseThrow();
