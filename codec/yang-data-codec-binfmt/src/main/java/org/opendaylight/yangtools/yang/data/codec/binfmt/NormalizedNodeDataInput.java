@@ -84,7 +84,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
         if (legacy.isFirst()) {
             return legacy.getFirst();
         }
-        throw new IOException(legacy.getSecond() + " does not have a representation");
+        throw new InvalidNormalizedNodeStreamException(legacy.getSecond() + " does not have a representation");
     }
 
     /**

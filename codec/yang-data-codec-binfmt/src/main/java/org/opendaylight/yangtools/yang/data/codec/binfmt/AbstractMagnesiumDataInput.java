@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -61,9 +60,10 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
     private static final @NonNull Integer INT32_0 = 0;
     private static final @NonNull Long INT64_0 = 0L;
     private static final byte @NonNull[] BINARY_0 = new byte[0];
-    private static final @NonNull AugmentationIdentifier EMPTY_AID = AugmentationIdentifier.create(ImmutableSet.of());
+    private static final @NonNull LegacyAugmentationIdentifier EMPTY_AID =
+        new LegacyAugmentationIdentifier(ImmutableSet.of());
 
-    private final List<AugmentationIdentifier> codedAugments = new ArrayList<>();
+    private final List<LegacyAugmentationIdentifier> codedAugments = new ArrayList<>();
     private final List<NodeIdentifier> codedNodeIdentifiers = new ArrayList<>();
     private final List<QNameModule> codedModules = new ArrayList<>();
     private final List<String> codedStrings = new ArrayList<>();
@@ -77,7 +77,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         streamNormalizedNode(requireNonNull(writer), null, input.readByte());
     }
 
-    private void streamNormalizedNode(final NormalizedNodeStreamWriter writer, final PathArgument parent,
+    private void streamNormalizedNode(final NormalizedNodeStreamWriter writer, final Object parent,
             final byte nodeHeader) throws IOException {
         switch (nodeHeader & MagnesiumNode.TYPE_MASK) {
             case MagnesiumNode.NODE_LEAF:
@@ -136,10 +136,11 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
     }
 
     private void streamAugmentation(final NormalizedNodeStreamWriter writer, final byte nodeHeader) throws IOException {
-        final AugmentationIdentifier augIdentifier = decodeAugmentationIdentifier(nodeHeader);
+        final var augIdentifier = decodeAugmentationIdentifier(nodeHeader);
         LOG.trace("Streaming augmentation node {}", augIdentifier);
-        writer.startAugmentationNode(augIdentifier);
-        commonStreamContainer(writer, augIdentifier);
+        for (byte nodeType = input.readByte(); nodeType != MagnesiumNode.NODE_END; nodeType = input.readByte()) {
+            streamNormalizedNode(writer, augIdentifier, nodeType);
+        }
     }
 
     private void streamChoice(final NormalizedNodeStreamWriter writer, final byte nodeHeader) throws IOException {
@@ -156,7 +157,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         commonStreamContainer(writer, identifier);
     }
 
-    private void streamLeaf(final NormalizedNodeStreamWriter writer, final PathArgument parent, final byte nodeHeader)
+    private void streamLeaf(final NormalizedNodeStreamWriter writer, final Object parent, final byte nodeHeader)
             throws IOException {
         final NodeIdentifier identifier = decodeNodeIdentifier(nodeHeader);
         LOG.trace("Streaming leaf node {}", identifier);
@@ -198,8 +199,8 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         commonStreamContainer(writer, identifier);
     }
 
-    private void streamLeafsetEntry(final NormalizedNodeStreamWriter writer, final PathArgument parent,
-            final byte nodeHeader) throws IOException {
+    private void streamLeafsetEntry(final NormalizedNodeStreamWriter writer, final Object parent, final byte nodeHeader)
+            throws IOException {
         final NodeIdentifier nodeId = decodeNodeIdentifier(nodeHeader, parent);
         final Object value = readLeafValue();
         final NodeWithValue<Object> leafIdentifier = new NodeWithValue<>(nodeId.getNodeType(), value);
@@ -215,8 +216,8 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         commonStreamContainer(writer, identifier);
     }
 
-    private void streamListEntry(final NormalizedNodeStreamWriter writer, final PathArgument parent,
-            final byte nodeHeader) throws IOException {
+    private void streamListEntry(final NormalizedNodeStreamWriter writer, final Object parent, final byte nodeHeader)
+            throws IOException {
         final NodeIdentifier identifier = decodeNodeIdentifier(nodeHeader, parent);
         LOG.trace("Streaming unkeyed list item node {}", identifier);
         writer.startUnkeyedListItem(identifier, UNKNOWN_SIZE);
@@ -237,8 +238,8 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         commonStreamContainer(writer, identifier);
     }
 
-    private void streamMapEntry(final NormalizedNodeStreamWriter writer, final PathArgument parent,
-            final byte nodeHeader) throws IOException {
+    private void streamMapEntry(final NormalizedNodeStreamWriter writer, final Object parent, final byte nodeHeader)
+            throws IOException {
         final NodeIdentifier nodeId = decodeNodeIdentifier(nodeHeader, parent);
 
         final int size = switch (mask(nodeHeader, MagnesiumNode.PREDICATE_MASK)) {
@@ -284,7 +285,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         return decodeNodeIdentifier(nodeHeader, null);
     }
 
-    private NodeIdentifier decodeNodeIdentifier(final byte nodeHeader, final PathArgument parent) throws IOException {
+    private NodeIdentifier decodeNodeIdentifier(final byte nodeHeader, final Object parent) throws IOException {
         final int index;
         switch (nodeHeader & MagnesiumNode.ADDR_MASK) {
             case MagnesiumNode.ADDR_DEFINE:
@@ -312,7 +313,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         }
     }
 
-    private AugmentationIdentifier decodeAugmentationIdentifier(final byte nodeHeader) throws IOException {
+    private LegacyAugmentationIdentifier decodeAugmentationIdentifier(final byte nodeHeader) throws IOException {
         final int index;
         switch (nodeHeader & MagnesiumNode.ADDR_MASK) {
             case MagnesiumNode.ADDR_DEFINE:
@@ -379,7 +380,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
     public final Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
         final byte header = input.readByte();
         return switch (header & MagnesiumPathArgument.TYPE_MASK) {
-            case MagnesiumPathArgument.AUGMENTATION_IDENTIFIER -> Either.ofFirst(readAugmentationIdentifier(header));
+            case MagnesiumPathArgument.AUGMENTATION_IDENTIFIER -> Either.ofSecond(readAugmentationIdentifier(header));
             case MagnesiumPathArgument.NODE_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
                 yield Either.ofFirst(readNodeIdentifier(header));
@@ -398,13 +399,13 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         };
     }
 
-    private AugmentationIdentifier readAugmentationIdentifier() throws IOException {
-        final AugmentationIdentifier result = readAugmentationIdentifier(input.readInt());
+    private @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier() throws IOException {
+        final var result = readAugmentationIdentifier(input.readInt());
         codedAugments.add(result);
         return result;
     }
 
-    private @NonNull AugmentationIdentifier readAugmentationIdentifier(final byte header) throws IOException {
+    private @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier(final byte header) throws IOException {
         final byte count = mask(header, MagnesiumPathArgument.AID_COUNT_MASK);
         return switch (count) {
             case MagnesiumPathArgument.AID_COUNT_1B -> readAugmentationIdentifier(input.readUnsignedByte());
@@ -414,13 +415,13 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         };
     }
 
-    private @NonNull AugmentationIdentifier readAugmentationIdentifier(final int size) throws IOException {
+    private @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier(final int size) throws IOException {
         if (size > 0) {
-            final List<QName> qnames = new ArrayList<>(size);
+            final var qnames = ImmutableSet.<QName>builderWithExpectedSize(size);
             for (int i = 0; i < size; ++i) {
                 qnames.add(readQName());
             }
-            return AugmentationIdentifier.create(ImmutableSet.copyOf(qnames));
+            return new LegacyAugmentationIdentifier(qnames.build());
         } else if (size == 0) {
             return EMPTY_AID;
         } else {
