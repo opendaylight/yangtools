@@ -16,7 +16,6 @@ import java.io.IOException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.ExtensibleObject;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -62,10 +61,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * <li>{@code anyxml} - An anyxml node event is emitted using {@link #startAnyxmlNode(NodeIdentifier, Class)}.</li>
  *
  * <li>{@code choice} - Choice node event is emitted by {@link #startChoiceNode(NodeIdentifier, int)} event.</li>
- *
- * <li>{@code augment} - Represents augmentation, augmentation node is started by invoking
- * {@link #startAugmentationNode(AugmentationIdentifier)}.
- * </li>
  * </ul>
  *
  * <h3>Implementation notes</h3>
@@ -160,7 +155,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
      * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
      * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-     * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
      * </ul>
      *
      * @param name name of node as defined in schema, namespace and revision are derived from parent node.
@@ -200,7 +194,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
      * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
      * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-     * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
      * </ul>
      *
      * @param name Identifier of node
@@ -238,7 +231,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
      * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
      * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-     * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
      * </ul>
      *
      * @param identifier QName to value pairs of keys of map entry node.
@@ -282,24 +274,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * @throws IOException if an underlying IO error occurs
      */
     void startChoiceNode(NodeIdentifier name, int childSizeHint) throws IOException;
-
-    /**
-     * Emits start of augmentation node. Valid sub-events are:
-     * <ul>
-     * <li>{@link #startLeafNode}</li>
-     * <li>{@link #startContainerNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startChoiceNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
-     * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-     * </ul>
-     *
-     * @param identifier Augmentation identifier
-     * @throws NullPointerException if {@code identifier} is null
-     * @throws IllegalArgumentException If augmentation is invalid in current context.
-     * @throws IOException if an underlying IO error occurs
-     */
-    void startAugmentationNode(AugmentationIdentifier identifier) throws IOException;
 
     /**
      * Start emitting a new anydata node identified by name.

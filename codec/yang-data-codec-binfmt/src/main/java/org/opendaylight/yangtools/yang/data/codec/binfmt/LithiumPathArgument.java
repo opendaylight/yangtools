@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -28,8 +27,6 @@ final class LithiumPathArgument {
             return NODE_IDENTIFIER;
         } else if (pathArgument instanceof NodeIdentifierWithPredicates) {
             return NODE_IDENTIFIER_WITH_PREDICATES;
-        } else if (pathArgument instanceof AugmentationIdentifier) {
-            return AUGMENTATION_IDENTIFIER;
         } else if (pathArgument instanceof NodeWithValue) {
             return NODE_IDENTIFIER_WITH_VALUE;
         } else {
