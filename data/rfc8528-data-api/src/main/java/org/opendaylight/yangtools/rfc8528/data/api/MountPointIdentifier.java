@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.WritableObject;
 import org.opendaylight.yangtools.util.AbstractIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 @Beta
@@ -68,15 +67,9 @@ public final class MountPointIdentifier extends AbstractIdentifier<QName> implem
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int compareTo(final @Nullable PathArgument o) {
-        if (o instanceof AugmentationIdentifier) {
-            // Augmentations are strictly more, in keeping of their compare
-            return 1;
-        }
-        if (!(o instanceof MountPointIdentifier)) {
-            // TODO: Yeah, okay, this declaration is not quite right, but we are following AugmentationIdenfier's lead
-            return -1;
-        }
-        return getValue().compareTo(((MountPointIdentifier) o).getLabel());
+        return o instanceof MountPointIdentifier other ? getValue().compareTo(other.getLabel())
+            // TODO: Yeah, okay, this declaration is not quite right, but we are following the lead from others
+            : -1;
     }
 
     @Override
