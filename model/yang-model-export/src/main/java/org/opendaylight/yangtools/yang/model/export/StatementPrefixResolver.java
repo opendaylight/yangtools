@@ -64,10 +64,6 @@ final class StatementPrefixResolver {
 
     private final Map<QNameModule, ?> lookup;
 
-    private StatementPrefixResolver(final Map<QNameModule, String> map) {
-        lookup = ImmutableMap.copyOf(map);
-    }
-
     private StatementPrefixResolver(final ImmutableMap<QNameModule, ?> map) {
         lookup = requireNonNull(map);
     }
