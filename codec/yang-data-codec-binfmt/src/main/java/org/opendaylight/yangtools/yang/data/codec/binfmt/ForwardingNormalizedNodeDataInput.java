@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Either;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -48,8 +49,8 @@ abstract class ForwardingNormalizedNodeDataInput extends ForwardingDataInput imp
     }
 
     @Override
-    public final PathArgument readPathArgument() throws IOException {
-        return delegate().readPathArgument();
+    public final Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
+        return delegate().readLegacyPathArgument();
     }
 
     @Override
