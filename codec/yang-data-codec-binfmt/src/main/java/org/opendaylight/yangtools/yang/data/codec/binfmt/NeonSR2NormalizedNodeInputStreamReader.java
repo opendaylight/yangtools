@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataInput {
     private final ArrayList<NodeIdentifier> codedNodeIdentifiers = new ArrayList<>();
-    private final List<AugmentationIdentifier> codedAugments = new ArrayList<>();
+    private final List<LegacyAugmentationIdentifier> codedAugments = new ArrayList<>();
     private final List<QNameModule> codedModules = new ArrayList<>();
     private final List<QName> codedQNames = new ArrayList<>();
 
@@ -49,7 +48,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     }
 
     @Override
-    AugmentationIdentifier readAugmentationIdentifier() throws IOException {
+    LegacyAugmentationIdentifier readAugmentationIdentifier() throws IOException {
         final byte valueType = readByte();
         return switch (valueType) {
             case NeonSR2Tokens.IS_AUGMENT_CODE -> codedAugmentId(readInt());
@@ -122,12 +121,12 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
         return qname;
     }
 
-    private AugmentationIdentifier codedAugmentId(final int code) throws IOException {
+    private LegacyAugmentationIdentifier codedAugmentId(final int code) throws IOException {
         return getCode("QName set", codedAugments, code);
     }
 
-    private AugmentationIdentifier rawAugmentId() throws IOException {
-        final AugmentationIdentifier aid = defaultReadAugmentationIdentifier();
+    private LegacyAugmentationIdentifier rawAugmentId() throws IOException {
+        final var aid = defaultReadAugmentationIdentifier();
         codedAugments.add(aid);
         return aid;
     }

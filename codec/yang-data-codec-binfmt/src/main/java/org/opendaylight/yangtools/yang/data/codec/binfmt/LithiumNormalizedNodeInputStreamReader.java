@@ -11,7 +11,6 @@ import com.google.common.base.Strings;
 import java.io.DataInput;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -39,7 +38,7 @@ final class LithiumNormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     }
 
     @Override
-    AugmentationIdentifier readAugmentationIdentifier() throws IOException {
+    LegacyAugmentationIdentifier readAugmentationIdentifier() throws IOException {
         return defaultReadAugmentationIdentifier();
     }
 
