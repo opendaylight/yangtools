@@ -343,7 +343,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     }
 
     @Override
-    public PathArgument readPathArgument() throws IOException {
+    public PathArgument readLegacyPathArgument() throws IOException {
         final byte header = input.readByte();
         return switch (header & PotassiumPathArgument.TYPE_MASK) {
             case PotassiumPathArgument.NODE_IDENTIFIER -> {

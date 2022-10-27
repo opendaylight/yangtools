@@ -13,7 +13,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -113,14 +112,6 @@ abstract class AbstractIndentingNormalizedNodeStreamWriter implements Normalized
     }
 
     abstract void enterChoiceNode(NodeIdentifier name, String indent);
-
-    @Override
-    public final void startAugmentationNode(final AugmentationIdentifier identifier) {
-        enterAugmentationNode(identifier, ind());
-        incIndent();
-    }
-
-    abstract void enterAugmentationNode(AugmentationIdentifier identifier, String indent);
 
     @Override
     public final void startLeafSetEntryNode(final NodeWithValue<?> name) {

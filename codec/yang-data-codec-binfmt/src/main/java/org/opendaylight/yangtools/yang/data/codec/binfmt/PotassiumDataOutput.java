@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -166,12 +165,6 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     }
 
     @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        // Ignored except for stack tracking
-        stack.push(identifier);
-    }
-
-    @Override
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             startSimpleNode(PotassiumNode.NODE_ANYXML, name);
@@ -226,8 +219,6 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
             writeNodeWithValue(niv);
         } else if (pathArgument instanceof MountPointIdentifier mpid) {
             writeMountPointIdentifier(mpid);
-        } else if (pathArgument instanceof AugmentationIdentifier augid) {
-            // Ignored
         } else {
             throw new IOException("Unhandled PathArgument " + pathArgument);
         }

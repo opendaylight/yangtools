@@ -92,7 +92,7 @@ public enum NormalizedNodeStreamVersion {
      * @return Current runtime version.
      */
     public static NormalizedNodeStreamVersion current() {
-        return MAGNESIUM;
+        return POTASSIUM;
     }
 
     /**

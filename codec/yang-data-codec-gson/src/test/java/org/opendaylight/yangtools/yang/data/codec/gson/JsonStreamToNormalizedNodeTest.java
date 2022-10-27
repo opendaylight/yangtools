@@ -13,19 +13,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -222,25 +219,22 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(ImmutableSet.of(augmentChoice1QName));
-        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(ImmutableSet.of(augmentChoice2QName));
         final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
         final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
         final NodeIdentifier containerId = new NodeIdentifier(containerQName);
 
-        final NormalizedNode cont1Normalized =
-                containerBuilder().withNodeIdentifier(new NodeIdentifier(CONT_1))
-                        .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
-                                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
-                                        .withChild(augmentationBuilder().withNodeIdentifier(aug2Id)
-                                                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice2Id)
-                                                        .withChild(containerBuilder().withNodeIdentifier(containerId)
-                                                                .withChild(leafNode(leafQName, "leaf-value"))
-                                                                .build())
-                                                        .build())
-                                                .build())
-                                        .build())
-                                .build()).build();
+        final NormalizedNode cont1Normalized = containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(CONT_1))
+            .withChild(choiceBuilder()
+                .withNodeIdentifier(augmentChoice1Id)
+                .withChild(choiceBuilder()
+                    .withNodeIdentifier(augmentChoice2Id)
+                    .withChild(containerBuilder().withNodeIdentifier(containerId)
+                        .withChild(leafNode(leafQName, "leaf-value"))
+                        .build())
+                    .build())
+                .build())
+            .build();
 
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));

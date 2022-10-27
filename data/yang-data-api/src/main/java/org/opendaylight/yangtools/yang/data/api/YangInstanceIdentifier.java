@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -18,16 +17,13 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
@@ -71,7 +67,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *       tree</li>
  *   <li>{@link NodeIdentifierWithPredicates} - Identifier of node (list item), which has cardinality {@code 0..n}</li>
  *   <li>{@link NodeWithValue} - Identifier of instance {@code leaf} node or {@code leaf-list} node</li>
- *   <li>{@link AugmentationIdentifier} - Identifier of instance of {@code augmentation} node</li>
  * </ul>
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
@@ -276,12 +271,11 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         }
 
         final Iterator<PathArgument> lit = getPathArguments().iterator();
-        final Iterator<PathArgument> oit = ancestor.getPathArguments().iterator();
         int common = 0;
 
-        while (oit.hasNext()) {
+        for (PathArgument element : ancestor.getPathArguments()) {
             // Ancestor is not really an ancestor
-            if (!lit.hasNext() || !lit.next().equals(oit.next())) {
+            if (!lit.hasNext() || !lit.next().equals(element)) {
                 return Optional.empty();
             }
 
@@ -305,15 +299,14 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         }
 
         checkArgument(other != null, "other should not be null");
-        final Iterator<PathArgument> lit = getPathArguments().iterator();
         final Iterator<PathArgument> oit = other.getPathArguments().iterator();
 
-        while (lit.hasNext()) {
+        for (PathArgument element : getPathArguments()) {
             if (!oit.hasNext()) {
                 return false;
             }
 
-            if (!lit.next().equals(oit.next())) {
+            if (!element.equals(oit.next())) {
                 return false;
             }
         }
@@ -450,7 +443,6 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
      * <ul>
      * <li>{@link NodeIdentifier} - Identifier of container or leaf
      * <li>{@link NodeIdentifierWithPredicates} - Identifier of list entries, which have key defined
-     * <li>{@link AugmentationIdentifier} - Identifier of augmentation
      * <li>{@link NodeWithValue} - Identifier of leaf-list entry
      * </ul>
      */
@@ -878,148 +870,6 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         @Override
         Object writeReplace() {
             return new NIVv1(this);
-        }
-    }
-
-    /**
-     * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode}
-     * node in particular subtree.
-     *
-     * <p>
-     * Augmentation is uniquely identified by set of all possible child nodes.
-     * This is possible
-     * to identify instance of augmentation,
-     * since RFC6020 states that <code>augment</code> that augment
-     * statement must not add multiple nodes from same namespace
-     * / module to the target node.
-     *
-     * @see <a href="http://tools.ietf.org/html/rfc6020#section-7.15">RFC6020</a>
-     */
-    public static final class AugmentationIdentifier implements PathArgument {
-        private static final long serialVersionUID = -8122335594681936939L;
-
-        private static final LoadingCache<ImmutableSet<QName>, AugmentationIdentifier> CACHE = CacheBuilder.newBuilder()
-                .weakValues().build(new CacheLoader<ImmutableSet<QName>, AugmentationIdentifier>() {
-                    @Override
-                    public AugmentationIdentifier load(final ImmutableSet<QName> key) {
-                        return new AugmentationIdentifier(key);
-                    }
-                });
-
-        private final @NonNull ImmutableSet<QName> childNames;
-
-        @Override
-        public QName getNodeType() {
-            // This should rather throw exception than return always null
-            throw new UnsupportedOperationException("Augmentation node has no QName");
-        }
-
-        /**
-         * Construct new augmentation identifier using supplied set of possible
-         * child nodes.
-         *
-         * @param childNames
-         *            Set of possible child nodes.
-         */
-        public AugmentationIdentifier(final ImmutableSet<QName> childNames) {
-            this.childNames = requireNonNull(childNames);
-        }
-
-        /**
-         * Construct new augmentation identifier using supplied set of possible
-         * child nodes.
-         *
-         * @param childNames
-         *            Set of possible child nodes.
-         */
-        public AugmentationIdentifier(final Set<QName> childNames) {
-            this.childNames = ImmutableSet.copyOf(childNames);
-        }
-
-        /**
-         * Return an AugmentationIdentifier for a particular set of QNames. Unlike the constructor, this factory method
-         * uses a global instance cache, resulting in object reuse for equal inputs.
-         *
-         * @param childNames Set of possible child nodes
-         * @return An {@link AugmentationIdentifier}
-         */
-        public static @NonNull AugmentationIdentifier create(final ImmutableSet<QName> childNames) {
-            return CACHE.getUnchecked(childNames);
-        }
-
-        /**
-         * Return an AugmentationIdentifier for a particular set of QNames. Unlike the constructor, this factory method
-         * uses a global instance cache, resulting in object reuse for equal inputs.
-         *
-         * @param childNames Set of possible child nodes
-         * @return An {@link AugmentationIdentifier}
-         */
-        public static @NonNull AugmentationIdentifier create(final Set<QName> childNames) {
-            final AugmentationIdentifier existing = CACHE.getIfPresent(childNames);
-            return existing != null ? existing : create(ImmutableSet.copyOf(childNames));
-        }
-
-        /**
-         * Returns set of all possible child nodes.
-         *
-         * @return set of all possible child nodes.
-         */
-        public @NonNull Set<QName> getPossibleChildNames() {
-            return childNames;
-        }
-
-        @Override
-        public String toString() {
-            return "AugmentationIdentifier{" + "childNames=" + childNames + '}';
-        }
-
-        @Override
-        public String toRelativeString(final PathArgument previous) {
-            return toString();
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return this == obj || obj instanceof AugmentationIdentifier other && childNames.equals(other.childNames);
-        }
-
-        @Override
-        public int hashCode() {
-            return childNames.hashCode();
-        }
-
-        @Override
-        @SuppressWarnings("checkstyle:parameterName")
-        public int compareTo(final PathArgument o) {
-            if (!(o instanceof AugmentationIdentifier other)) {
-                return -1;
-            }
-            Set<QName> otherChildNames = other.getPossibleChildNames();
-            int thisSize = childNames.size();
-            int otherSize = otherChildNames.size();
-            if (thisSize == otherSize) {
-                // Quick Set-based comparison
-                if (childNames.equals(otherChildNames)) {
-                    return 0;
-                }
-
-                // We already know the sets are not equal, but have equal size, hence the sets differ in their elements,
-                // but potentially share a common set of elements. The most consistent way of comparing them is using
-                // total ordering defined by QName's compareTo. Hence convert both sets to lists ordered
-                // by QName.compareTo() and decide on the first differing element.
-                final List<QName> diff = new ArrayList<>(Sets.symmetricDifference(childNames, otherChildNames));
-                verify(!diff.isEmpty(), "Augmentation identifiers %s and %s report no difference", this, o);
-                diff.sort(QName::compareTo);
-                return childNames.contains(diff.get(0)) ? -1 : 1;
-            } else if (thisSize < otherSize) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-
-        private Object writeReplace() {
-            return new AIv1(this);
         }
     }
 
