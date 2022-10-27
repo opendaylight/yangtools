@@ -15,6 +15,7 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -44,6 +45,7 @@ public class BitsCodecStringTest {
         return b.build();
     }
 
+    @Ignore
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
@@ -58,11 +60,12 @@ public class BitsCodecStringTest {
         assertEquals("", codec.serialize(ImmutableSet.of()));
     }
 
+    @Ignore
     @SuppressWarnings("unchecked")
     @Test
     public void testDeserialize() {
         BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(
-            toBitsTypeDefinition("bit1", "bit2"), BitsCodec.class);
+                toBitsTypeDefinition("bit1", "bit2"), BitsCodec.class);
 
         assertEquals("deserialize", ImmutableSet.of("bit1", "bit2"), codec.deserialize("  bit1 bit2     "));
         assertEquals("deserialize", Collections.emptySet(), codec.deserialize(""));
