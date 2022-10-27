@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import java.util.Set;
+import org.opendaylight.yangtools.yang.common.Bits;
 
-public interface BitsCodec<T> extends IllegalArgumentCodec<T, Set<String>> {
+public interface BitsCodec<T> extends IllegalArgumentCodec<T, Bits> {
 
 }
