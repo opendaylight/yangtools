@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -206,9 +205,6 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         } else if (node instanceof ChoiceNode n) {
             writer.startChoiceNode(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
-        } else if (node instanceof AugmentationNode n) {
-            writer.startAugmentationNode(n.getIdentifier());
-            return writeChildren(n.body());
         } else if (node instanceof UnkeyedListNode n) {
             writer.startUnkeyedList(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
@@ -253,15 +249,11 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
             // Write all the rest
             return writeChildren(Iterables.filter(node.body(), input -> {
-                if (input instanceof AugmentationNode) {
-                    return true;
+                if (qnames.contains(input.getIdentifier().getNodeType())) {
+                    LOG.debug("Skipping key child {}", input);
+                    return false;
                 }
-                if (!qnames.contains(input.getIdentifier().getNodeType())) {
-                    return true;
-                }
-
-                LOG.debug("Skipping key child {}", input);
-                return false;
+                return true;
             }));
         }
     }

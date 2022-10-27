@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
@@ -212,13 +211,6 @@ public class BuilderTest {
                 .build();
         final ChoiceNode choiceNodeCreated = ImmutableChoiceNodeBuilder.create(choiceNode).build();
         assertEquals(choiceNodeCreated.getIdentifier(), choiceNode.getIdentifier());
-    }
-
-
-    @Test
-    public void immutableAugmentationNodeBuilderExceptionTest() {
-        final var builder = ImmutableAugmentationNodeBuilder.create(1);
-        assertThrows(NullPointerException.class, builder::build);
     }
 
     @Test

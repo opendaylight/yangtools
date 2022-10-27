@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.transform;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -139,11 +137,6 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
     }
 
     @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        super.startAugmentationNode(transform(identifier));
-    }
-
-    @Override
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         return super.startAnyxmlNode(transform(name), objectModel);
     }
@@ -175,14 +168,6 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
         final QName original = name.getNodeType();
         final QName transformed = transform(original);
         return transformed == original ? name : new NodeWithValue<>(transformed, name.getValue());
-    }
-
-    private AugmentationIdentifier transform(final AugmentationIdentifier identifier) {
-        ImmutableSet.Builder<QName> builder = ImmutableSet.builder();
-        for (QName original : identifier.getPossibleChildNames()) {
-            builder.add(transform(original));
-        }
-        return new AugmentationIdentifier(builder.build());
     }
 
     private NodeIdentifierWithPredicates transform(final NodeIdentifierWithPredicates identifier) {

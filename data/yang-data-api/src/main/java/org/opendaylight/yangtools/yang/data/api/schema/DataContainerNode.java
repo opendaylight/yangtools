@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * <h2>Implementation notes</h2>
  * This interface should not be implemented directly, but rather implementing one of it's subclasses
  * <ul>
- *   <li>{@link AugmentationNode}</li>
  *   <li>{@link ChoiceNode}</li>
  *   <li>{@link ContainerNode}</li>
  *   <li>{@link MapEntryNode} and its specializations</li>

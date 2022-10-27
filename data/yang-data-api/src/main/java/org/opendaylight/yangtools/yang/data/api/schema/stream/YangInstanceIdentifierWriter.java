@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.util.List;
@@ -21,15 +19,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -37,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Utility for emitting a {@link YangInstanceIdentifier} into a {@link NormalizedNodeStreamWriter} as a set of
@@ -96,23 +90,7 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
             }
 
             final var arg = it.next();
-            if (arg instanceof AugmentationIdentifier augId) {
-                if (!(parent instanceof AugmentationTarget target)) {
-                    throw new IOException(parent + " does not support augmentations, cannot resolve " + arg);
-                }
-                if (reuse) {
-                    throw new IOException(parent + " is expecting a nested item, cannot resolve " + arg);
-                }
-
-                if (target instanceof DataNodeContainer container) {
-                    parent = new EffectiveAugmentationSchema(enterAugmentation(target, augId), container);
-                } else if (target instanceof ChoiceSchemaNode) {
-                    throw new IOException(parent + " should not use addressing through " + arg);
-                } else {
-                    throw new IOException("Unhandled parent " + target + " while resolving " + arg);
-                }
-                writer.startAugmentationNode(augId);
-            } else if (arg instanceof NodeWithValue<?> nodeId) {
+            if (arg instanceof NodeWithValue<?> nodeId) {
                 if (!(parent instanceof LeafListSchemaNode)) {
                     throw new IOException(parent + " does not support leaf-list entry " + arg);
                 }
@@ -253,23 +231,5 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
         }
 
         return NodeIdentifierWithPredicates.of(input.getNodeType(), ImmutableOffsetMap.orderedCopyOf(builder.build()));
-    }
-
-    private static AugmentationSchemaNode enterAugmentation(final AugmentationTarget target,
-            final AugmentationIdentifier id) throws IOException {
-        final var augs = target.getAvailableAugmentations();
-        for (var augment : augs) {
-            if (id.equals(augmentationIdentifierFrom(augment))) {
-                return augment;
-            }
-        }
-        throw new IOException("Cannot find augmentation " + id + " in " + target + ", available: "
-            + Collections2.transform(augs, YangInstanceIdentifierWriter::augmentationIdentifierFrom));
-    }
-
-    // FIXME: duplicate of data.util.DataSchemaContextNode.augmentationIdentifierFrom()
-    static @NonNull AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode schema) {
-        return new AugmentationIdentifier(
-            schema.getChildNodes().stream().map(DataSchemaNode::getQName).collect(ImmutableSet.toImmutableSet()));
     }
 }

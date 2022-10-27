@@ -8,12 +8,8 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.annotations.Beta;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -29,10 +25,6 @@ public final class NormalizedNodeSchemaUtils {
     }
 
     public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild child) {
-        if (child instanceof AugmentationNode) {
-            return detectCase(schema, (AugmentationNode) child);
-        }
-
         final QName childId = child.getIdentifier().getNodeType();
         for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
             if (choiceCaseNode.dataChildByName(childId) != null) {
@@ -40,33 +32,6 @@ public final class NormalizedNodeSchemaUtils {
             }
         }
         return Optional.empty();
-    }
-
-    public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final AugmentationNode child) {
-        final AugmentationIdentifier childId = child.getIdentifier();
-        for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
-            if (belongsToCaseAugment(choiceCaseNode, childId)) {
-                return Optional.of(choiceCaseNode);
-            }
-        }
-        return Optional.empty();
-    }
-
-    private static boolean belongsToCaseAugment(final CaseSchemaNode caseNode,
-            final AugmentationIdentifier childToProcess) {
-        for (final AugmentationSchemaNode augmentationSchema : caseNode.getAvailableAugmentations()) {
-
-            final Set<QName> currentAugmentChildNodes = new HashSet<>();
-            for (final DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
-                currentAugmentChildNodes.add(dataSchemaNode.getQName());
-            }
-
-            if (childToProcess.getPossibleChildNames().equals(currentAugmentChildNodes)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
