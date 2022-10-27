@@ -12,7 +12,6 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -60,7 +59,7 @@ public class Bug4501Test {
         final DataContainerChild lrsBits = hop.childAt(0).getChildByArg(
                 NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
-        assertEquals(ImmutableSet.of("lookup", "rloc-probe", "strict"), lrsBits.body());
+        assertEquals(7, lrsBits.body());
     }
 
     @Test
@@ -74,6 +73,6 @@ public class Bug4501Test {
         final JsonReader reader = new JsonReader(new StringReader(inputJson));
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> jsonParser.parse(reader));
-        assertEquals("Node '(foo)lrs-bits' has already set its value to '[lookup]'", ex.getMessage());
+        assertEquals("Node '(foo)lrs-bits' has already set its value to '1'", ex.getMessage());
     }
 }
