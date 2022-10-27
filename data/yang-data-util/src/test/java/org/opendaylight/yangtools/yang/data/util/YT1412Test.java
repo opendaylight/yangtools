@@ -11,7 +11,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -79,11 +77,7 @@ public class YT1412Test {
         assertThat(one, instanceOf(ContainerContextNode.class));
         assertThat(stack.currentStatement(), instanceOf(ContainerEffectiveStatement.class));
 
-        final var augment = one.enterChild(FIVE, stack);
-        assertThat(augment, instanceOf(AugmentationContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ContainerEffectiveStatement.class));
-
-        final var five = augment.enterChild(FIVE, stack);
+        final var five = one.enterChild(FIVE, stack);
         assertThat(five, instanceOf(UnkeyedListMixinContextNode.class));
         assertThat(stack.currentStatement(), instanceOf(ListEffectiveStatement.class));
 
@@ -132,7 +126,6 @@ public class YT1412Test {
     public void testEnterAugmentPath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
             new NodeIdentifier(ONE),
-            new AugmentationIdentifier(Set.of(FIVE)),
             new NodeIdentifier(FIVE),
             new NodeIdentifier(FIVE)))
             .orElseThrow();

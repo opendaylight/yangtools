@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 
 /**
  * NormalizedNodeOutputStreamWriter will be used by distributed datastore to send normalized node in
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
  * while reading.
  */
 final class NeonSR2NormalizedNodeOutputStreamWriter extends AbstractLithiumDataOutput {
-    private final Map<AugmentationIdentifier, Integer> aidCodeMap = new HashMap<>();
     private final Map<QNameModule, Integer> moduleCodeMap = new HashMap<>();
     private final Map<QName, Integer> qnameCodeMap = new HashMap<>();
 
@@ -54,21 +52,6 @@ final class NeonSR2NormalizedNodeOutputStreamWriter extends AbstractLithiumDataO
         } else {
             // We have already seen this QName: write its code
             writeByte(NeonSR2Tokens.IS_QNAME_CODE);
-            writeInt(value);
-        }
-    }
-
-    @Override
-    void writeAugmentationIdentifier(final AugmentationIdentifier aid) throws IOException {
-        final Integer value = aidCodeMap.get(aid);
-        if (value == null) {
-            // Fresh AugmentationIdentifier, remember it and emit as three strings
-            aidCodeMap.put(aid, aidCodeMap.size());
-            writeByte(NeonSR2Tokens.IS_AUGMENT_VALUE);
-            defaultWriteAugmentationIdentifier(aid);
-        } else {
-            // We have already seen this AugmentationIdentifier: write its code
-            writeByte(NeonSR2Tokens.IS_AUGMENT_CODE);
             writeInt(value);
         }
     }

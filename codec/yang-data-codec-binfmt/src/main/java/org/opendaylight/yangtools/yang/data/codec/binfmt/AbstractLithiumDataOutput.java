@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -165,15 +164,6 @@ abstract class AbstractLithiumDataOutput extends AbstractNormalizedNodeDataOutpu
     }
 
     @Override
-    public final void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        requireNonNull(identifier, "Node identifier should not be null");
-        LOG.trace("Starting a new augmentation node");
-
-        output.writeByte(LithiumNode.AUGMENTATION_NODE);
-        writeAugmentationIdentifier(identifier);
-    }
-
-    @Override
     public final boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             LOG.trace("Starting anyxml node");
@@ -233,10 +223,6 @@ abstract class AbstractLithiumDataOutput extends AbstractNormalizedNodeDataOutpu
                 writeQNameInternal(nodeWithValue.getNodeType());
                 writeObject(nodeWithValue.getValue());
                 break;
-            case LithiumPathArgument.AUGMENTATION_IDENTIFIER:
-                // No Qname in augmentation identifier
-                writeAugmentationIdentifier((AugmentationIdentifier) pathArgument);
-                break;
             default:
                 throw new IllegalStateException("Unknown node identifier type is found : "
                         + pathArgument.getClass().toString());
@@ -250,20 +236,6 @@ abstract class AbstractLithiumDataOutput extends AbstractNormalizedNodeDataOutpu
 
         for (PathArgument pathArgument : pathArguments) {
             writePathArgumentInternal(pathArgument);
-        }
-    }
-
-    final void defaultWriteAugmentationIdentifier(final @NonNull AugmentationIdentifier aid) throws IOException {
-        final Set<QName> qnames = aid.getPossibleChildNames();
-        // Write each child's qname separately, if list is empty send count as 0
-        if (!qnames.isEmpty()) {
-            output.writeInt(qnames.size());
-            for (QName qname : qnames) {
-                writeQNameInternal(qname);
-            }
-        } else {
-            LOG.debug("augmentation node does not have any child");
-            output.writeInt(0);
         }
     }
 
@@ -283,8 +255,6 @@ abstract class AbstractLithiumDataOutput extends AbstractNormalizedNodeDataOutpu
     }
 
     abstract void writeModule(QNameModule module) throws IOException;
-
-    abstract void writeAugmentationIdentifier(@NonNull AugmentationIdentifier aid) throws IOException;
 
     private void startNode(final PathArgument arg, final byte nodeType) throws IOException {
         requireNonNull(arg, "Node identifier should not be null");
