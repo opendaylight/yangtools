@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -300,14 +298,12 @@ public class YangInstanceIdentifierTest {
         final NodeIdentifier node1 = new NodeIdentifier(NODENAME1);
         assertEquals(NODENAME1, node1.getNodeType());
         final NodeIdentifier node2 = new NodeIdentifier(NODENAME1);
-        final AugmentationIdentifier node3 = new AugmentationIdentifier(ImmutableSet.of(NODENAME1, NODENAME2));
 
         assertEquals(node1.hashCode(), node2.hashCode());
         assertEquals(0, node1.compareTo(node2));
         assertTrue(node1.compareTo(new NodeIdentifier(NODENAME3)) != 0);
 
         assertFalse(node1.equals(null));
-        assertFalse(node1.equals(node3));
         assertTrue(node1.equals(node1));
         assertTrue(node1.equals(node2));
         assertFalse(node1.equals(new NodeIdentifier(NODENAME3)));
@@ -315,42 +311,6 @@ public class YangInstanceIdentifierTest {
 
         // for code coverage
         assertNotNull(node1.toString());
-    }
-
-    @Test
-    public void testAugmentationIdentifierNodeType() {
-        AugmentationIdentifier node1 = new AugmentationIdentifier(ImmutableSet.of(NODENAME1, NODENAME2));
-        assertThrows(UnsupportedOperationException.class, () -> node1.getNodeType());
-    }
-
-    @Test
-    public void testAugmentationIdentifier() {
-
-        final AugmentationIdentifier node1 = new AugmentationIdentifier(ImmutableSet.of(NODENAME1, NODENAME2));
-        assertEquals(ImmutableSet.of(NODENAME1, NODENAME2), node1.getPossibleChildNames());
-        final AugmentationIdentifier node2 = new AugmentationIdentifier(ImmutableSet.of(NODENAME2, NODENAME1));
-        final AugmentationIdentifier node3 = new AugmentationIdentifier(ImmutableSet.of(NODENAME1, NODENAME3));
-        final AugmentationIdentifier node4 = new AugmentationIdentifier(ImmutableSet.of(NODENAME1, NODENAME2,
-                    NODENAME3));
-        final NodeIdentifier node5 = new NodeIdentifier(NODENAME3);
-
-        assertEquals(node1.hashCode(), node2.hashCode());
-
-        assertTrue(node1.equals(node1));
-        assertTrue(node1.equals(node2));
-        assertFalse(node1.equals(node3));
-        assertFalse(node1.equals(new AugmentationIdentifier(ImmutableSet.of(NODENAME1))));
-        assertFalse(node1.equals(new Object()));
-
-        assertEquals(-1, node1.compareTo(node5));
-        assertEquals(0, node1.compareTo(node2));
-        assertEquals(0, node1.compareTo(node2));
-        assertEquals(1, node1.compareTo(node4));
-        assertEquals(-1, node4.compareTo(node1));
-
-        // for code coverage
-        assertNotNull(node1.toString());
-        assertNotNull(node1.toRelativeString(node5));
     }
 
     private static YangInstanceIdentifier serdes(final YangInstanceIdentifier id) throws IOException,

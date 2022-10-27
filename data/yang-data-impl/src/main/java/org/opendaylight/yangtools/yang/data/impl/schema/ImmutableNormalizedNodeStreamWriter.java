@@ -16,7 +16,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
@@ -217,13 +215,6 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
         enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.choiceBuilder() : Builders.choiceBuilder(childSizeHint));
-    }
-
-    @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) {
-        checkDataNodeContainer();
-        checkArgument(!(current() instanceof ImmutableAugmentationNodeBuilder));
-        enter(identifier, Builders.augmentationBuilder());
     }
 
     @Override
