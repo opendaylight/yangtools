@@ -13,9 +13,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
@@ -30,11 +28,8 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -71,20 +66,6 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         } else {
             throw new IllegalStateException("Unsupported schema " + schemaNode);
         }
-    }
-
-    static @Nullable AugmentationModificationStrategy from(final DataNodeContainer resolvedTree,
-            final AugmentationTarget augSchemas, final AugmentationIdentifier identifier,
-            final DataTreeConfiguration treeConfig) {
-        for (final AugmentationSchemaNode potential : augSchemas.getAvailableAugmentations()) {
-            for (final DataSchemaNode child : potential.getChildNodes()) {
-                if (identifier.getPossibleChildNames().contains(child.getQName())) {
-                    return new AugmentationModificationStrategy(potential, resolvedTree, treeConfig);
-                }
-            }
-        }
-
-        return null;
     }
 
     static void checkConflicting(final ModificationPath path, final boolean condition, final String message)

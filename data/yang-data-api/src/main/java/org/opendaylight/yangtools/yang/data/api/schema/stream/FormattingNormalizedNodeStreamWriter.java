@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -87,11 +86,6 @@ public final class FormattingNormalizedNodeStreamWriter extends AbstractIndentin
     @Override
     void enterChoiceNode(final NodeIdentifier name, final String indent) {
         sb.append(indent).append(name).append("(choice)\n");
-    }
-
-    @Override
-    void enterAugmentationNode(final AugmentationIdentifier identifier, final String indent) {
-        sb.append(indent).append(identifier).append("(augmentation)\n");
     }
 
     @Override
