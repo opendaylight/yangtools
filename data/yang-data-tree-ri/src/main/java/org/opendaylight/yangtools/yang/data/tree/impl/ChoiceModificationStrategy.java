@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -35,7 +34,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.AbstractNodeContainerModificationStrategy.Visible;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -70,11 +68,6 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
 
                     childBuilder.put(entry.getKey(), childOper);
                     enforcerBuilder.put(entry.getKey(), enforcer);
-                }
-                for (final Entry<AugmentationIdentifier, AugmentationSchemaNode> e
-                        : enforcer.getAugmentationEntries()) {
-                    childBuilder.put(e.getKey(), new AugmentationModificationStrategy(e.getValue(), caze, treeConfig));
-                    enforcerBuilder.put(e.getKey(), enforcer);
                 }
             }
         }
@@ -127,7 +120,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
 
             // Make sure no leaves from other cases are present
             for (final CaseEnforcer other : verifyNotNull(exclusions.get(enforcer))) {
-                for (final PathArgument id : other.getAllChildIdentifiers()) {
+                for (final PathArgument id : other.getChildIdentifiers()) {
                     final Optional<NormalizedNode> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
                     checkArgument(!maybeChild.isPresent(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",

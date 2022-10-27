@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -77,7 +76,6 @@ public class YangInstanceIdentifierWriterTest {
 
         final YangInstanceIdentifier path = YangInstanceIdentifier.builder()
             .node(QName.create("test", "container-1"))
-            .node(AugmentationIdentifier.create(Set.of(augmented)))
             .node(augmented)
             .node(QName.create(augmented, "container-2"))
             .build();
@@ -90,13 +88,11 @@ public class YangInstanceIdentifierWriterTest {
 
         assertEquals("""
             (test)container-1(container)
-              AugmentationIdentifier{childNames=[(augment-namespace)augmented-container]}(augmentation)
-                (augment-namespace)augmented-container(container)
-                  (augment-namespace)container-2(container)
-                    (test)payload-container(container)
-                      (test)payload-leaf(leaf)
-                        (String)=leaf-value
-                      (end)
+              (augment-namespace)augmented-container(container)
+                (augment-namespace)container-2(container)
+                  (test)payload-container(container)
+                    (test)payload-leaf(leaf)
+                      (String)=leaf-value
                     (end)
                   (end)
                 (end)
