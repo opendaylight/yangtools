@@ -7,21 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 
 public class NormalizedDataBuilderTest {
@@ -56,19 +52,14 @@ public class NormalizedDataBuilderTest {
                                 getNodeIdentifier("list").getNodeType(), Collections.singletonMap(
                                 getNodeIdentifier("uint32InList").getNodeType(), 1))).build();
 
-        MapNode list = Builders.mapBuilder().withChild(listChild1).withNodeIdentifier(getNodeIdentifier("list"))
-                .build();
-        builder.withChild(list);
-
-        AugmentationNode augmentation = Builders
-                .augmentationBuilder()
-                .withNodeIdentifier(
-                        new AugmentationIdentifier(ImmutableSet.of(getQName("augmentUint32"))))
-                .withChild(
-                        Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
-                                .withValue(11).build()).build();
-
-        builder.withChild(augmentation);
+        builder
+            .withChild(Builders.mapBuilder()
+                .withNodeIdentifier(getNodeIdentifier("list"))
+                .withChild(listChild1)
+                .build())
+            .withChild(Builders.<Integer>leafBuilder()
+                .withNodeIdentifier(getNodeIdentifier("augmentUint32"))
+                .withValue(11).build());
 
         // This works without schema (adding child from augment as a direct
         // child)

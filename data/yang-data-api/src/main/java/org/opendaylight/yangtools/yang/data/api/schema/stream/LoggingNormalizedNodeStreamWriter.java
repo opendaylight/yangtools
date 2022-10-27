@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -74,11 +73,6 @@ public final class LoggingNormalizedNodeStreamWriter extends AbstractIndentingNo
     @Override
     void enterChoiceNode(final NodeIdentifier name, final String indent) {
         LOG.debug("{}{}(choice)", indent, name);
-    }
-
-    @Override
-    void enterAugmentationNode(final AugmentationIdentifier identifier, final String indent) {
-        LOG.debug("{}{}(augmentation)", indent, identifier);
     }
 
     @Override

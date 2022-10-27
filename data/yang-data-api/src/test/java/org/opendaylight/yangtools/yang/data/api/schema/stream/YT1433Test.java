@@ -10,12 +10,10 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -36,9 +34,7 @@ public class YT1433Test {
 
         final YangInstanceIdentifier path = YangInstanceIdentifier.builder()
             .node(QName.create("foo", "foo"))
-            .node(AugmentationIdentifier.create(Set.of(bar)))
             .node(bar)
-            .node(AugmentationIdentifier.create(Set.of(baz)))
             .node(baz)
             .build();
 
@@ -50,12 +46,8 @@ public class YT1433Test {
 
         assertEquals("""
             (foo)foo(container)
-              AugmentationIdentifier{childNames=[(foo)bar]}(augmentation)
-                (foo)bar(container)
-                  AugmentationIdentifier{childNames=[(foo)baz]}(augmentation)
-                    (foo)baz(container)
-                    (end)
-                  (end)
+              (foo)bar(container)
+                (foo)baz(container)
                 (end)
               (end)
             (end)
