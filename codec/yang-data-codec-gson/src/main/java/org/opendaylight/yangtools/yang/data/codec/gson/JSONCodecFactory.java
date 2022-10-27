@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
-import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
@@ -117,7 +116,7 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
 
     @Override
     protected final JSONCodec<?> bitsCodec(final BitsTypeDefinition type) {
-        return new QuotedJSONCodec<>(BitsStringCodec.from(type));
+        return new QuotedJSONCodec<>(AbstractIntegerStringCodec.from(type));
     }
 
     @Override
