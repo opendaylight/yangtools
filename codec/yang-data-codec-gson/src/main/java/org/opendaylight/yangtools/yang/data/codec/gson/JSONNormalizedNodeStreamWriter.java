@@ -22,7 +22,6 @@ import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -383,12 +382,6 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         tracker.startChoiceNode(name);
-        context = new JSONStreamWriterInvisibleContext(context);
-    }
-
-    @Override
-    public final void startAugmentationNode(final AugmentationIdentifier identifier) {
-        tracker.startAugmentationNode(identifier);
         context = new JSONStreamWriterInvisibleContext(context);
     }
 

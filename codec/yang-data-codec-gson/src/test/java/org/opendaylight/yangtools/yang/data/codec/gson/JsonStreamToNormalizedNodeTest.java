@@ -13,19 +13,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
@@ -221,19 +218,13 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
 
         final var cont1Normalized = containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(CONT_1))
-            .withChild(augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(augmentChoice1QName)))
+            .withChild(choiceBuilder()
+                .withNodeIdentifier(new NodeIdentifier(augmentChoice1QName))
                 .withChild(choiceBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(augmentChoice1QName))
-                    .withChild(augmentationBuilder()
-                        .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(augmentChoice2QName)))
-                        .withChild(choiceBuilder()
-                            .withNodeIdentifier(new NodeIdentifier(augmentChoice2QName))
-                            .withChild(containerBuilder()
-                                .withNodeIdentifier(new NodeIdentifier(containerQName))
-                                .withChild(leafNode(leafQName, "leaf-value"))
-                                .build())
-                            .build())
+                    .withNodeIdentifier(new NodeIdentifier(augmentChoice2QName))
+                    .withChild(containerBuilder()
+                        .withNodeIdentifier(new NodeIdentifier(containerQName))
+                        .withChild(leafNode(leafQName, "leaf-value"))
                         .build())
                     .build())
                 .build())
