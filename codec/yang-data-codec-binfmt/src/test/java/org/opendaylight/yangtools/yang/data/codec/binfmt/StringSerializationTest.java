@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import static org.junit.Assume.assumeTrue;
-
 import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +22,8 @@ public class StringSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   100, 101, 32869, 33554534 },
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,  96,  99, 32865, 33554532 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,   96,  99, 32865, 33554532 });
+            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 96, 99, 32_865, 33_554_532 },
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  96, 99, 32_865, 33_554_532 });
     }
 
     @Parameter(1)
@@ -39,13 +36,7 @@ public class StringSerializationTest extends AbstractSerializationTest {
     public int hugeSize;
 
     @Test
-    public void testEmptyString() {
-        assertEquals("", emptySize);
-    }
-
-    @Test
     public void testEmptySame() {
-        assumeTrue(version.compareTo(NormalizedNodeStreamVersion.SODIUM_SR1) >= 0);
         assertSame("", emptySize);
     }
 
