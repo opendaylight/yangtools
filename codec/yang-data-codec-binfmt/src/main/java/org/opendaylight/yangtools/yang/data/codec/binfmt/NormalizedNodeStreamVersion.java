@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import com.google.common.annotations.Beta;
 import java.io.DataOutput;
 import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 /**
  * Enumeration of all stream versions this implementation supports on both input and output.
  */
-@Beta
 @NonNullByDefault
 public enum NormalizedNodeStreamVersion {
     /**
