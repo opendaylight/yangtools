@@ -84,8 +84,6 @@ public class NormalizedNodeStreamReaderWriterTest {
     @Parameters(name = "{0} {1}")
     public static Iterable<Object[]> data() {
         return List.of(
-            new Object[] { NormalizedNodeStreamVersion.LITHIUM,    Unsigned.BIG_INTEGER,
-                1_050_286, 9_577_973, 171, 1_553, 103, 237,  98 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   Unsigned.BIG_INTEGER,
                 1_049_950, 5_577_993, 161, 1_163, 105, 235, 100 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, Unsigned.BIG_INTEGER,

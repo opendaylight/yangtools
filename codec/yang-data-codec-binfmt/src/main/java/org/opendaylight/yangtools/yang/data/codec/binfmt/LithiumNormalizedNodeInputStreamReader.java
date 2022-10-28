@@ -23,6 +23,7 @@ final class LithiumNormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     }
 
     @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
     public NormalizedNodeStreamVersion getVersion() {
         return NormalizedNodeStreamVersion.LITHIUM;
     }

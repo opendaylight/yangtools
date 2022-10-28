@@ -19,7 +19,6 @@ public class IntSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.LITHIUM,    97, 97, 98,   98, 100, 100, 100, 104, 104, 104 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   99, 99, 100, 100, 102, 102, 102, 106, 106, 106 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 96, 97, 96,   98,  96,  98, 100,  96, 100, 104 },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  96, 97, 96,   98,  96,  98, 100,  96, 100, 104 });
