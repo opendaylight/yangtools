@@ -17,6 +17,7 @@ final class SodiumSR1DataInput extends AbstractMagnesiumDataInput {
     }
 
     @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
     public NormalizedNodeStreamVersion getVersion() {
         return NormalizedNodeStreamVersion.SODIUM_SR1;
     }
