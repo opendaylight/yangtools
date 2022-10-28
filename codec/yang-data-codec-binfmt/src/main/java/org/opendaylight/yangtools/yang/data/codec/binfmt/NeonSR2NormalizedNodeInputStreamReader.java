@@ -33,6 +33,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     }
 
     @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
     public NormalizedNodeStreamVersion getVersion() {
         return NormalizedNodeStreamVersion.NEON_SR2;
     }
