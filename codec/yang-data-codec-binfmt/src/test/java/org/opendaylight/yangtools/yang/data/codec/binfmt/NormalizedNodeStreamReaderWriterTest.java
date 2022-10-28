@@ -20,11 +20,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -38,7 +37,6 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -66,49 +64,28 @@ import org.xml.sax.InputSource;
 
 @RunWith(Parameterized.class)
 public class NormalizedNodeStreamReaderWriterTest {
-    public enum Unsigned implements Function<String, Number> {
-        BIG_INTEGER {
-            @Override
-            public BigInteger apply(final String str) {
-                return new BigInteger(str);
-            }
-        },
-        UINT64 {
-            @Override
-            public Uint64 apply(final String str) {
-                return Uint64.valueOf(str);
-            }
-        };
-    }
-
     @Parameters(name = "{0} {1}")
     public static Iterable<Object[]> data() {
-        return List.of(
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, Unsigned.BIG_INTEGER,
-                1_049_619, 2_289_103, 139, 826, 103, 229,  99 },
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, Unsigned.UINT64,
-                1_049_618, 2_289_103, 139, 825, 103, 229,  99 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  Unsigned.UINT64,
+        return Collections.singletonList(
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,
                 1_049_618, 2_289_103, 139, 825, 103, 229,  99 });
     }
 
     @Parameter(0)
     public NormalizedNodeStreamVersion version;
     @Parameter(1)
-    public Unsigned uint64;
-    @Parameter(2)
     public int normalizedNodeStreamingSize;
-    @Parameter(3)
+    @Parameter(2)
     public int hugeEntriesSize;
-    @Parameter(4)
+    @Parameter(3)
     public int yiidStreamingSize;
-    @Parameter(5)
+    @Parameter(4)
     public int nnYiidStreamingSize;
-    @Parameter(6)
+    @Parameter(5)
     public int writePathArgumentSize;
-    @Parameter(7)
+    @Parameter(6)
     public int anyxmlStreamingSize;
-    @Parameter(8)
+    @Parameter(7)
     public int schemaPathSize;
 
     @Test
@@ -149,7 +126,7 @@ public class NormalizedNodeStreamReaderWriterTest {
         LeafSetEntryNode<Object> entry2 = ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
                 new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes2)).withValue(bytes2).build();
 
-        return TestModel.createBaseTestContainerBuilder(uint64)
+        return TestModel.createBaseTestContainerBuilder()
                 .withChild(ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(
                         new NodeIdentifier(TestModel.BINARY_LEAF_LIST_QNAME))
                         .withChild(entry1).withChild(entry2).build())
@@ -181,7 +158,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
     @Test
     public void testNormalizedNodeAndYangInstanceIdentifierStreaming() throws IOException {
-        final NormalizedNode testContainer = TestModel.createBaseTestContainerBuilder(uint64).build();
+        final NormalizedNode testContainer = TestModel.createBaseTestContainerBuilder().build();
         final YangInstanceIdentifier path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
             .node(TestModel.OUTER_LIST_QNAME)
             .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.ID_QNAME, 10)
@@ -210,7 +187,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
     @Test
     public void testWithSerializable() {
-        NormalizedNode input = TestModel.createTestContainer(uint64);
+        NormalizedNode input = TestModel.createTestContainer();
         SampleNormalizedNodeSerializable serializable = new SampleNormalizedNodeSerializable(version, input);
         SampleNormalizedNodeSerializable clone = clone(serializable);
         assertEquals(input, clone.getInput());

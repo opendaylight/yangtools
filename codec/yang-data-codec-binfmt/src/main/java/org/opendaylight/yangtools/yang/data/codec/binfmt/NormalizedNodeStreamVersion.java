@@ -63,12 +63,22 @@ public enum NormalizedNodeStreamVersion {
     /**
      * First shipping in Sodium SR1. Improved stream coding to eliminate redundancies present in {@link #NEON_SR2}.
      * Supports {@code Uint8} et al. as well as {@link BigInteger}.
+     *
+     * @deprecated This version cannot be written in and always required adaption. This version should not be relied
+     *             upon, as it is subject to in a future version.
      */
+    @Deprecated(since = "11.0.0", forRemoval = true)
     SODIUM_SR1 {
+        /**
+         * {@inheritDoc}
+         * @implSpec
+         *     This method always throws {@link UnsupportedOperationException}.
+         * @deprecated This version is a historic one and writeout is not supported
+         */
         @Override
         @Deprecated(since = "10.0.0", forRemoval = true)
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
-            return new SodiumSR1DataOutput(output);
+            throw new UnsupportedOperationException();
         }
     },
     /**

@@ -17,9 +17,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -114,8 +114,7 @@ public final class TestModel {
         throw new UnsupportedOperationException();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBaseTestContainerBuilder(
-            final Function<String, Number> uint64) {
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBaseTestContainerBuilder() {
         // Create a list of shoes
         // This is to test leaf list entry
         final LeafSetEntryNode<Object> nike = ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
@@ -208,7 +207,7 @@ public final class TestModel {
                 .withChild(ImmutableNodes.leafNode(BOOLEAN_LEAF_QNAME, ENABLED))
                 .withChild(ImmutableNodes.leafNode(SHORT_LEAF_QNAME, SHORT_ID))
                 .withChild(ImmutableNodes.leafNode(BYTE_LEAF_QNAME, BYTE_ID))
-                .withChild(ImmutableNodes.leafNode(TestModel.BIGINTEGER_LEAF_QNAME, uint64.apply("100")))
+                .withChild(ImmutableNodes.leafNode(TestModel.BIGINTEGER_LEAF_QNAME, Uint64.valueOf("100")))
                 .withChild(ImmutableNodes.leafNode(TestModel.BIGDECIMAL_LEAF_QNAME, Decimal64.valueOf("1.2")))
                 .withChild(ImmutableNodes.leafNode(SOME_REF_QNAME, instanceID))
                 .withChild(ImmutableNodes.leafNode(MYIDENTITY_QNAME, DESC_QNAME))
@@ -234,8 +233,8 @@ public final class TestModel {
                 );
     }
 
-    static ContainerNode createTestContainer(final Function<String, Number> uint64) {
-        return createBaseTestContainerBuilder(uint64).build();
+    static ContainerNode createTestContainer() {
+        return createBaseTestContainerBuilder().build();
     }
 
     private static MapEntryNode createAugmentedListEntry(final int id, final String name) {

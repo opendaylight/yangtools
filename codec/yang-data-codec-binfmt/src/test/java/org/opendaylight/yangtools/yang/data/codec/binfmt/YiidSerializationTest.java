@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,12 +25,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.InstanceI
 public class YiidSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
-        return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,
-                96,   98, 158, 359, 164, 372, 612, 2388, 131_684, 719_700, 916_815
-            },
+        return Collections.singletonList(
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,
-                96,   98, 158, 359, 164, 372, 612, 2388, 131_684, 719_700, 916_815
+                96, 98, 158, 359, 164, 372, 612, 2388, 131_684, 719_700, 916_815
             });
     }
 
