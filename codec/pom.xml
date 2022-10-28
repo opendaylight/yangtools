@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>codec-aggregator</artifactId>
-    <version>8.0.8-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
