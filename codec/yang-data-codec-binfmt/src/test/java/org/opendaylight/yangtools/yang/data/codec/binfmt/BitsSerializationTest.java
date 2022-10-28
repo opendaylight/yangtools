@@ -27,7 +27,6 @@ public class BitsSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.LITHIUM,    100, 104, 229, 1538, 456_764, 785_890 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   102, 106, 231, 1540, 456_766, 785_882 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,  96, 100, 226, 1536, 456_764, 654_045 },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,   96, 100, 226, 1536, 456_764, 654_045 });
