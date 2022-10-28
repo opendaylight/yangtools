@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-netty</artifactId>
-    <version>7.0.18-SNAPSHOT</version>
+    <version>7.0.19-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Netty integration</name>
     <description>YANG Tools/netty-buffer utilities</description>
