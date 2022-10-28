@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +21,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 public class AidSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
-        return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 4, 94, 332, 2376, 716_618, 912_975 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  4, 94, 332, 2376, 716_618, 912_975 });
+        return Collections.singletonList(
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 4, 94, 332, 2376, 716_618, 912_975 });
     }
 
     @Parameter(1)

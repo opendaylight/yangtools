@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import com.google.common.collect.Maps;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,9 +26,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 public class MapEntrySerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
-        return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 96, 110, 125, 3_927 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  96, 110, 125, 3_927 });
+        return Collections.singletonList(
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 110, 125, 3_927 });
     }
 
     @Parameter(1)

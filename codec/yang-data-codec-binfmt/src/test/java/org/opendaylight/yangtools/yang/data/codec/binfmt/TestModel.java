@@ -14,9 +14,9 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
-import java.util.function.Function;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -92,8 +92,7 @@ public final class TestModel {
         throw new UnsupportedOperationException();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBaseTestContainerBuilder(
-            final Function<String, Number> uint64) {
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBaseTestContainerBuilder() {
         // Create the document
         return Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TEST_QNAME))
@@ -103,7 +102,7 @@ public final class TestModel {
             .withChild(leafNode(BOOLEAN_LEAF_QNAME, ENABLED))
             .withChild(leafNode(SHORT_LEAF_QNAME, SHORT_ID))
             .withChild(leafNode(BYTE_LEAF_QNAME, BYTE_ID))
-            .withChild(leafNode(TestModel.BIGINTEGER_LEAF_QNAME, uint64.apply("100")))
+            .withChild(leafNode(TestModel.BIGINTEGER_LEAF_QNAME, Uint64.valueOf(100)))
             .withChild(leafNode(TestModel.BIGDECIMAL_LEAF_QNAME, Decimal64.valueOf("1.2")))
             .withChild(leafNode(SOME_REF_QNAME,
                 // Create YangInstanceIdentifier with all path arg types.
@@ -176,8 +175,8 @@ public final class TestModel {
                 .build());
     }
 
-    static ContainerNode createTestContainer(final Function<String, Number> uint64) {
-        return createBaseTestContainerBuilder(uint64).build();
+    static ContainerNode createTestContainer() {
+        return createBaseTestContainerBuilder().build();
     }
 
     private static MapEntryNode createAugmentedListEntry(final int id, final String name) {
