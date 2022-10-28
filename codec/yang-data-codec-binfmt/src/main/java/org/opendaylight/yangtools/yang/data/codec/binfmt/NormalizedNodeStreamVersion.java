@@ -21,19 +21,22 @@ public enum NormalizedNodeStreamVersion {
     /**
      * Original stream version, as shipped in OpenDaylight Lithium simultaneous release. The caveat here is that this
      * version has augmented in OpenDaylight Oxygen to retrofit a non-null representation of the empty type.
+     *
+     * @deprecated This version cannot be written in and always required adaption. This version should not be relied
+     *             upon, as it is subject to in a future version.
      */
+    @Deprecated(since = "11.0.0", forRemoval = true)
     LITHIUM {
         /**
          * {@inheritDoc}
-         *
-         * @deprecated This version is a historic one and should not be used in code. It does not support current
-         *             mapping of {@code Uint8} et al. and hence results in a stream which needs to be further adapted
-         *             to current definition of LeafNode.
+         * @implSpec
+         *     This method always throws {@link UnsupportedOperationException}.
+         * @deprecated This version is a historic one and writeout is not supported
          */
         @Override
         @Deprecated(since = "10.0.0", forRemoval = true)
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
-            return new LithiumNormalizedNodeOutputStreamWriter(output);
+            throw new UnsupportedOperationException();
         }
     },
     /**

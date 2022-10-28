@@ -24,7 +24,6 @@ public class StringSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.LITHIUM,     98,  99, 32867, 33554532 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   100, 101, 32869, 33554534 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,  96,  99, 32865, 33554532 },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,   96,  99, 32865, 33554532 });

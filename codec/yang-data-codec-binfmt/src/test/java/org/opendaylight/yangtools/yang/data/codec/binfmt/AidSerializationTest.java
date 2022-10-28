@@ -22,7 +22,6 @@ public class AidSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.LITHIUM,    8,  97, 530, 4162, 1_175_362, 2_158_407 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   9, 100, 421, 3145,   913_225,   913_231 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 4,  94, 332, 2376,   716_618,   912_975 },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  4,  94, 332, 2376,   716_618,   912_975 });
