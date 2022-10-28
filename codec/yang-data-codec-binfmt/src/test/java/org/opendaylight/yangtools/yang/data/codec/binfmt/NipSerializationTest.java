@@ -27,9 +27,8 @@ public class NipSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   101, 116, 176, 4181, 1_180_245, 1_772_383 },
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,  95, 107, 156, 3409,   982_867, 1_443_164 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,   95, 107, 156, 3409,   982_867, 1_443_164 });
+            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 95, 107, 156, 3409, 982_867, 1_443_164 },
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  95, 107, 156, 3409, 982_867, 1_443_164 });
     }
 
     @Parameter(1)

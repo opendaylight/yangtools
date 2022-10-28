@@ -84,14 +84,12 @@ public class NormalizedNodeStreamReaderWriterTest {
     @Parameters(name = "{0} {1}")
     public static Iterable<Object[]> data() {
         return List.of(
-            new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   Unsigned.BIG_INTEGER,
-                1_049_950, 5_577_993, 161, 1_163, 105, 235, 100 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, Unsigned.BIG_INTEGER,
-                1_049_619, 2_289_103, 139,   826, 103, 229,  99 },
+                1_049_619, 2_289_103, 139, 826, 103, 229,  99 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, Unsigned.UINT64,
-                1_049_618, 2_289_103, 139,   825, 103, 229,  99 },
+                1_049_618, 2_289_103, 139, 825, 103, 229,  99 },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  Unsigned.UINT64,
-                1_049_618, 2_289_103, 139,   825, 103, 229,  99 });
+                1_049_618, 2_289_103, 139, 825, 103, 229,  99 });
     }
 
     @Parameter(0)

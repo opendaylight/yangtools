@@ -26,14 +26,11 @@ public class YiidSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.NEON_SR2,
-                102, 108, 288, 489, 294, 502, 1638, 3414,   394_854,   982_870, 1_377_611
-            },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,
-                96,   98, 158, 359, 164, 372,  612, 2388,   131_684,   719_700,   916_815
+                96,   98, 158, 359, 164, 372, 612, 2388, 131_684, 719_700, 916_815
             },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,
-                96,   98, 158, 359, 164, 372,  612, 2388,   131_684 ,  719_700,   916_815
+                96,   98, 158, 359, 164, 372, 612, 2388, 131_684, 719_700, 916_815
             });
     }
 

@@ -27,9 +27,8 @@ public class MapEntrySerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   102, 127, 152,  6_742 },
-            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,  96, 110, 125,  3_927 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,   96, 110, 125,  3_927 });
+            new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 96, 110, 125, 3_927 },
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  96, 110, 125, 3_927 });
     }
 
     @Parameter(1)
