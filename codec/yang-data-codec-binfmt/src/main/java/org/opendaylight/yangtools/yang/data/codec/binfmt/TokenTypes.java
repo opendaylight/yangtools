@@ -13,15 +13,18 @@ final class TokenTypes {
     /**
      * Original stream version. Uses a per-stream dictionary for strings. QNames are serialized as three strings.
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     static final short LITHIUM_VERSION = 1;
     /**
      * Revised stream version. Unlike {@link #LITHIUM_VERSION}, QNames and QNameModules are using a per-stream
      * dictionary, too.
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     static final short NEON_SR2_VERSION = 2;
     /**
      * From-scratch designed version shipping in Sodium SR1.
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     static final short SODIUM_SR1_VERSION = 3;
     /**
      * Magnesium version. Structurally matches {@link #SODIUM_SR1_VERSION}, but does not allow BigIntegers to be

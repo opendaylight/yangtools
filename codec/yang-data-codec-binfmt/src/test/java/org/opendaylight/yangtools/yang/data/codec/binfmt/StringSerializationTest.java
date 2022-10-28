@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import static org.junit.Assume.assumeTrue;
-
 import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +41,6 @@ public class StringSerializationTest extends AbstractSerializationTest {
 
     @Test
     public void testEmptySame() {
-        assumeTrue(version.compareTo(NormalizedNodeStreamVersion.SODIUM_SR1) >= 0);
         assertSame("", emptySize);
     }
 
