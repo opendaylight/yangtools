@@ -19,7 +19,6 @@ public class BooleanSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(
-            new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   99 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 96 },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  96 });
     }
