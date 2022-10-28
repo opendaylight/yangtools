@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import com.google.common.annotations.Beta;
 import java.io.DataInput;
 import java.io.IOException;
 import java.util.Optional;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
  * Interface for reading {@link NormalizedNode}s, {@link YangInstanceIdentifier}s, {@link PathArgument}s
  * and {@link SchemaNodeIdentifier}s.
  */
-@Beta
 public interface NormalizedNodeDataInput extends QNameAwareDataInput {
     /**
      * Interpret current stream position as a NormalizedNode, stream its events into a NormalizedNodeStreamWriter.
@@ -33,7 +31,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @param writer Writer to emit events to
      * @throws IOException if an error occurs
      * @throws IllegalStateException if the dictionary has been detached
-     * @throws NullPointerException if {@code writer} is null
+     * @throws NullPointerException if {@code writer} is {@code null}
      */
     void streamNormalizedNode(NormalizedNodeStreamWriter writer) throws IOException;
 
@@ -55,6 +53,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @return Next node from the stream, or null if end of stream has been reached.
      * @throws IOException if an error occurs
      * @throws IllegalStateException if the dictionary has been detached
+     * @throws NullPointerException if {@code receiver} is {@code null}
      */
     default NormalizedNode readNormalizedNode(final ReusableStreamReceiver receiver) throws IOException {
         try {
@@ -91,6 +90,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @return a new {@link NormalizedNodeDataInput} instance
      * @throws InvalidNormalizedNodeStreamException if the stream version is not supported
      * @throws IOException if an error occurs reading from the input
+     * @throws NullPointerException if {@code input} is {@code null}
      */
     static @NonNull NormalizedNodeDataInput newDataInput(final @NonNull DataInput input) throws IOException {
         return new VersionedNormalizedNodeDataInput(input).delegate();

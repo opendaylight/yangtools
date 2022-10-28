@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import com.google.common.annotations.Beta;
 import java.io.DataOutput;
 import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 /**
  * Enumeration of all stream versions this implementation supports on both input and output.
  */
-@Beta
 @NonNullByDefault
 public enum NormalizedNodeStreamVersion {
     /**
@@ -32,8 +30,8 @@ public enum NormalizedNodeStreamVersion {
          *             mapping of {@code Uint8} et al. and hence results in a stream which needs to be further adapted
          *             to current definition of LeafNode.
          */
-        @Deprecated
         @Override
+        @Deprecated(since = "10.0.0", forRemoval = true)
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new LithiumNormalizedNodeOutputStreamWriter(output);
         }
@@ -50,8 +48,8 @@ public enum NormalizedNodeStreamVersion {
          *             mapping of {@code Uint8} et al. and hence results in a stream which needs to be further adapted
          *             to current definition of LeafNode.
          */
-        @Deprecated
         @Override
+        @Deprecated(since = "10.0.0", forRemoval = true)
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new NeonSR2NormalizedNodeOutputStreamWriter(output);
         }
@@ -62,6 +60,7 @@ public enum NormalizedNodeStreamVersion {
      */
     SODIUM_SR1 {
         @Override
+        @Deprecated(since = "10.0.0", forRemoval = true)
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new SodiumSR1DataOutput(output);
         }
