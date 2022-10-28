@@ -90,6 +90,15 @@ public enum NormalizedNodeStreamVersion {
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
             return new MagnesiumDataOutput(output);
         }
+    },
+    /**
+     * First shipping is Potassium. Does not support {@code AugmentationIdentifier} nor {@code AugmentationNode}.
+     */
+    POTASSIUM {
+        @Override
+        public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
+            return new PotassiumDataOutput(output);
+        }
     };
 
     /**
@@ -99,7 +108,7 @@ public enum NormalizedNodeStreamVersion {
      * @return Current runtime version.
      */
     public static NormalizedNodeStreamVersion current() {
-        return MAGNESIUM;
+        return POTASSIUM;
     }
 
     /**

@@ -28,6 +28,11 @@ final class TokenTypes {
      * present.
      */
     static final short MAGNESIUM_VERSION = 4;
+    /**
+     * Potassium version. Structurally matches {@link #MAGNESIUM_VERSION} except that {@code augmentation} indirection
+     * is removed.
+     */
+    static final short POTASSIUM_VERSION = 5;
 
     private TokenTypes() {
         // Utility class
