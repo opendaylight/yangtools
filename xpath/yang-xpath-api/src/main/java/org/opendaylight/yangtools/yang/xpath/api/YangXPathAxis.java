@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,10 +24,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.UnresolvedQNam
 
 /**
  * XPath evaluation axis, as defined in <a href="https://www.w3.org/TR/1999/REC-xpath-19991116/#axes">XPath 1.0</a>.
- *
- * @author Robert Varga
  */
-@Beta
 public enum YangXPathAxis {
     /**
      * The {@code child} axis.

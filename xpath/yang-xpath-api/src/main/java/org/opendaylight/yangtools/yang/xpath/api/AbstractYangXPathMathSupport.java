@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -18,10 +18,9 @@ import java.util.Optional;
  * YangNumberExprs.
  *
  * @param <N> Type of YangNumberExpr
- * @author Robert Varga
  */
-@Beta
 public abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr> implements YangXPathMathSupport {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Class<N> numberClass;
@@ -67,5 +66,6 @@ public abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr> imp
      */
     protected abstract YangExpr doEvaluate(YangBinaryOperator operator, N left, N right);
 
+    @Serial
     protected abstract Object readResolve();
 }

@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
+import java.io.Serial;
+
 final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNumberExpr> {
     static final DoubleXPathMathSupport INSTANCE = new DoubleXPathMathSupport();
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private DoubleXPathMathSupport() {
@@ -34,8 +37,8 @@ final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNu
     @Override
     protected YangExpr doEvaluate(final YangBinaryOperator operator, final DoubleNumberExpr left,
             final DoubleNumberExpr right) {
-        final double l = left.getValue();
-        final double r = right.getValue();
+        final var l = left.getValue();
+        final var r = right.getValue();
 
         return switch (operator) {
             case DIV -> DoubleNumberExpr.of(l / r);

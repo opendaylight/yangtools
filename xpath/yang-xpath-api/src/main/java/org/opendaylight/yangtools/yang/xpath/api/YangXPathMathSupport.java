@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * Interface supporting mathematical operations. This interface should be implemented by subclassing
  * {@link AbstractYangXPathMathSupport}, which provides type safety guards.
- *
- * @author Robert Varga
  */
-@Beta
 public interface YangXPathMathSupport extends Serializable {
     /**
      * Create a {@link YangNumberExpr} backed by specified string.

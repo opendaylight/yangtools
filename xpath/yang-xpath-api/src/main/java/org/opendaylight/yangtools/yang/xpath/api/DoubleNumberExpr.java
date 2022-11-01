@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
 final class DoubleNumberExpr extends YangNumberExpr {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final double value;
@@ -43,7 +45,7 @@ final class DoubleNumberExpr extends YangNumberExpr {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof DoubleNumberExpr && bitEqual(((DoubleNumberExpr) obj).value);
+        return this == obj || obj instanceof DoubleNumberExpr other && bitEqual(other.value);
     }
 
     private boolean bitEqual(final double other) {

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
  *
  * @author Robert Varga
  */
-@Beta
 public interface YangXPathParserFactory {
     /**
      * Return a {@link YangXPathParser} compliant with {@link YangXPathMathMode#IEEE754}. Returned parser will not
@@ -35,7 +33,7 @@ public interface YangXPathParserFactory {
      *
      * @param mathMode Requested XPath number compliance
      * @return An XPathParser
-     * @throws NullPointerException if {@code mathMode} is null
+     * @throws NullPointerException if {@code mathMode} is {code null}
      */
     YangXPathParser newParser(YangXPathMathMode mathMode);
 
@@ -45,7 +43,7 @@ public interface YangXPathParserFactory {
      *
      * @param namespaceContext Prefix-to-namespace resolver, used to bind qualified node identifiers
      * @return An XPathParser
-     * @throws NullPointerException if {@code namespaceContext} is null
+     * @throws NullPointerException if {@code namespaceContext} is {code null}
      */
     default YangXPathParser.QualifiedBound newParser(final YangNamespaceContext namespaceContext) {
         return newParser(YangXPathMathMode.IEEE754, namespaceContext);
@@ -58,7 +56,7 @@ public interface YangXPathParserFactory {
      * @param mathMode Requested XPath number compliance
      * @param namespaceContext Prefix-to-namespace resolver, used to bind qualified node identifiers
      * @return An XPathParser
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {code null}
      */
     YangXPathParser.QualifiedBound newParser(YangXPathMathMode mathMode, YangNamespaceContext namespaceContext);
 
@@ -69,7 +67,7 @@ public interface YangXPathParserFactory {
      * @param namespaceContext Prefix-to-namespace resolver, used to bind qualified node identifiers
      * @param defaultNamespace Default namespace, used to bind unqualified node identifiers
      * @return An XPathParser
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {code null}
      */
     default YangXPathParser.UnqualifiedBound newParser(final YangNamespaceContext namespaceContext,
             final QNameModule defaultNamespace) {
@@ -84,7 +82,7 @@ public interface YangXPathParserFactory {
      * @param namespaceContext Prefix-to-namespace resolver, used to bind qualified node identifiers
      * @param defaultNamespace Default namespace, used to bind unqualified node identifiers
      * @return An XPathParser
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {code null}
      */
     YangXPathParser.UnqualifiedBound newParser(YangXPathMathMode mathMode, YangNamespaceContext namespaceContext,
             QNameModule defaultNamespace);

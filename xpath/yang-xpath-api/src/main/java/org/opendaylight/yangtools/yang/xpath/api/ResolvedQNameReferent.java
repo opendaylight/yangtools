@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * A {@link QNameReferent} referencing a resolved QName.
- *
- * @author Robert Varga
  */
-@Beta
-public interface ResolvedQNameReferent extends QNameReferent {
+public non-sealed interface ResolvedQNameReferent extends QNameReferent {
     /**
      * Return the referenced QName.
      *
