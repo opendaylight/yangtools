@@ -14,11 +14,13 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serial;
 
 /**
  * Externalizable proxy for {@link QName}.
  */
 final class QNv1 implements Externalizable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private QName qname;
@@ -42,6 +44,7 @@ final class QNv1 implements Externalizable {
         qname = QName.readFrom(in);
     }
 
+    @Serial
     Object readResolve() {
         return verifyNotNull(qname);
     }

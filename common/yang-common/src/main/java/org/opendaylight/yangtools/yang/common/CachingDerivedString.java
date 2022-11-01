@@ -10,6 +10,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -22,6 +23,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @Beta
 @NonNullByDefault
 public abstract class CachingDerivedString<T extends CachingDerivedString<T>> extends DerivedString<T> {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private transient volatile @Nullable String str;

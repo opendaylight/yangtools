@@ -13,6 +13,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -40,6 +41,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 public final class Revision implements Comparable<Revision>, Immutable, Serializable {
     // Note: since we are using writeReplace() this version is not significant.
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -152,11 +154,13 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
         return str;
     }
 
+    @Serial
     Object writeReplace() {
         return new Proxy(str);
     }
 
     private static final class Proxy implements Externalizable {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private String str;
@@ -180,6 +184,7 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
             str = (String) in.readObject();
         }
 
+        @Serial
         private Object readResolve() {
             return Revision.of(requireNonNull(str));
         }

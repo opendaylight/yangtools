@@ -14,12 +14,14 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serial;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 
 /**
  * Externalizable proxy for {@link Qualified}.
  */
 final class QQNv1 implements Externalizable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private Qualified qname;
@@ -43,6 +45,7 @@ final class QQNv1 implements Externalizable {
         qname = Qualified.readFrom(in);
     }
 
+    @Serial
     Object readResolve() {
         return verifyNotNull(qname);
     }

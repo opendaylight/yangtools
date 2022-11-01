@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 public final class XMLNamespace implements Comparable<XMLNamespace>, Immutable, Serializable {
     private static final Interner<XMLNamespace> INTERNER = Interners.newWeakInterner();
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String namespace;
@@ -73,6 +75,7 @@ public final class XMLNamespace implements Comparable<XMLNamespace>, Immutable, 
         return namespace;
     }
 
+    @Serial
     Object writeReplace() {
         return new XNv1(this);
     }

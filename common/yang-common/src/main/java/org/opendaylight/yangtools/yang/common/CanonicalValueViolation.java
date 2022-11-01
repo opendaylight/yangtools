@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @NonNullByDefault
 public abstract class CanonicalValueViolation implements Immutable, Serializable {
     public static class Regular extends CanonicalValueViolation {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final @Nullable String appTag;
@@ -58,6 +60,7 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
 
     @SuppressFBWarnings("NM_CLASS_NOT_EXCEPTION")
     public static class WithException extends CanonicalValueViolation {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final Exception cause;
@@ -88,6 +91,7 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
 
     private static final CanonicalValueViolation EMPTY = new Regular(null, null);
     private static final Either<?, CanonicalValueViolation> EMPTY_VARIANT = Either.ofSecond(EMPTY);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public static CanonicalValueViolation empty() {

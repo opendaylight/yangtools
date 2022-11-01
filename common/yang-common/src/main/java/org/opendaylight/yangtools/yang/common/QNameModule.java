@@ -15,6 +15,7 @@ import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  */
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
+    @Serial
     private static final long serialVersionUID = 3L;
 
     private final @NonNull XMLNamespace namespace;
@@ -167,6 +169,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
             .toString();
     }
 
+    @Serial
     Object writeReplace() {
         return new NSv1(this);
     }

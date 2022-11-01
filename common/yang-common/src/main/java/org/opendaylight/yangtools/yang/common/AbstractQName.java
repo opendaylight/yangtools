@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  */
 @NonNullByDefault
 public abstract sealed class AbstractQName implements Identifier, WritableObject permits QName, UnresolvedQName {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String localName;
@@ -75,6 +77,7 @@ public abstract sealed class AbstractQName implements Identifier, WritableObject
         return str != null && !str.isEmpty() && checkContent(str);
     }
 
+    @Serial
     abstract Object writeReplace();
 
     static final String checkLocalName(final @Nullable String localName) {

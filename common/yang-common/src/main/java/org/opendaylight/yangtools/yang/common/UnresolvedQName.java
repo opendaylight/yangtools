@@ -16,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -36,6 +37,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
      * through {@link #bindTo(YangNamespaceContext)}.
      */
     public static final class Qualified extends UnresolvedQName implements Comparable<Qualified> {
+        @Serial
         private static final long serialVersionUID = 1L;
         private static final Interner<Qualified> INTERNER = Interners.newWeakInterner();
 
@@ -133,6 +135,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
      * {@link #bindTo(QNameModule)}.
      */
     public static final class Unqualified extends UnresolvedQName implements Comparable<Unqualified> {
+        @Serial
         private static final long serialVersionUID = 1L;
         private static final Interner<Unqualified> INTERNER = Interners.newWeakInterner();
 
@@ -216,6 +219,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
         }
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private UnresolvedQName(final String localName) {

@@ -11,11 +11,13 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serial;
 
 /**
  * Externalizable proxy for {@link ErrorTag}.
  */
 final class ETv1 implements Externalizable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String elementBody;
@@ -39,6 +41,7 @@ final class ETv1 implements Externalizable {
         elementBody = in.readUTF();
     }
 
+    @Serial
     Object readResolve() {
         return new ErrorTag(elementBody);
     }

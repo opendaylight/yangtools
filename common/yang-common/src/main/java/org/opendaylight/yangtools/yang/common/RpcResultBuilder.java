@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.Futures;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
 public final class RpcResultBuilder<T> implements Mutable {
 
     private static class RpcResultImpl<T> implements RpcResult<T>, Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableList<RpcError> errors;
@@ -62,6 +64,7 @@ public final class RpcResultBuilder<T> implements Mutable {
     }
 
     private static class RpcErrorImpl implements RpcError, Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final String applicationTag;

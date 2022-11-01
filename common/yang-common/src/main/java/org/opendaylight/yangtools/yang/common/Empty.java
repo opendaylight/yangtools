@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @NonNullByDefault
 public final class Empty implements Immutable, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Empty INSTANCE = new Empty();
 
@@ -39,6 +41,7 @@ public final class Empty implements Immutable, Serializable {
         return "empty";
     }
 
+    @Serial
     @SuppressWarnings("static-method")
     private Object readResolve() {
         return INSTANCE;

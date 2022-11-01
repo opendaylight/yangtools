@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -167,6 +168,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     }
 
     private static final CanonicalValueSupport<Decimal64> SUPPORT = new Support();
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final int MAX_SCALE = 18;

@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableBiMap.Builder;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  */
 @Beta
 public final class BiMapYangNamespaceContext implements YangNamespaceContext, WritableObject {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final ImmutableBiMap<String, QNameModule> mapping;

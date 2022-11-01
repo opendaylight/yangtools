@@ -15,6 +15,7 @@ import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -72,6 +73,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
 
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Regex

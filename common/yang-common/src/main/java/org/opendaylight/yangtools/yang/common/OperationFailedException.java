@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
  * @author Thomas Pantelis
  */
 public class OperationFailedException extends Exception {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final ImmutableList<RpcError> errorList;
@@ -73,7 +75,7 @@ public class OperationFailedException extends Exception {
      */
     public OperationFailedException(final String message, final Collection<? extends RpcError> errors) {
         super(requireNonNull(message));
-        this.errorList = ImmutableList.copyOf(errors);
+        errorList = ImmutableList.copyOf(errors);
     }
 
     /**
