@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.plugin.generator.api;
 
-import com.google.common.annotations.Beta;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Identifiable;
 
 /**
  * A {@link java.util.ServiceLoader} factory for instantiating {@link FileGenerator} instances.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public interface FileGeneratorFactory extends Identifiable<String> {
     /**

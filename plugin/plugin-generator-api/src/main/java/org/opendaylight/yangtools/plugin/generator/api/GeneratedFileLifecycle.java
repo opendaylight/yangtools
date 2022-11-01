@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.plugin.generator.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Lifecycle policy of a generated file. This governs how existing files interact with newly-generated bodies.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public enum GeneratedFileLifecycle {
     /**

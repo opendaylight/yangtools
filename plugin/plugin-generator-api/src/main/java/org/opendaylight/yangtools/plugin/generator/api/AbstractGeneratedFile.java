@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.plugin.generator.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -20,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public abstract class AbstractGeneratedFile implements GeneratedFile {
     private final GeneratedFileLifecycle lifecycle;

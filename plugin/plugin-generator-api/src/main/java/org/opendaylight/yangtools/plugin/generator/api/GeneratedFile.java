@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.plugin.generator.api;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import java.io.IOException;
@@ -18,10 +17,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * The contents of a generated file and its {@link GeneratedFileLifecycle}.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public interface GeneratedFile extends Immutable {
     /**
@@ -36,6 +32,7 @@ public interface GeneratedFile extends Immutable {
      *
      * @param output stream where to write the output
      * @throws IOException when the stream reports an IOException
+     * @throws NullPointerException if {@code output} is {@code null}
      */
     void writeBody(OutputStream output) throws IOException;
 
@@ -46,7 +43,7 @@ public interface GeneratedFile extends Immutable {
      * @param lifecycle File lifecycle
      * @param body File body
      * @return A GeneratedFile.
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     static GeneratedFile of(final GeneratedFileLifecycle lifecycle, final CharSequence body) {
         return new CharSeqGeneratedTextFile(lifecycle, body);
@@ -59,7 +56,7 @@ public interface GeneratedFile extends Immutable {
      * @param lifecycle File lifecycle
      * @param body File body
      * @return A GeneratedFile.
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     static GeneratedFile of(final GeneratedFileLifecycle lifecycle, final CharSource body) {
         return new CharSourceGeneratedTextFile(lifecycle, body);
@@ -71,7 +68,7 @@ public interface GeneratedFile extends Immutable {
      * @param lifecycle File lifecycle
      * @param body File body
      * @return A GeneratedFile.
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     static GeneratedFile of(final GeneratedFileLifecycle lifecycle, final ByteSource body) {
         return new ByteSourceGeneratedFile(lifecycle, body);

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.plugin.generator.api;
 
-import com.google.common.annotations.Beta;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public abstract class AbstractGeneratedTextFile extends AbstractGeneratedFile {
     protected AbstractGeneratedTextFile(final GeneratedFileLifecycle lifecycle) {
@@ -31,8 +29,8 @@ public abstract class AbstractGeneratedTextFile extends AbstractGeneratedFile {
 
     @Override
     public final void writeBody(final OutputStream output) throws IOException {
-        try (Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            try (BufferedWriter buffered = new BufferedWriter(writer)) {
+        try (var writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
+            try (var buffered = new BufferedWriter(writer)) {
                 writeBody(buffered);
             }
         }

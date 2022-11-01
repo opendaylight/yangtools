@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.plugin.generator.api;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Table;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -20,14 +19,16 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  *
  * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public interface FileGenerator {
     /**
      * Indicate import resolution mode this code generator requires. Default implementation indicates
      * {@link ImportResolutionMode#REVISION_EXACT_OR_LATEST}.
      *
-     * @return Required import resolution mode, null if the code generator does not care.
+     * @implNote
+     *     Default implementation returns {@link ImportResolutionMode#REVISION_EXACT_OR_LATEST}.
+     *
+     * @return Required import resolution mode.
      */
     default ImportResolutionMode importResolutionMode() {
         return ImportResolutionMode.REVISION_EXACT_OR_LATEST;
@@ -54,7 +55,6 @@ public interface FileGenerator {
     /**
      * {@link EffectiveModelContext} can be assembled in multiple ways, we hold known modes here.
      */
-    @Beta
     enum ImportResolutionMode {
         /**
          * Standard, RFC6020 and RFC7950 compliant mode. Imports are satisfied by exact revision match (if specified),

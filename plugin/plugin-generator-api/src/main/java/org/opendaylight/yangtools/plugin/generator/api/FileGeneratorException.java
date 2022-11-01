@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.plugin.generator.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
+import java.io.Serial;
 
 /**
  * An exception reporting a problem with file generation. This exception should be reported when exception chaining
  * occurs.
  */
-@Beta
 public class FileGeneratorException extends Exception {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public FileGeneratorException(final String message) {

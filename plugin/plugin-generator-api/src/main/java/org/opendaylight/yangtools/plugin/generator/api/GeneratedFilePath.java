@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.plugin.generator.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import java.io.File;
@@ -19,10 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A relative path to a generated file.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public final class GeneratedFilePath {
     public static final char SEPARATOR = '/';
@@ -60,7 +56,7 @@ public final class GeneratedFilePath {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof GeneratedFilePath && path.equals(((GeneratedFilePath) obj).path);
+        return this == obj || obj instanceof GeneratedFilePath other && path.equals(other.path);
     }
 
     @Override
