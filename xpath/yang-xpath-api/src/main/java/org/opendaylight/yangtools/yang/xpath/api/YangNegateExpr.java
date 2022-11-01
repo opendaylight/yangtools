@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
-@Beta
 public final class YangNegateExpr implements YangExpr {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final YangExpr subExpr;

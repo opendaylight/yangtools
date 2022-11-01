@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import org.eclipse.jdt.annotation.Nullable;
 
 final class BigDecimalNumberExpr extends YangNumberExpr {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final BigDecimal number;

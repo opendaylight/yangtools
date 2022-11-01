@@ -9,14 +9,9 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-
 /**
  * XPath node type as defined in <a href="https://www.w3.org/TR/1999/REC-xpath-19991116/#NT-NodeType">XPath 1.0</a>.
- *
- * @author Robert Varga
  */
-@Beta
 public enum YangXPathNodeType {
     /**
      * A {@code comment}.

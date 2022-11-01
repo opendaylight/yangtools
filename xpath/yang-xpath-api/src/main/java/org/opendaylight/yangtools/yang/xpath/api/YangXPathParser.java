@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 
 /**
  * Interface for converting a String into a {@link YangXPathExpression}. Implementations of this interface are expected
  * to be NOT thread-safe.
- *
- * @author Robert Varga
  */
-@Beta
 public interface YangXPathParser {
     /**
      * A {@link YangXPathParser} bound to a {@link YangNamespaceContext}, producing Qualified-bound Expressions.
@@ -41,7 +37,7 @@ public interface YangXPathParser {
      *
      * @param xpath XPath expression string
      * @return A parsed {@link YangXPathExpression}
-     * @throws NullPointerException if {@code xpath} is null
+     * @throws NullPointerException if {@code xpath} is {@code null}
      * @throws XPathExpressionException when the expression cannot be parsed
      */
     YangXPathExpression parseExpression(String xpath) throws XPathExpressionException;

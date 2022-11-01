@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,10 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * <p>
  * They also map these functions' names to the constant pool under their {@link YangFunctionCallExpr#getName()}
  * identity. All users should use these constants in favor of their equivalent function calls.
- *
- * @author Robert Varga
  */
-@Beta
 public enum YangBooleanConstantExpr implements YangConstantExpr<Boolean> {
     /**
      * A constant {@code false} expression.
@@ -80,13 +76,10 @@ public enum YangBooleanConstantExpr implements YangConstantExpr<Boolean> {
     }
 
     public static Optional<YangFunctionCallExpr> forFunctionName(final String functionName) {
-        switch (functionName) {
-            case "false":
-                return Optional.of(FALSE.function);
-            case "true":
-                return Optional.of(TRUE.function);
-            default:
-                return Optional.empty();
-        }
+        return switch (functionName) {
+            case "false" -> Optional.of(FALSE.function);
+            case "true" -> Optional.of(TRUE.function);
+            default -> Optional.empty();
+        };
     }
 }

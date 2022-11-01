@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -24,11 +25,10 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * <p>
  * A more type-safe alternative is {@link YangQNameExpr}, which should be preferred and used whenever possible.
- *
- * @author Robert Varga
  */
 @Beta
 public final class YangLiteralExpr implements YangExpr {
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final YangLiteralExpr EMPTY = new YangLiteralExpr("");
 

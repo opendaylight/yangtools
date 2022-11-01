@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
@@ -19,8 +19,8 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * A {@link YangExpr} combining a {@link YangNaryOperator} with a set of expressions.
  */
-@Beta
 public final class YangNaryExpr implements YangExpr {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final YangNaryOperator operator;

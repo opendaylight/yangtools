@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 
 @Beta
 public abstract sealed class YangLocationPath implements YangExpr {

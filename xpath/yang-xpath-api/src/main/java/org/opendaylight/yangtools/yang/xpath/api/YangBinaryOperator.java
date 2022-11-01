@@ -9,15 +9,12 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.Serial;
 
 /**
  * YANG XPath binary operator.
- *
- * @author Robert Varga
  */
-@Beta
 public enum YangBinaryOperator {
     /**
      * Operands are equal.
@@ -91,6 +88,7 @@ public enum YangBinaryOperator {
 
     @SuppressFBWarnings(value = "SE_INNER_CLASS", justification = "Outer class is a retained enumeration")
     final class Expr extends YangBinaryExpr {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         Expr(final YangExpr leftExpr, final YangExpr rightExpr) {
@@ -109,12 +107,12 @@ public enum YangBinaryOperator {
         this.str = requireNonNull(str);
     }
 
+    public YangBinaryExpr exprWith(final YangExpr leftExpr, final YangExpr rightExpr) {
+        return new Expr(leftExpr, rightExpr);
+    }
+
     @Override
     public String toString() {
         return str;
-    }
-
-    public YangBinaryExpr exprWith(final YangExpr leftExpr, final YangExpr rightExpr) {
-        return new Expr(leftExpr, rightExpr);
     }
 }
