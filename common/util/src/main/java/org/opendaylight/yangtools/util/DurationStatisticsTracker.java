@@ -17,8 +17,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class that calculates and tracks time duration statistics.
@@ -28,7 +26,6 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public abstract class DurationStatisticsTracker {
-    private static final Logger LOG = LoggerFactory.getLogger(DurationStatisticsTracker.class);
     private static final DecimalFormat DECIMAL_FORMAT;
 
     static {
