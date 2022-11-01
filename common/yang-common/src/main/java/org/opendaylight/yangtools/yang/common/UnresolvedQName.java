@@ -227,35 +227,6 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
     }
 
     /**
-     * Create a new qualified unresolved QName.
-     *
-     * @param prefix The prefix on this qualified QName
-     * @param localName The local name of this qualified QName
-     * @return An UnqualifiedQName instance
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
-     * @deprecated Use {@link Qualified#of(String, String)} instead.
-     */
-    @Deprecated(since = "9.0.0", forRemoval = true)
-    public static Qualified qualified(final String prefix, final String localName) {
-        return Qualified.of(prefix, localName);
-    }
-
-    /**
-     * Create a new unqualified unresolved QName.
-     *
-     * @param localName The local name of this unqualified QName
-     * @return An UnqualifiedQName instance
-     * @throws NullPointerException if localName is {@code null}
-     * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
-     * @deprecated Use {@link Unqualified#of(String)} instead.
-     */
-    @Deprecated(since = "9.0.0", forRemoval = true)
-    public static Unqualified unqualified(final String localName) {
-        return Unqualified.of(localName);
-    }
-
-    /**
      * Try to create a new unqualified QName.
      *
      * @param localName The local name of this unqualified QName
