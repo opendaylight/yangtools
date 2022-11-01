@@ -322,15 +322,10 @@ public final class XmlParserStream implements Closeable, Flushable {
      *              instance of XmlParserStream
      * @throws XMLStreamException
      *              if a well-formedness error or an unexpected processing condition occurs while parsing the XML
-     * @throws URISyntaxException
-     *              if the namespace URI of an XML element contains a syntax error
      * @throws IOException
      *              if an error occurs while parsing the value of an anyxml node
-     * @throws SAXException
-     *              if an error occurs while parsing the value of an anyxml node
      */
-    public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
-            IOException, SAXException {
+    public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, IOException {
         if (reader.hasNext()) {
             reader.nextTag();
             final AbstractNodeDataWithSchema<?> nodeDataWithSchema;
