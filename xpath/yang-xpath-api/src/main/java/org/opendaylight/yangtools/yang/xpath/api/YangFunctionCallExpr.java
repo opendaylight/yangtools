@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.util.Iterator;
+import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
@@ -21,10 +20,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 /**
  * Function call invocation. Function names without a prefix are mapped into {@link YangConstants#RFC6020_YIN_MODULE},
  * as they are required to be mapped into YANG as per RFC7950 definitions.
- *
- * @author Robert Varga
  */
-@Beta
 public sealed class YangFunctionCallExpr implements YangExpr {
     private static final class WithArgs extends YangFunctionCallExpr {
         private static final long serialVersionUID = 1L;
@@ -42,6 +38,7 @@ public sealed class YangFunctionCallExpr implements YangExpr {
         }
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final QName name;
@@ -83,8 +80,8 @@ public sealed class YangFunctionCallExpr implements YangExpr {
 
     @Override
     public final String toString() {
-        final StringBuilder sb = new StringBuilder().append(getName()).append('(');
-        final Iterator<YangExpr> it = getArguments().iterator();
+        final var sb = new StringBuilder().append(getName()).append('(');
+        final var it = getArguments().iterator();
         if (it.hasNext()) {
             sb.append(it.next());
             while (it.hasNext()) {

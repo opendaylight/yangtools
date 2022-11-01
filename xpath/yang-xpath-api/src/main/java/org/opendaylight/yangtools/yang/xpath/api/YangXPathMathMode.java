@@ -9,15 +9,12 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-
 /**
  * {@link YangXPathParser} number compliance knobs. This enumeration defines what assumptions the parser can make --
  * affecting its optimization properties around
  * <a href="https://en.wikipedia.org/wiki/Constant_folding">constant folding</a> when number expressions are
  * involved.
  */
-@Beta
 public enum YangXPathMathMode {
     /**
      * All number expressions are treated as {@code double}. This in spirit of XPath 1.0 -- any number expression

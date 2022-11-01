@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
+import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
@@ -23,11 +23,10 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName;
  * Parsers and users of this package are encouraged to use this class in place of {@link YangLiteralExpr} where
  * appropriate, as it retains type safety and more semantic context.
  *
- * @author Robert Varga
  */
-@Beta
 public abstract sealed class YangQNameExpr implements YangExpr, QNameReferent {
     public static final class Resolved extends YangQNameExpr implements ResolvedQNameReferent {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final QName qname;
@@ -58,6 +57,7 @@ public abstract sealed class YangQNameExpr implements YangExpr, QNameReferent {
     }
 
     public static final class Unresolved extends YangQNameExpr implements UnresolvedQNameReferent {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final UnresolvedQName qname;
@@ -87,6 +87,7 @@ public abstract sealed class YangQNameExpr implements YangExpr, QNameReferent {
         }
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public static Unresolved of(final UnresolvedQName qname) {

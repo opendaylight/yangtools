@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -41,10 +40,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  *     object model.
  * </li>
  * </ul>
- *
- * @author Robert Varga
  */
-@Beta
 public interface YangXPathExpression extends Immutable {
     /**
      * A Qualified-bound expression. All {@link Qualified}s are eliminated and replaced with {@link QName}s.

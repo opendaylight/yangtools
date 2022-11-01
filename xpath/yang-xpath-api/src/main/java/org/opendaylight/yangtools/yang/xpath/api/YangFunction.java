@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -20,7 +19,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  *
  * @author Robert Varga
  */
-@Beta
 public enum YangFunction implements Identifiable<QName> {
     // XPath 1.0 functions
     BOOLEAN("boolean"),

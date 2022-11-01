@@ -7,17 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 /**
  * An object referencing a QName, either resolved or unresolved.
- *
- * @author Robert Varga
  */
-@Beta
-public interface QNameReferent extends Immutable {
+public sealed interface QNameReferent extends Immutable
+        permits ResolvedQNameReferent, UnresolvedQNameReferent, YangQNameExpr, YangLocationPath.QNameStep {
     /**
      * Return the referenced {@link AbstractQName}.
      *

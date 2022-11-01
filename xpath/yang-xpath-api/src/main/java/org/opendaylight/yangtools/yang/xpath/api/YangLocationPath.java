@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
-@Beta
 public abstract sealed class YangLocationPath implements YangExpr {
     public abstract static sealed class Step implements Serializable, YangPredicateAware {
         private static final long serialVersionUID = 1L;

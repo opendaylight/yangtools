@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigDecimalNumberExpr> {
     static final BigDecimalXPathMathSupport INSTANCE = new BigDecimalXPathMathSupport();
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final BigDecimalNumberExpr ZERO = BigDecimalNumberExpr.of(BigDecimal.ZERO);
     private static final BigDecimalNumberExpr ONE = BigDecimalNumberExpr.of(BigDecimal.ONE);
@@ -23,30 +25,22 @@ final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigD
 
     @Override
     public BigDecimalNumberExpr createNumber(final String str) {
-        switch (str) {
-            case "0":
-                return ZERO;
-            case "1":
-                return ONE;
-            case "10":
-                return TEN;
-            default:
-                return BigDecimalNumberExpr.of(new BigDecimal(str));
-        }
+        return switch (str) {
+            case "0" -> ZERO;
+            case "1" -> ONE;
+            case "10" -> TEN;
+            default -> BigDecimalNumberExpr.of(new BigDecimal(str));
+        };
     }
 
     @Override
     public BigDecimalNumberExpr createNumber(final int value) {
-        switch (value) {
-            case 0:
-                return ZERO;
-            case 1:
-                return ONE;
-            case 10:
-                return TEN;
-            default:
-                return BigDecimalNumberExpr.of(BigDecimal.valueOf(value));
-        }
+        return switch (value) {
+            case 0 -> ZERO;
+            case 1 -> ONE;
+            case 10 -> TEN;
+            default -> BigDecimalNumberExpr.of(BigDecimal.valueOf(value));
+        };
     }
 
     @Override
@@ -57,8 +51,8 @@ final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigD
     @Override
     protected YangExpr doEvaluate(final YangBinaryOperator operator, final BigDecimalNumberExpr left,
             final BigDecimalNumberExpr right) {
-        final BigDecimal l = left.getNumber();
-        final BigDecimal r = right.getNumber();
+        final var l = left.getNumber();
+        final var r = right.getNumber();
 
         return switch (operator) {
             case DIV -> BigDecimalNumberExpr.of(l.divide(r));

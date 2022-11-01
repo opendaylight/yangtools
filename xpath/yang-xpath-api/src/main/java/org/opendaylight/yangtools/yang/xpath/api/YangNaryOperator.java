@@ -9,16 +9,12 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 
 /**
- * YANG XPath binary operator.
- *
- * @author Robert Varga
+ * YANG XPath n-ary operator.
  */
-@Beta
 public enum YangNaryOperator {
     /**
      * Logical 'and' operator on operands.
@@ -51,7 +47,7 @@ public enum YangNaryOperator {
     }
 
     public YangExpr exprWith(final Collection<YangExpr> exprs) {
-        final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(exprs);
+        final var set = ImmutableSet.copyOf(exprs);
         return set.size() == 1 ? set.iterator().next() : new YangNaryExpr(this, set);
     }
 }

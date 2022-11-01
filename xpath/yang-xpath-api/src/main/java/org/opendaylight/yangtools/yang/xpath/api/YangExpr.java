@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import java.io.Serializable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Common base interface for all YANG Expression components.
- *
- * @author Robert Varga
  */
-@Beta
 public sealed interface YangExpr extends Immutable, Serializable
     permits YangBinaryExpr,
             YangConstantExpr,

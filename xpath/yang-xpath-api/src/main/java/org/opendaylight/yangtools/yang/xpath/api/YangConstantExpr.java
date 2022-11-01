@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Common interface for all YANG XPath constant expressions. Each constant has a unique {@link QName}, which acts as its
  * globally-unique identifier.
- *
- * @author Robert Varga
  */
-@Beta
 public sealed interface YangConstantExpr<T> extends YangExpr, Identifiable<QName> permits YangBooleanConstantExpr {
     /**
      * Return this constant's value.
