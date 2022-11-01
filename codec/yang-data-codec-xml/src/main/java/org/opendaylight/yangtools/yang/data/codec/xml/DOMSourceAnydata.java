@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
@@ -20,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractNormalizableAnydata;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
-import org.xml.sax.SAXException;
 
 /**
  * Internal parser representation of a parsed-out chunk of XML. This format is completely internal to the parser
@@ -62,7 +60,7 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
             reader.nextTag();
 
             xmlParser.parse(reader).flush();
-        } catch (XMLStreamException | URISyntaxException | SAXException e) {
+        } catch (XMLStreamException e) {
             throw new IOException("Failed to parse payload", e);
         }
     }
