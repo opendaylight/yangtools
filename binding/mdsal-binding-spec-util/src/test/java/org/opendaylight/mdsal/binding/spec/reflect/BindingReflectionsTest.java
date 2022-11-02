@@ -44,11 +44,6 @@ public class BindingReflectionsTest {
         assertTrue(BindingReflections.isRpcMethod(TestImplementation.class.getDeclaredMethod("rpcMethodTest")));
         assertEquals(TestImplementation.class, BindingReflections.findAugmentationTarget(TestImplementation.class));
 
-        assertEquals(Object.class, BindingReflections.resolveRpcOutputClass(
-                TestImplementation.class.getDeclaredMethod("rpcMethodTest")).get());
-        assertFalse(BindingReflections.resolveRpcOutputClass(
-                TestImplementation.class.getDeclaredMethod("rpcMethodTest2")).isPresent());
-
         assertEquals(QName.create("test", "test"), BindingReflections.getQName(TestIdentity.VALUE));
     }
 
@@ -65,11 +60,6 @@ public class BindingReflectionsTest {
 
         @SuppressWarnings("static-method")
         ListenableFuture<List<Object>> rpcMethodTest() {
-            return null;
-        }
-
-        @SuppressWarnings("static-method")
-        ListenableFuture<?> rpcMethodTest2() {
             return null;
         }
 
