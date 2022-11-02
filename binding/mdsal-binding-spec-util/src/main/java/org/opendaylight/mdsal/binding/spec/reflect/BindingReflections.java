@@ -134,10 +134,11 @@ public final class BindingReflections {
     /**
      * Extracts Output class for RPC method.
      *
-     * @param targetMethod
-     *            method to scan
+     * @param targetMethod method to scan
      * @return Optional.empty() if result type could not be get, or return type is Void.
+     * @deprecated This method is unused and scheduled for removal
      */
+    @Deprecated(since = "10.0.4", forRemoval = true)
     @SuppressWarnings("rawtypes")
     public static Optional<Class<?>> resolveRpcOutputClass(final Method targetMethod) {
         checkState(isRpcMethod(targetMethod), "Supplied method is not a RPC invocation method");
@@ -153,10 +154,11 @@ public final class BindingReflections {
     /**
      * Extracts input class for RPC method.
      *
-     * @param targetMethod
-     *            method to scan
+     * @param targetMethod method to scan
      * @return Optional.empty() if RPC has no input, RPC input type otherwise.
+     * @deprecated This method is unused and scheduled for removal
      */
+    @Deprecated(since = "10.0.4", forRemoval = true)
     @SuppressWarnings("rawtypes")
     public static Optional<Class<? extends DataContainer>> resolveRpcInputClass(final Method targetMethod) {
         for (Class clazz : targetMethod.getParameterTypes()) {
