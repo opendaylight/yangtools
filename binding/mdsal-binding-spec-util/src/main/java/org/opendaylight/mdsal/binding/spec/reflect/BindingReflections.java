@@ -561,38 +561,34 @@ public final class BindingReflections {
     }
 
     /**
-     * Determines if two augmentation classes or case classes represents same
-     * data.
+     * Determines if two augmentation classes or case classes represents same data.
      *
      * <p>
      * Two augmentations or cases could be substituted only if and if:
      * <ul>
-     * <li>Both implements same interfaces</li>
-     * <li>Both have same children</li>
-     * <li>If augmentations: Both have same augmentation target class. Target
-     * class was generated for data node in grouping.</li>
-     * <li>If cases: Both are from same choice. Choice class was generated for
-     * data node in grouping.</li>
+     *   <li>Both implements same interfaces</li>
+     *   <li>Both have same children</li>
+     *   <li>If augmentations: Both have same augmentation target class. Target class was generated for data node in a
+     *       grouping.</li>
+     *   <li>If cases: Both are from same choice. Choice class was generated for data node in grouping.</li>
      * </ul>
      *
      * <p>
-     * <b>Explanation:</b> Binding Specification reuses classes generated for
-     * groupings as part of normal data tree, this classes from grouping could
-     * be used at various locations and user may not be aware of it and may use
-     * incorrect case or augmentation in particular subtree (via copy
-     * constructors, etc).
+     * <b>Explanation:</b>
+     * Binding Specification reuses classes generated for groupings as part of normal data tree, this classes from
+     * grouping could be used at various locations and user may not be aware of it and may use incorrect case or
+     * augmentation in particular subtree (via copy constructors, etc).
      *
-     * @param potential
-     *            Class which is potential substitution
-     * @param target
-     *            Class which should be used at particular subtree
+     * @param potential Class which is potential substitution
+     * @param target Class which should be used at particular subtree
      * @return true if and only if classes represents same data.
+     * @throws NullPointerException if any argument is {@code null}
      */
-    // FIXME: this really should live in BindingRuntimeTypes and should not be based on reflection. The only user is
-    //        binding-dom-codec and the logic could easily be performed on GeneratedType instead. For a particular
-    //        world this boils down to a matrix, which can be calculated either on-demand or when we create
-    //        BindingRuntimeTypes. Achieving that will bring us one step closer to being able to have a pre-compiled
-    //        Binding Runtime.
+    // FIXME: MDSAL-785: this really should live in BindingRuntimeTypes and should not be based on reflection. The only
+    //                   user is binding-dom-codec and the logic could easily be performed on GeneratedType instead. For
+    //                   a particular world this boils down to a matrix, which can be calculated either on-demand or
+    //                   when we create BindingRuntimeTypes. Achieving that will bring us one step closer to being able
+    //                   to have a pre-compiled Binding Runtime.
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static boolean isSubstitutionFor(final Class potential, final Class target) {
         Set<Class> subImplemented = new HashSet<>(Arrays.asList(potential.getInterfaces()));
