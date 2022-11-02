@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -30,27 +32,29 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
 
     @Override
     public D deserialize(final NormalizedNode node) {
-        if (node instanceof MapEntryNode) {
-            return createBindingProxy((MapEntryNode) node);
-        } else if (node instanceof UnkeyedListEntryNode) {
-            return createBindingProxy((UnkeyedListEntryNode) node);
+        final var nonnull = requireNonNull(node);
+        if (nonnull instanceof MapEntryNode mapEntry) {
+            return createBindingProxy(mapEntry);
+        } else if (nonnull instanceof UnkeyedListEntryNode unkeyedEntry) {
+            return createBindingProxy(unkeyedEntry);
         } else {
-            throw new IllegalStateException("Unsupported data type " + node.getClass());
+            throw new IllegalArgumentException("Expecting either a MapEntryNode or an UnkeyedListEntryNode, not "
+                + node.contract().getSimpleName());
         }
     }
 
     @Override
     protected Object deserializeObject(final NormalizedNode node) {
-        if (node instanceof MapNode) {
-            return fromMap((MapNode) node);
-        } else if (node instanceof MapEntryNode) {
-            return createBindingProxy((MapEntryNode) node);
-        } else if (node instanceof UnkeyedListNode) {
-            return fromUnkeyedList((UnkeyedListNode) node);
-        } else if (node instanceof UnkeyedListEntryNode) {
-            return createBindingProxy((UnkeyedListEntryNode) node);
+        if (node instanceof MapNode map) {
+            return fromMap(map);
+        } else if (node instanceof MapEntryNode mapEntry) {
+            return createBindingProxy(mapEntry);
+        } else if (node instanceof UnkeyedListNode list) {
+            return fromUnkeyedList(list);
+        } else if (node instanceof UnkeyedListEntryNode listEntry) {
+            return createBindingProxy(listEntry);
         } else {
-            throw new IllegalStateException("Unsupported data type " + node.getClass());
+            throw new IllegalStateException("Unsupported data type " + node.contract().getSimpleName());
         }
     }
 

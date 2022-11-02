@@ -11,7 +11,7 @@ import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.top;
 import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.topLevelList;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
@@ -414,12 +414,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                                 .build())
                         .build())
                 .build();
-        try {
-            codecContext.fromNormalizedNode(yangInstanceIdentifierValid, containerNodeValid);
-            fail("Incorect YangInstanceIdentifier should fail");
-        } catch (IllegalStateException e) {
-            // Expected
-        }
+
+        var msg = assertThrows(IllegalArgumentException.class,
+            () -> codecContext.fromNormalizedNode(yangInstanceIdentifierValid, containerNodeValid))
+            .getMessage();
+        assertEquals("Expecting either a MapEntryNode or an UnkeyedListEntryNode, not ContainerNode", msg);
 
         final ContainerNode containerNode4798 = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(containerIdentifierQname4798))
@@ -432,12 +431,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                             .build())
                         .build())
                 .build();
-        try {
-            codecContext.fromNormalizedNode(yangInstanceIdentifier4798, containerNode4798);
-            fail("Incorect YangInstanceIdentifier should fail");
-        } catch (IllegalStateException e) {
-            // Expected
-        }
+
+        msg = assertThrows(IllegalArgumentException.class,
+            () -> codecContext.fromNormalizedNode(yangInstanceIdentifier4798, containerNode4798))
+            .getMessage();
+        assertEquals("Expecting either a MapEntryNode or an UnkeyedListEntryNode, not ContainerNode", msg);
     }
 
     @Test

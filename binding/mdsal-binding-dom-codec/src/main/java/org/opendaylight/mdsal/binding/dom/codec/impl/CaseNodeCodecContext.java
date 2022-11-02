@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
@@ -43,8 +42,7 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
 
     @Override
     public D deserialize(final NormalizedNode data) {
-        checkState(data instanceof ChoiceNode, "Unexpected data %s", data);
-        return createBindingProxy((ChoiceNode) data);
+        return createBindingProxy(checkDataArgument(ChoiceNode.class, data));
     }
 
     @Override

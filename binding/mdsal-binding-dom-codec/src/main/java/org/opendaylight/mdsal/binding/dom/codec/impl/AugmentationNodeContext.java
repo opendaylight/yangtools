@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -22,9 +21,8 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    public D deserialize(final NormalizedNode normalizedNode) {
-        Preconditions.checkArgument(normalizedNode instanceof AugmentationNode);
-        return createBindingProxy((AugmentationNode)normalizedNode);
+    public D deserialize(final NormalizedNode data) {
+        return createBindingProxy(checkDataArgument(AugmentationNode.class, data));
     }
 
     @Override

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.loadThis;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.getField;
@@ -102,8 +101,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
 
     @Override
     public D deserialize(final NormalizedNode data) {
-        checkState(data instanceof ContainerNode, "Unexpected data %s", data);
-        return createBindingProxy((ContainerNode) data);
+        return createBindingProxy(checkDataArgument(ContainerNode.class, data));
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")

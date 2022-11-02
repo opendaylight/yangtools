@@ -116,8 +116,10 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
 
     @Override
     public final T deserialize(final NormalizedNode data) {
-        checkArgument(data instanceof ForeignDataNode, "Unexpected value %s", data);
-        return deserialize((ForeignDataNode<?>) data);
+        if (data instanceof ForeignDataNode<?> foreign) {
+            return deserialize(foreign);
+        }
+        throw new IllegalArgumentException("Expected a ForeignDataNode, not " + data.contract().getSimpleName());
     }
 
     T deserialize(final ForeignDataNode<?> foreignData) {
@@ -127,8 +129,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     @Override
     public final ForeignDataNode<?> serialize(final T data) {
         final OpaqueData<?> opaqueData = data.getValue();
-        return opaqueData instanceof ForeignOpaqueData ? ((ForeignOpaqueData<?>) opaqueData).domData()
-                : serializedData(opaqueData);
+        return opaqueData instanceof ForeignOpaqueData<?> foreign ? foreign.domData() : serializedData(opaqueData);
     }
 
     @Override

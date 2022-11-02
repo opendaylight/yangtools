@@ -7,8 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -24,8 +22,7 @@ final class ContainerNodeCodecContext<D extends DataObject>
 
     @Override
     public D deserialize(final NormalizedNode data) {
-        checkState(data instanceof ContainerNode, "Unexpected data %s", data);
-        return createBindingProxy((ContainerNode) data);
+        return createBindingProxy(checkDataArgument(ContainerNode.class, data));
     }
 
     @Override

@@ -259,4 +259,13 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
             throw new IllegalStateException("Failed to serialize Binding DTO",e);
         }
     }
+
+    static final <T extends NormalizedNode> @NonNull T checkDataArgument(final @NonNull Class<T> expectedType,
+            final NormalizedNode data) {
+        try {
+            return expectedType.cast(requireNonNull(data));
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Expected " + expectedType.getSimpleName(), e);
+        }
+    }
 }

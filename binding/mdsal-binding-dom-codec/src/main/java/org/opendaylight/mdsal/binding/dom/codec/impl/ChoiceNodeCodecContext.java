@@ -130,8 +130,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             }
             // Updates collection of YANG instance identifier to case
             for (var stmt : cazeDef.getType().statement().effectiveSubstatements()) {
-                if (stmt instanceof DataSchemaNode) {
-                    final DataSchemaNode cazeChild = (DataSchemaNode) stmt;
+                if (stmt instanceof DataSchemaNode cazeChild) {
                     if (cazeChild.isAugmenting()) {
                         final AugmentationSchemaNode augment = NormalizedNodeSchemaUtils.findCorrespondingAugment(
                             // FIXME: bad cast
@@ -261,8 +260,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     @SuppressWarnings("unchecked")
     @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "See FIXME below")
     public D deserialize(final NormalizedNode data) {
-        checkArgument(data instanceof ChoiceNode);
-        final ChoiceNode casted = (ChoiceNode) data;
+        final ChoiceNode casted = checkDataArgument(ChoiceNode.class, data);
         final NormalizedNode first = Iterables.getFirst(casted.body(), null);
 
         if (first == null) {
