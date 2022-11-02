@@ -209,7 +209,10 @@ public final class BindingReflections {
 
     /**
      * Checks if class is child of augmentation.
+     *
+     * @deprecated This method is unused and scheduled for removal.
      */
+    @Deprecated(since = "10.0.3", forRemoval = true)
     public static boolean isAugmentationChild(final Class<?> clazz) {
         // FIXME: Current resolver could be still confused when child node was added by grouping
         checkArgument(clazz != null);
