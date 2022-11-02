@@ -103,35 +103,6 @@ public final class BindingReflections {
     }
 
     /**
-     * Find data hierarchy parent from concrete Data class. This method uses first generic argument of implemented
-     * {@link ChildOf} interface.
-     *
-     * @param childClass child class for which we want to find the parent class.
-     * @return Parent class, e.g. class of which the childClass is ChildOf.
-     * @deprecated This method is unused and scheduled for removal
-     */
-    @Deprecated(since = "10.0.3", forRemoval = true)
-    public static Class<?> findHierarchicalParent(final Class<? extends ChildOf<?>> childClass) {
-        return ClassLoaderUtils.findFirstGenericArgument(childClass, ChildOf.class).orElse(null);
-    }
-
-    /**
-     * Find data hierarchy parent from concrete Data class. This method is shorthand which gets DataObject class by
-     * invoking {@link DataObject#implementedInterface()} and uses {@link #findHierarchicalParent(Class)}.
-     *
-     * @param child Child object for which the parent needs to be located.
-     * @return Parent class, or null if a parent is not found.
-     * @deprecated This method is unused and scheduled for removal
-     */
-    @Deprecated(since = "10.0.3", forRemoval = true)
-    public static Class<?> findHierarchicalParent(final DataObject child) {
-        if (child instanceof ChildOf) {
-            return ClassLoaderUtils.findFirstGenericArgument(child.implementedInterface(), ChildOf.class).orElse(null);
-        }
-        return null;
-    }
-
-    /**
      * Returns a QName associated to supplied type.
      *
      * @param dataType Data type class

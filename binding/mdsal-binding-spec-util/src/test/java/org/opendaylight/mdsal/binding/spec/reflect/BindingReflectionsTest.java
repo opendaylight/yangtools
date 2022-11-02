@@ -9,18 +9,15 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.opendaylight.mdsal.binding.spec.reflect.BindingReflections.findHierarchicalParent;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.spec.util.FooChild;
-import org.opendaylight.mdsal.binding.spec.util.GroupingFoo;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
@@ -42,11 +39,8 @@ public class BindingReflectionsTest {
         assertTrue("Should be BindingClass", BindingReflections.isBindingClass(DataObject.class));
         assertFalse("Should not be Notification", BindingReflections.isNotification(DataObject.class));
 
-        assertNull(findHierarchicalParent(mock(DataObject.class)));
-        assertEquals(GroupingFoo.class, BindingReflections.findHierarchicalParent(FooChild.class));
         final ChildOf<?> childOf = mock(FooChild.class);
         doReturn(FooChild.class).when(childOf).implementedInterface();
-        assertEquals(GroupingFoo.class, BindingReflections.findHierarchicalParent(childOf));
         assertTrue(BindingReflections.isRpcMethod(TestImplementation.class.getDeclaredMethod("rpcMethodTest")));
         assertEquals(TestImplementation.class, BindingReflections.findAugmentationTarget(TestImplementation.class));
 
