@@ -208,29 +208,6 @@ public final class BindingReflections {
     }
 
     /**
-     * Checks if class is child of augmentation.
-     *
-     * @deprecated This method is unused and scheduled for removal.
-     */
-    @Deprecated(since = "10.0.3", forRemoval = true)
-    public static boolean isAugmentationChild(final Class<?> clazz) {
-        // FIXME: Current resolver could be still confused when child node was added by grouping
-        checkArgument(clazz != null);
-
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        Class<?> parent = findHierarchicalParent((Class) clazz);
-        if (parent == null) {
-            LOG.debug("Did not find a parent for class {}", clazz);
-            return false;
-        }
-
-        String clazzModelPackage = getModelRootPackageName(clazz.getPackage());
-        String parentModelPackage = getModelRootPackageName(parent.getPackage());
-
-        return !clazzModelPackage.equals(parentModelPackage);
-    }
-
-    /**
      * Returns root package name for supplied package.
      *
      * @param pkg

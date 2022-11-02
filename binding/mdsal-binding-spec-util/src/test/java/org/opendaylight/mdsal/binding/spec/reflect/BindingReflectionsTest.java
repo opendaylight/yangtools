@@ -39,7 +39,6 @@ public class BindingReflectionsTest {
         assertEquals("Module info should be empty Set", Collections.emptySet(),
                 BindingReflections.loadModuleInfos());
         assertFalse("Should not be RpcType", BindingReflections.isRpcType(DataObject.class));
-        assertFalse("Should not be AugmentationChild", BindingReflections.isAugmentationChild(DataObject.class));
         assertTrue("Should be BindingClass", BindingReflections.isBindingClass(DataObject.class));
         assertFalse("Should not be Notification", BindingReflections.isNotification(DataObject.class));
 
