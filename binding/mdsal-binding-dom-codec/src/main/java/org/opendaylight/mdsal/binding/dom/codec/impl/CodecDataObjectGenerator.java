@@ -182,7 +182,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final Optional<Entry<Method, NodeContextSupplier>> found = properties.entrySet().stream()
                     .filter(entry -> methodName.equals(entry.getKey().getName())).findAny();
             verify(found.isPresent(), "Failed to find property for %s in %s", methodName, this);
-            return verifyNotNull(found.get().getValue());
+            return verifyNotNull(found.orElseThrow().getValue());
         }
     }
 
@@ -226,7 +226,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final Optional<Entry<Method, ValueNodeCodecContext>> found = simpleProperties.entrySet().stream()
                     .filter(entry -> methodName.equals(entry.getKey().getName())).findAny();
             verify(found.isPresent(), "Failed to find property for %s in %s", methodName, this);
-            return found.get().getValue().getSchema().getQName().getLocalName();
+            return found.orElseThrow().getValue().getSchema().getQName().getLocalName();
         }
     }
 
