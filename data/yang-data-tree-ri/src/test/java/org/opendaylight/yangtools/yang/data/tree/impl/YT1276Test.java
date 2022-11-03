@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -101,9 +100,9 @@ public class YT1276Test {
                     .withChild(Builders.augmentationBuilder()
                         .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT, XYZZY_AUGMENT_CONT)))
                         .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
-                        .withChild(ImmutableContainerNodeBuilder.create()
+                        .withChild(Builders.containerBuilder()
                             .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT))
-                            .withChild(ImmutableContainerNodeBuilder.create()
+                            .withChild(Builders.containerBuilder()
                                 .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT_INNER))
                                 .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                                 .build())
@@ -184,9 +183,9 @@ public class YT1276Test {
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_LEAF, "xyzzy"))
                     .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
-                    .withChild(ImmutableContainerNodeBuilder.create()
+                    .withChild(Builders.containerBuilder()
                         .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
-                        .withChild(ImmutableContainerNodeBuilder.create()
+                        .withChild(Builders.containerBuilder()
                             .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
                             .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                             .build())
@@ -206,9 +205,9 @@ public class YT1276Test {
                     .withChild(Builders.augmentationBuilder()
                         .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT, XYZZY_AUGMENT_CONT)))
                         .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
-                        .withChild(ImmutableContainerNodeBuilder.create()
+                        .withChild(Builders.containerBuilder()
                             .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
-                            .withChild(ImmutableContainerNodeBuilder.create()
+                            .withChild(Builders.containerBuilder()
                                 .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
                                 .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                                 .build())

@@ -8,18 +8,18 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -41,12 +41,12 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
             .builder(TestModel.OUTER_LIST_PATH).nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
             .build();
 
-    private static final MapEntryNode INNER_FOO_ENTRY_NODE = ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME,
+    private static final MapEntryNode INNER_FOO_ENTRY_NODE = mapEntry(TestModel.INNER_LIST_QNAME,
             TestModel.NAME_QNAME, "foo");
 
-    private static final MapEntryNode INNER_BAR_ENTRY_NODE = ImmutableNodes
-            .mapEntryBuilder(QName.create(TestModel.TEST_QNAME, "inner-list2"), TestModel.NAME_QNAME, "foo")
-            .withChild(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "value")).build();
+    private static final MapEntryNode INNER_BAR_ENTRY_NODE =
+            mapEntryBuilder(QName.create(TestModel.TEST_QNAME, "inner-list2"), TestModel.NAME_QNAME, "foo")
+                .withChild(leafNode(TestModel.VALUE_QNAME, "value")).build();
 
     private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
             .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_FOO_ENTRY_NODE)
@@ -59,15 +59,15 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
             .build();
 
     private static ContainerNode createFooTestContainerNode() {
-        return ImmutableContainerNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(FOO_NODE).build()).build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(FOO_NODE).build()).build();
     }
 
     private static ContainerNode createBarTestContainerNode() {
-        return ImmutableContainerNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build()).build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build()).build();
     }
 
     @Test(expected = SchemaValidationFailedException.class)
@@ -75,9 +75,8 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        final YangInstanceIdentifier ii = OUTER_LIST_1_PATH.node(
-                new YangInstanceIdentifier.NodeIdentifier(TestModel.INNER_LIST_QNAME)).node(
-                INNER_FOO_ENTRY_NODE.getIdentifier());
+        final YangInstanceIdentifier ii = OUTER_LIST_1_PATH.node(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+            .node(INNER_FOO_ENTRY_NODE.getIdentifier());
         modificationTree.write(ii, INNER_FOO_ENTRY_NODE);
 
         inMemoryDataTree.validate(modificationTree);
@@ -113,10 +112,8 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
     public void testOnPathCaseLeafFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
-        final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(QName.create(
-                TestModel.TEST_QNAME, "choice1"));
-        final YangInstanceIdentifier.NodeIdentifier case2ContId = new YangInstanceIdentifier.NodeIdentifier(
-                QName.create(TestModel.TEST_QNAME, "case2-cont"));
+        final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
+        final NodeIdentifier case2ContId = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont"));
         final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id).node(case2ContId);
         final ContainerNode case2Cont = Builders.containerBuilder().withNodeIdentifier(case2ContId)
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value")).build();
@@ -130,8 +127,7 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
     public void testOnDataCaseLeafFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
-        final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(QName.create(
-                TestModel.TEST_QNAME, "choice1"));
+        final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
         final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id);
         final ChoiceNode choice1 = Builders.choiceBuilder().withNodeIdentifier(choice1Id)
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value")).build();

@@ -19,9 +19,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
@@ -47,12 +46,12 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
     public void setUp() throws Exception {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
 
-        final ContainerNode testContainer = ImmutableContainerNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(ImmutableContainerNodeBuilder.create()
-                        .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
-                        .build())
-                .build();
+        final ContainerNode testContainer = Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .withChild(Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
+                .build())
+            .build();
 
         final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) dataTree.takeSnapshot()
                 .newModification();
@@ -73,10 +72,7 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
             .setRootPath(TestModel.INNER_CONTAINER_PATH)
             .setUniqueIndexes(true).build(), SCHEMA_CONTEXT);
 
-        final LeafNode<String> leaf = ImmutableLeafNodeBuilder.<String>create()
-                .withNodeIdentifier(new NodeIdentifier(TestModel.VALUE_QNAME))
-                .withValue("testing-value")
-                .build();
+        final LeafNode<String> leaf = ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "testing-value");
 
         final DataTreeModification modification = innerDataTree.takeSnapshot().newModification();
         modification.write(TestModel.VALUE_PATH, leaf);

@@ -36,10 +36,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -76,12 +74,14 @@ public class Bug4454Test {
     private static final YangInstanceIdentifier MIN_MAX_LEAF_LIST_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH).node(MIN_MAX_LEAF_LIST_QNAME).build();
 
-    private final MapEntryNode fooEntryNodeWithValue = ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(
-        NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo"))
-            .withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "footest")).build();
-    private final MapEntryNode bazEntryNodeWithValue = ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(
-        NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "baz"))
-            .withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "baztest")).build();
+    private final MapEntryNode fooEntryNodeWithValue = Builders.mapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo"))
+        .withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "footest"))
+        .build();
+    private final MapEntryNode bazEntryNodeWithValue = Builders.mapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "baz"))
+        .withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "baztest"))
+        .build();
     private final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
             "foo");
     private final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
@@ -267,14 +267,14 @@ public class Bug4454Test {
         final NodeWithValue<?> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
         final NodeWithValue<?> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
-        final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
+        final LeafSetEntryNode<Object> barLeafSetEntry = Builders.leafSetEntryBuilder()
                 .withNodeIdentifier(barPath)
                 .withValue("bar").build();
-        final LeafSetEntryNode<Object> gooLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
+        final LeafSetEntryNode<Object> gooLeafSetEntry = Builders.leafSetEntryBuilder()
                 .withNodeIdentifier(gooPath)
                 .withValue("goo").build();
 
-        final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
+        final LeafSetNode<Object> fooLeafSetNode = Builders.leafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo")
                 .build();
