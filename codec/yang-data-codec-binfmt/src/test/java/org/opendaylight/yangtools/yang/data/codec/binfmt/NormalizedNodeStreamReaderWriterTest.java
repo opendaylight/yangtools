@@ -48,17 +48,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.w3c.dom.Node;
@@ -117,22 +109,25 @@ public class NormalizedNodeStreamReaderWriterTest {
 
     @Test
     public void testNormalizedNodeStreaming() throws IOException {
-
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
 
-        NormalizedNode testContainer = createTestContainer();
+        ContainerNode testContainer = createTestContainer();
         nnout.writeNormalizedNode(testContainer);
 
         QName toaster = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","toaster");
         QName darknessFactor = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","darknessFactor");
         QName description = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","description");
-        ContainerNode toasterNode = Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(toaster))
-                .withChild(ImmutableNodes.leafNode(darknessFactor, "1000"))
-                .withChild(ImmutableNodes.leafNode(description, largeString(20))).build();
+        ContainerNode toasterNode = Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(toaster))
+            .withChild(ImmutableNodes.leafNode(darknessFactor, "1000"))
+            .withChild(ImmutableNodes.leafNode(description, largeString(20)))
+            .build();
 
         ContainerNode toasterContainer = Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME)).withChild(toasterNode).build();
+            .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
+            .withChild(toasterNode)
+            .build();
         nnout.writeNormalizedNode(toasterContainer);
 
         final byte[] bytes = bos.toByteArray();
@@ -144,25 +139,30 @@ public class NormalizedNodeStreamReaderWriterTest {
         assertEquals(toasterContainer, nnin.readNormalizedNode());
     }
 
-    private NormalizedNode createTestContainer() {
+    private ContainerNode createTestContainer() {
         byte[] bytes1 = {1, 2, 3};
-        LeafSetEntryNode<Object> entry1 = ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
-                new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes1)).withValue(bytes1).build();
 
         byte[] bytes2 = {};
-        LeafSetEntryNode<Object> entry2 = ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
-                new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes2)).withValue(bytes2).build();
 
         return TestModel.createBaseTestContainerBuilder(uint64)
-                .withChild(ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(
-                        new NodeIdentifier(TestModel.BINARY_LEAF_LIST_QNAME))
-                        .withChild(entry1).withChild(entry2).build())
-                .withChild(ImmutableNodes.leafNode(TestModel.SOME_BINARY_DATA_QNAME, new byte[]{1, 2, 3, 4}))
-                .withChild(ImmutableNodes.leafNode(TestModel.EMPTY_QNAME, Empty.value()))
-                .withChild(Builders.orderedMapBuilder()
-                      .withNodeIdentifier(new NodeIdentifier(TestModel.ORDERED_LIST_QNAME))
-                      .withChild(ImmutableNodes.mapEntry(TestModel.ORDERED_LIST_ENTRY_QNAME,
-                              TestModel.ID_QNAME, 11)).build()).build();
+            .withChild(Builders.leafSetBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.BINARY_LEAF_LIST_QNAME))
+                .withChild(Builders.leafSetEntryBuilder()
+                    .withNodeIdentifier(new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes1))
+                    .withValue(bytes1)
+                    .build())
+                .withChild(Builders.leafSetEntryBuilder()
+                    .withNodeIdentifier(new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes2))
+                    .withValue(bytes2)
+                    .build())
+                .build())
+            .withChild(ImmutableNodes.leafNode(TestModel.SOME_BINARY_DATA_QNAME, new byte[]{1, 2, 3, 4}))
+            .withChild(ImmutableNodes.leafNode(TestModel.EMPTY_QNAME, Empty.value()))
+            .withChild(Builders.orderedMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.ORDERED_LIST_QNAME))
+                .withChild(ImmutableNodes.mapEntry(TestModel.ORDERED_LIST_ENTRY_QNAME, TestModel.ID_QNAME, 11))
+                .build())
+            .build();
     }
 
     @Test
@@ -185,7 +185,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
     @Test
     public void testNormalizedNodeAndYangInstanceIdentifierStreaming() throws IOException {
-        final NormalizedNode testContainer = TestModel.createBaseTestContainerBuilder(uint64).build();
+        final ContainerNode testContainer = TestModel.createBaseTestContainerBuilder(uint64).build();
         final YangInstanceIdentifier path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
             .node(TestModel.OUTER_LIST_QNAME)
             .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.ID_QNAME, 10)
@@ -214,7 +214,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
     @Test
     public void testWithSerializable() {
-        NormalizedNode input = TestModel.createTestContainer(uint64);
+        ContainerNode input = TestModel.createTestContainer(uint64);
         SampleNormalizedNodeSerializable serializable = new SampleNormalizedNodeSerializable(version, input);
         SampleNormalizedNodeSerializable clone = clone(serializable);
         assertEquals(input, clone.getInput());
@@ -231,10 +231,13 @@ public class NormalizedNodeStreamReaderWriterTest {
 
         assertEquals("http://www.w3.org/TR/html4/", xmlNode.getNamespaceURI());
 
-        NormalizedNode anyXmlContainer = ImmutableContainerNodeBuilder.create().withNodeIdentifier(
-                new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME)).withChild(
-                        Builders.anyXmlBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.ANY_XML_QNAME))
-                            .withValue(new DOMSource(xmlNode)).build()).build();
+        ContainerNode anyXmlContainer = Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .withChild(Builders.anyXmlBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.ANY_XML_QNAME))
+                .withValue(new DOMSource(xmlNode))
+                .build())
+            .build();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
@@ -300,9 +303,9 @@ public class NormalizedNodeStreamReaderWriterTest {
      */
     @Test
     public void testHugeEntries() throws IOException {
-        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder = Builders.mapBuilder()
+        final var mapBuilder = Builders.mapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME));
-        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> entryBuilder =
+        final var entryBuilder =
                 Builders.mapEntryBuilder().withChild(ImmutableNodes.leafNode(TestModel.DESC_QNAME, (byte) 42));
 
         for (int i = 0; i < 100_000; ++i) {

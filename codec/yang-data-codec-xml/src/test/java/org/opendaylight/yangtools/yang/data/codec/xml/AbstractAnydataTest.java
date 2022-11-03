@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
@@ -45,8 +45,7 @@ public abstract class AbstractAnydataTest {
     static final NodeIdentifier CONT_ANY_NODEID = NodeIdentifier.create(CONT_ANY_QNAME);
     static final NodeIdentifier CONT_LEAF_NODEID = NodeIdentifier.create(CONT_LEAF_QNAME);
 
-    static final LeafNode<?> CONT_LEAF = ImmutableLeafNodeBuilder.create().withNodeIdentifier(CONT_LEAF_NODEID)
-            .withValue("abc").build();
+    static final LeafNode<String> CONT_LEAF = ImmutableNodes.leafNode(CONT_LEAF_NODEID, "abc");
 
     static EffectiveModelContext SCHEMA_CONTEXT;
 
@@ -97,8 +96,7 @@ public abstract class AbstractAnydataTest {
      * @return {@link InputStream}
      */
     static InputStream loadResourcesAsInputStream(final String xmlPath) {
-        return SchemalessXMLStreamNormalizedNodeStreamWriterTest.class
-                .getResourceAsStream(xmlPath);
+        return SchemalessXMLStreamNormalizedNodeStreamWriterTest.class.getResourceAsStream(xmlPath);
     }
 
     /**
@@ -117,7 +115,7 @@ public abstract class AbstractAnydataTest {
             transformer.transform(source, result);
 
             return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
+        } catch (TransformerFactoryConfigurationError | TransformerException e) {
             throw new RuntimeException("Unable to serialize xml element " + xml, e);
         }
     }
