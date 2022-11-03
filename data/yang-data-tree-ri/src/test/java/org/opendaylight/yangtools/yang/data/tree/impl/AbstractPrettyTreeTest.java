@@ -27,13 +27,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 public abstract class AbstractPrettyTreeTest {
     protected static final QName ROOT_QNAME = QName.create(
@@ -103,19 +102,19 @@ public abstract class AbstractPrettyTreeTest {
      *
      * @return A test node
      */
-    protected static NormalizedNode createContainerNode() {
-        return ImmutableContainerNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
-                .withChild(createMapNode())
-                .withChild(createChoiceNode())
-                .withChild(createContainerFromAnotherNamespace())
-                .withChild(createLeafNode())
-                .withChild(createLeafSetNode())
-                .withChild(createUserLeafSetNode())
-                .withChild(createUserMapNode())
-                .withChild(createUnkeyedListNode())
-                .withChild(createAnyDataNode())
-                .build();
+    protected static ContainerNode createContainerNode() {
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
+            .withChild(createMapNode())
+            .withChild(createChoiceNode())
+            .withChild(createContainerFromAnotherNamespace())
+            .withChild(createLeafNode())
+            .withChild(createLeafSetNode())
+            .withChild(createUserLeafSetNode())
+            .withChild(createUserMapNode())
+            .withChild(createUnkeyedListNode())
+            .withChild(createAnyDataNode())
+            .build();
     }
 
     protected static MapNode createMapNode() {
@@ -152,33 +151,28 @@ public abstract class AbstractPrettyTreeTest {
     }
 
     protected static ContainerNode createContainerFromAnotherNamespace() {
-        return ImmutableContainerNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(ANOTHER_QNAME))
-                .withChild(mapNodeBuilder(LIST_ANOTHER_NAMESPACE_QNAME)
-                        .withChild(mapEntry(LIST_ANOTHER_NAMESPACE_QNAME,
-                                LEAF_ANOTHER_NAMESPACE_QNAME,
-                                "Leaf from another namespace value"))
-                        .build())
-                .build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(ANOTHER_QNAME))
+            .withChild(mapNodeBuilder(LIST_ANOTHER_NAMESPACE_QNAME)
+                .withChild(mapEntry(LIST_ANOTHER_NAMESPACE_QNAME, LEAF_ANOTHER_NAMESPACE_QNAME,
+                    "Leaf from another namespace value"))
+                .build())
+            .build();
     }
 
     protected static LeafNode<String> createLeafNode() {
-        return Builders.<String>leafBuilder()
-                .withNodeIdentifier(NodeIdentifier.create(LEAF_QNAME))
-                .withValue("Leaf value")
-                .build();
+        return ImmutableNodes.leafNode(LEAF_QNAME, "Leaf value");
     }
 
     protected static LeafSetNode<String> createLeafSetNode() {
         final String value = "Leaf set value";
-        final LeafSetEntryNode<String> leafSetValue = Builders.<String>leafSetEntryBuilder()
+        return Builders.<String>leafSetBuilder()
+            .withNodeIdentifier(NodeIdentifier.create(LEAF_SET_QNAME))
+            .withValue(List.of(Builders.<String>leafSetEntryBuilder()
                 .withNodeIdentifier(new NodeWithValue<>(LEAF_SET_QNAME, value))
                 .withValue(value)
-                .build();
-        return Builders.<String>leafSetBuilder()
-                .withNodeIdentifier(NodeIdentifier.create(LEAF_SET_QNAME))
-                .withValue(List.of(leafSetValue))
-                .build();
+                .build()))
+            .build();
     }
 
     protected static UserLeafSetNode<String> createUserLeafSetNode() {

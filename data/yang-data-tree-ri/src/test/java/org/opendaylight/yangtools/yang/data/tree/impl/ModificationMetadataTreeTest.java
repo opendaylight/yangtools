@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -115,22 +115,20 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
      *
      * @return a test document
      */
-    public NormalizedNode createDocumentOne() {
-        return ImmutableContainerNodeBuilder
-                .create()
-                .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
-                .withChild(createTestContainer()).build();
-
+    public ContainerNode createDocumentOne() {
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
+            .withChild(createTestContainer())
+            .build();
     }
 
     private static ContainerNode createTestContainer() {
-        return ImmutableContainerNodeBuilder
-                .create()
-                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(
-                        mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
-                        .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
-                        .withChild(BAR_NODE).build()).build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+                .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+                .withChild(BAR_NODE).build())
+            .build();
     }
 
     @Test

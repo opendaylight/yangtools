@@ -24,9 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
@@ -72,12 +71,11 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
-    public NormalizedNode createDocumentOne() {
-        return ImmutableContainerNodeBuilder
-                .create()
-                .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
-                .withChild(createTestContainer()).build();
-
+    public static ContainerNode createDocumentOne() {
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
+            .withChild(createTestContainer())
+            .build();
     }
 
     @Test
@@ -164,13 +162,13 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     }
 
     private static ContainerNode createTestContainer() {
-        return ImmutableContainerNodeBuilder
-                .create()
-                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(
-                        mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
-                        .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
-                        .withChild(BAR_NODE).build()).build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+                .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+                .withChild(BAR_NODE)
+                .build())
+            .build();
     }
 
     private static <T extends TreeNode> T assertPresentAndType(final Optional<? extends TreeNode> potential,
