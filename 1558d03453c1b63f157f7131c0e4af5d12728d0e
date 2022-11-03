@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "31b50857_4b4460f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-11-03T12:09:29Z",
+      "side": 1,
+      "message": "Also, let\u0027s move this to top-level \u0027csit\u0027 directory instead in tools/",
+      "revId": "1558d03453c1b63f157f7131c0e4af5d12728d0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8aa1777_2b3f7e97",
+        "filename": "tools/pytest-files/pytest_test.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-11-03T12:09:29Z",
+      "side": 1,
+      "message": "please add copyright headers",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 35
+      },
+      "revId": "1558d03453c1b63f157f7131c0e4af5d12728d0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57384cae_0b658ec0",
+        "filename": "tools/pytest-files/pytest_test.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-11-03T12:09:29Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "range": {
+        "startLine": 45,
+        "startChar": 45,
+        "endLine": 45,
+        "endChar": 49
+      },
+      "revId": "1558d03453c1b63f157f7131c0e4af5d12728d0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
