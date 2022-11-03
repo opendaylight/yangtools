@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.AfterClass;
@@ -31,19 +30,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -192,20 +185,18 @@ public class ListConstraintsValidation {
         final NodeWithValue<Object> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
         final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
-        final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
-                .withNodeIdentifier(barPath)
-                .withValue("bar").build();
-        final LeafSetEntryNode<Object> gooLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
-                .withNodeIdentifier(gooPath)
-                .withValue("goo").build();
-
-        final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
-                .withChildValue("foo").build();
-
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
-        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, Builders.leafSetBuilder()
+            .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
+            .withChildValue("foo")
+            .build());
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), Builders.leafSetEntryBuilder()
+            .withNodeIdentifier(barPath)
+            .withValue("bar")
+            .build());
+        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), Builders.leafSetEntryBuilder()
+            .withNodeIdentifier(gooPath)
+            .withValue("goo")
+            .build());
         modificationTree.delete(MIN_MAX_LEAF_LIST_PATH.node(gooPath));
         modificationTree.ready();
 
@@ -231,24 +222,22 @@ public class ListConstraintsValidation {
         final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
         final NodeWithValue<Object> fuuPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "fuu");
 
-        final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
-                .withNodeIdentifier(barPath)
-                .withValue("bar").build();
-        final LeafSetEntryNode<Object> gooLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
-                .withNodeIdentifier(gooPath)
-                .withValue("goo").build();
-        final LeafSetEntryNode<Object> fuuLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
-                .withNodeIdentifier(fuuPath)
-                .withValue("fuu").build();
-
-        final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
-                .withChildValue("foo").build();
-
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
-        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), fuuLeafSetEntry);
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, Builders.leafSetBuilder()
+            .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
+            .withChildValue("foo")
+            .build());
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), Builders.leafSetEntryBuilder()
+            .withNodeIdentifier(barPath)
+            .withValue("bar")
+            .build());
+        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), Builders.leafSetEntryBuilder()
+            .withNodeIdentifier(gooPath)
+            .withValue("goo")
+            .build());
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), Builders.leafSetEntryBuilder()
+            .withNodeIdentifier(fuuPath)
+            .withValue("fuu")
+            .build());
 
         final MinMaxElementsValidationFailedException ex = assertThrows(MinMaxElementsValidationFailedException.class,
             () -> modificationTree.ready());
@@ -262,14 +251,13 @@ public class ListConstraintsValidation {
     public void unkeyedListTestPass() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final UnkeyedListEntryNode foo = ImmutableUnkeyedListEntryNodeBuilder.create()
+        final UnkeyedListNode unkeyedListNode = Builders.unkeyedListBuilder()
+            .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
+            .withValue(List.of(Builders.unkeyedListEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
-                .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo")).build();
-        final List<UnkeyedListEntryNode> unkeyedEntries = new ArrayList<>();
-        unkeyedEntries.add(foo);
-        final UnkeyedListNode unkeyedListNode = ImmutableUnkeyedListNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
-                .withValue(unkeyedEntries).build();
+                .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo"))
+                .build()))
+            .build();
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
         modificationTree.merge(UNKEYED_LIST_PATH, unkeyedListNode);
@@ -289,20 +277,18 @@ public class ListConstraintsValidation {
     public void unkeyedListTestFail() {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final UnkeyedListEntryNode foo = ImmutableUnkeyedListEntryNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
-                .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo")).build();
-        final UnkeyedListEntryNode bar = ImmutableUnkeyedListEntryNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
-                .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "bar")).build();
-        final List<UnkeyedListEntryNode> unkeyedEntries = new ArrayList<>();
-        unkeyedEntries.add(foo);
-        unkeyedEntries.add(bar);
-        final UnkeyedListNode unkeyedListNode = ImmutableUnkeyedListNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
-                .withValue(unkeyedEntries).build();
-
-        modificationTree.write(UNKEYED_LIST_PATH, unkeyedListNode);
+        modificationTree.write(UNKEYED_LIST_PATH, Builders.unkeyedListBuilder()
+            .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
+            .withValue(List.of(
+                Builders.unkeyedListEntryBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
+                    .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo"))
+                    .build(),
+                Builders.unkeyedListEntryBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
+                    .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "bar"))
+                    .build()))
+            .build());
         final MinMaxElementsValidationFailedException ex = assertThrows(MinMaxElementsValidationFailedException.class,
             () -> modificationTree.ready());
         assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
