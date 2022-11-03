@@ -12,15 +12,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import org.custommonkey.xmlunit.Diff;
@@ -34,19 +30,16 @@ import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class AnydataSerializeTest extends AbstractAnydataTest {
@@ -63,7 +56,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testDOMAnydata() throws XMLStreamException, IOException {
+    public void testDOMAnydata() throws Exception {
         final StringWriter writer = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -71,8 +64,10 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             xmlStreamWriter, SCHEMA_CONTEXT);
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
             xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(ImmutableAnydataNodeBuilder.create(DOMSourceAnydata.class)
-            .withNodeIdentifier(FOO_NODEID).withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>")).build());
+        normalizedNodeWriter.write(Builders.anydataBuilder(DOMSourceAnydata.class)
+            .withNodeIdentifier(FOO_NODEID)
+            .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>"))
+            .build());
         normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
@@ -80,8 +75,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testXmlParseAnydata()
-            throws IOException, SAXException, XMLStreamException, URISyntaxException, TransformerException {
+    public void testXmlParseAnydata() throws Exception {
         // deserialization
         final XMLStreamReader reader
                 = UntrustedXML.createXMLStreamReader(loadResourcesAsInputStream("/test-anydata.xml"));
@@ -92,7 +86,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
         xmlParser.parse(reader);
 
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult();
         assertThat(transformedInput, instanceOf(AnydataNode.class));
         AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
 
@@ -121,7 +115,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testAnydataLoadFromXML() throws IOException, SAXException, XMLStreamException, URISyntaxException {
+    public void testAnydataLoadFromXML() throws Exception {
         // Load XML file
         Document doc = loadXmlDocument("/test-anydata.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
@@ -153,8 +147,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testAnydataSerialization()
-            throws IOException, SAXException, XMLStreamException, URISyntaxException, TransformerException {
+    public void testAnydataSerialization() throws Exception {
         //Get XML Data.
         Document doc = loadXmlDocument("/test-anydata.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
@@ -171,7 +164,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         xmlParser.flush();
 
         //Get Result
-        final NormalizedNode node = normalizedResult.getResult();
+        final var node = normalizedResult.getResult();
         assertThat(node, instanceOf(AnydataNode.class));
         final AnydataNode<?> anydataResult = (AnydataNode<?>) node;
 
@@ -189,7 +182,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testSiblingSerialize() throws IOException, XMLStreamException {
+    public void testSiblingSerialize() throws Exception {
         final StringWriter writer = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -197,9 +190,12 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             xmlStreamWriter, SCHEMA_CONTEXT);
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
             xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(ImmutableContainerNodeBuilder.create().withNodeIdentifier(CONT_NODEID)
-            .withChild(ImmutableAnydataNodeBuilder.create(DOMSourceAnydata.class).withNodeIdentifier(CONT_ANY_NODEID)
-                .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>")).build())
+        normalizedNodeWriter.write(Builders.containerBuilder()
+            .withNodeIdentifier(CONT_NODEID)
+            .withChild(Builders.anydataBuilder(DOMSourceAnydata.class)
+                .withNodeIdentifier(CONT_ANY_NODEID)
+                .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>"))
+                .build())
             .withChild(CONT_LEAF)
             .build());
         normalizedNodeWriter.flush();
@@ -210,7 +206,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testNormalizedSerialize() throws IOException, XMLStreamException {
+    public void testNormalizedSerialize() throws Exception {
         final StringWriter writer = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -218,13 +214,13 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             xmlStreamWriter, SCHEMA_CONTEXT);
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
             xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(ImmutableContainerNodeBuilder.create()
+        normalizedNodeWriter.write(Builders.containerBuilder()
             .withNodeIdentifier(CONT_NODEID)
-            .withChild(ImmutableAnydataNodeBuilder.create(NormalizedAnydata.class)
+            .withChild(Builders.anydataBuilder(NormalizedAnydata.class)
                 .withNodeIdentifier(CONT_ANY_NODEID)
                 .withValue(new ImmutableNormalizedAnydata(
                     DefaultSchemaTreeInference.of(SCHEMA_CONTEXT, Absolute.of(CONT_QNAME)),
-                    ImmutableContainerNodeBuilder.create().withNodeIdentifier(CONT_NODEID).build()))
+                    Builders.containerBuilder().withNodeIdentifier(CONT_NODEID).build()))
                 .build())
             .build());
         normalizedNodeWriter.flush();
