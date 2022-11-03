@@ -35,11 +35,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
@@ -81,11 +80,13 @@ public class Bug5446Test extends XMLTestCase {
     }
 
     private static ContainerNode createDocNode() {
-        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ=="));
-        ContainerNode root = ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
-                .withChild(ipAddress).build();
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME)).withChild(root)
-                .build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
+            .withChild(Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
+                .withChild(ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ==")))
+                .build())
+            .build();
     }
 
     private static DOMResult writeNormalizedNode(final ContainerNode normalized, final EffectiveModelContext context)
@@ -100,7 +101,7 @@ public class Bug5446Test extends XMLTestCase {
             normalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(writer, context);
             normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(normalizedNodeStreamWriter);
 
-            for (NormalizedNode child : normalized.body()) {
+            for (var child : normalized.body()) {
                 normalizedNodeWriter.write(child);
             }
 
