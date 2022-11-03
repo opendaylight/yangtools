@@ -16,11 +16,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -79,8 +76,7 @@ public class InMemoryDataTreeBenchmark {
     private static final MapNode TEN_ITEM_INNER_LIST = initInnerListItems(10);
 
     private static MapNode initInnerListItems(final int count) {
-        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapEntryBuilder = ImmutableNodes
-            .mapNodeBuilder(BenchmarkModel.INNER_LIST);
+        final var mapEntryBuilder = ImmutableNodes.mapNodeBuilder(BenchmarkModel.INNER_LIST);
 
         for (int i = 0; i < count; ++i) {
             mapEntryBuilder
@@ -90,17 +86,18 @@ public class InMemoryDataTreeBenchmark {
         return mapEntryBuilder.build();
     }
 
-    private static final NormalizedNode[] OUTER_LIST_ONE_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_100K,
+    private static final MapEntryNode[] OUTER_LIST_ONE_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_100K,
         ONE_ITEM_INNER_LIST);
-    private static final NormalizedNode[] OUTER_LIST_TWO_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_50K,
+    private static final MapEntryNode[] OUTER_LIST_TWO_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_50K,
         TWO_ITEM_INNER_LIST);
-    private static final NormalizedNode[] OUTER_LIST_TEN_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_10K,
+    private static final MapEntryNode[] OUTER_LIST_TEN_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_10K,
         TEN_ITEM_INNER_LIST);
 
-    private static NormalizedNode[] initOuterListItems(final int outerListItemsCount, final MapNode innerList) {
-        return Arrays.stream(OUTER_LIST_IDS).limit(outerListItemsCount)
-                .map(id -> ImmutableNodes.mapEntryBuilder().withNodeIdentifier(id).withChild(innerList).build())
-                .collect(Collectors.toList()).toArray(new NormalizedNode[0]);
+    private static MapEntryNode[] initOuterListItems(final int outerListItemsCount, final MapNode innerList) {
+        return Arrays.stream(OUTER_LIST_IDS)
+            .limit(outerListItemsCount)
+            .map(id -> ImmutableNodes.mapEntryBuilder().withNodeIdentifier(id).withChild(innerList).build())
+            .toArray(MapEntryNode[]::new);
     }
 
     private DataTree datastore;
@@ -120,8 +117,10 @@ public class InMemoryDataTreeBenchmark {
             BenchmarkModel.createTestContext());
 
         final DataTreeModification modification = begin();
-        modification.write(BenchmarkModel.TEST_PATH, ImmutableContainerNodeBuilder.create()
-            .withNodeIdentifier(BenchmarkModel.TEST).withChild(EMPTY_OUTER_LIST).build());
+        modification.write(BenchmarkModel.TEST_PATH, Builders.containerBuilder()
+            .withNodeIdentifier(BenchmarkModel.TEST)
+            .withChild(EMPTY_OUTER_LIST)
+            .build());
         commit(modification);
     }
 
