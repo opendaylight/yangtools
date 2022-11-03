@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -123,7 +123,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final PathArgument arg = path.getLastPathArgument();
         if (schemaNode instanceof ContainerSchemaNode) {
             checkArgument(arg instanceof NodeIdentifier, "Mismatched container %s path %s", schemaNode, path);
-            return ImmutableContainerNodeBuilder.create().withNodeIdentifier((NodeIdentifier) arg).build();
+            return Builders.containerBuilder().withNodeIdentifier((NodeIdentifier) arg).build();
         } else if (schemaNode instanceof ListSchemaNode) {
             // This can either be a top-level list or its individual entry
             if (arg instanceof NodeIdentifierWithPredicates) {
@@ -143,7 +143,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
         final PathArgument arg = path.getLastPathArgument();
         if (arg instanceof NodeIdentifier) {
-            return ImmutableContainerNodeBuilder.create().withNodeIdentifier((NodeIdentifier) arg).build();
+            return Builders.containerBuilder().withNodeIdentifier((NodeIdentifier) arg).build();
         }
         if (arg instanceof NodeIdentifierWithPredicates) {
             return ImmutableNodes.mapEntryBuilder().withNodeIdentifier((NodeIdentifierWithPredicates) arg).build();
