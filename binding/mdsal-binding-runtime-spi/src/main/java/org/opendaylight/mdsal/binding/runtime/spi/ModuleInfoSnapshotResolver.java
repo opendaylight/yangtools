@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 import java.io.IOException;
@@ -22,8 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.lock.qual.Holding;
@@ -36,11 +33,8 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -81,8 +75,12 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper(this).add("info", info).add("registration", reg)
-                    .add("classLoader", loader).add("refCount", refcount).toString();
+            return MoreObjects.toStringHelper(this)
+                .add("info", info)
+                .add("registration", reg)
+                .add("classLoader", loader)
+                .add("refCount", refcount)
+                .toString();
         }
     }
 
@@ -102,20 +100,18 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
     public synchronized List<ObjectRegistration<YangModuleInfo>> registerModuleInfos(
             final Iterable<? extends YangModuleInfo> moduleInfos) {
-        final List<ObjectRegistration<YangModuleInfo>> ret = new ArrayList<>();
-        for (YangModuleInfo yangModuleInfo : moduleInfos) {
-            ret.add(register(requireNonNull(yangModuleInfo)));
+        final var ret = new ArrayList<ObjectRegistration<YangModuleInfo>>();
+        for (var moduleInfo : moduleInfos) {
+            ret.add(register(requireNonNull(moduleInfo)));
         }
         return ret;
     }
 
     @Holding("this")
     private ObjectRegistration<YangModuleInfo> register(final @NonNull YangModuleInfo moduleInfo) {
-        final Builder<RegisteredModuleInfo> regBuilder = ImmutableList.builder();
-        for (YangModuleInfo info : flatDependencies(moduleInfo)) {
-            regBuilder.add(registerModuleInfo(info));
-        }
-        final ImmutableList<RegisteredModuleInfo> regInfos = regBuilder.build();
+        final var regInfos = flatDependencies(moduleInfo).stream()
+            .map(this::registerModuleInfo)
+            .collect(ImmutableList.toImmutableList());
 
         return new AbstractObjectRegistration<>(moduleInfo) {
             @Override
@@ -131,8 +127,8 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     @Holding("this")
     private RegisteredModuleInfo registerModuleInfo(final @NonNull YangModuleInfo info) {
         // First search for an existing explicit registration
-        final SourceIdentifier sourceId = sourceIdentifierFrom(info);
-        for (RegisteredModuleInfo reg : sourceToInfoReg.get(sourceId)) {
+        final var sourceId = sourceIdentifierFrom(info);
+        for (var reg : sourceToInfoReg.get(sourceId)) {
             if (info.equals(reg.info)) {
                 reg.incRef();
                 LOG.debug("Reusing registration {}", reg);
@@ -148,7 +144,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             throw new IllegalStateException("Failed to register info " + info, e);
         }
 
-        final RegisteredModuleInfo regInfo = new RegisteredModuleInfo(info, reg, info.getClass().getClassLoader());
+        final var regInfo = new RegisteredModuleInfo(info, reg, info.getClass().getClassLoader());
         LOG.debug("Created new registration {}", regInfo);
 
         sourceToInfoReg.put(sourceId, regInfo);
@@ -156,8 +152,8 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     }
 
     public synchronized @NonNull ModuleInfoSnapshot takeSnapshot() {
-        final EffectiveModelContext effectiveModel = ctxResolver.getEffectiveModelContext().orElseThrow();
-        final ModuleInfoSnapshot local = currentSnapshot;
+        final var effectiveModel = ctxResolver.getEffectiveModelContext().orElseThrow();
+        final var local = currentSnapshot;
         if (local != null && local.getEffectiveModelContext().equals(effectiveModel)) {
             return local;
         }
@@ -168,10 +164,10 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     @Holding("this")
     private @NonNull ModuleInfoSnapshot updateSnapshot(final EffectiveModelContext effectiveModel) {
         // Alright, now let's find out which sources got captured
-        final Set<SourceIdentifier> sources = new HashSet<>();
-        for (Entry<QNameModule, ModuleEffectiveStatement> entry : effectiveModel.getModuleStatements().entrySet()) {
-            final Revision revision = entry.getKey().getRevision().orElse(null);
-            final ModuleEffectiveStatement module = entry.getValue();
+        final var sources = new HashSet<SourceIdentifier>();
+        for (var entry : effectiveModel.getModuleStatements().entrySet()) {
+            final var revision = entry.getKey().getRevision().orElse(null);
+            final var module = entry.getValue();
 
             sources.add(new SourceIdentifier(module.argument(), revision));
             module.streamEffectiveSubstatements(SubmoduleEffectiveStatement.class)
@@ -179,33 +175,33 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
                 .forEach(sources::add);
         }
 
-        final Map<SourceIdentifier, YangModuleInfo> moduleInfos = new HashMap<>();
-        final Map<String, ClassLoader> classLoaders = new HashMap<>();
-        for (SourceIdentifier source : sources) {
-            final List<RegisteredModuleInfo> regs = sourceToInfoReg.get(source);
+        final var moduleInfos = new HashMap<SourceIdentifier, YangModuleInfo>();
+        final var classLoaders = new HashMap<String, ClassLoader>();
+        for (var source : sources) {
+            final var regs = sourceToInfoReg.get(source);
             checkState(!regs.isEmpty(), "No registration for %s", source);
 
-            final RegisteredModuleInfo reg = regs.get(0);
-            final YangModuleInfo info = reg.info;
+            final var reg = regs.get(0);
+            final var info = reg.info;
             moduleInfos.put(source, info);
-            final Class<?> infoClass = info.getClass();
+            final var infoClass = info.getClass();
             classLoaders.put(BindingReflections.getModelRootPackageName(infoClass.getPackage()),
                 infoClass.getClassLoader());
         }
 
-        final ModuleInfoSnapshot next = new DefaultModuleInfoSnapshot(effectiveModel, moduleInfos, classLoaders);
+        final var next = new DefaultModuleInfoSnapshot(effectiveModel, moduleInfos, classLoaders);
         currentSnapshot = next;
         return next;
     }
 
-    private synchronized void unregister(final ImmutableList<RegisteredModuleInfo> regInfos) {
-        for (RegisteredModuleInfo regInfo : regInfos) {
+    private synchronized void unregister(final List<RegisteredModuleInfo> regInfos) {
+        for (var regInfo : regInfos) {
             if (!regInfo.decRef()) {
                 LOG.debug("Registration {} has references, not removing it", regInfo);
                 continue;
             }
 
-            final SourceIdentifier sourceId = sourceIdentifierFrom(regInfo.info);
+            final var sourceId = sourceIdentifierFrom(regInfo.info);
             if (!sourceToInfoReg.remove(sourceId, regInfo)) {
                 LOG.warn("Failed to find {} registered under {}", regInfo, sourceId);
             }
@@ -225,13 +221,13 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     }
 
     private static SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
-        final QName name = moduleInfo.getName();
+        final var name = moduleInfo.getName();
         return new SourceIdentifier(name.getLocalName(), name.getRevision().map(Revision::toString).orElse(null));
     }
 
     private static @NonNull List<@NonNull YangModuleInfo> flatDependencies(final YangModuleInfo moduleInfo) {
         // Flatten the modules being registered, with the triggering module being first...
-        final Set<YangModuleInfo> requiredInfos = new LinkedHashSet<>();
+        final var requiredInfos = new LinkedHashSet<YangModuleInfo>();
         flatDependencies(requiredInfos, moduleInfo);
 
         // ... now reverse the order in an effort to register dependencies first (triggering module last)
@@ -240,7 +236,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
     static void flatDependencies(final Set<YangModuleInfo> set, final YangModuleInfo moduleInfo) {
         if (set.add(moduleInfo)) {
-            for (YangModuleInfo dep : moduleInfo.getImportedModules()) {
+            for (var dep : moduleInfo.getImportedModules()) {
                 flatDependencies(set, dep);
             }
         }
