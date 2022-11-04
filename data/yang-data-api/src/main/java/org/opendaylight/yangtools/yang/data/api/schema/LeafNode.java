@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -27,4 +30,9 @@ public non-sealed interface LeafNode<T> extends ValueNode<T>, DataContainerChild
 
     @Override
     NodeIdentifier getIdentifier();
+
+    @Override
+    default Entry<@NonNull NodeIdentifier, @NonNull T> toEntry() {
+        return Map.entry(getIdentifier(), body());
+    }
 }

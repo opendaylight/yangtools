@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
@@ -70,4 +71,16 @@ public interface NormalizedNode extends Identifiable<PathArgument>, PrettyTreeAw
      * @return Returned value of this node.
      */
     @NonNull Object body();
+
+    /**
+     * Convert this {@link NormalizedNode} to an {@link Entry} containing its identifier and body.
+     *
+     * @implSpec
+     *     Default implementation creates an Entry composed of {@link #getIdentifier()} and {@link #body()}.
+     *
+     * @return A split identifier-and-body representation of this object.
+     */
+    @NonNull Entry<? extends @NonNull PathArgument, ? extends @NonNull Object> toEntry();
+//        return Map.entry(getIdentifier(), body());
+//    }
 }

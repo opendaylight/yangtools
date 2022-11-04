@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Map.Entry;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -27,4 +29,7 @@ public interface ContainerNode extends DataContainerNode, DataContainerChild {
 
     @Override
     NodeIdentifier getIdentifier();
+
+    @Override
+    Entry<@NonNull NodeIdentifier, @NonNull ContainerBody> toEntry();
 }

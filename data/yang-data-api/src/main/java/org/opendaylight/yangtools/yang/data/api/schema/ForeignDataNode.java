@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
+import java.util.Map.Entry;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -31,6 +32,9 @@ public sealed interface ForeignDataNode<V> extends DataContainerChild permits An
      */
     @Override
     V body();
+
+    @Override
+    Entry<@NonNull NodeIdentifier, ? extends @NonNull ForeignDataBody<V>> toEntry();
 
     /**
      * Return the object model class, which identifies it. For example {@link DOMSourceAnyxmlNode} uses
