@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * A NormalizedNode holding the contents of an {@code anydata} node in some object model. While no guarantees are placed
@@ -31,7 +30,4 @@ public non-sealed interface AnydataNode<V> extends ForeignDataNode<V> {
     default Class<AnydataNode> contract() {
         return AnydataNode.class;
     }
-
-    @Override
-    NodeIdentifier getIdentifier();
 }
