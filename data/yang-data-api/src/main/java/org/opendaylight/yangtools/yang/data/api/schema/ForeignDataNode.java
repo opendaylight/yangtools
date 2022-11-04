@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import com.google.common.annotations.Beta;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * A NormalizedNode holding a value in some foreign object model. The object model is identified by a single class,
@@ -23,6 +24,9 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 @Beta
 public sealed interface ForeignDataNode<V> extends DataContainerChild permits AnydataNode, AnyxmlNode {
+    @Override
+    NodeIdentifier getIdentifier();
+
     /**
      * {@inheritDoc}
      *
