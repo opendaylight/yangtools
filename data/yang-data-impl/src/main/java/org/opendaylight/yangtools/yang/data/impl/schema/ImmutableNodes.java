@@ -209,7 +209,7 @@ public final class ImmutableNodes {
     public static @NonNull NormalizedNode fromInstanceId(final EffectiveModelContext ctx,
             final YangInstanceIdentifier id) {
         if (id.isEmpty()) {
-            return ImmutableNodes.containerNode(SchemaContext.NAME);
+            return containerNode(SCHEMACONTEXT_NAME);
         }
 
         final var result = new NormalizedNodeResult();
