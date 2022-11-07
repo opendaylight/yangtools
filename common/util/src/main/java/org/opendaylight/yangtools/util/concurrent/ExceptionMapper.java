@@ -65,22 +65,23 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
     protected abstract X newWithCause(String message, Throwable cause);
 
     @Override
-    @SuppressWarnings("unchecked")
     @SuppressFBWarnings({"BC_UNCONFIRMED_CAST_OF_RETURN_VALUE", "NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"})
     public X apply(final Exception input) {
 
         // If exception is of the specified type,return it.
-        if (exceptionType.isAssignableFrom(input.getClass())) {
-            return (X) input;
+        if (exceptionType.isInstance(input)) {
+            return exceptionType.cast(input);
         }
 
         // If exception is ExecutionException whose cause is of the specified
         // type, return the cause.
-        if (input instanceof ExecutionException && input.getCause() != null) {
-            if (exceptionType.isAssignableFrom(input.getCause().getClass())) {
-                return (X) input.getCause();
+        if (input instanceof ExecutionException) {
+            final var cause = input.getCause();
+            if (exceptionType.isInstance(cause)) {
+                return exceptionType.cast(cause);
+            } else if (cause != null) {
+                return newWithCause(opName + " execution failed", cause);
             }
-            return newWithCause(opName + " execution failed", input.getCause());
         }
 
         // Otherwise return an instance of the specified type with the original
