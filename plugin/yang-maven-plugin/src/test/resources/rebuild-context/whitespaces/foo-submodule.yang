@@ -1,0 +1,9 @@
+submodule foo-submodule {
+    belongs-to foo { prefix "foo"; }
+    revision "2022-02-22";
+    container sub {
+        leaf sub-leaf {
+            type string;
+        }
+    }
+}
