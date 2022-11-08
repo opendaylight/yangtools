@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -39,9 +40,13 @@ record FileState(@NonNull String path, long size, int crc32) {
     }
 
     static @NonNull FileState ofFile(final File file) throws IOException {
-        try (var cis = new CapturingInputStream(Files.newInputStream(file.toPath()))) {
+        return ofFile(file.toPath());
+    }
+
+    static @NonNull FileState ofFile(final Path file) throws IOException {
+        try (var cis = new CapturingInputStream(Files.newInputStream(file))) {
             cis.readAllBytes();
-            return new FileState(file.getPath(), cis.size(), cis.crc32c());
+            return new FileState(file.toString(), cis.size(), cis.crc32c());
         }
     }
 

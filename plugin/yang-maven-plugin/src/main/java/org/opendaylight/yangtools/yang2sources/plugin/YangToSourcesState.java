@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
 /**
  * State of the result of a {@link YangToSourcesMojo} execution run.
  */
+// FIXME: rename to ExecutionState
 record YangToSourcesState(
         @NonNull ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs,
         @NonNull FileStateSet projectYangs,
@@ -42,6 +43,11 @@ record YangToSourcesState(
         }
         return new YangToSourcesState(readConfigurations(in),
             FileStateSet.readFrom(in), FileStateSet.readFrom(in), FileStateSet.readFrom(in));
+    }
+
+    static @NonNull YangToSourcesState empty() {
+        return new YangToSourcesState(ImmutableMap.of(),
+            FileStateSet.empty(), FileStateSet.empty(), FileStateSet.empty());
     }
 
     @Override
