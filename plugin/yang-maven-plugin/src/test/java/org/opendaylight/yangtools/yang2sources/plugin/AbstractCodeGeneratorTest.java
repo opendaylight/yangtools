@@ -17,6 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
 import com.google.common.collect.Iterators;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -33,6 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class AbstractCodeGeneratorTest {
@@ -44,6 +46,13 @@ public abstract class AbstractCodeGeneratorTest {
     private Build build;
     @Mock
     private Plugin plugin;
+    @Mock
+    private BuildContext buildContext;
+
+    @Before
+    public void beforeEach() {
+        new File("target/" + RebuildContext.PERSISTENCE_FILE_NAME).delete(); // avoid rebuild context impact
+    }
 
     @Before
     public void before() {
