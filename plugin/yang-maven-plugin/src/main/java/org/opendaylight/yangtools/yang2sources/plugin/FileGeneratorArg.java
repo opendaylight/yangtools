@@ -11,14 +11,17 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.concepts.WritableObject;
 
-public final class FileGeneratorArg implements Identifiable<String> {
+public final class FileGeneratorArg implements Identifiable<String>, WritableObject {
     @Parameter
     private final Map<String, String> configuration = new HashMap<>();
 
@@ -26,7 +29,6 @@ public final class FileGeneratorArg implements Identifiable<String> {
     private String identifier;
 
     public FileGeneratorArg() {
-
     }
 
     public FileGeneratorArg(final String identifier) {
@@ -50,5 +52,15 @@ public final class FileGeneratorArg implements Identifiable<String> {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("id", identifier).add("configuration", configuration).toString();
+    }
+
+    @Override
+    public void writeTo(DataOutput out) throws IOException {
+        out.writeUTF(identifier);
+        out.writeInt(configuration.size());
+        for (String key : configuration.keySet().stream().sorted().toList()) {
+            out.writeUTF(key);
+            out.writeUTF(configuration.getOrDefault(key, ""));
+        }
     }
 }
