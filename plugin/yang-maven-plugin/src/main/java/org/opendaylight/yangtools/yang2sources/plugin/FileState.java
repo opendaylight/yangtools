@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static java.util.Objects.requireNonNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -36,6 +37,13 @@ record FileState(@NonNull String path, long size, int crc32) {
 
     FileState {
         requireNonNull(path);
+    }
+
+    static @NonNull FileState ofFile(final File file) throws IOException {
+        try (var cis = new CapturingInputStream(new FileInputStream(file))) {
+            cis.readAllBytes();
+            return new FileState(file.getPath(), cis.size(), cis.crc32c());
+        }
     }
 
     static @NonNull FileState ofWrittenFile(final File file, final FileContent content) throws IOException {
