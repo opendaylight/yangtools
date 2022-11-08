@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +23,8 @@ abstract class YangProvider {
         private static final Logger LOG = LoggerFactory.getLogger(Default.class);
 
         @Override
-        void addYangsToMetaInf(final MavenProject project, final Collection<YangTextSchemaSource> modelsInProject)
-                throws IOException {
+        Collection<FileState> addYangsToMetaInf(final MavenProject project,
+                final Collection<YangTextSchemaSource> modelsInProject) throws IOException {
 
             final File generatedYangDir = new GeneratedDirectories(project).getYangDir();
             LOG.debug("Generated dir {}", generatedYangDir);
@@ -31,18 +32,21 @@ abstract class YangProvider {
             // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
             // This honors setups like a Eclipse-profile derived one
             final File withMetaInf = new File(generatedYangDir, YangToSourcesProcessor.META_INF_YANG_STRING);
+            final var stateListBuilder = ImmutableList.<FileState>builder();
 
             for (YangTextSchemaSource source : modelsInProject) {
                 final String fileName = source.getIdentifier().toYangFilename();
                 final File file = new File(withMetaInf, fileName);
                 Files.createParentDirs(file);
 
-                source.copyTo(Files.asByteSink(file));
+                stateListBuilder.add(FileState.ofWrittenFile(file, source::copyTo));
                 LOG.debug("Created file {} for {}", file, source.getIdentifier());
             }
 
             setResource(generatedYangDir, project);
             LOG.debug("{} YANG files marked as resources: {}", YangToSourcesProcessor.LOG_PREFIX, generatedYangDir);
+
+            return stateListBuilder.build();
         }
     }
 
@@ -52,8 +56,8 @@ abstract class YangProvider {
         return DEFAULT;
     }
 
-    abstract void addYangsToMetaInf(MavenProject project, Collection<YangTextSchemaSource> modelsInProject)
-            throws IOException;
+    abstract Collection<FileState> addYangsToMetaInf(MavenProject project,
+            Collection<YangTextSchemaSource> modelsInProject) throws IOException;
 
     static void setResource(final File targetYangDir, final MavenProject project) {
         Resource res = new Resource();
