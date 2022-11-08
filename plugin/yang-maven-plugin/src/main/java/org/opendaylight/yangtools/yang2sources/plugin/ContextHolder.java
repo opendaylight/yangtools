@@ -26,11 +26,14 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
     private final EffectiveModelContext context;
     private final Set<Module> modules;
     private final Set<SourceIdentifier> sources;
+    private final RebuildContext rebuildContext;
 
-    ContextHolder(final EffectiveModelContext context, final Set<Module> modules, final Set<SourceIdentifier> sources) {
+    ContextHolder(final EffectiveModelContext context, final Set<Module> modules, final Set<SourceIdentifier> sources,
+            final RebuildContext rebuildContext) {
         this.context = requireNonNull(context);
         this.modules = ImmutableSet.copyOf(modules);
         this.sources = ImmutableSet.copyOf(sources);
+        this.rebuildContext = requireNonNull(rebuildContext);
     }
 
     @Override
@@ -50,5 +53,9 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
 
     Set<Module> getYangModules() {
         return modules;
+    }
+
+    boolean isModified(ModuleLike module) {
+        return rebuildContext.isModified(module);
     }
 }

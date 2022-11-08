@@ -30,6 +30,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -37,6 +38,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class UtilTest {
+
+    @Mock
+    RebuildContext rebuildContext;
 
     @Test
     public void getClassPathTest() {
@@ -102,7 +106,7 @@ public class UtilTest {
         final EffectiveModelContext context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang",
             "/test2.yang");
         final Set<Module> yangModules = new HashSet<>();
-        final ContextHolder cxH = new ContextHolder(context, yangModules, ImmutableSet.of());
+        final ContextHolder cxH = new ContextHolder(context, yangModules, ImmutableSet.of(), rebuildContext);
         assertEquals(context, cxH.getContext());
         assertEquals(yangModules, cxH.getYangModules());
     }

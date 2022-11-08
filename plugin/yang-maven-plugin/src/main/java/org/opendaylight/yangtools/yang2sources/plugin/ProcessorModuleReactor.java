@@ -44,14 +44,15 @@ final class ProcessorModuleReactor {
 
     private final Map<SourceIdentifier, YangTextSchemaSource> modelsInProject;
     private final Collection<ScannedDependency> dependencies;
-
+    private final RebuildContext rebuildContext;
     private YangParser parser;
 
     ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject,
-            final Collection<ScannedDependency> dependencies) {
+            final Collection<ScannedDependency> dependencies, final RebuildContext rebuildContext) {
         this.parser = requireNonNull(parser);
         this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::getIdentifier);
         this.dependencies = ImmutableList.copyOf(dependencies);
+        this.rebuildContext = requireNonNull(rebuildContext);
     }
 
     ContextHolder toContext() throws IOException, YangParserException {
@@ -84,7 +85,10 @@ final class ProcessorModuleReactor {
             }
         }
 
-        return new ContextHolder(schemaContext, modules, modelsInProject.keySet());
+        rebuildContext.updateSourceStates(modelsInProject.values());
+        rebuildContext.updateDependencies(modules);
+
+        return new ContextHolder(schemaContext, modules, modelsInProject.keySet(), rebuildContext);
     }
 
     Collection<YangTextSchemaSource> getModelsInProject() {
