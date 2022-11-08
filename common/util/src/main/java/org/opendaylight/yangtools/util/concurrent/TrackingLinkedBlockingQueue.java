@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.annotations.Beta;
 import java.io.Serial;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -26,15 +27,21 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("rawtypes")
-    private static final AtomicIntegerFieldUpdater<TrackingLinkedBlockingQueue> LARGEST_QUEUE_SIZE_UPDATER
-        = AtomicIntegerFieldUpdater.newUpdater(TrackingLinkedBlockingQueue.class, "largestQueueSize");
+    private static final VarHandle LARGEST_QUEUE_SIZE;
+
+    static {
+        try {
+            LARGEST_QUEUE_SIZE = MethodHandles.lookup()
+                .findVarHandle(TrackingLinkedBlockingQueue.class, "largestQueueSize", int.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
-     * Holds largestQueueSize, this long field should be only accessed
-     * using {@link #LARGEST_QUEUE_SIZE_UPDATER}.
+     * Holds largestQueueSize, this field should be only updated using {@link #LARGEST_QUEUE_SIZE}.
      */
-    private volatile int largestQueueSize = 0;
+    private volatile int largestQueueSize;
 
     /**
      * See {@link LinkedBlockingQueue#LinkedBlockingQueue()}.
@@ -116,9 +123,9 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     private void updateLargestQueueSize() {
         final int size = size();
 
-        int largest;
-        do {
-            largest = largestQueueSize;
-        } while (size > largest && !LARGEST_QUEUE_SIZE_UPDATER.weakCompareAndSet(this, largest, size));
+        int largest = (int) LARGEST_QUEUE_SIZE.getAcquire(this);
+        while (largest < size) {
+            largest = (int) LARGEST_QUEUE_SIZE.compareAndExchangeRelease(this, largest, size);
+        }
     }
 }
