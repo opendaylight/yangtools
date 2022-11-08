@@ -60,9 +60,8 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
     private ModificationApplyOperation resolveChild(final PathArgument identifier) {
         final T schema = getSchema();
-        if (identifier instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
-            return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema,
-                (AugmentationIdentifier) identifier, treeConfig);
+        if (identifier instanceof AugmentationIdentifier augId && schema instanceof AugmentationTarget augTarget) {
+            return SchemaAwareApplyOperation.from(schema, augTarget, augId, treeConfig);
         }
 
         final var qname = identifier.getNodeType();
