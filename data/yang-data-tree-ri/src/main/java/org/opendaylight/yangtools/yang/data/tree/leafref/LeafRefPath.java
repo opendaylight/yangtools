@@ -11,11 +11,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 public abstract class LeafRefPath implements Immutable {
@@ -57,9 +58,15 @@ public abstract class LeafRefPath implements Immutable {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<LeafRefPath, ImmutableList> LEGACYPATH_UPDATER =
-        AtomicReferenceFieldUpdater.newUpdater(LeafRefPath.class, ImmutableList.class, "legacyPath");
+    private static final VarHandle LEGACYPATH;
+
+    static {
+        try {
+            LEGACYPATH = MethodHandles.lookup().findVarHandle(LeafRefPath.class, "legacyPath", ImmutableList.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
      * Shared instance of the conceptual root schema node.
@@ -87,19 +94,10 @@ public abstract class LeafRefPath implements Immutable {
     private final int hash;
 
     /**
-     * Cached legacy path, filled-in when {@link #getPathFromRoot()} or {@link #getPathTowardsRoot()} is invoked.
+     * Cached legacy path, filled-in when {@link #getPathFromRoot()} is invoked.
      */
+    @SuppressWarnings("unused")
     private volatile ImmutableList<QNameWithPredicate> legacyPath;
-
-    private ImmutableList<QNameWithPredicate> getLegacyPath() {
-        ImmutableList<QNameWithPredicate> ret = legacyPath;
-        if (ret == null) {
-            ret = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
-            LEGACYPATH_UPDATER.lazySet(this, ret);
-        }
-
-        return ret;
-    }
 
     protected LeafRefPath(final LeafRefPath parent, final QNameWithPredicate qname) {
         this.parent = parent;
@@ -198,7 +196,14 @@ public abstract class LeafRefPath implements Immutable {
      * @return list of {@code qname} instances which represents path from the root to the schema node.
      */
     public Iterable<QNameWithPredicate> getPathFromRoot() {
-        return getLegacyPath();
+        final var local = (ImmutableList<QNameWithPredicate>) LEGACYPATH.getAcquire(this);
+        return local != null ? local : loadLegacyPath();
+    }
+
+    private ImmutableList<QNameWithPredicate> loadLegacyPath() {
+        final var ret = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
+        final var witness = (ImmutableList<QNameWithPredicate>) LEGACYPATH.compareAndExchangeRelease(this, null, ret);
+        return witness != null ? witness : ret;
     }
 
     /**
@@ -208,7 +213,7 @@ public abstract class LeafRefPath implements Immutable {
      * @return list of {@code qname} instances which represents path from the schema node towards the root.
      */
     public Iterable<QNameWithPredicate> getPathTowardsRoot() {
-        return () -> new Iterator<QNameWithPredicate>() {
+        return () -> new Iterator<>() {
             private LeafRefPath current = LeafRefPath.this;
 
             @Override
