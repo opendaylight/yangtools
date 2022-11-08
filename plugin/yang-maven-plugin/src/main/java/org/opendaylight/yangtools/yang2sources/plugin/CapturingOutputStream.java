@@ -12,6 +12,7 @@ import com.google.common.hash.HashingOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An {@link OutputStream} which captures the sum of its contents.
@@ -36,11 +37,7 @@ final class CapturingOutputStream extends FilterOutputStream {
         size += len;
     }
 
-    long size() {
-        return size;
-    }
-
-    int crc32c() {
-        return ((HashingOutputStream) out).hash().asInt();
+    @NonNull FileState toFileState(final String identifier) {
+        return new FileState(identifier, size, ((HashingOutputStream) out).hash().asInt());
     }
 }
