@@ -189,12 +189,14 @@ final class GeneratorTask extends ParserConfigAware {
         }
 
         FileState generateFile() {
-            try (var out = new CapturingOutputStream(buildContext.newFileOutputStream(target))) {
-                file.writeBody(out);
-                return new FileState(target.getPath(), out.size(), out.crc32c());
+            final FileState ret;
+            try {
+                ret = FileState.ofWrittenFile(target, file::writeBody);
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }
+            buildContext.refresh(target);
+            return ret;
         }
     }
 }
