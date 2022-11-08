@@ -9,12 +9,15 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,10 @@ class RebuildContextTest {
     private static final String SUBMODULE = "foo-submodule.yang";
     private static final String AUGMENTATION = "bar.yang";
     private static final String FIRST_RUN = "First run";
+    private static final String FILE1 = "file-1";
+    private static final String FILE2 = "file-2";
+    private static final String FILE3 = "file-3";
+    private static final String FILE4 = "file-4";
 
     @TempDir
     private static File workDir;
@@ -166,6 +173,75 @@ class RebuildContextTest {
                         List.of(new File(MODIFIED_DIR, MODULE),
                                 new File(MODIFIED_DIR, SUBMODULE),
                                 new File(MODIFIED_DIR, AUGMENTATION)))
+        );
+    }
+
+    @ParameterizedTest(name = "Obsolete output files: {0}")
+    @MethodSource("obsoleteOutputFilesArgs")
+    void obsoleteOutputFiles(final String testDesc, final Map<String, Set<String>> filesMapBefore,
+            final Map<String, Set<String>> filesMapAfter, final Set<String> expected) throws Exception {
+
+        persistenceFile.delete();
+
+        final RebuildContext rebuildContextBefore = new RebuildContext(workDir);
+
+        // previous build: create and register output files
+        final Set<File> existingFiles = new HashSet<>();
+        filesMapBefore.forEach((configId, paths) -> {
+            final Set<File> files = paths.stream().map(name -> new File(workDir, name)).collect(Collectors.toSet());
+            existingFiles.addAll(files);
+            rebuildContextBefore.setOutputFiles(configId, files);
+        });
+        for (File file : existingFiles) {
+            Files.touch(file);
+            assertTrue(file.exists());
+        }
+
+        // persist previous build state
+        rebuildContextBefore.persist();
+        assertTrue(persistenceFile.exists());
+
+        // current build: load context data, set configuration
+        final RebuildContext rebuildContext = new RebuildContext(workDir);
+        final Map<String, WritableObject> configMap = filesMapAfter.keySet().stream()
+                        .collect(Collectors.toMap(key -> key, key -> CONFIG_ORIGINAL));
+        rebuildContext.setConfigurations(configMap);
+
+        // set new output files
+        filesMapAfter.forEach((configId, paths) -> {
+            final Set<File> files = paths.stream().map(path -> new File(workDir, path)).collect(Collectors.toSet());
+            rebuildContext.setOutputFiles(configId, files);
+        });
+
+        // validate obsolete files
+        final Collection<File> obsoleteFiles = rebuildContext.getObsoleteFiles();
+        assertNotNull(obsoleteFiles);
+        if (expected.isEmpty()) {
+            assertTrue(obsoleteFiles.isEmpty());
+        } else {
+            final Set<String> obsoleteFileNames = obsoleteFiles.stream().map(File::getName).collect(Collectors.toSet());
+            assertEquals(expected, obsoleteFileNames);
+            // ensure only existing files are accounted
+            obsoleteFiles.forEach(File::delete);
+            assertTrue(rebuildContext.getObsoleteFiles().isEmpty());
+        }
+    }
+
+    private static Stream<Arguments> obsoleteOutputFilesArgs() {
+        // (test case descriptor, filenames per config before, filenames per config after, expected obsolete filenames )
+        return Stream.of(
+                Arguments.of("Same set of files",
+                        Map.of(CONFIG_ID1, Set.of(FILE1, FILE2), CONFIG_ID2, Set.of(FILE3, FILE4)),
+                        Map.of(CONFIG_ID1, Set.of(FILE1, FILE2), CONFIG_ID2, Set.of(FILE3, FILE4)),
+                        Set.of()),
+                Arguments.of("Reduced outputs",
+                        Map.of(CONFIG_ID1, Set.of(FILE1, FILE2), CONFIG_ID2, Set.of(FILE3, FILE4)),
+                        Map.of(CONFIG_ID1, Set.of(FILE1), CONFIG_ID2, Set.of(FILE3)),
+                        Set.of(FILE2, FILE4)),
+                Arguments.of("Removed configuration",
+                        Map.of(CONFIG_ID1, Set.of(FILE1, FILE2), CONFIG_ID2, Set.of(FILE3, FILE4)),
+                        Map.of(CONFIG_ID1, Set.of(FILE1)),
+                        Set.of(FILE2, FILE3, FILE4))
         );
     }
 
