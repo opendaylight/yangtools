@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.format.DateTimeParseException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -63,11 +64,25 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Creates new YANG Schema source identifier for sources with or without a revision.
      *
      * @param name Name of schema
+     * @param revision Optional schema revision
      * @throws NullPointerException if {@code name} is null
      * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
      */
+    public SourceIdentifier(final @NonNull String name, final @Nullable Revision revision) {
+        this(Unqualified.of(name), revision);
+    }
+
+    /**
+     * Creates new YANG Schema source identifier for sources with or without a revision.
+     *
+     * @param name Name of schema
+     * @param revision Optional schema revision
+     * @throws NullPointerException if {@code name} is null
+     * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
+     * @throws DateTimeParseException if {@code revision} format does not conform specification.
+     */
     public SourceIdentifier(final @NonNull String name, final @Nullable String revision) {
-        this(Unqualified.of(name), revision != null ? Revision.of(revision) : null);
+        this(name, revision != null ? Revision.of(revision) : null);
     }
 
     /**
