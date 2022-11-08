@@ -14,6 +14,7 @@ import static org.opendaylight.yangtools.yang2sources.plugin.RebuildContextUtils
 import static org.opendaylight.yangtools.yang2sources.plugin.RebuildContextUtils.isSame;
 import static org.opendaylight.yangtools.yang2sources.plugin.RebuildContextUtils.isSameSetOfFiles;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.WritableObject;
 import org.slf4j.Logger;
@@ -46,6 +48,8 @@ final class RebuildContext {
     private ImmutableMap<String, ResourceState> inputFilesStates;
     private ImmutableMap<String, ResourceState> configStates;
     private ImmutableMap<String, ResourceState> outputFileStates;
+
+    private ImmutableList<File> obsoleteFiles;
 
     RebuildContext(final @NonNull File dir, final @NonNull BuildContext buildContext) {
         requireNonNull(dir);
@@ -119,6 +123,18 @@ final class RebuildContext {
         requireNonNull(fileStateMap, "fileStateMap should not be null");
         checkState(outputFileStates == null, "output files state map is already set");
         outputFileStates = fileStateMap;
+        processOutputs();
+    }
+
+    private void processOutputs() {
+        outputFileStates.forEach((path, state) -> {
+            if (!Objects.equals(state, previousState.outputFiles().get(path))) {
+                buildContext.refresh(new File(path)); // notify output file added or modified
+            }
+        });
+        obsoleteFiles = previousState.outputFiles().entrySet().stream()
+                .filter(entry -> !outputFileStates.containsKey(entry.getKey()))
+                .map(entry -> new File(entry.getKey())).collect(ImmutableList.toImmutableList());
     }
 
     /**
@@ -130,5 +146,17 @@ final class RebuildContext {
         return !isSame(previousState.inputFiles(), inputFilesStates)
                 || !isSame(previousState.configurations(), configStates)
                 || !isSameSetOfFiles(previousState.outputFiles().values());
+    }
+
+    public int deleteObsoleteFiles() {
+        if (obsoleteFiles == null) {
+            return 0;
+        }
+        int count = 0;
+        for (File file : obsoleteFiles) {
+            count += file.delete() ? 1 : 0;
+            buildContext.refresh(file);
+        }
+        return count;
     }
 }

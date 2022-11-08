@@ -197,6 +197,7 @@ class YangToSourcesProcessor {
         LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
 
         final var outputFiles = ImmutableList.<ResourceState>builder();
+        boolean sourcesPersisted = false;
 
         for (YangParserConfiguration parserConfig : parserConfigs) {
             final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject,
@@ -219,17 +220,19 @@ class YangToSourcesProcessor {
                     LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(),
                         sw);
                     outputFiles.addAll(generateSources(holder, codeGenerators, parserConfig));
+
+                    if (!sourcesPersisted) {
+                        // add META_INF/yang once
+                        final Collection<YangTextSchemaSource> models = reactor.getModelsInProject();
+                        try {
+                            outputFiles.addAll(yangProvider.addYangsToMetaInf(project, models));
+                            sourcesPersisted = true;
+                        } catch (IOException e) {
+                            throw new MojoExecutionException("Failed write model files for " + models, e);
+                        }
+                    }
                 } else {
                     LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
-                }
-
-                // FIXME: this is not right: we should be generating the models exactly once!
-                // add META_INF/yang
-                final Collection<YangTextSchemaSource> models = reactor.getModelsInProject();
-                try {
-                    yangProvider.addYangsToMetaInf(project, models);
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Failed write model files for " + models, e);
                 }
             }
         }
@@ -248,10 +251,10 @@ class YangToSourcesProcessor {
             }
         }
 
-        // TODO: add yang files from meta-inf to outputFiles
         // register output
         rebuildContext.setOutputFileStates(ImmutableMap.copyOf(uniqueOutputFiles));
-        // TODO: clear outputs remaining from prior build
+        // delete obsolete outputs remaining from previous build
+        rebuildContext.deleteObsoleteFiles();
         // persist resource states for next build
         rebuildContext.persistState();
     }
