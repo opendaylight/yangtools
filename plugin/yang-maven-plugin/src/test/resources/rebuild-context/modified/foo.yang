@@ -1,0 +1,20 @@
+module foo {
+  yang-version 1;
+  namespace "urn:opendaylight:test:foo";
+  prefix "foo";
+
+  include foo-submodule;
+
+  revision "2022-02-22";
+
+  container top {
+    container cont {
+      leaf foo-leaf {
+        type string;
+      }
+      leaf foo-another-leaf {
+        type uint32;
+      }
+    }
+  }
+}
