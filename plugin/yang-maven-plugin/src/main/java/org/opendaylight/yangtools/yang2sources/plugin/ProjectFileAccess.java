@@ -89,8 +89,7 @@ final class ProjectFileAccess {
     }
 
     private @NonNull File buildDirectoryFor(final String name) {
-        return new File(project.getBuild().getDirectory()
-            + File.separatorChar + name
-            + File.separatorChar + buildDirSuffix);
+        return IncrementalBuildSupport.pluginSubdirectory(project.getBuild().getDirectory(), buildDirSuffix, name)
+            .toFile();
     }
 }
