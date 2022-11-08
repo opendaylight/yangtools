@@ -44,6 +44,11 @@ record YangToSourcesState(
             FileStateSet.readFrom(in), FileStateSet.readFrom(in), FileStateSet.readFrom(in));
     }
 
+    static @NonNull YangToSourcesState empty() {
+        return new YangToSourcesState(ImmutableMap.of(),
+            FileStateSet.empty(), FileStateSet.empty(), FileStateSet.empty());
+    }
+
     @Override
     public void writeTo(final DataOutput out) throws IOException {
         out.writeInt(MAGIC);
