@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -31,13 +32,19 @@ import org.slf4j.LoggerFactory;
  */
 class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithStatus> extends Visible<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
+    private static final VarHandle CHILDREN;
+
+    static {
+        try {
+            CHILDREN = MethodHandles.lookup().findVarHandle(
+                DataNodeContainerModificationStrategy.class, "children", ImmutableMap.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     private final @NonNull DataTreeConfiguration treeConfig;
 
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<DataNodeContainerModificationStrategy, ImmutableMap> UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(DataNodeContainerModificationStrategy.class, ImmutableMap.class,
-                "children");
     private volatile ImmutableMap<PathArgument, ModificationApplyOperation> children = ImmutableMap.of();
 
     DataNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final T schema,
@@ -94,12 +101,14 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
                 .build();
 
             // Attempt to install the updated map
-            if (UPDATER.compareAndSet(this, previous, updated)) {
+            final var witness = (ImmutableMap<PathArgument, ModificationApplyOperation>)
+                CHILDREN.compareAndExchange(this, previous, updated);
+            if (witness == previous) {
                 return computed;
             }
 
             // We have raced, acquire a new snapshot, recheck presence and retry if needed
-            previous = children;
+            previous = witness;
             final var raced = previous.get(identifier);
             if (raced != null) {
                 return raced;
