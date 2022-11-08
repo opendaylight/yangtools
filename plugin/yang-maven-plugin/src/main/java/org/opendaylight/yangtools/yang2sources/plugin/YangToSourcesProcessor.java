@@ -65,7 +65,6 @@ class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
     private static final String META_INF_STR = "META-INF";
     private static final String YANG_STR = "yang";
-    private static final String BUILD_CONTEXT_STATE_NAME = YangToSourcesProcessor.class.getName();
 
     static final String META_INF_YANG_STRING = META_INF_STR + File.separator + YANG_STR;
     static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
@@ -114,11 +113,8 @@ class YangToSourcesProcessor {
     }
 
     void conditionalExecute(final boolean skip) throws MojoExecutionException, MojoFailureException {
-        var prevState = buildContext.getValue(BUILD_CONTEXT_STATE_NAME);
-        if (prevState == null) {
-            LOG.debug("{} BuildContext did not provide state", LOG_PREFIX);
-            // FIXME: look for persisted state and restore it
-        }
+
+        final var rebuildContext = new RebuildContext(new File(project.getBuild().getDirectory()), buildContext);
 
         /*
          * Collect all files which affect YANG context. This includes all
@@ -171,11 +167,17 @@ class YangToSourcesProcessor {
             dependencies = ImmutableList.of();
         }
 
+        // register input files
+        rebuildContext.setInputFiles(allFiles);
+
+        // register configurations
+        rebuildContext.setConfigurations(fileGeneratorArgs);
+
         /*
          * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
          * end of execution.
          */
-        if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
+        if (!rebuildContext.hasChanges()) {
             LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
             return;
         }
@@ -246,13 +248,12 @@ class YangToSourcesProcessor {
             }
         }
 
-        // FIXME: store these files into state, so that we can verify/clean up
-        final var outputState = new YangToSourcesState(ImmutableMap.copyOf(uniqueOutputFiles));
-        buildContext.setValue(BUILD_CONTEXT_STATE_NAME, outputState);
-        if (buildContext.getValue(BUILD_CONTEXT_STATE_NAME) == null) {
-            LOG.debug("{} BuildContext did not retain state, persisting", LOG_PREFIX);
-            // FIXME: persist in target/ directory (there is a maven best practice where)
-        }
+        // TODO: add yang files from meta-inf to outputFiles
+        // register output
+        rebuildContext.setOutputFileStates(ImmutableMap.copyOf(uniqueOutputFiles));
+        // TODO: clear outputs remaining from prior build
+        // persist resource states for next build
+        rebuildContext.persistState();
     }
 
     private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException {
@@ -359,7 +360,7 @@ class YangToSourcesProcessor {
 
             final List<FileState> files;
             try {
-                files = task.execute(buildContext);
+                files = task.execute();
             } catch (FileGeneratorException | IOException e) {
                 throw new MojoFailureException(LOG_PREFIX + " Generator " + factory + " failed", e);
             }
