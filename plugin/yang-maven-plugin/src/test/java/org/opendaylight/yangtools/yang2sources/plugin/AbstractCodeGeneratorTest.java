@@ -61,7 +61,8 @@ public abstract class AbstractCodeGeneratorTest {
         doReturn(plugin).when(project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
 
         try {
-            lenient().doNothing().when(yangProvider).addYangsToMetaInf(any(MavenProject.class), anyCollection());
+            lenient().when(yangProvider.addYangsToMetaInf(any(MavenProject.class), anyCollection()))
+                    .thenReturn(List.of());
         } catch (IOException e) {
             throw new AssertionError(e);
         }
