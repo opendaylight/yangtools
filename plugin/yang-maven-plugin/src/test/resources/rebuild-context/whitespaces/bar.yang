@@ -1,0 +1,14 @@
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight:test:bar";
+    prefix "bar";
+    import foo {
+        prefix "foo";
+    }
+    revision "2022-02-22";
+    augment /foo:top/foo:cont {
+        leaf bar-leaf {
+            type string;
+        }
+    }
+}
