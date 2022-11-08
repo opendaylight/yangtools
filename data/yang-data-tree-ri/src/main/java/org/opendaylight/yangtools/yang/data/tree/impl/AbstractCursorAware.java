@@ -7,29 +7,39 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import com.google.common.base.Preconditions;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractCursorAware {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCursorAware.class);
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<AbstractCursorAware, AbstractCursor> CURSOR_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(AbstractCursorAware.class, AbstractCursor.class, "cursor");
-    private volatile AbstractCursor<?> cursor = null;
+    private static final VarHandle CURSOR;
+
+    static {
+        try {
+            CURSOR = MethodHandles.lookup().findVarHandle(AbstractCursorAware.class, "cursor", AbstractCursor.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private volatile AbstractCursor<?> cursor;
 
     protected <T extends AbstractCursor<?>> T openCursor(final T cursorToOpen) {
-        final boolean success = CURSOR_UPDATER.compareAndSet(this, null, cursorToOpen);
-        Preconditions.checkState(success, "Modification %s has cursor attached at path %s", this,
-            this.cursor.getRootPath());
+        final var witness = (AbstractCursor<?>) CURSOR.compareAndExchange(this, null, cursorToOpen);
+        if (witness != null) {
+            throw new IllegalStateException(
+                "Modification " + this + " has cursor attached at path " + witness.getRootPath());
+        }
         return cursorToOpen;
     }
 
     final void closeCursor(final AbstractCursor<?> cursorToClose) {
-        final boolean success = CURSOR_UPDATER.compareAndSet(this, cursorToClose, null);
-        if (!success) {
-            LOG.warn("Attempted to close cursor {} while {} is open", cursorToClose, this.cursor);
+        final var witness = (AbstractCursor<?>) CURSOR.compareAndExchange(this, cursorToClose, null);
+        if (witness != cursorToClose) {
+            LOG.warn("Attempted to close cursor {} while {} is open", cursorToClose, witness);
         }
     }
 }
