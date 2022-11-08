@@ -76,7 +76,7 @@ class YangToSourcesProcessor {
     private final ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs;
     private final @NonNull MavenProject project;
     private final boolean inspectDependencies;
-    private final BuildContext buildContext;
+    private final @NonNull BuildContext buildContext;
     private final YangProvider yangProvider;
     private final StateStorage stateStorage;
 
@@ -129,6 +129,8 @@ class YangToSourcesProcessor {
             throw new MojoFailureException("Failed to list project files", e);
         }
 
+        final var rebuildContext = new RebuildContext(buildContext, prevState);
+
         if (yangFilesInProject.isEmpty()) {
             // No files to process, skip.
             LOG.info("{} No input files found", LOG_PREFIX);
@@ -170,11 +172,18 @@ class YangToSourcesProcessor {
             dependencies = ImmutableList.of();
         }
 
+        // register input files
+        rebuildContext.setInputFiles(allFiles);
+
+        // register configurations
+        rebuildContext.setFileGeneratorArgs(codeGenerators.stream()
+            .collect(ImmutableMap.toImmutableMap(GeneratorTaskFactory::getIdentifier, GeneratorTaskFactory::arg)));
+
         /*
          * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
          * end of execution.
          */
-        if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
+        if (!rebuildContext.hasChanges()) {
             LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
             return;
         }
@@ -246,12 +255,13 @@ class YangToSourcesProcessor {
             }
         }
 
-        // FIXME: store these files into state, so that we can verify/clean up
-        final var outputState = new YangToSourcesState(
-            codeGenerators.stream()
-                .collect(ImmutableMap.toImmutableMap(GeneratorTaskFactory::getIdentifier, GeneratorTaskFactory::arg)),
-            new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
+        // register output
+        rebuildContext.setOutputFileStates(ImmutableMap.copyOf(uniqueOutputFiles));
+        // delete obsolete outputs remaining from previous build
+        rebuildContext.deleteObsoleteFiles();
 
+        // persist resource states for next build
+        final var outputState = rebuildContext.toState();
         try {
             stateStorage.storeState(outputState);
         } catch (IOException e) {
