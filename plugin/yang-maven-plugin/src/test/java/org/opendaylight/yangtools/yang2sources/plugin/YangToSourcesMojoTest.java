@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.junit.Test;
@@ -26,10 +27,14 @@ public class YangToSourcesMojoTest {
     private MavenProject project;
     @Mock
     private Plugin plugin;
+    @Mock
+    private Build build;
 
     @Test
     public void yangToSourceMojoTest() throws Exception {
         doReturn(plugin).when(project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
+        doReturn("target/").when(build).getDirectory();
+        doReturn(build).when(project).getBuild();
 
         YangToSourcesMojo mojo = new YangToSourcesMojo();
         mojo.setProject(project);
