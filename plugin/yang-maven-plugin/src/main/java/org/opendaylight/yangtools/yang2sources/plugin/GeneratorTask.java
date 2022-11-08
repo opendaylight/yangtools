@@ -16,6 +16,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 final class GeneratorTask extends ParserConfigAware {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorTask.class);
@@ -61,7 +61,7 @@ final class GeneratorTask extends ParserConfigAware {
         return factory.parserConfig();
     }
 
-    List<FileState> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
+    List<FileState> execute() throws FileGeneratorException, IOException {
         // Step one: determine what files are going to be generated
         final Stopwatch sw = Stopwatch.createStarted();
         final FileGenerator gen = factory.generator();
@@ -91,7 +91,7 @@ final class GeneratorTask extends ParserConfigAware {
                     throw new IllegalStateException("Unsupported file type in " + file);
             }
 
-            dirs.put(target.getParentFile(), new WriteTask(buildContext, target, cell.getValue()));
+            dirs.put(target.getParentFile(), new WriteTask(target, cell.getValue()));
         }
         LOG.info("Sorted {} files into {} directories in {}", dirs.size(), dirs.keySet().size(), sw);
 
@@ -178,20 +178,18 @@ final class GeneratorTask extends ParserConfigAware {
     }
 
     private static final class WriteTask {
-        private final BuildContext buildContext;
         private final GeneratedFile file;
         private final File target;
 
-        WriteTask(final BuildContext buildContext, final File target, final GeneratedFile file) {
-            this.buildContext = requireNonNull(buildContext);
+        WriteTask(final File target, final GeneratedFile file) {
             this.target = requireNonNull(target);
             this.file = requireNonNull(file);
         }
 
         FileState generateFile() {
-            try (var out = new CapturingOutputStream(buildContext.newFileOutputStream(target))) {
-                file.writeBody(out);
-                return new FileState(target.getPath(), out.size(), out.crc32c());
+            try (var cos = new CapturingOutputStream(new FileOutputStream(target))) {
+                file.writeBody(cos);
+                return cos.toFileState(target.getPath());
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }
