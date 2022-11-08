@@ -59,10 +59,9 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
 
     /**
      * Returns the largest queue size.
-     *
-     * <p>FIXME: the this return will be changed to int in a future release.
      */
     @Beta
+    // FIXME: 11.0.0: return int
     public long getLargestQueueSize() {
         return largestQueueSize;
     }
