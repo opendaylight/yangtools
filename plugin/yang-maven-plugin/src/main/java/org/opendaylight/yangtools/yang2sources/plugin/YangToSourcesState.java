@@ -20,22 +20,27 @@ import org.opendaylight.yangtools.concepts.WritableObject;
 /**
  * State of the result of a {@link YangToSourcesMojo} execution run.
  */
-// FIXME: expand to capture:
-//        - input YANG files
 record YangToSourcesState(
         @NonNull ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs,
+        @NonNull FileStateSet inputFiles,
         @NonNull FileStateSet outputFiles) implements WritableObject {
     YangToSourcesState {
         requireNonNull(fileGeneratorArgs);
+        requireNonNull(inputFiles);
         requireNonNull(outputFiles);
     }
 
     static @NonNull YangToSourcesState readFrom(final DataInput in) throws IOException {
-        return new YangToSourcesState(readConfigurations(in), FileStateSet.readFrom(in));
+        return new YangToSourcesState(readConfigurations(in), FileStateSet.readFrom(in), FileStateSet.readFrom(in));
+    }
+
+    static YangToSourcesState empty() {
+        return new YangToSourcesState(ImmutableMap.of(), FileStateSet.empty(), FileStateSet.empty());
     }
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
+        inputFiles.writeTo(out);
         writeConfigurations(out, fileGeneratorArgs.values());
         outputFiles.writeTo(out);
     }
