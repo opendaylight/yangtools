@@ -45,6 +45,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
     private final @NonNull DataTreeConfiguration treeConfig;
 
+    @SuppressWarnings("unused")
     private volatile ImmutableMap<PathArgument, ModificationApplyOperation> children = ImmutableMap.of();
 
     DataNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final T schema,
@@ -55,7 +56,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
     @Override
     public final ModificationApplyOperation childByArg(final PathArgument arg) {
-        final var local = children;
+        final var local = (ImmutableMap<PathArgument, ModificationApplyOperation>) CHILDREN.getAcquire(this);
         final var existing = local.get(arg);
         if (existing != null) {
             return existing;
@@ -102,7 +103,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
             // Attempt to install the updated map
             final var witness = (ImmutableMap<PathArgument, ModificationApplyOperation>)
-                CHILDREN.compareAndExchange(this, previous, updated);
+                CHILDREN.compareAndExchangeRelease(this, previous, updated);
             if (witness == previous) {
                 return computed;
             }
