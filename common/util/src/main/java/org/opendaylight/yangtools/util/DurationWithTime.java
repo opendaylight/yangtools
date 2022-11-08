@@ -8,22 +8,8 @@
 package org.opendaylight.yangtools.util;
 
 /**
- * Utility holder for a duration/time of occurance.
+ * Utility holder for a duration/time of occurrence.
  */
-final class DurationWithTime {
-    private final long duration;
-    private final long timeMillis;
-
-    DurationWithTime(final long duration, final long timeMillis) {
-        this.duration = duration;
-        this.timeMillis = timeMillis;
-    }
-
-    long getDuration() {
-        return duration;
-    }
-
-    long getTimeMillis() {
-        return timeMillis;
-    }
+record DurationWithTime(long duration, long timeMillis) {
+    // Nothing else
 }

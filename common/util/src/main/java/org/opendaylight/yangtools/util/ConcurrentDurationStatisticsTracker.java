@@ -58,11 +58,11 @@ class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
          * the number of volatile operations.
          */
         final var currentShortest = (DurationWithTime) SHORTEST.getAcquire(this);
-        if (currentShortest == null || duration < currentShortest.getDuration()) {
+        if (currentShortest == null || duration < currentShortest.duration()) {
             updateShortest(currentShortest, duration);
         }
         final var currentLongest = (DurationWithTime) LONGEST.getAcquire(this);
-        if (currentLongest == null || duration > currentLongest.getDuration()) {
+        if (currentLongest == null || duration > currentLongest.duration()) {
             updateLongest(currentLongest, duration);
         }
     }
@@ -73,7 +73,7 @@ class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
         var expected = prev;
         while (true) {
             final var witness = (DurationWithTime) SHORTEST.compareAndExchangeRelease(this, expected, newObj);
-            if (witness == expected || duration >= witness.getDuration()) {
+            if (witness == expected || duration >= witness.duration()) {
                 break;
             }
             expected = witness;
@@ -86,7 +86,7 @@ class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
         var expected = prev;
         while (true) {
             final var witness = (DurationWithTime) LONGEST.compareAndExchangeRelease(this, expected, newObj);
-            if (witness == expected || duration <= witness.getDuration()) {
+            if (witness == expected || duration <= witness.duration()) {
                 break;
             }
             expected = witness;

@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 public class SynchronizedDurationStatsTrackerTest {
-
     @Test
     public void testAllMethodsOfSynchronizedDurationStatsTracker() {
         final SynchronizedDurationStatsTracker statsTracker = new SynchronizedDurationStatsTracker();
@@ -21,9 +20,9 @@ public class SynchronizedDurationStatsTrackerTest {
         statsTracker.addDuration(2000);
         statsTracker.addDuration(3000);
 
-        assertEquals("Shortest recorded duration should be '1000'.", 1000, statsTracker.getShortest().getDuration());
+        assertEquals("Shortest recorded duration should be '1000'.", 1000, statsTracker.getShortest().duration());
         assertEquals("Average recorded duration should be '2000'.", 2000, statsTracker.getAverageDuration(), 0.0001);
-        assertEquals("Longest recorded duration should be '3000'.", 3000, statsTracker.getLongest().getDuration());
+        assertEquals("Longest recorded duration should be '3000'.", 3000, statsTracker.getLongest().duration());
         assertEquals("Total recorded duration count should be '3'.", 3, statsTracker.getTotalDurations());
 
         statsTracker.reset();

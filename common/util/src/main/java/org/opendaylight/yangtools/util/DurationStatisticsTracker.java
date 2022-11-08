@@ -165,11 +165,11 @@ public abstract class DurationStatisticsTracker {
     }
 
     private static long getDuration(final DurationWithTime current) {
-        return current == null ? 0L : current.getDuration();
+        return current == null ? 0L : current.duration();
     }
 
     private static long getTimeMillis(final DurationWithTime current) {
-        return current == null ? 0L : current.getTimeMillis();
+        return current == null ? 0L : current.timeMillis();
     }
 
     private static String formatDuration(final double duration, final Long timeStamp) {
@@ -187,10 +187,7 @@ public abstract class DurationStatisticsTracker {
     }
 
     private static String formatDuration(final DurationWithTime current) {
-        if (current == null) {
-            return formatDuration(0, null);
-        }
-        return formatDuration(current.getDuration(), current.getTimeMillis());
+        return current == null ? formatDuration(0, null) : formatDuration(current.duration(), current.timeMillis());
     }
 
     private static TimeUnit chooseUnit(final long nanos) {
