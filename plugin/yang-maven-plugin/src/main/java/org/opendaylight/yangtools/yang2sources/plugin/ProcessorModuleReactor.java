@@ -36,9 +36,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An incremental state reactor. Allows resolution of a SchemaContext based on a set of sources.
- *
- * @author Robert Varga
  */
+// FIXME: reneame to ExecutionModuleReactor or similar
 final class ProcessorModuleReactor {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorModuleReactor.class);
 
