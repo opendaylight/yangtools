@@ -10,21 +10,28 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshotCursor;
 
 abstract class AbstractCursor<T extends AbstractCursorAware> implements DataTreeSnapshotCursor {
-    @SuppressWarnings("rawtypes")
-    private static final AtomicIntegerFieldUpdater<AbstractCursor> CLOSED_UPDATER =
-            AtomicIntegerFieldUpdater.newUpdater(AbstractCursor.class, "closed");
+    private static final VarHandle CLOSED;
+
+    static {
+        try {
+            CLOSED = MethodHandles.lookup().findVarHandle(AbstractCursor.class, "closed", boolean.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final YangInstanceIdentifier rootPath;
     private final T parent;
-    // closed isn't unused, it's updated by CLOSED_UPDATER but data-flow analysers can't see that
-    @SuppressWarnings("unused")
-    private volatile int closed;
+
+    private volatile boolean closed;
 
     AbstractCursor(final T parent, final YangInstanceIdentifier rootPath) {
         this.rootPath = requireNonNull(rootPath);
@@ -41,7 +48,7 @@ abstract class AbstractCursor<T extends AbstractCursorAware> implements DataTree
 
 
     final void ensureNotClosed() {
-        checkState(closed == 0, "Modification cursor has been closed");
+        checkState(!closed, "Modification cursor has been closed");
     }
 
     @Override
@@ -56,9 +63,8 @@ abstract class AbstractCursor<T extends AbstractCursorAware> implements DataTree
 
     @Override
     public final void close() {
-        if (CLOSED_UPDATER.compareAndSet(this, 0, 1)) {
+        if (CLOSED.compareAndSet(this, false, true)) {
             parent.closeCursor(this);
         }
     }
-
 }
