@@ -63,11 +63,24 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Creates new YANG Schema source identifier for sources with or without a revision.
      *
      * @param name Name of schema
+     * @param revision Optional source revision
      * @throws NullPointerException if {@code name} is null
      * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
      */
     public SourceIdentifier(final @NonNull String name, final @Nullable String revision) {
-        this(Unqualified.of(name), revision != null ? Revision.of(revision) : null);
+        this(name, revision != null ? Revision.of(revision) : null);
+    }
+
+    /**
+     * Creates new YANG Schema source identifier for sources with or without a revision.
+     *
+     * @param name Name of schema
+     * @param revision Optional source revision
+     * @throws NullPointerException if {@code name} is null
+     * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
+     */
+    public SourceIdentifier(final @NonNull String name, final @Nullable Revision revision) {
+        this(Unqualified.of(name), revision);
     }
 
     /**
