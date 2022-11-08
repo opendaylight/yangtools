@@ -61,7 +61,7 @@ final class GeneratorTask extends ParserConfigAware {
         return factory.parserConfig();
     }
 
-    List<FileState> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
+    List<ResourceState> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
         // Step one: determine what files are going to be generated
         final Stopwatch sw = Stopwatch.createStarted();
         final FileGenerator gen = factory.generator();
@@ -188,10 +188,10 @@ final class GeneratorTask extends ParserConfigAware {
             this.file = requireNonNull(file);
         }
 
-        FileState generateFile() {
+        ResourceState generateFile() {
             try (var out = new CapturingOutputStream(buildContext.newFileOutputStream(target))) {
                 file.writeBody(out);
-                return new FileState(target.getPath(), out.size(), out.crc32c());
+                return new ResourceState(target.getPath(), out.size(), out.crc32c());
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }

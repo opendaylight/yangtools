@@ -65,7 +65,6 @@ class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
     private static final String META_INF_STR = "META-INF";
     private static final String YANG_STR = "yang";
-    private static final String BUILD_CONTEXT_STATE_NAME = YangToSourcesProcessor.class.getName();
 
     static final String META_INF_YANG_STRING = META_INF_STR + File.separator + YANG_STR;
     static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
@@ -114,11 +113,8 @@ class YangToSourcesProcessor {
     }
 
     void conditionalExecute(final boolean skip) throws MojoExecutionException, MojoFailureException {
-        var prevState = buildContext.getValue(BUILD_CONTEXT_STATE_NAME);
-        if (prevState == null) {
-            LOG.debug("{} BuildContext did not provide state", LOG_PREFIX);
-            // FIXME: look for persisted state and restore it
-        }
+
+        final var rebuildContext = new RebuildContext(new File(project.getBuild().getDirectory()), buildContext);
 
         /*
          * Collect all files which affect YANG context. This includes all
@@ -171,34 +167,29 @@ class YangToSourcesProcessor {
             dependencies = ImmutableList.of();
         }
 
+        // register input files
+        rebuildContext.setInputFiles(allFiles);
+
+        // register configurations
+        rebuildContext.setConfigurations(fileGeneratorArgs);
+
         /*
          * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
          * end of execution.
          */
-        if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
+        if (!rebuildContext.hasChanges()) {
             LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
             return;
         }
 
-        final Stopwatch watch = Stopwatch.createStarted();
-        final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
-            .map(file -> {
-                final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
-                try {
-                    return Map.entry(textSource, TextToIRTransformer.transformText(textSource));
-                } catch (YangSyntaxErrorException | IOException e) {
-                    throw new IllegalArgumentException("Failed to parse " + file, e);
-                }
-            })
-            .collect(Collectors.toList());
         LOG.debug("Found project files: {}", yangFilesInProject);
-        LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
+        LOG.info("{} Project model files found: {}", LOG_PREFIX, yangFilesInProject.size());
 
-        final var outputFiles = ImmutableList.<FileState>builder();
+        final var outputFiles = ImmutableList.<ResourceState>builder();
 
         for (YangParserConfiguration parserConfig : parserConfigs) {
-            final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject,
-                parserConfig, dependencies, parsed);
+            final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject, parserConfig,
+                    dependencies);
             if (optReactor.isPresent()) {
                 final ProcessorModuleReactor reactor = optReactor.orElseThrow();
 
@@ -238,21 +229,20 @@ class YangToSourcesProcessor {
         LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
             META_INF_YANG_SERVICES_STRING_JAR);
 
-        final var uniqueOutputFiles = new LinkedHashMap<String, FileState>();
+        final var uniqueOutputFiles = new LinkedHashMap<String, ResourceState>();
         for (var fileHash : outputFiles.build()) {
-            final var prev = uniqueOutputFiles.putIfAbsent(fileHash.path(), fileHash);
+            final var prev = uniqueOutputFiles.putIfAbsent(fileHash.identifier(), fileHash);
             if (prev != null) {
                 throw new MojoFailureException("Duplicate files " + prev + " and " + fileHash);
             }
         }
 
-        // FIXME: store these files into state, so that we can verify/clean up
-        final var outputState = new YangToSourcesState(ImmutableMap.copyOf(uniqueOutputFiles));
-        buildContext.setValue(BUILD_CONTEXT_STATE_NAME, outputState);
-        if (buildContext.getValue(BUILD_CONTEXT_STATE_NAME) == null) {
-            LOG.debug("{} BuildContext did not retain state, persisting", LOG_PREFIX);
-            // FIXME: persist in target/ directory (there is a maven best practice where)
-        }
+        // TODO: add yang files from meta-inf to outputFiles
+        // register output
+        rebuildContext.setOutputFileStates(ImmutableMap.copyOf(uniqueOutputFiles));
+        // TODO: clear outputs remaining from prior build
+        // persist resource states for next build
+        rebuildContext.persistState();
     }
 
     private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException {
@@ -293,15 +283,16 @@ class YangToSourcesProcessor {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private Optional<ProcessorModuleReactor> createReactor(final List<File> yangFilesInProject,
-            final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
-            final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
+            final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies)
+            throws MojoExecutionException {
 
         try {
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             final YangParser parser = parserFactory.createParser(parserConfig);
-            for (final Entry<YangTextSchemaSource, YangIRSchemaSource> entry : parsed) {
-                final YangTextSchemaSource textSource = entry.getKey();
-                final YangIRSchemaSource astSource = entry.getValue();
+
+            for (final File yangFile : yangFilesInProject) {
+                final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(yangFile.toPath());
+                final YangIRSchemaSource astSource = TextToIRTransformer.transformText(textSource);
                 parser.addSource(astSource);
 
                 if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
@@ -313,7 +304,8 @@ class YangToSourcesProcessor {
                 }
             }
 
-            final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
+            final ProcessorModuleReactor reactor =
+                    new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {} with {}", reactor, yangFilesInProject);
             return Optional.of(reactor);
         } catch (IOException | YangSyntaxErrorException | RuntimeException e) {
@@ -344,10 +336,10 @@ class YangToSourcesProcessor {
     /**
      * Call generate on every generator from plugin configuration.
      */
-    private List<FileState> generateSources(final ContextHolder context,
+    private List<ResourceState> generateSources(final ContextHolder context,
             final Collection<GeneratorTaskFactory> generators, final YangParserConfiguration parserConfig)
                 throws MojoFailureException {
-        final var generatorToFiles = ImmutableList.<FileState>builder();
+        final var generatorToFiles = ImmutableList.<ResourceState>builder();
         for (GeneratorTaskFactory factory : generators) {
             if (!parserConfig.equals(factory.parserConfig())) {
                 continue;
@@ -357,7 +349,7 @@ class YangToSourcesProcessor {
             final GeneratorTask task = factory.createTask(project, context);
             LOG.debug("{} Task {} initialized in {}", LOG_PREFIX, task, sw);
 
-            final List<FileState> files;
+            final List<ResourceState> files;
             try {
                 files = task.execute(buildContext);
             } catch (FileGeneratorException | IOException e) {
