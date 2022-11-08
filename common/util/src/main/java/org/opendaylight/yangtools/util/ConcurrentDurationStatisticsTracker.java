@@ -10,19 +10,22 @@ package org.opendaylight.yangtools.util;
 import com.google.common.primitives.UnsignedLong;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 /**
  * Concurrent version of {@link DurationStatisticsTracker}.
  */
 // TODO: once DurationStatsTracker is gone make this class final
 class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
+    private static final VarHandle SUM;
+    private static final VarHandle COUNT;
     private static final VarHandle LONGEST;
     private static final VarHandle SHORTEST;
 
     static {
         final var lookup = MethodHandles.lookup();
         try {
+            SUM = lookup.findVarHandle(ConcurrentDurationStatisticsTracker.class, "sum", long.class);
+            COUNT = lookup.findVarHandle(ConcurrentDurationStatisticsTracker.class, "count", long.class);
             LONGEST = lookup.findVarHandle(
                 ConcurrentDurationStatisticsTracker.class, "longest", DurationWithTime.class);
             SHORTEST = lookup.findVarHandle(
@@ -32,13 +35,8 @@ class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
         }
     }
 
-    private static final AtomicLongFieldUpdater<ConcurrentDurationStatisticsTracker> COUNT_UPDATER =
-            AtomicLongFieldUpdater.newUpdater(ConcurrentDurationStatisticsTracker.class, "count");
-    private static final AtomicLongFieldUpdater<ConcurrentDurationStatisticsTracker> SUM_UPDATER =
-            AtomicLongFieldUpdater.newUpdater(ConcurrentDurationStatisticsTracker.class, "sum");
-
-    private volatile long sum = 0;
-    private volatile long count = 0;
+    private volatile long sum;
+    private volatile long count;
     private volatile DurationWithTime longest;
     private volatile DurationWithTime shortest;
 
@@ -49,8 +47,8 @@ class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
     @Override
     public final void addDuration(final long duration) {
         // First update the quick stats
-        SUM_UPDATER.addAndGet(this, duration);
-        COUNT_UPDATER.incrementAndGet(this);
+        SUM.getAndAdd(this, duration);
+        COUNT.getAndAdd(this, 1L);
 
         /*
          * Now the hairy 'min/max' things. The notion of "now" we cache, so the first time we use it, we do not call it
