@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,8 @@ final class RebuildContext {
     private ImmutableMap<String, FileState> inputFilesStates;
     private ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs;
     private ImmutableMap<String, FileState> outputFileStates;
+
+    private ImmutableList<File> obsoleteFiles;
 
     RebuildContext(final @NonNull File dir, final @NonNull BuildContext buildContext) {
         requireNonNull(dir);
@@ -114,6 +117,19 @@ final class RebuildContext {
         requireNonNull(fileStateMap, "fileStateMap should not be null");
         checkState(outputFileStates == null, "output files state map is already set");
         outputFileStates = fileStateMap;
+        processOutputs();
+    }
+
+    private void processOutputs() {
+        outputFileStates.forEach((path, state) -> {
+            if (!Objects.equals(state, previousState.outputFiles().fileStates().get(path))) {
+                // notify output file added or modified
+                buildContext.refresh(new File(path));
+            }
+        });
+        obsoleteFiles = previousState.outputFiles().fileStates().entrySet().stream()
+                .filter(entry -> !outputFileStates.containsKey(entry.getKey()))
+                .map(entry -> new File(entry.getKey())).collect(ImmutableList.toImmutableList());
     }
 
     /**
@@ -127,7 +143,6 @@ final class RebuildContext {
             || !isSameSetOfFiles(previousState.outputFiles().fileStates().values());
     }
 
-    @VisibleForTesting
     static FileState buildState(final File file) {
         try (var cis = new CapturingInputStream(new FileInputStream(file))) {
             cis.readAllBytes();
@@ -149,5 +164,17 @@ final class RebuildContext {
             }
         }
         return true;
+    }
+
+    public int deleteObsoleteFiles() {
+        if (obsoleteFiles == null) {
+            return 0;
+        }
+        int count = 0;
+        for (File file : obsoleteFiles) {
+            count += file.delete() ? 1 : 0;
+            buildContext.refresh(file);
+        }
+        return count;
     }
 }

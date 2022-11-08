@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
@@ -17,18 +21,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -44,12 +52,18 @@ class RebuildContextTest {
     private static final String IN_FILE2 = "in-file-2";
     private static final String OUT_FILE1 = "out-file-1";
     private static final String OUT_FILE2 = "out-file-2";
+    private static final String OUT_FILE3 = "out-file-3";
+    private static final String OUT_FILE4 = "out-file-4";
     private static final String CONTENT1 = "content-1";
     private static final String CONTENT2 = "content-2";
-    private static final Set<String> ALL_OUTPUTS = Set.of(OUT_FILE1, OUT_FILE2);
+    private static final Set<String> ALL_OUTPUTS = Set.of(OUT_FILE1, OUT_FILE2, OUT_FILE3, OUT_FILE4);
 
     @Mock
     private BuildContext buildContext;
+    @Captor
+    private ArgumentCaptor<File> fileCaptor1;
+    @Captor
+    private ArgumentCaptor<File> fileCaptor2;
 
     @TempDir
     private static File workDir;
@@ -73,7 +87,7 @@ class RebuildContextTest {
             assertTrue(persistenceFile.exists());
         }
         final List<File> inputFiles = createInputFiles(inputDataMap);
-        final ImmutableMap<String, FileState> outputStates = createOutputStates(outputDataMap);
+        final ImmutableMap<String, FileState> outputStates = createOutputStates(outputDataMap, true);
         final RebuildContext rebuildContext = new RebuildContext(workDir, buildContext);
         rebuildContext.setInputFiles(inputFiles);
         rebuildContext.setFileGeneratorArgs(configMap);
@@ -114,28 +128,88 @@ class RebuildContextTest {
                         Map.of(IN_FILE2, CONTENT2), Map.of()));
     }
 
+    @Test
+    @DisplayName("Processing outputs")
+    void outputProcessing() throws Exception {
+        // inputs
+        final List<File> inputFiles = createInputFiles(Map.of(IN_FILE1, CONTENT1));
+        final var configMap = ImmutableMap.of(CONFIG_ID1, CONFIG_ORIGINAL);
+        // output files
+        final File file1 = new File(workDir, OUT_FILE1);
+        final File file2 = new File(workDir, OUT_FILE2);
+        final File file3 = new File(workDir, OUT_FILE3);
+        final File file4 = new File(workDir, OUT_FILE4);
+
+        // first run: created file 1, file2, file3
+        final ImmutableMap<String, FileState> outputStatesBefore = createOutputStates(
+                Map.of(OUT_FILE1, CONTENT1, OUT_FILE2, CONTENT1, OUT_FILE3, CONTENT1), true);
+        assertTrue(file1.exists());
+        assertTrue(file2.exists());
+        assertTrue(file3.exists());
+        // execution circle
+        final RebuildContext rebuildContext = new RebuildContext(workDir, buildContext);
+        rebuildContext.setInputFiles(inputFiles);
+        rebuildContext.setFileGeneratorArgs(configMap);
+        rebuildContext.setOutputFileStates(outputStatesBefore);
+        rebuildContext.deleteObsoleteFiles();
+        rebuildContext.persistState();
+        // ensure output files exist
+        assertTrue(file1.exists());
+        assertTrue(file2.exists());
+        assertTrue(file3.exists());
+        // verify buildContext refreshed on created files
+        verify(buildContext, times(3)).refresh(fileCaptor1.capture());
+        assertEquals(Set.of(file1.getPath(), file2.getPath(), file3.getPath()),
+                fileCaptor1.getAllValues().stream().map(File::getPath).collect(Collectors.toSet()));
+
+        // second run: file1 is obsolete, file2 remain same, file3 updated, file4 added
+        final ImmutableMap<String, FileState> outputStatesAfter = createOutputStates(
+                Map.of(OUT_FILE2, CONTENT1, OUT_FILE3, CONTENT2, OUT_FILE4, CONTENT2), false);
+        assertTrue(file1.exists()); // remain from previous run
+        assertTrue(file2.exists());
+        assertTrue(file3.exists());
+        assertTrue(file4.exists());
+        // execution circle
+        reset(buildContext);
+        final RebuildContext nextRebuildContext = new RebuildContext(workDir, buildContext);
+        nextRebuildContext.setInputFiles(inputFiles);
+        nextRebuildContext.setFileGeneratorArgs(configMap);
+        nextRebuildContext.setOutputFileStates(outputStatesAfter);
+        final int deleted = nextRebuildContext.deleteObsoleteFiles();
+        nextRebuildContext.persistState();
+        // ensure output files exist, obsolete file deleted
+        assertEquals(1, deleted);
+        assertFalse(file1.exists());
+        assertTrue(file2.exists());
+        assertTrue(file3.exists());
+        assertTrue(file4.exists());
+        // verify buildContext refreshed for deleted, updated and added files, not for one  remaining same
+        verify(buildContext, times(3)).refresh(fileCaptor2.capture());
+        assertEquals(Set.of(file1.getPath(), file3.getPath(), file4.getPath()),
+                fileCaptor2.getAllValues().stream().map(File::getPath).collect(Collectors.toSet()));
+    }
+
     private static List<File> createInputFiles(final Map<String, String> nameContentMap) throws IOException {
         final var files = new ArrayList<File>();
         for (var entry : nameContentMap.entrySet()) {
-            Path filePath = workDir.toPath().resolve(entry.getKey());
-            Files.writeString(filePath, entry.getValue(), StandardCharsets.UTF_8);
-            files.add(filePath.toFile());
+            File file = new File(workDir, entry.getKey());
+            Files.writeString(file.toPath(), entry.getValue(), StandardCharsets.UTF_8);
+            files.add(file);
         }
         return files;
     }
 
-    private static ImmutableMap<String, FileState> createOutputStates(final Map<String, String> nameContentMap)
-            throws IOException {
+    private static ImmutableMap<String, FileState> createOutputStates(final Map<String, String> nameContentMap,
+            final boolean removeObsolete) throws IOException {
         final var mapBuilder = ImmutableMap.<String, FileState>builder();
         for (String filename : ALL_OUTPUTS) {
-            final Path filePath = workDir.toPath().resolve(filename);
-            final File file = filePath.toFile();
+            final File file = new File(workDir, filename);
             if (nameContentMap.containsKey(filename)) {
                 // create files if requested
-                Files.writeString(filePath, nameContentMap.get(filename), StandardCharsets.UTF_8);
+                Files.writeString(file.toPath(), nameContentMap.get(filename), StandardCharsets.UTF_8);
                 mapBuilder.put(file.getPath(), RebuildContext.buildState(file));
-            } else {
-                // remove extra output files bc rebuild context checks for prior output file existence
+            } else if (removeObsolete) {
+                // remove extra output files
                 file.delete();
             }
         }
