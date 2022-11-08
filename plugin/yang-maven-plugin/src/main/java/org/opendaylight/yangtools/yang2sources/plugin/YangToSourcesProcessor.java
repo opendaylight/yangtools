@@ -31,7 +31,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -51,6 +50,8 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
+// FIXME: rename to Execution
+// FIXME: final
 class YangToSourcesProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesProcessor.class);
     private static final YangParserFactory DEFAULT_PARSER_FACTORY;
@@ -104,9 +105,10 @@ class YangToSourcesProcessor {
     private final ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs;
     private final @NonNull MavenProject project;
     private final boolean inspectDependencies;
-    private final BuildContext buildContext;
+    private final @NonNull BuildContext buildContext;
     private final YangProvider yangProvider;
     private final StateStorage stateStorage;
+    private final String projectBuildDirectory;
 
     private YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
             final Collection<File> excludedFiles, final List<FileGeneratorArg> fileGeneratorsArgs,
@@ -119,7 +121,8 @@ class YangToSourcesProcessor {
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
-        stateStorage = StateStorage.of(buildContext, stateFilePath(project.getBuild().getDirectory()));
+        projectBuildDirectory = project.getBuild().getDirectory();
+        stateStorage = StateStorage.of(buildContext, stateFilePath(projectBuildDirectory));
         parserFactory = DEFAULT_PARSER_FACTORY;
     }
 
@@ -160,19 +163,17 @@ class YangToSourcesProcessor {
         if (yangFilesInProject.isEmpty()) {
             // No files to process, skip.
             LOG.info("{} No input files found", LOG_PREFIX);
+            // FIXME: YANGTOOLS-745: wipe everything we generated, including state storage
             return;
         }
 
         // We need to instantiate all code generators to determine required import resolution mode
-        final List<GeneratorTask> codeGenerators = instantiateGenerators();
+        final var codeGenerators = instantiateGenerators();
         if (codeGenerators.isEmpty()) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
+            // FIXME: YANGTOOLS-745: wipe everything we generated, including state storage
             return;
         }
-
-        final Set<YangParserConfiguration> parserConfigs = codeGenerators.stream()
-            .map(GeneratorTask::parserConfig)
-            .collect(Collectors.toUnmodifiableSet());
 
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
 
@@ -192,19 +193,8 @@ class YangToSourcesProcessor {
             dependencies = ImmutableList.of();
         }
 
-        /*
-         * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
-         * end of execution.
-         */
-        // FIXME: YANGTOOLS-745: remove this check FileStates instead
-        if (!Stream.concat(yangFilesInProject.stream(), dependencies.stream().map(ScannedDependency::file))
-                .anyMatch(buildContext::hasDelta)) {
-            LOG.info("{} None of {} input files changed", LOG_PREFIX, yangFilesInProject.size() + dependencies.size());
-            return;
-        }
-
-        final Stopwatch watch = Stopwatch.createStarted();
-        // Determine hash/size of YANG input files in parallel
+        // Determine hash/size of YANG input files and dependencies in parallel
+        final var hashTimer = Stopwatch.createStarted();
         final var projectYangs = new FileStateSet(yangFilesInProject.parallelStream()
             .map(file -> {
                 try {
@@ -214,6 +204,44 @@ class YangToSourcesProcessor {
                 }
             })
             .collect(ImmutableMap.toImmutableMap(FileState::path, Function.identity())));
+        // TODO: this produces false positives for Jar files -- there we want to capture the contents of the YANG files,
+        //       not the entire file
+        final var dependencyYangs = new FileStateSet(dependencies.parallelStream()
+            .map(ScannedDependency::file)
+            .map(file -> {
+                try {
+                    return FileState.ofFile(file);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Failed to read " + file, e);
+                }
+            })
+            .collect(ImmutableMap.toImmutableMap(FileState::path, Function.identity())));
+        LOG.debug("{} Input state determined in {}", hashTimer);
+
+        // We have collected our current inputs and previous state. Instantiate a support object which will guide us for
+        // the rest of the way.
+        final var buildSupport = new IncrementalBuildSupport(prevState,
+            codeGenerators.stream()
+                .collect(ImmutableMap.toImmutableMap(GeneratorTask::getIdentifier, GeneratorTask::arg)),
+            projectYangs, dependencyYangs);
+
+        // Check if any inputs changed, which is supposed to be fast. If they did not, we need to also validate our
+        // our previous are also up-to-date.
+        if (!buildSupport.inputsChanged()) {
+            final boolean outputsChanged;
+            try {
+                outputsChanged = buildSupport.outputsChanged(projectBuildDirectory);
+            } catch (IOException e) {
+                throw new MojoFailureException("Failed to reconcile generation outputs", e);
+            }
+
+            if (!outputsChanged) {
+                LOG.info("{}: Everything is up to date", LOG_PREFIX);
+                return;
+            }
+        }
+
+        final Stopwatch watch = Stopwatch.createStarted();
 
         final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
             .map(file -> {
@@ -228,24 +256,9 @@ class YangToSourcesProcessor {
         LOG.debug("Found project files: {}", yangFilesInProject);
         LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
 
-        // Determine hash/size of dependency files
-        // TODO: this produces false positives for Jar files -- there we want to capture the contents of the YANG files,
-        //       not the entire file
-        final var dependencyYangs = new FileStateSet(dependencies.parallelStream()
-            .map(ScannedDependency::file)
-            .map(file -> {
-                try {
-                    return FileState.ofFile(file);
-                } catch (IOException e) {
-                    throw new IllegalStateException("Failed to read " + file, e);
-                }
-            })
-            .collect(ImmutableMap.toImmutableMap(FileState::path, Function.identity())));
-
         final var outputFiles = ImmutableList.<FileState>builder();
         boolean sourcesPersisted = false;
-
-        for (YangParserConfiguration parserConfig : parserConfigs) {
+        for (var parserConfig : codeGenerators.stream().map(GeneratorTask::parserConfig).collect(Collectors.toSet())) {
             final var moduleReactor = createReactor(yangFilesInProject, parserConfig, dependencies, parsed);
             final var yangSw = Stopwatch.createStarted();
 
@@ -309,11 +322,8 @@ class YangToSourcesProcessor {
             }
         }
 
-        final var outputState = new YangToSourcesState(
-            codeGenerators.stream()
-                .collect(ImmutableMap.toImmutableMap(GeneratorTask::getIdentifier, GeneratorTask::arg)),
-            projectYangs, dependencyYangs, new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
-
+        // Reconcile push output files into project directory and acquire the execution state
+        final var outputState = buildSupport.reconcileOutputFiles(uniqueOutputFiles);
         try {
             stateStorage.storeState(outputState);
         } catch (IOException e) {
