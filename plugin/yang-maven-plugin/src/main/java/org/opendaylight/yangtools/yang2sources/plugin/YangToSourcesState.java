@@ -9,29 +9,116 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableMap;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.WritableObject;
+import org.opendaylight.yangtools.concepts.WritableObjects;
 
 /**
  * State of the result of a {@link YangToSourcesMojo} execution run.
  */
-// FIXME: expand to capture:
-//        - input YANG files
-//        - code generators and their config
-record YangToSourcesState(@NonNull FileStateSet outputFiles) implements WritableObject {
+record YangToSourcesState(
+        @NonNull FileStateSet inputFiles,
+        @NonNull ImmutableMap<String, FileGeneratorArg> configurations,
+        @NonNull FileStateSet outputFiles) implements WritableObject {
     YangToSourcesState {
+        requireNonNull(inputFiles);
+        requireNonNull(configurations);
         requireNonNull(outputFiles);
     }
 
     static @NonNull YangToSourcesState readFrom(final DataInput in) throws IOException {
-        return new YangToSourcesState(FileStateSet.readFrom(in));
+        return new YangToSourcesState(FileStateSet.readFrom(in), readConfigurations(in), FileStateSet.readFrom(in));
+    }
+
+    static YangToSourcesState empty() {
+        return new YangToSourcesState(FileStateSet.empty(), ImmutableMap.of(), FileStateSet.empty());
     }
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
+        inputFiles.writeTo(out);
+        writeConfigurations(out, configurations.values());
         outputFiles.writeTo(out);
+    }
+
+    private static void writeConfigurations(final DataOutput out, final Collection<FileGeneratorArg> configurations)
+            throws IOException {
+        out.writeInt(configurations.size());
+        for (var arg : configurations) {
+            arg.writeTo(out);
+        }
+    }
+
+    private static @NonNull ImmutableMap<String, FileGeneratorArg> readConfigurations(final DataInput in)
+            throws IOException {
+        final int size = in.readInt();
+        if (size == 0) {
+            return ImmutableMap.of();
+        }
+        final var configurations = ImmutableMap.<String, FileGeneratorArg>builderWithExpectedSize(size);
+        for (int i = 0; i < size; ++i) {
+            final var arg = FileGeneratorArg.readFrom(in);
+            configurations.put(arg.getIdentifier(), arg);
+        }
+        return configurations.build();
+    }
+
+    private static void writeFileStates(final DataOutput out, final Collection<FileState> items) throws IOException {
+        out.writeInt(items.size());
+        if (items.isEmpty()) {
+            return;
+        }
+
+        final String prefix = findPathPrefix(items);
+        out.writeUTF(prefix);
+        final int cutIndex = prefix.length();
+        for (var item : items) {
+            out.writeUTF(cutIndex == 0 ? item.path() : item.path().substring(cutIndex));
+            WritableObjects.writeLong(out, item.size());
+            out.writeInt(item.crc32());
+        }
+    }
+
+    private static @NonNull ImmutableMap<String, FileState> readFileStates(final DataInput in) throws IOException {
+        final int size = in.readInt();
+        if (size == 0) {
+            return ImmutableMap.of();
+        }
+        final var prefix = in.readUTF();
+        final var states = ImmutableMap.<String,FileState>builderWithExpectedSize(size);
+        for (int i = 0; i < size; ++i) {
+            final var path = prefix + in.readUTF();
+            states.put(path, new FileState(path, WritableObjects.readLong(in), in.readInt()));
+        }
+        return states.build();
+    }
+
+    private static String findPathPrefix(final Collection<FileState> fileStates) {
+        String prefix = null;
+        for (final var fileState : fileStates) {
+            prefix = findCommonPrefix(prefix, fileState.path());
+            if (prefix.isEmpty()) {
+                break;
+            }
+        }
+        return prefix;
+    }
+
+    private static String findCommonPrefix(final String prefix, final String path) {
+        if (prefix == null) {
+            // first element
+            return path;
+        }
+        for (int i = 0; i < Math.min(path.length(), prefix.length()); i++) {
+            if (prefix.charAt(i) != path.charAt(i)) {
+                return prefix.substring(0, i);
+            }
+        }
+        return prefix;
     }
 }
