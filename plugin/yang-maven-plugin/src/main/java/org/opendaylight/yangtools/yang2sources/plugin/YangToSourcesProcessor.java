@@ -171,25 +171,17 @@ class YangToSourcesProcessor {
             return;
         }
 
-        final Stopwatch watch = Stopwatch.createStarted();
-        final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
-            .map(file -> {
-                final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
-                try {
-                    return Map.entry(textSource, TextToIRTransformer.transformText(textSource));
-                } catch (YangSyntaxErrorException | IOException e) {
-                    throw new IllegalArgumentException("Failed to parse " + file, e);
-                }
-            })
-            .collect(Collectors.toList());
         LOG.debug("Found project files: {}", yangFilesInProject);
-        LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
+        LOG.info("{} Project model files found: {}", LOG_PREFIX, yangFilesInProject.size());
 
         // FIXME: store these files into state, so that we can verify/clean up
         final Builder<File> files = ImmutableSet.builder();
+
+        final RebuildContext rebuildContext = new RebuildContext(new File(project.getBuild().getDirectory()));
+
         for (YangParserConfiguration parserConfig : parserConfigs) {
-            final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject,
-                parserConfig, dependencies, parsed);
+            final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject, parserConfig,
+                    dependencies);
             if (optReactor.isPresent()) {
                 final ProcessorModuleReactor reactor = optReactor.orElseThrow();
 
@@ -204,6 +196,9 @@ class YangToSourcesProcessor {
                     } catch (IOException e) {
                         throw new MojoExecutionException("Failed to read reactor " + reactor, e);
                     }
+
+                    // register effective module states
+                    rebuildContext.setModules(holder.getYangModules());
 
                     LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(),
                         sw);
@@ -223,6 +218,9 @@ class YangToSourcesProcessor {
             }
         }
 
+        // persist resource states for next build
+        rebuildContext.persist();
+
         // add META_INF/services
         File generatedServicesDir = new GeneratedDirectories(project).getYangServicesDir();
         YangProvider.setResource(generatedServicesDir, project);
@@ -233,7 +231,7 @@ class YangToSourcesProcessor {
     private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
         // Search for available FileGenerator implementations
         final Map<String, FileGeneratorFactory> factories = Maps.uniqueIndex(
-            ServiceLoader.load(FileGeneratorFactory.class), FileGeneratorFactory::getIdentifier);
+                ServiceLoader.load(FileGeneratorFactory.class), FileGeneratorFactory::getIdentifier);
 
         // FIXME: iterate over fileGeneratorArg instances (configuration), not factories (environment)
         // Assign instantiate FileGenerators with appropriate configuration
@@ -256,11 +254,11 @@ class YangToSourcesProcessor {
 
         // Notify if no factory found for defined identifiers
         fileGeneratorArgs.keySet().forEach(
-            fileGenIdentifier -> {
-                if (!factories.containsKey(fileGenIdentifier)) {
-                    LOG.warn("{} No generator found for identifier {}", LOG_PREFIX, fileGenIdentifier);
+                fileGenIdentifier -> {
+                    if (!factories.containsKey(fileGenIdentifier)) {
+                        LOG.warn("{} No generator found for identifier {}", LOG_PREFIX, fileGenIdentifier);
+                    }
                 }
-            }
         );
 
         return generators;
@@ -268,27 +266,29 @@ class YangToSourcesProcessor {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private Optional<ProcessorModuleReactor> createReactor(final List<File> yangFilesInProject,
-            final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
-            final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
+            final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies)
+            throws MojoExecutionException {
 
         try {
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             final YangParser parser = parserFactory.createParser(parserConfig);
-            for (final Entry<YangTextSchemaSource, YangIRSchemaSource> entry : parsed) {
-                final YangTextSchemaSource textSource = entry.getKey();
-                final YangIRSchemaSource astSource = entry.getValue();
+
+            for (final File yangFile : yangFilesInProject) {
+                final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(yangFile.toPath());
+                final YangIRSchemaSource astSource = TextToIRTransformer.transformText(textSource);
                 parser.addSource(astSource);
 
                 if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
                     // AST indicates a different source identifier, make sure we use that
                     sourcesInProject.add(YangTextSchemaSource.delegateForByteSource(astSource.getIdentifier(),
-                        textSource));
+                            textSource));
                 } else {
                     sourcesInProject.add(textSource);
                 }
             }
 
-            final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
+            final ProcessorModuleReactor reactor =
+                    new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {} with {}", reactor, yangFilesInProject);
             return Optional.of(reactor);
         } catch (IOException | YangSyntaxErrorException | RuntimeException e) {
@@ -296,7 +296,7 @@ class YangToSourcesProcessor {
             LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
             Throwable rootCause = Throwables.getRootCause(e);
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
-                rootCause);
+                    rootCause);
         }
     }
 
