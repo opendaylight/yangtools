@@ -32,11 +32,10 @@ abstract class YangProvider {
             // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
             // This honors setups like a Eclipse-profile derived one
             final File withMetaInf = new File(generatedYangDir, YangToSourcesProcessor.META_INF_YANG_STRING);
-            final var stateListBuilder = ImmutableList.<FileState>builder();
+            final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
 
             for (YangTextSchemaSource source : modelsInProject) {
-                final String fileName = source.getIdentifier().toYangFilename();
-                final File file = new File(withMetaInf, fileName);
+                final File file = new File(withMetaInf, source.getIdentifier().toYangFilename());
                 Files.createParentDirs(file);
 
                 stateListBuilder.add(FileState.ofWrittenFile(file, source::copyTo));

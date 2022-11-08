@@ -34,6 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class AbstractCodeGeneratorTest {
@@ -45,6 +46,8 @@ public abstract class AbstractCodeGeneratorTest {
     private Build build;
     @Mock
     private Plugin plugin;
+    @Mock
+    private BuildContext buildContext;
 
     @Before
     public void before() throws IOException {
