@@ -17,12 +17,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
 import com.google.common.collect.Iterators;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ServiceLoader;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -30,6 +32,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class AbstractCodeGeneratorTest {
@@ -41,6 +44,13 @@ public abstract class AbstractCodeGeneratorTest {
     private Build build;
     @Mock
     private Plugin plugin;
+    @Mock
+    private BuildContext buildContext;
+
+    @Before
+    public void beforeEach() {
+        new File("target/" + RebuildContext.PERSISTENCE_FILE_NAME).delete(); // avoid rebuild context impact
+    }
 
     final YangToSourcesMojo setupMojo(final YangToSourcesProcessor processor) {
         doReturn("target/").when(build).getDirectory();
