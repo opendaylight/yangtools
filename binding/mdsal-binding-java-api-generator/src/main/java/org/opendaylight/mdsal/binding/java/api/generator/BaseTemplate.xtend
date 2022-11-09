@@ -366,14 +366,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
        «ENDFOR»
     '''
 
-    def protected hashCodeResult(Collection<? extends GeneratedProperty> properties) '''
-        final int prime = 31;
-        int result = 1;
-        «FOR property : properties»
-            result = prime * result + «property.importedUtilClass».hashCode(«property.fieldName»);
-        «ENDFOR»
-    '''
-
     def protected final generateAnnotation(AnnotationType annotation) '''
         @«annotation.importedName»
         «IF annotation.parameters !== null && !annotation.parameters.empty»
