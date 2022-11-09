@@ -7,21 +7,18 @@
  */
 package org.opendaylight.mdsal.binding.test.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.put.top.input.choice.list.choice.in.choice.list.ComplexViaUses;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.put.top.input.choice.list.choice.in.choice.list.ComplexViaUsesBuilder;
 
 public class TestCopyBuilders {
-
     @Test
     public void testBuilderListCopy() {
-        final TreeComplexUsesAugment source = new TreeComplexUsesAugmentBuilder().build();
-        final ComplexViaUses viaUses = new ComplexViaUsesBuilder().build();
-        final TreeComplexUsesAugment copied = new TreeComplexUsesAugmentBuilder(viaUses).build();
+        final var source = new TreeComplexUsesAugmentBuilder().build();
+        final var viaUses = new ComplexViaUsesBuilder().build();
+        final var copied = new TreeComplexUsesAugmentBuilder(viaUses).build();
         assertEquals(source, copied);
     }
 }

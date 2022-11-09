@@ -7,46 +7,40 @@
  */
 package org.opendaylight.mdsal.binding.test.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Test;
-import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.Def;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.DefBuilder;
-import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.Lst;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstBuilder;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstKey;
-import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal298.rev180129.Container;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal298.rev180129.ContainerBuilder;
-import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal298.rev180129.container.Keyed;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal298.rev180129.container.KeyedBuilder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal298.rev180129.container.KeyedKey;
-import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal298.rev180129.container.Unkeyed;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal298.rev180129.container.UnkeyedBuilder;
-import org.opendaylight.yang.gen.v1.urn.test.pattern.rev170101.Cont;
 import org.opendaylight.yang.gen.v1.urn.test.pattern.rev170101.ContBuilder;
 
 public class TestListSquashing {
     @Test
     public void testEmptyLeafList() {
-        final Cont obj = new ContBuilder().setTest3(Set.of()).build();
+        final var obj = new ContBuilder().setTest3(Set.of()).build();
         // Eventhough return type is Set, it should be retained
         assertEquals(Set.of(), obj.getTest3());
     }
 
     @Test
     public void testEmptyUserOrderedLeafList() {
-        final Cont obj = new ContBuilder().setTest4(List.of()).build();
+        final var obj = new ContBuilder().setTest4(List.of()).build();
         // Eventhough return type is List, it should be retained
         assertEquals(List.of(), obj.getTest4());
     }
 
     @Test
     public void testEmptyUserOrderedList() {
-        final Container cont = new ContainerBuilder()
+        final var cont = new ContainerBuilder()
                 .setKeyed(List.of())
                 .setUnkeyed(List.of())
                 .build();
@@ -57,9 +51,9 @@ public class TestListSquashing {
 
     @Test
     public void testUserOrderedList() {
-        final Keyed keyed = new KeyedBuilder().withKey(new KeyedKey("a")).build();
-        final Unkeyed unkeyed = new UnkeyedBuilder().build();
-        final Container cont = new ContainerBuilder()
+        final var keyed = new KeyedBuilder().withKey(new KeyedKey("a")).build();
+        final var unkeyed = new UnkeyedBuilder().build();
+        final var cont = new ContainerBuilder()
                 .setKeyed(List.of(keyed))
                 .setUnkeyed(List.of(unkeyed))
                 .build();
@@ -70,15 +64,15 @@ public class TestListSquashing {
 
     @Test
     public void testEmptySystemOrderedList() {
-        final Def cont = new DefBuilder().setLst(Map.of()).build();
+        final var def = new DefBuilder().setLst(Map.of()).build();
         // Empty Map should become null
-        assertNull(cont.getLst());
+        assertNull(def.getLst());
     }
 
     @Test
     public void testSystemOrderedList() {
-        final Lst lst = new LstBuilder().withKey(new LstKey("a")).build();
-        final Def cont = new DefBuilder().setLst(Map.of(lst.key(), lst)).build();
+        final var lst = new LstBuilder().withKey(new LstKey("a")).build();
+        final var cont = new DefBuilder().setLst(Map.of(lst.key(), lst)).build();
         // Non-empty Map should be retained
         assertEquals(Map.of(lst.key(), lst), cont.getLst());
     }

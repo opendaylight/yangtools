@@ -7,13 +7,13 @@
  */
 package org.opendaylight.mdsal.binding.test.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.lal.norev.Foo;
 import org.opendaylight.yang.gen.v1.lal.norev.FooBuilder;
 import org.opendaylight.yang.gen.v1.lal.norev.foo.Bar;

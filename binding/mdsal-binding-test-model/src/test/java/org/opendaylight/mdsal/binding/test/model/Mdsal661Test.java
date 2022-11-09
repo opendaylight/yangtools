@@ -7,10 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.test.model;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal661.norev.Foo;
 
 public class Mdsal661Test {
