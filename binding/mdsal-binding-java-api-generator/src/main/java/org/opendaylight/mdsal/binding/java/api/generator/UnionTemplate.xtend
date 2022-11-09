@@ -68,7 +68,9 @@ class UnionTemplate extends ClassTemplate {
             «val propertyAndTopParentProperties = parentProperties + #[property]»
             «val propFieldName = property.fieldName»
             public «type.name»(«propertyAndTopParentProperties.asArgumentsDeclaration») {
-                super(«parentProperties.asArguments»);
+                «IF !parentProperties.empty»
+                    super(«parentProperties.asArguments»);
+                «ENDIF»
                 «IF restrictions !== null»
                     «checkArgument(property, restrictions, actualType, propFieldName)»
                 «ENDIF»
