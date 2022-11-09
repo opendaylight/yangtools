@@ -91,6 +91,10 @@ class JavaFileTemplate {
      */
     static final @NonNull JavaTypeName NSEE = JavaTypeName.create(NoSuchElementException.class);
     /**
+     * {@code java.lang.Object} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName OBJECT = JavaTypeName.create(Object.class);
+    /**
      * {@code java.lang.Override} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);

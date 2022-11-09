@@ -572,7 +572,7 @@ class ClassTemplate extends BaseTemplate {
     def private generateEquals() '''
         «IF !genTO.equalsIdentifiers.empty»
             @«OVERRIDE.importedName»
-            public final boolean equals(java.lang.Object obj) {
+            public final boolean equals(«OBJECT.importedName» obj) {
                 if (this == obj) {
                     return true;
                 }
