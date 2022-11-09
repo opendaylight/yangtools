@@ -72,10 +72,11 @@ class UnionTemplate extends ClassTemplate {
                 «IF restrictions !== null»
                     «checkArgument(property, restrictions, actualType, propFieldName)»
                 «ENDIF»
-                this.«propFieldName» = «JU_OBJECTS.importedName».requireNonNull(«propFieldName»);
                 «FOR other : finalProperties»
-                    «IF !property.equals(other)»
-                         this.«other.fieldName» = null;
+                    «IF property.equals(other)»
+                        this.«propFieldName» = «JU_OBJECTS.importedName».requireNonNull(«propFieldName»);
+                    «ELSE»
+                        this.«other.fieldName» = null;
                     «ENDIF»
                 «ENDFOR»
             }
