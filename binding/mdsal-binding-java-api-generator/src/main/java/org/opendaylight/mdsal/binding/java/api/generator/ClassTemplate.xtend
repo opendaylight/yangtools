@@ -573,20 +573,11 @@ class ClassTemplate extends BaseTemplate {
         «IF !genTO.equalsIdentifiers.empty»
             @«OVERRIDE.importedName»
             public final boolean equals(«OBJECT.importedName» obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if (!(obj instanceof «type.name»)) {
-                    return false;
-                }
-                final «type.name» other = («type.name») obj;
+                return this == obj || obj instanceof «type.name» other
                 «FOR property : genTO.equalsIdentifiers»
                     «val fieldName = property.fieldName»
-                    if (!«property.importedUtilClass».equals(«fieldName», other.«fieldName»)) {
-                        return false;
-                    }
-                «ENDFOR»
-                return true;
+                        && «property.importedUtilClass».equals(«fieldName», other.«fieldName»)«
+                »«ENDFOR»;
             }
         «ENDIF»
     '''
