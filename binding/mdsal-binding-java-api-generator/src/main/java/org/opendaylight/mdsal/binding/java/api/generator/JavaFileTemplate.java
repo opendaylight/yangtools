@@ -272,7 +272,18 @@ class JavaFileTemplate {
      * @return Imported class name
      */
     final String importedUtilClass(final GeneratedProperty property) {
-        return importedName(property.getReturnType().getName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
+        return importedUtilClass(property.getReturnType());
+    }
+
+    /**
+     * Return imported name of java.util class, whose hashCode/equals methods we want to invoke for a type. Returns
+     * {@link Arrays} if the type is an array, {@link Objects} otherwise.
+     *
+     * @param returnType A property return Type
+     * @return Imported class name
+     */
+    final String importedUtilClass(final Type returnType) {
+        return importedName(returnType.getName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
     }
 
     final String generatedAnnotation() {

@@ -47,6 +47,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
+import org.opendaylight.mdsal.binding.model.ri.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.common.Empty
 
@@ -574,10 +575,15 @@ class ClassTemplate extends BaseTemplate {
             @«OVERRIDE.importedName»
             public final boolean equals(«OBJECT.importedName» obj) {
                 return this == obj || obj instanceof «type.name» other
-                «FOR property : genTO.equalsIdentifiers»
-                    «val fieldName = property.fieldName»
-                        && «property.importedUtilClass».equals(«fieldName», other.«fieldName»)«
-                »«ENDFOR»;
+                    «FOR property : genTO.equalsIdentifiers»
+                        «val fieldName = property.fieldName»
+                        «val type = property.returnType»
+                        «IF type.equals(Types.primitiveBooleanType)»
+                            && «fieldName» == other.«fieldName»«
+                        »«ELSE»
+                            && «type.importedUtilClass».equals(«fieldName», other.«fieldName»)«
+                        »«ENDIF»«
+                    »«ENDFOR»;
             }
         «ENDIF»
     '''
