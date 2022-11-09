@@ -66,12 +66,13 @@ class UnionTemplate extends ClassTemplate {
                 «generateCheckers(property, restrictions, actualType)»
             «ENDIF»
             «val propertyAndTopParentProperties = parentProperties + #[property]»
+            «val propFieldName = property.fieldName»
             public «type.name»(«propertyAndTopParentProperties.asArgumentsDeclaration») {
                 super(«parentProperties.asArguments»);
                 «IF restrictions !== null»
-                    «checkArgument(property, restrictions, actualType, property.fieldName)»
+                    «checkArgument(property, restrictions, actualType, propFieldName)»
                 «ENDIF»
-                this.«property.fieldName» = «property.fieldName»;
+                this.«propFieldName» = «JU_OBJECTS.importedName».requireNonNull(«propFieldName»);
                 «FOR other : finalProperties»
                     «IF !property.equals(other)»
                          this.«other.fieldName» = null;
