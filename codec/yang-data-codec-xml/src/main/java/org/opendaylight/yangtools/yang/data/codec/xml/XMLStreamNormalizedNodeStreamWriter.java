@@ -20,6 +20,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -98,9 +99,10 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
-            final EffectiveModelContext context, final Absolute path) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
-            NormalizedNodeStreamWriterStack.of(context, path));
+            final EffectiveModelContext context, final @Nullable Absolute path) {
+        return path == null ? create(writer, context)
+            : new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
+                NormalizedNodeStreamWriterStack.of(context));
     }
 
     /**
