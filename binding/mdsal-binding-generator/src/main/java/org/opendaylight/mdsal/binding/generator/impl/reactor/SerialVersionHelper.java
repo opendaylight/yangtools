@@ -16,7 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import org.opendaylight.mdsal.binding.model.api.AccessModifier;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
@@ -88,7 +87,7 @@ public final class SerialVersionHelper {
             return input;
         }
 
-        final List<T> ret = new ArrayList<>(input);
+        final var ret = new ArrayList<>(input);
         ret.sort(comparator);
         return ret;
     }
