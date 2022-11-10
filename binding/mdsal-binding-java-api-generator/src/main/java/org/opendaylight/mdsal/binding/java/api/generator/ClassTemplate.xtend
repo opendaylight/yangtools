@@ -44,6 +44,7 @@ import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
@@ -67,6 +68,10 @@ class ClassTemplate extends BaseTemplate {
         UINT16_TYPE,
         UINT32_TYPE,
         UINT64_TYPE)
+    /**
+     * {@code java.lang.Boolean} as a JavaTypeName.
+     */
+    static val BOOLEAN = JavaTypeName.create(Boolean)
 
     protected val List<GeneratedProperty> properties
     protected val List<GeneratedProperty> finalProperties
@@ -544,7 +549,8 @@ class ClassTemplate extends BaseTemplate {
      * @return string with the <code>hashCode()</code> method definition in JAVA format
      */
     def protected generateHashCode() {
-        val size = genTO.hashCodeIdentifiers.size
+        val props = genTO.hashCodeIdentifiers
+        val size = props.size
         if (size == 0) {
             return ""
         }
@@ -554,15 +560,28 @@ class ClassTemplate extends BaseTemplate {
                 «IF size != 1»
                     final int prime = 31;
                     int result = 1;
-                    «FOR property : genTO.hashCodeIdentifiers»
-                        result = prime * result + «property.importedUtilClass».hashCode(«property.fieldName»);
+                    «FOR property : props»
+                        result = prime * result + «property.importedHashCodeUtilClass».hashCode(«property.fieldName»);
                     «ENDFOR»
                     return result;
                 «ELSE»
-                    return «CODEHELPERS.importedName».wrapperHashCode(«genTO.hashCodeIdentifiers.get(0).fieldName»);
+                    «val prop = props.get(0)»
+                    «IF prop.returnType.equals(Types.primitiveBooleanType())»
+                        return «BOOLEAN.importedName».hashCode(«prop.fieldName»);
+                    «ELSE»
+                        return «CODEHELPERS.importedName».wrapperHashCode(«prop.fieldName»);
+                    «ENDIF»
                 «ENDIF»
             }
         '''
+    }
+
+    def private importedHashCodeUtilClass(GeneratedProperty prop) {
+        val propType = prop.returnType
+        if (propType.equals(Types.primitiveBooleanType)) {
+            return BOOLEAN.importedName
+        }
+        return propType.importedUtilClass
     }
 
     /**
