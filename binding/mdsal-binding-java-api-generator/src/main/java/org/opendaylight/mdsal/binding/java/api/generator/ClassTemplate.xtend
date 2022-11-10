@@ -613,12 +613,19 @@ class ClassTemplate extends BaseTemplate {
             public «STRING.importedName» toString() {
                 final var helper = «MOREOBJECTS.importedName».toStringHelper(«type.importedName».class);
                 «FOR property : properties»
-                    «CODEHELPERS.importedName».appendValue(helper, "«property.name»", «property.fieldName»);
+                    «CODEHELPERS.importedName».«property.valueAppender»(helper, "«property.name»", «property.fieldName»);
                 «ENDFOR»
                 return helper.toString();
             }
         «ENDIF»
     '''
+
+    def private valueAppender(GeneratedProperty prop) {
+        if (prop.returnType.equals(Types.primitiveBooleanType())) {
+            return "appendBit"
+        }
+        return "appendValue"
+    }
 
     def GeneratedProperty getPropByName(String name) {
         for (GeneratedProperty prop : allProperties) {

@@ -94,6 +94,20 @@ public final class CodeHelpers {
     }
 
     /**
+     * Append a {@code bits} individual value. If the value is {@code false}, this method does nothing.
+     *
+     * @param helper Helper to append to
+     * @param name Name of the bit
+     * @param value Value to append
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public static void appendBit(final ToStringHelper helper, final @NonNull String name, final boolean value) {
+        if (value) {
+            helper.addValue(name);
+        }
+    }
+
+    /**
      * Append a named value to a ToStringHelper. If the value is null, this method does nothing.
      *
      * @param helper Helper to append to
