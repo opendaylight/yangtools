@@ -22,8 +22,14 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -44,6 +50,8 @@ class RebuildContext {
     private final File persistenceFile;
     private final Map<String, ResourceState> configStateMap = new HashMap<>();
     private final Map<QNameModule, ResourceState> moduleStateMap = new HashMap<>();
+    private final Map<String, Set<String>> outputFilesMap = new HashMap<>();
+    private final Set<String> oboleteFiles = new HashSet<>();
 
     RebuildContext(final File dir) {
         requireNonNull(dir, "dir should not be null");
@@ -59,6 +67,7 @@ class RebuildContext {
                 final RebuildContextData data = (RebuildContextData) ois.readObject();
                 configStateMap.putAll(data.getConfigStateMap());
                 moduleStateMap.putAll(data.getModuleStateMap());
+                outputFilesMap.putAll(data.getOutputFilesMap());
             } catch (IOException | ClassNotFoundException e) {
                 LOGGER.warn("Could not load from rebuild context file", e);
             }
@@ -75,6 +84,7 @@ class RebuildContext {
             final RebuildContextData data = new RebuildContextData();
             data.setModuleStateMap(moduleStateMap);
             data.setConfigStateMap(configStateMap);
+            data.setOutputFilesMap(outputFilesMap);
             oos.writeObject(data);
         } catch (IOException e) {
             LOGGER.warn("Could not persist rebuild context file", e);
@@ -91,7 +101,7 @@ class RebuildContext {
         checkArgument(!configMap.isEmpty(), "configmap should not be empty");
         final Map<String, ResourceState> newStateMap = configMap.entrySet().stream()
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey,
+                        Entry::getKey,
                         entry -> buildResourceState(entry.getValue(), configStateMap.get(entry.getKey()))
                 ));
         configStateMap.clear();
@@ -132,7 +142,7 @@ class RebuildContext {
      * @return true if there is any update found in configuration; false otherwise
      */
     boolean isConfigurationContextChanged(final String configId) {
-        requireNonNull(configId, "configId cannot be null");
+        requireNonNull(configId, "configId should be null");
         return !configStateMap.containsKey(configId) || configStateMap.get(configId).isModified();
     }
 
@@ -141,7 +151,6 @@ class RebuildContext {
      *
      * @return true if there is any update found in any module; false otherwise
      */
-
     boolean isModuleContextChanged() {
         for (ResourceState state : moduleStateMap.values()) {
             if (state.isModified()) {
@@ -151,11 +160,55 @@ class RebuildContext {
         return false;
     }
 
+    /**
+     * Updates information on output files created during current build.
+     *
+     * @param configId configuration Id
+     * @param outputFiles output files
+     */
+    void setOutputFiles(final String configId, final Collection<File> outputFiles) {
+        requireNonNull(configId, "configId should be null");
+        requireNonNull(configId, "outputFiles should be null");
+        final Set<String> priorFilePaths = Set.copyOf(outputFilesMap.getOrDefault(configId, Set.of()));
+        final Set<String> newFilePaths = outputFiles.stream().map(File::getAbsolutePath).collect(Collectors.toSet());
+        outputFilesMap.put(configId, newFilePaths);
+        priorFilePaths.stream().filter(path -> !newFilePaths.contains(path)).forEach(oboleteFiles::add);
+    }
+
+    /**
+     * Collects obsolete files via comparison of outputs from prior build and current one;
+     * also takes into account removed configurations.
+     *
+     * @return collection of existing files which are obsolete and safe to remove.
+     */
+    Collection<File> getObsoleteFiles() {
+        // include files of removed configurations
+        for (Iterator<Entry<String, Set<String>>> it = outputFilesMap.entrySet().iterator(); it.hasNext(); ) {
+            final Entry<String, Set<String>> entry = it.next();
+            if (!configStateMap.containsKey(entry.getKey())) {
+                it.remove();
+                entry.getValue().forEach(oboleteFiles::add);
+            }
+        }
+        // exclude non-existing files
+        final List<File> result = new LinkedList<>();
+        for (Iterator<String> it = oboleteFiles.iterator(); it.hasNext(); ) {
+            final File file = new File(it.next());
+            if (file.exists()) {
+                result.add(file);
+            } else {
+                it.remove();
+            }
+        }
+        return result;
+    }
+
     private static class RebuildContextData implements Serializable {
         private static final long serialVersionUID = 1L;
 
         private Map<String, ResourceState> configStateMap = new HashMap<>();
         private Map<QNameModule, ResourceState> moduleStateMap = new HashMap<>();
+        private Map<String, Set<String>> outputFilesMap = new HashMap<>();
 
         public Map<String, ResourceState> getConfigStateMap() {
             return configStateMap;
@@ -171,6 +224,14 @@ class RebuildContext {
 
         public void setModuleStateMap(Map<QNameModule, ResourceState> moduleStateMap) {
             this.moduleStateMap = moduleStateMap;
+        }
+
+        public Map<String, Set<String>> getOutputFilesMap() {
+            return outputFilesMap;
+        }
+
+        public void setOutputFilesMap(Map<String, Set<String>> outputFilesMap) {
+            this.outputFilesMap = outputFilesMap;
         }
     }
 
