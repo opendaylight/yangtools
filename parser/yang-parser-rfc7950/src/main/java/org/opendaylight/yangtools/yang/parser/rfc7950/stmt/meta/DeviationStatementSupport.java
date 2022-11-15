@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -29,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class DeviationStatementSupport
@@ -53,9 +56,17 @@ public final class DeviationStatementSupport
     public void onFullDefinitionDeclared(final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
         super.onFullDefinitionDeclared(ctx);
 
-        final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot());
-        final QNameModule targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
+        StmtContext<?, ?, ?> root = ctx.getRoot();
+        if (root.producesDeclared(SubmoduleStatement.class)) {
+            // root is submodule, we need to find the module we belong to. We can rely on there being exactly one
+            // belongs-to statement, enforced SubmoduleStatementSupport's validator.
+            root = Iterables.getOnlyElement(
+                root.getAllFromNamespace(BelongsToPrefixToModuleCtx.class).values());
+        }
 
+        final var currentModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, root),
+            "Failed to find QName for %s", root);
+        final var targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx,
                     "Deviation must not target the same module as the one it is defined in: %s", currentModule);

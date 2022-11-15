@@ -1,0 +1,17 @@
+submodule foo-submodule {
+  yang-version 1.1;
+
+  belongs-to foo {
+    prefix foo;
+  }
+
+  import bar {
+    prefix bar;
+  }
+
+  revision 2020-10-21;
+
+  deviation "/bar:object/bar:items/bar:boolean" {
+    deviate not-supported ;
+  }
+}
