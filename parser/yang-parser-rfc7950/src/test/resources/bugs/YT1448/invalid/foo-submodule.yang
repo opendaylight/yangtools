@@ -1,0 +1,13 @@
+submodule foo-submodule {
+  yang-version 1.1;
+
+  belongs-to foo {
+    prefix foo;
+  }
+
+  revision 2020-10-21;
+
+  deviation "/foo:object/foo:items/foo:boolean" {
+    deviate not-supported ;
+  }
+}
