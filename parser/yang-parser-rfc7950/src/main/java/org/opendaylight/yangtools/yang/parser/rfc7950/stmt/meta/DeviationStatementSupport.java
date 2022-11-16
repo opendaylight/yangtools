@@ -50,8 +50,9 @@ public final class DeviationStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(
-            final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
+    public void onFullDefinitionDeclared(final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
+        super.onFullDefinitionDeclared(ctx);
+
         final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot());
         final QNameModule targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
 
