@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.generator.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT;
-import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.TYPE_OBJECT;
+import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.UNION_TYPE_OBJECT;
 
 import java.util.List;
 import org.junit.AfterClass;
@@ -78,7 +78,7 @@ public class Mdsal406TypeObjectTest {
         assertNotNull(typedefType.getImplements());
         Type objectType = typedefType.getImplements().stream()
                 .filter(type -> type.getFullyQualifiedName()
-                        .equals("org.opendaylight.yangtools.yang.binding.TypeObject")).findAny().get();
-        assertEquals(TYPE_OBJECT, objectType);
+                        .equals("org.opendaylight.yangtools.yang.binding.UnionTypeObject")).findAny().get();
+        assertEquals(UNION_TYPE_OBJECT, objectType);
     }
 }

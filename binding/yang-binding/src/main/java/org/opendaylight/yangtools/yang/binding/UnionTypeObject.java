@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 ZTE Corp. and others.  All rights reserved.
+ * Copyright (c) 2022 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,11 +8,8 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * TypeObject is a mark interface for all derived types.
- *
- * @author Jie Han
+ * A {@link TypeObject} corresponding to a {@code type union}.
  */
-public sealed interface TypeObject extends BindingObject
-    permits BitsTypeObject, Enumeration, ScalarTypeObject, UnionTypeObject {
+public non-sealed interface UnionTypeObject extends TypeObject {
 
 }

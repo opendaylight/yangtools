@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * Interface implemented by all {@link TypeObject}s generated for {@code type bits}.
  */
-public interface BitsTypeObject extends TypeObject {
+public non-sealed interface BitsTypeObject extends TypeObject {
     /**
      * Return the set of strings which are valid {@code bit} names for this type. The iteration order of the returned
      * set is required to match effective bit {@code position} assignment.

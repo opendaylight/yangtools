@@ -28,7 +28,7 @@ import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 
 public final class SerialVersionHelper {
     private static final Set<ConcreteType> IGNORED_INTERFACES =
-        Set.of(BindingTypes.TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT);
+        Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<TypeMemberBuilder<?>> SUID_MEMBER_COMPARATOR =
         Comparator.comparing(TypeMemberBuilder::getName);
     private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::getFullyQualifiedName);

@@ -691,7 +691,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             final TypeEffectiveStatement<?> type, final boolean isTypedef, final TypeDefinition<?> typedef) {
         final GeneratedUnionBuilder builder = builderFactory.newGeneratedUnionBuilder(typeName);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
-        builder.addImplementsType(BindingTypes.TYPE_OBJECT);
+        builder.addImplementsType(BindingTypes.UNION_TYPE_OBJECT);
         builder.setIsUnion(true);
 
 //        builder.setSchemaPath(typedef.getPath());

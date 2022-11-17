@@ -12,7 +12,8 @@ package org.opendaylight.yangtools.yang.binding;
  *
  * @author Robert Varga
  */
-public interface Enumeration extends TypeObject {
+// FIXME: 12.0.0: rename to EnumTypeObject
+public non-sealed interface Enumeration extends TypeObject {
     /**
      * Returns the assigned name of the enumeration item as it is specified in the input YANG.
      *

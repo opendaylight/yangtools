@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.yang.binding.TypeObject;
+import org.opendaylight.yangtools.yang.binding.UnionTypeObject;
 import org.opendaylight.yangtools.yang.binding.YangFeature;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -58,7 +58,6 @@ public final class BindingTypes {
     public static final ConcreteType BASE_IDENTITY = typeForClass(BaseIdentity.class);
     public static final ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
-    public static final ConcreteType TYPE_OBJECT = typeForClass(TypeObject.class);
     public static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
     @Deprecated(since = "10.0.0", forRemoval = true)
     public static final ConcreteType NOTIFICATION_LISTENER = typeForClass(NotificationListener.class);
@@ -68,6 +67,7 @@ public final class BindingTypes {
     public static final ConcreteType RPC_SERVICE = typeForClass(RpcService.class);
     public static final ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
     public static final ConcreteType BITS_TYPE_OBJECT = typeForClass(BitsTypeObject.class);
+    public static final ConcreteType UNION_TYPE_OBJECT = typeForClass(UnionTypeObject.class);
     public static final ConcreteType INSTANCE_IDENTIFIER = typeForClass(InstanceIdentifier.class);
     public static final ConcreteType KEYED_INSTANCE_IDENTIFIER = typeForClass(KeyedInstanceIdentifier.class);
 

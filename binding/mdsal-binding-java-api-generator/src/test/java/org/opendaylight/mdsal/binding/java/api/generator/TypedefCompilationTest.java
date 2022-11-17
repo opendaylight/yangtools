@@ -81,7 +81,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsField(bitsExtClass, "_sfmof", boolean.class);
         CompilationTestUtils.assertContainsField(bitsExtClass, "_sfapc", boolean.class);
         CompilationTestUtils.assertContainsFieldWithValue(bitsExtClass, "serialVersionUID", Long.TYPE,
-            7934653360983102096L, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class,
+            -2922917845344851623L, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class,
             boolean.class, boolean.class);
 
         assertEquals(9, bitsExtClass.getDeclaredFields().length);
