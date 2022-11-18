@@ -13,12 +13,12 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.binding.Enumeration;
+import org.opendaylight.yangtools.yang.binding.EnumTypeObject;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 public class EnumerationCodecTest {
-    private enum TestEnum implements Enumeration {
+    private enum TestEnum implements EnumTypeObject {
         ENUM;
 
         @Override

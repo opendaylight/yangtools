@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.Enumeration;
+import org.opendaylight.yangtools.yang.binding.EnumTypeObject;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.slf4j.Logger;
@@ -56,9 +56,9 @@ final class EnumerationCodec extends SchemaUnawareCodec {
 
             final Map<String, Enum<?>> mapping = Maps.uniqueIndex(Arrays.asList(enumType.getEnumConstants()),
                 value -> {
-                    checkArgument(value instanceof Enumeration,
-                        "Enumeration constant %s.%s is not implementing Enumeration", enumType.getName(), value);
-                    return ((Enumeration) value).getName();
+                    checkArgument(value instanceof EnumTypeObject,
+                        "Enumeration constant %s.%s is not implementing EnumTypeObject", enumType.getName(), value);
+                    return ((EnumTypeObject) value).getName();
                 });
 
             // Check if mapping is a bijection

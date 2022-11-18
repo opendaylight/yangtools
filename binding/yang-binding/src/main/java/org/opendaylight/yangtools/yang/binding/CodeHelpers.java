@@ -383,7 +383,7 @@ public final class CodeHelpers {
     }
 
     /**
-     * Check that the specified {@link Enumeration} object is not {@code null}. This method is meant to be used with
+     * Check that the specified {@link EnumTypeObject} object is not {@code null}. This method is meant to be used with
      * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
      *
      * @param obj enumeration object, possibly null
@@ -391,7 +391,7 @@ public final class CodeHelpers {
      * @return Enumeration object
      * @throws IllegalArgumentException if {@code obj} is null
      */
-    public static <T extends Enumeration> @NonNull T checkEnum(final @Nullable T obj, final String name) {
+    public static <T extends EnumTypeObject> @NonNull T checkEnum(final @Nullable T obj, final String name) {
         if (obj == null) {
             throw new IllegalArgumentException("\"" + name + "\" is not a valid name");
         }
@@ -399,7 +399,7 @@ public final class CodeHelpers {
     }
 
     /**
-     * Check that the specified {@link Enumeration} object is not {@code null}. This method is meant to be used with
+     * Check that the specified {@link EnumTypeObject} object is not {@code null}. This method is meant to be used with
      * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
      *
      * @param obj enumeration object, possibly null
@@ -407,7 +407,7 @@ public final class CodeHelpers {
      * @return Enumeration object
      * @throws IllegalArgumentException if {@code obj} is null
      */
-    public static <T extends Enumeration> @NonNull T checkEnum(final @Nullable T obj, final int value) {
+    public static <T extends EnumTypeObject> @NonNull T checkEnum(final @Nullable T obj, final int value) {
         if (obj == null) {
             throw new IllegalArgumentException(value + " is not a valid value");
         }

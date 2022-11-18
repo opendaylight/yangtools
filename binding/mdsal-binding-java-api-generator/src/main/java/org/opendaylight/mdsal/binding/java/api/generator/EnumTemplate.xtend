@@ -12,11 +12,15 @@ import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName
+import org.opendaylight.yangtools.yang.binding.EnumTypeObject
 
 /**
  * Template for generating JAVA enumeration type.
  */
 class EnumTemplate extends BaseTemplate {
+    static val ENUM_TYPE_OBJECT = JavaTypeName.create(EnumTypeObject)
+
     /**
      * Enumeration which will be transformed to JAVA source code for enumeration
      */
@@ -66,7 +70,7 @@ class EnumTemplate extends BaseTemplate {
     override body() '''
         «enums.formatDataForJavaDoc.wrapToDocumentation»
         «generatedAnnotation»
-        public enum «enums.name» implements «org.opendaylight.yangtools.yang.binding.Enumeration.importedName» {
+        public enum «enums.name» implements «ENUM_TYPE_OBJECT.importedName» {
             «writeEnumeration(enums)»
 
             private final «STRING.importedNonNull» name;

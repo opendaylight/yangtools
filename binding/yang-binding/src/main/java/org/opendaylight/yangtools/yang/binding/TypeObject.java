@@ -13,6 +13,6 @@ package org.opendaylight.yangtools.yang.binding;
  * @author Jie Han
  */
 public sealed interface TypeObject extends BindingObject
-    permits BitsTypeObject, Enumeration, ScalarTypeObject, UnionTypeObject {
+    permits BitsTypeObject, EnumTypeObject, ScalarTypeObject, UnionTypeObject {
 
 }

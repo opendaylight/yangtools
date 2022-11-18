@@ -68,7 +68,7 @@ public class CodeHelpersTest {
         final var ex = assertThrows(IllegalArgumentException.class, () -> CodeHelpers.checkEnum(null, "xyzzy"));
         assertEquals("\"xyzzy\" is not a valid name", ex.getMessage());
 
-        final var obj = mock(Enumeration.class);
+        final var obj = mock(EnumTypeObject.class);
         assertSame(obj, CodeHelpers.checkEnum(obj, "xyzzy"));
     }
 
@@ -77,7 +77,7 @@ public class CodeHelpersTest {
         final var ex = assertThrows(IllegalArgumentException.class, () -> CodeHelpers.checkEnum(null, 1234));
         assertEquals("1234 is not a valid value", ex.getMessage());
 
-        final var obj = mock(Enumeration.class);
+        final var obj = mock(EnumTypeObject.class);
         assertSame(obj, CodeHelpers.checkEnum(obj, 1234));
     }
 }
