@@ -1,0 +1,29 @@
+module test-model-aug {
+  namespace "test-ns-aug";
+  prefix test-model;
+
+  import test-model {
+    prefix tm;
+  }
+
+  augment /tm:container-root/tm:container-lvl1 {
+    container container-aug {
+      leaf leaf-aug {
+        type string;
+      }
+
+      list list-aug {
+        key list-aug-key;
+        leaf list-aug-key {
+          type string;
+        }
+
+        container list-aug-container {
+          leaf foo {
+            type string;
+          }
+        }
+      }
+    }
+  }
+}
