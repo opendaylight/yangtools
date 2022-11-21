@@ -27,13 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.YangInstanceIdentifierWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -46,7 +40,7 @@ public final class ImmutableNodes {
     }
 
     public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder() {
-        return ImmutableMapNodeBuilder.create();
+        return Builders.mapBuilder();
     }
 
     public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder(final QName name) {
@@ -55,7 +49,7 @@ public final class ImmutableNodes {
 
     public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder(
             final NodeIdentifier name) {
-        return ImmutableMapNodeBuilder.create().withNodeIdentifier(name);
+        return Builders.mapBuilder().withNodeIdentifier(name);
     }
 
     /**
@@ -95,7 +89,7 @@ public final class ImmutableNodes {
      * @return An ordered Map node
      */
     public static @NonNull UserMapNode orderedMapNode(final NodeIdentifier name) {
-        return ImmutableUserMapNodeBuilder.create().withNodeIdentifier(name).build();
+        return Builders.orderedMapBuilder().withNodeIdentifier(name).build();
     }
 
     /**
@@ -124,13 +118,13 @@ public final class ImmutableNodes {
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final QName nodeName, final QName keyName, final Object keyValue) {
-        return ImmutableMapEntryNodeBuilder.create()
+        return Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(nodeName, keyName, keyValue))
                 .withChild(leafNode(keyName, keyValue));
     }
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
-        return ImmutableMapEntryNodeBuilder.create();
+        return Builders.mapEntryBuilder();
     }
 
     public static @NonNull MapEntryNode mapEntry(final QName nodeName, final QName keyName, final Object keyValue) {
@@ -154,7 +148,7 @@ public final class ImmutableNodes {
      * @return A container node
      */
     public static @NonNull ContainerNode containerNode(final NodeIdentifier name) {
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(name).build();
+        return Builders.containerBuilder().withNodeIdentifier(name).build();
     }
 
     /**
@@ -174,7 +168,7 @@ public final class ImmutableNodes {
      * @return A choice node
      */
     public static @NonNull ChoiceNode choiceNode(final NodeIdentifier name) {
-        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(name).build();
+        return Builders.choiceBuilder().withNodeIdentifier(name).build();
     }
 
     /**
@@ -194,7 +188,7 @@ public final class ImmutableNodes {
      * @return An unkeyed list node
      */
     public static @NonNull UnkeyedListNode listNode(final NodeIdentifier name) {
-        return ImmutableUnkeyedListNodeBuilder.create().withNodeIdentifier(name).build();
+        return Builders.unkeyedListBuilder().withNodeIdentifier(name).build();
     }
 
     /**

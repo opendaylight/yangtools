@@ -72,12 +72,20 @@ public final class Builders {
         return ImmutableUserLeafSetNodeBuilder.create();
     }
 
+    public static <T> ListNodeBuilder<T, UserLeafSetNode<T>> orderedLeafSetBuilder(final UserLeafSetNode<T> node) {
+        return ImmutableUserLeafSetNodeBuilder.create(node);
+    }
+
     public static <T> ListNodeBuilder<T, SystemLeafSetNode<T>> leafSetBuilder() {
         return ImmutableLeafSetNodeBuilder.create();
     }
 
     public static <T> ListNodeBuilder<T, SystemLeafSetNode<T>> leafSetBuilder(final SystemLeafSetNode<T> node) {
         return ImmutableLeafSetNodeBuilder.create(node);
+    }
+
+    public static <T> ListNodeBuilder<T, SystemLeafSetNode<T>> leafSetBuilder(final int sizeHint) {
+        return ImmutableLeafSetNodeBuilder.create(sizeHint);
     }
 
     public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder() {
@@ -89,6 +97,10 @@ public final class Builders {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(final int sizeHint) {
+        return ImmutableContainerNodeBuilder.create(sizeHint);
+    }
+
     public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
         return ImmutableMapEntryNodeBuilder.create();
     }
@@ -98,12 +110,25 @@ public final class Builders {
         return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
     }
 
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+            final int sizeHint) {
+        return ImmutableMapEntryNodeBuilder.create(sizeHint);
+    }
+
     public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder() {
         return ImmutableUserMapNodeBuilder.create();
     }
 
+    public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder(final int sizeHint) {
+        return ImmutableUserMapNodeBuilder.create(sizeHint);
+    }
+
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder() {
         return ImmutableUnkeyedListNodeBuilder.create();
+    }
+
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder(final int sizeHint) {
+        return ImmutableUnkeyedListNodeBuilder.create(sizeHint);
     }
 
     public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder() {
@@ -114,15 +139,33 @@ public final class Builders {
         return ImmutableMapNodeBuilder.create(node);
     }
 
+    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final int sizeHint) {
+        return ImmutableMapNodeBuilder.create(sizeHint);
+    }
+
     public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder() {
         return ImmutableAugmentationNodeBuilder.create();
+    }
+
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder(
+            final int sizeHint) {
+        return ImmutableAugmentationNodeBuilder.create(sizeHint);
     }
 
     public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder() {
         return ImmutableChoiceNodeBuilder.create();
     }
 
+    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder(final int sizeHint) {
+        return ImmutableChoiceNodeBuilder.create(sizeHint);
+    }
+
     public static DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
         return ImmutableUnkeyedListEntryNodeBuilder.create();
+    }
+
+    public static DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder(
+            final int sizeHint) {
+        return ImmutableUnkeyedListEntryNodeBuilder.create(sizeHint);
     }
 }
