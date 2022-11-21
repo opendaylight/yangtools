@@ -19,10 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 
@@ -44,8 +42,8 @@ public class YT1262Test extends AbstractYangTest {
 
         final var action = container.findFirstEffectiveSubstatement(ActionEffectiveStatement.class).orElseThrow();
         assertTypedef(action, "adef");
-        assertTypedef(action.findFirstEffectiveSubstatement(InputEffectiveStatement.class).orElseThrow(), "idef");
-        assertTypedef(action.findFirstEffectiveSubstatement(OutputEffectiveStatement.class).orElseThrow(), "odef");
+        assertTypedef(action.input(), "idef");
+        assertTypedef(action.output(), "odef");
     }
 
     private static void assertTypedef(final EffectiveStatement<?, ?> parent, final String typedefName) {
