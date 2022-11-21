@@ -36,8 +36,8 @@ final class DefaultMethodHelpers {
         return verifySubstatement(stmt, PrefixEffectiveStatement.class);
     }
 
-    private static <T extends EffectiveStatement<?, ?>> @NonNull T verifySubstatement(
-            final EffectiveStatement<?, ?> stmt, final Class<T> type) {
+    static <T extends EffectiveStatement<?, ?>> @NonNull T verifySubstatement(final EffectiveStatement<?, ?> stmt,
+            final Class<T> type) {
         return stmt.findFirstEffectiveSubstatement(type).orElseThrow(
             () -> new VerifyException(stmt + " does not define a " + type.getSimpleName() + " substatement"));
     }
