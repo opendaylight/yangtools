@@ -73,6 +73,18 @@ public non-sealed interface ModuleEffectiveStatement
     }
 
     /**
+     * Return this statement's {@code namespace} substatement.
+     *
+     * @implSpec
+     *      Default implementation uses {@link #findFirstEffectiveSubstatement(Class)} and throws a
+     *      {@link VerifyException} if a matching substatement is not found.
+     * @return A {@link NamespaceEffectiveStatement}
+     */
+    default @NonNull NamespaceEffectiveStatement namespace() {
+        return DefaultMethodHelpers.verifySubstatement(this, NamespaceEffectiveStatement.class);
+    }
+
+    /**
      * Return this statement's {@code prefix} substatement.
      *
      * @implSpec
