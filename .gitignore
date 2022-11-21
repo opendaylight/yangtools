@@ -21,6 +21,8 @@ META-INF
 .pmd
 .factorypath
 .fbExcludeFilterFile
+venv
+__pycache__
 
 # Vim
 .*.sw?
