@@ -75,17 +75,14 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UsesNode && !mutableUses.add((UsesNode) effectiveStatement)) {
+            if (effectiveStatement instanceof UsesNode uses && !mutableUses.add(uses)) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
             }
-            if (effectiveStatement instanceof TypedefEffectiveStatement) {
-                final TypeDefinition<?> type = ((TypedefEffectiveStatement) effectiveStatement).getTypeDefinition();
-                if (!mutableTypeDefinitions.add(type)) {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
-                }
+            if (effectiveStatement instanceof TypedefEffectiveStatement typedef
+                    && !mutableTypeDefinitions.add(typedef.getTypeDefinition())) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
             }
-            if (effectiveStatement instanceof GroupingDefinition
-                    && !mutableGroupings.add((GroupingDefinition) effectiveStatement)) {
+            if (effectiveStatement instanceof GroupingDefinition grouping && !mutableGroupings.add(grouping)) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
             }
         }
