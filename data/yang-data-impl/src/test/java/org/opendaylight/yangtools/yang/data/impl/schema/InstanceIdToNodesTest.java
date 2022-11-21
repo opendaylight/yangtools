@@ -48,7 +48,7 @@ public class InstanceIdToNodesTest {
             QName.create(NS, REVISION, "outer-list"), ID, 1);
 
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
-    private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
+    private final NodeWithValue<String> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
 
     @BeforeClass
     public static void setUp() {
@@ -83,9 +83,9 @@ public class InstanceIdToNodesTest {
     public void testLeafList() {
         assertEquals(Builders.containerBuilder()
             .withNodeIdentifier(rootContainer)
-            .withChild(Builders.orderedLeafSetBuilder()
+            .withChild(Builders.<String>orderedLeafSetBuilder()
                 .withNodeIdentifier(leafList)
-                .withChild(Builders.leafSetEntryBuilder()
+                .withChild(Builders.<String>leafSetEntryBuilder()
                     .withNodeIdentifier(leafListWithValue)
                     .withValue(leafListWithValue.getValue())
                     .build())
