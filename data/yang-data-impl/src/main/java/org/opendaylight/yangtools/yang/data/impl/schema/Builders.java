@@ -54,8 +54,7 @@ public final class Builders {
         return ImmutableLeafNodeBuilder.create();
     }
 
-    // FIXME: 7.0.0: add generic arguments
-    public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
+    public static <T> NormalizedNodeBuilder<NodeWithValue<T>, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
         return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
