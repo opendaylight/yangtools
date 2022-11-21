@@ -26,17 +26,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
@@ -166,7 +160,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) {
         checkDataNodeContainer();
         if (DOMSource.class.isAssignableFrom(objectModel)) {
-            enter(name, ImmutableAnyXmlNodeBuilder.create());
+            enter(name, Builders.anyXmlBuilder());
             nextSchema = null;
             return true;
         }
@@ -176,15 +170,15 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableContainerNodeBuilder.create()
-                : ImmutableContainerNodeBuilder.create(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.containerBuilder()
+            : Builders.containerBuilder(childSizeHint));
     }
 
     @Override
     public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListNodeBuilder.create()
-                : ImmutableUnkeyedListNodeBuilder.create(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.unkeyedListBuilder()
+            : Builders.unkeyedListBuilder(childSizeHint));
     }
 
     @Override
@@ -192,15 +186,14 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         final NormalizedNodeBuilder<?, ?, ?> current = current();
         checkArgument(current instanceof ImmutableUnkeyedListNodeBuilder
             || current instanceof NormalizedNodeResultBuilder);
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListEntryNodeBuilder.create()
-                : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.unkeyedListEntryBuilder()
+            : Builders.unkeyedListEntryBuilder(childSizeHint));
     }
 
     @Override
     public void startMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableMapNodeBuilder.create()
-                : ImmutableMapNodeBuilder.create(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.mapBuilder() : Builders.mapBuilder(childSizeHint));
     }
 
     @Override
@@ -209,22 +202,21 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         checkArgument(current instanceof ImmutableMapNodeBuilder || current instanceof ImmutableUserMapNodeBuilder
             || current instanceof NormalizedNodeResultBuilder);
 
-        enter(identifier, UNKNOWN_SIZE == childSizeHint ? ImmutableMapEntryNodeBuilder.create()
-                : ImmutableMapEntryNodeBuilder.create(childSizeHint));
+        enter(identifier, UNKNOWN_SIZE == childSizeHint ? Builders.mapEntryBuilder()
+            : Builders.mapEntryBuilder(childSizeHint));
     }
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableUserMapNodeBuilder.create()
-                : ImmutableUserMapNodeBuilder.create(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.orderedMapBuilder()
+            : Builders.orderedMapBuilder(childSizeHint));
     }
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableChoiceNodeBuilder.create()
-                : ImmutableChoiceNodeBuilder.create(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.choiceBuilder() : Builders.choiceBuilder(childSizeHint));
     }
 
     @Override
@@ -273,7 +265,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         checkDataNodeContainer();
-        enter(name, ImmutableAnydataNodeBuilder.create(objectModel));
+        enter(name, Builders.anydataBuilder(objectModel));
         // We support all object models
         return true;
     }
