@@ -1,0 +1,27 @@
+module test-model {
+  namespace "test-ns";
+  prefix test-model;
+
+  container container-root {
+    leaf leaf-lvl1 {
+      type string;
+    }
+
+    container container-lvl1 {
+      leaf leaf-lvl2 {
+        type string;
+      }
+
+      list list-lvl2 {
+        key list-lvl2-key;
+        leaf list-lvl2-key {
+          type string;
+        }
+
+        leaf leaf-lvl2 {
+          type string;
+        }
+      }
+    }
+  }
+}
