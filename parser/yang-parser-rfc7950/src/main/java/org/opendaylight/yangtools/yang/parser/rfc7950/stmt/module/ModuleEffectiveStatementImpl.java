@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -55,7 +54,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         this.qnameModule = requireNonNull(qnameModule);
         this.submodules = ImmutableList.copyOf(submodules);
 
-        final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get();
+        final String localPrefix = prefix().argument();
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
         prefixToModuleBuilder.put(localPrefix, this);
         appendPrefixes(stmt, prefixToModuleBuilder);
