@@ -706,6 +706,19 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    public boolean isSupportedToBuildEffective() {
+        // Our prototype may have fizzled, for example due to it being a implicit statement guarded by if-feature which
+        // evaluates to false. If that happens, this statement also needs to report unsupported -- and we want to cache
+        // that information for future reuse.
+        boolean ret = super.isSupportedToBuildEffective();
+        if (ret && !prototype.isSupportedToBuildEffective()) {
+            setUnsupported();
+            ret = false;
+        }
+        return ret;
+    }
+
+    @Override
     protected boolean isParentSupportedByFeatures() {
         return parent.isSupportedByFeatures();
     }
