@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>model-aggregator</artifactId>
-    <version>9.0.3-SNAPSHOT</version>
+    <version>9.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
