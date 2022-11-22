@@ -1,0 +1,25 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  feature foo;
+
+  container foo;
+
+  augment /foo {
+    container bar {
+      choice baz {
+        mandatory true;
+
+        leaf one {
+          type string;
+        }
+
+        leaf two {
+          if-feature foo;
+          type string;
+        }
+      }
+    }
+  }
+}
