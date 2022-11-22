@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21e0bc27_fdbfeaf1",
+        "filename": "csit/README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-11-22T15:48:34Z",
+      "side": 1,
+      "message": "the script should default to just \u0027java\u0027, i.e. local PATH preference\nit should pick up the path specified in JAVA_HOME environment variable if it is present",
+      "range": {
+        "startLine": 35,
+        "startChar": 3,
+        "endLine": 35,
+        "endChar": 75
+      },
+      "revId": "d2316a3c3d0c500c8f6fa49999510dbc1c88f312",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4fcb847c_70e2c69b",
+        "filename": "csit/yangtools_test.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-11-22T15:48:34Z",
+      "side": 1,
+      "message": "can we use a shallow clone, i.e. --depth 10 or similar?",
+      "range": {
+        "startLine": 18,
+        "startChar": 48,
+        "endLine": 18,
+        "endChar": 54
+      },
+      "revId": "d2316a3c3d0c500c8f6fa49999510dbc1c88f312",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
