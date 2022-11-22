@@ -468,7 +468,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     //
     //
 
-    // Non-final form ImplicitStmtCtx
+    // Non-final for ImplicitStmtCtx/InferredStatementContext
     @Override
     public boolean isSupportedToBuildEffective() {
         return isSupportedToBuildEffective;
