@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.collect.Range;
-import java.lang.reflect.Array;
-import java.util.Locale;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -25,36 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  */
 final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
     /**
-     * {@code java.lang.reflect.Array} as a JavaTypeName.
-     */
-    private static final @NonNull JavaTypeName ARRAY = JavaTypeName.create(Array.class);
-    /**
      * {@code org.opendaylight.yangtools.yang.common.Decimal64} as a JavaTypeName.
      */
     private static final @NonNull JavaTypeName DECIMAL64 = JavaTypeName.create(Decimal64.class);
-    /**
-     * {@code com.google.common.collect.Range} as a JavaTypeName.
-     */
-    private static final @NonNull JavaTypeName RANGE = JavaTypeName.create(Range.class);
 
     Decimal64RangeGenerator() {
         super(Decimal64.class);
-    }
-
-    private static String range(final Function<JavaTypeName, String> classImporter) {
-        return classImporter.apply(RANGE);
-    }
-
-    private static String itemType(final Function<JavaTypeName, String> classImporter) {
-        return range(classImporter) + '<' + classImporter.apply(DECIMAL64) + '>';
-    }
-
-    private static String arrayType(final Function<JavaTypeName, String> classImporter) {
-        return itemType(classImporter) + "[]";
-    }
-
-    private static String format(final Function<JavaTypeName, String> classImporter, final Decimal64 value) {
-        return classImporter.apply(DECIMAL64) +  ".of(" + value.scale() + ", " + value.unscaledValue() + "L)";
     }
 
     @Override
@@ -73,42 +47,35 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
     protected String generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraint, final Function<JavaTypeName, String> classImporter) {
         final var constraints = constraint.getAllowedRanges().asRanges();
-        final var fieldName = checkerName.toUpperCase(Locale.ENGLISH) + "_RANGES";
+        final var scale = getValue(constraints.iterator().next().upperEndpoint()).scale();
+
         final var sb = new StringBuilder();
+        sb.append("private static void ").append(checkerName).append("(final ").append(classImporter.apply(DECIMAL64))
+            .append(" value) {\n");
+        sb.append("    final var unscaled = ").append(classImporter.apply(JavaFileTemplate.CODEHELPERS))
+            .append(".checkScale(value, ").append(scale).append(");\n");
 
-        // Field to hold the Range objects in an array
-        sb.append("private static final ").append(arrayType(classImporter)).append(' ').append(fieldName).append(";\n");
+        final var msg = new StringBuilder().append("\"[");
+        final var it = constraints.iterator();
+        while (true) {
+            final var range = it.next();
+            final var min = getValue(range.lowerEndpoint());
+            final var max = getValue(range.upperEndpoint());
+            msg.append('[').append(min).append("..").append(max).append(']');
 
-        // Static initializer block for the array
-        sb.append("static {\n");
-        sb.append("    @SuppressWarnings(\"unchecked\")\n");
-        sb.append("    final ").append(arrayType(classImporter)).append(" a = (").append(arrayType(classImporter))
-            .append(") ").append(classImporter.apply(ARRAY)).append(".newInstance(").append(range(classImporter))
-            .append(".class, ").append(constraints.size()).append(");\n");
+            sb.append("    if (unscaled >= ").append(min.unscaledValue()).append("L && unscaled <= ")
+                .append(max.unscaledValue()).append("L) {\n");
+            sb.append("        return;\n");
+            sb.append("    }\n");
 
-        int offset = 0;
-        for (var range : constraints) {
-            final var min = format(classImporter, getValue(range.lowerEndpoint()));
-            final var max = format(classImporter, getValue(range.upperEndpoint()));
-
-            sb.append("    a[").append(offset++).append("] = ").append(range(classImporter)).append(".closed(")
-                .append(min).append(", ").append(max).append(");\n");
+            if (!it.hasNext()) {
+                break;
+            }
+            msg.append(", ");
         }
 
-        sb.append("    ").append(fieldName).append(" = a;\n");
-        sb.append("}\n");
-
-        // Static enforcement method
-        sb.append("private static void ").append(checkerName).append("(final ").append(getTypeName())
-            .append(" value) {\n");
-        sb.append("    for (").append(itemType(classImporter)).append(" r : ").append(fieldName).append(") {\n");
-        sb.append("        if (r.contains(value)) {\n");
-        sb.append("            return;\n");
-        sb.append("        }\n");
-        sb.append("    }\n");
-
         sb.append("    ").append(classImporter.apply(JavaFileTemplate.CODEHELPERS)).append(".throwInvalidRange(")
-            .append(fieldName).append(", value);\n");
+            .append(msg).append("]\", value);\n");
         sb.append("}\n");
 
         return sb.toString();
