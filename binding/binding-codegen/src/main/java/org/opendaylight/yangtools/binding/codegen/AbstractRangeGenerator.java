@@ -69,15 +69,6 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     }
 
     /**
-     * Return the type's fully-qualified name.
-     *
-     * @return Fully-qualified name
-     */
-    protected final @NonNull String getTypeName() {
-        return type.getName();
-    }
-
-    /**
      * Return the value in the native type from a particular Number instance.
      *
      * @param value Value as a Number

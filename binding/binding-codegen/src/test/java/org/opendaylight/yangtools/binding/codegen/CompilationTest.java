@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HexFormat;
@@ -447,20 +446,17 @@ class CompilationTest extends BaseCompilationTest {
 
         Method method = CompilationTestUtils.assertContainsMethod(builderClass, builderClass, "setIdBinary",
             b.getClass());
-        final List<Range<Integer>> lengthConstraints = new ArrayList<>();
-        lengthConstraints.add(Range.closed(1, 10));
+        final var lengthConstraints = List.of(Range.closed(1, 10));
         byte[] arg = new byte[] {};
-        String expectedMsg = String.format("Invalid length: %s, expected: %s.", HexFormat.of().formatHex(arg),
-            lengthConstraints);
-        CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method, expectedMsg, arg);
+        CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method,
+            "Invalid length: %s, expected: %s.".formatted(HexFormat.of().formatHex(arg), lengthConstraints), arg);
 
         method = CompilationTestUtils.assertContainsMethod(builderClass, builderClass, "setIdDecimal64",
             Decimal64.class);
-        final List<Range<Decimal64>> rangeConstraints = new ArrayList<>();
-        rangeConstraints.add(Range.closed(Decimal64.valueOf("1.5"), Decimal64.valueOf("5.5")));
-        Object arg1 = Decimal64.valueOf("1.4");
-        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg1, rangeConstraints);
-        CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method, expectedMsg, arg1);
+        final var rangeConstraints = List.of(Range.closed(Decimal64.valueOf("1.5"), Decimal64.valueOf("5.5")));
+        Object arg1 = Decimal64.valueOf("1.4").scaleTo(4);
+        CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method,
+            "Invalid range: %s, expected: %s.".formatted(arg1, rangeConstraints), arg1);
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

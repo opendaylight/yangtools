@@ -63,7 +63,8 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
             final var needMax = needsMaximumEnforcement(max);
 
             if (!needMin && !needMax) {
-                LOG.debug("Type {} indicates [{}, {}] does not require enforcement", getTypeName(), min, max);
+                LOG.debug("Type {} indicates [{}, {}] does not require enforcement", getTypeClass().getName(), min,
+                    max);
                 continue;
             }
 

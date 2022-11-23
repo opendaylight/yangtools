@@ -213,7 +213,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsField(myDecimalTypeClass, VAL, Decimal64.class);
         CompilationTestUtils.assertContainsFieldWithValue(myDecimalTypeClass, "serialVersionUID", Long.TYPE,
             3143735729419861095L, Decimal64.class);
-        assertEquals(3, myDecimalTypeClass.getDeclaredFields().length);
+        assertEquals(2, myDecimalTypeClass.getDeclaredFields().length);
         CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, Decimal64.class, "getValue");
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, Decimal64.class);
         CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, myDecimalTypeClass);
@@ -224,20 +224,23 @@ class TypedefCompilationTest extends BaseCompilationTest {
             "getDefaultInstance", String.class);
         assertEquals(7, myDecimalTypeClass.getDeclaredMethods().length);
 
-        List<Range<Decimal64>> decimalRangeConstraints = new ArrayList<>();
-        decimalRangeConstraints.add(Range.closed(Decimal64.valueOf("1.5"), Decimal64.valueOf("5.5")));
-        arg = Decimal64.valueOf("1.4");
-        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, decimalRangeConstraints);
-        CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance(Decimal64.valueOf("3.14"));
-        assertEquals(obj, defInst.invoke(null, "3.14"));
+        final var decimalRangeConstraints = List.of(Range.closed(Decimal64.valueOf("1.5"), Decimal64.valueOf("5.5")));
+        CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, "Invalid 1.4 scale: 1, expected 6.",
+            Decimal64.valueOf("1.4"));
+        CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor,
+            "Invalid range: 1.4, expected: %s.".formatted(decimalRangeConstraints),
+            Decimal64.valueOf("1.4").scaleTo(6));
+
+        // FIXME: defaultInstance should scale appropriately
+        obj = expectedConstructor.newInstance(Decimal64.valueOf("3.141592"));
+        assertEquals(obj, defInst.invoke(null, "3.141592"));
 
         // typedef my-decimal-type2
         assertFalse(myDecimalType2Class.isInterface());
         CompilationTestUtils.assertContainsField(myDecimalType2Class, VAL, Decimal64.class);
         CompilationTestUtils.assertContainsFieldWithValue(myDecimalType2Class, "serialVersionUID", Long.TYPE,
             -672265764962082714L, Decimal64.class);
-        assertEquals(3, myDecimalType2Class.getDeclaredFields().length);
+        assertEquals(2, myDecimalType2Class.getDeclaredFields().length);
         CompilationTestUtils.assertContainsMethod(myDecimalType2Class, Decimal64.class, "getValue");
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalType2Class, Decimal64.class);
         CompilationTestUtils.assertContainsConstructor(myDecimalType2Class, myDecimalType2Class);
@@ -248,13 +251,14 @@ class TypedefCompilationTest extends BaseCompilationTest {
             "getDefaultInstance", String.class);
         assertEquals(7, myDecimalType2Class.getDeclaredMethods().length);
 
-        List<Range<Decimal64>> decimal2RangeConstraints = new ArrayList<>();
-        decimal2RangeConstraints.add(Range.closed(Decimal64.valueOf("0.0"), Decimal64.valueOf("1.0")));
-        arg = Decimal64.valueOf("1.4");
-        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, decimal2RangeConstraints);
-        CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance(Decimal64.valueOf("0.14"));
-        assertEquals(obj, defInst.invoke(null, "0.14"));
+        final var decimal2RangeConstraints = List.of(Range.closed(Decimal64.valueOf("0.0"), Decimal64.valueOf("1.0")));
+        arg = Decimal64.valueOf("1.4").scaleTo(18);
+        CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor,
+            "Invalid range: %s, expected: %s.".formatted(arg, decimal2RangeConstraints), arg);
+
+        // FIXME: defaultInstance should scale appropriately
+        obj = expectedConstructor.newInstance(Decimal64.valueOf("0.123456789012345678"));
+        assertEquals(obj, defInst.invoke(null, "0.123456789012345678"));
 
         // typedef union-ext1
         assertFalse(unionExt1Class.isInterface());

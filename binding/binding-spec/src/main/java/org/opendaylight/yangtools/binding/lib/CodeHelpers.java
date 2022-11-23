@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
@@ -213,6 +214,23 @@ public final class CodeHelpers {
     }
 
     /**
+     * Check whether a {@link Decimal64} value has the expected scale.
+     *
+     * @param value value to be checked.
+     * @param expectedScale the expected scale
+     * @return unscaled value
+     * @throws IllegalArgumentException if the value has unexpected scale
+     */
+    public static long checkScale(final Decimal64 value, final int expectedScale) {
+        final var scale = value.scale();
+        if (scale != expectedScale) {
+            throw new IllegalArgumentException("Invalid " + value + " scale: " + scale + ", expected " + expectedScale
+                + ".");
+        }
+        return value.unscaledValue();
+    }
+
+    /**
      * Throw an IllegalArgument exception describing a length violation.
      *
      * @param expected String describing expected lengths
@@ -267,17 +285,6 @@ public final class CodeHelpers {
     public static void throwInvalidRange(final String expected, final long actual) {
         // Not a code duplication: provides faster string concat via StringBuilder.append(long)
         throw new IllegalArgumentException("Invalid range: " + actual + ", expected: " + expected + ".");
-    }
-
-    /**
-     * Throw an IllegalArgument exception describing a range violation.
-     *
-     * @param expected Objects describing expected ranges
-     * @param actual Actual observed byte array
-     * @throws IllegalArgumentException always
-     */
-    public static void throwInvalidRange(final Object[] expected, final Object actual) {
-        throwInvalidRange(Arrays.toString(expected), actual);
     }
 
     /**
