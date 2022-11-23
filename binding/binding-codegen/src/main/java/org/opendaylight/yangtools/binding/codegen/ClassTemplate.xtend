@@ -319,6 +319,8 @@ class ClassTemplate extends BaseTemplate {
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
+        «ELSE»
+           «CODEHELPERS.importedName».requireValue(_value);
         «ENDIF»
         «FOR p : allProperties»
             «generateRestrictions(type, p.fieldName, p.returnType)»
@@ -327,9 +329,7 @@ class ClassTemplate extends BaseTemplate {
          * If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code is
          * structured.
          */»
-        «CODEHELPERS.importedName».requireValue(_value);
         «genPatternEnforcer("_value")»
-
         «FOR p : properties»
             «val fieldName = p.fieldName»
             this.«fieldName» = «fieldName»«p.cloneCall»;
@@ -382,14 +382,18 @@ class ClassTemplate extends BaseTemplate {
         «val restrictions = type.restrictions»
         «IF restrictions !== null»
             «IF restrictions.lengthConstraint.present || restrictions.rangeConstraint.present»
-            if («paramName» != null) {
+                «IF !paramName.equals("_value")»
+                if («paramName» != null) {
+                «ENDIF»
                 «IF restrictions.lengthConstraint.present»
-                    «LengthGenerator.generateLengthCheckerCall(paramName, paramValue(returnType, paramName))»
+                «LengthGenerator.generateLengthCheckerCall(paramName, paramValue(returnType, paramName))»
                 «ENDIF»
                 «IF restrictions.rangeConstraint.present»
-                    «rangeGenerator.generateRangeCheckerCall(paramName, paramValue(returnType, paramName))»
+                «rangeGenerator.generateRangeCheckerCall(paramName, paramValue(returnType, paramName))»
                 «ENDIF»
-            }
+                «IF !paramName.equals("_value")»
+                }
+                «ENDIF»
             «ENDIF»
         «ENDIF»
     '''
