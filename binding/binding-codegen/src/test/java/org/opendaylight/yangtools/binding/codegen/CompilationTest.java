@@ -458,7 +458,7 @@ class CompilationTest extends BaseCompilationTest {
             Decimal64.class);
         final List<Range<Decimal64>> rangeConstraints = new ArrayList<>();
         rangeConstraints.add(Range.closed(Decimal64.valueOf("1.5"), Decimal64.valueOf("5.5")));
-        Object arg1 = Decimal64.valueOf("1.4");
+        Object arg1 = Decimal64.valueOf("1.4").scaleTo(4);
         expectedMsg = String.format("Invalid range: %s, expected: %s.", arg1, rangeConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method, expectedMsg, arg1);
 
