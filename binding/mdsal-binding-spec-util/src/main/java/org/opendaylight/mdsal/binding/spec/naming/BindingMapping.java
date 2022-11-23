@@ -24,9 +24,13 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.BindingContract;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.Rpc;
+import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -112,6 +116,16 @@ public final class BindingMapping {
      * interface contains this static method.
      */
     public static final @NonNull String BINDING_TO_STRING_NAME = "bindingToString";
+
+    /**
+     * Name of {@link Action#invoke(InstanceIdentifier, RpcInput)}.
+     */
+    public static final @NonNull String ACTION_INVOKE_NAME = "invoke";
+
+    /**
+     * Name of {@link Rpc#invoke(org.opendaylight.yangtools.yang.binding.RpcInput)}.
+     */
+    public static final @NonNull String RPC_INVOKE_NAME = "invoke";
 
     /**
      * Name of {@link ScalarTypeObject#getValue()}.
