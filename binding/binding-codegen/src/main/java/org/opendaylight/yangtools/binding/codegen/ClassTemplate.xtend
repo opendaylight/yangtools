@@ -320,6 +320,8 @@ class ClassTemplate extends BaseTemplate {
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
+        «ELSE»
+           «CODEHELPERS.importedName».requireValue(_value);
         «ENDIF»
         «val value = Verify.verifyNotNull(allProperties.valueProperty)»
         «val fieldName = value.fieldName»
@@ -390,14 +392,18 @@ class ClassTemplate extends BaseTemplate {
         «val restrictions = type.restrictions»
         «IF restrictions !== null»
             «IF restrictions.lengthConstraint.present || restrictions.rangeConstraint.present»
-            if («paramName» != null) {
+                «IF !paramName.equals("_value")»
+                if («paramName» != null) {
+                «ENDIF»
                 «IF restrictions.lengthConstraint.present»
-                    «LengthGenerator.generateLengthCheckerCall(paramName, paramValue(returnType, paramName))»
+                «LengthGenerator.generateLengthCheckerCall(paramName, paramValue(returnType, paramName))»
                 «ENDIF»
                 «IF restrictions.rangeConstraint.present»
-                    «rangeGenerator.generateRangeCheckerCall(paramName, paramValue(returnType, paramName))»
+                «rangeGenerator.generateRangeCheckerCall(paramName, paramValue(returnType, paramName))»
                 «ENDIF»
-            }
+                «IF !paramName.equals("_value")»
+                }
+                «ENDIF»
             «ENDIF»
         «ENDIF»
     '''

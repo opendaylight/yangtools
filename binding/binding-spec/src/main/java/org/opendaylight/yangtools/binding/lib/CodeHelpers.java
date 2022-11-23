@@ -293,6 +293,17 @@ public final class CodeHelpers {
     }
 
     /**
+     * Throw an IllegalArgument exception describing a scale violation.
+     *
+     * @param expected int describing expected scale
+     * @param actual Actual observed object
+     * @throws IllegalArgumentException always
+     */
+    public static void throwInvalidScale(final int expected, final int actual) {
+        throw new IllegalArgumentException("Invalid scale: " + actual + ", expected: " + expected + ".");
+    }
+
+    /**
      * Check whether specified List is {@code null} and if so return an immutable list instead. This method supports
      * non-null default getter methods.
      *
