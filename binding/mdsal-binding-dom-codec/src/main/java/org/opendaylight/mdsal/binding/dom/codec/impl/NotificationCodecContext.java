@@ -73,9 +73,9 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
         super(DataContainerCodecPrototype.from(key, schema, factory));
         final Class<D> bindingClass = getBindingClass();
 
-        final Class<?> awareClass = factory().getLoader().generateClass(bindingClass, "eventInstantAware",
+        final Class<?> awareClass = CodecPackage.EVENT_AWARE.generateClass(factory().getLoader(), bindingClass,
             (loader, fqcn, bindingInterface) -> {
-                final Class<?> codecImpl = loader.getGeneratedClass(bindingClass, "codecImpl");
+                final Class<?> codecImpl = CodecPackage.CODEC.getGeneratedClass(loader, bindingClass);
 
                 return GeneratorResult.of(new ByteBuddy()
                     .subclass(codecImpl, ConstructorStrategy.Default.NO_CONSTRUCTORS)

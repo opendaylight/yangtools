@@ -143,31 +143,28 @@ public abstract sealed class BindingClassLoader extends ClassLoader
     }
 
     /**
-     * The name of the target class is formed through concatenation of the name of a {@code bindingInterface} and
-     * specified {@code suffix}.
+     * Generate a class which is related to specified compile-type-generated interface.
      *
      * @param <T> Type of generated class
      * @param bindingInterface Binding compile-time-generated interface
-     * @param suffix Suffix to use
+     * @param fqcn Fully-Qualified Class Name of the generated class
      * @param generator Code generator to run
      * @return A generated class object
      * @throws NullPointerException if any argument is null
      */
-    public final <T> Class<T> generateClass(final Class<?> bindingInterface, final String suffix,
+    public final <T> @NonNull Class<T> generateClass(final Class<?> bindingInterface, final String fqcn,
             final ClassGenerator<T> generator)  {
-        return findClassLoader(requireNonNull(bindingInterface)).doGenerateClass(bindingInterface, suffix, generator);
+        return findClassLoader(requireNonNull(bindingInterface)).doGenerateClass(bindingInterface, fqcn, generator);
     }
 
-    public final @NonNull Class<?> getGeneratedClass(final Class<?> bindingInterface, final String suffix) {
+    public final @NonNull Class<?> getGeneratedClass(final Class<?> bindingInterface, final String fqcn) {
         final var loader = findClassLoader(requireNonNull(bindingInterface));
-        final var fqcn = generatedClassName(bindingInterface, suffix);
-
         final Class<?> ret;
         synchronized (loader.getClassLoadingLock(fqcn)) {
             ret = loader.findLoadedClass(fqcn);
         }
 
-        checkArgument(ret != null, "Failed to find generated class %s for %s of %s", fqcn, suffix, bindingInterface);
+        checkArgument(ret != null, "Failed to find generated class %s for %s", fqcn, bindingInterface);
         return ret;
     }
 
@@ -190,10 +187,8 @@ public abstract sealed class BindingClassLoader extends ClassLoader
      */
     abstract @NonNull BindingClassLoader findClassLoader(@NonNull Class<?> bindingClass);
 
-    private <T> Class<T> doGenerateClass(final Class<?> bindingInterface, final String suffix,
+    private <T> @NonNull Class<T> doGenerateClass(final Class<?> bindingInterface, final String fqcn,
             final ClassGenerator<T> generator)  {
-        final var fqcn = generatedClassName(bindingInterface, suffix);
-
         synchronized (getClassLoadingLock(fqcn)) {
             // Attempt to find a loaded class
             final var existing = findLoadedClass(fqcn);
@@ -254,9 +249,5 @@ public abstract sealed class BindingClassLoader extends ClassLoader
                 LOG.info("Failed to save {}", unloaded.getTypeDescription().getName(), e);
             }
         }
-    }
-
-    private static String generatedClassName(final Class<?> bindingInterface, final String suffix) {
-        return bindingInterface.getName() + "$$$" + suffix;
     }
 }

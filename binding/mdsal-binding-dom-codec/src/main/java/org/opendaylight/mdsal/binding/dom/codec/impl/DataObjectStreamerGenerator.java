@@ -196,7 +196,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             throw new UnsupportedOperationException("Schema type " + schema.getClass() + " is not supported");
         }
 
-        return loader.generateClass(type, "streamer",
+        return CodecPackage.STREAMER.generateClass(loader, type,
             // FIXME: cast to GeneratedType: we really should adjust getTypeWithSchema()
             new DataObjectStreamerGenerator<>(registry, (GeneratedType) typeAndSchema.javaType(),
                 (DataNodeContainer) schema, type, startEvent));

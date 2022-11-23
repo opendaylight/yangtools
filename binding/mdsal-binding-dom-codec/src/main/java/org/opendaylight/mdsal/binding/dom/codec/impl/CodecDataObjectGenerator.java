@@ -263,7 +263,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generate(final BindingClassLoader loader,
             final Class<D> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
-        return loader.generateClass(bindingInterface, "codecImpl",
+        return CodecPackage.CODEC.generateClass(loader, bindingInterface,
             new Reusable<>(BB_CDO, simpleProperties, daoProperties, keyMethod));
     }
 
@@ -271,7 +271,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final BindingClassLoader loader, final Class<D> bindingInterface,
             final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
-        return loader.generateClass(bindingInterface, "codecImpl",
+        return CodecPackage.CODEC.generateClass(loader, bindingInterface,
             new Reusable<>(BB_ACDO, simpleProperties, daoProperties, keyMethod));
     }
 

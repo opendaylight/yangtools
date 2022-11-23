@@ -155,7 +155,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     }
 
     private static MethodHandle createImpl(final BindingClassLoader rootLoader, final Class<?> bindingClass) {
-        final Class<?> proxyClass = rootLoader.generateClass(bindingClass, "codecImpl",
+        final Class<?> proxyClass = CodecPackage.CODEC.generateClass(rootLoader, bindingClass,
             (loader, fqcn, bindingInterface) -> GeneratorResult.of(TEMPLATE
                 .name(fqcn)
                 .implement(bindingInterface)
