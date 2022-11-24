@@ -11,9 +11,9 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +25,20 @@ final class LeafBindingClassLoader extends BindingClassLoader {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(LeafBindingClassLoader.class);
+    private static final VarHandle DEPENDENCIES;
+
+    static {
+        try {
+            DEPENDENCIES = MethodHandles.lookup()
+                .findVarHandle(LeafBindingClassLoader.class, "dependencies", ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     private final @NonNull RootBindingClassLoader root;
     private final @NonNull ClassLoader target;
 
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<LeafBindingClassLoader, ImmutableSet> DEPENDENCIES_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(LeafBindingClassLoader.class, ImmutableSet.class, "dependencies");
     private volatile ImmutableSet<LeafBindingClassLoader> dependencies = ImmutableSet.of();
 
     LeafBindingClassLoader(final RootBindingClassLoader root, final ClassLoader target) {
@@ -68,16 +75,27 @@ final class LeafBindingClassLoader extends BindingClassLoader {
 
     @Override
     void appendLoaders(final Set<LeafBindingClassLoader> newLoaders) {
+        var local = dependencies;
+
         while (true) {
-            final var local = dependencies;
-            final var builder = new ArrayList<LeafBindingClassLoader>(local.size() + newLoaders.size());
-            builder.addAll(local);
-            builder.addAll(newLoaders);
-            final var updated = ImmutableSet.copyOf(builder);
-            if (local.equals(updated) || DEPENDENCIES_UPDATER.compareAndSet(this, local, updated)) {
-                // No need for an update or the update was successful
+            final var updated = ImmutableSet.builderWithExpectedSize(local.size() + newLoaders.size())
+                .addAll(local)
+                .addAll(newLoaders)
+                .build();
+
+            if (local.equals(updated)) {
+                // No update needed, bail out
                 return;
             }
+
+            final var witness = (ImmutableSet<LeafBindingClassLoader>)
+                DEPENDENCIES.compareAndExchange(this, local, updated);
+            if (witness == local) {
+                // Successful update, we are done
+                return;
+            }
+
+            local = witness;
         }
     }
 }

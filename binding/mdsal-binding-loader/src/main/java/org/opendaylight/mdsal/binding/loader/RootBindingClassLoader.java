@@ -11,10 +11,11 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableMap;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.slf4j.Logger;
@@ -23,14 +24,17 @@ import org.slf4j.LoggerFactory;
 // A root codec classloader, binding only whatever is available StaticClassPool
 final class RootBindingClassLoader extends BindingClassLoader {
     private static final Logger LOG = LoggerFactory.getLogger(RootBindingClassLoader.class);
+    private static final VarHandle LOADERS;
 
     static {
+        try {
+            LOADERS = MethodHandles.lookup().findVarHandle(RootBindingClassLoader.class, "loaders", ImmutableMap.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+
         verify(registerAsParallelCapable());
     }
-
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<RootBindingClassLoader, ImmutableMap> LOADERS_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(RootBindingClassLoader.class, ImmutableMap.class, "loaders");
 
     private volatile ImmutableMap<ClassLoader, BindingClassLoader> loaders = ImmutableMap.of();
 
@@ -66,19 +70,22 @@ final class RootBindingClassLoader extends BindingClassLoader {
 
         // Now make sure we cache this result
         while (true) {
-            final var builder = ImmutableMap.<ClassLoader, BindingClassLoader>builderWithExpectedSize(local.size() + 1);
-            builder.putAll(local);
-            builder.put(target, found);
+            final var updated = ImmutableMap.<ClassLoader, BindingClassLoader>builderWithExpectedSize(local.size() + 1)
+                .putAll(local)
+                .put(target, found)
+                .build();
 
-            if (LOADERS_UPDATER.compareAndSet(this, local, builder.build())) {
+            final var witness = (ImmutableMap<ClassLoader, BindingClassLoader>)
+                LOADERS.compareAndExchange(this, local, updated);
+            if (witness == updated) {
                 return found;
             }
-
-            local = loaders;
-            final var recheck = local.get(target);
+            final var recheck = witness.get(target);
             if (recheck != null) {
                 return recheck;
             }
+
+            local = witness;
         }
     }
 
