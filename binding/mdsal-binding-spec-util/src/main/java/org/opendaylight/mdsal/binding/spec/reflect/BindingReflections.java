@@ -476,12 +476,14 @@ public final class BindingReflections {
      * @param target Class which should be used at particular subtree
      * @return true if and only if classes represents same data.
      * @throws NullPointerException if any argument is {@code null}
+     * @deprecated This method is used only mdsal-binding-dom-codec and is scheduled for removal.
      */
     // FIXME: MDSAL-785: this really should live in BindingRuntimeTypes and should not be based on reflection. The only
     //                   user is binding-dom-codec and the logic could easily be performed on GeneratedType instead. For
     //                   a particular world this boils down to a matrix, which can be calculated either on-demand or
     //                   when we create BindingRuntimeTypes. Achieving that will bring us one step closer to being able
     //                   to have a pre-compiled Binding Runtime.
+    @Deprecated(since = "10.0.4", forRemoval = true)
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static boolean isSubstitutionFor(final Class potential, final Class target) {
         Set<Class> subImplemented = new HashSet<>(Arrays.asList(potential.getInterfaces()));
