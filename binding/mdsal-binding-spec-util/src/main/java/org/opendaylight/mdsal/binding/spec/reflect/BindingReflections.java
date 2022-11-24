@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -282,10 +283,9 @@ public final class BindingReflections {
      *
      * @param potentialNotification class to examine
      * @return True if the class represents a Notification.
-     * @deprecated This method is only used internally and is schedule for removal
      */
-    @Deprecated(since = "10.0.4", forRemoval = true)
-    public static boolean isNotification(final Class<?> potentialNotification) {
+    @VisibleForTesting
+    static boolean isNotification(final Class<?> potentialNotification) {
         checkArgument(potentialNotification != null, "potentialNotification must not be null.");
         return Notification.class.isAssignableFrom(potentialNotification);
     }
