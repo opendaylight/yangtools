@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9ac60fe_a740120a",
+        "filename": "csit/README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 9117
+      },
+      "writtenOn": "2022-11-24T07:03:39Z",
+      "side": 1,
+      "message": "added get_java() function which is loading JAVA_HOME from local ENV",
+      "parentUuid": "21e0bc27_fdbfeaf1",
+      "range": {
+        "startLine": 35,
+        "startChar": 3,
+        "endLine": 35,
+        "endChar": 75
+      },
+      "revId": "d2316a3c3d0c500c8f6fa49999510dbc1c88f312",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4fcb847c_70e2c69b",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-11-22T15:48:34Z",
       "side": 1,
       "message": "can we use a shallow clone, i.e. --depth 10 or similar?",
+      "range": {
+        "startLine": 18,
+        "startChar": 48,
+        "endLine": 18,
+        "endChar": 54
+      },
+      "revId": "d2316a3c3d0c500c8f6fa49999510dbc1c88f312",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d1ebf91_1de60c83",
+        "filename": "csit/yangtools_test.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 9117
+      },
+      "writtenOn": "2022-11-24T07:03:39Z",
+      "side": 1,
+      "message": "used depth option in clone command:\nos.system(f\"cd {working_dir}/src/main \u0026\u0026 git clone --depth 10 {pytest_lib.YANGMODELS_REPO}\")",
+      "parentUuid": "4fcb847c_70e2c69b",
       "range": {
         "startLine": 18,
         "startChar": 48,
