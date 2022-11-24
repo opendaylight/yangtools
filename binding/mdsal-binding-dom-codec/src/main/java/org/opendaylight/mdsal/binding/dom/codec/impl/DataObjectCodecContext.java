@@ -351,7 +351,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         if (getBindingClass().equals(augTarget) && belongsToRuntimeContext(childClass)) {
             for (final DataContainerCodecPrototype<?> realChild : augmentationByStream.values()) {
                 if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
-                        && BindingReflections.isSubstitutionFor(childClass, realChild.getBindingClass())) {
+                        && isSubstitutionFor(childClass, realChild.getBindingClass())) {
                     return cacheMismatched(oldMismatched, childClass, realChild);
                 }
             }

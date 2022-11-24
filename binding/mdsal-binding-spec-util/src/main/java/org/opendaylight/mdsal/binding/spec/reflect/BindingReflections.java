@@ -21,13 +21,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -451,69 +447,5 @@ public final class BindingReflections {
              */
             return module;
         }
-    }
-
-    /**
-     * Determines if two augmentation classes or case classes represents same data.
-     *
-     * <p>
-     * Two augmentations or cases could be substituted only if and if:
-     * <ul>
-     *   <li>Both implements same interfaces</li>
-     *   <li>Both have same children</li>
-     *   <li>If augmentations: Both have same augmentation target class. Target class was generated for data node in a
-     *       grouping.</li>
-     *   <li>If cases: Both are from same choice. Choice class was generated for data node in grouping.</li>
-     * </ul>
-     *
-     * <p>
-     * <b>Explanation:</b>
-     * Binding Specification reuses classes generated for groupings as part of normal data tree, this classes from
-     * grouping could be used at various locations and user may not be aware of it and may use incorrect case or
-     * augmentation in particular subtree (via copy constructors, etc).
-     *
-     * @param potential Class which is potential substitution
-     * @param target Class which should be used at particular subtree
-     * @return true if and only if classes represents same data.
-     * @throws NullPointerException if any argument is {@code null}
-     * @deprecated This method is used only mdsal-binding-dom-codec and is scheduled for removal.
-     */
-    // FIXME: MDSAL-785: this really should live in BindingRuntimeTypes and should not be based on reflection. The only
-    //                   user is binding-dom-codec and the logic could easily be performed on GeneratedType instead. For
-    //                   a particular world this boils down to a matrix, which can be calculated either on-demand or
-    //                   when we create BindingRuntimeTypes. Achieving that will bring us one step closer to being able
-    //                   to have a pre-compiled Binding Runtime.
-    @Deprecated(since = "10.0.4", forRemoval = true)
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static boolean isSubstitutionFor(final Class potential, final Class target) {
-        Set<Class> subImplemented = new HashSet<>(Arrays.asList(potential.getInterfaces()));
-        Set<Class> targetImplemented = new HashSet<>(Arrays.asList(target.getInterfaces()));
-        if (!subImplemented.equals(targetImplemented)) {
-            return false;
-        }
-        if (Augmentation.class.isAssignableFrom(potential)
-                && !BindingReflections.findAugmentationTarget(potential).equals(
-                        BindingReflections.findAugmentationTarget(target))) {
-            return false;
-        }
-        for (Method potentialMethod : potential.getMethods()) {
-            if (Modifier.isStatic(potentialMethod.getModifiers())) {
-                // Skip any static methods, as we are not interested in those
-                continue;
-            }
-
-            try {
-                Method targetMethod = target.getMethod(potentialMethod.getName(), potentialMethod.getParameterTypes());
-                if (!potentialMethod.getReturnType().equals(targetMethod.getReturnType())) {
-                    return false;
-                }
-            } catch (NoSuchMethodException e) {
-                // Counterpart method is missing, so classes could not be substituted.
-                return false;
-            } catch (SecurityException e) {
-                throw new IllegalStateException("Could not compare methods", e);
-            }
-        }
-        return true;
     }
 }

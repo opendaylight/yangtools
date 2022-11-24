@@ -37,7 +37,6 @@ import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
@@ -192,7 +191,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
                 final Class<?> substitution = loadCase(context, caseType);
 
                 search: for (final Entry<Class<?>, DataContainerCodecPrototype<?>> real : byClassBuilder.entrySet()) {
-                    if (BindingReflections.isSubstitutionFor(substitution, real.getKey())) {
+                    if (isSubstitutionFor(substitution, real.getKey())) {
                         bySubstitutionBuilder.put(substitution, real.getValue());
                         break search;
                     }
