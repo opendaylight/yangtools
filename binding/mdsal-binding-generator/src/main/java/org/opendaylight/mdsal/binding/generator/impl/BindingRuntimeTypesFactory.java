@@ -19,10 +19,10 @@ import org.opendaylight.mdsal.binding.generator.impl.reactor.AbstractExplicitGen
 import org.opendaylight.mdsal.binding.generator.impl.reactor.Generator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.GeneratorReactor;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.IdentityGenerator;
+import org.opendaylight.mdsal.binding.generator.impl.reactor.InputGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.ModuleGenerator;
+import org.opendaylight.mdsal.binding.generator.impl.reactor.OutputGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.RpcGenerator;
-import org.opendaylight.mdsal.binding.generator.impl.reactor.RpcInputGenerator;
-import org.opendaylight.mdsal.binding.generator.impl.reactor.RpcOutputGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.TypeBuilderFactory;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultBindingRuntimeTypes;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -91,9 +91,9 @@ final class BindingRuntimeTypesFactory implements Mutable {
                 if (gen instanceof RpcGenerator rpcGen) {
                     final QName rpcName = rpcGen.statement().argument();
                     for (var subgen : gen) {
-                        if (subgen instanceof RpcInputGenerator inputGen) {
+                        if (subgen instanceof InputGenerator inputGen) {
                             inputGen.runtimeType().ifPresent(input -> rpcInputs.put(rpcName, input));
-                        } else if (subgen instanceof RpcOutputGenerator outputGen) {
+                        } else if (subgen instanceof OutputGenerator outputGen) {
                             outputGen.runtimeType().ifPresent(output -> rpcOutputs.put(rpcName, output));
                         }
                     }

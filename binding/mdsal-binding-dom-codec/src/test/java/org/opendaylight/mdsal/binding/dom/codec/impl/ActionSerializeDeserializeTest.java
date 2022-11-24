@@ -15,12 +15,20 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafBuil
 
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.Foo;
-import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.foo.InputBuilder;
-import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.foo.OutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.FooInput;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.FooInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.FooOutput;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.FooOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grp.BarInput;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grp.BarInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grp.BarOutput;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grp.BarOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grpcont.Bar;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.Fooio;
-import org.opendaylight.yangtools.yang.binding.RpcInput;
-import org.opendaylight.yangtools.yang.binding.RpcOutput;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.FooioInput;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.FooioInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.FooioOutput;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.FooioOutputBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -33,8 +41,8 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
             .withChild(leafBuilder().withNodeIdentifier(FOO_XYZZY).withValue("xyzzy").build())
             .build();
     private static final ContainerNode DOM_FOO_OUTPUT = containerBuilder().withNodeIdentifier(FOO_OUTPUT).build();
-    private static final RpcInput BINDING_FOO_INPUT = new InputBuilder().setXyzzy("xyzzy").build();
-    private static final RpcOutput BINDING_FOO_OUTPUT = new OutputBuilder().build();
+    private static final FooInput BINDING_FOO_INPUT = new FooInputBuilder().setXyzzy("xyzzy").build();
+    private static final FooOutput BINDING_FOO_OUTPUT = new FooOutputBuilder().build();
 
     private static final NodeIdentifier BAR_INPUT = NodeIdentifier.create(operationInputQName(Foo.QNAME.getModule()));
     private static final NodeIdentifier BAR_OUTPUT = NodeIdentifier.create(operationOutputQName(Foo.QNAME.getModule()));
@@ -43,10 +51,8 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     private static final ContainerNode DOM_BAR_OUTPUT = containerBuilder().withNodeIdentifier(BAR_OUTPUT)
             .withChild(leafBuilder().withNodeIdentifier(BAR_XYZZY).withValue("xyzzy").build())
             .build();
-    private static final RpcInput BINDING_BAR_INPUT =
-            new org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grp.bar.InputBuilder().build();
-    private static final RpcOutput BINDING_BAR_OUTPUT =
-            new org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grp.bar.OutputBuilder().setXyzzy("xyzzy").build();
+    private static final BarInput BINDING_BAR_INPUT = new BarInputBuilder().build();
+    private static final BarOutput BINDING_BAR_OUTPUT = new BarOutputBuilder().setXyzzy("xyzzy").build();
 
     private static final NodeIdentifier FOOIO_INPUT = NodeIdentifier.create(operationInputQName(Fooio.QNAME
             .getModule()));
@@ -58,10 +64,8 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
             leafBuilder().withNodeIdentifier(FOOIO_I).withValue("ifoo").build()).build();
     private static final ContainerNode DOM_FOOIO_OUTPUT = containerBuilder().withNodeIdentifier(FOOIO_OUTPUT).withChild(
             leafBuilder().withNodeIdentifier(FOOIO_O).withValue("ofoo").build()).build();
-    private static final RpcInput BINDING_FOOIO_INPUT =
-            new org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.fooio.InputBuilder().setFooi("ifoo").build();
-    private static final RpcOutput BINDING_FOOIO_OUTPUT =
-            new org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.fooio.OutputBuilder().setFooo("ofoo").build();
+    private static final FooioInput BINDING_FOOIO_INPUT = new FooioInputBuilder().setFooi("ifoo").build();
+    private static final FooioOutput BINDING_FOOIO_OUTPUT = new FooioOutputBuilder().setFooo("ofoo").build();
 
     @Test
     public void testSerialization() {

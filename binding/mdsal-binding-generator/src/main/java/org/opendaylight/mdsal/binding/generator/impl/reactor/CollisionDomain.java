@@ -236,12 +236,12 @@ final class CollisionDomain {
         return addMember(new LeafSecondary(memberGen, primary, classSuffix));
     }
 
-    @NonNull Member addSecondary(final RpcInputGenerator memberGen, final Member primary) {
+    @NonNull Member addSecondary(final InputGenerator memberGen, final Member primary) {
         return addMember(new SuffixSecondary(memberGen, primary, BindingMapping.RPC_INPUT_SUFFIX,
             memberGen.statement().argument()));
     }
 
-    @NonNull Member addSecondary(final RpcOutputGenerator memberGen, final Member primary) {
+    @NonNull Member addSecondary(final OutputGenerator memberGen, final Member primary) {
         return addMember(new SuffixSecondary(memberGen, primary, BindingMapping.RPC_OUTPUT_SUFFIX,
             memberGen.statement().argument()));
     }

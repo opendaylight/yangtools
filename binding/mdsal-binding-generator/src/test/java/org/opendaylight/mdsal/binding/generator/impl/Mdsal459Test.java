@@ -35,7 +35,7 @@ public class Mdsal459Test {
             JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev", "AugData"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev", "Foo1"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev.foo", "Bar"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev.foo.bar", "Output"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev.foo.bar", "Input")), typeNames);
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev.foo", "BarOutput"),
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.aug.norev.foo", "BarInput")), typeNames);
     }
 }

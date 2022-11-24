@@ -502,8 +502,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
             } else if (stmt instanceof IdentityEffectiveStatement identity) {
                 tmp.add(new IdentityGenerator(identity, this));
             } else if (stmt instanceof InputEffectiveStatement input) {
-                tmp.add(this instanceof RpcGenerator ? new RpcInputGenerator(input, this)
-                    : new InputGenerator(input, this));
+                tmp.add(new InputGenerator(input, this));
             } else if (stmt instanceof LeafEffectiveStatement leaf) {
                 if (!isAugmenting(leaf)) {
                     tmp.add(new LeafGenerator(leaf, this));
@@ -527,8 +526,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                     tmp.add(new NotificationGenerator(notification, this));
                 }
             } else if (stmt instanceof OutputEffectiveStatement output) {
-                tmp.add(this instanceof RpcGenerator ? new RpcOutputGenerator(output, this)
-                    : new OutputGenerator(output, this));
+                tmp.add(new OutputGenerator(output, this));
             } else if (stmt instanceof RpcEffectiveStatement rpc) {
                 if (this instanceof ModuleGenerator module) {
                     tmp.add(new RpcGenerator(rpc, module));

@@ -9,6 +9,8 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -19,8 +21,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to an {@code input} or an {@code output} statement.
  */
-abstract class OperationContainerGenerator<S extends DataTreeEffectiveStatement<?>, R extends CompositeRuntimeType>
-        extends CompositeSchemaTreeGenerator<S, R> {
+abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveStatement<?>,
+            R extends CompositeRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
+        permits InputGenerator, OutputGenerator {
     private final ConcreteType baseInterface;
 
     OperationContainerGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent,
@@ -28,6 +31,23 @@ abstract class OperationContainerGenerator<S extends DataTreeEffectiveStatement<
         super(statement, parent);
         this.baseInterface = requireNonNull(baseInterface);
     }
+
+    @Override
+    final CollisionDomain parentDomain() {
+        return getParent().parentDomain();
+    }
+
+    @Override
+    final AbstractCompositeGenerator<?, ?> getPackageParent() {
+        return getParent().getParent();
+    }
+
+    @Override
+    final Member createMember(final CollisionDomain domain) {
+        return createMember(domain, getParent().ensureMember());
+    }
+
+    abstract @NonNull Member createMember(@NonNull CollisionDomain domain, Member parent);
 
     @Override
     final void pushToInference(final SchemaInferenceStack dataTree) {
