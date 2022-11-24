@@ -379,10 +379,11 @@ public final class BindingReflections {
     /**
      * Scans supplied class and returns an iterable of all data children classes.
      *
-     * @param type
-     *            YANG Modeled Entity derived from DataContainer
+     * @param type YANG Modeled Entity derived from DataContainer
      * @return Iterable of all data children, which have YANG modeled entity
+     * @deprecated This method is only used in mdsal-binding-dom-codec and is schedule for removal.
      */
+    @Deprecated(since = "10.0.4", forRemoval = true)
     @SuppressWarnings("unchecked")
     public static Iterable<Class<? extends DataObject>> getChildrenClasses(final Class<? extends DataContainer> type) {
         checkArgument(type != null, "Target type must not be null");
@@ -403,12 +404,15 @@ public final class BindingReflections {
      *
      * @param type YANG Modeled Entity derived from DataContainer
      * @return Iterable of all data children, which have YANG modeled entity
+     * @deprecated This method is only used in mdsal-binding-dom-codec and is schedule for removal.
      */
+    @Deprecated(since = "10.0.4", forRemoval = true)
     public static Map<Class<? extends DataContainer>, Method> getChildrenClassToMethod(final Class<?> type) {
         return getChildClassToMethod(type, BindingMapping.GETTER_PREFIX);
     }
 
     @Beta
+    @Deprecated(since = "10.0.4", forRemoval = true)
     public static Map<Class<? extends DataContainer>, Method> getChildrenClassToNonnullMethod(final Class<?> type) {
         return getChildClassToMethod(type, BindingMapping.NONNULL_PREFIX);
     }
