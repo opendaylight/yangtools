@@ -19,10 +19,12 @@ import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +36,9 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -125,7 +129,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             // Updates collection of case children
             @SuppressWarnings("unchecked")
             final Class<? extends DataObject> cazeCls = (Class<? extends DataObject>) cazeDef.getBindingClass();
-            for (final Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses(cazeCls)) {
+            for (final Class<? extends DataObject> cazeChild : getChildrenClasses(cazeCls)) {
                 childToCase.put(cazeChild, cazeDef);
             }
             // Updates collection of YANG instance identifier to case
@@ -307,5 +311,28 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         }
 
         return childNonNull(result, type, "Class %s is not child of any cases for %s", type, bindingArg()).get();
+    }
+
+    /**
+     * Scans supplied class and returns an iterable of all data children classes.
+     *
+     * @param type
+     *            YANG Modeled Entity derived from DataContainer
+     * @return Iterable of all data children, which have YANG modeled entity
+     */
+    // FIXME: MDSAL-780: replace use of this method
+    @SuppressWarnings("unchecked")
+    private static Iterable<Class<? extends DataObject>> getChildrenClasses(final Class<? extends DataContainer> type) {
+        checkArgument(type != null, "Target type must not be null");
+        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
+        List<Class<? extends DataObject>> ret = new LinkedList<>();
+        for (Method method : type.getMethods()) {
+            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method,
+                BindingMapping.GETTER_PREFIX);
+            if (entity.isPresent()) {
+                ret.add((Class<? extends DataObject>) entity.get());
+            }
+        }
+        return ret;
     }
 }

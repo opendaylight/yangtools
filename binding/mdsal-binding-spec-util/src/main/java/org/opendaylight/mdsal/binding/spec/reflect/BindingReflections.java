@@ -21,14 +21,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -374,116 +369,6 @@ public final class BindingReflections {
                 && !ChildOf.class.isAssignableFrom(targetType)
                 && !Notification.class.isAssignableFrom(targetType)
                 && (targetType.getName().endsWith("Input") || targetType.getName().endsWith("Output"));
-    }
-
-    /**
-     * Scans supplied class and returns an iterable of all data children classes.
-     *
-     * @param type YANG Modeled Entity derived from DataContainer
-     * @return Iterable of all data children, which have YANG modeled entity
-     * @deprecated This method is only used in mdsal-binding-dom-codec and is schedule for removal.
-     */
-    @Deprecated(since = "10.0.4", forRemoval = true)
-    @SuppressWarnings("unchecked")
-    public static Iterable<Class<? extends DataObject>> getChildrenClasses(final Class<? extends DataContainer> type) {
-        checkArgument(type != null, "Target type must not be null");
-        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
-        List<Class<? extends DataObject>> ret = new LinkedList<>();
-        for (Method method : type.getMethods()) {
-            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method,
-                BindingMapping.GETTER_PREFIX);
-            if (entity.isPresent()) {
-                ret.add((Class<? extends DataObject>) entity.get());
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * Scans supplied class and returns an iterable of all data children classes.
-     *
-     * @param type YANG Modeled Entity derived from DataContainer
-     * @return Iterable of all data children, which have YANG modeled entity
-     * @deprecated This method is only used in mdsal-binding-dom-codec and is schedule for removal.
-     */
-    @Deprecated(since = "10.0.4", forRemoval = true)
-    public static Map<Class<? extends DataContainer>, Method> getChildrenClassToMethod(final Class<?> type) {
-        return getChildClassToMethod(type, BindingMapping.GETTER_PREFIX);
-    }
-
-    @Beta
-    @Deprecated(since = "10.0.4", forRemoval = true)
-    public static Map<Class<? extends DataContainer>, Method> getChildrenClassToNonnullMethod(final Class<?> type) {
-        return getChildClassToMethod(type, BindingMapping.NONNULL_PREFIX);
-    }
-
-    private static Map<Class<? extends DataContainer>, Method> getChildClassToMethod(final Class<?> type,
-            final String prefix) {
-        checkArgument(type != null, "Target type must not be null");
-        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type %s must be derived from DataContainer",
-            type);
-        Map<Class<? extends DataContainer>, Method> ret = new HashMap<>();
-        for (Method method : type.getMethods()) {
-            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method, prefix);
-            if (entity.isPresent()) {
-                ret.put(entity.get(), method);
-            }
-        }
-        return ret;
-    }
-
-    private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
-            final String prefix) {
-        final String methodName = method.getName();
-        if ("getClass".equals(methodName) || !methodName.startsWith(prefix) || method.getParameterCount() > 0) {
-            return Optional.empty();
-        }
-
-        final Class<?> returnType = method.getReturnType();
-        if (DataContainer.class.isAssignableFrom(returnType)) {
-            return optionalDataContainer(returnType);
-        } else if (List.class.isAssignableFrom(returnType)) {
-            return getYangModeledReturnType(method, 0);
-        } else if (Map.class.isAssignableFrom(returnType)) {
-            return getYangModeledReturnType(method, 1);
-        }
-        return Optional.empty();
-    }
-
-    @SuppressWarnings("checkstyle:illegalCatch")
-    private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
-            final int parameterOffset) {
-        try {
-            return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(),
-                () -> genericParameter(method.getGenericReturnType(), parameterOffset)
-                    .flatMap(result -> result instanceof Class ? optionalCast((Class<?>) result) : Optional.empty()));
-        } catch (Exception e) {
-            /*
-             * It is safe to log this this exception on debug, since this
-             * method should not fail. Only failures are possible if the
-             * runtime / backing.
-             */
-            LOG.debug("Unable to find YANG modeled return type for {}", method, e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<Class<? extends DataContainer>> optionalCast(final Class<?> type) {
-        return DataContainer.class.isAssignableFrom(type) ? optionalDataContainer(type) : Optional.empty();
-    }
-
-    private static Optional<Class<? extends DataContainer>> optionalDataContainer(final Class<?> type) {
-        return Optional.of(type.asSubclass(DataContainer.class));
-    }
-
-    private static Optional<Type> genericParameter(final Type type, final int offset) {
-        if (type instanceof ParameterizedType parameterized) {
-            final Type[] parameters = parameterized.getActualTypeArguments();
-            if (parameters.length > offset) {
-                return Optional.of(parameters[offset]);
-            }
-        }
-        return Optional.empty();
     }
 
     private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {

@@ -37,6 +37,7 @@ import org.opendaylight.mdsal.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -107,8 +108,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
 
         final ImmutableMap<Method, ValueNodeCodecContext> tmpLeaves = factory().getLeafNodes(bindingClass,
             getType().statement());
-        final Map<Class<? extends DataContainer>, Method> clsToMethod =
-            BindingReflections.getChildrenClassToMethod(bindingClass);
+        final Map<Class<? extends DataContainer>, Method> clsToMethod = getChildrenClassToMethod(bindingClass);
 
         final Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> byStreamClassBuilder = new HashMap<>();
@@ -152,7 +152,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         }
 
         // Find all non-default nonnullFoo() methods and update the corresponding property info
-        for (var entry : BindingReflections.getChildrenClassToNonnullMethod(bindingClass).entrySet()) {
+        for (var entry : getChildrenClassToNonnullMethod(bindingClass).entrySet()) {
             final var method = entry.getValue();
             if (!method.isDefault()) {
                 daoProperties.compute(entry.getKey(), (key, value) -> new PropertyInfo.GetterAndNonnull(
@@ -481,5 +481,34 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         checkArgument(bindingArg().equals(arg));
         return getDomPathArgument();
+    }
+
+    /**
+     * Scans supplied class and returns an iterable of all data children classes.
+     *
+     * @param type YANG Modeled Entity derived from DataContainer
+     * @return Iterable of all data children, which have YANG modeled entity
+     */
+    // FIXME: MDSAL-780: replace use of this method
+    private static Map<Class<? extends DataContainer>, Method> getChildrenClassToMethod(final Class<?> type) {
+        return getChildClassToMethod(type, BindingMapping.GETTER_PREFIX);
+    }
+
+    // FIXME: MDSAL-780: replace use of this method
+    private static Map<Class<? extends DataContainer>, Method> getChildrenClassToNonnullMethod(final Class<?> type) {
+        return getChildClassToMethod(type, BindingMapping.NONNULL_PREFIX);
+    }
+
+    // FIXME: MDSAL-780: replace use of this method
+    private static Map<Class<? extends DataContainer>, Method> getChildClassToMethod(final Class<?> type,
+            final String prefix) {
+        checkArgument(type != null, "Target type must not be null");
+        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type %s must be derived from DataContainer",
+            type);
+        final var ret = new HashMap<Class<? extends DataContainer>, Method>();
+        for (Method method : type.getMethods()) {
+            getYangModeledReturnType(method, prefix).ifPresent(entity -> ret.put(entity, method));
+        }
+        return ret;
     }
 }
