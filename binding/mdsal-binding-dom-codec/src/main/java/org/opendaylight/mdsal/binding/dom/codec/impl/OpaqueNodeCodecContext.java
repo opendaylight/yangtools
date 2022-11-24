@@ -21,8 +21,8 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingOpaqueObjectCodecTreeNode;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.GeneratorResult;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.yangtools.yang.binding.OpaqueData;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -38,7 +38,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         implements BindingOpaqueObjectCodecTreeNode<T> {
     static final class Anyxml<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
         Anyxml(final AnyxmlSchemaNode schema, final String getterName, final Class<T> bindingClass,
-                final CodecClassLoader loader) {
+                final BindingClassLoader loader) {
             super(schema, getterName, bindingClass, loader);
         }
 
@@ -60,7 +60,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
 
     static final class Anydata<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
         Anydata(final AnydataSchemaNode schema, final String getterName, final Class<T> bindingClass,
-                final CodecClassLoader loader) {
+                final BindingClassLoader loader) {
             super(schema, getterName, bindingClass, loader);
         }
 
@@ -103,7 +103,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     private final @NonNull Class<T> bindingClass;
 
     OpaqueNodeCodecContext(final DataSchemaNode schema, final String getterName, final Class<T> bindingClass,
-            final CodecClassLoader loader) {
+            final BindingClassLoader loader) {
         super(schema, getterName, null);
         this.bindingClass = requireNonNull(bindingClass);
         proxyConstructor = createImpl(loader, bindingClass);
@@ -154,7 +154,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         }
     }
 
-    private static MethodHandle createImpl(final CodecClassLoader rootLoader, final Class<?> bindingClass) {
+    private static MethodHandle createImpl(final BindingClassLoader rootLoader, final Class<?> bindingClass) {
         final Class<?> proxyClass = rootLoader.generateClass(bindingClass, "codecImpl",
             (loader, fqcn, bindingInterface) -> GeneratorResult.of(TEMPLATE
                 .name(fqcn)

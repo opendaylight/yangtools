@@ -50,10 +50,10 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.ClassGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.GeneratorResult;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingSchemaMapping;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
@@ -173,7 +173,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         this.startEvent = requireNonNull(startEvent);
     }
 
-    static Class<? extends DataObjectStreamer<?>> generateStreamer(final CodecClassLoader loader,
+    static Class<? extends DataObjectStreamer<?>> generateStreamer(final BindingClassLoader loader,
             final CodecContextFactory registry, final Class<?> type) {
 
         final var typeAndSchema = registry.getRuntimeContext().getTypeWithSchema(type);
@@ -203,7 +203,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     }
 
     @Override
-    public GeneratorResult<T> generateClass(final CodecClassLoader loader, final String fqcn,
+    public GeneratorResult<T> generateClass(final BindingClassLoader loader, final String fqcn,
             final Class<?> bindingInterface) {
         LOG.trace("Definining streamer {}", fqcn);
 
@@ -247,7 +247,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         return result;
     }
 
-    private ChildStream createStream(final CodecClassLoader loader, final ImmutableMap<String, Type> props,
+    private ChildStream createStream(final BindingClassLoader loader, final ImmutableMap<String, Type> props,
             final DataSchemaNode childSchema, final Method getter) {
         if (childSchema instanceof LeafSchemaNode) {
             return qnameChildStream(STREAM_LEAF, getter, childSchema);
@@ -379,7 +379,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         }
     }
 
-    private static Class<?> loadTypeClass(final CodecClassLoader loader, final Type type) {
+    private static Class<?> loadTypeClass(final BindingClassLoader loader, final Type type) {
         try {
             return loader.loadClass(type.getFullyQualifiedName());
         } catch (ClassNotFoundException e) {

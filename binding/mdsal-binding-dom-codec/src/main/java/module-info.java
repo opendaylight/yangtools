@@ -26,6 +26,7 @@ module org.opendaylight.mdsal.binding.dom.codec.impl {
     requires transitive org.opendaylight.mdsal.binding.dom.codec.spi;
     requires com.google.common;
     requires net.bytebuddy;
+    requires org.opendaylight.mdsal.binding.loader;
     requires org.opendaylight.mdsal.binding.model.api;
     requires org.opendaylight.mdsal.binding.spec.util;
     requires org.opendaylight.yangtools.concepts;

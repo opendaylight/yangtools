@@ -13,7 +13,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -80,7 +80,7 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
          *
          * @return A codec loader instance
          */
-        @NonNull CodecClassLoader getLoader();
+        @NonNull BindingClassLoader getLoader();
 
         @NonNull DataObjectStreamer<?> getDataObjectSerializer(Class<?> type);
 

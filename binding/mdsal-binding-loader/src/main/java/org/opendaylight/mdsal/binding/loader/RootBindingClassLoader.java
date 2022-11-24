@@ -5,70 +5,68 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.impl.loader;
+package org.opendaylight.mdsal.binding.loader;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // A root codec classloader, binding only whatever is available StaticClassPool
-final class RootCodecClassLoader extends CodecClassLoader {
-    private static final Logger LOG = LoggerFactory.getLogger(RootCodecClassLoader.class);
-    private static final ClassLoader LOADER = verifyNotNull(RootCodecClassLoader.class.getClassLoader());
+final class RootBindingClassLoader extends BindingClassLoader {
+    private static final Logger LOG = LoggerFactory.getLogger(RootBindingClassLoader.class);
 
     static {
         verify(registerAsParallelCapable());
     }
 
     @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<RootCodecClassLoader, ImmutableMap> LOADERS_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(RootCodecClassLoader.class, ImmutableMap.class, "loaders");
+    private static final AtomicReferenceFieldUpdater<RootBindingClassLoader, ImmutableMap> LOADERS_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(RootBindingClassLoader.class, ImmutableMap.class, "loaders");
 
-    private volatile ImmutableMap<ClassLoader, CodecClassLoader> loaders = ImmutableMap.of();
+    private volatile ImmutableMap<ClassLoader, BindingClassLoader> loaders = ImmutableMap.of();
 
-    RootCodecClassLoader() {
-        super(LOADER);
+    RootBindingClassLoader(final ClassLoader parentLoader, final @Nullable File dumpDir) {
+        super(parentLoader, dumpDir);
     }
 
     @Override
-    CodecClassLoader findClassLoader(final Class<?> bindingClass) {
-        final ClassLoader target = bindingClass.getClassLoader();
+    BindingClassLoader findClassLoader(final Class<?> bindingClass) {
+        final var target = bindingClass.getClassLoader();
         if (target == null) {
             // No class loader associated ... well, let's use root then
             return this;
         }
 
         // Cache for update
-        ImmutableMap<ClassLoader, CodecClassLoader> local = loaders;
-        final CodecClassLoader known = local.get(target);
+        var local = loaders;
+        final var known = local.get(target);
         if (known != null) {
             return known;
         }
 
         // Alright, we need to determine if the class is accessible through our hierarchy (in which case we use
         // ourselves) or we need to create a new Leaf.
-        final CodecClassLoader found;
+        final BindingClassLoader found;
         if (!isOurClass(bindingClass)) {
             verifyStaticLinkage(target);
             found = AccessController.doPrivileged(
-                (PrivilegedAction<CodecClassLoader>)() -> new LeafCodecClassLoader(this, target));
+                (PrivilegedAction<BindingClassLoader>)() -> new LeafBindingClassLoader(this, target));
         } else {
             found = this;
         }
 
         // Now make sure we cache this result
         while (true) {
-            final Builder<ClassLoader, CodecClassLoader> builder = ImmutableMap.builderWithExpectedSize(
-                local.size() + 1);
+            final var builder = ImmutableMap.<ClassLoader, BindingClassLoader>builderWithExpectedSize(local.size() + 1);
             builder.putAll(local);
             builder.put(target, found);
 
@@ -77,7 +75,7 @@ final class RootCodecClassLoader extends CodecClassLoader {
             }
 
             local = loaders;
-            final CodecClassLoader recheck = local.get(target);
+            final var recheck = local.get(target);
             if (recheck != null) {
                 return recheck;
             }
@@ -85,7 +83,7 @@ final class RootCodecClassLoader extends CodecClassLoader {
     }
 
     @Override
-    void appendLoaders(final Set<LeafCodecClassLoader> newLoaders) {
+    void appendLoaders(final Set<LeafBindingClassLoader> newLoaders) {
         // Root loader should never see the requirement for other loaders, as that would violate loop-free nature
         // of generated code: if a binding class is hosted in root loader, all its references must be visible from
         // the root loader and hence all the generated code ends up residing in the root loader, too.

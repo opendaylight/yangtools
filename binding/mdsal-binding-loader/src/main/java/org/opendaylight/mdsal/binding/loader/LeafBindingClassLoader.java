@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.impl.loader;
+package org.opendaylight.mdsal.binding.loader;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
@@ -20,22 +19,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // A leaf class loader, binding together a root class loader and some other class loader
-final class LeafCodecClassLoader extends CodecClassLoader {
+final class LeafBindingClassLoader extends BindingClassLoader {
     static {
         verify(registerAsParallelCapable());
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(LeafCodecClassLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LeafBindingClassLoader.class);
 
-    private final @NonNull RootCodecClassLoader root;
+    private final @NonNull RootBindingClassLoader root;
     private final @NonNull ClassLoader target;
 
     @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<LeafCodecClassLoader, ImmutableSet> DEPENDENCIES_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(LeafCodecClassLoader.class, ImmutableSet.class, "dependencies");
-    private volatile ImmutableSet<LeafCodecClassLoader> dependencies = ImmutableSet.of();
+    private static final AtomicReferenceFieldUpdater<LeafBindingClassLoader, ImmutableSet> DEPENDENCIES_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(LeafBindingClassLoader.class, ImmutableSet.class, "dependencies");
+    private volatile ImmutableSet<LeafBindingClassLoader> dependencies = ImmutableSet.of();
 
-    LeafCodecClassLoader(final RootCodecClassLoader root, final ClassLoader target) {
+    LeafBindingClassLoader(final RootBindingClassLoader root, final ClassLoader target) {
         super(root);
         this.root = requireNonNull(root);
         this.target = requireNonNull(target);
@@ -47,10 +46,10 @@ final class LeafCodecClassLoader extends CodecClassLoader {
             return target.loadClass(name);
         } catch (ClassNotFoundException e) {
             LOG.trace("Class {} not found in target, looking through dependencies", name);
-            for (LeafCodecClassLoader loader : dependencies) {
+            for (LeafBindingClassLoader loader : dependencies) {
                 // Careful: a loading operation may be underway, make sure that process has completed
                 synchronized (loader.getClassLoadingLock(name)) {
-                    final Class<?> loaded = loader.findLoadedClass(name);
+                    final var loaded = loader.findLoadedClass(name);
                     if (loaded != null) {
                         LOG.trace("Class {} found in dependency {}", name, loader);
                         return loaded;
@@ -63,19 +62,18 @@ final class LeafCodecClassLoader extends CodecClassLoader {
     }
 
     @Override
-    CodecClassLoader findClassLoader(final Class<?> bindingClass) {
-        final ClassLoader bindingTarget = bindingClass.getClassLoader();
-        return target.equals(bindingTarget) ? this : root.findClassLoader(bindingClass);
+    BindingClassLoader findClassLoader(final Class<?> bindingClass) {
+        return target.equals(bindingClass.getClassLoader()) ? this : root.findClassLoader(bindingClass);
     }
 
     @Override
-    void appendLoaders(final Set<LeafCodecClassLoader> newLoaders) {
+    void appendLoaders(final Set<LeafBindingClassLoader> newLoaders) {
         while (true) {
-            final ImmutableSet<LeafCodecClassLoader> local = dependencies;
-            final List<LeafCodecClassLoader> builder = new ArrayList<>(local.size() + newLoaders.size());
+            final var local = dependencies;
+            final var builder = new ArrayList<LeafBindingClassLoader>(local.size() + newLoaders.size());
             builder.addAll(local);
             builder.addAll(newLoaders);
-            final ImmutableSet<LeafCodecClassLoader> updated = ImmutableSet.copyOf(builder);
+            final var updated = ImmutableSet.copyOf(builder);
             if (local.equals(updated) || DEPENDENCIES_UPDATER.compareAndSet(this, local, updated)) {
                 // No need for an update or the update was successful
                 return;

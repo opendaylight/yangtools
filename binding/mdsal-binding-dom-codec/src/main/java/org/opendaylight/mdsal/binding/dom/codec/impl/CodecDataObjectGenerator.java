@@ -43,9 +43,9 @@ import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.LocalNameProvider;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.NodeContextSupplierProvider;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.ClassGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.GeneratorResult;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.slf4j.Logger;
@@ -130,7 +130,7 @@ import org.slf4j.LoggerFactory;
  *
  * <p>
  * We take a different approach here, which takes advantage of the fact we are in control of both code generation (here)
- * and class loading (in {@link CodecClassLoader}). The process is performed in four steps:
+ * and class loading (in {@link BindingClassLoader}). The process is performed in four steps:
  * <ul>
  * <li>During code generation, the context fields are pointed towards
  *     {@link ClassGeneratorBridge#resolveNodeContextSupplier(String)} and
@@ -260,7 +260,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         this.keyMethod = keyMethod;
     }
 
-    static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generate(final CodecClassLoader loader,
+    static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generate(final BindingClassLoader loader,
             final Class<D> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
         return loader.generateClass(bindingInterface, "codecImpl",
@@ -268,7 +268,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generateAugmentable(
-            final CodecClassLoader loader, final Class<D> bindingInterface,
+            final BindingClassLoader loader, final Class<D> bindingInterface,
             final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
         return loader.generateClass(bindingInterface, "codecImpl",
@@ -276,7 +276,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     @Override
-    public final GeneratorResult<T> generateClass(final CodecClassLoader loader, final String fqcn,
+    public final GeneratorResult<T> generateClass(final BindingClassLoader loader, final String fqcn,
             final Class<?> bindingInterface) {
         LOG.trace("Generating class {}", fqcn);
 

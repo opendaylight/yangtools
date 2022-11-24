@@ -5,15 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.impl.loader;
+package org.opendaylight.mdsal.binding.loader;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
@@ -22,12 +19,12 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
-import net.bytebuddy.description.type.TypeDescription;
+import java.util.function.Supplier;
 import net.bytebuddy.dynamic.DynamicType.Unloaded;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +42,14 @@ import org.slf4j.LoggerFactory;
  *
  * <p>In single-classloader environments, obviously, the root loader can load all binding classes, and hence no leaf
  * loader is created.
- *
- * @author Robert Varga
  */
-@Beta
-public abstract class CodecClassLoader extends ClassLoader {
+public abstract sealed class BindingClassLoader extends ClassLoader
+        permits LeafBindingClassLoader, RootBindingClassLoader {
+    /**
+     * A class generator, generating a class of a particular type.
+     *
+     * @param <T> Type of generated class
+     */
     public interface ClassGenerator<T> {
         /**
          * Generate a class.
@@ -58,7 +58,7 @@ public abstract class CodecClassLoader extends ClassLoader {
          * @param bindingInterface Binding interface for which the class is being generated
          * @return A result.
          */
-        GeneratorResult<T> generateClass(CodecClassLoader loader, String fqcn, Class<?> bindingInterface);
+        GeneratorResult<T> generateClass(BindingClassLoader loader, String fqcn, Class<?> bindingInterface);
 
         /**
          * Run the specified loader in a customized environment. The environment customizations must be cleaned up by
@@ -72,6 +72,11 @@ public abstract class CodecClassLoader extends ClassLoader {
         }
     }
 
+    /**
+     * Result of class generation.
+     *
+     * @param <T> Type of generated class.
+     */
     public static final class GeneratorResult<T> {
         private final @NonNull ImmutableSet<Class<?>> dependecies;
         private final @NonNull Unloaded<T> result;
@@ -88,7 +93,7 @@ public abstract class CodecClassLoader extends ClassLoader {
         public static <T> @NonNull GeneratorResult<T> of(final Unloaded<T> result,
                 final Collection<Class<?>> dependencies) {
             return dependencies.isEmpty() ? of(result) : new GeneratorResult<>(result,
-                    ImmutableSet.copyOf(dependencies));
+                ImmutableSet.copyOf(dependencies));
         }
 
         @NonNull Unloaded<T> getResult() {
@@ -100,9 +105,9 @@ public abstract class CodecClassLoader extends ClassLoader {
         }
     }
 
-    private static final ClassLoadingStrategy<CodecClassLoader> STRATEGY = (classLoader, types) -> {
+    private static final ClassLoadingStrategy<BindingClassLoader> STRATEGY = (classLoader, types) -> {
         verify(types.size() == 1, "Unexpected multiple types", types);
-        final Entry<TypeDescription, byte[]> entry = types.entrySet().iterator().next();
+        final var entry = types.entrySet().iterator().next();
         return ImmutableMap.of(entry.getKey(), classLoader.loadClass(entry.getKey().getName(), entry.getValue()));
     };
 
@@ -110,45 +115,52 @@ public abstract class CodecClassLoader extends ClassLoader {
         verify(ClassLoader.registerAsParallelCapable());
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(CodecClassLoader.class);
-    private static final File BYTECODE_DIRECTORY;
+    private static final Logger LOG = LoggerFactory.getLogger(BindingClassLoader.class);
 
-    static {
-        final String dir = System.getProperty("org.opendaylight.mdsal.binding.dom.codec.loader.bytecodeDumpDirectory");
-        BYTECODE_DIRECTORY = Strings.isNullOrEmpty(dir) ? null : new File(dir);
+    private final @Nullable File dumpDir;
+
+    BindingClassLoader(final ClassLoader parentLoader, final @Nullable File dumpDir) {
+        super(parentLoader);
+        this.dumpDir = dumpDir;
     }
 
-    CodecClassLoader(final ClassLoader parentLoader) {
-        super(parentLoader);
+    BindingClassLoader(final BindingClassLoader parentLoader) {
+        this(parentLoader, parentLoader.dumpDir);
     }
 
     /**
-     * Instantiate a new CodecClassLoader, which serves as the root of generated code loading.
+     * Instantiate a new BindingClassLoader, which serves as the root of generated code loading.
      *
-     * @return A new CodecClassLoader.
+     * @param rootClass Class from which to derive the class loader
+     * @param dumpDir Directory in which to dump loaded bytecode
+     * @return A new BindingClassLoader.
+     * @throws NullPointerException if {@code parentLoader} is {@code null}
      */
-    public static @NonNull CodecClassLoader create() {
-        return AccessController.doPrivileged((PrivilegedAction<CodecClassLoader>)() -> new RootCodecClassLoader());
+    public static @NonNull BindingClassLoader create(final Class<?> rootClass, final @Nullable File dumpDir) {
+        final var parentLoader = rootClass.getClassLoader();
+        return AccessController.doPrivileged(
+            (PrivilegedAction<BindingClassLoader>)() -> new RootBindingClassLoader(parentLoader, dumpDir));
     }
 
     /**
      * The name of the target class is formed through concatenation of the name of a {@code bindingInterface} and
      * specified {@code suffix}.
      *
+     * @param <T> Type of generated class
      * @param bindingInterface Binding compile-time-generated interface
      * @param suffix Suffix to use
      * @param generator Code generator to run
      * @return A generated class object
      * @throws NullPointerException if any argument is null
      */
-    public final <T> Class<T> generateClass(final Class<?> bindingInterface,
-            final String suffix, final ClassGenerator<T> generator)  {
+    public final <T> Class<T> generateClass(final Class<?> bindingInterface, final String suffix,
+            final ClassGenerator<T> generator)  {
         return findClassLoader(requireNonNull(bindingInterface)).doGenerateClass(bindingInterface, suffix, generator);
     }
 
     public final @NonNull Class<?> getGeneratedClass(final Class<?> bindingInterface, final String suffix) {
-        final CodecClassLoader loader = findClassLoader(requireNonNull(bindingInterface));
-        final String fqcn = generatedClassName(bindingInterface, suffix);
+        final var loader = findClassLoader(requireNonNull(bindingInterface));
+        final var fqcn = generatedClassName(bindingInterface, suffix);
 
         final Class<?> ret;
         synchronized (loader.getClassLoadingLock(fqcn)) {
@@ -167,7 +179,7 @@ public abstract class CodecClassLoader extends ClassLoader {
      * @param newLoaders Loaders to append
      * @throws NullPointerException if {@code loaders} is null
      */
-    abstract void appendLoaders(@NonNull Set<LeafCodecClassLoader> newLoaders);
+    abstract void appendLoaders(@NonNull Set<LeafBindingClassLoader> newLoaders);
 
     /**
      * Find the loader responsible for holding classes related to a binding class.
@@ -176,21 +188,21 @@ public abstract class CodecClassLoader extends ClassLoader {
      * @return a Loader instance
      * @throws NullPointerException if {@code bindingClass} is null
      */
-    abstract @NonNull CodecClassLoader findClassLoader(@NonNull Class<?> bindingClass);
+    abstract @NonNull BindingClassLoader findClassLoader(@NonNull Class<?> bindingClass);
 
     private <T> Class<T> doGenerateClass(final Class<?> bindingInterface, final String suffix,
             final ClassGenerator<T> generator)  {
-        final String fqcn = generatedClassName(bindingInterface, suffix);
+        final var fqcn = generatedClassName(bindingInterface, suffix);
 
         synchronized (getClassLoadingLock(fqcn)) {
             // Attempt to find a loaded class
-            final Class<?> existing = findLoadedClass(fqcn);
+            final var existing = findLoadedClass(fqcn);
             if (existing != null) {
                 return (Class<T>) existing;
             }
 
-            final GeneratorResult<T> result = generator.generateClass(this, fqcn, bindingInterface);
-            final Unloaded<T> unloaded = result.getResult();
+            final var result = generator.generateClass(this, fqcn, bindingInterface);
+            final var unloaded = result.getResult();
             verify(fqcn.equals(unloaded.getTypeDescription().getName()), "Unexpected class in %s", unloaded);
             verify(unloaded.getAuxiliaryTypes().isEmpty(), "Auxiliary types present in %s", unloaded);
             dumpBytecode(unloaded);
@@ -202,18 +214,18 @@ public abstract class CodecClassLoader extends ClassLoader {
 
     final Class<?> loadClass(final String fqcn, final byte[] byteCode) {
         synchronized (getClassLoadingLock(fqcn)) {
-            final Class<?> existing = findLoadedClass(fqcn);
+            final var existing = findLoadedClass(fqcn);
             verify(existing == null, "Attempted to load existing %s", existing);
             return defineClass(fqcn, byteCode, 0, byteCode.length);
         }
     }
 
     private void processDependencies(final Collection<Class<?>> deps) {
-        final Set<LeafCodecClassLoader> depLoaders = new HashSet<>();
-        for (Class<?> dep : deps) {
-            final ClassLoader depLoader = dep.getClassLoader();
-            verify(depLoader instanceof CodecClassLoader, "Dependency %s is not a generated class", dep);
-            if (this.equals(depLoader)) {
+        final var depLoaders = new HashSet<LeafBindingClassLoader>();
+        for (var dep : deps) {
+            final var depLoader = dep.getClassLoader();
+            verify(depLoader instanceof BindingClassLoader, "Dependency %s is not a generated class", dep);
+            if (equals(depLoader)) {
                 // Same loader, skip
                 continue;
             }
@@ -223,8 +235,8 @@ public abstract class CodecClassLoader extends ClassLoader {
             } catch (ClassNotFoundException e) {
                 LOG.debug("Cannot find {} in local loader, attempting to compensate", dep, e);
                 // Root loader is always visible from a leaf, hence the dependency can only be a leaf
-                verify(depLoader instanceof LeafCodecClassLoader, "Dependency loader %s is not a leaf", depLoader);
-                depLoaders.add((LeafCodecClassLoader) depLoader);
+                verify(depLoader instanceof LeafBindingClassLoader, "Dependency loader %s is not a leaf", depLoader);
+                depLoaders.add((LeafBindingClassLoader) depLoader);
             }
         }
 
@@ -233,10 +245,11 @@ public abstract class CodecClassLoader extends ClassLoader {
         }
     }
 
-    private static void dumpBytecode(final Unloaded<?> unloaded) {
-        if (BYTECODE_DIRECTORY != null) {
+    private void dumpBytecode(final Unloaded<?> unloaded) {
+        final var dir = dumpDir;
+        if (dir != null) {
             try {
-                unloaded.saveIn(BYTECODE_DIRECTORY);
+                unloaded.saveIn(dir);
             } catch (IOException | IllegalArgumentException e) {
                 LOG.info("Failed to save {}", unloaded.getTypeDescription().getName(), e);
             }

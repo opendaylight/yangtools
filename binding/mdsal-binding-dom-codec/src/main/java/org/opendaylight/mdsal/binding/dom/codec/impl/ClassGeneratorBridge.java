@@ -10,10 +10,10 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.ClassGenerator;
+import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
 
 /**
  * Bridge for initializing generated instance constants during class loading time. This class is public only due to
@@ -24,9 +24,9 @@ public final class ClassGeneratorBridge {
     interface BridgeProvider<T> extends ClassGenerator<T> {
         @Override
         default Class<T> customizeLoading(final @NonNull Supplier<Class<T>> loader) {
-            final BridgeProvider<?> prev = ClassGeneratorBridge.setup(this);
+            final var prev = ClassGeneratorBridge.setup(this);
             try {
-                final Class<T> result = loader.get();
+                final var result = loader.get();
 
                 /*
                  * This a bit of magic to support NodeContextSupplier constants. These constants need to be resolved
@@ -62,7 +62,7 @@ public final class ClassGeneratorBridge {
     private static final ThreadLocal<BridgeProvider<?>> CURRENT_CUSTOMIZER = new ThreadLocal<>();
 
     private ClassGeneratorBridge() {
-
+        // Hidden on purpose
     }
 
     public static @NonNull NodeContextSupplier resolveNodeContextSupplier(final @NonNull String methodName) {
@@ -74,7 +74,7 @@ public final class ClassGeneratorBridge {
     }
 
     static @Nullable BridgeProvider<?> setup(final @NonNull BridgeProvider<?> next) {
-        final BridgeProvider<?> prev = CURRENT_CUSTOMIZER.get();
+        final var prev = CURRENT_CUSTOMIZER.get();
         CURRENT_CUSTOMIZER.set(verifyNotNull(next));
         return prev;
     }
