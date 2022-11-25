@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.cache.Cache;
@@ -38,8 +39,8 @@ final class EnumerationCodec extends SchemaUnawareCodec {
      *     "Virtual machine implementations are, however, encouraged to bias against clearing recently-created or
      *      recently-used soft references."
      */
-    private static final Cache<Class<?>, @NonNull EnumerationCodec> CACHE = CacheBuilder.newBuilder().weakKeys()
-        .softValues().build();
+    private static final Cache<Class<? extends EnumTypeObject>, @NonNull EnumerationCodec> CACHE =
+        CacheBuilder.newBuilder().weakKeys().softValues().build();
 
     private final ImmutableBiMap<String, Enum<?>> nameToEnum;
     private final Class<? extends Enum<?>> enumClass;
@@ -51,7 +52,7 @@ final class EnumerationCodec extends SchemaUnawareCodec {
 
     static @NonNull EnumerationCodec of(final Class<?> returnType, final EnumTypeDefinition def)
             throws ExecutionException {
-        return CACHE.get(returnType, () -> {
+        return CACHE.get(returnType.asSubclass(EnumTypeObject.class), () -> {
             final Class<? extends Enum<?>> enumType = castType(returnType);
 
             final Map<String, Enum<?>> mapping = Maps.uniqueIndex(Arrays.asList(enumType.getEnumConstants()),
@@ -82,7 +83,7 @@ final class EnumerationCodec extends SchemaUnawareCodec {
     @SuppressWarnings("unchecked")
     private static Class<? extends Enum<?>> castType(final Class<?> returnType) {
         checkArgument(Enum.class.isAssignableFrom(returnType));
-        return (Class<? extends Enum<?>>) returnType;
+        return (Class<? extends Enum<?>>) returnType.asSubclass(Enum.class);
     }
 
     @Override
@@ -96,7 +97,6 @@ final class EnumerationCodec extends SchemaUnawareCodec {
     @Override
     protected String serializeImpl(final Object input) {
         checkArgument(enumClass.isInstance(input), "Input %s is not a instance of %s", input, enumClass);
-        // FIXME: verifyNotNull here
-        return requireNonNull(nameToEnum.inverse().get(input));
+        return verifyNotNull(nameToEnum.inverse().get(input));
     }
 }

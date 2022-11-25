@@ -59,10 +59,10 @@ abstract class SchemaUnawareCodec extends AbstractValueCodec<Object, Object> {
         }
 
         try {
-            if (rootType instanceof EnumTypeDefinition) {
-                return EnumerationCodec.of(typeClz, (EnumTypeDefinition) rootType);
-            } else if (rootType instanceof BitsTypeDefinition) {
-                return BitsCodec.of(typeClz, (BitsTypeDefinition) rootType);
+            if (rootType instanceof EnumTypeDefinition enumType) {
+                return EnumerationCodec.of(typeClz, enumType);
+            } else if (rootType instanceof BitsTypeDefinition bitsType) {
+                return BitsCodec.of(typeClz, bitsType);
             } else {
                 return EncapsulatedValueCodec.of(typeClz);
             }
