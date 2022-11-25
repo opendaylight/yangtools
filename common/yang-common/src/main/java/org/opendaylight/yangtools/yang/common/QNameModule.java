@@ -108,7 +108,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *
      * @return XMLNamespace of the namespace of the module
      */
-    public @NonNull XMLNamespace getNamespace() {
+    public @NonNull XMLNamespace namespace() {
         return namespace;
     }
 
@@ -117,8 +117,39 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *
      * @return date of the module revision which is specified as argument of YANG Module {@code revision} keyword
      */
-    public @NonNull Optional<Revision> getRevision() {
+    public @Nullable Revision revision() {
+        return revision;
+    }
+
+    /**
+     * Returns the revision date for the module.
+     *
+     * @return date of the module revision which is specified as argument of YANG Module {@code revision} keyword
+     */
+    public @NonNull Optional<Revision> findRevision() {
         return Optional.ofNullable(revision);
+    }
+
+    /**
+     * Returns the namespace of the module which is specified as argument of YANG Module {@code namespace} keyword.
+     *
+     * @return XMLNamespace of the namespace of the module
+     * @deprecated Use {@link #namespace} instead.
+     */
+    @Deprecated
+    public @NonNull XMLNamespace getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * Returns the revision date for the module.
+     *
+     * @return date of the module revision which is specified as argument of YANG Module {@code revision} keyword
+     * @deprecated Use either {@link #revision()} or {@link #findRevision()}
+     */
+    @Deprecated
+    public @NonNull Optional<Revision> getRevision() {
+        return findRevision();
     }
 
     @Override
