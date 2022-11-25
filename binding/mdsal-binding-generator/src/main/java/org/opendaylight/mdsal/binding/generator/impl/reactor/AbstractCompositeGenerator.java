@@ -310,19 +310,16 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
             // Attempt to make progress on child linkage
             final var it = unlinkedChildren.iterator();
             while (it.hasNext()) {
-                final var child = it.next();
-                if (child instanceof AbstractExplicitGenerator) {
-                    if (((AbstractExplicitGenerator<?, ?>) child).linkOriginalGenerator()) {
-                        progress = LinkageProgress.SOME;
-                        it.remove();
+                if (it.next() instanceof AbstractExplicitGenerator<?, ?> explicit && explicit.linkOriginalGenerator()) {
+                    progress = LinkageProgress.SOME;
+                    it.remove();
 
-                        // If this is a composite generator we need to process is further
-                        if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
-                            if (unlinkedComposites.isEmpty()) {
-                                unlinkedComposites = new ArrayList<>();
-                            }
-                            unlinkedComposites.add(composite);
+                    // If this is a composite generator we need to process is further
+                    if (explicit instanceof AbstractCompositeGenerator<?, ?> composite) {
+                        if (unlinkedComposites.isEmpty()) {
+                            unlinkedComposites = new ArrayList<>();
                         }
+                        unlinkedComposites.add(composite);
                     }
                 }
             }
@@ -594,11 +591,9 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     // Utility equivalent of (!isAddedByUses(stmt) && !isAugmenting(stmt)). Takes advantage of relationship between
     // CopyableNode and AddedByUsesAware
     private static boolean isOriginalDeclaration(final EffectiveStatement<?, ?> stmt) {
-        if (stmt instanceof AddedByUsesAware aware) {
-            if (aware.isAddedByUses()
-                || stmt instanceof CopyableNode copyable && copyable.isAugmenting()) {
-                return false;
-            }
+        if (stmt instanceof AddedByUsesAware aware
+            && (aware.isAddedByUses() || stmt instanceof CopyableNode copyable && copyable.isAugmenting())) {
+            return false;
         }
         return true;
     }
