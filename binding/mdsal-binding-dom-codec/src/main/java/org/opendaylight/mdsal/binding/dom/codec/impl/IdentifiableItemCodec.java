@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
@@ -75,16 +74,15 @@ abstract class IdentifiableItemCodec {
                 final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
             super(schema, keyClass, identifiable);
 
-            final MethodHandle tmpCtor = getConstructor(keyClass, keyValueContexts.size());
-            final MethodHandle inv = MethodHandles.spreadInvoker(tmpCtor.type(), 0);
+            final var tmpCtor = getConstructor(keyClass, keyValueContexts.size());
+            final var inv = MethodHandles.spreadInvoker(tmpCtor.type(), 0);
             ctor = inv.asType(inv.type().changeReturnType(Identifier.class)).bindTo(tmpCtor);
 
             /*
              * We need to re-index to make sure we instantiate nodes in the order in which they are defined. We will
              * also need to instantiate values in the same order.
              */
-            final Set<QName> keyDef = schema.findFirstEffectiveSubstatementArgument(KeyEffectiveStatement.class)
-                .orElseThrow();
+            final var keyDef = schema.findFirstEffectiveSubstatementArgument(KeyEffectiveStatement.class).orElseThrow();
             predicateTemplate = ImmutableOffsetMapTemplate.ordered(keyDef);
             this.keyValueContexts = predicateTemplate.instantiateTransformed(keyValueContexts, (key, value) -> value);
 
@@ -94,17 +92,17 @@ abstract class IdentifiableItemCodec {
              *
              * BUG-2755: remove this if order is made declaration-order-dependent
              */
-            final List<QName> tmp = new ArrayList<>(keyDef);
+            final var tmp = new ArrayList<>(keyDef);
             // This is not terribly efficient but gets the job done
-            tmp.sort(Comparator.comparing(qname -> BindingMapping.getPropertyName(qname.getLocalName())));
+            tmp.sort(Comparator.comparing(leaf -> BindingMapping.getPropertyName(leaf.getLocalName())));
             keysInBindingOrder = ImmutableList.copyOf(tmp.equals(List.copyOf(keyDef)) ? keyDef : tmp);
         }
 
         @Override
         Identifier<?> deserializeIdentifierImpl(final NodeIdentifierWithPredicates nip) throws Throwable {
-            final Object[] bindingValues = new Object[keysInBindingOrder.size()];
+            final var bindingValues = new Object[keysInBindingOrder.size()];
             int offset = 0;
-            for (final QName key : keysInBindingOrder) {
+            for (var key : keysInBindingOrder) {
                 bindingValues[offset++] = keyValueContexts.get(key).deserialize(nip.getValue(key));
             }
 
@@ -113,9 +111,9 @@ abstract class IdentifiableItemCodec {
 
         @Override
         NodeIdentifierWithPredicates serializeIdentifier(final QName qname, final Identifier<?> key) {
-            final Object[] values = new Object[keyValueContexts.size()];
+            final var values = new Object[keyValueContexts.size()];
             int offset = 0;
-            for (final ValueContext valueCtx : keyValueContexts.values()) {
+            for (var valueCtx : keyValueContexts.values()) {
                 values[offset++] = valueCtx.getAndSerialize(key);
             }
 
@@ -173,7 +171,7 @@ abstract class IdentifiableItemCodec {
     abstract @NonNull NodeIdentifierWithPredicates serializeIdentifier(QName qname, Identifier<?> key);
 
     static MethodHandle getConstructor(final Class<? extends Identifier<?>> clazz, final int nrArgs) {
-        for (final Constructor<?> ctor : clazz.getConstructors()) {
+        for (var ctor : clazz.getConstructors()) {
             // Check argument count
             if (ctor.getParameterCount() != nrArgs) {
                 LOG.debug("Skipping {} due to argument count mismatch", ctor);
