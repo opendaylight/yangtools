@@ -98,9 +98,9 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @throws IOException if I/O error occurs
      */
     public static @NonNull QNameModule readFrom(final DataInput in) throws IOException {
-        final String namespace = in.readUTF();
-        final String revision = in.readUTF();
-        return new QNameModule(XMLNamespace.of(namespace), revision.isEmpty() ? null : Revision.of(revision));
+        final var namespace = XMLNamespace.of(in.readUTF());
+        final var revStr = in.readUTF();
+        return new QNameModule(namespace, revStr.isEmpty() ? null : Revision.of(revStr));
     }
 
     /**
