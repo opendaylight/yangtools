@@ -124,11 +124,8 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int compareTo(final QNameModule o) {
-        int cmp = namespace.compareTo(o.namespace);
-        if (cmp != 0) {
-            return cmp;
-        }
-        return Revision.compare(revision, o.revision);
+        int cmp;
+        return (cmp = namespace.compareTo(o.namespace)) != 0 ? cmp : Revision.compare(revision, o.revision);
     }
 
     /**
