@@ -221,8 +221,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     @SuppressWarnings("unchecked")
     public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
-        final DataContainerCodecContext<?, ?> result = Notification.class.isAssignableFrom(childClass)
-            ? getNotificationImpl(childClass) : getOrRethrow(childrenByClass, childClass);
+        final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationImpl(childClass)
+            : getOrRethrow(childrenByClass, childClass);
         return (DataContainerCodecContext<C, ?>) result;
     }
 
@@ -324,13 +324,17 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     ChoiceNodeCodecContext<?> createChoiceDataContext(final Class<? extends DataObject> caseType) {
-        final Class<?> choiceClass = findCaseChoice(caseType);
-        checkArgument(choiceClass != null, "Class %s is not a valid case representation", caseType);
-        final CompositeRuntimeType schema = factory().getRuntimeContext().getSchemaDefinition(choiceClass);
-        checkArgument(schema instanceof ChoiceRuntimeType, "Class %s does not refer to a choice", caseType);
+        final var choiceClass = findCaseChoice(caseType);
+        if (choiceClass == null) {
+            throw new IllegalArgumentException(caseType + " is not a valid case representation");
+        }
 
-        final DataContainerCodecContext<?, ChoiceRuntimeType> choice = DataContainerCodecPrototype.from(choiceClass,
-            (ChoiceRuntimeType)schema, factory()).get();
+        final var runtimeType = factory().getRuntimeContext().getSchemaDefinition(choiceClass);
+        if (!(runtimeType instanceof ChoiceRuntimeType choiceType)) {
+            throw new IllegalArgumentException(caseType + " does not refer to a choice");
+        }
+
+        final var choice = DataContainerCodecPrototype.from(choiceClass, choiceType, factory()).get();
         verify(choice instanceof ChoiceNodeCodecContext);
         return (ChoiceNodeCodecContext<?>) choice;
     }
@@ -355,12 +359,12 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
             final List<PathArgument> builder) {
-        final Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
+        final var caseType = arg.getCaseType();
         if (caseType.isPresent()) {
             final @NonNull Class<? extends DataObject> type = caseType.orElseThrow();
-            final ChoiceNodeCodecContext<?> choice = choicesByClass.getUnchecked(type);
+            final var choice = choicesByClass.getUnchecked(type);
             choice.addYangPathArgument(arg, builder);
-            final DataContainerCodecContext<?, ?> caze = choice.streamChild(type);
+            final var caze = choice.streamChild(type);
             caze.addYangPathArgument(arg, builder);
             return caze.bindingPathArgumentChild(arg, builder);
         }
@@ -369,11 +373,9 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     private static Class<?> findCaseChoice(final Class<? extends DataObject> caseClass) {
-        for (Type type : caseClass.getGenericInterfaces()) {
-            if (type instanceof Class<?> typeClass) {
-                if (ChoiceIn.class.isAssignableFrom(typeClass)) {
-                    return typeClass.asSubclass(ChoiceIn.class);
-                }
+        for (var type : caseClass.getGenericInterfaces()) {
+            if (type instanceof Class<?> typeClass && ChoiceIn.class.isAssignableFrom(typeClass)) {
+                return typeClass.asSubclass(ChoiceIn.class);
             }
         }
         return null;
@@ -382,8 +384,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     private static <K,V> V getOrRethrow(final LoadingCache<K, V> cache, final K key) {
         try {
             return cache.getUnchecked(key);
-        } catch (final UncheckedExecutionException e) {
-            final Throwable cause = e.getCause();
+        } catch (UncheckedExecutionException e) {
+            final var cause = e.getCause();
             if (cause != null) {
                 Throwables.throwIfUnchecked(cause);
             }
