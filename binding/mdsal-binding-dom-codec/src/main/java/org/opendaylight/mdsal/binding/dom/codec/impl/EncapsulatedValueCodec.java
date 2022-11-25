@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
@@ -15,12 +16,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 
 /**
  * Derived YANG types are just immutable value holders for simple value
@@ -39,17 +39,18 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
      *     "Virtual machine implementations are, however, encouraged to bias against clearing recently-created or
      *      recently-used soft references."
      */
-    private static final LoadingCache<Class<?>, EncapsulatedValueCodec> CACHE = CacheBuilder.newBuilder().weakKeys()
-        .softValues().build(new CacheLoader<>() {
+    @SuppressWarnings("rawtypes")
+    private static final LoadingCache<Class<? extends ScalarTypeObject>, @NonNull EncapsulatedValueCodec> CACHE =
+        CacheBuilder.newBuilder().weakKeys().softValues().build(new CacheLoader<>() {
             @Override
-            public EncapsulatedValueCodec load(final Class<?> key) throws ReflectiveOperationException {
-                final Method m = key.getMethod(BindingMapping.SCALAR_TYPE_OBJECT_GET_VALUE_NAME);
-                final Lookup lookup = MethodHandles.publicLookup();
-                final MethodHandle getter = lookup.unreflect(m).asType(OBJ_METHOD);
-                final Class<?> valueType = m.getReturnType();
-                final MethodHandle constructor = lookup.findConstructor(key,
-                    MethodType.methodType(void.class, valueType)).asType(OBJ_METHOD);
-                return new EncapsulatedValueCodec(constructor, getter, valueType);
+            public EncapsulatedValueCodec load(final Class<? extends ScalarTypeObject> key)
+                    throws ReflectiveOperationException {
+                final var method = key.getMethod(BindingMapping.SCALAR_TYPE_OBJECT_GET_VALUE_NAME);
+                final var lookup = MethodHandles.publicLookup();
+                final var retType = method.getReturnType();
+                return new EncapsulatedValueCodec(lookup.findConstructor(key,
+                    MethodType.methodType(void.class, retType)).asType(OBJ_METHOD),
+                    lookup.unreflect(method).asType(OBJ_METHOD), retType);
             }
         });
 
@@ -65,13 +66,11 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
     }
 
     static @NonNull EncapsulatedValueCodec of(final Class<?> typeClz) throws ExecutionException {
-        // FIXME: require base class to be ScalarTypeObject
-        return CACHE.get(typeClz);
+        return CACHE.get(typeClz.asSubclass(ScalarTypeObject.class));
     }
 
     static @NonNull EncapsulatedValueCodec ofUnchecked(final Class<?> typeClz) {
-        // FIXME: require base class to be ScalarTypeObject
-        return CACHE.getUnchecked(typeClz);
+        return CACHE.getUnchecked(typeClz.asSubclass(ScalarTypeObject.class));
     }
 
     /**
@@ -85,7 +84,7 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:illegalCatch")
+    @SuppressWarnings({ "null", "checkstyle:illegalCatch" })
     protected Object deserializeImpl(final Object input) {
         try {
             return constructor.invokeExact(input);
@@ -99,7 +98,7 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
     @SuppressWarnings("checkstyle:illegalCatch")
     protected Object serializeImpl(final Object input) {
         try {
-            return getter.invokeExact(input);
+            return verifyNotNull(getter.invokeExact(input));
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException(e);
