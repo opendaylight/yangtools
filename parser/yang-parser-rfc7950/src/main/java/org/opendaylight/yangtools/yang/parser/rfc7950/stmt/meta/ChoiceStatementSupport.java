@@ -193,10 +193,9 @@ public final class ChoiceStatementSupport
     private static CaseSchemaNode findCase(final QName qname,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         for (final EffectiveStatement<?, ?> effectiveStatement : substatements) {
-            if (effectiveStatement instanceof CaseSchemaNode choiceCaseNode) {
-                if (qname.equals(choiceCaseNode.getQName())) {
-                    return choiceCaseNode;
-                }
+            if (effectiveStatement instanceof CaseSchemaNode choiceCaseNode
+                && qname.equals(choiceCaseNode.getQName())) {
+                return choiceCaseNode;
             }
         }
 
