@@ -230,7 +230,7 @@ class YangToSourcesProcessor {
             META_INF_YANG_SERVICES_STRING_JAR);
     }
 
-    private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
+    private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException {
         // Search for available FileGenerator implementations
         final Map<String, FileGeneratorFactory> factories = Maps.uniqueIndex(
             ServiceLoader.load(FileGeneratorFactory.class), FileGeneratorFactory::getIdentifier);
