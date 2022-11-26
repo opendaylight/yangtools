@@ -129,13 +129,12 @@ final class Util {
      */
     private static void checkArtifact(final Artifact artifact, final Collection<Artifact> dependencies) {
         for (org.apache.maven.artifact.Artifact d : dependencies) {
-            if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
-                if (!artifact.getVersion().equals(d.getVersion())) {
-                    LOG.warn("{} Dependency resolution conflict:", LOG_PREFIX);
-                    LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]"
-                            + ". It is recommended to fix this problem because it may cause compilation errors.",
-                            LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME, artifact, d);
-                }
+            if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())
+                && !artifact.getVersion().equals(d.getVersion())) {
+                LOG.warn("{} Dependency resolution conflict:", LOG_PREFIX);
+                LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]"
+                    + ". It is recommended to fix this problem because it may cause compilation errors.",
+                    LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME, artifact, d);
             }
         }
     }
