@@ -231,11 +231,7 @@ public final class ModuleDependencySort {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + Objects.hashCode(name);
-            result = prime * result + Objects.hashCode(revision);
-            return result;
+            return Objects.hash(name, revision);
         }
 
         @Override
@@ -243,20 +239,11 @@ public final class ModuleDependencySort {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final ModuleNodeImpl other = (ModuleNodeImpl) obj;
-            if (!Objects.equals(name, other.name)) {
-                return false;
-            }
-            if (!Objects.equals(revision, other.revision)) {
-                return false;
-            }
-            return true;
+            final var other = (ModuleNodeImpl) obj;
+            return Objects.equals(name, other.name) && Objects.equals(revision, other.revision);
         }
 
         @Override
