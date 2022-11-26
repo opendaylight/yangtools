@@ -73,12 +73,10 @@ final class MandatoryDescendant implements Immutable {
             return;
         }
         // ... if we have a legacy path, try that as well ...
-        if (legacyPath != null) {
-            if (NormalizedNodes.findNode(data, legacyPath).isPresent()) {
-                // .. this should not really be happening ...
-                LOG.debug("Found {} at alternate path {}", path, legacyPath);
-                return;
-            }
+        if (legacyPath != null && NormalizedNodes.findNode(data, legacyPath).isPresent()) {
+            // .. this should not really be happening ...
+            LOG.debug("Found {} at alternate path {}", path, legacyPath);
+            return;
         }
 
         // ... not found, report the error
