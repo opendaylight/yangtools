@@ -36,18 +36,15 @@ final class CompactTokenFactory implements TokenFactory<Token> {
         }
 
         // Can we fit token type into a single byte? This should always be true
-        if (type >= Byte.MIN_VALUE && type <= Byte.MAX_VALUE) {
+        if (type >= Byte.MIN_VALUE && type <= Byte.MAX_VALUE
             // Can we fit line in an unsigned short? This is usually be true
-            if (line >= 0 && line <= 65535) {
-                // Can we fit position in line into an unsigned byte? This is usually true
-                if (charPositionInLine >= 0 && charPositionInLine <= 255) {
-                    // Can we fit start/stop into an an unsigned short?
-                    if (start >= 0 && start <= 65535 && stop >= 0 && stop <= 65535) {
-                        return new Token12122(source, type, line, charPositionInLine, start, stop);
-                    }
-                    return new Token12144(source, type, line, charPositionInLine, start, stop);
-                }
-            }
+             && line >= 0 && line <= 65535
+             // Can we fit position in line into an unsigned byte? This is usually true
+             && charPositionInLine >= 0 && charPositionInLine <= 255) {
+            // Can we fit start/stop into an an unsigned short?
+            return start >= 0 && start <= 65535 && stop >= 0 && stop <= 65535
+                ? new Token12122(source, type, line, charPositionInLine, start, stop)
+                    : new Token12144(source, type, line, charPositionInLine, start, stop);
         }
 
         return new Token44444(source, type, line, charPositionInLine, start, stop);
