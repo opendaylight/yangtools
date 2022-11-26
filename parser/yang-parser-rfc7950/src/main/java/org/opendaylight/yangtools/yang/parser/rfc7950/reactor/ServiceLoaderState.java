@@ -21,14 +21,30 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 final class ServiceLoaderState {
     static final class DefaultReactor {
         static final CrossSourceStatementReactor INSTANCE = RFC7950Reactors.defaultReactorBuilder().build();
+
+        private DefaultReactor() {
+            // Hidden on putpose
+        }
     }
 
     static final class VanillaReactor {
         static final CrossSourceStatementReactor INSTANCE = RFC7950Reactors.vanillaReactorBuilder().build();
+
+        private VanillaReactor() {
+            // Hidden on putpose
+        }
     }
 
     static final class XPath {
         static final XPathSupport INSTANCE = new XPathSupport(ServiceLoader.load(YangXPathParserFactory.class)
             .findFirst().orElseThrow(() -> new ExceptionInInitializerError("No YangXPathParserFactory found")));
+
+        private XPath() {
+            // Hidden on putpose
+        }
+    }
+
+    private ServiceLoaderState() {
+        // Hidden on putpose
     }
 }
