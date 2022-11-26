@@ -243,20 +243,11 @@ public final class ModuleDependencySort {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
             final ModuleNodeImpl other = (ModuleNodeImpl) obj;
-            if (!Objects.equals(name, other.name)) {
-                return false;
-            }
-            if (!Objects.equals(revision, other.revision)) {
-                return false;
-            }
-            return true;
+            return Objects.equals(name, other.name) && Objects.equals(revision, other.revision);
         }
 
         @Override
