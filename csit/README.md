@@ -66,9 +66,3 @@ FILES:
         For example "following-components-yang-model-validator--yangtools-system-txt.1669020980.753.log"
     Name of these logs are modified with prefix depending on JAVA error.
     Txt files will be generated containing list of all models that not passed test.
-
-
-
-
-
-
