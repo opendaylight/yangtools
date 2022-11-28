@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4056df4_f7d50d81",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-11-28T06:38:10Z",
+      "side": 1,
+      "message": "the implementation is over-complicated, simplification is suggested",
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "916ab4e1_f3ab5197",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-11-28T06:38:10Z",
+      "side": 1,
+      "message": "i see no reason creating 3 implementations of a same approach, \nall 3 can be replaced with same int array with almost no impact to storage size:\nint is int array of 1 element, long is same of 2 elements;\njust extra artifacts, extra logic branching, no actual benefits\n\nsuggested replacing with single implementation using byte array as backing\nstorage instead of int array; it seems more reasonable: min size (and incremental step) will be 1 byte instead of 4",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 5
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8bd6b66_661a13b5",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-11-28T06:38:10Z",
+      "side": 1,
+      "message": "same data will be achieved in normalizedBits var after execution of normalizeBits() in case all bits are enabled via input, no reason for another variable which is only used in this particular case and contains exact same data; no any impact on result, just calculation resources wasted.\nremove as extra incl setAllBits() method",
+      "range": {
+        "startLine": 55,
+        "startChar": 8,
+        "endLine": 55,
+        "endChar": 59
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38fe18d9_f73dc368",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-11-28T06:38:10Z",
+      "side": 1,
+      "message": "the unexpected bit name in input should be checked before result is produced, not after, then there will be no reason to calculate lengthOfBits (extremely confusing name btw), bc the expected should be always equal to strings.size()\n\nmove input validation to before normalizeBits() is executed, \nrename normalizeBits() to setBits() for clear meaning\nremove getLengthOfBits() as extra",
+      "range": {
+        "startLine": 61,
+        "startChar": 7,
+        "endLine": 61,
+        "endChar": 45
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32137fd7_1dc48363",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-11-28T06:38:10Z",
+      "side": 1,
+      "message": "the unexpected bit name in input should be checked before result is produced, not after, then there will be no reason to calculate lengthOfBits (extremely confusing name btw), this value always expected to be equal to strings.size()\n\nmove validation before normalizeBits() execution, remove getLengthOfBits() as extra",
+      "range": {
+        "startLine": 61,
+        "startChar": 7,
+        "endLine": 61,
+        "endChar": 45
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
