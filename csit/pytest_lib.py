@@ -8,7 +8,7 @@
 
 YANGMODELS_REPO = "https://github.com/YangModels/yang"
 TEST_TOOL_NAME = "yang-model-validator"
-NEXUS_RELEASE_BASE_URL = "https://nexus.opendaylight.org/content/repositories/opendaylight.release"
+NEXUS_RELEASE_BASE_URL = "https://nexus.opendaylight.org/content/repositories/opendaylight.snapshot"
 
 delete_static_paths_list = [
     "/src/main/yang/.git",
@@ -16,12 +16,6 @@ delete_static_paths_list = [
     # excluding ieee/draft from test
     "/src/main/yang/standard/ieee/draft",
     "/src/main/yang/standard/ietf/DRAFT",
-    # excluding 4 files due error "Unexpected error processing source SourceIdentifier [ietf-network@2018-02-26]"
-    # bug reported here https://jira.opendaylight.org/browse/YANGTOOLS-1465
-    "/src/main/yang/standard/ietf/RFC/ietf-te-topology-state.yang",
-    "/src/main/yang/standard/ietf/RFC/ietf-te-topology-state@2020-08-06.yang",
-    "/src/main/yang/standard/ietf/RFC/ietf-te-topology.yang",
-    "/src/main/yang/standard/ietf/RFC/ietf-te-topology@2020-08-06.yang",
     ## Removing entire juniper folder because it creates an OOM Crash with the validator tool.*** Keywords ***
     ## Unsure if the yang models are the problem or something in the tool. This is being tracked here:
     ## https://jira.opendaylight.org/browse/YANGTOOLS-1093

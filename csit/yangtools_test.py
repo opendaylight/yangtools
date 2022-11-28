@@ -8,6 +8,9 @@ import datetime
 import os
 import sys, getopt
 import pytest_lib
+import time
+
+start_time = time.time()
 
 def get_java():
     global java_home
@@ -81,13 +84,11 @@ def get_yang_files_to_validate():
     return (yang_files_to_validate)
 
 
-def yang_path_option():
+def get_yang_path():
     global yang_path_option
     yang_path_option = "--path "
     for path in pytest_lib.yang_model_paths:
         yang_path_option += (working_dir + path +  " ")
-    return yang_path_option
-
 
 def download_yang_model_validator():
     global url, artifact, version, filename
@@ -95,7 +96,7 @@ def download_yang_model_validator():
     location = "org/opendaylight/yangtools"
     component="yangtools"
     artifact=pytest_lib.TEST_TOOL_NAME
-    version = "9.0.2"
+    version = "10.0.1"
     url = urlbase + "/" + location + "/" + artifact + "/" + version
     name_prefix = f"{artifact}-"
     suffix="jar-with-dependencies"
@@ -105,20 +106,25 @@ def download_yang_model_validator():
     if not os.path.exists(working_dir + "/" + filename):
         url = url + "/" + filename
         print(f"downloading {filename}")
-        cmd = f"cd {working_dir} && wget -q -N '{url}' 2>&1"
+        url = "https://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/org/opendaylight/yangtools/yang-model-validator/10.0.1-SNAPSHOT/yang-model-validator-10.0.1-20221124.151234-58-jar-with-dependencies.jar"
+        cmd = f"cd {working_dir} && wget -q -N '{url}' 2>&1 && mv yang-model-validator-10.0.1-20221124.151234-58-jar-with-dependencies.jar yang-model-validator-10.0.1-jar-with-dependencies.jar"
         os.popen(cmd).read()
 
 
 def yang_files_loop(yang_files_to_validate):
-    global url
+    global url, yang_path_option
+    file_counter = 0
     effective_model_not_resolved, all_not_pass_yang_files, leaf_is_missing, mount_points, following_components = [],[],[],[],[]
     leaf_list_is_missing, statement_has_to_be_present, augment_cannot_add_node_named, augment_target, other = [],[],[],[],[]
     for x in range (0,len(yang_files_to_validate)):
+        file_counter +=1
         print("Working on file: ", yang_files_to_validate[x])
+        print(f"Testing file {file_counter} from total {len(yang_files_to_validate)} files")
+        # update --path option for ietf/RFC/ models to shorten test duration
+        if "/src/main/yang/standard/ietf/RFC" in yang_files_to_validate[x]:
+            yang_path_option = f"--path {working_dir}/src/main/yang/standard/ietf/RFC {working_dir}/src/main/yang/standard/ieee/published/802.1 {working_dir}/src/main/yang/standard/ieee/published/802 {working_dir}/src/main/yang/vendor/ciena "
         tool_options=f" {yang_path_option}-- {yang_files_to_validate[x]}"
-        # set java version based on ip (testing on locallhost)
-        base_command = java_home
-        command = base_command + "  -jar " + working_dir + "/" + filename + tool_options
+        command = java_home + "  -jar " + working_dir + "/" + filename + tool_options
         # generate name for log file
         name = "yangtools-system-txt"
         date = datetime.datetime.today()
@@ -175,6 +181,7 @@ def yang_files_loop(yang_files_to_validate):
 
     # print test result counts and save txt list with not pass files
     print("\n\n\n",40 * "*", " TEST RESULTS  ", 40 * "*")
+    print(f"All tested files: {len(yang_files_to_validate)}")
     for x in range(0, len(print_files_count)):
         if print_files_count[x]:
             print(f"{print_files_name[x]} = {len(print_files_count[x])}")
@@ -186,5 +193,6 @@ get_java()
 prepare_enviroment()
 delete_static_paths()
 download_yang_model_validator()
-yang_path_option()
+get_yang_path()
 yang_files_loop(get_yang_files_to_validate())
+print("test duration --- %s seconds ---" % (time.time() - start_time))
