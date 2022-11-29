@@ -27,18 +27,20 @@ def get_java():
 
 # retrieve args from command
 def main(argv):
-    global log, models
+    global log, models, validator
     log = "N"
     models = "/src/main/yang/"
+    validator = ""
     try:
-        opts, args = getopt.getopt(argv,"hl:m:",["help", "log=","models="])
+        opts, args = getopt.getopt(argv,"hl:m:v:",["help", "log=","models=", "validator="])
     except getopt.GetoptError:
         print("wrong usage type -h or --help for help")
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h' or opt == '--help':
-            print("Usage: python3 yangtools_test.py [log] [models]")
+            print("Usage: python3 yangtools_test.py [log] [models] [validator_version]")
             print("[log]\n-l, --log=y/n    for delete previous logs in ~/yangtools_csit_test/yang_validator_logs/ (omitting will not delete previous logs)")
+            print("[validator_version]\n-v, --validator=10.0.2    will download yang-model-validator-10.0.0-jar-with-dependencies.jar from nexus.opendaylight.org (omitting will build it locally")
             print("[models]\n-m, --models=/path/to/models/    select directory for testing (omitting will test all models)")
             print('''models option examples:
 /src/main/yang/standard/
@@ -52,6 +54,8 @@ def main(argv):
             log = arg.upper()
         elif opt in ("-m", "--models"):
             models = arg
+        elif opt in ("-v", "--validator"):
+            validator = arg
 
 if __name__ == "__main__":
    main(sys.argv[1:])
@@ -91,28 +95,46 @@ def get_yang_path():
         yang_path_option += (working_dir + path +  " ")
 
 def download_yang_model_validator():
-    global url, artifact, version, filename
-    urlbase = pytest_lib.NEXUS_RELEASE_BASE_URL
-    location = "org/opendaylight/yangtools"
-    component="yangtools"
-    artifact=pytest_lib.TEST_TOOL_NAME
-    version = "10.0.1"
-    url = urlbase + "/" + location + "/" + artifact + "/" + version
-    name_prefix = f"{artifact}-"
-    suffix="jar-with-dependencies"
-    extension = "tar" if component == "odl-micro" else "jar"
-    name_suffix = f"-{suffix}.{extension}" if suffix != "" else f".{extension}"
-    filename = name_prefix + version + name_suffix
-    if not os.path.exists(working_dir + "/" + filename):
-        url = url + "/" + filename
-        print(f"downloading {filename}")
-        url = "https://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/org/opendaylight/yangtools/yang-model-validator/10.0.1-SNAPSHOT/yang-model-validator-10.0.1-20221124.151234-58-jar-with-dependencies.jar"
-        cmd = f"cd {working_dir} && wget -q -N '{url}' 2>&1 && mv yang-model-validator-10.0.1-20221124.151234-58-jar-with-dependencies.jar yang-model-validator-10.0.1-jar-with-dependencies.jar"
-        os.popen(cmd).read()
+    global validator_file_name, validator
+    # check if validator argument received
+    if validator == "":
+        # check if validator was build with maven or built it
+        if check_maven() and get_validator_file_name():
+            return validator_file_name
+        elif check_maven() and not get_validator_file_name():
+            print("building yang-validator with command 'cd ../ && mvn clean install -pl tools/yang-model-validator/'")
+            print(os.popen(f"cd ../ && mvn clean install -pl tools/yang-model-validator/").read())
+            get_validator_file_name()
+        else:
+            print("MAVEN not found, please install MAVEN first and restart python command")
+            sys.exit()
+    else:
+        validator_file_name = f"yang-model-validator-{validator}-jar-with-dependencies.jar"
+        if validator_file_name in os.popen("ls -la").read():
+            print(f"file {validator_file_name} exist...")
+        else:
+            print(f"downloading {validator_file_name}")
+            print(os.system(f"wget https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/yangtools/yang-model-validator/{validator}/{validator_file_name}"))
+
+
+
+def get_validator_file_name():
+    global validator_file_name, yang_target_dir
+    yang_target_dir = "../tools/yang-model-validator/target/"
+    get_dir_files = os.popen(f"ls {yang_target_dir}").read()
+    if "-SNAPSHOT-jar-with-dependencies.jar" in get_dir_files:
+        for line in get_dir_files.split("\n"):
+            if "-SNAPSHOT-jar-with-dependencies.jar" in line:
+                validator_file_name = line
+                return True
+
+def check_maven():
+    if "Apache Maven" in os.popen("mvn --version").read():
+        return True
 
 
 def yang_files_loop(yang_files_to_validate):
-    global url, yang_path_option
+    global yang_path_option, yang_target_dir
     file_counter = 0
     effective_model_not_resolved, all_not_pass_yang_files, leaf_is_missing, mount_points, following_components = [],[],[],[],[]
     leaf_list_is_missing, statement_has_to_be_present, augment_cannot_add_node_named, augment_target, other = [],[],[],[],[]
@@ -124,12 +146,15 @@ def yang_files_loop(yang_files_to_validate):
         if "/src/main/yang/standard/ietf/RFC" in yang_files_to_validate[x]:
             yang_path_option = f"--path {working_dir}/src/main/yang/standard/ietf/RFC {working_dir}/src/main/yang/standard/ieee/published/802.1 {working_dir}/src/main/yang/standard/ieee/published/802 {working_dir}/src/main/yang/vendor/ciena "
         tool_options=f" {yang_path_option}-- {yang_files_to_validate[x]}"
-        command = java_home + "  -jar " + working_dir + "/" + filename + tool_options
+        # update command if argument --validator given
+        if validator != "":
+            yang_target_dir =  ""
+        command = java_home + "  -jar " + yang_target_dir + validator_file_name + tool_options
         # generate name for log file
-        name = "yangtools-system-txt"
+        name = "yangtools-log"
         date = datetime.datetime.today()
         timestamp = str(date.timestamp())[:-3]
-        logfile = f"{artifact}--{name}.{timestamp}.log"
+        logfile = f"{name}.{timestamp}.log"
         cmd =  f"{command} > {logfile_path + logfile} 2>&1"
         os.popen(cmd).read()
         # copy log file and print error to console
