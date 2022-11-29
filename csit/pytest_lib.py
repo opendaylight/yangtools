@@ -7,7 +7,6 @@
 # variables
 
 YANGMODELS_REPO = "https://github.com/YangModels/yang"
-TEST_TOOL_NAME = "yang-model-validator"
 NEXUS_RELEASE_BASE_URL = "https://nexus.opendaylight.org/content/repositories/opendaylight.snapshot"
 
 delete_static_paths_list = [

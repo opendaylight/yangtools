@@ -63,6 +63,6 @@ LOCATION:
 
 FILES:
     for each model not pass in yangvalidator, one log file will be created.
-        For example "following-components-yang-model-validator--yangtools-system-txt.1669020980.753.log"
+        For example "following-components-yangtools-log.1669020980.753.log" meaning "Following components of unique statement argument refer to non-existent nodes" error.
     Name of these logs are modified with prefix depending on JAVA error.
     Txt files will be generated containing list of all models that not passed test.
