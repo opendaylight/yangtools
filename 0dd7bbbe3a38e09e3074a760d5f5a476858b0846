@@ -22,6 +22,29 @@
       },
       "revId": "0dd7bbbe3a38e09e3074a760d5f5a476858b0846",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbbd2107_800e48fc",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-12-01T10:45:12Z",
+      "side": 1,
+      "message": "Same here + both checking \u0027configId\u0027. Copy-paste typo?",
+      "range": {
+        "startLine": 171,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 22
+      },
+      "revId": "0dd7bbbe3a38e09e3074a760d5f5a476858b0846",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
