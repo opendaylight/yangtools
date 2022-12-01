@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4bcb48e_6b7e2071",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNodes.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-12-01T09:59:09Z",
+      "side": 1,
+      "message": "Idk if it is related to the task, but since you get rid of most of immutable builders you also can replace this one too. It looks logically for me because this is the last one left.\nYou can do something like this:\n Builders.leafBuilder().withNodeIdentifier(name).withValue(value).build();",
+      "range": {
+        "startLine": 104,
+        "startChar": 15,
+        "endLine": 104,
+        "endChar": 39
+      },
+      "revId": "6fea9c8a4354e7ca16366ffa22439f6461082b36",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
