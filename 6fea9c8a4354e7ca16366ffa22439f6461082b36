@@ -22,6 +22,30 @@
       },
       "revId": "6fea9c8a4354e7ca16366ffa22439f6461082b36",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "893f0c73_367421a5",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNodes.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2022-12-01T13:39:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4bcb48e_6b7e2071",
+      "range": {
+        "startLine": 104,
+        "startChar": 15,
+        "endLine": 104,
+        "endChar": 39
+      },
+      "revId": "6fea9c8a4354e7ca16366ffa22439f6461082b36",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

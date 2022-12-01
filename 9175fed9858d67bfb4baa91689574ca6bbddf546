@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d4ad584_b3eedcdd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2022-12-01T13:39:36Z",
+      "side": 1,
+      "message": "Needed an extra cast, but thank you for your suggestion.",
+      "revId": "9175fed9858d67bfb4baa91689574ca6bbddf546",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
