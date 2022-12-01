@@ -41,6 +41,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c58712d_1b476f31",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-12-01T09:37:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "916ab4e1_f3ab5197",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 5
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f8bd6b66_661a13b5",
@@ -54,6 +78,30 @@
       "writtenOn": "2022-11-28T06:38:10Z",
       "side": 1,
       "message": "same data will be achieved in normalizedBits var after execution of normalizeBits() in case all bits are enabled via input, no reason for another variable which is only used in this particular case and contains exact same data; no any impact on result, just calculation resources wasted.\nremove as extra incl setAllBits() method",
+      "range": {
+        "startLine": 55,
+        "startChar": 8,
+        "endLine": 55,
+        "endChar": 59
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0ec6df3_0e595e0b",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-12-01T09:37:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8bd6b66_661a13b5",
       "range": {
         "startLine": 55,
         "startChar": 8,
@@ -100,6 +148,54 @@
       "writtenOn": "2022-11-28T06:38:10Z",
       "side": 1,
       "message": "the unexpected bit name in input should be checked before result is produced, not after, then there will be no reason to calculate lengthOfBits (extremely confusing name btw), this value always expected to be equal to strings.size()\n\nmove validation before normalizeBits() execution, remove getLengthOfBits() as extra",
+      "range": {
+        "startLine": 61,
+        "startChar": 7,
+        "endLine": 61,
+        "endChar": 45
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4a1b5de_b9904a1a",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-12-01T09:37:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32137fd7_1dc48363",
+      "range": {
+        "startLine": 61,
+        "startChar": 7,
+        "endLine": 61,
+        "endChar": 45
+      },
+      "revId": "b7e0514806d03370b328e0363e0c7af1a11e4573",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5fd5e120_2a4133f6",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractBitsNumberCodec.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-12-01T09:37:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "38fe18d9_f73dc368",
       "range": {
         "startLine": 61,
         "startChar": 7,
