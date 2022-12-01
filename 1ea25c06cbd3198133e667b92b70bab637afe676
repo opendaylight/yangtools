@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9144a667_ed70dd2c",
+        "filename": "plugin/yang-maven-plugin/src/test/resources/rebuild-context/modified/bar.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-12-01T13:57:10Z",
+      "side": 1,
+      "message": "these yang files belong to test which compares yang resources\nwith differentiation of significant changes (model update) \nvs insignificant (white-spaces, formatting, etc) \nin order to make a decision either rebuild is required or not.\n\nthe extra line here plays no role, it will be ignored on parsing. \nalso removing it impacts nothing.\nleft as is (can be treated as an example of custom formatting).",
+      "parentUuid": "ba96914b_8e23eaa5",
+      "revId": "1ea25c06cbd3198133e667b92b70bab637afe676",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4bfe03af_e64909fc",
@@ -31,6 +49,24 @@
       "writtenOn": "2022-12-01T11:12:07Z",
       "side": 1,
       "message": "Random empty line?",
+      "revId": "1ea25c06cbd3198133e667b92b70bab637afe676",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9d1d7a2_704ae903",
+        "filename": "plugin/yang-maven-plugin/src/test/resources/rebuild-context/original/bar.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-12-01T13:57:10Z",
+      "side": 1,
+      "message": "same as above",
+      "parentUuid": "4bfe03af_e64909fc",
       "revId": "1ea25c06cbd3198133e667b92b70bab637afe676",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
