@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba96914b_8e23eaa5",
+        "filename": "plugin/yang-maven-plugin/src/test/resources/rebuild-context/modified/bar.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-12-01T11:12:07Z",
+      "side": 1,
+      "message": "Random empty line?",
+      "revId": "1ea25c06cbd3198133e667b92b70bab637afe676",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4bfe03af_e64909fc",
+        "filename": "plugin/yang-maven-plugin/src/test/resources/rebuild-context/original/bar.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2022-12-01T11:12:07Z",
+      "side": 1,
+      "message": "Random empty line?",
+      "revId": "1ea25c06cbd3198133e667b92b70bab637afe676",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
