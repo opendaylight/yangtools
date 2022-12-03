@@ -118,7 +118,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             final EffectiveModelContext context, final @Nullable Absolute path) {
         return path == null ? create(writer, context)
             : new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
-                NormalizedNodeStreamWriterStack.of(context));
+                NormalizedNodeStreamWriterStack.of(context, path));
     }
 
     /**
