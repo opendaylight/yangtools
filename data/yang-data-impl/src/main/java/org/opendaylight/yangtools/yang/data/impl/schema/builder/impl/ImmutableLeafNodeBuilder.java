@@ -24,8 +24,8 @@ public class ImmutableLeafNodeBuilder<T>
     @Beta
     @SuppressWarnings("unchecked")
     public static <T> @NonNull LeafNode<T> createNode(final NodeIdentifier identifier, final T value) {
-        if (value instanceof byte[]) {
-            return (LeafNode<T>) new ImmutableBinaryLeafNode(identifier, (byte[]) value);
+        if (value instanceof byte[] bytes) {
+            return (LeafNode<T>) new ImmutableBinaryLeafNode(identifier, bytes);
         }
         return new ImmutableLeafNode<>(identifier, value);
     }
