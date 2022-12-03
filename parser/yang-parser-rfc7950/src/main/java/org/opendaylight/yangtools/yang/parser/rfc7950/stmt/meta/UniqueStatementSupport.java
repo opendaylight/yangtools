@@ -14,6 +14,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,13 +22,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
@@ -66,14 +69,36 @@ public final class UniqueStatementSupport
         SubstatementValidator.builder(YangStmtMapping.UNIQUE).build();
 
     public UniqueStatementSupport(final YangParserConfiguration config) {
-        // FIXME: This reflects what the current implementation does. We really want to define an adaptArgumentValue(),
-        //        but how that plays with the argument and expectations needs to be investigated.
-        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(YangStmtMapping.UNIQUE,
+            StatementPolicy.copyDeclared(
+                (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
+            config, SUBSTATEMENT_VALIDATOR);
+    }
+
+    @Override
+    public Set<Descendant> adaptArgumentValue(
+            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
+            final QNameModule targetModule) {
+        // Copy operation to a targetNamespace -- this implies rehosting node-identifiers to target namespace. Check
+        // if that is needed first, though, so as not to copy things unnecessarily.
+        final var origArg = ctx.getArgument();
+        if (allMatch(origArg.stream().flatMap(desc -> desc.getNodeIdentifiers().stream()), targetModule)) {
+            return origArg;
+        }
+
+        return origArg.stream()
+            .map(descendant -> {
+                final var nodeIds = descendant.getNodeIdentifiers();
+                // Only update descendants that need updating
+                return allMatch(nodeIds.stream(), targetModule) ? descendant
+                    : Descendant.of(Lists.transform(nodeIds, nodeId -> nodeId.bindTo(targetModule).intern()));
+            })
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     @Override
     public ImmutableSet<Descendant> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final ImmutableSet<Descendant> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
+        final var uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
         SourceException.throwIf(uniqueConstraints.isEmpty(), ctx,
             "Invalid argument value '%s' of unique statement. The value must contains at least one descendant schema "
                 + "node identifier.", value);
@@ -113,14 +138,18 @@ public final class UniqueStatementSupport
         return EffectiveStatements.createUnique(stmt.declared(), substatements);
     }
 
+    private static boolean allMatch(final Stream<QName> qnames, final QNameModule module) {
+        return qnames.allMatch(qname -> module.equals(qname.getModule()));
+    }
+
     private static ImmutableSet<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         final String nocrlf = CRLF_PATTERN.matcher(argumentValue).replaceAll("\n");
 
-        final Set<Descendant> uniqueConstraintNodes = new HashSet<>();
-        for (final String uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
-            final SchemaNodeIdentifier nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
+        final var uniqueConstraintNodes = new HashSet<Descendant>();
+        for (var uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
+            final var nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
             SourceException.throwIf(nodeIdentifier instanceof Absolute, ctx,
                 "Unique statement argument '%s' contains schema node identifier '%s' which is not in the descendant "
                     + "node identifier form.", argumentValue, uniqueArgToken);
