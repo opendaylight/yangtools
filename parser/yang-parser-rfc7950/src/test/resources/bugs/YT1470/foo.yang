@@ -1,0 +1,18 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  import bar {
+    prefix bar;
+  }
+
+  container foo {
+    uses bar:bar-group;
+  }
+
+  augment "/foo:foo/foo:bar-list" {
+    leaf foo-leaf {
+      type string;
+    }
+  }
+}
