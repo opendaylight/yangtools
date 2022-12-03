@@ -1,0 +1,18 @@
+module bar {
+  namespace "urn:bar";
+  prefix "bar";
+
+  grouping bar-group {
+    list bar-list {
+      key bar-leaf1;
+      unique bar-leaf2;
+
+      leaf bar-leaf1 {
+        type string;
+      }
+      leaf bar-leaf2 {
+        type string;
+      }
+    }
+  }
+}
