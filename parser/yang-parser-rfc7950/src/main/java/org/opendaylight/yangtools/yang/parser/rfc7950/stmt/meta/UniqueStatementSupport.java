@@ -14,6 +14,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -66,9 +68,33 @@ public final class UniqueStatementSupport
         SubstatementValidator.builder(YangStmtMapping.UNIQUE).build();
 
     public UniqueStatementSupport(final YangParserConfiguration config) {
-        // FIXME: This reflects what the current implementation does. We really want to define an adaptArgumentValue(),
-        //        but how that plays with the argument and expectations needs to be investigated.
-        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(YangStmtMapping.UNIQUE,
+            StatementPolicy.copyDeclared(
+                (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
+            config, SUBSTATEMENT_VALIDATOR);
+    }
+
+    @Override
+    public Set<Descendant> adaptArgumentValue(
+            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
+            final QNameModule targetModule) {
+        // Copy operation to a targetNamespace -- this implies rehosting node-identifiers to target namespace. Check
+        // if that is needed first, though, so as not to copy things unnecessarily.
+        final var origArg = ctx.getArgument();
+        if (origArg.stream()
+            .flatMap(descendant -> descendant.getNodeIdentifiers().stream())
+            .allMatch(nodeId -> targetModule.equals(nodeId.getModule()))) {
+            return origArg;
+        }
+
+        return origArg.stream()
+            .map(descendant -> {
+                final var nodeIds = descendant.getNodeIdentifiers();
+                // Only update descendants that need updating
+                return nodeIds.stream().allMatch(nodeId -> targetModule.equals(nodeId.getModule())) ? descendant
+                    : Descendant.of(Lists.transform(nodeIds, nodeId -> nodeId.bindTo(targetModule).intern()));
+            })
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     @Override
