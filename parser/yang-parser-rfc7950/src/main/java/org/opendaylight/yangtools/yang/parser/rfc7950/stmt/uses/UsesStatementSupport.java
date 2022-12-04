@@ -89,9 +89,6 @@ public final class UsesStatementSupport
 
     @Override
     public void onFullDefinitionDeclared(final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
-        if (!usesNode.isSupportedByFeatures()) {
-            return;
-        }
         super.onFullDefinitionDeclared(usesNode);
 
         final var usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
@@ -198,11 +195,12 @@ public final class UsesStatementSupport
         final var effective = sourceGrpStmtCtx.effectiveSubstatements();
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
         final var newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
+        final var unsupported = !usesNode.isSupportedByFeatures();
 
         for (var original : declared) {
             if (shouldCopy(original)) {
                 original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(copy -> {
-                    if (!original.isSupportedByFeatures() || !original.isSupportedToBuildEffective()) {
+                    if (unsupported || !original.isSupportedByFeatures() || !original.isSupportedToBuildEffective()) {
                         copy.setUnsupported();
                     }
                     buffer.add(copy);
