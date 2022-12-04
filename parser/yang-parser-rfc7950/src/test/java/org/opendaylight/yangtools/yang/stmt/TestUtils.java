@@ -14,7 +14,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -55,11 +58,24 @@ public final class TestUtils {
         return loadModules(TestUtils.class, resourceDirectory);
     }
 
+    public static EffectiveModelContext loadModules(final String resourceDirectory,
+            final @Nullable Set<QName> supportedFeatures) throws Exception {
+        return loadModules(TestUtils.class, resourceDirectory, supportedFeatures);
+    }
+
     public static EffectiveModelContext loadModules(final Class<?> cls, final String resourceDirectory)
             throws Exception {
-        return RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(loadSources(cls, resourceDirectory))
-            .buildEffective();
+        return loadModules(cls, resourceDirectory, null);
+    }
+
+    public static EffectiveModelContext loadModules(final Class<?> cls, final String resourceDirectory,
+            final @Nullable Set<QName> supportedFeatures) throws Exception {
+        final var action = RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(loadSources(cls, resourceDirectory));
+        if (supportedFeatures != null) {
+            action.setSupportedFeatures(supportedFeatures);
+        }
+        return action.buildEffective();
     }
 
     public static EffectiveModelContext parseYangSource(final String... yangSourceFilePath) throws Exception {
