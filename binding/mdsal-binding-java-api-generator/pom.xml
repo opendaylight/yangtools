@@ -101,7 +101,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <javaSourceVersion>11</javaSourceVersion>
+                            <javaSourceVersion>17</javaSourceVersion>
                             <outputDirectory>${project.build.directory}/generated-sources/xtend</outputDirectory>
                         </configuration>
                     </execution>
