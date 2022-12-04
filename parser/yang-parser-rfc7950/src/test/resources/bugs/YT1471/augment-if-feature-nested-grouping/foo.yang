@@ -1,0 +1,28 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  feature bar-feature;
+
+  grouping baz-group {
+    container baz;
+  }
+
+  grouping bar-group {
+    container bar {
+      if-feature bar-feature;
+      uses baz-group;
+    }
+  }
+
+  container foo {
+    uses bar-group;
+  }
+
+  augment "/foo/bar/baz" {
+    if-feature bar-feature;
+    leaf baz-leaf {
+      type string;
+    }
+  }
+}
