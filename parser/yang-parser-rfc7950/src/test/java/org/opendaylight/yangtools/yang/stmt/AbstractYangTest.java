@@ -14,8 +14,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Throwables;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.hamcrest.Matcher;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidBitDefinitionException;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidEnumDefinitionException;
@@ -43,9 +46,15 @@ public abstract class AbstractYangTest {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     public static @NonNull EffectiveModelContext assertEffectiveModelDir(final String resourceDirName) {
+        return assertEffectiveModelDir(resourceDirName, null);
+    }
+
+    @SuppressWarnings("checkstyle:illegalCatch")
+    public static @NonNull EffectiveModelContext assertEffectiveModelDir(final String resourceDirName,
+            final @Nullable Set<QName> supportedFeatures) {
         final EffectiveModelContext ret;
         try {
-            ret = TestUtils.loadModules(resourceDirName);
+            ret = TestUtils.loadModules(resourceDirName, supportedFeatures);
         } catch (Exception e) {
             Throwables.throwIfUnchecked(e);
             throw new AssertionError("Failed to assemble effective model of " + resourceDirName, e);
