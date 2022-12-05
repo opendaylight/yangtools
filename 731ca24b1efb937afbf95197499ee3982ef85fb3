@@ -50,6 +50,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e0f469a5_4d2d8317",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-12-05T15:41:49Z",
+      "side": 1,
+      "message": "I really would prefer we would use a dedicated type for this. I mean yes, String works, but then we have to parse it.\n\nHaving an interface would allow us to have actual specializations, i.e. if the number of bits is less than 64, use a plain long, if it is larger, use byte[] plus an ImmutableOffsetMap, etc.\n\nIt also would allow us to retain a .toString() which is friendly, and we also could have a friendly .toSet() which would return a Set\u003cString\u003e backed by whatever the internal representation is.",
+      "range": {
+        "startLine": 30,
+        "startChar": 65,
+        "endLine": 30,
+        "endChar": 71
+      },
+      "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4f5f260a_07cebe42",
         "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
         "patchSetId": 15
