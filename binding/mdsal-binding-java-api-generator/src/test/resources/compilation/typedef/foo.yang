@@ -129,6 +129,7 @@ module foo {
             type int32-ext2;
             type empty;
             type my-decimal-type;
+            type bits-ext;
         }
     }
 

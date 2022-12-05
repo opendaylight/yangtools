@@ -143,7 +143,7 @@ class UnionTemplate extends ClassTemplate {
                 return "";
                 «ELSEIF propRet.isBitsType»
                     ««« generated bits typedef
-                return «JU_ARRAYS.importedName».toString(«field».getValue());
+                return «JU_ARRAYS.importedName».toString(«field».values());
                 «ELSEIF propRet.isIdentityType»
                     ««« generated identity
                 return «field».«BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»().toString();
