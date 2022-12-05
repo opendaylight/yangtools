@@ -57,6 +57,29 @@
       "parentUuid": "4f5f260a_07cebe42",
       "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93413077_b517b4bf",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2022-12-05T15:36:24Z",
+      "side": 1,
+      "message": "@NonNull is a TYPE_USE annotation, so it is \u0027final @NonNull String\u0027 -- otherwise Sonar will not like it",
+      "range": {
+        "startLine": 54,
+        "startChar": 46,
+        "endLine": 54,
+        "endChar": 54
+      },
+      "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
