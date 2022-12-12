@@ -15,8 +15,9 @@ import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.util.Set;
+import java.util.Map;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -64,30 +65,11 @@ public class Bug4969Test {
         assertNotNull(ref3);
         assertNotNull(ref4);
 
-        final Object value1 = ref1.body();
-        final Object value2 = ref2.body();
-        final Object value3 = ref3.body();
-        final Object value4 = ref4.body();
-
-        assertTrue(value1 instanceof Set);
-        assertTrue(value2 instanceof Set);
-        assertTrue(value3 instanceof Set);
-        assertTrue(value4 instanceof Set);
-
-        final Set<?> set1 = (Set<?>) value1;
-        final Set<?> set2 = (Set<?>) value2;
-        final Set<?> set3 = (Set<?>) value3;
-        final Set<?> set4 = (Set<?>) value4;
-
-        assertEquals(1, set1.size());
-        assertEquals(2, set2.size());
-        assertEquals(3, set3.size());
-        assertEquals(4, set4.size());
-
-        assertTrue(set1.contains("a"));
-        assertTrue(set2.contains("a") && set2.contains("b"));
-        assertTrue(set3.contains("a") && set3.contains("b") && set3.contains("c"));
-        assertTrue(set4.contains("a") && set4.contains("b") && set4.contains("c") && set4.contains("d"));
+        final Map<String, Integer> offsetMap = Map.of("a", 0, "b", 1, "c", 2, "d", 3);
+        assertEquals(Bits.of(offsetMap, "a"), ref1.body());
+        assertEquals(Bits.of(offsetMap, "a b"), ref2.body());
+        assertEquals(Bits.of(offsetMap, "a b c"), ref3.body());
+        assertEquals(Bits.of(offsetMap, "a b c d"), ref4.body());
     }
 
     @Test

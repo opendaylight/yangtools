@@ -8,18 +8,20 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -51,7 +53,7 @@ public class Bug4501Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode transformedInput = result.getResult();
         assertTrue(transformedInput instanceof UnkeyedListNode);
@@ -60,7 +62,8 @@ public class Bug4501Test {
         final DataContainerChild lrsBits = hop.childAt(0).getChildByArg(
                 NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
-        assertEquals(ImmutableSet.of("lookup", "rloc-probe", "strict"), lrsBits.body());
+        assertTrue(lrsBits.body() instanceof Bits);
+        assertEquals(Set.of("lookup", "rloc-probe", "strict"), ((Bits) lrsBits.body()).toSet());
     }
 
     @Test
@@ -69,11 +72,12 @@ public class Bug4501Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
 
         final JsonReader reader = new JsonReader(new StringReader(inputJson));
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> jsonParser.parse(reader));
-        assertEquals("Node '(foo)lrs-bits' has already set its value to '[lookup]'", ex.getMessage());
+                () -> jsonParser.parse(reader));
+        assertNotNull(ex.getMessage());
+        assertTrue(ex.getMessage().startsWith("Node '(foo)lrs-bits' has already set its value"));
     }
 }
