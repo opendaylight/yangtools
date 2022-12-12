@@ -71,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "51352a5b_ebc30928",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2022-12-12T15:44:10Z",
+      "side": 1,
+      "message": "dedicated type is introduced in alt change https://git.opendaylight.org/gerrit/c/yangtools/+/103659\n\nnotes: \n\na) neither integer nor long nor byte[] provide friendly interface to bit state,\nall of these require extra logic, there is no any reason to use these types \nbecause existing type BitSet already covers any length.\n\nB) necessity to include bit names to offset map into an object (to serve \n\"friendly\" api) does not help to minimize resource usage; it contradicts\nthe goal of the task, unless configuration part (bit name to offset map) \nis never persisted, then bits type definition will be always required to \nrestore Bits object out of backing data",
+      "parentUuid": "e0f469a5_4d2d8317",
+      "range": {
+        "startLine": 30,
+        "startChar": 65,
+        "endLine": 30,
+        "endChar": 71
+      },
+      "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4f5f260a_07cebe42",
