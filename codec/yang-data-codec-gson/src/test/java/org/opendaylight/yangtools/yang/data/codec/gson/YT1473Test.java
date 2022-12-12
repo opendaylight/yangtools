@@ -16,10 +16,12 @@ import static org.mockito.Mockito.verify;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonWriter;
+import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -48,6 +50,8 @@ class YT1473Test {
     private static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf-list of type 'instance-identifier'
     private static final QName BAR_BEE = QName.create(BAR_NS, "bee"); // leaf-list of type 'foo:bts' (bits)
     private static final QName BAR_TWO = QName.create(BAR_NS, "two"); // identity inheriting 'foo:one'
+
+    private static final Map<String, Integer> BITS_MAP = Map.of("one", 0, "two", 1, "three", 2);
 
     private static JSONCodec<YangInstanceIdentifier> CODEC;
 
@@ -197,17 +201,22 @@ class YT1473Test {
 
     @Test
     void testSerializeBits() throws Exception {
-        assertSerdes("/foo:bee[bts='']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of()));
-        assertSerdes("/foo:bee[bts='one']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("one")));
+        assertSerdes("/foo:bee[bts='']",
+            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, ImmutableSet.of())));
+        assertSerdes("/foo:bee[bts='one']",
+            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, ImmutableSet.of("one"))));
         assertSerdes("/foo:bee[bts='two three']",
-            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("two", "three")));
+            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, ImmutableSet.of("two", "three"))));
     }
 
     @Test
     void testSerializeBitsValue() throws Exception {
-        assertSerdes("/bar:bee[.='']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of()));
-        assertSerdes("/bar:bee[.='one']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("one")));
-        assertSerdes("/bar:bee[.='two three']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("two", "three")));
+        assertSerdes("/bar:bee[.='']",
+            buildYangInstanceIdentifier(BAR_BEE, Bits.of(BITS_MAP, ImmutableSet.of())));
+        assertSerdes("/bar:bee[.='one']",
+            buildYangInstanceIdentifier(BAR_BEE, Bits.of(BITS_MAP, ImmutableSet.of("one"))));
+        assertSerdes("/bar:bee[.='two three']",
+            buildYangInstanceIdentifier(BAR_BEE, Bits.of(BITS_MAP, ImmutableSet.of("two", "three"))));
     }
 
     private static void assertSerdes(final String expected, final YangInstanceIdentifier id) throws Exception {

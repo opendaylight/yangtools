@@ -13,7 +13,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Map;
+import java.util.Set;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamWriter;
 import org.junit.jupiter.api.AfterAll;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -49,6 +51,8 @@ class YT1473Test {
     private static final QName BAR_FOO = QName.create(BAR_NS, "foo"); // leaf-list of type 'foo:one' based
     private static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf-list of type 'instance-identifier'
     private static final QName BAR_BEE = QName.create(BAR_NS, "bee"); // leaf-list of type 'foo:bts' (bits)
+
+    private static final Map<String, Integer> BITS_MAP = Map.of("one", 0, "two", 1, "three", 2);
 
     private static XmlCodec<YangInstanceIdentifier> CODEC;
 
@@ -196,16 +200,17 @@ class YT1473Test {
 
     @Test
     void testSerializeBits() throws Exception {
-        assertFoo("/f:bee[f:bts='']", createIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of()));
-        assertFoo("/f:bee[f:bts='one']", createIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("one")));
-        assertFoo("/f:bee[f:bts='two three']", createIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("two", "three")));
+        assertFoo("/f:bee[f:bts='']", createIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, Set.of())));
+        assertFoo("/f:bee[f:bts='one']", createIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, Set.of("one"))));
+        assertFoo("/f:bee[f:bts='two three']",
+            createIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, Set.of("two", "three"))));
     }
 
     @Test
     void testSerializeBitsValue() throws Exception {
-        assertBar("/b:bee[.='']", createIdentifier(BAR_BEE, ImmutableSet.of()));
-        assertBar("/b:bee[.='one']", createIdentifier(BAR_BEE, ImmutableSet.of("one")));
-        assertBar("/b:bee[.='two three']", createIdentifier(BAR_BEE, ImmutableSet.of("two", "three")));
+        assertBar("/b:bee[.='']", createIdentifier(BAR_BEE, Bits.of(BITS_MAP, Set.of())));
+        assertBar("/b:bee[.='one']", createIdentifier(BAR_BEE, Bits.of(BITS_MAP, Set.of("one"))));
+        assertBar("/b:bee[.='two three']", createIdentifier(BAR_BEE, Bits.of(BITS_MAP, Set.of("two", "three"))));
     }
 
     private static void assertBar(final String expected, final YangInstanceIdentifier id) throws Exception {
