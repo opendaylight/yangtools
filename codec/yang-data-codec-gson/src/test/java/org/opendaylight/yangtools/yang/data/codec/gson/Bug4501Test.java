@@ -12,14 +12,15 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -83,7 +84,8 @@ public class Bug4501Test {
         final DataContainerChild lrsBits = hop.childAt(0).getChildByArg(
                 NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
-        assertEquals(ImmutableSet.of("lookup", "rloc-probe", "strict"), lrsBits.body());
+        final Bits expected = Bits.of(Map.of("lookup", 0, "rloc-probe", 1, "strict", 2), new byte[]{7});
+        assertEquals(expected, lrsBits.body());
     }
 
     @Test
@@ -97,6 +99,6 @@ public class Bug4501Test {
         final JsonReader reader = new JsonReader(new StringReader(inputJson));
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> jsonParser.parse(reader));
-        assertEquals("Node '(foo)lrs-bits' has already set its value to '[lookup]'", ex.getMessage());
+        assertEquals("Node '(foo)lrs-bits' has already set its value to 'lookup'", ex.getMessage());
     }
 }

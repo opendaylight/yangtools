@@ -14,12 +14,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Map;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamWriter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -48,6 +50,8 @@ class YT1473Test {
     private static final QName BAR_FOO = QName.create(BAR_NS, "foo"); // leaf-list of type 'foo:one' based
     private static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf-list of type 'instance-identifier'
     private static final QName BAR_BEE = QName.create(BAR_NS, "bee"); // leaf-list of type 'foo:bts' (bits)
+
+    private static final Map<String, Integer> BITS_MAP = Map.of("one", 0, "two", 1, "three", 2);
 
     private static XmlCodec<YangInstanceIdentifier> CODEC;
 
@@ -195,17 +199,22 @@ class YT1473Test {
 
     @Test
     void testSerializeBits() throws Exception {
-        assertSerdes("/foo:bee[foo:bts='']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of()));
-        assertSerdes("/foo:bee[foo:bts='one']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("one")));
+        assertSerdes("/foo:bee[foo:bts='']",
+            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, ImmutableSet.of())));
+        assertSerdes("/foo:bee[foo:bts='one']",
+            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, ImmutableSet.of("one"))));
         assertSerdes("/foo:bee[foo:bts='two three']",
-            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("two", "three")));
+            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, Bits.of(BITS_MAP, ImmutableSet.of("two", "three"))));
     }
 
     @Test
     void testSerializeBitsValue() throws Exception {
-        assertSerdes("/bar:bee[.='']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of()));
-        assertSerdes("/bar:bee[.='one']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("one")));
-        assertSerdes("/bar:bee[.='two three']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("two", "three")));
+        assertSerdes("/bar:bee[.='']",
+            buildYangInstanceIdentifier(BAR_BEE, Bits.of(BITS_MAP, ImmutableSet.of())));
+        assertSerdes("/bar:bee[.='one']",
+            buildYangInstanceIdentifier(BAR_BEE, Bits.of(BITS_MAP, "one")));
+        assertSerdes("/bar:bee[.='two three']",
+            buildYangInstanceIdentifier(BAR_BEE, Bits.of(BITS_MAP, ImmutableSet.of("two", "three"))));
     }
 
     private static void assertSerdes(final String expected, final YangInstanceIdentifier id) throws Exception {
@@ -218,11 +227,12 @@ class YT1473Test {
         final var context = mock(NamespaceContext.class);
         doReturn("foons").when(context).getNamespaceURI("foo");
         doReturn("barns").when(context).getNamespaceURI("bar");
+        final var id2 = CODEC.parseValue(context, expected);
         assertEquals(id, CODEC.parseValue(context, expected));
     }
 
     private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final QName key,
-            final Object value) {
+        final Object value) {
         return YangInstanceIdentifier.of(new NodeIdentifier(node), NodeIdentifierWithPredicates.of(node, key, value));
     }
 
