@@ -13,8 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.gson.stream.JsonReader;
 import java.io.StringReader;
-import java.util.Set;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -139,10 +140,11 @@ class Bug4969Test {
         final var ref4 = assertInstanceOf(LeafNode.class, root.childByArg(NodeIdentifier.create(
             QName.create("foo", "2016-01-22", "ref4"))));
 
-        assertEquals(Set.of("a"), ref1.body());
-        assertEquals(Set.of("a", "b"), ref2.body());
-        assertEquals(Set.of("a", "b", "c"), ref3.body());
-        assertEquals(Set.of("a", "b", "c", "d"), ref4.body());
+        final Map<String, Integer> offsetMap = Map.of("a", 0, "b", 1, "c", 2, "d", 3);
+        assertEquals(Bits.of(offsetMap, "a"), ref1.body());
+        assertEquals(Bits.of(offsetMap, "a b"), ref2.body());
+        assertEquals(Bits.of(offsetMap, "a b c"), ref3.body());
+        assertEquals(Bits.of(offsetMap, "a b c d"), ref4.body());
     }
 
     @Test

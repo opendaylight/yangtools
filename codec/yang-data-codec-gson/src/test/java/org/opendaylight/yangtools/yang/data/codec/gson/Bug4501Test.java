@@ -16,10 +16,11 @@ import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.util.Set;
+import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
@@ -80,7 +81,8 @@ class Bug4501Test {
         final var lrsBits = hop.childAt(0).getChildByArg(
                 NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
-        assertEquals(Set.of("lookup", "rloc-probe", "strict"), lrsBits.body());
+        final Bits expected = Bits.of(Map.of("lookup", 0, "rloc-probe", 1, "strict", 2), new byte[]{7});
+        assertEquals(expected, lrsBits.body());
     }
 
     @Test
@@ -94,6 +96,6 @@ class Bug4501Test {
         final var reader = new JsonReader(new StringReader(inputJson));
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> jsonParser.parse(reader));
-        assertEquals("Node '(foo)lrs-bits' has already set its value to '[lookup]'", ex.getMessage());
+        assertEquals("Node '(foo)lrs-bits' has already set its value to 'lookup'", ex.getMessage());
     }
 }

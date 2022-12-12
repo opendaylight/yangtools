@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.common.Bits;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -104,7 +106,8 @@ final class TestingNormalizedNodeStructuresCreator {
     }
 
     private static LeafNode<Object> lf15_11Node() {
-        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf15_11"), ImmutableSet.of("one", "two"));
+        final Bits bits = Bits.of(Map.of("one", 0, "two", 1, "three", 2), Set.of("one", "two"));
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf15_11"), bits);
     }
 
     private static SystemMapNode childLst11() {
