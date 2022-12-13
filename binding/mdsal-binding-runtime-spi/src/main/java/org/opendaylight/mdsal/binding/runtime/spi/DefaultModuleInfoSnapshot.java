@@ -15,7 +15,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -52,7 +52,7 @@ final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
 
     @Override
     public <T> Class<T> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
-        final String packageName = BindingReflections.getModelRootPackageName(fullyQualifiedName);
+        final String packageName = BindingMapping.getModelRootPackageName(fullyQualifiedName);
         final ClassLoader loader = classLoaders.get(packageName);
         if (loader == null) {
             throw new ClassNotFoundException("Package " + packageName + " not found");

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
@@ -92,7 +93,7 @@ public final class ModuleInfoSnapshotBuilder {
             mappedInfos.put(source.getIdentifier(), info);
 
             final Class<?> infoClass = info.getClass();
-            classLoaders.put(BindingReflections.getModelRootPackageName(infoClass.getPackage()),
+            classLoaders.put(BindingMapping.getModelRootPackageName(infoClass.getPackage().getName()),
                 infoClass.getClassLoader());
 
             try {

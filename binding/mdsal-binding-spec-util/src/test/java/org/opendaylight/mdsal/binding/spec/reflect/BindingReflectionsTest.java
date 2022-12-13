@@ -29,8 +29,6 @@ public class BindingReflectionsTest {
 
     @Test
     public void testBindingWithDummyObject() throws Exception {
-        assertEquals("Package name should be equal to string", "org.opendaylight.yang.gen.v1.test.rev990939",
-                BindingReflections.getModelRootPackageName("org.opendaylight.yang.gen.v1.test.rev990939"));
         assertEquals("ModuleInfoClassName should be equal to string", "test.$YangModuleInfoImpl",
                 BindingReflections.getModuleInfoClassName("test"));
         assertEquals("Module info should be empty Set", Collections.emptySet(),

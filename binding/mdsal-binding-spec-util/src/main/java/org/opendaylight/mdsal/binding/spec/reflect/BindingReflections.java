@@ -24,9 +24,6 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -50,20 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class BindingReflections {
-
-    private static final long EXPIRATION_TIME = 60;
-
-    @Regex
-    private static final String ROOT_PACKAGE_PATTERN_STRING =
-            "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
-    private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
     private static final Logger LOG = LoggerFactory.getLogger(BindingReflections.class);
-
     private static final LoadingCache<Class<?>, Optional<QName>> CLASS_TO_QNAME = CacheBuilder.newBuilder()
             .weakKeys()
-            .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS)
+            .expireAfterAccess(60, TimeUnit.SECONDS)
             .build(new ClassToQNameLoader());
-
     private static final LoadingCache<ClassLoader, ImmutableSet<YangModuleInfo>> MODULE_INFO_CACHE =
             CacheBuilder.newBuilder().weakKeys().weakValues().build(
                 new CacheLoader<ClassLoader, ImmutableSet<YangModuleInfo>>() {
@@ -138,10 +126,10 @@ public final class BindingReflections {
     /**
      * Returns root package name for supplied package.
      *
-     * @param pkg
-     *            Package for which find model root package.
-     * @return Package of model root.
+     * @param pkg Package for which find model root package.
+     * @deprecated Use {@link BindingMapping#getModelRootPackageName(String)} instead.
      */
+    @Deprecated(since = "11.0.3", forRemoval = true)
     public static String getModelRootPackageName(final Package pkg) {
         return getModelRootPackageName(pkg.getName());
     }
@@ -149,18 +137,14 @@ public final class BindingReflections {
     /**
      * Returns root package name for supplied package name.
      *
-     * @param name
-     *            Package for which find model root package.
+     * @param name Package for which find model root package.
      * @return Package of model root.
+     * @deprecated Use {@link BindingMapping#getModelRootPackageName(String)} instead.
      */
+    @Deprecated(since = "11.0.3", forRemoval = true)
     public static String getModelRootPackageName(final String name) {
         checkArgument(name != null, "Package name should not be null.");
-        checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
-                BindingMapping.PACKAGE_PREFIX, name);
-        Matcher match = ROOT_PACKAGE_PATTERN.matcher(name);
-        checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", name,
-                ROOT_PACKAGE_PATTERN_STRING);
-        return match.group(0);
+        return BindingMapping.getModelRootPackageName(name);
     }
 
     public static QNameModule getQNameModule(final Class<?> clz) {
@@ -179,7 +163,7 @@ public final class BindingReflections {
      * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
      */
     public static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) {
-        final String packageName = getModelRootPackageName(cls.getPackage());
+        final String packageName = BindingMapping.getModelRootPackageName(cls.getPackage().getName());
         final String potentialClassName = getModuleInfoClassName(packageName);
         final Class<?> moduleInfoClass;
         try {

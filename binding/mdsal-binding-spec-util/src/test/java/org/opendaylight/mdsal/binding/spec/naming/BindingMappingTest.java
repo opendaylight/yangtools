@@ -20,6 +20,12 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 public class BindingMappingTest {
     @Test
+    public void testGetModelRootPackageName() {
+        assertEquals("org.opendaylight.yang.gen.v1.test.rev990939",
+            BindingMapping.getModelRootPackageName("org.opendaylight.yang.gen.v1.test.rev990939"));
+    }
+
+    @Test
     public void testGetMethodName() {
         assertEquals("testLocalName", BindingMapping.getMethodName(QName.create("testNS", "testLocalName")));
         assertEquals("testYangIdentifier", BindingMapping.getMethodName("TestYangIdentifier"));

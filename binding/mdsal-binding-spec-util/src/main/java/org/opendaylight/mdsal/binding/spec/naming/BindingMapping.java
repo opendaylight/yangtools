@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -151,6 +152,10 @@ public final class BindingMapping {
     public static final @NonNull String RPC_OUTPUT_SUFFIX = "Output";
 
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
+    @Regex
+    private static final String ROOT_PACKAGE_PATTERN_STRING =
+            "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
+    private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
 
     private BindingMapping() {
         // Hidden on purpose
@@ -357,6 +362,24 @@ public final class BindingMapping {
     public static @NonNull String getRpcMethodName(final @NonNull QName qname) {
         final String methodName = getMethodName(qname);
         return JAVA_RESERVED_WORDS.contains(methodName) ? methodName + "$" : methodName;
+    }
+
+    /**
+     * Returns root package name for supplied package name.
+     *
+     * @param packageName Package for which find model root package.
+     * @return Package of model root.
+     * @throws NullPointerException if {@code packageName} is {@code null}
+     * @throws IllegalArgumentException if {@code packageName} does not start with {@link #PACKAGE_PREFIX} or it does
+     *                                  not match package name formatting rules
+     */
+    public static @NonNull String getModelRootPackageName(final String packageName) {
+        checkArgument(packageName.startsWith(PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
+            PACKAGE_PREFIX, packageName);
+        final var match = ROOT_PACKAGE_PATTERN.matcher(packageName);
+        checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", packageName,
+                ROOT_PACKAGE_PATTERN_STRING);
+        return match.group(0);
     }
 
     /**

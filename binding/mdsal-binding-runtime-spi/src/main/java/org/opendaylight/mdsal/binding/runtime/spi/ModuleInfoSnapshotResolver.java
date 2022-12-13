@@ -27,7 +27,7 @@ import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
@@ -185,7 +185,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             final var info = reg.info;
             moduleInfos.put(source, info);
             final var infoClass = info.getClass();
-            classLoaders.put(BindingReflections.getModelRootPackageName(infoClass.getPackage()),
+            classLoaders.put(BindingMapping.getModelRootPackageName(infoClass.getPackage().getName()),
                 infoClass.getClassLoader());
         }
 
