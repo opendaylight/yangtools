@@ -109,6 +109,12 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
             Map.entry(yangModuleInfo, localName.getLocalName()));
     }
 
+    // FIXME: use YangDataName
+    void addNameConstant(final GeneratedTypeBuilderBase<?> builder, final String templateName) {
+        builder.addConstant(BindingTypes.YANG_DATA_NAME, BindingMapping.NAME_STATIC_FIELD_NAME,
+            Map.entry(yangModuleInfo, templateName));
+    }
+
     @Override
     CompositeRuntimeTypeBuilder<ModuleEffectiveStatement, ModuleRuntimeType> createBuilder(
             final ModuleEffectiveStatement statement) {

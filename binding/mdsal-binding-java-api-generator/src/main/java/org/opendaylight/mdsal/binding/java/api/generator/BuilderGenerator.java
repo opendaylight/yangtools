@@ -19,6 +19,7 @@ import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGen
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.YangData;
 
 /**
  * Transformator of the data from the virtual form to JAVA programming language. The result source code represent java
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
 public final class BuilderGenerator implements CodeGenerator {
     private static final JavaTypeName AUGMENTABLE = JavaTypeName.create(Augmentable.class);
     private static final JavaTypeName AUGMENTATION = JavaTypeName.create(Augmentation.class);
+    private static final JavaTypeName YANG_DATA = JavaTypeName.create(YangData.class);
 
     /**
      * Passes via list of implemented types in <code>type</code>.
@@ -40,7 +42,7 @@ public final class BuilderGenerator implements CodeGenerator {
             for (Type t : generated.getImplements()) {
                 // "rpc" and "grouping" elements do not implement Augmentable
                 final JavaTypeName name = t.getIdentifier();
-                if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION)) {
+                if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION) || name.equals(YANG_DATA)) {
                     return true;
                 }
             }

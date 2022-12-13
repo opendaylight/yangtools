@@ -12,6 +12,7 @@ import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMappin
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODEL_BINDING_PROVIDER_CLASS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODULE_INFO_CLASS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODULE_INFO_QNAMEOF_METHOD_NAME
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
@@ -22,6 +23,7 @@ import java.util.Set
 import java.util.TreeMap
 import java.util.function.Function
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext
@@ -64,6 +66,7 @@ final class YangModuleInfoTemplate {
     val Module module
     val EffectiveModelContext ctx
     val Function<ModuleLike, Optional<String>> moduleFilePathResolver
+    val boolean hasYangData
 
     var importedTypes = CORE_IMPORT_STR
 
@@ -80,6 +83,7 @@ final class YangModuleInfoTemplate {
         this.moduleFilePathResolver = moduleFilePathResolver
         packageName = module.QNameModule.rootPackageName;
         modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»'''
+        hasYangData = module.unknownSchemaNodes.stream.anyMatch([s | s instanceof YangDataSchemaNode])
     }
 
     def String generate() {
@@ -113,12 +117,27 @@ final class YangModuleInfoTemplate {
                  *
                  * @param localName local name
                  * @return A QName
-                 * @throws NullPointerException if {@code localName} is null
-                 * @throws IllegalArgumentException if localName is not a valid YANG identifier
+                 * @throws NullPointerException if {@code localName} is {@code null}
+                 * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
                  */
                 public static @NonNull QName «MODULE_INFO_QNAMEOF_METHOD_NAME»(final String localName) {
                     return QName.create(NAME, localName).intern();
                 }
+            «IF hasYangData»
+
+                /**
+                 * Create an interned {@link YangDataName} with specified {@code templateName} and namespace/revision of
+                 * this module.
+                 *
+                 * @param templateName template name
+                 * @return A YangDataName
+                 * @throws NullPointerException if {@code templateName} is {@code null}
+                 * @throws IllegalArgumentException if {@code templateName} is empty
+                 */
+                public static @NonNull YangDataName «MODULE_INFO_YANGDATANAMEOF_METHOD_NAME»(final String templateName) {
+                    return new YangDataName(NAME.getModule(), templateName).intern();
+                }
+            «ENDIF»
 
                 «classBody(module, MODULE_INFO_CLASS_NAME, submodules)»
             }
@@ -127,6 +146,9 @@ final class YangModuleInfoTemplate {
             package «packageName»;
 
             «importedTypes»
+            «IF hasYangData»
+            import org.opendaylight.yangtools.yang.common.YangDataName;
+            «ENDIF»
 
             «body»
         '''.toString

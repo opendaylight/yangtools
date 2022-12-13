@@ -47,10 +47,12 @@ import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.binding.UnionTypeObject;
+import org.opendaylight.yangtools.yang.binding.YangData;
 import org.opendaylight.yangtools.yang.binding.YangFeature;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 public final class BindingTypes {
@@ -71,6 +73,7 @@ public final class BindingTypes {
     public static final ConcreteType UNION_TYPE_OBJECT = typeForClass(UnionTypeObject.class);
     public static final ConcreteType INSTANCE_IDENTIFIER = typeForClass(InstanceIdentifier.class);
     public static final ConcreteType KEYED_INSTANCE_IDENTIFIER = typeForClass(KeyedInstanceIdentifier.class);
+    public static final ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
 
     // This is an annotation, we are current just referencing the type
     public static final JavaTypeName ROUTING_CONTEXT = JavaTypeName.create(RoutingContext.class);
@@ -95,6 +98,7 @@ public final class BindingTypes {
     private static final ConcreteType RPC = typeForClass(Rpc.class);
     private static final ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
     private static final ConcreteType YANG_FEATURE = typeForClass(YangFeature.class);
+    private static final ConcreteType YANG_DATA = typeForClass(YangData.class);
 
     private BindingTypes() {
 
@@ -107,7 +111,7 @@ public final class BindingTypes {
      * @param input Type input type
      * @param output Type output type
      * @return A parameterized type corresponding to {@code Action<Parent, Input, Output>}
-     * @throws NullPointerException if any argument is is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType action(final Type parent, final Type input, final Type output) {
         return parameterizedTypeFor(ACTION, instanceIdentifier(parent), input, output);
@@ -121,7 +125,7 @@ public final class BindingTypes {
      * @param input Type input type
      * @param output Type output type
      * @return A parameterized type corresponding to {@code KeyedListAction<ParentKey, Parent, Input, Output>}
-     * @throws NullPointerException if any argument is is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType keyedListAction(final Type parent, final Type keyType, final Type input,
             final Type output) {
@@ -133,7 +137,7 @@ public final class BindingTypes {
      *
      * @param concreteType The concrete type of this notification
      * @return A parameterized type corresponding to {@code Notification<ConcreteType>}
-     * @throws NullPointerException if any argument is is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType notification(final Type concreteType) {
         return parameterizedTypeFor(NOTIFICATION, concreteType);
@@ -145,7 +149,7 @@ public final class BindingTypes {
      * @param concreteType The concrete type of this notification
      * @param parent Type of parent defining the notification
      * @return A parameterized type corresponding to {@code InstanceNotification<ConcreteType, Parent>}
-     * @throws NullPointerException if {@code parent} is is null
+     * @throws NullPointerException if {@code parent} is {@code null}
      */
     public static ParameterizedType instanceNotification(final Type concreteType, final Type parent) {
         return parameterizedTypeFor(INSTANCE_NOTIFICATION, concreteType, parent);
@@ -158,7 +162,7 @@ public final class BindingTypes {
      * @param parent Type of parent defining the notification
      * @param keyType Type of parent's key
      * @return A parameterized type corresponding to {@code KeyedInstanceNotification<ConcreteType, ParentKey, Parent>}
-     * @throws NullPointerException if any argument is is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType keyedListNotification(final Type concreteType, final Type parent,
             final Type keyType) {
@@ -170,7 +174,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code Augmentable<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static @NonNull ParameterizedType augmentable(final Type type) {
         return parameterizedTypeFor(AUGMENTABLE, type);
@@ -181,7 +185,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code Augmentation<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static @NonNull ParameterizedType augmentation(final Type type) {
         return parameterizedTypeFor(AUGMENTATION, type);
@@ -192,7 +196,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code ChildOf<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType childOf(final Type type) {
         return parameterizedTypeFor(CHILD_OF, type);
@@ -203,7 +207,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code ChoiceIn<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType choiceIn(final Type type) {
         return parameterizedTypeFor(CHOICE_IN, type);
@@ -214,7 +218,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code Identifier<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType identifier(final Type type) {
         return parameterizedTypeFor(IDENTIFIER, type);
@@ -225,7 +229,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code Identifiable<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType identifiable(final Type type) {
         return parameterizedTypeFor(IDENTIFIABLE, type);
@@ -236,7 +240,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code InstanceIdentifier<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType instanceIdentifier(final Type type) {
         return parameterizedTypeFor(INSTANCE_IDENTIFIER, type);
@@ -248,7 +252,7 @@ public final class BindingTypes {
      * @param type Type for which to specialize
      * @param keyType Type of key
      * @return A parameterized type corresponding to {@code KeyedInstanceIdentifier<Type, KeyType>}
-     * @throws NullPointerException if any argument is is null
+     * @throws NullPointerException if any argument is is {@code null}
      */
     public static ParameterizedType keyedInstanceIdentifier(final Type type, final Type keyType) {
         return parameterizedTypeFor(KEYED_INSTANCE_IDENTIFIER, type, keyType);
@@ -259,7 +263,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code OpaqueObject<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType opaqueObject(final Type type) {
         return parameterizedTypeFor(OPAQUE_OBJECT, type);
@@ -282,7 +286,7 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code RpcResult<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType rpcResult(final Type type) {
         return parameterizedTypeFor(RPC_RESULT, type);
@@ -293,10 +297,21 @@ public final class BindingTypes {
      *
      * @param type Type for which to specialize
      * @return A parameterized type corresponding to {@code ScalarTypeObject<Type>}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     public static ParameterizedType scalarTypeObject(final Type type) {
         return parameterizedTypeFor(SCALAR_TYPE_OBJECT, type);
+    }
+
+    /**
+     * Type specializing {@link YangData} for a particular type.
+     *
+     * @param concreteType The concrete type of this notification
+     * @return A parameterized type corresponding to {@code YangData<Type>}
+     * @throws NullPointerException if any argument is is {@code null}
+     */
+    public static ParameterizedType yangData(final Type concreteType) {
+        return parameterizedTypeFor(YANG_DATA, concreteType);
     }
 
     /**
@@ -305,7 +320,7 @@ public final class BindingTypes {
      * @param concreteType The concrete type of this notification
      * @param parent Type of parent defining the notification
      * @return A parameterized type corresponding to {@code YangFeature<Type, DataRootType>}
-     * @throws NullPointerException if any argument is is null
+     * @throws NullPointerException if any argument is is {@code null}
      */
     public static ParameterizedType yangFeature(final Type concreteType, final Type parent) {
         return parameterizedTypeFor(YANG_FEATURE, concreteType, parent);
@@ -354,7 +369,7 @@ public final class BindingTypes {
      *
      * @param type Parameterized type
      * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentation(Type)}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     @Beta
     public static @Nullable Type extractAugmentable(final ParameterizedType type) {
@@ -375,7 +390,7 @@ public final class BindingTypes {
      *
      * @param type Parameterized type
      * @return Identifiable target, or null if {@code type} does not match the result of {@link #identifier(Type)}
-     * @throws NullPointerException if {@code type} is null
+     * @throws NullPointerException if {@code type} is {@code null}
      */
     @Beta
     public static @Nullable Type extractIdentifiable(final ParameterizedType type) {

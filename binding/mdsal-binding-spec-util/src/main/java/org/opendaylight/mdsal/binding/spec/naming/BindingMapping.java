@@ -70,7 +70,11 @@ public final class BindingMapping {
     public static final @NonNull String NOTIFICATION_LISTENER_SUFFIX = "Listener";
     public static final @NonNull String BUILDER_SUFFIX = "Builder";
     public static final @NonNull String KEY_SUFFIX = "Key";
+    // ietf-restconf:yang-data, i.e. YangDataName
+    public static final @NonNull String NAME_STATIC_FIELD_NAME = "NAME";
+    // everything that can have a QName (e.g. identifier bound to a namespace)
     public static final @NonNull String QNAME_STATIC_FIELD_NAME = "QNAME";
+    // concrete extensible contracts, for example 'feature', 'identity' and similar
     public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
     public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
     public static final @NonNull String AUGMENTATION_FIELD = "augmentation";
@@ -83,6 +87,7 @@ public final class BindingMapping {
 
     public static final @NonNull String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
     public static final @NonNull String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
+    public static final @NonNull String MODULE_INFO_YANGDATANAMEOF_METHOD_NAME = "yangDataNameOf";
     public static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
 
     /**
@@ -424,6 +429,19 @@ public final class BindingMapping {
         }
 
         return javaToYang.inverse();
+    }
+
+    /**
+     * Builds class name representing yang-data template name which is not yang identifier compliant.
+     *
+     * @param templateName template name
+     * @return Java class name
+     * @throws NullPointerException if {@code templateName} is {@code null}
+     * @throws IllegalArgumentException if (@code templateName} is empty
+     */
+    // TODO: take YangDataName once we have it readily available
+    public static String mapYangDataName(final String templateName) {
+        return mapEnumAssignedName(templateName);
     }
 
     // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-3.html#jls-3.8

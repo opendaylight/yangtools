@@ -1,0 +1,119 @@
+module yang-data-demo {
+  yang-version 1.1;
+  namespace "urn:test:yang:data:demo";
+  prefix ydd;
+
+  import ietf-restconf {
+    prefix rc;
+  }
+
+  revision 2022-02-22;
+
+  rc:yang-data yang-data-with-container {
+    container container-from-yang-data {
+      leaf str {
+        type string;
+      }
+    }
+  }
+
+  rc:yang-data yang-data-with-list {
+    list list-from-yang-data {
+      leaf str {
+        type string;
+      }
+    }
+  }
+
+  rc:yang-data yang-data-with-leaf {
+    leaf leaf-from-yang-data {
+      type string;
+    }
+  }
+
+  rc:yang-data yang-data-with-leaf-list {
+    leaf-list leaf-list-from-yang-data {
+      type string;
+    }
+  }
+
+  rc:yang-data yang-data-with-anydata {
+    anydata anydata-from-yang-data;
+  }
+
+  rc:yang-data yang-data-with-anyxml {
+    anyxml anyxml-from-yang-data;
+  }
+
+  rc:yang-data yang-data-with-container-from-group {
+    uses grp-for-container;
+  }
+
+  rc:yang-data yang-data-with-list-from-group {
+    uses grp-for-list;
+  }
+
+  rc:yang-data yang-data-with-leaf-from-group {
+    uses grp-for-leaf;
+  }
+
+  rc:yang-data yang-data-with-leaf-list-from-group {
+    uses grp-for-leaf-list;
+  }
+
+  rc:yang-data yang-data-with-anydata-from-group {
+    uses grp-for-anydata;
+  }
+
+  rc:yang-data yang-data-with-anyxml-from-group {
+    uses grp-for-anyxml;
+  }
+
+  grouping grp-for-container {
+    container container-from-group {
+      leaf str {
+        type string;
+      }
+    }
+  }
+
+  grouping grp-for-list {
+    list list-from-group {
+      leaf num {
+        type uint32;
+      }
+    }
+  }
+
+  grouping grp-for-leaf {
+    leaf leaf-from-group {
+      type uint32;
+    }
+  }
+
+  grouping grp-for-leaf-list {
+    leaf-list leaf-list-from-group {
+      type uint32;
+    }
+  }
+
+  grouping grp-for-anydata {
+    anydata anydata-from-group;
+  }
+
+  grouping grp-for-anyxml {
+    anyxml anyxml-from-group;
+  }
+
+  container root-container {
+    rc:yang-data "yang-data-ignored";
+  }
+
+  rc:yang-data "ľaľaho papľuhu" {
+    container latin-naming;
+  }
+
+  rc:yang-data привет {
+    container cyrillic-naming;
+  }
+}
