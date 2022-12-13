@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.spec.util;
 
+@Deprecated(since = "11.0.3", forRemoval = true)
 public interface GroupingFoo {
 
 }

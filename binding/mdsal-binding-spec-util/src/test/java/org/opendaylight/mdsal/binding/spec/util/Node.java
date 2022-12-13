@@ -11,6 +11,7 @@ import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 
+@Deprecated(since = "11.0.3", forRemoval = true)
 public interface Node extends DataObject, Identifiable<NodeKey>, ChildOf<Nodes> {
 
 }

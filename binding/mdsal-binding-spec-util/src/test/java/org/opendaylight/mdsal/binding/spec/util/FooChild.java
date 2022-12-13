@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.spec.util;
 
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 
+@Deprecated(since = "11.0.3", forRemoval = true)
 public interface FooChild extends ChildOf<GroupingFoo> {
 
 }

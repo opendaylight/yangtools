@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.spec.util;
 import java.io.Serial;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 
+@Deprecated(since = "11.0.3", forRemoval = true)
 public class NodeKey implements Identifier<Node> {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.spec.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.lang.reflect.InvocationTargetException;
@@ -34,9 +33,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableIt
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 
-@Beta
+@Deprecated(since = "11.0.3", forRemoval = true)
 public final class DataObjectReadingUtil {
-
     private static final DataObjectReadingStrategy REAUSABLE_AUGMENTATION_READING_STRATEGY =
             new AugmentationReadingStrategy();
 
@@ -146,14 +144,14 @@ public final class DataObjectReadingUtil {
             checkArgument(DataContainer.class.isAssignableFrom(childType));
             this.parentType = parentType;
             this.childType = childType;
-            this.getterMethod = resolveGetterMethod(parentType, childType);
+            getterMethod = resolveGetterMethod(parentType, childType);
         }
 
         @SuppressWarnings("unchecked")
         DataObjectReadingStrategy(final Class parentType, final Class childType, final Method getter) {
             this.parentType = parentType;
             this.childType = childType;
-            this.getterMethod = getter;
+            getterMethod = getter;
         }
 
         @SuppressWarnings("unused")

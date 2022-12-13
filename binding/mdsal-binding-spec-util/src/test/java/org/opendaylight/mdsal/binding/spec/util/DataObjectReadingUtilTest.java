@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
+@Deprecated(since = "11.0.3", forRemoval = true)
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class DataObjectReadingUtilTest {
     @Mock
