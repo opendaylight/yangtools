@@ -7,40 +7,39 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5531Test {
     @Test
     public void test() throws Exception {
-        EffectiveModelContext schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/bug5531");
+        final var schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/bug5531");
 
         assertNotNull(schema);
         assertNotNull(schema.getModules());
         assertEquals(1, schema.getModules().size());
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         // write small module of size less than 8kB
-        for (ModuleEffectiveStatement module : schema.getModuleStatements().values()) {
+        for (var module : schema.getModuleStatements().values()) {
             YinExportUtils.writeModuleAsYinText(module, bufferedOutputStream);
         }
 
         String output = byteArrayOutputStream.toString();
 
         // if all changes were flushed then following conditions are satisfied
-        assertNotEquals("Output should not be empty", 0, output.length());
-        assertTrue("Output should contains start of the module", output.contains("<module"));
-        assertTrue("Output should contains end of the module", output.contains("</module>"));
+        assertNotEquals(0, output.length());
+        assertThat(output, allOf(containsString("<module"), containsString("</module>")));
     }
 }

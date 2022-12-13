@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter.defaultInstance;
 
-import java.util.Collection;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -21,22 +19,19 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class YangTextSnippetTest {
     @Test
     public void testNotification() {
-        final SchemaContext schema = YangParserTestUtils.parseYangResource("/bugs/bug2444/yang/notification.yang");
-        assertFormat(schema.getModules());
+        assertFormat(YangParserTestUtils.parseYangResource("/bugs/bug2444/yang/notification.yang"));
     }
 
     @Test
     public void testSubmoduleNamespaces() throws Exception {
-        SchemaContext schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/yt992");
-        assertFormat(schema.getModules());
+        assertFormat(YangParserTestUtils.parseYangResourceDirectory("/bugs/yt992"));
     }
 
-    private static void assertFormat(final Collection<? extends Module> modules) {
-        for (Module module : modules) {
-            final ModuleEffectiveStatement stmt = module.asEffectiveStatement();
-            assertNotNull(formatModule(stmt));
+    private static void assertFormat(final EffectiveModelContext context) {
+        for (var module : context.getModuleStatements().values()) {
+            assertNotNull(formatModule(module));
 
-            for (SubmoduleEffectiveStatement substmt : stmt.submodules()) {
+            for (var substmt : module.submodules()) {
                 assertNotNull(formatSubmodule(substmt));
             }
         }

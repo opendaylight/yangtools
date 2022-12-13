@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Bug2444Test extends AbstractYinExportTest {
     @Test

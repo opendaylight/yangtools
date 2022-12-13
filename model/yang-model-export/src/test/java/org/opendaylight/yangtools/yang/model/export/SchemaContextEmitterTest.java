@@ -5,18 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.export;
 
-import java.io.IOException;
-import javax.xml.stream.XMLStreamException;
-import org.junit.Test;
-import org.xml.sax.SAXException;
+import org.junit.jupiter.api.Test;
 
 public class SchemaContextEmitterTest extends AbstractYinExportTest {
-
     @Test
-    public void testSchemaContextEmitter() throws IOException, XMLStreamException, SAXException {
+    public void testSchemaContextEmitter() throws Exception {
         exportYinModules("/schema-context-emitter-test", "/schema-context-emitter-test");
     }
 }

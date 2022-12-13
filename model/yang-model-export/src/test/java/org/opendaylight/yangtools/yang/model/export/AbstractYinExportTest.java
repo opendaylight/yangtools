@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import javax.xml.stream.XMLStreamException;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
@@ -28,14 +27,14 @@ import org.xml.sax.SAXException;
 abstract class AbstractYinExportTest {
     final void exportYinModules(final String yangDir, final String yinDir) throws IOException, SAXException,
             XMLStreamException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResourceDirectory(yangDir);
-        final Collection<? extends Module> modules = schemaContext.getModules();
+        final var schemaContext = YangParserTestUtils.parseYangResourceDirectory(yangDir);
+        final var modules = schemaContext.getModules();
         assertNotEquals(0, modules.size());
 
-        for (Module module : modules) {
+        for (var module : modules) {
             readAndValidateModule(schemaContext, module, yinDir);
 
-            for (Submodule submodule : module.getSubmodules()) {
+            for (var submodule : module.getSubmodules()) {
                 readAndValidateSubmodule(schemaContext, module, submodule, yinDir);
             }
         }

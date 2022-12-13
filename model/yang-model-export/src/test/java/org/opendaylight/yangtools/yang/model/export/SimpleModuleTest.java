@@ -9,19 +9,15 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
@@ -31,7 +27,7 @@ public class SimpleModuleTest {
     private EffectiveModelContextFactory schemaContextFactory;
     private Set<SourceIdentifier> allTestSources;
 
-    @Before
+    @BeforeEach
     public void init() {
         schemaRegistry = new SharedSchemaRepository("test");
         final TextToIRTransformer astTransformer = TextToIRTransformer.create(schemaRegistry, schemaRegistry);
@@ -39,26 +35,27 @@ public class SimpleModuleTest {
 
         schemaContextFactory = schemaRegistry.createEffectiveModelContextFactory();
         allTestSources = new HashSet<>();
-        final SchemaListenerRegistration reg = schemaRegistry.registerSchemaSourceListener(new SchemaSourceListener() {
-
-            @Override
-            public void schemaSourceUnregistered(final PotentialSchemaSource<?> source) {
-                // NOOP
-            }
-
-            @Override
-            public void schemaSourceRegistered(final Iterable<PotentialSchemaSource<?>> sources) {
-                for (final PotentialSchemaSource<?> source : sources) {
-                    allTestSources.add(source.getSourceIdentifier());
+        try (var reg = schemaRegistry.registerSchemaSourceListener(
+            new SchemaSourceListener() {
+                @Override
+                public void schemaSourceUnregistered(final PotentialSchemaSource<?> source) {
+                    // NOOP
                 }
-            }
 
-            @Override
-            public void schemaSourceEncountered(final SchemaSourceRepresentation source) {
-                // NOOP
-            }
-        });
-        reg.close();
+                @Override
+                public void schemaSourceRegistered(final Iterable<PotentialSchemaSource<?>> sources) {
+                    for (final PotentialSchemaSource<?> source : sources) {
+                        allTestSources.add(source.getSourceIdentifier());
+                    }
+                }
+
+                @Override
+                public void schemaSourceEncountered(final SchemaSourceRepresentation source) {
+                    // NOOP
+                }
+            })) {
+            // Noop
+        }
     }
 
     @Test
@@ -66,9 +63,9 @@ public class SimpleModuleTest {
         testSetOfModules(allTestSources);
     }
 
-    private void testSetOfModules(final Collection<SourceIdentifier> source) throws Exception {
-        final EffectiveModelContext schemaContext = schemaContextFactory.createEffectiveModelContext(source).get();
-        final File outDir = new File("target/collection");
+    private void testSetOfModules(final Set<SourceIdentifier> source) throws Exception {
+        final var schemaContext = schemaContextFactory.createEffectiveModelContext(source).get();
+        final var outDir = new File("target/collection");
         outDir.mkdirs();
         for (final Module module : schemaContext.getModules()) {
             exportModule(module, outDir);
@@ -77,8 +74,8 @@ public class SimpleModuleTest {
 
     private static File exportModule(final Module module, final File outDir)
             throws Exception {
-        final File outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
-        try (OutputStream output = new FileOutputStream(outFile)) {
+        final var outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
+        try (var output = new FileOutputStream(outFile)) {
             YinExportUtils.writeModuleAsYinText(module.asEffectiveStatement(), output);
         }
         return outFile;

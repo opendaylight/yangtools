@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1313Test {
     @Test
     public void testSubmoduleImportPrefixes() {
-        final ModuleEffectiveStatement bar = YangParserTestUtils.parseYangResourceDirectory("/bugs/yt1313")
+        final var bar = YangParserTestUtils.parseYangResourceDirectory("/bugs/yt1313")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("bar")));
 
         final StatementPrefixResolver resolver = StatementPrefixResolver.forModule(bar);

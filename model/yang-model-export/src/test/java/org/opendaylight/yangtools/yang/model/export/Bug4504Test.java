@@ -7,14 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import java.io.IOException;
-import javax.xml.stream.XMLStreamException;
-import org.junit.Test;
-import org.xml.sax.SAXException;
+import org.junit.jupiter.api.Test;
 
 public class Bug4504Test extends AbstractYinExportTest {
     @Test
-    public void test() throws IOException, SAXException, XMLStreamException {
+    public void test() throws Exception {
         exportYinModules("/bugs/bug4504", null);
     }
 }

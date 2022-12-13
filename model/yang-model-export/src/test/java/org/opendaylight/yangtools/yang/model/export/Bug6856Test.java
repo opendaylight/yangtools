@@ -5,35 +5,28 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug6856Test {
-
     @Test
     public void testImplicitInputAndOutputInRpc() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class,
-            "/bugs/bug-6856/foo.yang");
+        final var schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class, "/bugs/bug-6856/foo.yang");
         assertNotNull(schemaContext);
 
-        final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+        final var byteArrayOutputStream = new ByteArrayOutputStream();
+        final var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
-        final Module fooModule = schemaContext.findModule("foo", Revision.of("2017-02-28")).get();
+        final var fooModule = schemaContext.findModule("foo", Revision.of("2017-02-28")).orElseThrow();
         YinExportUtils.writeModuleAsYinText(fooModule.asEffectiveStatement(), bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();
@@ -46,14 +39,13 @@ public class Bug6856Test {
 
     @Test
     public void testExplicitInputAndOutputInRpc() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class,
-            "/bugs/bug-6856/bar.yang");
+        final var schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class, "/bugs/bug-6856/bar.yang");
         assertNotNull(schemaContext);
 
-        final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+        final var byteArrayOutputStream = new ByteArrayOutputStream();
+        final var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-02-28")).get();
+        final var barModule = schemaContext.findModule("bar", Revision.of("2017-02-28")).get();
         YinExportUtils.writeModuleAsYinText(barModule.asEffectiveStatement(), bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();
