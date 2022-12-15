@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *   <li>{@link ContainerNode}</li>
  *   <li>{@link MapEntryNode} and its specializations</li>
  *   <li>{@link UnkeyedListEntryNode}</li>
+ *   <li>{@link YangDataNode}</li>
  * </ul>
  */
 public interface DataContainerNode
