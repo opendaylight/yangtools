@@ -10,13 +10,16 @@ package org.opendaylight.yangtools.yang.data.tree.spi;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Optional;
+import org.checkerframework.checker.units.qual.C;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
-abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateNode {
-    AbstractRecursiveCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+abstract class AbstractRecursiveCandidateNode
+        <T extends DistinctNodeContainer<PathArgument, NormalizedNode> & NormalizedNode>
+        extends AbstractDataTreeCandidateNode<T> {
+    AbstractRecursiveCandidateNode(final T data) {
         super(data);
     }
 
@@ -30,14 +33,15 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
         return Collections2.transform(data().body(), this::createChild);
     }
 
-    abstract DataTreeCandidateNode createContainer(DistinctNodeContainer<PathArgument, NormalizedNode> childData);
+    abstract <X extends DistinctNodeContainer<PathArgument, NormalizedNode> & NormalizedNode>
+        DataTreeCandidateNode createContainer(X childData);
 
     abstract DataTreeCandidateNode createLeaf(NormalizedNode childData);
 
     @SuppressWarnings("unchecked")
     private DataTreeCandidateNode createChild(final NormalizedNode childData) {
         if (childData instanceof DistinctNodeContainer) {
-            return createContainer((DistinctNodeContainer<PathArgument, NormalizedNode>) childData);
+            return createContainer((C) childData);
         }
         return createLeaf(childData);
     }

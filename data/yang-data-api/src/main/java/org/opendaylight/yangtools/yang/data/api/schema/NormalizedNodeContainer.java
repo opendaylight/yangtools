@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <V> Child Node type
  */
-public sealed interface NormalizedNodeContainer<V extends NormalizedNode> extends NormalizedNode, OrderingAware
+public sealed interface NormalizedNodeContainer<V extends NormalizedNode> extends NormalizedData, OrderingAware
         permits DistinctNodeContainer, OrderedNodeContainer {
     /**
      * {@inheritDoc}

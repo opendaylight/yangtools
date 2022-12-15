@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * This nodes itself does not contain any ordering information, user supplied ordering is preserved by parent node,
  * which is an instance of {@link UnkeyedListNode}.
  */
-public interface UnkeyedListEntryNode extends DataContainerNode {
+public interface UnkeyedListEntryNode extends DataContainerNode, NormalizedNode {
     @Override
     default Class<UnkeyedListEntryNode> contract() {
         return UnkeyedListEntryNode.class;

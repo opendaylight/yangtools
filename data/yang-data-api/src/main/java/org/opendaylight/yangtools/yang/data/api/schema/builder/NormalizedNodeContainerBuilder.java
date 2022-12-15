@@ -11,11 +11,12 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedData;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 @Beta
 public interface NormalizedNodeContainerBuilder<K extends PathArgument, CK extends PathArgument,
-        CV extends NormalizedNode, P extends NormalizedNode> extends NormalizedNodeBuilder<K, Collection<CV>, P> {
+        CV extends NormalizedNode, P extends NormalizedData> extends NormalizedNodeBuilder<K, Collection<CV>, P> {
 
     @Override
     NormalizedNodeContainerBuilder<K, CK, CV, P> withNodeIdentifier(K nodeIdentifier);

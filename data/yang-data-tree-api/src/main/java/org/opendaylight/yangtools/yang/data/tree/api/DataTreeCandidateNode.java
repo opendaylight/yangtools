@@ -58,7 +58,7 @@ public interface DataTreeCandidateNode {
      * @return Node data as they will be present in the tree after
      *         the modification is applied.
      */
-    @NonNull Optional<NormalizedNode> getDataAfter();
+    @NonNull Optional<? extends NormalizedNode> getDataAfter();
 
     /**
      * Return the before-image of data corresponding to the node.
@@ -66,5 +66,5 @@ public interface DataTreeCandidateNode {
      * @return Node data as they were present in the tree before
      *         the modification was applied.
      */
-    @NonNull Optional<NormalizedNode> getDataBefore();
+    @NonNull Optional<? extends NormalizedNode> getDataBefore();
 }

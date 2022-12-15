@@ -16,10 +16,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
-abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    private final DistinctNodeContainer<PathArgument, NormalizedNode> data;
+abstract class AbstractDataTreeCandidateNode
+        <T extends DistinctNodeContainer<PathArgument, NormalizedNode> & NormalizedNode>
+        implements DataTreeCandidateNode {
+    private final @NonNull T data;
 
-    AbstractDataTreeCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+    AbstractDataTreeCandidateNode(final T data) {
         this.data = requireNonNull(data);
     }
 
@@ -28,16 +30,16 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
         return data.getIdentifier();
     }
 
-    final @NonNull Optional<NormalizedNode> dataOptional() {
+    final @NonNull Optional<T> dataOptional() {
         return Optional.of(data);
     }
 
-    final DistinctNodeContainer<PathArgument, NormalizedNode> data() {
+    final @NonNull T data() {
         return data;
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{data = " + this.data + "}";
+        return this.getClass().getSimpleName() + "{data = " + data + "}";
     }
 }

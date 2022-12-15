@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -48,68 +47,65 @@ public final class NormalizedNodes {
         return Maps.filterValues(DuplicateFinder.findDuplicates(node), input -> !input.getDuplicates().isEmpty());
     }
 
-    public static Optional<NormalizedNode> findNode(final YangInstanceIdentifier rootPath,
-            final NormalizedNode rootNode, final YangInstanceIdentifier childPath) {
-        final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
-        return relativePath.isPresent() ? findNode(rootNode, relativePath.get()) : Optional.empty();
+    public static Optional<NormalizedData> findNode(final YangInstanceIdentifier rootPath,
+            final NormalizedData rootNode, final YangInstanceIdentifier childPath) {
+        return childPath.relativeTo(rootPath).flatMap(path -> findNode(rootNode, path));
     }
 
-    public static Optional<NormalizedNode> findNode(final Optional<NormalizedNode> parent,
+    public static Optional<? extends NormalizedData> findNode(final Optional<? extends NormalizedData> parent,
             final Iterable<PathArgument> relativePath) {
-        final Iterator<PathArgument> pathIterator = requireNonNull(relativePath, "Relative path must not be null")
-                .iterator();
-        Optional<NormalizedNode> currentNode = requireNonNull(parent, "Parent must not be null");
+        final var pathIterator = requireNonNull(relativePath, "Relative path must not be null").iterator();
+        Optional<? extends NormalizedData> currentNode = requireNonNull(parent, "Parent must not be null");
         while (currentNode.isPresent() && pathIterator.hasNext()) {
-            currentNode = getDirectChild(currentNode.get(), pathIterator.next());
+            currentNode = getDirectChild(currentNode.orElseThrow(), pathIterator.next());
         }
         return currentNode;
     }
 
-    public static Optional<NormalizedNode> findNode(final Optional<NormalizedNode> parent,
+    public static Optional<NormalizedNode> findNode(final Optional<NormalizedData> parent,
             final PathArgument pathArg) {
         return parent.flatMap(node -> getDirectChild(node, pathArg));
     }
 
-    public static Optional<NormalizedNode> findNode(final Optional<NormalizedNode> parent,
+    public static Optional<? extends NormalizedData> findNode(final Optional<NormalizedData> parent,
             final PathArgument... relativePath) {
         return findNode(parent, Arrays.asList(relativePath));
     }
 
-    public static Optional<NormalizedNode> findNode(final @Nullable NormalizedNode parent,
+    public static Optional<? extends NormalizedNode> findNode(final @Nullable NormalizedNode parent,
             final PathArgument pathArg) {
         return parent == null ? Optional.empty() : getDirectChild(parent, pathArg);
     }
 
-    public static Optional<NormalizedNode> findNode(final NormalizedNode parent,
+    public static Optional<? extends NormalizedData> findNode(final NormalizedData parent,
             final Iterable<PathArgument> relativePath) {
         return findNode(Optional.ofNullable(parent), relativePath);
     }
 
-    public static Optional<NormalizedNode> findNode(final NormalizedNode parent, final Descendant path) {
+    public static Optional<? extends NormalizedData> findNode(final NormalizedData parent, final Descendant path) {
         return findNode(Optional.ofNullable(parent),
             Lists.transform(path.getNodeIdentifiers(), NodeIdentifier::new));
     }
 
-    public static Optional<NormalizedNode> findNode(final NormalizedNode parent,
+    public static Optional<? extends NormalizedData> findNode(final NormalizedData parent,
             final PathArgument... relativePath) {
         return findNode(parent, Arrays.asList(relativePath));
     }
 
-    public static Optional<NormalizedNode> findNode(final NormalizedNode tree,
+    public static Optional<? extends NormalizedData> findNode(final NormalizedData tree,
             final YangInstanceIdentifier path) {
         return findNode(Optional.of(requireNonNull(tree, "Tree must not be null")),
             requireNonNull(path, "Path must not be null").getPathArguments());
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static Optional<NormalizedNode> getDirectChild(final NormalizedNode node,
+    public static Optional<? extends NormalizedNode> getDirectChild(final NormalizedData node,
             final PathArgument pathArg) {
-        if (node instanceof DataContainerNode) {
-            return (Optional) ((DataContainerNode) node).findChildByArg(pathArg);
-        } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
-            return (Optional) ((MapNode) node).findChildByArg((NodeIdentifierWithPredicates) pathArg);
-        } else if (node instanceof LeafSetNode && pathArg instanceof NodeWithValue) {
-            return (Optional) ((LeafSetNode<?>) node).findChildByArg((NodeWithValue<?>) pathArg);
+        if (node instanceof DataContainerNode container) {
+            return container.findChildByArg(pathArg);
+        } else if (node instanceof MapNode map && pathArg instanceof NodeIdentifierWithPredicates) {
+            return map.findChildByArg((NodeIdentifierWithPredicates) pathArg);
+        } else if (node instanceof LeafSetNode<?> leafset && pathArg instanceof NodeWithValue) {
+            return leafset.findChildByArg((NodeWithValue<?>) pathArg);
         }
         // Anything else, including ValueNode
         return Optional.empty();
