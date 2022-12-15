@@ -89,7 +89,8 @@ public class NormalizedNodesTest {
         final YangInstanceIdentifier childPath = YangInstanceIdentifier.create(new NodeIdentifier(node1QName),
                 new NodeIdentifier(node2Qname), new NodeIdentifier(node3QName), new NodeIdentifier(node4Qname));
 
-        assertEquals(mockedLeafNode, NormalizedNodes.findNode(rootPath, mockedDataContainerNode, childPath).get());
+        assertEquals(mockedLeafNode, NormalizedNodes.findNode(rootPath, mockedDataContainerNode, childPath)
+                .orElseThrow());
         assertEquals(Optional.empty(), NormalizedNodes.findNode(childPath, mockedDataContainerNode, rootPath));
 
         final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);

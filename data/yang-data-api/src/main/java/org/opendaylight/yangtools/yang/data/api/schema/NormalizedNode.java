@@ -13,8 +13,8 @@ import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
- * Node which is normalized according to the YANG schema
- * is identifiable by a {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier}.
+ * A piece of data that additionally to being {@link NormalizedData}, forms part of {@code YangInstanceIdentifier}
+ * hierarchy by being {@link Identifiable} by a {@link PathArgument}.
  *
  * <p>
  * See subinterfaces of this interface for concretization of node.
@@ -45,29 +45,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               boundary -- like RFC8528. Hence we cannot really have a reasonably-structured concept of unverified
  *               data. Nevertheless, this interface should be named 'NormalizedData'.
  */
-public interface NormalizedNode extends Identifiable<PathArgument>, PrettyTreeAware {
+public interface NormalizedNode extends Identifiable<PathArgument>, NormalizedData, PrettyTreeAware {
     @Override
     // We override here, so that NormalizedNode.getIdentifier() has fewer implementations
     PathArgument getIdentifier();
 
-    /**
-     * Return the contract governing this {@link NormalizedNode} instance.
-     *
-     * @apiNote
-     *     This method should be specialized in intermediate contracts like {@link MapNode} and implemented as a default
-     *     method by interfaces which form the contracts themselves, for example {@link ContainerNode}, {@link LeafNode}
-     *     and similar.
-     *
-     * @return A class identifying the NormalizedNode contract.
-     */
+    @Override
     @NonNull Class<? extends NormalizedNode> contract();
-
-    /**
-     * Returns the body of this node. While the return value specifies {@link Object}, this method's return value has
-     * further semantics. The returned object must be a well-published contract, such as {@code String},
-     * {@code Collection<NormalizedNode>} or {@code DOMSource}.
-     *
-     * @return Returned value of this node.
-     */
-    @NonNull Object body();
 }

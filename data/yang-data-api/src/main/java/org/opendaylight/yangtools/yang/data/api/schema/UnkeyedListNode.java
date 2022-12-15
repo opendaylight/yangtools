@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+
 /**
  * Containment node, which contains {@link UnkeyedListEntryNode} of the same type, which may be quickly retrieved using
  * key. This node maps to the <code>list</code> statement in YANG schema, which did not define {@code key} substatement.
@@ -16,6 +18,9 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * (iteration) is provided by {@link #body()} call.
  */
 public interface UnkeyedListNode extends OrderedNodeContainer<UnkeyedListEntryNode>, DataContainerChild {
+    @Override
+    NodeIdentifier getIdentifier();
+
     @Override
     default Class<UnkeyedListNode> contract() {
         return UnkeyedListNode.class;
