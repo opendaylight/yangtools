@@ -16,13 +16,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
@@ -82,7 +77,6 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
     private final @NonNull ChildAddressabilitySummary childAddressabilitySummary;
 
     // Accessed via a VarHandle
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile DataContainerSerializer eventStreamSerializer;
 
@@ -274,65 +268,6 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
     }
 
     /**
-     * Determines if two augmentation classes or case classes represents same data.
-     *
-     * <p>Two augmentations or cases could be substituted only if and if:
-     * <ul>
-     *   <li>Both implements same interfaces</li>
-     *   <li>Both have same children</li>
-     *   <li>If augmentations: Both have same augmentation target class. Target class was generated for data node in a
-     *       grouping.</li>
-     *   <li>If cases: Both are from same choice. Choice class was generated for data node in grouping.</li>
-     * </ul>
-     *
-     * <p><b>Explanation:</b>
-     * Binding Specification reuses classes generated for groupings as part of normal data tree, this classes from
-     * grouping could be used at various locations and user may not be aware of it and may use incorrect case or
-     * augmentation in particular subtree (via copy constructors, etc).
-     *
-     * @param potential Class which is potential substitution
-     * @param target Class which should be used at particular subtree
-     * @return true if and only if classes represents same data.
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    // FIXME: MDSAL-785: this really should live in BindingRuntimeTypes and should not be based on reflection. The only
-    //                   user is binding-dom-codec and the logic could easily be performed on GeneratedType instead. For
-    //                   a particular world this boils down to a matrix, which can be calculated either on-demand or
-    //                   when we create BindingRuntimeTypes. Achieving that will bring us one step closer to being able
-    //                   to have a pre-compiled Binding Runtime.
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    static final boolean isSubstitutionFor(final Class potential, final Class target) {
-        Set<Class> subImplemented = new HashSet<>(Arrays.asList(potential.getInterfaces()));
-        Set<Class> targetImplemented = new HashSet<>(Arrays.asList(target.getInterfaces()));
-        if (!subImplemented.equals(targetImplemented)) {
-            return false;
-        }
-        if (Augmentation.class.isAssignableFrom(potential)
-            && !findAugmentationTarget(potential).equals(findAugmentationTarget(target))) {
-            return false;
-        }
-        for (Method potentialMethod : potential.getMethods()) {
-            if (Modifier.isStatic(potentialMethod.getModifiers())) {
-                // Skip any static methods, as we are not interested in those
-                continue;
-            }
-
-            try {
-                Method targetMethod = target.getMethod(potentialMethod.getName(), potentialMethod.getParameterTypes());
-                if (!potentialMethod.getReturnType().equals(targetMethod.getReturnType())) {
-                    return false;
-                }
-            } catch (NoSuchMethodException e) {
-                // Counterpart method is missing, so classes could not be substituted.
-                return false;
-            } catch (SecurityException e) {
-                throw new IllegalStateException("Could not compare methods", e);
-            }
-        }
-        return true;
-    }
-
-    /**
      * Find augmentation target class from concrete Augmentation class. This method uses first generic argument of
      * implemented {@link Augmentation} interface.
      *
@@ -384,7 +319,8 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
             }
 
             return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
-        } else if (nodeSchema instanceof ChoiceSchemaNode choice) {
+        }
+        if (nodeSchema instanceof ChoiceSchemaNode choice) {
             return computeChildAddressabilitySummary(choice);
         }
 
