@@ -113,10 +113,11 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
         // Load case statements valid in this choice and keep track of their names
         final var choiceType = prototype.runtimeType();
         final var factory = prototype.contextFactory();
+        final var context = factory.runtimeContext();
         final var localCases = new HashSet<JavaTypeName>();
         for (var caseType : choiceType.validCaseChildren()) {
             @SuppressWarnings("unchecked")
-            final var caseClass = (Class<? extends DataObject>) loadCase(factory.runtimeContext(), caseType);
+            final var caseClass = (Class<? extends DataObject>) loadCase(context, caseType);
             final var caseProto = new CaseCodecPrototype(caseClass, caseType, factory);
 
             localCases.add(caseType.getIdentifier());
@@ -164,21 +165,13 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
          * This is required due property of binding specification, that if choice is in grouping schema path location is
          * lost, and users may use incorrect case class using copy builders.
          */
-        final var bySubstitutionBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
-        final var context = factory.runtimeContext();
-        for (var caseType : context.getTypes().allCaseChildren(choiceType)) {
-            final var caseName = caseType.getIdentifier();
-            if (!localCases.contains(caseName)) {
-                // FIXME: do not rely on class loading here, the check we are performing should be possible on
-                //        GeneratedType only -- or it can be provided by BindingRuntimeTypes -- i.e. rather than
-                //        'allCaseChildren()' it would calculate additional mappings we can use off-the-bat.
-                final var substitution = loadCase(context, caseType);
-
-                search: for (var real : byClassBuilder.entrySet()) {
-                    if (isSubstitutionFor(substitution, real.getKey())) {
-                        bySubstitutionBuilder.put(substitution, real.getValue());
-                        break search;
-                    }
+        final var bySubstitutionBuilder = new HashMap<Class<?>, DataObjectCodecPrototype<?>>();
+        for (final var localCaseType : choiceType.validCaseChildren()) {
+            for (final var substitution : context.getTypes().getSubstitutionsForCase(localCaseType)) {
+                if (!localCases.contains(substitution.getIdentifier())) {
+                    final var substitutionClass = loadCase(context, substitution);
+                    bySubstitutionBuilder.put(substitutionClass,
+                        new CaseCodecPrototype(substitutionClass, substitution, factory));
                 }
             }
         }
