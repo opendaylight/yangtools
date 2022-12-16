@@ -15,12 +15,10 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +33,6 @@ import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -64,27 +61,12 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         CommonDataObjectCodecContext.class, DataContainerNode.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         DataObjectCodecContext.class, DataContainerNode.class);
-    private static final VarHandle MISMATCHED_AUGMENTED;
-
-    static {
-        try {
-            MISMATCHED_AUGMENTED = MethodHandles.lookup().findVarHandle(DataObjectCodecContext.class,
-                "mismatchedAugmented", ImmutableMap.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
 
     private final ImmutableMap<Class<?>, AugmentationCodecPrototype<?>> augmentToPrototype;
     private final ImmutableMap<NodeIdentifier, Class<?>> yangToAugmentClass;
     private final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
     private final MethodHandle proxyConstructor;
-
-    // Note this the content of this field depends only of invariants expressed as this class's fields or
-    // BindingRuntimeContext. It is only accessed via MISMATCHED_AUGMENTED above.
-    @SuppressWarnings("unused")
-    @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
-    private volatile ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
+    private final ImmutableMap<Class<?>, AugmentationCodecPrototype<?>> mismatchedAugmented;
 
     DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype) {
         this(prototype, new DataContainerAnalysis<>(prototype), null);
@@ -150,6 +132,25 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         }
         yangToAugmentClass = ImmutableMap.copyOf(augPathToBinding);
         augmentToPrototype = ImmutableMap.copyOf(augClassToProto);
+
+        // Calculate possible mismatched augmentations.
+        final var substitutions = new HashMap<Class<?>, AugmentationCodecPrototype<?>>();
+        if (!augmentToPrototype.isEmpty()) {
+            final var context = prototype().contextFactory().runtimeContext();
+            // get the precalculated possible substitutions for each augmentation
+            for (var entry : augmentToPrototype.entrySet()) {
+                final var subsForAug = context.getTypes().getSubstitutionsForAugment(entry.getValue().runtimeType());
+                for (var sub : subsForAug) {
+                    try {
+                        substitutions.put(context.loadClass(sub.javaType()), entry.getValue());
+                    } catch (ClassNotFoundException e) {
+                        throw new IllegalStateException(
+                            "RuntimeContext references type " + sub.javaType() + " but failed to load its class", e);
+                    }
+                }
+            }
+        }
+        mismatchedAugmented = ImmutableMap.copyOf(substitutions);
     }
 
     @Override
@@ -186,71 +187,10 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
 
     private @Nullable AugmentationCodecPrototype<?> mismatchedAugmentationByClass(final @NonNull Class<?> childClass) {
         /*
-         * It is potentially mismatched valid augmentation - we look up equivalent augmentation using reflection
-         * and walk all stream child and compare augmentations classes if they are equivalent. When we find a match
-         * we'll cache it so we do not need to perform reflection operations again.
+         * It is potentially mismatched valid augmentation - we look up equivalent augmentation using precalculated
+         * mapping.
          */
-        final var local = (ImmutableMap<Class<?>, AugmentationCodecPrototype<?>>) MISMATCHED_AUGMENTED.getAcquire(this);
-        final var mismatched = local.get(childClass);
-        return mismatched != null ? mismatched : loadMismatchedAugmentation(local, childClass);
-    }
-
-    private @Nullable AugmentationCodecPrototype<?> loadMismatchedAugmentation(
-            final ImmutableMap<Class<?>, AugmentationCodecPrototype<?>> oldMismatched,
-            final @NonNull Class<?> childClass) {
-        @SuppressWarnings("rawtypes")
-        final Class<?> augTarget = findAugmentationTarget((Class) childClass);
-        // Do not bother with proposals which are not augmentations of our class, or do not match what the runtime
-        // context would load.
-        if (getBindingClass().equals(augTarget) && belongsToRuntimeContext(childClass)) {
-            for (var realChild : augmentToPrototype.values()) {
-                final var realClass = realChild.javaClass();
-                if (Augmentation.class.isAssignableFrom(realClass) && isSubstitutionFor(childClass, realClass)) {
-                    return cacheMismatched(oldMismatched, childClass, realChild);
-                }
-            }
-        }
-        LOG.trace("Failed to resolve {} as a valid augmentation in {}", childClass, this);
-        return null;
-    }
-
-    private @NonNull AugmentationCodecPrototype<?> cacheMismatched(
-            final @NonNull ImmutableMap<Class<?>, AugmentationCodecPrototype<?>> oldMismatched,
-            final @NonNull Class<?> childClass, final @NonNull AugmentationCodecPrototype<?> prototype) {
-        var expected = oldMismatched;
-        while (true) {
-            final var newMismatched =
-                ImmutableMap.<Class<?>, CommonDataObjectCodecPrototype<?>>builderWithExpectedSize(expected.size() + 1)
-                    .putAll(expected)
-                    .put(childClass, prototype)
-                    .build();
-
-            final var witness = (ImmutableMap<Class<?>, AugmentationCodecPrototype<?>>)
-                MISMATCHED_AUGMENTED.compareAndExchangeRelease(this, expected, newMismatched);
-            if (witness == expected) {
-                LOG.trace("Cached mismatched augmentation {} -> {} in {}", childClass, prototype, this);
-                return prototype;
-            }
-
-            expected = witness;
-            final var existing = expected.get(childClass);
-            if (existing != null) {
-                LOG.trace("Using raced mismatched augmentation {} -> {} in {}", childClass, existing, this);
-                return existing;
-            }
-        }
-    }
-
-    private boolean belongsToRuntimeContext(final Class<?> cls) {
-        final var ctx = prototype().contextFactory().runtimeContext();
-        final Class<?> loaded;
-        try {
-            loaded = ctx.loadClass(Type.of(cls));
-        } catch (ClassNotFoundException e) {
-            LOG.debug("Proposed {} cannot be loaded in {}", cls, ctx, e);
-            return false;
-        }
-        return cls.equals(loaded);
+        return mismatchedAugmented.get(childClass);
     }
 
     private @Nullable AugmentationCodecPrototype<?> loadAugmentPrototype(final AugmentRuntimeType augment) {
