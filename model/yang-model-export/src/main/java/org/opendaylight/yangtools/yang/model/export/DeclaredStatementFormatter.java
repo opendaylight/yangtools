@@ -57,6 +57,18 @@ public final class DeclaredStatementFormatter implements Immutable {
             omitDefaultStatements);
     }
 
+    public YangOrganizationTree toYangOrganizationTree(final ModuleEffectiveStatement module,
+            final DeclaredStatement<?> statement) {
+        return new YangOrganizationTree(statement, StatementPrefixResolver.forModule(module), ignoredStatements,
+                omitDefaultStatements);
+    }
+
+    public YangOrganizationTree toYangOrganizationTree(final SubmoduleEffectiveStatement submodule,
+            final DeclaredStatement<?> statement) {
+        return new YangOrganizationTree(statement, StatementPrefixResolver.forSubmodule(submodule), ignoredStatements,
+                omitDefaultStatements);
+    }
+
     /**
      * Return the default DeclaredStatementFormatter instance. The instance suppresses statements with default values
      * and does not ignore any statements.
