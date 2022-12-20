@@ -32,6 +32,8 @@ public final class DeclaredStatementFormatter implements Immutable {
     private final Set<StatementDefinition> ignoredStatements;
     private final boolean omitDefaultStatements;
 
+    private int defaultOrganizationTreeDepth = 8;
+
     DeclaredStatementFormatter(final Set<StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
         this.ignoredStatements = requireNonNull(ignoredStatements);
         this.omitDefaultStatements = omitDefaultStatements;
@@ -55,6 +57,28 @@ public final class DeclaredStatementFormatter implements Immutable {
             final DeclaredStatement<?> statement) {
         return new YangTextSnippet(statement, StatementPrefixResolver.forSubmodule(submodule), ignoredStatements,
             omitDefaultStatements);
+    }
+
+    public YangOrganizationTree toYangOrganizationTree(final ModuleEffectiveStatement module,
+            final DeclaredStatement<?> statement) {
+        return toYangOrganizationTree(module, statement, defaultOrganizationTreeDepth);
+    }
+
+    public YangOrganizationTree toYangOrganizationTree(final SubmoduleEffectiveStatement submodule,
+            final DeclaredStatement<?> statement) {
+        return toYangOrganizationTree(submodule, statement, defaultOrganizationTreeDepth);
+    }
+
+    public YangOrganizationTree toYangOrganizationTree(final ModuleEffectiveStatement module,
+            final DeclaredStatement<?> statement, final int depth) {
+        return new YangOrganizationTree(statement, StatementPrefixResolver.forModule(module), ignoredStatements,
+                depth);
+    }
+
+    public YangOrganizationTree toYangOrganizationTree(final SubmoduleEffectiveStatement submodule,
+            final DeclaredStatement<?> statement, final int depth) {
+        return new YangOrganizationTree(statement, StatementPrefixResolver.forSubmodule(submodule), ignoredStatements,
+                depth);
     }
 
     /**
