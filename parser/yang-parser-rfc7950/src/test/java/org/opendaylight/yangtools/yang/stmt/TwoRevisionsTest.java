@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 
-public class TwoRevisionsTest extends AbstractYangTest {
+class TwoRevisionsTest extends AbstractYangTest {
     @Test
-    public void testTwoRevisions() throws Exception {
+    void testTwoRevisions() throws Exception {
         var it = assertEffectiveModelDir("/ietf").findModuleStatements("network-topology").iterator();
         assertTrue(it.hasNext());
         assertEquals(Revision.ofNullable("2013-10-21"), it.next().localQNameModule().getRevision());

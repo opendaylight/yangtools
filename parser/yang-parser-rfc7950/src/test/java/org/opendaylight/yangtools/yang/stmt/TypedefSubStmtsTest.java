@@ -7,25 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class TypedefSubStmtsTest {
+class TypedefSubStmtsTest {
 
     @Test
-    public void typedefSubStmtsTest() throws ReactorException {
+    void typedefSubStmtsTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/typedef-substmts-test/typedef-substmts-test.yang"))
-                .buildEffective();
+            .addSource(sourceForResource("/typedef-substmts-test/typedef-substmts-test.yang"))
+            .buildEffective();
         assertNotNull(result);
 
         Collection<? extends TypeDefinition<?>> typedefs = result.getTypeDefinitions();

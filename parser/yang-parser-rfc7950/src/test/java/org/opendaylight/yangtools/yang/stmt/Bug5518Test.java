@@ -7,27 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 
-public class Bug5518Test extends AbstractYangTest {
+class Bug5518Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug5518");
-        final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "root"));
-        assertThat(dataChildByName, instanceOf(ContainerSchemaNode.class));
-        final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
-        final Collection<? extends MustDefinition> mustConstraints = root.getMustConstraints();
+        final var root = assertInstanceOf(ContainerSchemaNode.class,
+            context.getDataChildByName(QName.create("foo", "root")));
+        final var mustConstraints = root.getMustConstraints();
         assertEquals(1, mustConstraints.size());
-        final MustDefinition must = mustConstraints.iterator().next();
+        final var must = mustConstraints.iterator().next();
         assertEquals("not(deref(.)/../same-pass)", must.getXpath().toString());
     }
 }
