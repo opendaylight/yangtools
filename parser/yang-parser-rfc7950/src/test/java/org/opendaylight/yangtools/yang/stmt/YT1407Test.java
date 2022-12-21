@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1407Test extends AbstractYangTest {
+class YT1407Test extends AbstractYangTest {
     @Test
-    public void testUsedUndeclaredCase() {
+    void testUsedUndeclaredCase() {
         assertEffectiveModelDir("/bugs/YT1407");
     }
 }

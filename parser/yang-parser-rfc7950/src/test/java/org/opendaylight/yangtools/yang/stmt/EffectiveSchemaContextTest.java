@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -35,10 +35,10 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
 
-public class EffectiveSchemaContextTest {
+class EffectiveSchemaContextTest {
     @Test
-    public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException,
-            YangSyntaxErrorException {
+    void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException,
+        YangSyntaxErrorException {
         final EffectiveSchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource("/effective-schema-context-test/foo.yang"))
             .addSource(StmtTestUtils.sourceForResource("/effective-schema-context-test/bar.yang"))

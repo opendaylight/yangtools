@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
@@ -30,9 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
-public class YT1208Test extends AbstractYangTest {
+class YT1208Test extends AbstractYangTest {
     @Test
-    public void testAugmentStatementReuse() {
+    void testAugmentStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/augment.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -52,7 +52,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testCaseStatementReuse() {
+    void testCaseStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/case.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -72,7 +72,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testChoiceStatementReuse() {
+    void testChoiceStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/choice.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -90,7 +90,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testGroupingStatementReuse() {
+    void testGroupingStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/grouping.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -110,7 +110,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testLeafStatementReuse() {
+    void testLeafStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/leaf.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
         assertNotNull(module);
@@ -129,7 +129,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testLeafListStatementReuse() {
+    void testLeafListStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/leaflist.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -147,7 +147,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testListStatementReuse() {
+    void testListStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/list.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -165,7 +165,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testTypedefStatementReuse() {
+    void testTypedefStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/typedef.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -181,7 +181,7 @@ public class YT1208Test extends AbstractYangTest {
     }
 
     @Test
-    public void testUsesStatementReuse() {
+    void testUsesStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/uses.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
         assertNotNull(module);

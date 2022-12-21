@@ -10,21 +10,21 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
-public class Bug8126Test extends AbstractYangTest {
+class Bug8126Test extends AbstractYangTest {
     private static final XMLNamespace FOO_NS = XMLNamespace.of("foo");
     private static final XMLNamespace BAR_NS = XMLNamespace.of("bar");
 
     @Test
-    public void testValidAugments() {
+    void testValidAugments() {
         final var fooModule = assertEffectiveModelDir("/bugs/bug8126/valid")
             .getModuleStatement(QNameModule.create(FOO_NS));
         assertThat(fooModule.findSchemaTreeNode(
@@ -40,19 +40,19 @@ public class Bug8126Test extends AbstractYangTest {
     }
 
     @Test
-    public void testAugmentMandatoryChoice() {
+    void testAugmentMandatoryChoice() {
         assertInferenceExceptionDir("/bugs/bug8126/inv-choice", startsWith(
             "An augment cannot add node 'mandatory-choice' because it is mandatory and in module different than "));
     }
 
     @Test
-    public void testAugmentMandatoryList() {
+    void testAugmentMandatoryList() {
         assertInferenceExceptionDir("/bugs/bug8126/inv-list", startsWith(
             "An augment cannot add node 'mandatory-list' because it is mandatory and in module different than "));
     }
 
     @Test
-    public void testAugmentMandatoryContainer() {
+    void testAugmentMandatoryContainer() {
         assertInferenceExceptionDir("/bugs/bug8126/inv-cont", startsWith(
             "An augment cannot add node 'mandatory-leaf-3' because it is mandatory and in module different than "));
     }

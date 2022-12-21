@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -23,38 +24,36 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug5410Test extends AbstractYangTest {
+class Bug5410Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void testYangPattern() {
+    void testYangPattern() {
         final var context = assertEffectiveModelDir("/bugs/bug5410");
 
         final PatternConstraint pattern = getPatternConstraintOf(context, "leaf-with-pattern");
 
         final String rawRegex = pattern.getRegularExpressionString();
         final String expectedYangRegex = "$0$.*|$1$[a-zA-Z0-9./]{1,8}$[a-zA-Z0-9./]{22}|$5$(rounds=\\d+$)?"
-                + "[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{43}|$6$(rounds=\\d+$)?[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{86}";
+            + "[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{43}|$6$(rounds=\\d+$)?[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{86}";
         assertEquals(expectedYangRegex, rawRegex);
 
         final String javaRegexFromYang = pattern.getJavaPatternString();
         final String expectedJavaRegex = "^(?:\\$0\\$.*|\\$1\\$[a-zA-Z0-9./]{1,8}\\$[a-zA-Z0-9./]{22}|\\$5\\$"
-                + "(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{43}|\\$6\\$(rounds=\\d+\\$)?"
-                + "[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{86})$";
+            + "(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{43}|\\$6\\$(rounds=\\d+\\$)?"
+            + "[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{86})$";
         assertEquals(expectedJavaRegex, javaRegexFromYang);
 
         final String value = "$6$AnrKGc0V$B/0/A.pWg4HrrA6YiEJOtFGibQ9Fmm5.4rI/"
-                + "00gEz3QeB7joSxBU3YtbHDm6NSkS1dKTQy3BWhwKKDS8nB5S//";
+            + "00gEz3QeB7joSxBU3YtbHDm6NSkS1dKTQy3BWhwKKDS8nB5S//";
         testPattern(javaRegexFromYang, ImmutableList.of(value), ImmutableList.of());
     }
 
     private static PatternConstraint getPatternConstraintOf(final SchemaContext context, final String leafName) {
         final DataSchemaNode dataChildByName = context.getDataChildByName(foo(leafName));
-        assertTrue(dataChildByName instanceof LeafSchemaNode);
-        final LeafSchemaNode leaf = (LeafSchemaNode) dataChildByName;
+        final LeafSchemaNode leaf = assertInstanceOf(LeafSchemaNode.class, dataChildByName);
         final TypeDefinition<? extends TypeDefinition<?>> type = leaf.getType();
-        assertTrue(type instanceof StringTypeDefinition);
-        final StringTypeDefinition strType = (StringTypeDefinition) type;
+        final StringTypeDefinition strType = assertInstanceOf(StringTypeDefinition.class, type);
         return strType.getPatternConstraints().iterator().next();
     }
 
@@ -62,10 +61,10 @@ public class Bug5410Test extends AbstractYangTest {
     private static void testPattern(final String javaRegex, final List<String> positiveMatches,
             final List<String> negativeMatches) {
         for (final String value : positiveMatches) {
-            assertTrue("Value '" + value + "' does not match java regex '" + javaRegex + "'", value.matches(javaRegex));
+            assertTrue(value.matches(javaRegex), "Value '" + value + "' does not match java regex '" + javaRegex + "'");
         }
         for (final String value : negativeMatches) {
-            assertFalse("Value '" + value + "' matches java regex '" + javaRegex + "'", value.matches(javaRegex));
+            assertFalse(value.matches(javaRegex), "Value '" + value + "' matches java regex '" + javaRegex + "'");
         }
     }
 
