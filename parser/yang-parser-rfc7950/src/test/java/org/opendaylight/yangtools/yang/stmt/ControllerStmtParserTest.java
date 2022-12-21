@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -29,9 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
-public class ControllerStmtParserTest extends AbstractYangTest {
+class ControllerStmtParserTest extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/sal-broker-impl");
         salDomBrokerImplModuleTest(context);
         configModuleTest(context);
@@ -51,7 +51,7 @@ public class ControllerStmtParserTest extends AbstractYangTest {
                 if (dataNode2 instanceof ContainerSchemaNode) {
                     final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
                     final DataSchemaNode leaf = containerNode
-                            .getDataChildByName(QName.create(module.getQNameModule(), "type"));
+                        .getDataChildByName(QName.create(module.getQNameModule(), "type"));
                     assertEquals(0, leaf.getUnknownSchemaNodes().size());
 
                     final Collection<? extends UnrecognizedStatement> unknownSchemaNodes =
@@ -80,13 +80,13 @@ public class ControllerStmtParserTest extends AbstractYangTest {
 
         final ContainerSchemaNode moduleContainer = (ContainerSchemaNode) dataNode;
         final DataSchemaNode dataChildList = moduleContainer
-                .getDataChildByName(QName.create(configModule.getQNameModule(), "module"));
+            .getDataChildByName(QName.create(configModule.getQNameModule(), "module"));
 
         assertTrue(dataChildList instanceof ListSchemaNode);
 
         final ListSchemaNode listModule = (ListSchemaNode) dataChildList;
         final DataSchemaNode dataChildChoice = listModule
-                .getDataChildByName(QName.create(configModule.getQNameModule(), "configuration"));
+            .getDataChildByName(QName.create(configModule.getQNameModule(), "configuration"));
 
         assertTrue(dataChildChoice instanceof ChoiceSchemaNode);
 
@@ -95,7 +95,7 @@ public class ControllerStmtParserTest extends AbstractYangTest {
 
         assertNotNull(caseNodeByName);
         final DataSchemaNode dataNode2 = caseNodeByName
-                .getDataChildByName(QName.create(module.getQNameModule(), "async-data-broker"));
+            .getDataChildByName(QName.create(module.getQNameModule(), "async-data-broker"));
         assertTrue(dataNode2 instanceof ContainerSchemaNode);
 
         final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
@@ -103,11 +103,11 @@ public class ControllerStmtParserTest extends AbstractYangTest {
         assertEquals(0, leaf.getUnknownSchemaNodes().size());
 
         final CaseSchemaNode domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator()
-                .next();
+            .next();
 
         assertNotNull(domInmemoryDataBroker);
         final DataSchemaNode schemaService = domInmemoryDataBroker
-                .getDataChildByName(QName.create(module.getQNameModule(), "schema-service"));
+            .getDataChildByName(QName.create(module.getQNameModule(), "schema-service"));
         assertTrue(schemaService instanceof ContainerSchemaNode);
 
         final ContainerSchemaNode schemaServiceContainer = (ContainerSchemaNode) schemaService;

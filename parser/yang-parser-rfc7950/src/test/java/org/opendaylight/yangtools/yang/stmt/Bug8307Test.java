@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
-public class Bug8307Test {
+class Bug8307Test {
 
     private static final StatementStreamSource FOO_MODULE = sourceForResource("/bugs/bug8307/foo.yang");
     private static final StatementStreamSource BAR_MODULE = sourceForResource("/bugs/bug8307/bar.yang");
@@ -54,18 +54,18 @@ public class Bug8307Test {
     private static final QName MY_BAZ_CONT = QName.create(BAZ, "my-baz-cont");
 
     @Test
-    public void testDeviationsSupportedInSomeModules() throws Exception {
+    void testDeviationsSupportedInSomeModules() throws Exception {
         final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations =
-                ImmutableSetMultimap.<QNameModule, QNameModule>builder()
+            ImmutableSetMultimap.<QNameModule, QNameModule>builder()
                 .put(FOO, BAR)
                 .put(FOO, BAZ)
                 .put(BAR, BAZ)
                 .build();
 
         final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
-                .setModulesWithSupportedDeviations(modulesWithSupportedDeviations)
-                .buildEffective();
+            .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+            .setModulesWithSupportedDeviations(modulesWithSupportedDeviations)
+            .buildEffective();
         assertNotNull(schemaContext);
 
         assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_FOO_CONT_A));
@@ -76,10 +76,10 @@ public class Bug8307Test {
     }
 
     @Test
-    public void testDeviationsSupportedInAllModules() throws Exception {
+    void testDeviationsSupportedInAllModules() throws Exception {
         final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
-                .buildEffective();
+            .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+            .buildEffective();
         assertNotNull(schemaContext);
 
         assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_FOO_CONT_A));
@@ -90,11 +90,11 @@ public class Bug8307Test {
     }
 
     @Test
-    public void testDeviationsSupportedInNoModule() throws Exception {
+    void testDeviationsSupportedInNoModule() throws Exception {
         final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
-                .setModulesWithSupportedDeviations(ImmutableSetMultimap.of())
-                .buildEffective();
+            .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+            .setModulesWithSupportedDeviations(ImmutableSetMultimap.of())
+            .buildEffective();
         assertNotNull(schemaContext);
 
         assertNotNull(schemaContext.findDataTreeChild(MY_FOO_CONT_A).orElse(null));
@@ -105,7 +105,7 @@ public class Bug8307Test {
     }
 
     @Test
-    public void shouldFailOnAttemptToDeviateTheSameModule() {
+    void shouldFailOnAttemptToDeviateTheSameModule() {
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(FOO_INVALID_MODULE);
 
         try {
@@ -115,14 +115,14 @@ public class Bug8307Test {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
             assertTrue(cause.getMessage().startsWith(
-                    "Deviation must not target the same module as the one it is defined in"));
+                "Deviation must not target the same module as the one it is defined in"));
         }
     }
 
     @Test
-    public void shouldFailOnAttemptToDeviateTheSameModule2() {
+    void shouldFailOnAttemptToDeviateTheSameModule2() {
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(BAR_INVALID_MODULE, BAZ_INVALID_MODULE);
+            .addSources(BAR_INVALID_MODULE, BAZ_INVALID_MODULE);
 
         try {
             reactor.buildEffective();
@@ -131,7 +131,7 @@ public class Bug8307Test {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
             assertTrue(cause.getMessage().startsWith(
-                    "Deviation must not target the same module as the one it is defined in"));
+                "Deviation must not target the same module as the one it is defined in"));
         }
     }
 }

@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.Range;
 import java.util.Collection;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -27,17 +27,17 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-public class Bug4623Test extends AbstractYangTest {
+class Bug4623Test extends AbstractYangTest {
     private static Module TYPES;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    @BeforeAll
+    static void beforeClass() throws Exception {
         // given
         TYPES = assertEffectiveModelDir("/bugs/bug4623").findModules("types").iterator().next();
     }
 
     @Test
-    public void testStringTypeWithUnknownSchemaNodeAtTheEndOfTypeDefinition() {
+    void testStringTypeWithUnknownSchemaNodeAtTheEndOfTypeDefinition() {
         // when
         final LeafSchemaNode leaf = (LeafSchemaNode) TYPES.getDataChildByName(
             QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
@@ -63,14 +63,14 @@ public class Bug4623Test extends AbstractYangTest {
         assertEquals(Integer.valueOf(10), span.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+        assertEquals("[0-9a-fA-F]", patternConstraint.getRegularExpressionString());
     }
 
     @Test
-    public void testStringTypeWithUnknownSchemaNodeBetweenStringRestrictionStatements() {
+    void testStringTypeWithUnknownSchemaNodeBetweenStringRestrictionStatements() {
         // when
         final LeafSchemaNode leaf = (LeafSchemaNode) TYPES.getDataChildByName(
-                QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-unknown-pattern"));
+            QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-unknown-pattern"));
 
         // then
         assertNotNull(leaf);
@@ -93,14 +93,14 @@ public class Bug4623Test extends AbstractYangTest {
         assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+        assertEquals("[0-9a-fA-F]", patternConstraint.getRegularExpressionString());
     }
 
     @Test
-    public void testStringTypeWithUnknownSchemaNodeOnTheStartOfTypeDefinition() {
+    void testStringTypeWithUnknownSchemaNodeOnTheStartOfTypeDefinition() {
         // when
         final LeafSchemaNode leaf = (LeafSchemaNode) TYPES.getDataChildByName(
-                QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
+            QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
 
         // then
         final TypeDefinition<?> type = leaf.getType();
@@ -109,7 +109,7 @@ public class Bug4623Test extends AbstractYangTest {
         assertExtension(leaf);
 
         final LengthConstraint lengthConstraints =
-                ((StringTypeDefinition) type).getLengthConstraint().get();
+            ((StringTypeDefinition) type).getLengthConstraint().get();
         assertEquals(1, lengthConstraints.getAllowedRanges().asRanges().size());
 
         final Range<Integer> lengthConstraint = lengthConstraints.getAllowedRanges().span();
@@ -119,7 +119,7 @@ public class Bug4623Test extends AbstractYangTest {
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
         assertEquals(1, patternConstraints.size());
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+        assertEquals("[0-9a-fA-F]", patternConstraint.getRegularExpressionString());
     }
 
     private static void assertExtension(final LeafSchemaNode leaf) {

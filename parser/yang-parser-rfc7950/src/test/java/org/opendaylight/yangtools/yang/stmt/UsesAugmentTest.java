@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
-public class UsesAugmentTest extends AbstractYangTest {
+class UsesAugmentTest extends AbstractYangTest {
     private static final QNameModule UG = QNameModule.create(
         XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:uses-grouping"), Revision.of("2013-07-30"));
     private static final QNameModule GD = QNameModule.create(
@@ -40,8 +40,8 @@ public class UsesAugmentTest extends AbstractYangTest {
 
     private static EffectiveModelContext CONTEXT;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    @BeforeAll
+    static void beforeClass() throws Exception {
         CONTEXT = assertEffectiveModelDir("/grouping-test");
     }
 
@@ -102,7 +102,7 @@ public class UsesAugmentTest extends AbstractYangTest {
      * @throws Exception if exception occurs
      */
     @Test
-    public void testAugmentInUses() throws Exception {
+    void testAugmentInUses() throws Exception {
         final Module testModule = CONTEXT.findModules("uses-grouping").iterator().next();
 
         // * notification pcreq
@@ -115,7 +115,7 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertEquals(4, childNodes.size());
         // * |-- leaf version
         LeafSchemaNode version = (LeafSchemaNode) pcreq.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "version"));
+            "version"));
         assertNotNull(version);
         assertEquals(QName.create(UG, "version"), version.getQName());
         assertEquals(QName.create(UG, "version"), version.getType().getQName());
@@ -123,7 +123,7 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(version.isAddedByUses());
         // * |-- leaf type
         LeafSchemaNode type = (LeafSchemaNode) pcreq.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "type"));
+            "type"));
         assertNotNull(type);
         assertTrue(type.isAddedByUses());
         assertEquals(QName.create(UG, "type"), type.getQName());
@@ -133,7 +133,7 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertEquals(2, union.getTypes().size());
         // * |-- list requests
         final ListSchemaNode requests = (ListSchemaNode) pcreq.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "requests"));
+            testModule.getQNameModule(), "requests"));
         assertNotNull(requests);
         assertEquals(QName.create(UG, "requests"), requests.getQName());
         assertFalse(requests.isAddedByUses());
@@ -141,7 +141,7 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertEquals(3, childNodes.size());
         // * |-- |-- container rp
         final ContainerSchemaNode rp = (ContainerSchemaNode) requests.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "rp"));
+            testModule.getQNameModule(), "rp"));
         assertNotNull(rp);
         assertEquals(QName.create(UG, "rp"), rp.getQName());
         assertFalse(rp.isAddedByUses());
@@ -149,21 +149,21 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertEquals(4, childNodes.size());
         // * |-- |-- |-- leaf processing-rule
         LeafSchemaNode processingRule = (LeafSchemaNode) rp.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "processing-rule"));
+            testModule.getQNameModule(), "processing-rule"));
         assertNotNull(processingRule);
         assertEquals(QName.create(UG, "processing-rule"), processingRule.getQName());
         assertEquals(BaseTypes.booleanType(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- leaf ignore
         LeafSchemaNode ignore = (LeafSchemaNode) rp.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "ignore"));
+            "ignore"));
         assertNotNull(ignore);
         assertEquals(QName.create(UG, "ignore"), ignore.getQName());
         assertEquals(BaseTypes.booleanType(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- leaf priority
         final LeafSchemaNode priority = (LeafSchemaNode) rp.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "priority"));
+            testModule.getQNameModule(), "priority"));
         assertNotNull(priority);
         assertEquals(QName.create(UG, "priority"), priority.getQName());
         // TODO
@@ -172,13 +172,13 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(priority.isAddedByUses());
         // * |-- |-- |-- container box
         ContainerSchemaNode box = (ContainerSchemaNode) rp.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "box"));
+            "box"));
         assertNotNull(box);
         assertEquals(QName.create(UG, "box"), box.getQName());
         assertTrue(box.isAddedByUses());
         // * |-- |-- |-- |-- container order
         final ContainerSchemaNode order = (ContainerSchemaNode) box.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "order"));
+            testModule.getQNameModule(), "order"));
         assertNotNull(order);
         assertEquals(QName.create(UG, "order"), order.getQName());
         assertTrue(order.isAddedByUses());
@@ -186,34 +186,34 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertEquals(2, order.getChildNodes().size());
         // * |-- |-- |-- |-- |-- leaf delete
         final LeafSchemaNode delete = (LeafSchemaNode) order.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "delete"));
+            testModule.getQNameModule(), "delete"));
         assertNotNull(delete);
         assertEquals(QName.create(UG, "delete"), delete.getQName());
         assertEquals(BaseTypes.uint32Type(), delete.getType());
         assertTrue(delete.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf setup
         final LeafSchemaNode setup = (LeafSchemaNode) order.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "setup"));
+            testModule.getQNameModule(), "setup"));
         assertNotNull(setup);
         assertEquals(QName.create(UG, "setup"), setup.getQName());
         assertEquals(BaseTypes.uint32Type(), setup.getType());
         assertTrue(setup.isAddedByUses());
         // * |-- |-- path-key-expansion
         final ContainerSchemaNode pke = (ContainerSchemaNode) requests.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "path-key-expansion"));
+            testModule.getQNameModule(), "path-key-expansion"));
         assertNotNull(pke);
         assertEquals(QName.create(UG, "path-key-expansion"), pke.getQName());
         assertFalse(pke.isAddedByUses());
         // * |-- |-- |-- path-key
         final ContainerSchemaNode pathKey = (ContainerSchemaNode) pke.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "path-key"));
+            testModule.getQNameModule(), "path-key"));
         assertNotNull(pathKey);
         assertEquals(QName.create(UG, "path-key"), pathKey.getQName());
         assertFalse(pathKey.isAddedByUses());
         assertEquals(3, pathKey.getChildNodes().size());
         // * |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) pathKey.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "processing-rule"));
+            "processing-rule"));
         assertNotNull(processingRule);
         assertEquals(QName.create(UG, "processing-rule"), processingRule.getQName());
         assertEquals(BaseTypes.booleanType(), processingRule.getType());
@@ -226,7 +226,7 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- |-- list path-keys
         final ListSchemaNode pathKeys = (ListSchemaNode) pathKey.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "path-keys"));
+            testModule.getQNameModule(), "path-keys"));
         assertNotNull(pathKeys);
         assertEquals(QName.create(UG, "path-keys"), pathKeys.getQName());
         assertTrue(pathKeys.isAddedByUses());
@@ -249,25 +249,25 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(type.isAugmenting());
         // * |-- |-- container segment-computation
         final ContainerSchemaNode sc = (ContainerSchemaNode) requests.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "segment-computation"));
+            testModule.getQNameModule(), "segment-computation"));
         assertNotNull(sc);
         assertEquals(QName.create(UG, "segment-computation"), sc.getQName());
         assertFalse(sc.isAddedByUses());
         // * |-- |-- |-- container p2p
         final ContainerSchemaNode p2p = (ContainerSchemaNode) sc.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "p2p"));
+            testModule.getQNameModule(), "p2p"));
         assertNotNull(p2p);
         assertEquals(QName.create(UG, "p2p"), p2p.getQName());
         assertFalse(p2p.isAddedByUses());
         // * |-- |-- |-- |-- container endpoints
         final ContainerSchemaNode endpoints = (ContainerSchemaNode) p2p.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "endpoints"));
+            testModule.getQNameModule(), "endpoints"));
         assertNotNull(endpoints);
         assertEquals(QName.create(UG, "endpoints"), endpoints.getQName());
         assertFalse(endpoints.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) endpoints.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "processing-rule"));
+            "processing-rule"));
         assertNotNull(processingRule);
         assertEquals(QName.create(UG, "processing-rule"), processingRule.getQName());
         assertEquals(BaseTypes.booleanType(), processingRule.getType());
@@ -285,19 +285,19 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(box.isAddedByUses());
         // * |-- |-- |-- |-- |-- choice address-family
         final ChoiceSchemaNode af = (ChoiceSchemaNode) endpoints.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "address-family"));
+            testModule.getQNameModule(), "address-family"));
         assertNotNull(af);
         assertEquals(QName.create(UG, "address-family"), af.getQName());
         assertTrue(af.isAddedByUses());
         // * |-- |-- |-- |-- container reported-route
         final ContainerSchemaNode reportedRoute = (ContainerSchemaNode) p2p.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "reported-route"));
+            testModule.getQNameModule(), "reported-route"));
         assertNotNull(reportedRoute);
         assertEquals(QName.create(UG, "reported-route"), reportedRoute.getQName());
         assertFalse(reportedRoute.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) reportedRoute.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "processing-rule"));
+            "processing-rule"));
         assertNotNull(processingRule);
         assertEquals(QName.create(UG, "processing-rule"), processingRule.getQName());
         assertEquals(BaseTypes.booleanType(), processingRule.getType());
@@ -310,25 +310,25 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- |-- |-- list subobjects
         final ListSchemaNode subobjects = (ListSchemaNode) reportedRoute.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "subobjects"));
+            testModule.getQNameModule(), "subobjects"));
         assertNotNull(subobjects);
         assertEquals(QName.create(UG, "subobjects"), subobjects.getQName());
         assertTrue(subobjects.isAddedByUses());
         // * |-- |-- |-- |-- |-- container bandwidth
         ContainerSchemaNode bandwidth = (ContainerSchemaNode) reportedRoute.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "bandwidth"));
+            testModule.getQNameModule(), "bandwidth"));
         assertNotNull(bandwidth);
         assertEquals(QName.create(UG, "bandwidth"), bandwidth.getQName());
         assertFalse(bandwidth.isAddedByUses());
         // * |-- |-- |-- |-- container bandwidth
         bandwidth = (ContainerSchemaNode) p2p
-                .getDataChildByName(QName.create(testModule.getQNameModule(), "bandwidth"));
+            .getDataChildByName(QName.create(testModule.getQNameModule(), "bandwidth"));
         assertNotNull(bandwidth);
         assertEquals(QName.create(UG, "bandwidth"), bandwidth.getQName());
         assertTrue(bandwidth.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) bandwidth.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "processing-rule"));
+            "processing-rule"));
         assertNotNull(processingRule);
         assertEquals(QName.create(UG, "processing-rule"), processingRule.getQName());
         assertEquals(BaseTypes.booleanType(), processingRule.getType());
@@ -341,26 +341,26 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- |-- |-- container bandwidth
         final ContainerSchemaNode bandwidthInner = (ContainerSchemaNode) bandwidth.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "bandwidth"));
+            testModule.getQNameModule(), "bandwidth"));
         assertNotNull(bandwidthInner);
         assertEquals(QName.create(UG, "bandwidth"), bandwidth.getQName());
         assertTrue(bandwidthInner.isAddedByUses());
         // * |-- list svec
         final ListSchemaNode svec = (ListSchemaNode) pcreq.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "svec"));
+            "svec"));
         assertNotNull(svec);
         assertEquals(QName.create(UG, "svec"), svec.getQName());
         assertFalse(svec.isAddedByUses());
         // * |-- |-- leaf link-diverse
         final LeafSchemaNode linkDiverse = (LeafSchemaNode) svec.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "link-diverse"));
+            testModule.getQNameModule(), "link-diverse"));
         assertNotNull(linkDiverse);
         assertEquals(QName.create(UG, "link-diverse"), linkDiverse.getQName());
         assertEquals(BaseTypes.booleanType(), linkDiverse.getType().getBaseType());
         assertTrue(linkDiverse.isAddedByUses());
         // * |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) svec.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "processing-rule"));
+            "processing-rule"));
         assertNotNull(processingRule);
         assertEquals(QName.create(UG, "processing-rule"), processingRule.getQName());
         assertEquals(BaseTypes.booleanType(), processingRule.getType());
@@ -373,13 +373,13 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- list metric
         final ListSchemaNode metric = (ListSchemaNode) svec.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "metric"));
+            testModule.getQNameModule(), "metric"));
         assertNotNull(metric);
         assertEquals(QName.create(UG, "metric"), metric.getQName());
         assertFalse(metric.isAddedByUses());
         // * |-- |-- |-- leaf metric-type
         final LeafSchemaNode metricType = (LeafSchemaNode) metric.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "metric-type"));
+            testModule.getQNameModule(), "metric-type"));
         assertNotNull(metricType);
         assertEquals(QName.create(UG, "metric-type"), metricType.getQName());
         assertEquals(BaseTypes.uint8Type(), metricType.getType());
@@ -391,7 +391,7 @@ public class UsesAugmentTest extends AbstractYangTest {
         assertTrue(box.isAddedByUses());
         // * |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) metric.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "processing-rule"));
+            "processing-rule"));
         assertNotNull(processingRule);
         assertEquals(QName.create(UG, "processing-rule"), processingRule.getQName());
         assertEquals(BaseTypes.booleanType(), processingRule.getType());
@@ -405,7 +405,7 @@ public class UsesAugmentTest extends AbstractYangTest {
     }
 
     @Test
-    public void testTypedefs() throws Exception {
+    void testTypedefs() throws Exception {
         final Module testModule = CONTEXT.findModules("grouping-definitions").iterator().next();
         final Collection<? extends TypeDefinition<?>> types = testModule.getTypeDefinitions();
 

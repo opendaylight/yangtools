@@ -11,13 +11,13 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
-public class Bug5335Test extends AbstractYangTest {
+class Bug5335Test extends AbstractYangTest {
     private static final String FOO = "foo";
     private static final String BAR = "bar";
     private static final String REV = "2016-03-04";
@@ -30,25 +30,25 @@ public class Bug5335Test extends AbstractYangTest {
     private static final QName MANDATORY_LEAF_B = QName.create(BAR, REV, "mandatory-leaf");
 
     @Test
-    public void incorrectTest1() {
+    void incorrectTest1() {
         assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-1", startsWith(
             "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
-    public void incorrectTest2() {
+    void incorrectTest2() {
         assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-2", startsWith(
             "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
-    public void incorrectTest3() {
+    void incorrectTest3() {
         assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-3", startsWith(
             "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
-    public void correctTest1() {
+    void correctTest1() {
         final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-1");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B)
             .orElse(null);
@@ -56,7 +56,7 @@ public class Bug5335Test extends AbstractYangTest {
     }
 
     @Test
-    public void correctTest2() {
+    void correctTest2() {
         final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-2");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
             NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null);
@@ -64,7 +64,7 @@ public class Bug5335Test extends AbstractYangTest {
     }
 
     @Test
-    public void correctTest3() {
+    void correctTest3() {
         final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-3");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
             NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null);
@@ -72,7 +72,7 @@ public class Bug5335Test extends AbstractYangTest {
     }
 
     @Test
-    public void correctTest4() {
+    void correctTest4() {
         final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-4");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F)
             .orElse(null);

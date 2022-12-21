@@ -7,26 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug7037Test extends AbstractYangTest {
+class Bug7037Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
 
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug7037");
 
         final var unknownSchemaNodes = context.getModuleStatement(foo("foo")) .getDeclared()
@@ -47,11 +47,11 @@ public class Bug7037Test extends AbstractYangTest {
 
         final Collection<? extends UnrecognizedStatement> rootUnknownNodes =
             ((ContainerSchemaNode) root).asEffectiveStatement().getDeclared()
-            .declaredSubstatements(UnrecognizedStatement.class);
+                .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(2, rootUnknownNodes.size());
 
         final Map<QName, UnrecognizedStatement> rootUnknownNodeMap = rootUnknownNodes.stream()
-                .collect(Collectors.toMap(u -> u.statementDefinition().getStatementName(), u -> u));
+            .collect(Collectors.toMap(u -> u.statementDefinition().getStatementName(), u -> u));
 
         final UnrecognizedStatement barExt = rootUnknownNodeMap.get(bar("bar-ext"));
         final Collection<? extends UnrecognizedStatement> barExtUnknownNodes =

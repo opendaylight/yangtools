@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
-public class YinFileIncludeStmtTest {
+class YinFileIncludeStmtTest {
     @Test
-    public void testInclude() throws Exception {
+    void testInclude() throws Exception {
         Collection<? extends Submodule> submodules = TestUtils.loadYinModules(getClass().getResource(
             "/semantic-statement-parser/yin/include-belongs-to-test").toURI()).findModules("parent").iterator().next()
             .getSubmodules();

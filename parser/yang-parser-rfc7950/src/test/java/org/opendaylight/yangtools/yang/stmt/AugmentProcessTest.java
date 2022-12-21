@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class AugmentProcessTest extends AbstractYangTest {
+class AugmentProcessTest extends AbstractYangTest {
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
@@ -39,86 +40,90 @@ public class AugmentProcessTest extends AbstractYangTest {
     private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(XMLNamespace.of("aug"));
 
     private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE,
-            "aug-parent1");
+        "aug-parent1");
     private final QName augParent2 = QName.create(AUGMENTED_QNAME_MODULE,
-            "aug-parent2");
+        "aug-parent2");
     private final QName contTarget = QName.create(AUGMENTED_QNAME_MODULE,
-            "cont-target");
+        "cont-target");
 
     private final QName contAdded1 = QName.create(ROOT_QNAME_MODULE,
-            "cont-added1");
+        "cont-added1");
     private final QName contAdded2 = QName.create(ROOT_QNAME_MODULE,
-            "cont-added2");
+        "cont-added2");
 
     private final QName list1 = QName.create(ROOT_QNAME_MODULE, "list1");
     private final QName axml = QName.create(ROOT_QNAME_MODULE, "axml");
 
     private final QName contGrp = QName.create(ROOT_QNAME_MODULE,
-            "cont-grp");
+        "cont-grp");
     private final QName axmlGrp = QName.create(ROOT_QNAME_MODULE,
-            "axml-grp");
+        "axml-grp");
 
     private final QName augCont1 = QName.create(ROOT_QNAME_MODULE, "aug-cont1");
     private final QName augCont2 = QName.create(ROOT_QNAME_MODULE, "aug-cont2");
 
     private final QName grpCont2 = QName.create(ROOT_QNAME_MODULE, "grp-cont2");
     private final QName grpCont22 = QName.create(ROOT_QNAME_MODULE,
-            "grp-cont22");
+        "grp-cont22");
     private final QName grpAdd = QName.create(ROOT_QNAME_MODULE, "grp-add");
 
     private static final StatementStreamSource MULTIPLE_AUGMENT = sourceForResource(
-            "/stmt-test/augments/multiple-augment-test.yang");
+        "/stmt-test/augments/multiple-augment-test.yang");
 
     private static final StatementStreamSource MULTIPLE_AUGMENT_ROOT = sourceForResource(
-            "/stmt-test/augments/multiple-augment-root.yang");
+        "/stmt-test/augments/multiple-augment-root.yang");
     private static final StatementStreamSource MULTIPLE_AUGMENT_IMPORTED = sourceForResource(
-            "/stmt-test/augments/multiple-augment-imported.yang");
+        "/stmt-test/augments/multiple-augment-imported.yang");
     private static final StatementStreamSource MULTIPLE_AUGMENT_SUBMODULE = sourceForResource(
-            "/stmt-test/augments/multiple-augment-submodule.yang");
+        "/stmt-test/augments/multiple-augment-submodule.yang");
 
     private static final StatementStreamSource MULTIPLE_AUGMENT_INCORRECT = sourceForResource(
-            "/stmt-test/augments/multiple-augment-incorrect.yang");
+        "/stmt-test/augments/multiple-augment-incorrect.yang");
 
     private static final StatementStreamSource MULTIPLE_AUGMENT_INCORRECT2 = sourceForResource(
-            "/stmt-test/augments/multiple-augment-incorrect2.yang");
+        "/stmt-test/augments/multiple-augment-incorrect2.yang");
 
     @Test
-    public void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
+    void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED, MULTIPLE_AUGMENT_SUBMODULE)
-                .buildEffective();
+            .addSources(MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED, MULTIPLE_AUGMENT_SUBMODULE)
+            .buildEffective();
         assertNotNull(result);
     }
 
     @Test
-    public void multipleAugmentTest() throws ReactorException {
+    void multipleAugmentTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(MULTIPLE_AUGMENT)
-                .buildEffective();
+            .addSource(MULTIPLE_AUGMENT)
+            .buildEffective();
         assertNotNull(result);
     }
 
-    @Test(expected = SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+    @Test
+    void multipleAugmentIncorrectPathTest() throws ReactorException {
+        assertThrows(SomeModifiersUnresolvedException.class, () -> {
+            SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(MULTIPLE_AUGMENT_INCORRECT)
                 .buildEffective();
-        assertNull(result);
-    }
-
-    @Test(expected = SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathAndGrpTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(MULTIPLE_AUGMENT_INCORRECT2)
-                .buildEffective();
-        assertNull(result);
+            assertNull(result);
+        });
     }
 
     @Test
-    public void readAndParseYangFileTest() throws ReactorException {
-        final SchemaContext root = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(AUGMENTED, ROOT)
+    void multipleAugmentIncorrectPathAndGrpTest() throws ReactorException {
+        assertThrows(SomeModifiersUnresolvedException.class, () -> {
+            SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+                .addSource(MULTIPLE_AUGMENT_INCORRECT2)
                 .buildEffective();
+            assertNull(result);
+        });
+    }
+
+    @Test
+    void readAndParseYangFileTest() throws ReactorException {
+        final SchemaContext root = RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(AUGMENTED, ROOT)
+            .buildEffective();
         assertNotNull(root);
 
         final Module augmentedModule = root.findModules("augmented").iterator().next();
@@ -146,7 +151,7 @@ public class AugmentProcessTest extends AbstractYangTest {
     }
 
     @Test
-    public void caseShortHandAugmentingTest() {
+    void caseShortHandAugmentingTest() {
         final SchemaContext context = assertEffectiveModelDir("/choice-case-type-test-models");
 
         assertNotNull(context);
@@ -156,15 +161,15 @@ public class AugmentProcessTest extends AbstractYangTest {
         final String nsAug = "urn:ietf:params:xml:ns:yang:augment-monitoring";
 
         final ContainerSchemaNode netconf = (ContainerSchemaNode) context.getDataChildByName(QName.create(ns, rev,
-                "netconf-state"));
+            "netconf-state"));
         final ContainerSchemaNode datastores = (ContainerSchemaNode) netconf.getDataChildByName(QName.create(ns, rev,
-                "datastores"));
+            "datastores"));
         final ListSchemaNode datastore = (ListSchemaNode) datastores.getDataChildByName(QName.create(ns, rev,
-                "datastore"));
+            "datastore"));
         final ContainerSchemaNode locks = (ContainerSchemaNode) datastore.getDataChildByName(QName.create(ns, rev,
-                "locks"));
+            "locks"));
         final ChoiceSchemaNode lockType = (ChoiceSchemaNode) locks.getDataChildByName(QName
-                .create(ns, rev, "lock-type"));
+            .create(ns, rev, "lock-type"));
 
         final CaseSchemaNode leafAugCase = lockType.findCaseNodes("leaf-aug-case").iterator().next();
         assertTrue(leafAugCase.isAugmenting());

@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -29,18 +29,18 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class EffectiveBuildTest {
+class EffectiveBuildTest {
 
     private static final StatementStreamSource SIMPLE_MODULE = sourceForResource(
-            "/stmt-test/effective-build/simple-module.yang");
+        "/stmt-test/effective-build/simple-module.yang");
     private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(XMLNamespace.of("simple.yang"));
     private static final StatementStreamSource YANG_EXT = sourceForResource(
-            "/stmt-test/extensions/yang-ext.yang");
+        "/stmt-test/extensions/yang-ext.yang");
 
     @Test
-    public void effectiveBuildTest() throws ReactorException {
+    void effectiveBuildTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(SIMPLE_MODULE)
-                .buildEffective();
+            .buildEffective();
 
         assertNotNull(result);
 
@@ -89,7 +89,7 @@ public class EffectiveBuildTest {
     }
 
     @Test
-    public void extensionsTest() throws ReactorException {
+    void extensionsTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
 
@@ -109,7 +109,7 @@ public class EffectiveBuildTest {
     }
 
     @Test
-    public void mockTest() throws ReactorException, FileNotFoundException, URISyntaxException {
+    void mockTest() throws ReactorException, FileNotFoundException, URISyntaxException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
     }

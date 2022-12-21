@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1434Test extends AbstractYangTest {
+class YT1434Test extends AbstractYangTest {
     @Test
-    public void testUniqueViaAugment() {
+    void testUniqueViaAugment() {
         assertEffectiveModel("/bugs/YT1434/foo.yang");
     }
 
     @Test
-    public void testUniqueViaUses() {
+    void testUniqueViaUses() {
         assertEffectiveModel("/bugs/YT1434/bar.yang");
     }
 
     @Test
-    public void testUniqueViaSubmoduleUses() {
+    void testUniqueViaSubmoduleUses() {
         assertEffectiveModel("/bugs/YT1434/main-module.yang", "/bugs/YT1434/submodule.yang",
-                "/bugs/YT1434/test-bug.yang");
+            "/bugs/YT1434/test-bug.yang");
     }
 }

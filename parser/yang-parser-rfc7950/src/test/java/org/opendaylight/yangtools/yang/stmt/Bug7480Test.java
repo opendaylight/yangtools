@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
-public class Bug7480Test {
+class Bug7480Test {
     @Test
-    public void libSourcesTest() throws Exception {
+    void libSourcesTest() throws Exception {
         final SchemaContext context = parseYangSources("/bugs/bug7480/files", "/bugs/bug7480/lib");
         assertNotNull(context);
 
@@ -50,7 +50,7 @@ public class Bug7480Test {
     }
 
     @Test
-    public void missingRelevantImportTest() throws Exception {
+    void missingRelevantImportTest() throws Exception {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
         final String message = ex.getSuppressed().length > 0
@@ -59,7 +59,7 @@ public class Bug7480Test {
     }
 
     @Test
-    public void testHandlingOfMainSourceConflictingWithLibSource() throws Exception {
+    void testHandlingOfMainSourceConflictingWithLibSource() throws Exception {
         // parent module as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid module namespace collision
         final SchemaContext schemaContext =  RFC7950Reactors.defaultReactor().newBuild()
@@ -75,7 +75,7 @@ public class Bug7480Test {
     }
 
     @Test
-    public void testHandlingOfMainSourceConflictingWithLibSource2() throws Exception {
+    void testHandlingOfMainSourceConflictingWithLibSource2() throws Exception {
         // submodule as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid submodule name collision
         final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
@@ -91,7 +91,7 @@ public class Bug7480Test {
     }
 
     private static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
-            final String yangLibsDirectoryPath) throws Exception {
+        final String yangLibsDirectoryPath) throws Exception {
         return RFC7950Reactors.defaultReactor().newBuild()
             .addSources(TestUtils.loadSources(yangFilesDirectoryPath))
             .addLibSources(TestUtils.loadSources(yangLibsDirectoryPath))
