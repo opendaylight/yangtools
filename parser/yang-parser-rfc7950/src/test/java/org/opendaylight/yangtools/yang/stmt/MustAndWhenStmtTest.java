@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -27,12 +27,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class MustAndWhenStmtTest {
+class MustAndWhenStmtTest {
     @Test
-    public void mustStmtTest() throws ReactorException {
+    void mustStmtTest() throws ReactorException {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/must-when-stmt-test/must-test.yang"))
-                .buildEffective();
+            .addSource(sourceForResource("/must-when-stmt-test/must-test.yang"))
+            .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("must-test").iterator().next();
@@ -49,7 +49,7 @@ public class MustAndWhenStmtTest {
         final Iterator<? extends MustDefinition> mustsIterator = musts.iterator();
         MustDefinition mustStmt = mustsIterator.next();
         assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and "
-                + "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
+            + "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
         assertThat(mustStmt.getErrorMessage(), anyOf(is(Optional.of("An ethernet MTU must be 1500")),
             is(Optional.of("An atm MTU must be 64 .. 17966"))));
         assertThat(mustStmt.getErrorAppTag(), anyOf(is(Optional.of("An ethernet error")),
@@ -65,10 +65,10 @@ public class MustAndWhenStmtTest {
     }
 
     @Test
-    public void whenStmtTest() throws ReactorException {
+    void whenStmtTest() throws ReactorException {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/must-when-stmt-test/when-test.yang"))
-                .buildEffective();
+            .addSource(sourceForResource("/must-when-stmt-test/when-test.yang"))
+            .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("when-test").iterator().next();

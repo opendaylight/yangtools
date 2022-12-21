@@ -10,21 +10,21 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
+class YinFileAugmentStmtTest extends AbstractYinModulesTest {
     @Test
-    public void testAugment() {
+    void testAugment() {
         final Module testModule = context.findModules("main-impl").iterator().next();
         assertNotNull(testModule);
 
@@ -36,7 +36,7 @@ public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
         assertNotNull(augment);
         assertThat(augment.getTargetPath().toString(), containsString(
             "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)modules, module, "
-                    + "configuration"));
+                + "configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
         final DataSchemaNode caseNode = augment.findDataChildByName(

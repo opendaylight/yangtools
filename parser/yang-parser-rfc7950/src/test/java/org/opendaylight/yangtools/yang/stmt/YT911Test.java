@@ -7,36 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-public class YT911Test extends AbstractYangTest {
+class YT911Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "2018-10-22", "foo");
     private static final QName BAR = QName.create(FOO, "bar");
 
     @Test
-    public void testAugmentationConfig() {
+    void testAugmentationConfig() {
         final var context = assertEffectiveModel("/bugs/YT911/foo.yang");
-        final DataSchemaNode foo = context.findDataChildByName(FOO).get();
+        final var foo = assertInstanceOf(ContainerSchemaNode.class, context.dataChildByName(FOO));
         assertEquals(Optional.of(Boolean.FALSE), foo.effectiveConfig());
-        assertTrue(foo instanceof ContainerSchemaNode);
 
         // Instantiated node
-        final DataSchemaNode bar = ((ContainerSchemaNode) foo).findDataTreeChild(BAR).get();
+        final DataSchemaNode bar = foo.findDataTreeChild(BAR).orElseThrow();
         assertEquals(Optional.of(Boolean.FALSE), bar.effectiveConfig());
-        assertTrue(foo instanceof ContainerSchemaNode);
 
         // Original augmentation node
-        final AugmentationSchemaNode aug = ((ContainerSchemaNode) foo).getAvailableAugmentations().iterator().next();
-        final DataSchemaNode augBar = aug.findDataTreeChild(BAR).get();
+        final AugmentationSchemaNode aug = foo.getAvailableAugmentations().iterator().next();
+        final DataSchemaNode augBar = aug.findDataTreeChild(BAR).orElseThrow();
         assertEquals(Optional.empty(), augBar.effectiveConfig());
-        assertTrue(foo instanceof ContainerSchemaNode);
     }
 }

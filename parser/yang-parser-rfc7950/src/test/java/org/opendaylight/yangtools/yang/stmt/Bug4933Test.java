@@ -8,16 +8,16 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class Bug4933Test extends AbstractYangTest {
+class Bug4933Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug4933/correct");
 
         final Module foo = context.findModules("foo").iterator().next();
@@ -26,7 +26,7 @@ public class Bug4933Test extends AbstractYangTest {
     }
 
     @Test
-    public void incorrectKeywordTest() {
+    void incorrectKeywordTest() {
         assertSourceExceptionDir("/bugs/bug4933/incorrect",
             startsWith("String 'not_supported' is not valid deviate argument"));
     }

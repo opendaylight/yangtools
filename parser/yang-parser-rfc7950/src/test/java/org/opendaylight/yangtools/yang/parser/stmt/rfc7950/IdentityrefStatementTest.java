@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class IdentityrefStatementTest extends AbstractYangTest {
+class IdentityrefStatementTest extends AbstractYangTest {
 
     @Test
-    public void testIdentityrefWithMultipleBaseIdentities() {
+    void testIdentityrefWithMultipleBaseIdentities() {
         final var context = assertEffectiveModel("/rfc7950/identityref-stmt/foo.yang");
 
         final Module foo = context.findModule("foo", Revision.of("2017-01-11")).get();
@@ -31,7 +31,7 @@ public class IdentityrefStatementTest extends AbstractYangTest {
         assertEquals(3, identities.size());
 
         final LeafSchemaNode idrefLeaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-                "idref-leaf"));
+            "idref-leaf"));
         final IdentityrefTypeDefinition idrefType = (IdentityrefTypeDefinition) idrefLeaf.getType();
         final var referencedIdentities = idrefType.getIdentities();
         assertEquals(3, referencedIdentities.size());
@@ -40,8 +40,8 @@ public class IdentityrefStatementTest extends AbstractYangTest {
     }
 
     @Test
-    public void testInvalidYang10() {
+    void testInvalidYang10() {
         assertInvalidSubstatementException(startsWith("Maximal count of BASE for TYPE is 1, detected 3."),
-                "/rfc7950/identityref-stmt/foo10.yang");
+            "/rfc7950/identityref-stmt/foo10.yang");
     }
 }
