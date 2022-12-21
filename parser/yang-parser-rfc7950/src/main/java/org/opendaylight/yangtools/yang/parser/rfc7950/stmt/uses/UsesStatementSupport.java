@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -49,7 +48,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -94,23 +92,29 @@ public final class UsesStatementSupport
         }
         super.onFullDefinitionDeclared(usesNode);
 
-        final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final QName groupingName = usesNode.argument();
+        final var usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var groupingName = usesNode.argument();
 
         final var sourceGroupingPre = usesAction.requiresCtx(usesNode, ParserNamespaces.GROUPING, groupingName,
                 ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Prerequisite<? extends Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
-            usesNode.getParentContext());
+        final var targetNodePre = usesAction.mutatesEffectiveCtx(usesNode.getParentContext());
 
         usesAction.apply(new InferenceAction() {
 
             @Override
             public void apply(final InferenceContext ctx) {
-                final Mutable<?, ?, ?> targetNodeStmtCtx = targetNodePre.resolve(ctx);
-                final StmtContext<?, ?, ?> sourceGrpStmtCtx = sourceGroupingPre.resolve(ctx);
+                final var targetNodeStmtCtx = targetNodePre.resolve(ctx);
+                final var sourceGrpStmtCtx = sourceGroupingPre.resolve(ctx);
 
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
-                resolveUsesNode(usesNode, targetNodeStmtCtx);
+
+                // Apply any refine statements
+                for (var subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
+                    if (subStmtCtx.producesDeclared(RefineStatement.class) && areFeaturesSupported(subStmtCtx)) {
+                        performRefine(subStmtCtx, targetNodeStmtCtx);
+                    }
+                }
+
                 StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
                 usesNode.addToNs(SourceGroupingNamespace.INSTANCE, Empty.value(), sourceGrpStmtCtx);
             }
@@ -164,14 +168,12 @@ public final class UsesStatementSupport
 
     static @NonNull ImmutableMap<Descendant, SchemaNode> indexRefines(
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final Map<Descendant, SchemaNode> refines = new LinkedHashMap<>();
-
-        for (EffectiveStatement<?, ?> effectiveStatement : substatements) {
+        final var refines = new LinkedHashMap<Descendant, SchemaNode>();
+        for (var effectiveStatement : substatements) {
             if (effectiveStatement instanceof RefineEffectiveStatementImpl refineStmt) {
                 refines.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
             }
         }
-
         return ImmutableMap.copyOf(refines);
     }
 
@@ -192,9 +194,9 @@ public final class UsesStatementSupport
         final var declared = sourceGrpStmtCtx.declaredSubstatements();
         final var effective = sourceGrpStmtCtx.effectiveSubstatements();
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
-        final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
+        final var newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
-        for (StmtContext<?, ?, ?> original : declared) {
+        for (var original : declared) {
             if (shouldCopy(original)) {
                 original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(copy -> {
                     if (!original.isSupportedByFeatures() || !original.isSupportedToBuildEffective()) {
@@ -205,7 +207,7 @@ public final class UsesStatementSupport
             }
         }
 
-        for (StmtContext<?, ?, ?> original : effective) {
+        for (var original : effective) {
             if (shouldCopy(original)) {
                 original.copyAsChildOf(targetCtx, CopyType.ADDED_BY_USES, newQNameModule).ifPresent(buffer::add);
             }
@@ -259,23 +261,11 @@ public final class UsesStatementSupport
         if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
             return StmtContextUtils.getRootModuleQName(targetCtx);
         }
-
-        final Object targetStmtArgument = targetCtx.argument();
-        final Object sourceStmtArgument = stmtContext.argument();
-        if (targetStmtArgument instanceof QName && sourceStmtArgument instanceof QName) {
-            return ((QName) targetStmtArgument).getModule();
+        if (targetCtx.argument() instanceof QName targetQName && stmtContext.argument() instanceof QName) {
+            return targetQName.getModule();
         }
 
         return null;
-    }
-
-    private static void resolveUsesNode(final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode,
-            final StmtContext<?, ?, ?> targetNodeStmtCtx) {
-        for (Mutable<?, ?, ?> subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
-            if (subStmtCtx.producesDeclared(RefineStatement.class) && areFeaturesSupported(subStmtCtx)) {
-                performRefine(subStmtCtx, targetNodeStmtCtx);
-            }
-        }
     }
 
     private static boolean areFeaturesSupported(final StmtContext<?, ?, ?> subStmtCtx) {
