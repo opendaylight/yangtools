@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
-public class YT1431Test {
+class YT1431Test {
     @Test
-    public void testUnsupportedChoiceLeaf() throws Exception {
+    void testUnsupportedChoiceLeaf() throws Exception {
         final var module = StmtTestUtils.parseYangSource("/bugs/YT1431/foo.yang", Set.of())
             .findModuleStatement(QName.create("foo", "foo"))
             .orElseThrow();
@@ -27,7 +27,7 @@ public class YT1431Test {
     }
 
     @Test
-    public void testUnsupportedChoiceLeafAugment() throws Exception {
+    void testUnsupportedChoiceLeafAugment() throws Exception {
         final var module = StmtTestUtils.parseYangSource("/bugs/YT1431/bar.yang", Set.of())
             .findModuleStatement(QName.create("bar", "bar"))
             .orElseThrow();

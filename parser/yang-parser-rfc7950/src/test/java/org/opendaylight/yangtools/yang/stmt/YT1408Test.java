@@ -7,26 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1408Test extends AbstractYangTest {
+class YT1408Test extends AbstractYangTest {
     @Test
-    public void testChoiceCaseDeviateCase() {
+    void testChoiceCaseDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/choice-case-deviate-case");
     }
 
     @Test
-    public void testChoiceDeviateCase() {
+    void testChoiceDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/choice-deviate-case");
     }
 
     @Test
-    public void testAugmentChoiceCaseDeviateCase() {
+    void testAugmentChoiceCaseDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/aug-choice-case-deviate-case");
     }
 
     @Test
-    public void testAugmentChoiceDeviateCase() {
+    void testAugmentChoiceDeviateCase() {
         assertEffectiveModelDir("/bugs/YT1408/aug-choice-deviate-case");
     }
 }

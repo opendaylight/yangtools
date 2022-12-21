@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-public class YangModelDependencyInfoTest {
+class YangModelDependencyInfoTest {
     // Utility
     private static YangModelDependencyInfo forResource(final String resourceName) {
         final YangStatementStreamSource source = StmtTestUtils.sourceForResource(resourceName);
@@ -26,18 +24,18 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testModuleWithNoImports() {
+    void testModuleWithNoImports() {
         YangModelDependencyInfo info = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         assertNotNull(info);
         assertEquals("ietf-inet-types", info.getName());
         assertEquals("2010-09-24", info.getFormattedRevision());
         assertNotNull(info.getDependencies());
 
-        assertTrue(info.equals(info));
+        assertEquals(info, info);
     }
 
     @Test
-    public void testModuleWithImports() {
+    void testModuleWithImports() {
         YangModelDependencyInfo info = forResource("/parse-methods/dependencies/m2@2013-09-30.yang");
         assertNotNull(info);
         assertEquals("m2", info.getName());
@@ -47,7 +45,7 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testModuleWithoutRevision() {
+    void testModuleWithoutRevision() {
         YangModelDependencyInfo info = forResource("/no-revision/module-without-revision.yang");
         assertNotNull(info);
         assertEquals("module-without-revision", info.getName());
@@ -55,45 +53,45 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         YangModelDependencyInfo info1 = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         YangModelDependencyInfo info2 = forResource("/no-revision/module-without-revision.yang");
 
-        assertTrue(info1.equals(info1));
-        assertFalse(info1.equals(null));
-        assertFalse(info1.equals(info2));
+        assertEquals(info1, info1);
+        assertNotEquals(null, info1);
+        assertNotEquals(info1, info2);
     }
 
     @Test
-    public void testYangtools827() {
+    void testYangtools827() {
         // Latest revision needs to be picked up irrespective of ordering
         YangModelDependencyInfo info = forResource("/bugs/YT827/foo.yang");
         assertEquals("2014-12-24", info.getFormattedRevision());
     }
 
     @Test
-    public void testHashcode() {
+    void testHashcode() {
         YangModelDependencyInfo info = forResource("/no-revision/module-without-revision.yang");
-        assertNotEquals("hashcode", 31, info.hashCode());
+        assertNotEquals(31, info.hashCode(), "hashcode");
     }
 
     @Test
-    public void testMalformedImport() {
+    void testMalformedImport() {
         assertThrows(IllegalArgumentException.class, () -> forResource("/depinfo-malformed/malformed-import.yang"));
     }
 
     @Test
-    public void testMalformedImportRev() {
+    void testMalformedImportRev() {
         assertThrows(IllegalArgumentException.class, () -> forResource("/depinfo-malformed/malformed-import-rev.yang"));
     }
 
     @Test
-    public void testMalformedModule() {
+    void testMalformedModule() {
         assertThrows(IllegalArgumentException.class, () -> forResource("/depinfo-malformed/malformed-module.yang"));
     }
 
     @Test
-    public void testMalformedRev() {
+    void testMalformedRev() {
         assertThrows(IllegalArgumentException.class, () -> forResource("/depinfo-malformed/malformed-rev.yang"));
     }
 }

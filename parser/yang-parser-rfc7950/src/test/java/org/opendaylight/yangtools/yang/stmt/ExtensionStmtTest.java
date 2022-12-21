@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -22,12 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class ExtensionStmtTest {
+class ExtensionStmtTest {
     @Test
-    public void testExtensionDefinition() throws ReactorException {
+    void testExtensionDefinition() throws ReactorException {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/model/bar.yang"))
-                .buildEffective();
+            .addSource(sourceForResource("/model/bar.yang"))
+            .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("bar").iterator().next();
@@ -43,11 +43,11 @@ public class ExtensionStmtTest {
     }
 
     @Test
-    public void testExtensionUsage() throws ReactorException {
+    void testExtensionUsage() throws ReactorException {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/semantic-statement-parser/ext-typedef.yang"))
-                .addSource(sourceForResource("/semantic-statement-parser/ext-use.yang"))
-                .buildEffective();
+            .addSource(sourceForResource("/semantic-statement-parser/ext-typedef.yang"))
+            .addSource(sourceForResource("/semantic-statement-parser/ext-use.yang"))
+            .buildEffective();
         assertNotNull(result);
 
         final Module testModule1 = result.findModules("ext-typedef").iterator().next();

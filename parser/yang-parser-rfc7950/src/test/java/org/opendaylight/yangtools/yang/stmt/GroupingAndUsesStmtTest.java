@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class GroupingAndUsesStmtTest {
+class GroupingAndUsesStmtTest {
 
     private static final StatementStreamSource MODULE = sourceForResource("/model/bar.yang");
     private static final StatementStreamSource SUBMODULE = sourceForResource("/model/subfoo.yang");
@@ -41,10 +41,10 @@ public class GroupingAndUsesStmtTest {
     private static final StatementStreamSource USES_MODULE = sourceForResource("/model/foo.yang");
 
     @Test
-    public void groupingTest() throws ReactorException {
+    void groupingTest() throws ReactorException {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(MODULE, GROUPING_MODULE)
-                .buildEffective();
+            .addSources(MODULE, GROUPING_MODULE)
+            .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("baz").iterator().next();
@@ -87,10 +87,10 @@ public class GroupingAndUsesStmtTest {
     }
 
     @Test
-    public void usesAndRefinesTest() throws ReactorException {
+    void usesAndRefinesTest() throws ReactorException {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE)
-                .buildEffective();
+            .addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE)
+            .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("foo").iterator().next();
@@ -115,10 +115,10 @@ public class GroupingAndUsesStmtTest {
         assertEquals(4, refines.size());
 
         assertEquals(ImmutableList.of(
-            Descendant.of(QName.create(peer, "address")),
-            Descendant.of(QName.create(peer, "port")),
-            Descendant.of(QName.create(peer, "addresses")),
-            Descendant.of(QName.create(peer, "addresses"), QName.create(peer, "id"))),
+                Descendant.of(QName.create(peer, "address")),
+                Descendant.of(QName.create(peer, "port")),
+                Descendant.of(QName.create(peer, "addresses")),
+                Descendant.of(QName.create(peer, "addresses"), QName.create(peer, "id"))),
             new ArrayList<>(refines.keySet()));
     }
 }

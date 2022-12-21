@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -32,23 +33,23 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-public class YangParserSimpleTest extends AbstractYangTest {
+class YangParserSimpleTest extends AbstractYangTest {
     private static final XMLNamespace NS = XMLNamespace.of("urn:opendaylight:simple-nodes");
     private static final QNameModule SN = QNameModule.create(NS, Revision.of("2013-07-30"));
     private static final QName SN_NODES = QName.create(SN, "nodes");
 
     private static Module MODULE;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    @BeforeAll
+    static void beforeClass() throws Exception {
         MODULE = assertEffectiveModelDir("/simple-test").findModules("simple-nodes").iterator().next();
     }
 
     @Test
-    public void testParseAnyXml() {
+    void testParseAnyXml() {
         final AnyxmlSchemaNode data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
             QName.create(MODULE.getQNameModule(), "data"));
-        assertFalse(data.equals(null));
+        assertNotEquals(null, data);
         assertEquals(
             "RegularAnyxmlEffectiveStatement{argument=(urn:opendaylight:simple-nodes?revision=2013-07-30)data}",
             data.toString());
@@ -90,11 +91,11 @@ public class YangParserSimpleTest extends AbstractYangTest {
     }
 
     @Test
-    public void testParseAnyData() {
+    void testParseAnyData() {
         final AnydataSchemaNode anydata = (AnydataSchemaNode) MODULE.findDataChildByName(
-                QName.create(MODULE.getQNameModule(), "data2")).orElse(null);
+            QName.create(MODULE.getQNameModule(), "data2")).orElse(null);
 
-        assertNotNull("'anydata data not found'", anydata);
+        assertNotNull(anydata, "'anydata data not found'");
         assertEquals(
             "RegularAnydataEffectiveStatement{argument=(urn:opendaylight:simple-nodes?revision=2013-07-30)data2}",
             anydata.toString());
@@ -137,9 +138,9 @@ public class YangParserSimpleTest extends AbstractYangTest {
     }
 
     @Test
-    public void testParseContainer() {
+    void testParseContainer() {
         final ContainerSchemaNode nodes = (ContainerSchemaNode) MODULE
-                .getDataChildByName(QName.create(MODULE.getQNameModule(), "nodes"));
+            .getDataChildByName(QName.create(MODULE.getQNameModule(), "nodes"));
         // test SchemaNode args
         assertEquals(SN_NODES, nodes.getQName());
         assertEquals(Optional.of("nodes collection"), nodes.getDescription());
@@ -192,7 +193,7 @@ public class YangParserSimpleTest extends AbstractYangTest {
         // child nodes
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
-        final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(
+        final LeafListSchemaNode added = (LeafListSchemaNode) nodes.getDataChildByName(QName.create(
             MODULE.getQNameModule(), "added"));
         assertEquals(QName.create(SN, "added"), added.getQName());
         assertEquals(QName.create(SN, "mytype"), added.getType().getQName());
