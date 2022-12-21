@@ -89,7 +89,7 @@ public class UniqueConstraintTest {
         verifyException(assertThrows(UniqueValidationFailedException.class,
             () -> writeMap(inMemoryDataTree, true)),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
-            "}] violates unique constraint on [l2, l1] of ",
+            "}] violates unique constraint on [l1, l2] of ",
             "(foo?revision=2016-05-17)my-leaf-1",
             "(foo?revision=2016-05-17)my-leaf-2]");
 
@@ -97,7 +97,7 @@ public class UniqueConstraintTest {
         verifyException(assertThrows(UniqueConstraintException.class,
             () -> writeMapEntry(inMemoryDataTree, "4", "l1", "l2", "l30")),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
-            "}] violates unique constraint on [l2, l1] of ",
+            "}] violates unique constraint on [l1, l2] of ",
             "(foo?revision=2016-05-17)my-leaf-1",
             "(foo?revision=2016-05-17)my-leaf-2");
     }
@@ -126,7 +126,7 @@ public class UniqueConstraintTest {
         verifyException(assertThrows(UniqueConstraintException.class,
             () -> writeMapEntry(inMemoryDataTree, "5", "l3", "l4", "l7")),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
-            "}] violates unique constraint on [l4, l3] of ",
+            "}] violates unique constraint on [l3, l4] of ",
             "(foo?revision=2016-05-17)my-leaf-1",
             "(foo?revision=2016-05-17)my-leaf-2");
         removeMapEntry(inMemoryDataTree, taskEntryKey("3"));
@@ -135,7 +135,7 @@ public class UniqueConstraintTest {
         verifyException(assertThrows(UniqueConstraintException.class,
             () -> writeMapEntry(inMemoryDataTree, "6", "l3", "l4", "l11")),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
-            "}] violates unique constraint on [l4, l3] of ",
+            "}] violates unique constraint on [l3, l4] of ",
             "(foo?revision=2016-05-17)my-leaf-1",
             "(foo?revision=2016-05-17)my-leaf-2");
 
