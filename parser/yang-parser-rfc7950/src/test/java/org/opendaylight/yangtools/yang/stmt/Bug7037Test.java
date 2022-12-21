@@ -7,26 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug7037Test extends AbstractYangTest {
+class Bug7037Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
 
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug7037");
 
         final var unknownSchemaNodes = context.getModuleStatement(foo("foo")) .getDeclared()
@@ -43,25 +42,22 @@ public class Bug7037Test extends AbstractYangTest {
         assertEquals("bar-ext-con", barExtCont.argument());
 
         final DataSchemaNode root = context.getDataChildByName(foo("root"));
-        assertTrue(root instanceof ContainerSchemaNode);
 
         final Collection<? extends UnrecognizedStatement> rootUnknownNodes =
-            ((ContainerSchemaNode) root).asEffectiveStatement().getDeclared()
-            .declaredSubstatements(UnrecognizedStatement.class);
+            assertInstanceOf(ContainerSchemaNode.class, root).asEffectiveStatement().getDeclared()
+                .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(2, rootUnknownNodes.size());
 
         final Map<QName, UnrecognizedStatement> rootUnknownNodeMap = rootUnknownNodes.stream()
-                .collect(Collectors.toMap(u -> u.statementDefinition().getStatementName(), u -> u));
+            .collect(Collectors.toMap(u -> u.statementDefinition().getStatementName(), u -> u));
 
         final UnrecognizedStatement barExt = rootUnknownNodeMap.get(bar("bar-ext"));
         final Collection<? extends UnrecognizedStatement> barExtUnknownNodes =
             barExt.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(3, barExtUnknownNodes.size());
 
-        final Iterator<? extends UnrecognizedStatement> iterator = barExtUnknownNodes.iterator();
         UnrecognizedStatement barExtCont2 = null;
-        while (iterator.hasNext()) {
-            final UnrecognizedStatement next = iterator.next();
+        for (UnrecognizedStatement next : barExtUnknownNodes) {
             if (bar("container").equals(next.statementDefinition().getStatementName())) {
                 barExtCont2 = next;
                 break;

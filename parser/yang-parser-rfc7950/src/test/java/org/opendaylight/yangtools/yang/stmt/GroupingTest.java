@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Iterables;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -43,9 +44,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class GroupingTest extends AbstractModelTest {
+class GroupingTest extends AbstractModelTest {
     @Test
-    public void testRefine() {
+    void testRefine() {
         final ContainerSchemaNode peer = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("peer"));
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(fooQName("destination"));
 
@@ -117,7 +118,7 @@ public class GroupingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testGrouping() {
+    void testGrouping() {
         final var groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
@@ -126,7 +127,7 @@ public class GroupingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testUses() {
+    void testUses() {
         // suffix _u = added by uses
         // suffix _g = defined in grouping
 
@@ -208,7 +209,7 @@ public class GroupingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testUsesUnderModule() {
+    void testUsesUnderModule() {
         // suffix _u = added by uses
         // suffix _g = defined in grouping
 
@@ -295,13 +296,12 @@ public class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of("inner augment"), augment.getDescription());
         final var children = augment.getChildNodes();
         assertEquals(1, children.size());
-        final DataSchemaNode leaf = children.iterator().next();
-        assertTrue(leaf instanceof LeafSchemaNode);
+        final LeafSchemaNode leaf = assertInstanceOf(LeafSchemaNode.class, children.iterator().next());
         assertEquals("name", leaf.getQName().getLocalName());
     }
 
     @Test
-    public void testCascadeUses() throws Exception {
+    void testCascadeUses() throws Exception {
         final EffectiveModelContext loadModules = TestUtils.parseYangSource("/grouping-test/cascade-uses.yang");
         assertEquals(1, loadModules.getModules().size());
 
@@ -448,7 +448,7 @@ public class GroupingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testAddedByUsesLeafTypeQName() throws Exception {
+    void testAddedByUsesLeafTypeQName() throws Exception {
         final EffectiveModelContext loadModules = assertEffectiveModelDir("/added-by-uses-leaf-test");
         assertEquals(2, loadModules.getModules().size());
 
@@ -457,7 +457,7 @@ public class GroupingTest extends AbstractModelTest {
 
         final LeafSchemaNode leaf = (LeafSchemaNode)
             ((ContainerSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "my-container")))
-            .getDataChildByName(QName.create(foo.getQNameModule(), "my-leaf"));
+                .getDataChildByName(QName.create(foo.getQNameModule(), "my-leaf"));
 
         TypeDefinition<?> impType = null;
         for (final TypeDefinition<?> typeDefinition : imp.getTypeDefinitions()) {

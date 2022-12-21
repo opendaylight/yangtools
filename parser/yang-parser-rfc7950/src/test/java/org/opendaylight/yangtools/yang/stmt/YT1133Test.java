@@ -10,18 +10,18 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
-public class YT1133Test extends AbstractYangTest {
+class YT1133Test extends AbstractYangTest {
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
-    public void testAugmentKeys() throws Exception {
+    void testAugmentKeys() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final EffectiveModelContext ctx;

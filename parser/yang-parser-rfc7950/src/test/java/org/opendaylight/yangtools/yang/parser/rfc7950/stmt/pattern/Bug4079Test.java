@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Bug4079Test {
+class Bug4079Test {
     @Test
-    public void testValidPatternFix() {
+    void testValidPatternFix() {
         assertJavaRegex("^(?:(\\p{InArrows})*+)$", "(\\p{IsArrows})*+");
         assertJavaRegex("^(?:(\\p{InDingbats})++)$", "(\\p{IsDingbats})++");
         assertJavaRegex("^(?:(\\p{InSpecials})?+)$", "(\\p{IsSpecials})?+");
@@ -42,16 +42,16 @@ public class Bug4079Test {
         assertJavaRegex("^(?:(\\p{IsLatin}|\\p{InBasicLatin}){2,})$", "(\\p{IsLatin}|\\p{IsBasicLatin}){2,}");
         assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{IsLatin})*?)$", "(\\p{IsBasicLatin}|\\p{IsLatin})*?");
         assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}|\\p{InArrows})+?)$",
-                "(\\p{IsBasicLatin}|\\p{IsLatin-1Supplement}|\\p{IsArrows})+?");
+            "(\\p{IsBasicLatin}|\\p{IsLatin-1Supplement}|\\p{IsArrows})+?");
         assertJavaRegex("^(?:(\\p{InBasicLatin}|\\p{InLatin-1Supplement}|\\p{IsLatin})??)$",
-                "(\\p{InBasicLatin}|\\p{IsLatin-1Supplement}|\\p{IsLatin})??");
+            "(\\p{InBasicLatin}|\\p{IsLatin-1Supplement}|\\p{IsLatin})??");
         assertJavaRegex("^(?:(\\\\\\p{InBasicLatin})*+)$", "(\\\\\\p{IsBasicLatin})*+");
         assertJavaRegex("^(?:(\\\\\\\\\\p{InBasicLatin})*+)$", "(\\\\\\\\\\p{IsBasicLatin})*+");
         assertJavaRegex("^(?:(\\\\\\\\\\\\\\p{InBasicLatin})*+)$", "(\\\\\\\\\\\\\\p{IsBasicLatin})*+");
     }
 
     @Test
-    public void testInvalidPattern() {
+    void testInvalidPattern() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\\\p{IsBasicLatin})*+");
         assertEquals("^(?:(\\\\p{IsBasicLatin})*+)$", fixedUnicodeScriptPattern);
         // should throw exception
@@ -59,7 +59,7 @@ public class Bug4079Test {
     }
 
     @Test
-    public void testInvalidPattern2() {
+    void testInvalidPattern2() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
             "(\\p{IsSpecials}|\\\\\\\\p{IsBasicLatin})*+");
         assertEquals("^(?:(\\p{InSpecials}|\\\\\\\\p{IsBasicLatin})*+)$", fixedUnicodeScriptPattern);
@@ -68,7 +68,7 @@ public class Bug4079Test {
     }
 
     @Test
-    public void testInvalidPattern3() {
+    void testInvalidPattern3() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
             "(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+");
         assertEquals("^(?:(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+)$", fixedUnicodeScriptPattern);
@@ -77,7 +77,7 @@ public class Bug4079Test {
     }
 
     @Test
-    public void testCorrectBranches() {
+    void testCorrectBranches() {
         String str = RegexUtils.getJavaRegexFromXSD("a|bb");
         assertEquals("^(?:a|bb)$", str);
         Predicate<String> pred = Pattern.compile(str).asPredicate();

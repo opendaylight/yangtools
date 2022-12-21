@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug4456Test extends AbstractYangTest {
+class Bug4456Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var schema = assertEffectiveModelDir("/bugs/bug4456");
 
         var modules = schema.findModules(XMLNamespace.of("foo"));
