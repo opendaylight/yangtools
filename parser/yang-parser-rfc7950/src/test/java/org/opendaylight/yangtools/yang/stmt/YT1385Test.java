@@ -11,11 +11,11 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1385Test extends AbstractYangTest {
+class YT1385Test extends AbstractYangTest {
     @Test
-    public void testSameModuleWrongUnique() {
+    void testSameModuleWrongUnique() {
         assertSourceException(allOf(
             startsWith("Following components of unique statement argument refer to non-existent nodes: "
                 + "[Descendant{qnames=[(foo)bar]}] [at "),
