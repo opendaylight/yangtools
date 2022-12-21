@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -34,14 +34,14 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
-public class EffectiveModuleTest {
+class EffectiveModuleTest {
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(XMLNamespace.of("root-ns"));
     private static final QName CONT = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName FEATURE1 = QName.create(ROOT_MODULE_QNAME, "feature1");
     private static final Revision REVISION = Revision.of("2000-01-01");
 
     @Test
-    public void effectiveBuildTest() throws Exception {
+    void effectiveBuildTest() throws Exception {
         final Module rootModule = TestUtils.parseYangSource(
             "/semantic-statement-parser/effective-module/root.yang",
             "/semantic-statement-parser/effective-module/imported.yang",

@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
-public class Bug8597Test extends AbstractYangTest {
+class Bug8597Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final var foo = assertEffectiveModelDir("/bugs/bug8597").findModule("foo").orElseThrow();
         for (ModuleImport moduleImport : foo.getImports()) {
             switch (moduleImport.getModuleName().getLocalName()) {

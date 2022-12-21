@@ -7,23 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-public class YT841Test extends AbstractYangTest {
+class YT841Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "2018-01-02", "foo");
 
     @Test
-    public void testFindDataSchemaNode() throws Exception {
+    void testFindDataSchemaNode() throws Exception {
         final SchemaTreeEffectiveStatement<?> input = assertEffectiveModelDir("/bugs/YT841/")
             .getModuleStatement(FOO)
             .findSchemaTreeNode(FOO, FOO, FOO, QName.create(FOO, "input"))
             .orElse(null);
-        assertThat(input, instanceOf(InputEffectiveStatement.class));
+        assertInstanceOf(InputEffectiveStatement.class, input);
     }
 }
