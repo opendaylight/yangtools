@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
@@ -20,8 +23,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -47,13 +50,12 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
-public class TypesResolutionTest {
+class TypesResolutionTest {
     private static SchemaContext CONTEXT;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    @BeforeAll
+    static void beforeClass() throws Exception {
         CONTEXT = TestUtils.parseYangSource(
             "/types/custom-types-test@2012-04-04.yang",
             "/ietf/iana-timezones@2012-07-09.yang",
@@ -63,7 +65,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testIPVersion() {
+    void testIPVersion() {
         Module tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         assertEquals(14, typedefs.size());
@@ -94,7 +96,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testEnumeration() {
+    void testEnumeration() {
         Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
 
@@ -126,7 +128,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testIpAddress() {
+    void testIpAddress() {
         Module tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-address");
@@ -136,24 +138,24 @@ public class TypesResolutionTest {
         StringTypeDefinition ipv4 = (StringTypeDefinition) unionTypes.get(0);
         assertNotNull(ipv4.getBaseType());
         String expectedPattern = "^(?:(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
-                + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?)$";
+            + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?)$";
         assertEquals(expectedPattern, ipv4.getPatternConstraints().get(0).getJavaPatternString());
 
         StringTypeDefinition ipv6 = (StringTypeDefinition) unionTypes.get(1);
         assertNotNull(ipv6.getBaseType());
         List<PatternConstraint> ipv6Patterns = ipv6.getPatternConstraints();
         expectedPattern = "^(?:((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}"
-                + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
-                + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?)$";
+            + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
+            + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?)$";
         assertEquals(expectedPattern, ipv6Patterns.get(0).getJavaPatternString());
 
         expectedPattern = "^(?:(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|" + "((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)"
-                + "(%.+)?)$";
+            + "(%.+)?)$";
         assertEquals(expectedPattern, ipv6Patterns.get(1).getJavaPatternString());
     }
 
     @Test
-    public void testDomainName() {
+    void testDomainName() {
         Module tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition type = (StringTypeDefinition) TestUtils.findTypedef(typedefs, "domain-name");
@@ -161,7 +163,7 @@ public class TypesResolutionTest {
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
         String expectedPattern = "^(?:((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*"
-                + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.)$";
+            + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.)$";
         assertEquals(expectedPattern, patterns.get(0).getJavaPatternString());
 
         LengthConstraint lengths = type.getLengthConstraint().get();
@@ -172,10 +174,10 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testInstanceIdentifier1() {
+    void testInstanceIdentifier1() {
         Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
-                QName.create(tested.getQNameModule(), "inst-id-leaf1"));
+            QName.create(tested.getQNameModule(), "inst-id-leaf1"));
         InstanceIdentifierTypeDefinition leafType = (InstanceIdentifierTypeDefinition) leaf.getType();
         assertFalse(leafType.requireInstance());
         assertEquals(1,
@@ -183,16 +185,16 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testInstanceIdentifier2() {
+    void testInstanceIdentifier2() {
         Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
-                QName.create(tested.getQNameModule(), "inst-id-leaf2"));
+            QName.create(tested.getQNameModule(), "inst-id-leaf2"));
         InstanceIdentifierTypeDefinition leafType = (InstanceIdentifierTypeDefinition) leaf.getType();
         assertFalse(leafType.requireInstance());
     }
 
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
         Collection<? extends IdentitySchemaNode> identities = tested.getIdentities();
         assertEquals(5, identities.size());
@@ -224,10 +226,10 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testBitsType1() {
+    void testBitsType1() {
         Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
-                QName.create(tested.getQNameModule(), "mybits"));
+            QName.create(tested.getQNameModule(), "mybits"));
         BitsTypeDefinition leafType = (BitsTypeDefinition) leaf.getType();
         Iterator<? extends Bit> bits = leafType.getBits().iterator();
 
@@ -247,7 +249,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testBitsType2() {
+    void testBitsType2() {
         Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "access-operations-type");
@@ -279,7 +281,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testIanaTimezones() {
+    void testIanaTimezones() {
         Module tested = CONTEXT.findModules("iana-timezones").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
@@ -311,11 +313,11 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testObjectId128() {
+    void testObjectId128() {
         Module tested = CONTEXT.findModules("ietf-yang-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition testedType = (StringTypeDefinition) TestUtils.findTypedef(typedefs,
-                "object-identifier-128");
+            "object-identifier-128");
 
         List<PatternConstraint> patterns = testedType.getPatternConstraints();
         assertEquals(1, patterns.size());
@@ -333,7 +335,7 @@ public class TypesResolutionTest {
 
         pattern = patterns.get(0);
         assertEquals("^(?:(([0-1](\\.[1-3]?[0-9]))|(2\\.(0|([1-9]\\d*))))(\\.(0|([1-9]\\d*)))*)$",
-                pattern.getJavaPatternString());
+            pattern.getJavaPatternString());
 
         QName testedTypeBaseQName = testedTypeBase.getQName();
         assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-types"),
@@ -343,7 +345,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testIdentityref() {
+    void testIdentityref() {
         Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
@@ -358,35 +360,31 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testUnionWithExt() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/types/union-with-ext/extdef.yang"))
-                .addSource(sourceForResource("/types/union-with-ext/unionbug.yang"))
-                .addSource(sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"))
-                .buildEffective();
+    void testUnionWithExt() throws ReactorException {
+        final var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/types/union-with-ext/extdef.yang"))
+            .addSource(sourceForResource("/types/union-with-ext/unionbug.yang"))
+            .addSource(sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"))
+            .buildEffective();
         assertNotNull(result);
     }
 
     @Test
-    public void testUnionWithBits() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/types/union-with-bits/union-bits-model.yang"))
-                .buildEffective();
+    void testUnionWithBits() throws ReactorException {
+        final var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/types/union-with-bits/union-bits-model.yang"))
+            .buildEffective();
         assertNotNull(result);
     }
 
     @Test
-    public void testUnionInList() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/types/union-in-list/unioninlisttest.yang"));
+    void testUnionInList() {
+        var reactor = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/types/union-in-list/unioninlisttest.yang"));
 
-        try {
-            final SchemaContext result = reactor.buildEffective();
-            fail("effective build should fail due to union in list; this is not allowed");
-        } catch (ReactorException e) {
-            assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
-            assertTrue(e.getCause() instanceof SourceException);
-            assertTrue(e.getCause().getMessage().startsWith("union is not a YANG statement or use of extension"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective);
+        final var cause = ex.getCause();
+        assertInstanceOf(SourceException.class, cause);
+        assertThat(cause.getMessage(), startsWith("union is not a YANG statement or use of extension"));
     }
 }

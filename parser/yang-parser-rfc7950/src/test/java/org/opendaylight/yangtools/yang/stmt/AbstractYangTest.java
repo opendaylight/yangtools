@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.base.Throwables;
 import java.util.Set;
@@ -67,8 +67,7 @@ public abstract class AbstractYangTest {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(yangResourceName));
         final var actual = ex.getCause();
-        assertThat(actual, instanceOf(cause));
-        return cause.cast(actual);
+        return assertInstanceOf(cause, actual);
     }
 
     public static <E extends SourceException> @NonNull E assertException(final Class<E> cause,
@@ -90,8 +89,7 @@ public abstract class AbstractYangTest {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.loadModules(yangResourceName));
         final var actual = ex.getCause();
-        assertThat(actual, instanceOf(cause));
-        return cause.cast(actual);
+        return assertInstanceOf(cause, actual);
     }
 
     public static <E extends SourceException> @NonNull E assertExceptionDir(final String yangResourceName,

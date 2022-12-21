@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -20,11 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public class OrderingTest extends AbstractModelTest {
+class OrderingTest extends AbstractModelTest {
     @Test
-    public void testOrderingTypedef() {
+    void testOrderingTypedef() {
         final var typedefs = BAR.getTypeDefinitions();
-        final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
+        final String[] expectedOrder = {"int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
             "string-ext4", "multiple-pattern-string", "my-decimal-type", "my-union", "my-union-ext", "nested-union2"
         };
         final String[] actualOrder = new String[typedefs.size()];
@@ -38,7 +38,7 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingChildNodes() {
+    void testOrderingChildNodes() {
         AugmentationSchemaNode augment1 = null;
         for (final AugmentationSchemaNode as : FOO.getAugmentations()) {
             if (as.getChildNodes().size() == 5) {
@@ -48,7 +48,7 @@ public class OrderingTest extends AbstractModelTest {
         }
         assertNotNull(augment1);
 
-        final String[] expectedOrder = { "ds0ChannelNumber", "interface-id", "my-type", "schemas", "odl" };
+        final String[] expectedOrder = {"ds0ChannelNumber", "interface-id", "my-type", "schemas", "odl"};
         final String[] actualOrder = new String[expectedOrder.length];
 
         int offset = 0;
@@ -61,9 +61,9 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes1() {
+    void testOrderingNestedChildNodes1() {
         final var childNodes = FOO.getChildNodes();
-        final String[] expectedOrder = { "int32-leaf", "string-leaf", "multiple-pattern-string-leaf",
+        final String[] expectedOrder = {"int32-leaf", "string-leaf", "multiple-pattern-string-leaf",
             "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
             "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data", "how", "address", "port",
             "addresses", "peer", "id", "foo-id", "sub-ext", "sub-transfer", "sub-datas"
@@ -79,13 +79,13 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes2() {
+    void testOrderingNestedChildNodes2() {
         final var groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition target = groupings.iterator().next();
 
         final var childNodes = target.getChildNodes();
-        final String[] expectedOrder = { "data", "how", "address", "port", "addresses" };
+        final String[] expectedOrder = {"data", "how", "address", "port", "addresses"};
         final String[] actualOrder = new String[childNodes.size()];
 
         int offset = 0;
@@ -97,13 +97,13 @@ public class OrderingTest extends AbstractModelTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes3() {
+    void testOrderingNestedChildNodes3() {
         final Module justFoo = assertEffectiveModel("/ordering/foo.yang").getModules().iterator().next();
         final ContainerSchemaNode x = (ContainerSchemaNode) justFoo
-                .getDataChildByName(QName.create(justFoo.getQNameModule(), "x"));
+            .getDataChildByName(QName.create(justFoo.getQNameModule(), "x"));
         final var childNodes = x.getChildNodes();
 
-        final String[] expectedOrder = { "x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };
+        final String[] expectedOrder = {"x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15", "ax5"};
         final String[] actualOrder = new String[childNodes.size()];
 
         int offset = 0;

@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
+class YinFileChoiceStmtTest extends AbstractYinModulesTest {
     @Test
-    public void testChoiceAndCases() {
+    void testChoiceAndCases() {
         final Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
@@ -31,7 +31,7 @@ public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
             QName.create(testModule.getQNameModule(), "module")).get();
 
         ChoiceSchemaNode choice = (ChoiceSchemaNode) list.findDataChildByName(QName.create(testModule.getQNameModule(),
-                "configuration")).get();
+            "configuration")).get();
 
         assertEquals("configuration", choice.getQName().getLocalName());
         assertTrue(choice.isMandatory());

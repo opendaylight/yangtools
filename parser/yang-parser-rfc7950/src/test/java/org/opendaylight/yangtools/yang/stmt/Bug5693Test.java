@@ -7,26 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.xml.sax.SAXException;
 
-public class Bug5693Test {
+class Bug5693Test {
 
     private Module foo;
 
     /**
      * Use input stream to load Yin module.
      */
-    @Before
-    public void initTest() throws ReactorException, SAXException, IOException, URISyntaxException {
+    @BeforeEach
+    void initTest() throws ReactorException, SAXException, IOException, URISyntaxException {
         foo = StmtTestUtils.parseYinSources("/bugs/bug5693").getModules().iterator().next();
     }
 
@@ -35,10 +35,11 @@ public class Bug5693Test {
      * Meaning that stream was not closed after the first parsing phase.
      */
     @Test
-    public void bug5693Test() {
+    void bug5693Test() {
         assertNotNull(foo.getFeatures());
-        assertEquals("Module should has exactly one feature", 1, foo.getFeatures().size());
-        assertEquals("Present feature should has expected local name", "test-input-stream-not-closed",
-                foo.getFeatures().iterator().next().getQName().getLocalName());
+        assertEquals(1, foo.getFeatures().size(), "Module should has exactly one feature");
+        assertEquals("test-input-stream-not-closed",
+            foo.getFeatures().iterator().next().getQName().getLocalName(),
+            "Present feature should has expected local name");
     }
 }

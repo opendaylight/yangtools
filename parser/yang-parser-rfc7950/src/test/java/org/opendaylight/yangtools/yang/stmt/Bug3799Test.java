@@ -7,20 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 
-public class Bug3799Test extends AbstractYangTest {
+class Bug3799Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var schema = assertEffectiveModelDir("/bugs/bug3799");
 
         var modules = schema.getModules();
@@ -43,11 +42,7 @@ public class Bug3799Test extends AbstractYangTest {
         assertNotNull(childNodes);
         assertEquals(1, childNodes.size());
 
-        DataSchemaNode child = childNodes.iterator().next();
-        assertTrue(child instanceof LeafSchemaNode);
-
-        LeafSchemaNode leafBar = (LeafSchemaNode) child;
-        String bar = leafBar.getQName().getLocalName();
-        assertEquals("bar", bar);
+        LeafSchemaNode leafBar = assertInstanceOf(LeafSchemaNode.class, childNodes.iterator().next());
+        assertEquals("bar", leafBar.getQName().getLocalName());
     }
 }

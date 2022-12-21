@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1441Test extends AbstractYangTest {
+class YT1441Test extends AbstractYangTest {
     @Test
-    public void testInvalidRange() {
+    void testInvalidRange() {
         assertSourceException(startsWith(
             "Range constraint does not match fraction-digits: Decreasing scale of 2.345 to 2 requires rounding [at "),
             "/bugs/YT1441/foo.yang");
