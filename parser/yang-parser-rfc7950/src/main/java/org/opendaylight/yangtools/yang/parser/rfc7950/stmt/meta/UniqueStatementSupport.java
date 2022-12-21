@@ -14,10 +14,10 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
@@ -147,15 +146,14 @@ public final class UniqueStatementSupport
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         final String nocrlf = CRLF_PATTERN.matcher(argumentValue).replaceAll("\n");
 
-        final var uniqueConstraintNodes = new HashSet<Descendant>();
-        for (var uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
-            final var nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
-            SourceException.throwIf(nodeIdentifier instanceof Absolute, ctx,
-                "Unique statement argument '%s' contains schema node identifier '%s' which is not in the descendant "
-                    + "node identifier form.", argumentValue, uniqueArgToken);
-            uniqueConstraintNodes.add((Descendant) nodeIdentifier);
-        }
-        return ImmutableSet.copyOf(uniqueConstraintNodes);
+        return ImmutableSet.copyOf(Iterables.transform(SEP_SPLITTER.split(nocrlf), uniqueArgToken -> {
+            if (ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken) instanceof Descendant descendant) {
+                return descendant;
+            }
+
+            throw new SourceException(ctx, "Unique statement argument '%s' contains schema node identifier '%s' which "
+                + "is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
+        }));
     }
 
     /**
