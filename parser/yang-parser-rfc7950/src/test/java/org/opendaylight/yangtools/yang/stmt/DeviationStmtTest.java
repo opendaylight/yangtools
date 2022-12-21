@@ -7,29 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class DeviationStmtTest {
+class DeviationStmtTest {
 
     private static final StatementStreamSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
     private static final StatementStreamSource FOO_IMP_MODULE = sourceForResource("/deviation-stmt-test/foo-imp.yang");
@@ -37,10 +38,10 @@ public class DeviationStmtTest {
     private static final StatementStreamSource BAR_IMP_MODULE = sourceForResource("/deviation-stmt-test/bar-imp.yang");
 
     @Test
-    public void testDeviationAndDeviate() throws ReactorException {
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE)
-                .buildEffective();
+    void testDeviationAndDeviate() throws ReactorException {
+        final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE)
+            .buildEffective();
         assertNotNull(schemaContext);
 
         Module testModule = schemaContext.findModule("foo", Revision.of("2016-06-23")).get();
@@ -51,7 +52,7 @@ public class DeviationStmtTest {
             final Collection<? extends DeviateDefinition> deviates = deviation.getDeviates();
 
             final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
-                    .getLocalName();
+                .getLocalName();
             if ("test-leaf".equals(targetLocalName)) {
                 assertEquals(Optional.of("test-leaf is not supported"), deviation.getDescription());
                 assertEquals(1, deviates.size());
@@ -69,7 +70,7 @@ public class DeviationStmtTest {
                         assertEquals(12, deviate.getDeviatedMaxElements().intValue());
                     } else if (DeviateKind.REPLACE.equals(deviate.getDeviateType())) {
                         assertEquals(5, deviate.getDeviatedMinElements().intValue());
-                        assertTrue(deviate.getDeviatedType() instanceof Uint32TypeDefinition);
+                        assertInstanceOf(Uint32TypeDefinition.class, deviate.getDeviatedType());
                     } else {
                         assertEquals(2, deviate.getDeviatedMusts().size());
                         assertEquals("minutes", deviate.getDeviatedUnits());
@@ -99,7 +100,7 @@ public class DeviationStmtTest {
         for (Deviation deviation : deviations) {
             final Collection<? extends DeviateDefinition> deviates = deviation.getDeviates();
             final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
-                    .getLocalName();
+                .getLocalName();
 
             if ("bar-container-1".equals(targetLocalName)) {
                 deviation1 = deviation;
@@ -135,18 +136,18 @@ public class DeviationStmtTest {
         assertEquals(1,
             deviation1.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
 
-        assertTrue(deviation1.equals(deviation1));
-        assertFalse(deviation1.equals(null));
-        assertFalse(deviation1.equals("str"));
+        assertEquals(deviation1, deviation1);
+        assertNotEquals(null, deviation1);
+        assertNotEquals("str", deviation1);
 
         DeviateDefinition deviate = deviation1.getDeviates().iterator().next();
-        assertTrue(deviate.equals(deviate));
-        assertFalse(deviate.equals(null));
-        assertFalse(deviate.equals("str"));
+        assertEquals(deviate, deviate);
+        assertNotEquals(null, deviate);
+        assertNotEquals("str", deviate);
 
-        assertFalse(deviation1.equals(deviation2));
-        assertFalse(deviation2.equals(deviation3));
-        assertFalse(deviation4.equals(deviation5));
-        assertFalse(deviation6.equals(deviation7));
+        assertNotEquals(deviation1, deviation2);
+        assertNotEquals(deviation2, deviation3);
+        assertNotEquals(deviation4, deviation5);
+        assertNotEquals(deviation6, deviation7);
     }
 }

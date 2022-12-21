@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for testing of extensions and their arguments.
  */
-public class ParsingExtensionValueTest extends AbstractYangTest {
+class ParsingExtensionValueTest extends AbstractYangTest {
     @Test
-    public void extensionTest() {
+    void extensionTest() {
         assertSourceExceptionDir("/extensions", startsWith("ext:id is not a YANG statement or use of extension"));
     }
 }

@@ -7,17 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
@@ -67,23 +65,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class DeclaredStatementsTest {
-
+class DeclaredStatementsTest extends AbstractYangTest {
     @Test
-    public void testDeclaredAnyXml() throws ReactorException {
-        final StatementStreamSource anyxmlStmtModule =
-                sourceForResource("/declared-statements-test/anyxml-declared-test.yang");
-
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(anyxmlStmtModule);
-        assertNotNull(schemaContext);
+    void testDeclaredAnyXml() {
+        final var schemaContext = assertEffectiveModel("/declared-statements-test/anyxml-declared-test.yang");
 
         final Module testModule = schemaContext.findModules("anyxml-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final AnyxmlSchemaNode anyxmlSchemaNode = (AnyxmlSchemaNode) testModule.getDataChildByName(
-                QName.create(testModule.getQNameModule(), "foobar"));
+            QName.create(testModule.getQNameModule(), "foobar"));
         assertNotNull(anyxmlSchemaNode);
         final AnyxmlStatement anyxmlStatement = ((AnyxmlEffectiveStatement) anyxmlSchemaNode).getDeclared();
 
@@ -128,18 +120,14 @@ public class DeclaredStatementsTest {
     }
 
     @Test
-    public void testDeclaredChoice() throws ReactorException {
-        final StatementStreamSource choiceStmtModule =
-                sourceForResource("/declared-statements-test/choice-declared-test.yang");
-
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(choiceStmtModule);
-        assertNotNull(schemaContext);
+    void testDeclaredChoice() {
+        final var schemaContext = assertEffectiveModel("/declared-statements-test/choice-declared-test.yang");
 
         final Module testModule = schemaContext.findModules("choice-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) testModule.getDataChildByName(
-                QName.create(testModule.getQNameModule(), "test-choice"));
+            QName.create(testModule.getQNameModule(), "test-choice"));
         assertNotNull(choiceSchemaNode);
         final ChoiceStatement choiceStatement = ((ChoiceEffectiveStatement) choiceSchemaNode).getDeclared();
 
@@ -181,12 +169,8 @@ public class DeclaredStatementsTest {
     }
 
     @Test
-    public void testDeclaredAugment() throws ReactorException {
-        final StatementStreamSource augmentStmtModule =
-                sourceForResource("/declared-statements-test/augment-declared-test.yang");
-
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(augmentStmtModule);
-        assertNotNull(schemaContext);
+    void testDeclaredAugment() throws ReactorException {
+        final var schemaContext = assertEffectiveModel("/declared-statements-test/augment-declared-test.yang");
 
         final Module testModule = schemaContext.findModules("augment-declared-test").iterator().next();
         assertNotNull(testModule);
@@ -202,21 +186,15 @@ public class DeclaredStatementsTest {
         assertNotNull(targetNode);
 
         final Collection<? extends DataDefinitionStatement> augmentStatementDataDefinitions =
-                augmentStatement.getDataDefinitions();
+            augmentStatement.getDataDefinitions();
         assertNotNull(augmentStatementDataDefinitions);
         assertEquals(1, augmentStatementDataDefinitions.size());
     }
 
     @Test
-    public void testDeclaredModuleAndSubmodule() throws ReactorException {
-        final StatementStreamSource parentModule =
-                sourceForResource("/declared-statements-test/parent-module-declared-test.yang");
-
-        final StatementStreamSource childModule =
-                sourceForResource("/declared-statements-test/child-module-declared-test.yang");
-
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(parentModule, childModule);
-        assertNotNull(schemaContext);
+    void testDeclaredModuleAndSubmodule() throws ReactorException {
+        final var schemaContext = assertEffectiveModel("/declared-statements-test/parent-module-declared-test.yang",
+            "/declared-statements-test/child-module-declared-test.yang");
 
         final Module testModule = schemaContext.findModules("parent-module-declared-test").iterator().next();
         assertNotNull(testModule);
@@ -259,15 +237,9 @@ public class DeclaredStatementsTest {
     }
 
     @Test
-    public void testDeclaredModule() throws ReactorException, ParseException {
-        final StatementStreamSource rootModule =
-                sourceForResource("/declared-statements-test/root-module-declared-test.yang");
-
-        final StatementStreamSource importedModule =
-                sourceForResource("/declared-statements-test/imported-module-declared-test.yang");
-
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
-        assertNotNull(schemaContext);
+    void testDeclaredModule() throws ReactorException, ParseException {
+        final var schemaContext = assertEffectiveModel("/declared-statements-test/root-module-declared-test.yang",
+            "/declared-statements-test/imported-module-declared-test.yang");
 
         final Revision revision = Revision.of("2016-09-28");
         final Module testModule = schemaContext.findModule("root-module-declared-test", revision).orElseThrow();
@@ -334,21 +306,17 @@ public class DeclaredStatementsTest {
     }
 
     @Test
-    public void testDeclaredContainer() throws ReactorException {
-        final StatementStreamSource containerStmtModule =
-                sourceForResource("/declared-statements-test/container-declared-test.yang");
-
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(containerStmtModule);
-        assertNotNull(schemaContext);
+    void testDeclaredContainer() throws ReactorException {
+        final var schemaContext = assertEffectiveModel("/declared-statements-test/container-declared-test.yang");
 
         final Module testModule = schemaContext.findModules("container-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) testModule.getDataChildByName(
-                QName.create(testModule.getQNameModule(), "test-container"));
+            QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(containerSchemaNode);
         final ContainerStatement containerStatement =
-                ((ContainerEffectiveStatement) containerSchemaNode).getDeclared();
+            ((ContainerEffectiveStatement) containerSchemaNode).getDeclared();
 
         final QName name = containerStatement.argument();
         assertNotNull(name);
@@ -356,7 +324,7 @@ public class DeclaredStatementsTest {
         final WhenStatement containerStatementWhen = containerStatement.getWhenStatement().orElseThrow();
 
         final Collection<? extends IfFeatureStatement> containerStatementIfFeatures =
-                containerStatement.getIfFeatures();
+            containerStatement.getIfFeatures();
         assertNotNull(containerStatementIfFeatures);
         assertEquals(1, containerStatementIfFeatures.size());
 
@@ -382,7 +350,7 @@ public class DeclaredStatementsTest {
         assertEquals(1, containerStatementGroupings.size());
 
         final Collection<? extends DataDefinitionStatement> containerStatementDataDefinitions =
-                containerStatement.getDataDefinitions();
+            containerStatement.getDataDefinitions();
 
         assertNotNull(containerStatementDataDefinitions);
         assertEquals(1, containerStatementDataDefinitions.size());

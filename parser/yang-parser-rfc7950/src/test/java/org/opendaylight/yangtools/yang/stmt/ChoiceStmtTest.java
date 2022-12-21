@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-public class ChoiceStmtTest extends AbstractModelTest {
+class ChoiceStmtTest extends AbstractModelTest {
     @Test
-    public void choiceAndCaseTest() {
+    void choiceAndCaseTest() {
         final ContainerSchemaNode container = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("transfer"));
         final ChoiceSchemaNode choice = (ChoiceSchemaNode) container.getDataChildByName(fooQName("how"));
         assertEquals(5, choice.getCases().size());

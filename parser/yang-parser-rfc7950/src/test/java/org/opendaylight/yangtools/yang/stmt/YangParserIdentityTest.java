@@ -8,36 +8,36 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
-public class YangParserIdentityTest extends AbstractYangTest {
+class YangParserIdentityTest extends AbstractYangTest {
 
     // base identity name equals identity name
     @Test
-    public void testParsingIdentityTestModule() {
+    void testParsingIdentityTestModule() {
         assertInferenceException(startsWith("Unable to resolve identity (urn:test.identitytest?revision="
-                + "2014-09-17)test and base identity"), "/identity/identitytest.yang");
+            + "2014-09-17)test and base identity"), "/identity/identitytest.yang");
     }
 
     // same module prefixed base identity name equals identity name
     @Test
-    public void testParsingPrefixIdentityTestModule() {
+    void testParsingPrefixIdentityTestModule() {
         assertInferenceException(startsWith("Unable to resolve identity (urn:test.prefixidentitytest?revision="
-                + "2014-09-24)prefixtest and base identity"), "/identity/prefixidentitytest.yang");
+            + "2014-09-24)prefixtest and base identity"), "/identity/prefixidentitytest.yang");
     }
 
     // imported module prefixed base identity name equals identity name, but
     // prefix differs
     @Test
-    public void testParsingImportPrefixIdentityTestModule() {
+    void testParsingImportPrefixIdentityTestModule() {
         final var module = assertEffectiveModelDir("/identity/import").findModules("prefiximportidentitytest")
             .iterator().next();
         final var imports = module.getImports();
-        assertEquals(imports.size(), 1);
+        assertEquals(1, imports.size());
         ModuleImport dummy = TestUtils.findImport(imports, "dummy");
         assertNotEquals(dummy.getPrefix(), module.getPrefix());
     }
