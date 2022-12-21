@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Bug3859Test extends AbstractYangTest {
+class Bug3859Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         assertEquals(1, assertEffectiveModelDir("/bugs/bug3859").findModules("reference-in-unknown").size());
     }
 }

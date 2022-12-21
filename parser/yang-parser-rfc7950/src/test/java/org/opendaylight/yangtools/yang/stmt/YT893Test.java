@@ -9,26 +9,26 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT893Test extends AbstractYangTest {
+class YT893Test extends AbstractYangTest {
     @Test
-    public void testCR() {
+    void testCR() {
         assertSourceException(startsWith("Failed to parse node"), "/bugs/YT893/cr.yang");
     }
 
     @Test
-    public void testCRLF() {
+    void testCRLF() {
         assertEffectiveModel("/bugs/YT893/crlf.yang");
     }
 
     @Test
-    public void testHTAB() {
+    void testHTAB() {
         assertEffectiveModel("/bugs/YT893/ht.yang");
     }
 
     @Test
-    public void testLF() {
+    void testLF() {
         assertEffectiveModel("/bugs/YT893/lf.yang");
     }
 }

@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 
 import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -21,12 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class Bug5884Test extends AbstractYangTest {
+class Bug5884Test extends AbstractYangTest {
     private static final String NS = "urn:yang.foo";
     private static final String REV = "2016-01-01";
 
     @Test
-    public void testBug5884() {
+    void testBug5884() {
         final var context = assertEffectiveModelDir("/bugs/bug5884");
 
         final QName root = QName.create(NS, REV, "main-container");

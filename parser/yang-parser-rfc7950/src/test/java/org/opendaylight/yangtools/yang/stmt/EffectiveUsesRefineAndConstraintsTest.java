@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Iterables;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -26,9 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
+class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
     @Test
-    public void refineTest() throws Exception {
+    void refineTest() throws Exception {
         final EffectiveModelContext result = assertEffectiveModel("/stmt-test/uses/refine-test.yang");
 
         final ModuleEffectiveStatement module = Iterables.getOnlyElement(result.getModuleStatements().values());

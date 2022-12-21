@@ -7,22 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
-public class IncludeRevisionsTest {
+class IncludeRevisionsTest {
 
     private static final StatementStreamSource EQUAL_ROOT = sourceForResource("/revisions/equal-root.yang");
     private static final StatementStreamSource EQUAL_REV = sourceForResource("/revisions/equal-rev.yang");
@@ -36,50 +33,40 @@ public class IncludeRevisionsTest {
     private static final StatementStreamSource NOWHERE_REV = sourceForResource("/revisions/nowhere-rev.yang");
 
     @Test
-    public void revsEqualTest() throws ReactorException {
-        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(EQUAL_REV, EQUAL_ROOT)
-                .build();
+    void revsEqualTest() throws ReactorException {
+        var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(EQUAL_REV, EQUAL_ROOT)
+            .build();
         assertNotNull(result);
     }
 
     @Test
-    public void revsUnequalTest() throws ReactorException {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(UNEQUAL_REV, UNEQUAL_ROOT);
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to unequal revisions in include and submodule");
-        } catch (ReactorException e) {
-            assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
-        }
+    void revsUnequalTest() throws ReactorException {
+        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(UNEQUAL_REV, UNEQUAL_ROOT);
+        var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::build);
+        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
     }
 
     @Test
-    public void revIncludeOnly() throws ReactorException {
-        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT)
-                .build();
+    void revIncludeOnly() throws ReactorException {
+        var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT)
+            .build();
         assertNotNull(result);
     }
 
     @Test
-    public void revInModuleOnly() throws ReactorException {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to missing revision in included submodule");
-        } catch (ReactorException e) {
-            assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
-        }
+    void revInModuleOnly() throws ReactorException {
+        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
+        var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::build);
+        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
     }
 
     @Test
-    public void revNowhereTest() throws ReactorException {
-        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(NOWHERE_REV, NOWHERE_ROOT)
-                .build();
+    void revNowhereTest() throws ReactorException {
+        var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(NOWHERE_REV, NOWHERE_ROOT)
+            .build();
         assertNotNull(result);
     }
 }
