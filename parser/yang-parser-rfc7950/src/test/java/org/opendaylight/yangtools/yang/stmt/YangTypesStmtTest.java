@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class YangTypesStmtTest {
+class YangTypesStmtTest {
 
     private static final StatementStreamSource TYPEFILE1 = sourceForResource("/semantic-statement-parser/types.yang");
     private static final StatementStreamSource TYPEFILE2 = sourceForResource(
@@ -31,10 +31,10 @@ public class YangTypesStmtTest {
     private static final StatementStreamSource FILE4 = sourceForResource("/semantic-statement-parser/model/foo.yang");
 
     @Test
-    public void readAndParseYangFileTest() throws ReactorException {
+    void readAndParseYangFileTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, FILE1, FILE2, FILE3, FILE4)
-                .buildEffective();
+            .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, FILE1, FILE2, FILE3, FILE4)
+            .buildEffective();
         assertNotNull(result);
     }
 }

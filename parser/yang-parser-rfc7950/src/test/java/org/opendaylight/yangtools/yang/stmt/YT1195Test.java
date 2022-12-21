@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -18,9 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class YT1195Test extends AbstractYangTest {
+class YT1195Test extends AbstractYangTest {
     @Test
-    public void testKeyStatementReuse() {
+    void testKeyStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1195/key.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 

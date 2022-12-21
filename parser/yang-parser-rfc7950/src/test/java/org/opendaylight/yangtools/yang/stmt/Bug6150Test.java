@@ -7,23 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Bug6150Test {
+class Bug6150Test {
     @Test
-    public void effectiveAugmentFirstTest() throws Exception {
+    void effectiveAugmentFirstTest() throws Exception {
         assertNotNull(TestUtils.parseYangSource("/bugs/bug6150/target.yang", "/bugs/bug6150/aug-first.yang"));
     }
 
     @Test
-    public void effectiveAugmentSecondTest() throws Exception {
+    void effectiveAugmentSecondTest() throws Exception {
         assertNotNull(TestUtils.parseYangSource("/bugs/bug6150/target.yang", "/bugs/bug6150/aug-second.yang"));
     }
 
     @Test
-    public void effectiveAugmentBothTest() throws Exception {
+    void effectiveAugmentBothTest() throws Exception {
         assertNotNull(TestUtils.parseYangSource("/bugs/bug6150/target.yang", "/bugs/bug6150/aug-first.yang",
             "/bugs/bug6150/aug-second.yang"));
     }

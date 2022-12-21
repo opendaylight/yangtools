@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -19,15 +19,14 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug5942Test extends AbstractYangTest {
+class Bug5942Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var schemaContext = assertEffectiveModelDir("/bugs/bug5942");
 
         final DataSchemaNode root = schemaContext.getDataChildByName(QName.create("foo", "2016-06-02", "root"));
-        assertTrue(root instanceof ContainerSchemaNode);
 
-        final var uses = ((ContainerSchemaNode) root).getUses();
+        final var uses = assertInstanceOf(ContainerSchemaNode.class, root).getUses();
         assertEquals(1, uses.size());
         final UsesNode usesNode = uses.iterator().next();
 
