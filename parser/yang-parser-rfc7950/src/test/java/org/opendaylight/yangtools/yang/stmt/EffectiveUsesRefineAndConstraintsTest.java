@@ -7,31 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Iterables;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
+class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
     @Test
-    public void refineTest() throws Exception {
-        final EffectiveModelContext result = assertEffectiveModel("/stmt-test/uses/refine-test.yang");
+    void refineTest() {
+        final var result = assertEffectiveModel("/stmt-test/uses/refine-test.yang");
 
-        final ModuleEffectiveStatement module = Iterables.getOnlyElement(result.getModuleStatements().values());
+        final var module = Iterables.getOnlyElement(result.getModuleStatements().values());
         final QNameModule qnameModule = module.localQNameModule();
         final QName rootContainer = QName.create(qnameModule, "root-container");
 
@@ -46,8 +45,7 @@ public class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
         checkRefinedChoice(module, rootContainer, containerFromGrouping, choiceFromGrp);
         checkRefinedContainer(module, rootContainer, containerFromGrouping2, presenceContainer);
 
-        final GroupingEffectiveStatement grp = module.findFirstEffectiveSubstatement(GroupingEffectiveStatement.class)
-            .orElseThrow();
+        final var grp = module.findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow();
         assertEquals(QName.create(qnameModule, "grp-1"), grp.argument());
 
         checkOriginalList(grp, containerFromGrouping, listInContainer);

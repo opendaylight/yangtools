@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public class YT1393Test {
+class YT1393Test {
     @Test
-    public void testUsesAugmentUnsupportedByFeatures() throws Exception {
+    void testUsesAugmentUnsupportedByFeatures() throws Exception {
         final var module = StmtTestUtils.parseYangSource("/bugs/YT1393/foo.yang", Set.of())
             .findModuleStatement(QName.create("foo", "foo"))
             .orElseThrow();
@@ -23,7 +23,7 @@ public class YT1393Test {
     }
 
     @Test
-    public void testUsesRefineUnsupportedByFeatures() throws Exception {
+    void testUsesRefineUnsupportedByFeatures() throws Exception {
         final var module = StmtTestUtils.parseYangSource("/bugs/YT1393/bar.yang", Set.of())
             .findModuleStatement(QName.create("bar", "bar"))
             .orElseThrow();
@@ -31,7 +31,7 @@ public class YT1393Test {
     }
 
     @Test
-    public void testAugmentAugmentUnsupportedByFeatures() throws Exception {
+    void testAugmentAugmentUnsupportedByFeatures() throws Exception {
         final var module = StmtTestUtils.parseYangSource("/bugs/YT1393/baz.yang", Set.of())
             .findModuleStatement(QName.create("baz", "baz"))
             .orElseThrow();
@@ -39,7 +39,7 @@ public class YT1393Test {
     }
 
     @Test
-    public void testUsesAugmentInUnsupportedByFeatures() throws Exception {
+    void testUsesAugmentInUnsupportedByFeatures() throws Exception {
         final var module = StmtTestUtils.parseYangSource("/bugs/YT1393/xyzzy.yang", Set.of())
             .findModuleStatement(QName.create("xyzzy", "xyzzy"))
             .orElseThrow();

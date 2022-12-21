@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-public class Bug6316Test extends AbstractYangTest {
+class Bug6316Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug6316");
         verifyEnumTypedefinition(context);
         verifyBitsTypedefinition(context);
@@ -34,10 +34,10 @@ public class Bug6316Test extends AbstractYangTest {
 
     private static void verifyEnumTypedefinition(final SchemaContext context) {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "enum-leaf"));
-        assertTrue(dataChildByName instanceof LeafSchemaNode);
+        assertInstanceOf(LeafSchemaNode.class, dataChildByName);
         final LeafSchemaNode enumLeaf = (LeafSchemaNode) dataChildByName;
         final TypeDefinition<? extends TypeDefinition<?>> type = enumLeaf.getType();
-        assertTrue(type instanceof EnumTypeDefinition);
+        assertInstanceOf(EnumTypeDefinition.class, type);
         final EnumTypeDefinition myEnumeration = (EnumTypeDefinition) type;
         final List<EnumPair> values = myEnumeration.getValues();
         for (final EnumPair enumPair : values) {
@@ -66,11 +66,9 @@ public class Bug6316Test extends AbstractYangTest {
 
     private static void verifyBitsTypedefinition(final SchemaContext context) {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "bits-leaf"));
-        assertTrue(dataChildByName instanceof LeafSchemaNode);
-        final LeafSchemaNode bitsLeaf = (LeafSchemaNode) dataChildByName;
+        final LeafSchemaNode bitsLeaf = assertInstanceOf(LeafSchemaNode.class, dataChildByName);
         final TypeDefinition<? extends TypeDefinition<?>> type = bitsLeaf.getType();
-        assertTrue(type instanceof BitsTypeDefinition);
-        final BitsTypeDefinition myBits = (BitsTypeDefinition) type;
+        final BitsTypeDefinition myBits = assertInstanceOf(BitsTypeDefinition.class, type);
         for (final Bit bit : myBits.getBits()) {
             final String name = bit.getName();
             switch (name) {

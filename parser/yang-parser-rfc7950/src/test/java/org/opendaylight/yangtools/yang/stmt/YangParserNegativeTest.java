@@ -13,17 +13,17 @@ import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.base.Throwables;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class YangParserNegativeTest {
+class YangParserNegativeTest {
     @Test
-    public void testInvalidImport() {
+    void testInvalidImport() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/testfile1.yang"));
 
@@ -34,7 +34,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testTypeNotFound() {
+    void testTypeNotFound() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/testfile2.yang"));
         final Throwable rootCause = Throwables.getRootCause(ex);
@@ -44,7 +44,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidAugmentTarget() {
+    void testInvalidAugmentTarget() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(
                 "/negative-scenario/testfile0.yang", "/negative-scenario/testfile3.yang"));
@@ -55,7 +55,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidRefine() {
+    void testInvalidRefine() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/testfile4.yang"));
         final Throwable cause = ex.getCause();
@@ -66,7 +66,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidLength() {
+    void testInvalidLength() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/testfile5.yang"));
         final Throwable cause = ex.getCause();
@@ -75,7 +75,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidRange() {
+    void testInvalidRange() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/testfile6.yang"));
         final Throwable cause = ex.getCause();
@@ -84,7 +84,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateContainer() {
+    void testDuplicateContainer() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/duplicity/container.yang"));
         final Throwable cause = ex.getCause();
@@ -95,7 +95,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateContainerList() {
+    void testDuplicateContainerList() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/duplicity/container-list.yang"));
         final Throwable cause = ex.getCause();
@@ -106,7 +106,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateContainerLeaf() {
+    void testDuplicateContainerLeaf() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/duplicity/container-leaf.yang"));
         final Throwable cause = ex.getCause();
@@ -117,7 +117,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateTypedef() {
+    void testDuplicateTypedef() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/duplicity/typedef.yang"));
         final Throwable cause = ex.getCause();
@@ -127,7 +127,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicityInAugmentTarget1() {
+    void testDuplicityInAugmentTarget1() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(
                 "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang"));
@@ -138,7 +138,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicityInAugmentTarget2() {
+    void testDuplicityInAugmentTarget2() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(
                 "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang"));
@@ -152,7 +152,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testMandatoryInAugment() {
+    void testMandatoryInAugment() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(
                 "/negative-scenario/testfile8.yang", "/negative-scenario/testfile7.yang"));
@@ -163,7 +163,7 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidListKeyDefinition() {
+    void testInvalidListKeyDefinition() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource("/negative-scenario/invalid-list-key-def.yang"));
         final Throwable cause = ex.getCause();
