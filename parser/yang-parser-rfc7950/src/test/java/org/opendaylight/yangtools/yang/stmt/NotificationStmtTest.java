@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class NotificationStmtTest {
+class NotificationStmtTest {
     @Test
-    public void notificationTest() throws Exception {
+    void notificationTest() throws Exception {
         final SchemaContext result = TestUtils.parseYangSource("/model/baz.yang", "/model/bar.yang");
         assertNotNull(result);
 
@@ -36,7 +36,7 @@ public class NotificationStmtTest {
         assertEquals(3, notification.getChildNodes().size());
 
         LeafSchemaNode leaf = (LeafSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "event-class"));
+            "event-class"));
         assertNotNull(leaf);
         leaf = (LeafSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(), "severity"));
         assertNotNull(leaf);

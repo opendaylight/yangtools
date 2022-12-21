@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class YT826Test extends AbstractYangTest {
+class YT826Test extends AbstractYangTest {
     @Test
-    public void testWhenExpressionWhitespace() {
+    void testWhenExpressionWhitespace() {
         assertEffectiveModel("/bugs/yangtools826/example.yang");
     }
 }

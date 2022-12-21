@@ -7,21 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-public class YinFileUsesStmtTest extends AbstractYinModulesTest {
+class YinFileUsesStmtTest extends AbstractYinModulesTest {
     @Test
-    public void testUses() {
+    void testUses() {
         final Module testModule = context.findModules("main-impl").iterator().next();
 
         final Collection<? extends AugmentationSchemaNode> augmentations = testModule.getAugmentations();

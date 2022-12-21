@@ -5,39 +5,35 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6883Test extends AbstractYangTest {
+class Bug6883Test extends AbstractYangTest {
     private static final XMLNamespace FOO = XMLNamespace.of("foo");
 
     private ModuleEffectiveStatement foo;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         foo = assertEffectiveModelDir("/bugs/bug6883").getModuleStatement(QName.create(FOO, "foo"));
     }
 
     @Test
-    public void test() throws Exception {
-        final AnydataSchemaNode topAnyData = assertAnyData("top");
+    void test() throws Exception {
+        final var topAnyData = assertAnyData("top");
         assertEquals(Status.DEPRECATED, topAnyData.getStatus());
         assertEquals(Optional.of("top anydata"), topAnyData.getDescription());
 
@@ -56,11 +52,7 @@ public class Bug6883Test extends AbstractYangTest {
     }
 
     private AnydataSchemaNode assertAnyData(final String... names) {
-        final SchemaTreeEffectiveStatement<?> stmt = foo.findSchemaTreeNode(Arrays.stream(names)
-            .map(name -> QName.create(FOO, name))
-            .collect(Collectors.toList()))
-            .orElse(null);
-        assertThat(stmt, instanceOf(AnydataSchemaNode.class));
-        return (AnydataSchemaNode) stmt;
+        return assertInstanceOf(AnydataSchemaNode.class,
+            foo.findSchemaTreeNode(Arrays.stream(names).map(name -> QName.create(FOO, name)).toList()).orElseThrow());
     }
 }

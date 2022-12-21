@@ -5,61 +5,59 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6885Test extends AbstractYangTest {
-
+class Bug6885Test extends AbstractYangTest {
     @Test
-    public void validYang10Test() {
+    void validYang10Test() {
         // Yang 1.0 allows "if-feature" and "when" on list keys
         assertEffectiveModel("/rfc7950/list-keys-test/correct-list-keys-test.yang");
     }
 
     @Test
-    public void invalidListLeafKeyTest1() {
+    void invalidListLeafKeyTest1() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)when statement is not allowed in "
-                + "(incorrect-list-keys-test?revision=2017-02-06)a2 leaf statement which is specified as a list key.";
+            + "(incorrect-list-keys-test?revision=2017-02-06)a2 leaf statement which is specified as a list key.";
         assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test.yang");
     }
 
     @Test
-    public void invalidListLeafKeyTest2() {
+    void invalidListLeafKeyTest2() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
-                + "(incorrect-list-keys-test1?revision=2017-02-06)b leaf statement which is specified as a list key.";
+            + "(incorrect-list-keys-test1?revision=2017-02-06)b leaf statement which is specified as a list key.";
         assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test1.yang");
     }
 
     @Test
-    public void invalidListUsesLeafKeyTest() {
+    void invalidListUsesLeafKeyTest() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
-                + "(incorrect-list-keys-test2?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
+            + "(incorrect-list-keys-test2?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
         assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test2.yang");
     }
 
     @Test
-    public void invalidListUsesLeafKeyTest1() {
+    void invalidListUsesLeafKeyTest1() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)when statement is not allowed in "
-                + "(incorrect-list-keys-test3?revision=2017-02-06)a2 leaf statement which is specified as a list key.";
+            + "(incorrect-list-keys-test3?revision=2017-02-06)a2 leaf statement which is specified as a list key.";
         assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test3.yang");
     }
 
     @Test
-    public void invalidListUsesLeafKeyTest2() {
+    void invalidListUsesLeafKeyTest2() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
-                + "(incorrect-list-keys-test4?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
+            + "(incorrect-list-keys-test4?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
         assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test4.yang");
     }
 
     @Test
-    public void invalidListUsesRefineLeafKeyTest() {
+    void invalidListUsesRefineLeafKeyTest() {
         final String exceptionMessage = "(urn:ietf:params:xml:ns:yang:yin:1)if-feature statement is not allowed in "
-                + "(incorrect-list-keys-test5?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
+            + "(incorrect-list-keys-test5?revision=2017-02-06)a1 leaf statement which is specified as a list key.";
         assertSourceException(startsWith(exceptionMessage), "/rfc7950/list-keys-test/incorrect-list-keys-test5.yang");
     }
 }

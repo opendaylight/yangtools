@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Bug5899Test extends AbstractYangTest {
+class Bug5899Test extends AbstractYangTest {
     @Test
-    public void testBug5899() {
+    void testBug5899() {
         assertEffectiveModelDir("/bugs/bug5899");
     }
 }
