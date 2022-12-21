@@ -10,16 +10,16 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class Bug7954Test {
+class Bug7954Test {
     @Test
-    public void testParsingTheSameModuleTwice() throws Exception {
+    void testParsingTheSameModuleTwice() throws Exception {
         final File yang = new File(getClass().getResource("/bugs/bug7954/foo.yang").toURI());
 
         try {
@@ -33,7 +33,7 @@ public class Bug7954Test {
     }
 
     @Test
-    public void testParsingTheSameSubmoduleTwice() throws Exception {
+    void testParsingTheSameSubmoduleTwice() throws Exception {
         final File yang = new File(getClass().getResource("/bugs/bug7954/bar.yang").toURI());
         final File childYang = new File(getClass().getResource("/bugs/bug7954/subbar.yang").toURI());
 

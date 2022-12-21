@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug5200Test extends AbstractYangTest {
+class Bug5200Test extends AbstractYangTest {
     private static final String NS = "foo";
     private static final String REV = "2016-05-05";
 
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug5200");
 
         QName root = QName.create(NS, REV, "root");
@@ -50,7 +50,7 @@ public class Bug5200Test extends AbstractYangTest {
         assertThat(myLeaf2Type, instanceOf(Int32TypeDefinition.class));
 
         final LengthConstraint lengthConstraint =
-                ((StringTypeDefinition) myLeafType).getLengthConstraint().get();
+            ((StringTypeDefinition) myLeafType).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) myLeafType).getPatternConstraints();
 
         assertEquals(1, lengthConstraint.getAllowedRanges().asRanges().size());

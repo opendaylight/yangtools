@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -60,9 +60,9 @@ import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class YangParserTest extends AbstractModelTest {
+class YangParserTest extends AbstractModelTest {
     @Test
-    public void testHeaders() throws ParseException {
+    void testHeaders() throws ParseException {
         assertEquals("foo", FOO.getName());
         assertEquals(YangVersion.VERSION_1, FOO.getYangVersion());
         assertEquals(XMLNamespace.of("urn:opendaylight.foo"), FOO.getNamespace());
@@ -86,7 +86,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testParseList() {
+    void testParseList() {
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) BAR.getDataChildByName(barQName("interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(barQName("ifEntry"));
         // test SchemaNode args
@@ -129,7 +129,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypedefRangesResolving() throws ParseException {
+    void testTypedefRangesResolving() throws ParseException {
         final LeafSchemaNode int32Leaf = (LeafSchemaNode) FOO.getDataChildByName(fooQName("int32-leaf"));
 
         final Int32TypeDefinition leafType = (Int32TypeDefinition) int32Leaf.getType();
@@ -175,7 +175,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypedefPatternsResolving() {
+    void testTypedefPatternsResolving() {
         final LeafSchemaNode stringleaf = (LeafSchemaNode) FOO.getDataChildByName(fooQName("string-leaf"));
 
         assertTrue(stringleaf.getType() instanceof StringTypeDefinition);
@@ -228,7 +228,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypedefInvalidPatternsResolving() {
+    void testTypedefInvalidPatternsResolving() {
         final LeafSchemaNode multiplePatternStringLeaf = (LeafSchemaNode) FOO.getDataChildByName(
             fooQName("multiple-pattern-string-leaf"));
         StringTypeDefinition type = (StringTypeDefinition) multiplePatternStringLeaf.getType();
@@ -256,7 +256,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypedefLengthsResolving() {
+    void testTypedefLengthsResolving() {
         final LeafSchemaNode lengthLeaf = (LeafSchemaNode) FOO.getDataChildByName(fooQName("length-leaf"));
         final StringTypeDefinition type = (StringTypeDefinition) lengthLeaf.getType();
 
@@ -299,7 +299,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypedefDecimal1() {
+    void testTypedefDecimal1() {
         final LeafSchemaNode testleaf = (LeafSchemaNode) FOO.getDataChildByName(fooQName("decimal-leaf"));
 
         assertTrue(testleaf.getType() instanceof DecimalTypeDefinition);
@@ -321,7 +321,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypedefDecimal2() {
+    void testTypedefDecimal2() {
         final LeafSchemaNode testleaf = (LeafSchemaNode) FOO.getDataChildByName(fooQName("decimal-leaf2"));
 
         assertTrue(testleaf.getType() instanceof DecimalTypeDefinition);
@@ -337,7 +337,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypedefUnion() {
+    void testTypedefUnion() {
         final LeafSchemaNode unionleaf = (LeafSchemaNode) FOO.getDataChildByName(fooQName("union-leaf"));
 
         assertTrue(unionleaf.getType() instanceof UnionTypeDefinition);
@@ -371,7 +371,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testNestedUnionResolving() {
+    void testNestedUnionResolving() {
         final LeafSchemaNode testleaf = (LeafSchemaNode) FOO.getDataChildByName(fooQName("custom-union-leaf"));
 
         assertTrue(testleaf.getType() instanceof UnionTypeDefinition);
@@ -433,7 +433,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testChoice() {
+    void testChoice() {
         final ContainerSchemaNode transfer = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("transfer"));
         final ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName(fooQName("how"));
         final var cases = how.getCases();
@@ -452,7 +452,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testDeviation() {
+    void testDeviation() {
         final var deviations = FOO.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();
@@ -463,7 +463,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testUnknownNode() {
+    void testUnknownNode() {
         final ContainerSchemaNode network = (ContainerSchemaNode) BAZ.getDataChildByName(bazQName("network"));
         final var unknownNodes = network.asEffectiveStatement().getDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
@@ -472,25 +472,25 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testFeature() {
+    void testFeature() {
         final var features = BAZ.getFeatures();
         assertEquals(3, features.size());
     }
 
     @Test
-    public void testExtension() {
+    void testExtension() {
         final var extensions = BAZ.getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
         final ExtensionDefinition extension = extensions.iterator().next();
         assertEquals("name", extension.getArgument());
         assertEquals(
             Optional.of("Takes as argument a name string. Makes the code generator use the given name in the #define."),
-                extension.getDescription());
+            extension.getDescription());
         assertTrue(extension.isYinElement());
     }
 
     @Test
-    public void testNotification() {
+    void testNotification() {
         final var notifications = BAZ.getNotifications();
         assertEquals(1, notifications.size());
 
@@ -514,7 +514,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testRpc() {
+    void testRpc() {
         final var rpcs = BAZ.getRpcs();
         assertEquals(1, rpcs.size());
 
@@ -524,7 +524,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypePath() throws ParseException {
+    void testTypePath() throws ParseException {
         final Collection<? extends TypeDefinition<?>> types = BAR.getTypeDefinitions();
 
         // int32-ext1
@@ -536,7 +536,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testTypePath2() throws ParseException {
+    void testTypePath2() throws ParseException {
         final var types = BAR.getTypeDefinitions();
 
         // my-decimal-type
@@ -548,7 +548,7 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void testSubmodules() {
+    void testSubmodules() {
         final DataSchemaNode id = FOO.getDataChildByName(fooQName("id"));
         assertNotNull(id);
         final DataSchemaNode subExt = FOO.getDataChildByName(fooQName("sub-ext"));
@@ -561,21 +561,21 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void unknownStatementInSubmoduleHeaderTest() throws Exception {
+    void unknownStatementInSubmoduleHeaderTest() throws Exception {
         TestUtils.parseYangSource(
             "/yang-grammar-test/revisions-extension.yang",
             "/yang-grammar-test/submodule-header-extension.yang");
     }
 
     @Test
-    public void unknownStatementBetweenRevisionsTest() throws Exception {
+    void unknownStatementBetweenRevisionsTest() throws Exception {
         TestUtils.parseYangSource(
             "/yang-grammar-test/revisions-extension.yang",
             "/yang-grammar-test/submodule-header-extension.yang");
     }
 
     @Test
-    public void unknownStatementsInStatementsTest() {
+    void unknownStatementsInStatementsTest() {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(
                 "/yang-grammar-test/stmtsep-in-statements.yang",

@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-public class Bug4610Test extends AbstractYangTest {
+class Bug4610Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug4610");
         final Revision revision = Revision.of("2015-12-12");
 
@@ -54,7 +54,7 @@ public class Bug4610Test extends AbstractYangTest {
     }
 
     private static ContainerEffectiveStatement findContainer(final EffectiveModelContext context, final QName grouping,
-            final QName container) {
+        final QName container) {
         final ModuleEffectiveStatement module = context.getModuleStatement(grouping.getModule());
         final GroupingEffectiveStatement grp = module.streamEffectiveSubstatements(GroupingEffectiveStatement.class)
             .filter(stmt -> grouping.equals(stmt.argument()))

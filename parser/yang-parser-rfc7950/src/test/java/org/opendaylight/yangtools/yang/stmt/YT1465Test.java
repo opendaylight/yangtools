@@ -9,19 +9,19 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
-public class YT1465Test extends AbstractYangTest {
+class YT1465Test extends AbstractYangTest {
     @Test
-    public void supportedLeafInChoiceAugment() throws Exception {
+    void supportedLeafInChoiceAugment() throws Exception {
         final var baz = assertBaz(StmtTestUtils.parseYangSource("/bugs/YT1465/foo.yang", null));
         final var schemas = baz.schemaTreeNodes();
         assertEquals(2, schemas.size());
@@ -37,7 +37,7 @@ public class YT1465Test extends AbstractYangTest {
     }
 
     @Test
-    public void unsupportedLeafInChoiceAugment() throws Exception {
+    void unsupportedLeafInChoiceAugment() throws Exception {
         final var baz = assertBaz(StmtTestUtils.parseYangSource("/bugs/YT1465/foo.yang", Set.of()));
         final var schemas = baz.schemaTreeNodes();
         assertEquals(1, schemas.size());

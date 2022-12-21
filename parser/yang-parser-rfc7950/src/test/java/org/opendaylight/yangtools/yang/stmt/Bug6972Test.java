@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 
-public class Bug6972Test extends AbstractYangTest {
+class Bug6972Test extends AbstractYangTest {
     @Test
-    public void allUnitsShouldBeTheSameInstance() {
+    void allUnitsShouldBeTheSameInstance() {
         final var schemaContext = assertEffectiveModelDir("/bugs/bug6972");
         assertEquals(3, schemaContext.getModules().size());
 
@@ -48,7 +48,7 @@ public class Bug6972Test extends AbstractYangTest {
     }
 
     private static UnitsEffectiveStatement getEffectiveUnits(final Module module, final QName containerQName,
-            final QName leafQName) {
+        final QName leafQName) {
         UnitsEffectiveStatement units = null;
 
         final ContainerSchemaNode cont = (ContainerSchemaNode) module.getDataChildByName(containerQName);

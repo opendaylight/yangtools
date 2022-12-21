@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Bug2291Test {
+class Bug2291Test {
     @Test
-    public void testRevisionWithExt() throws Exception {
+    void testRevisionWithExt() throws Exception {
         assertNotNull(TestUtils.parseYangSource("/bugs/bug2291/bug2291-ext.yang", "/bugs/bug2291/bug2291.yang",
             "/ietf/ietf-inet-types@2010-09-24.yang"));
     }

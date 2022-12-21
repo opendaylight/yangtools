@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -30,26 +30,26 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EffectiveModulesAndSubmodulesTest {
+class EffectiveModulesAndSubmodulesTest {
     private static final Logger LOG = LoggerFactory.getLogger(EffectiveModulesAndSubmodulesTest.class);
     private static final StatementStreamSource ROOT_MODULE = sourceForResource(
-            "/stmt-test/submodules/root-module.yang");
+        "/stmt-test/submodules/root-module.yang");
     private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
-            "/stmt-test/submodules/imported-module.yang");
+        "/stmt-test/submodules/imported-module.yang");
     private static final StatementStreamSource SUBMODULE_1 = sourceForResource(
-            "/stmt-test/submodules/submodule-1.yang");
+        "/stmt-test/submodules/submodule-1.yang");
     private static final StatementStreamSource SUBMODULE_2 = sourceForResource(
-            "/stmt-test/submodules/submodule-2.yang");
+        "/stmt-test/submodules/submodule-2.yang");
     private static final StatementStreamSource SUBMODULE_TO_SUBMODULE_1 = sourceForResource(
-            "/stmt-test/submodules/submodule-to-submodule-1.yang");
+        "/stmt-test/submodules/submodule-to-submodule-1.yang");
 
     private static final QNameModule ROOT = QNameModule.create(XMLNamespace.of("root-module"));
 
     @Test
-    public void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
+    void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1)
-                .buildEffective();
+            .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1)
+            .buildEffective();
 
         assertNotNull(result);
 
@@ -161,7 +161,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
     private static void getDataChildByNameSubTest(final SchemaContext result, final Module root) {
         final DataSchemaNode containerInRoot = result.getDataChildByName(QName
-                .create(root.getQNameModule(), "container-in-root-module"));
+            .create(root.getQNameModule(), "container-in-root-module"));
         assertNotNull(containerInRoot);
         assertEquals(Optional.of("desc"), containerInRoot.getDescription());
     }
@@ -199,7 +199,7 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(imported, foundImported2);
         assertEquals(imported, foundImported3);
 
-        assertFalse(root.equals(imported));
+        assertNotEquals(root, imported);
     }
 
     private static void printReferences(final ModuleLike module, final boolean isSubmodule, final String indent) {

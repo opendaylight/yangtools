@@ -9,13 +9,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
@@ -26,13 +26,13 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class ActionStatementTest extends AbstractYangTest {
+class ActionStatementTest extends AbstractYangTest {
 
     private static final String FOO_NS = "foo-namespace";
     private static final String FOO_REV = "2016-12-13";
 
     @Test
-    public void testActionStatementInDataContainers() throws Exception {
+    void testActionStatementInDataContainers() throws Exception {
         final var context = assertEffectiveModel("/rfc7950/action-stmt/foo.yang");
 
         assertContainsActions(context, "root", "grp-action", "aug-action");
@@ -52,15 +52,15 @@ public class ActionStatementTest extends AbstractYangTest {
     }
 
     private static void assertContainsActions(final SchemaContext schemaContext, final String dataContainerName,
-            final String... actionNames) {
+        final String... actionNames) {
         final DataSchemaNode dataChildByName = schemaContext.getDataChildByName(QName.create(FOO_NS, FOO_REV,
-                dataContainerName));
+            dataContainerName));
         assertTrue(dataChildByName instanceof ActionNodeContainer);
         assertContainsActions((ActionNodeContainer) dataChildByName, actionNames);
     }
 
     private static void assertContainsActions(final ActionNodeContainer actionContainer,
-            final String... actionNames) {
+        final String... actionNames) {
         final Collection<? extends ActionDefinition> actions = actionContainer.getActions();
         assertEquals(actionNames.length, actions.size());
 
@@ -73,32 +73,32 @@ public class ActionStatementTest extends AbstractYangTest {
     }
 
     @Test
-    public void testActionUnsupportedInYang10() {
+    void testActionUnsupportedInYang10() {
         assertSourceException(startsWith("action is not a YANG statement or use of extension"),
-                "/rfc7950/action-stmt/foo10.yang");
+            "/rfc7950/action-stmt/foo10.yang");
     }
 
     @Test
-    public void testActionWithinIllegalAncestor() {
+    void testActionWithinIllegalAncestor() {
         assertSourceException(startsWith("Action (foo-namespace?revision=2016-12-13)action-in-grouping is defined"
-                + " within a notification, rpc or another action"), "/rfc7950/action-stmt/foo-invalid.yang");
+            + " within a notification, rpc or another action"), "/rfc7950/action-stmt/foo-invalid.yang");
     }
 
     @Test
-    public void testActionWithinListWithoutKey() {
+    void testActionWithinListWithoutKey() {
         assertSourceException(startsWith("Action (bar-namespace?revision=2016-12-13)my-action is defined within a list"
-                + " that has no key statement"), "/rfc7950/action-stmt/bar-invalid.yang");
+            + " that has no key statement"), "/rfc7950/action-stmt/bar-invalid.yang");
     }
 
     @Test
-    public void testActionInUsedGroupingWithinCase() {
+    void testActionInUsedGroupingWithinCase() {
         assertSourceException(startsWith("Action (baz-namespace?revision=2016-12-13)action-in-grouping"
-                + " is defined within a case statement"), "/rfc7950/action-stmt/baz-invalid.yang");
+            + " is defined within a case statement"), "/rfc7950/action-stmt/baz-invalid.yang");
     }
 
     @Test
-    public void testActionInUsedGroupingAtTopLevelOfModule() {
+    void testActionInUsedGroupingAtTopLevelOfModule() {
         assertSourceException(startsWith("Action (foobar-namespace?revision=2016-12-13)my-action is defined"
-                + " at the top level of a module"), "/rfc7950/action-stmt/foobar-invalid.yang");
+            + " at the top level of a module"), "/rfc7950/action-stmt/foobar-invalid.yang");
     }
 }

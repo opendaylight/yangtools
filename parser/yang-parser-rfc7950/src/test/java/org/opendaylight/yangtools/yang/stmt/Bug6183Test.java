@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -24,12 +24,12 @@ public class Bug6183Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void testYang10() {
+    void testYang10() {
         assertSchemaContext(assertEffectiveModelDir("/bugs/bug6183/yang10"));
     }
 
     @Test
-    public void testYang11() {
+    void testYang11() {
         assertSchemaContext(assertEffectiveModelDir("/bugs/bug6183/yang11"));
     }
 

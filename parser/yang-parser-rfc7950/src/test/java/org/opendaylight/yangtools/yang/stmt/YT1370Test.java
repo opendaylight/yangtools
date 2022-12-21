@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
-public class YT1370Test {
+class YT1370Test {
     @Test
-    public void testAugmentUnsupportedByFeatures() throws Exception {
+    void testAugmentUnsupportedByFeatures() throws Exception {
         assertNotNull(StmtTestUtils.parseYangSources("/bugs/YT1370", Set.of(), YangParserConfiguration.DEFAULT));
     }
 }

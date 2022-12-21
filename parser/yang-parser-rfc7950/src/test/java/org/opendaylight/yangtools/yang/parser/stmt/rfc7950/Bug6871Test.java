@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6871Test extends AbstractYangTest {
+class Bug6871Test extends AbstractYangTest {
     @Test
-    public void testValidYang11Model() {
+    void testValidYang11Model() {
         final Module foo = assertEffectiveModel("/rfc7950/bug6871/foo.yang")
             .findModule("foo", Revision.of("2016-12-14")).orElseThrow();
 
@@ -48,7 +48,7 @@ public class Bug6871Test extends AbstractYangTest {
     }
 
     @Test
-    public void testInvalidYang10Model() {
+    void testInvalidYang10Model() {
         assertInvalidSubstatementException(startsWith("MUST is not valid for NOTIFICATION"),
             "/rfc7950/bug6871/foo10.yang");
         assertInvalidSubstatementException(startsWith("MUST is not valid for INPUT"), "/rfc7950/bug6871/bar10.yang");

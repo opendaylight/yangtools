@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6874Test extends AbstractYangTest {
+class Bug6874Test extends AbstractYangTest {
     private static final StatementStreamSource ROOT_MODULE = sourceForResource(
         "/rfc7950/include-import-stmt-test/valid-11/root-module.yang");
     private static final StatementStreamSource CHILD_MODULE = sourceForResource(
@@ -38,7 +38,7 @@ public class Bug6874Test extends AbstractYangTest {
         "/rfc7950/include-import-stmt-test/valid-11/imported-module.yang");
 
     @Test
-    public void valid11Test() {
+    void valid11Test() {
         final var schemaContext = assertEffectiveModelDir("/rfc7950/include-import-stmt-test/valid-11");
 
         // Test for valid include statement
@@ -54,24 +54,26 @@ public class Bug6874Test extends AbstractYangTest {
     }
 
     @Test
-    public void invalid10IncludeStmtTest() {
+    void invalid10IncludeStmtTest() {
         assertInvalidSubstatementExceptionDir("/rfc7950/include-import-stmt-test/invalid-include-10", anyOf(
             startsWith("DESCRIPTION is not valid for INCLUDE"),
             startsWith("REFERENCE is not valid for INCLUDE")));
     }
 
     @Test
-    public void invalid10ImportStmtTest() {
+    void invalid10ImportStmtTest() {
         assertInvalidSubstatementExceptionDir("/rfc7950/include-import-stmt-test/invalid-import-10", anyOf(
             startsWith("DESCRIPTION is not valid for IMPORT"),
             startsWith("REFERENCE is not valid for IMPORT")));
     }
 
     @Test
-    public void descriptionAndReferenceTest11() throws ReactorException {
+    void descriptionAndReferenceTest11() throws ReactorException {
         RFC7950Reactors.defaultReactor().newBuild()
             .addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE)
-            .build().getRootStatements().forEach(declaredStmt -> {
+            .build()
+            .getRootStatements()
+            .forEach(declaredStmt -> {
                 if (declaredStmt instanceof ModuleStatement) {
                     declaredStmt.declaredSubstatements().forEach(subStmt -> {
                         if (subStmt instanceof IncludeStatement && "child-module".equals(subStmt.rawArgument())) {
