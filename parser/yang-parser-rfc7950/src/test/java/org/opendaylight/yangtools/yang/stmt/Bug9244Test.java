@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -21,27 +20,24 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class Bug9244Test extends AbstractYangTest {
+class Bug9244Test extends AbstractYangTest {
     @Test
-    public void testDeviateReplaceOfImplicitSubstatements() {
+    void testDeviateReplaceOfImplicitSubstatements() {
         final var schemaContext = assertEffectiveModelDir("/bugs/bug9244/");
 
         final Module barModule = schemaContext.findModule("bar", Revision.of("2017-10-13")).get();
         final ContainerSchemaNode barCont = (ContainerSchemaNode) barModule.getDataChildByName(
-                QName.create(barModule.getQNameModule(), "bar-cont"));
-        assertNotNull(barCont);
+            QName.create(barModule.getQNameModule(), "bar-cont"));
         assertEquals(Optional.of(Boolean.FALSE), barCont.effectiveConfig());
 
         final LeafListSchemaNode barLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
-                QName.create(barModule.getQNameModule(), "bar-leaf-list"));
-        assertNotNull(barLeafList);
+            QName.create(barModule.getQNameModule(), "bar-leaf-list"));
         final ElementCountConstraint constraint = barLeafList.getElementCountConstraint().get();
-        assertEquals((Object) 5, constraint.getMinElements());
-        assertEquals((Object) 10, constraint.getMaxElements());
+        assertEquals(5, constraint.getMinElements());
+        assertEquals(10, constraint.getMaxElements());
 
         final LeafSchemaNode barLeaf = (LeafSchemaNode) barModule.getDataChildByName(
-                QName.create(barModule.getQNameModule(), "bar-leaf"));
-        assertNotNull(barLeaf);
+            QName.create(barModule.getQNameModule(), "bar-leaf"));
         assertTrue(barLeaf.isMandatory());
     }
 }
