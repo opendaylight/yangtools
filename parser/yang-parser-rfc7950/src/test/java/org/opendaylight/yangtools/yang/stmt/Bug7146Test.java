@@ -5,28 +5,23 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class Bug7146Test {
-
+class Bug7146Test {
     @Test
-    public void shouldFailOnSyntaxError() throws ReactorException {
-        try {
-            StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug7146/foo.yang"));
-            fail("RuntimeException should have been thrown because of an unknown character in yang module.");
-        } catch (IllegalArgumentException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof YangSyntaxErrorException);
-            assertTrue(cause.getMessage().contains("extraneous input '#'"));
-        }
+    void shouldFailOnSyntaxError() {
+        final var cause = assertThrows(IllegalArgumentException.class,
+            () -> StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug7146/foo.yang"))).getCause();
+        assertInstanceOf(YangSyntaxErrorException.class, cause);
+        assertThat(cause.getMessage(), containsString("extraneous input '#'"));
     }
 }

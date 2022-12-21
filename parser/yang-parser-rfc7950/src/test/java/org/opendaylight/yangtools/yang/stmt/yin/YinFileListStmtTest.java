@@ -7,34 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
-public class YinFileListStmtTest extends AbstractYinModulesTest {
+class YinFileListStmtTest extends AbstractYinModulesTest {
     @Test
-    public void testListAndLeaves() {
+    void testListAndLeaves() {
         final Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(QName.create(
-                testModule.getQNameModule(), "modules"), QName.create(testModule.getQNameModule(), "module")).get();
+            testModule.getQNameModule(), "modules"), QName.create(testModule.getQNameModule(), "module")).get();
         final List<QName> keys = list.getKeyDefinition();
         assertEquals(1, keys.size());
         assertEquals("name", keys.get(0).getLocalName());
@@ -52,10 +50,8 @@ public class YinFileListStmtTest extends AbstractYinModulesTest {
         leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("type", leaf.getQName().getLocalName());
 
-        final TypeDefinition<?> leafType = leaf.getType();
-        assertThat(leafType, isA(IdentityrefTypeDefinition.class));
-        assertEquals("module-type", ((IdentityrefTypeDefinition)leafType).getIdentities().iterator().next().getQName()
-            .getLocalName());
+        final IdentityrefTypeDefinition leafType = assertInstanceOf(IdentityrefTypeDefinition.class, leaf.getType());
+        assertEquals("module-type", leafType.getIdentities().iterator().next().getQName().getLocalName());
         assertTrue(leaf.isMandatory());
     }
 }

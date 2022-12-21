@@ -7,34 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-
-public class YangTypesStmtTest {
-
-    private static final StatementStreamSource TYPEFILE1 = sourceForResource("/semantic-statement-parser/types.yang");
-    private static final StatementStreamSource TYPEFILE2 = sourceForResource(
-        "/semantic-statement-parser/simple-types.yang");
-    private static final StatementStreamSource TYPEFILE3 = sourceForResource(
-        "/semantic-statement-parser/identityreftest.yang");
-
-    private static final StatementStreamSource FILE1 = sourceForResource("/semantic-statement-parser/model/bar.yang");
-    private static final StatementStreamSource FILE2 = sourceForResource("/semantic-statement-parser/model/baz.yang");
-    private static final StatementStreamSource FILE3 = sourceForResource(
-        "/semantic-statement-parser/model/subfoo.yang");
-    private static final StatementStreamSource FILE4 = sourceForResource("/semantic-statement-parser/model/foo.yang");
-
+class YangTypesStmtTest extends AbstractYangTest {
     @Test
-    public void readAndParseYangFileTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, FILE1, FILE2, FILE3, FILE4)
-                .buildEffective();
-        assertNotNull(result);
+    void readAndParseYangFileTest() {
+        assertEffectiveModel(
+            "/semantic-statement-parser/types.yang",
+            "/semantic-statement-parser/simple-types.yang",
+            "/semantic-statement-parser/identityreftest.yang",
+            "/semantic-statement-parser/model/bar.yang",
+            "/semantic-statement-parser/model/baz.yang",
+            "/semantic-statement-parser/model/subfoo.yang",
+            "/semantic-statement-parser/model/foo.yang");
     }
 }

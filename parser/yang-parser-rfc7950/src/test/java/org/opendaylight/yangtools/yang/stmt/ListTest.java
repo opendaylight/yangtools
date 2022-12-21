@@ -7,33 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class ListTest {
+class ListTest extends AbstractYangTest {
 
     @Test
-    public void listAndLeavesTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/list-test/list-test.yang"))
-                .buildEffective();
-        assertNotNull(result);
+    void listAndLeavesTest() {
+        final var result = assertEffectiveModel("/list-test/list-test.yang");
 
         final Module testModule = result.findModules("list-test").iterator().next();
         assertNotNull(testModule);

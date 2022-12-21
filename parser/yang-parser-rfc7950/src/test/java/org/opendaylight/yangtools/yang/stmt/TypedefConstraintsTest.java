@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.google.common.collect.Range;
 import java.util.Collection;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
-public class TypedefConstraintsTest extends AbstractYangTest {
+class TypedefConstraintsTest extends AbstractYangTest {
     @Test
-    public void decimalRangeConstraintsTest() {
+    void decimalRangeConstraintsTest() {
         final var context = assertEffectiveModelDir("/stmt-test/constraints");
 
         assertNotNull(context);
@@ -37,11 +37,9 @@ public class TypedefConstraintsTest extends AbstractYangTest {
 
         final TypeDefinition<?> myDecimal = typeDefinitions.iterator().next();
 
-        assertNotNull(myDecimal);
-        assertTrue(myDecimal instanceof DecimalTypeDefinition);
-
-        final Set<? extends Range<?>> rangeConstraints = ((DecimalTypeDefinition) myDecimal).getRangeConstraint()
-                .get().getAllowedRanges().asRanges();
+        final Set<? extends Range<?>> rangeConstraints = assertInstanceOf(DecimalTypeDefinition.class, myDecimal)
+            .getRangeConstraint()
+            .orElseThrow().getAllowedRanges().asRanges();
 
         assertNotNull(rangeConstraints);
         assertEquals(1, rangeConstraints.size());
@@ -49,17 +47,15 @@ public class TypedefConstraintsTest extends AbstractYangTest {
         final DataSchemaNode dataNode = context.getDataChildByName(QName.create("urn:opendaylight.foo", "2013-10-08",
             "id-decimal64"));
         assertNotNull(dataNode);
-        assertTrue(dataNode instanceof LeafSchemaNode);
+        final LeafSchemaNode leafDecimal = assertInstanceOf(LeafSchemaNode.class, dataNode);
 
-        final LeafSchemaNode leafDecimal = (LeafSchemaNode) dataNode;
         final TypeDefinition<?> type = leafDecimal.getType();
 
-        assertTrue(type instanceof DecimalTypeDefinition);
-        final DecimalTypeDefinition decType = (DecimalTypeDefinition) type;
+        final DecimalTypeDefinition decType = assertInstanceOf(DecimalTypeDefinition.class, type);
         assertEquals(4, decType.getFractionDigits());
 
         final Set<? extends Range<Decimal64>> decRangeConstraints = decType.getRangeConstraint().get()
-                .getAllowedRanges().asRanges();
+            .getAllowedRanges().asRanges();
 
         assertEquals(1, decRangeConstraints.size());
 

@@ -5,23 +5,21 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1448Test extends AbstractYangTest {
-
+class YT1448Test extends AbstractYangTest {
     @Test
-    public void deviationFromSubmodule() {
+    void deviationFromSubmodule() {
         assertEffectiveModelDir("/bugs/YT1448/valid");
     }
 
     @Test
-    public void deviationFromSubmoduleTargetedOwnModule() {
+    void deviationFromSubmoduleTargetedOwnModule() {
         assertInferenceExceptionDir("/bugs/YT1448/invalid",
-                startsWith("Deviation must not target the same module as the one it is defined in"));
+            startsWith("Deviation must not target the same module as the one it is defined in"));
     }
 }
