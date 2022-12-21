@@ -10,39 +10,39 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
-public class YT1471Test extends AbstractYangTest {
+class YT1471Test extends AbstractYangTest {
     private static final QName FOO = QName.create("urn:foo", "foo");
     private static final QName BAR = QName.create("urn:foo", "bar");
     private static final QName BAZ = QName.create("urn:foo", "baz");
     private static final QName BAZ_LEAF = QName.create("urn:foo", "baz-leaf");
 
     @Test
-    public void testAugmentSingleGroupingWithFeatureSupported() {
+    void testAugmentSingleGroupingWithFeatureSupported() {
         assertSupportedFoo("single");
     }
 
     @Test
-    public void testAugmentSingleGroupingWithFeatureNotSupported() {
+    void testAugmentSingleGroupingWithFeatureNotSupported() {
         assertEquals(List.of(), assertFoo("single", Set.of()).effectiveSubstatements());
     }
 
     @Test
-    public void testAugmentNestedGroupingWithFeatureSupported() {
+    void testAugmentNestedGroupingWithFeatureSupported() {
         assertSupportedFoo("nested");
     }
 
     @Test
-    public void testAugmentNestedGroupingWithFeatureNotSupported() {
+    void testAugmentNestedGroupingWithFeatureNotSupported() {
         assertThat(assertFoo("nested", Set.of()).effectiveSubstatements(),
             contains(instanceOf(UsesEffectiveStatement.class)));
     }

@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 
 /**
@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
  * <p>
  * Note: Everything under unknown node is unknown node.
  */
-public class Bug1413Test extends AbstractYangTest {
+class Bug1413Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         var extensions = assertEffectiveModelDir("/bugs/bug1413").findModules("bug1413").iterator().next()
             .getExtensionSchemaNodes();
         assertEquals(1, extensions.size());

@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -22,16 +22,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug9241Test extends AbstractYangTest {
+class Bug9241Test extends AbstractYangTest {
 
     @Test
-    public void testImplicitInputAndOutputInAction() {
+    void testImplicitInputAndOutputInAction() {
         final var context = assertEffectiveModel("/rfc7950/bug9241/foo.yang");
 
         final Module fooModule = context.findModule("foo", Revision.of("2017-10-13")).get();
 
         final ContainerSchemaNode actionCont = (ContainerSchemaNode) fooModule.getDataChildByName(QName.create(
-                fooModule.getQNameModule(), "action-cont"));
+            fooModule.getQNameModule(), "action-cont"));
 
         final ActionDefinition actionInCont = actionCont.getActions().iterator().next();
 
