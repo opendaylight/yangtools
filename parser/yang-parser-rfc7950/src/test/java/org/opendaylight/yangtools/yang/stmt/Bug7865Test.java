@@ -7,25 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug7865Test extends AbstractYangTest {
+class Bug7865Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug7865");
         final DataSchemaNode root = context.getDataChildByName(foo("root"));
-        assertTrue(root instanceof ContainerSchemaNode);
-        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = ((ContainerSchemaNode) root)
-            .asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes =
+            assertInstanceOf(ContainerSchemaNode.class, root).asEffectiveStatement().getDeclared()
+                .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnrecognizedStatement unknownNode = unknownSchemaNodes.iterator().next();

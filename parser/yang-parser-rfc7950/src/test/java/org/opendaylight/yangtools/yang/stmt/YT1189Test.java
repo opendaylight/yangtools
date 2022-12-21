@@ -9,18 +9,18 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1189Test extends AbstractYangTest {
+class YT1189Test extends AbstractYangTest {
     @Test
-    public void testDescendantAugment() {
+    void testDescendantAugment() {
         assertSourceException(startsWith("Descendant schema node identifier is not allowed when used outside"
-                + " of a uses statement [at "), "/bugs/YT1189/foo.yang");
+            + " of a uses statement [at "), "/bugs/YT1189/foo.yang");
     }
 
     @Test
-    public void testAbsoluteUsesAugment() {
+    void testAbsoluteUsesAugment() {
         assertSourceException(startsWith("Absolute schema node identifier is not allowed when used within a"
-                + " uses statement [at "), "/bugs/YT1189/bar.yang");
+            + " uses statement [at "), "/bugs/YT1189/bar.yang");
     }
 }
