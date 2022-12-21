@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -23,9 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public class Bug5481Test extends AbstractYangTest {
+class Bug5481Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final var context = assertEffectiveModelDir("/bugs/bug5481");
         ContainerSchemaNode topContainer = verifyTopContainer(context);
         verifyExtendedLeaf(topContainer);
@@ -47,7 +47,7 @@ public class Bug5481Test extends AbstractYangTest {
 
     private static void verifyExtendedLeaf(final ContainerSchemaNode topContainer) {
         DataSchemaNode dataChildByName2 = topContainer.getDataChildByName(QName.create("http://example.com/module2",
-                "2016-03-09", "extended-leaf"));
+            "2016-03-09", "extended-leaf"));
         assertTrue(dataChildByName2 instanceof LeafSchemaNode);
 
         LeafSchemaNode extendedLeaf = (LeafSchemaNode) dataChildByName2;

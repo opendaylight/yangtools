@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.google.common.collect.Iterables;
 import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,14 +26,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
-public class YT1089Test extends AbstractYangTest {
+class YT1089Test extends AbstractYangTest {
     @Test
-    public void testPlusLexing() {
+    void testPlusLexing() {
         final EffectiveModelContext ctx = assertEffectiveModel("/bugs/YT1089/foo.yang");
         assertEquals(1, ctx.getModuleStatements().size());
 
         final Iterator<? extends EffectiveStatement<?, ?>> it =
-                Iterables.getOnlyElement(ctx.getModuleStatements().values()).effectiveSubstatements().iterator();
+            Iterables.getOnlyElement(ctx.getModuleStatements().values()).effectiveSubstatements().iterator();
 
         assertThat(it.next(), instanceOf(NamespaceEffectiveStatement.class));
         assertThat(it.next(), instanceOf(PrefixEffectiveStatement.class));

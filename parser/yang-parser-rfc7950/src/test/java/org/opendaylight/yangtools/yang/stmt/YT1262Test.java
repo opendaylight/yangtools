@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 
-public class YT1262Test extends AbstractYangTest {
+class YT1262Test extends AbstractYangTest {
     @Test
-    public void testTypedefNamespaces() {
+    void testTypedefNamespaces() {
         final var modelContext = assertEffectiveModelDir("/bugs/YT1262");
         final var module = modelContext.getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
         assertTypedef(module, "fdef");

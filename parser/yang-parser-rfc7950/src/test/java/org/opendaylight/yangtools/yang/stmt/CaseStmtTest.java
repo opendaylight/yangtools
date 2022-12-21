@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class CaseStmtTest extends AbstractYangTest {
+class CaseStmtTest extends AbstractYangTest {
     private static final Optional<Boolean> OPT_FALSE = Optional.of(Boolean.FALSE);
     private static final Optional<Boolean> OPT_TRUE = Optional.of(Boolean.TRUE);
 
@@ -39,8 +39,8 @@ public class CaseStmtTest extends AbstractYangTest {
     private DataSchemaNode tempThirdChild;
     private CaseSchemaNode tempChoice;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         schema = assertEffectiveModelDir("/case-test");
         Revision rev = Revision.of("2015-09-09");
         rootFoo = schema.findModule("foo", rev).get();
@@ -54,7 +54,7 @@ public class CaseStmtTest extends AbstractYangTest {
     }
 
     @Test
-    public void caseTest() {
+    void caseTest() {
         tempChild = rootFoo.getDataChildByName(QName.create(qnameFoo, "root-fff"));
         assertNotNull(tempChild);
         assertEquals(OPT_FALSE, tempChild.effectiveConfig());
@@ -291,7 +291,7 @@ public class CaseStmtTest extends AbstractYangTest {
     }
 
     @Test
-    public void shortCaseTest() {
+    void shortCaseTest() {
         tempChild = rootBar.getDataChildByName(QName.create(qnameBar, "sh-root-fff"));
         assertNotNull(tempChild);
         assertEquals(OPT_FALSE, tempChild.effectiveConfig());
@@ -528,13 +528,13 @@ public class CaseStmtTest extends AbstractYangTest {
     }
 
     @Test
-    public void testInferenceExceptionChoice() {
+    void testInferenceExceptionChoice() {
         assertInferenceExceptionDir("/case-test/case-test-exceptions/choice",
             startsWith("Parent node has config=false, this node must not be specifed as config=true [at "));
     }
 
     @Test
-    public void testInferenceExceptionCase() {
+    void testInferenceExceptionCase() {
         assertInferenceExceptionDir("/case-test/case-test-exceptions/case",
             startsWith("Parent node has config=false, this node must not be specifed as config=true [at "));
     }

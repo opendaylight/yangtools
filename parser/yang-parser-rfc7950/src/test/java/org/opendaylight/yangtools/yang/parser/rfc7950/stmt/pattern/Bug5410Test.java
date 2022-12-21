@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayOutputStream;
@@ -17,110 +17,110 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Bug5410Test {
+class Bug5410Test {
     @Test
-    public void testCaret() {
+    void testCaret() {
         testPattern("^", "\\^");
     }
 
     @Test
-    public void testTextCaret() {
+    void testTextCaret() {
         testPattern("abc^", "abc\\^");
     }
 
     @Test
-    public void testTextDollar() {
+    void testTextDollar() {
         testPattern("abc$", "abc\\$");
     }
 
     @Test
-    public void testCaretCaret() {
+    void testCaretCaret() {
         testPattern("^^", "\\^\\^");
     }
 
     @Test
-    public void testCaretDollar() {
+    void testCaretDollar() {
         testPattern("^$", "\\^\\$");
     }
 
     @Test
-    public void testDot() {
+    void testDot() {
         testPattern(".", ".");
     }
 
     @Test
-    public void testNotColon() {
+    void testNotColon() {
         testPattern("[^:]+", "[^:]+");
     }
 
     @Test
-    public void testDollar() {
+    void testDollar() {
         testPattern("$", "\\$");
     }
 
     @Test
-    public void testDollarOneDollar() {
+    void testDollarOneDollar() {
         testPattern("$1$", "\\$1\\$");
     }
 
     @Test
-    public void testDollarPercentRange() {
+    void testDollarPercentRange() {
         testPattern("[$-%]+", "[$-%]+");
     }
 
     @Test
-    public void testDollarRange() {
+    void testDollarRange() {
         testPattern("[$$]+", "[$$]+");
     }
 
     @Test
-    public void testDollarCaretRange() {
+    void testDollarCaretRange() {
         testPattern("[$^]+", "[$^]+");
     }
 
     @Test
-    public void testSimple() {
+    void testSimple() {
         testPattern("abc", "abc");
     }
 
     @Test
-    public void testDotPlus() {
+    void testDotPlus() {
         testPattern(".+", ".+");
     }
 
     @Test
-    public void testDotStar() {
+    void testDotStar() {
         testPattern(".*", ".*");
     }
 
     @Test
-    public void testSimpleOptional() {
+    void testSimpleOptional() {
         testPattern("a?", "a?");
     }
 
     @Test
-    public void testRangeOptional() {
+    void testRangeOptional() {
         testPattern("[a-z]?", "[a-z]?");
     }
 
     @Test
-    public void testInvalidXSDRegexes() throws UnsupportedEncodingException {
+    void testInvalidXSDRegexes() throws UnsupportedEncodingException {
         testInvalidPattern("$^a^[$^\\]", "Unclosed character class");
         testInvalidPattern("$(\\)", "Unclosed group");
     }
 
     @Test
-    public void testJavaPattern() {
+    void testJavaPattern() {
         testPattern("^[$^]+$", ImmutableList.of("$^", "^", "$"), ImmutableList.of("\\", "a"));
         testPattern("^[^$-^]$", ImmutableList.of("a", "_", "#"), ImmutableList.of("%", "^", "$", "]", "\\"));
     }
 
     @Test
-    public void testJavaRegexFromXSD() {
+    void testJavaRegexFromXSD() {
         testPattern("^[^:]+$", "^(?:\\^[^:]+\\$)$", ImmutableList.of("^a$", "^abc$"),
-                ImmutableList.of("abc$", "^abc", "^a:bc$"));
+            ImmutableList.of("abc$", "^abc", "^a:bc$"));
         testPattern("^[$^]$", "^(?:\\^[$^]\\$)$", ImmutableList.of("^^$", "^$$"),
             ImmutableList.of("^^", "^$", "$^", "$$"));
         testPattern("[$-%]+", "^(?:[$-%]+)$", ImmutableList.of("$", "%", "%$"),
@@ -129,9 +129,9 @@ public class Bug5410Test {
             ImmutableList.of("#", "$-&", "'"));
 
         testPattern("[a-z&&[^m-p]]+", "^(?:[a-z&&[^m-p]]+)$", ImmutableList.of("a", "z", "az"),
-                ImmutableList.of("m", "anz", "o"));
+            ImmutableList.of("m", "anz", "o"));
         testPattern("^[\\[-b&&[^^-a]]+$", "^(?:\\^[\\[-b&&[^^-a]]+\\$)$", ImmutableList.of("^[$", "^\\$", "^]$", "^b$"),
-                ImmutableList.of("^a$", "^^$", "^_$"));
+            ImmutableList.of("^a$", "^^$", "^_$"));
 
         // FIXME: YANGTOOLS-887: these patterns are not translated correctly, "&&" is a different construct in XSD
         //        testPattern("[^^-~&&[^$-^]]", "^(?:[^^-~&&[^$-^]])$", ImmutableList.of("!", "\"", "#"),
@@ -148,7 +148,7 @@ public class Bug5410Test {
 
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
     private static void testInvalidPattern(final String xsdRegex, final String expectedMessage)
-            throws UnsupportedEncodingException {
+        throws UnsupportedEncodingException {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
@@ -169,28 +169,28 @@ public class Bug5410Test {
     }
 
     private static void testPattern(final String javaRegex, final List<String> positiveMatches,
-            final List<String> negativeMatches) {
+        final List<String> negativeMatches) {
         for (final String value : positiveMatches) {
-            assertTrue("Value '" + value + "' does not match java regex '" + javaRegex + "'",
-                    testMatch(javaRegex, value));
+            assertTrue(testMatch(javaRegex, value),
+                "Value '" + value + "' does not match java regex '" + javaRegex + "'");
         }
         for (final String value : negativeMatches) {
-            assertFalse("Value '" + value + "' matches java regex '" + javaRegex + "'", testMatch(javaRegex, value));
+            assertFalse(testMatch(javaRegex, value), "Value '" + value + "' matches java regex '" + javaRegex + "'");
         }
     }
 
     private static void testPattern(final String xsdRegex, final String expectedJavaRegex,
-            final List<String> positiveMatches, final List<String> negativeMatches) {
+        final List<String> positiveMatches, final List<String> negativeMatches) {
         final String javaRegexFromXSD = RegexUtils.getJavaRegexFromXSD(xsdRegex);
         assertEquals(expectedJavaRegex, javaRegexFromXSD);
 
         for (final String value : positiveMatches) {
-            assertTrue("Value '" + value + "' does not match java regex '" + javaRegexFromXSD + "'",
-                    testMatch(javaRegexFromXSD, value));
+            assertTrue(testMatch(javaRegexFromXSD, value),
+                "Value '" + value + "' does not match java regex '" + javaRegexFromXSD + "'");
         }
         for (final String value : negativeMatches) {
-            assertFalse("Value '" + value + "' matches java regex '" + javaRegexFromXSD + "'",
-                    testMatch(javaRegexFromXSD, value));
+            assertFalse(testMatch(javaRegexFromXSD, value),
+                "Value '" + value + "' matches java regex '" + javaRegexFromXSD + "'");
         }
     }
 }

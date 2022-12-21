@@ -13,12 +13,12 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 
-public class Bug4410Test extends AbstractYangTest {
+class Bug4410Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var cause = assertInferenceExceptionDir("/bugs/bug4410",
             startsWith("Yang model processing phase EFFECTIVE_MODEL failed [at ")).getCause();
         assertThat(cause, instanceOf(InferenceException.class));

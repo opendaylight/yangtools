@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -34,8 +34,8 @@ public abstract class AbstractModelTest extends AbstractYangTest {
     static Module BAR;
     static Module BAZ;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    @BeforeAll
+    static void beforeClass() throws Exception {
         CTX = assertEffectiveModelDir("/model");
         assertEquals(3, CTX.getModules().size());
 

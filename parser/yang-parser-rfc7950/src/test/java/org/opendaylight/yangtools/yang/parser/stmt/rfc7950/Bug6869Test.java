@@ -10,17 +10,17 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -30,14 +30,14 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-public class Bug6869Test extends AbstractYangTest {
+class Bug6869Test extends AbstractYangTest {
     private static final QName ROOT = QName.create("foo", "root");
     private static final QName GRP_LEAF = QName.create("foo", "grp-leaf");
 
     @Test
-    public void identityNoFeaureTest() throws Exception {
+    void identityNoFeaureTest() throws Exception {
         final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
-                ImmutableSet.of());
+            ImmutableSet.of());
         assertNotNull(schemaContext);
 
         final Collection<? extends IdentitySchemaNode> identities = getIdentities(schemaContext);
@@ -50,9 +50,9 @@ public class Bug6869Test extends AbstractYangTest {
     }
 
     @Test
-    public void identityAllFeauresTest() throws Exception {
+    void identityAllFeauresTest() throws Exception {
         final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
-                createFeaturesSet("identity-feature", "mandatory-leaf", "tls", "ssh", "two", "three"));
+            createFeaturesSet("identity-feature", "mandatory-leaf", "tls", "ssh", "two", "three"));
         assertNotNull(schemaContext);
 
         final Collection<? extends IdentitySchemaNode> identities = getIdentities(schemaContext);
@@ -78,7 +78,7 @@ public class Bug6869Test extends AbstractYangTest {
     }
 
     @Test
-    public void invalidYang10Test() {
+    void invalidYang10Test() {
         assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for IDENTITY"),
             "/rfc7950/bug6869/invalid10.yang");
     }

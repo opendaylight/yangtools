@@ -10,21 +10,21 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class Bug6240Test extends AbstractYangTest {
+class Bug6240Test extends AbstractYangTest {
     private static final String NS = "bar";
     private static final String REV = "2016-07-19";
 
     @Test
-    public void testModels() throws Exception {
+    void testModels() throws Exception {
         final var context = assertEffectiveModelDir("/bugs/bug6240/correct");
 
         final var modules = context.getModules();
@@ -56,7 +56,7 @@ public class Bug6240Test extends AbstractYangTest {
     }
 
     @Test
-    public void testInvalidModels() {
+    void testInvalidModels() {
         assertInferenceExceptionDir("/bugs/bug6240/incorrect",
             startsWith("Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
     }
