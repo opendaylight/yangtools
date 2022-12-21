@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.google.common.collect.Iterables;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public class Bug9242Test extends AbstractYangTest {
+class Bug9242Test extends AbstractYangTest {
     @Test
-    public void testDeviateReplaceWithUserDefinedTypes() {
+    void testDeviateReplaceWithUserDefinedTypes() {
         final var schemaContext = assertEffectiveModelDir("/bugs/bug9242/");
 
         final Revision revision = Revision.of("2017-10-13");
@@ -46,11 +46,11 @@ public class Bug9242Test extends AbstractYangTest {
         assertNotNull(deviatedMyLeaf2Type);
 
         final LeafSchemaNode myLeaf = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
-                impModule.getQNameModule(), "my-leaf"));
+            impModule.getQNameModule(), "my-leaf"));
         assertSame(deviatedMyLeafType, myLeaf.getType());
 
         final LeafSchemaNode myLeaf2 = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
-                impModule.getQNameModule(), "my-leaf-2"));
+            impModule.getQNameModule(), "my-leaf-2"));
         assertSame(deviatedMyLeaf2Type, myLeaf2.getType());
     }
 }

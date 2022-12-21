@@ -9,24 +9,24 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6886Test extends AbstractYangTest {
+class Bug6886Test extends AbstractYangTest {
     @Test
-    public void yang11UnquotedStrTest() {
+    void yang11UnquotedStrTest() {
         assertSourceException(startsWith("YANG 1.1: unquoted string (illegalchars\"test1) contains illegal characters"),
             "/rfc7950/bug6886/yang11/foo.yang");
     }
 
     @Test
-    public void yang11UnquotedStrTest2() {
+    void yang11UnquotedStrTest2() {
         assertSourceException(startsWith("YANG 1.1: unquoted string (illegalchars'test2) contains illegal characters"),
             "/rfc7950/bug6886/yang11/foo2.yang");
     }
 
     @Test
-    public void yang11DoubleQuotedStrTest() {
+    void yang11DoubleQuotedStrTest() {
         assertSourceException(startsWith("YANG 1.1: illegal double quoted string "
             + "(i\\\\\\\\l\\nl\\te\\\"\\galcharstest1). In double quoted string the backslash must be followed "
             + "by one of the following character [n,t,\",\\], but was 'g'."),
@@ -34,17 +34,17 @@ public class Bug6886Test extends AbstractYangTest {
     }
 
     @Test
-    public void yang10UnquotedStrTest() {
+    void yang10UnquotedStrTest() {
         assertEffectiveModel("/rfc7950/bug6886/yang10/foo.yang");
     }
 
     @Test
-    public void yang10UnquotedStrTest2() {
+    void yang10UnquotedStrTest2() {
         assertEffectiveModel("/rfc7950/bug6886/yang10/foo2.yang");
     }
 
     @Test
-    public void yang10DoubleQuotedStrTest() {
+    void yang10DoubleQuotedStrTest() {
         assertEffectiveModel("/rfc7950/bug6886/yang10/foo3.yang");
     }
 }

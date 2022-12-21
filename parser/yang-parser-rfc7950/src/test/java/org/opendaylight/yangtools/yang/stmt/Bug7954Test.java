@@ -7,43 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
-import java.io.File;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.junit.jupiter.api.Test;
 
-public class Bug7954Test {
+class Bug7954Test extends AbstractYangTest {
     @Test
-    public void testParsingTheSameModuleTwice() throws Exception {
-        final File yang = new File(getClass().getResource("/bugs/bug7954/foo.yang").toURI());
-
-        try {
-            StmtTestUtils.parseYangSources(yang, yang);
-            fail("An exception should have been thrown because of adding the same YANG module twice.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertThat(cause, instanceOf(SourceException.class));
-            assertThat(cause.getMessage(), startsWith("Module namespace collision: foo-ns."));
-        }
+    void testParsingTheSameModuleTwice() {
+        assertSourceException(startsWith("Module namespace collision: foo-ns."),
+            "/bugs/bug7954/foo.yang", "/bugs/bug7954/foo.yang");
     }
 
     @Test
-    public void testParsingTheSameSubmoduleTwice() throws Exception {
-        final File yang = new File(getClass().getResource("/bugs/bug7954/bar.yang").toURI());
-        final File childYang = new File(getClass().getResource("/bugs/bug7954/subbar.yang").toURI());
-
-        try {
-            StmtTestUtils.parseYangSources(yang, childYang, childYang);
-            fail("An exception should have been thrown because of adding the same YANG submodule twice.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertThat(cause, instanceOf(SourceException.class));
-            assertThat(cause.getMessage(), startsWith("Submodule name collision: subbar."));
-        }
+    void testParsingTheSameSubmoduleTwice() throws Exception {
+        assertSourceException(startsWith("Submodule name collision: subbar."), "/bugs/bug7954/bar.yang",
+            "/bugs/bug7954/subbar.yang", "/bugs/bug7954/subbar.yang");
     }
 }

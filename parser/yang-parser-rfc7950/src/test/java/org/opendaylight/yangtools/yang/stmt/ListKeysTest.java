@@ -7,54 +7,37 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.junit.jupiter.api.Test;
 
-public class ListKeysTest {
+class ListKeysTest extends AbstractYangTest {
     @Test
-    public void correctListKeysTest() throws Exception {
-        TestUtils.parseYangSource("/list-keys-test/correct-list-keys-test.yang");
+    void correctListKeysTest() {
+        assertEffectiveModel("/list-keys-test/correct-list-keys-test.yang");
     }
 
     @Test
-    public void incorrectListKeysTest1() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test.yang"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
+    void incorrectListKeysTest1() {
+        assertInferenceException(startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"),
+            "/list-keys-test/incorrect-list-keys-test.yang");
     }
 
     @Test
-    public void incorrectListKeysTest2() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test2.yang"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
+    void incorrectListKeysTest2() {
+        assertInferenceException(startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"),
+            "/list-keys-test/incorrect-list-keys-test2.yang");
     }
 
     @Test
-    public void incorrectListKeysTest3() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test3.yang"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("Key 'grp_list' misses node 'grp_list'"));
+    void incorrectListKeysTest3() {
+        assertInferenceException(startsWith("Key 'grp_list' misses node 'grp_list'"),
+            "/list-keys-test/incorrect-list-keys-test3.yang");
     }
 
     @Test
-    public void incorrectListKeysTest4()  {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test4.yang"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("Key 'grp_leaf' misses node 'grp_leaf'"));
+    void incorrectListKeysTest4()  {
+        assertInferenceException(startsWith("Key 'grp_leaf' misses node 'grp_leaf'"),
+            "/list-keys-test/incorrect-list-keys-test4.yang");
     }
 }

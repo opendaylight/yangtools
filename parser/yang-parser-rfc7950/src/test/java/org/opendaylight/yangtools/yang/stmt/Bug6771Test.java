@@ -7,19 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
-public class Bug6771Test {
+class Bug6771Test extends AbstractYangTest {
     private static final QNameModule NS = QNameModule.create(XMLNamespace.of("http://www.example.com/typedef-bug"));
     private static final QName ROOT = QName.create(NS, "root");
     private static final QName CONT_B = QName.create(NS, "container-b");
@@ -27,18 +25,16 @@ public class Bug6771Test {
     private static final QName INNER_CONTAINER = QName.create(NS, "inner-container");
 
     @Test
-    public void augmentTest() throws Exception {
-        final ModuleEffectiveStatement module = TestUtils.parseYangSource("/bugs/bug6771/augment.yang")
-            .getModuleStatement(NS);
+    void augmentTest() {
+        final var module = assertEffectiveModel("/bugs/bug6771/augment.yang").getModuleStatement(NS);
 
         verifyLeafType(module, ROOT, CONT_B, LEAF_CONT_B);
         verifyLeafType(module, ROOT, CONT_B, INNER_CONTAINER, LEAF_CONT_B);
     }
 
     @Test
-    public void choiceCaseTest() throws Exception {
-        final ModuleEffectiveStatement module = TestUtils.parseYangSource("/bugs/bug6771/choice-case.yang")
-            .getModuleStatement(NS);
+    void choiceCaseTest() {
+        final var module = assertEffectiveModel("/bugs/bug6771/choice-case.yang").getModuleStatement(NS);
 
         final QName myChoice = QName.create(NS, "my-choice");
         final QName caseOne = QName.create(NS, "one");
@@ -54,14 +50,13 @@ public class Bug6771Test {
     }
 
     @Test
-    public void groupingTest() throws Exception {
-        verifyLeafType(TestUtils.parseYangSource("/bugs/bug6771/grouping.yang").getModuleStatement(NS),
+    void groupingTest() {
+        verifyLeafType(assertEffectiveModel("/bugs/bug6771/grouping.yang").getModuleStatement(NS),
             ROOT, CONT_B, LEAF_CONT_B);
     }
 
     private static void verifyLeafType(final ModuleEffectiveStatement module, final QName... qnames) {
-        final SchemaTreeEffectiveStatement<?> stmt = module.findSchemaTreeNode(qnames).orElse(null);
-        assertThat(stmt, instanceOf(LeafSchemaNode.class));
-        assertThat(((LeafSchemaNode) stmt).getType(), instanceOf(Uint32TypeDefinition.class));
+        assertInstanceOf(Uint32TypeDefinition.class,
+            assertInstanceOf(LeafSchemaNode.class, module.findSchemaTreeNode(qnames).orElseThrow()).getType());
     }
 }

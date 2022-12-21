@@ -9,36 +9,36 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT838Test extends AbstractYangTest {
+class YT838Test extends AbstractYangTest {
     @Test
-    public void testGroupingShadowing() {
+    void testGroupingShadowing() {
         testGrouping("grouping.yang");
     }
 
     @Test
-    public void testGroupingPostShadowing() {
+    void testGroupingPostShadowing() {
         testGrouping("grouping-post.yang");
     }
 
     @Test
-    public void testTypedefShadowing() {
+    void testTypedefShadowing() {
         testTypedef("typedef.yang");
     }
 
     @Test
-    public void testTypedefPostShadowing() {
+    void testTypedefPostShadowing() {
         testTypedef("typedef-post.yang");
     }
 
     private static void testGrouping(final String model) {
         assertSourceException(startsWith("Duplicate name for grouping (grouping?revision=2017-12-20)foo [at "),
-                "/bugs/YT838/" + model);
+            "/bugs/YT838/" + model);
     }
 
     private static void testTypedef(final String model) {
         assertSourceException(startsWith("Duplicate name for typedef (typedef?revision=2017-12-20)foo [at "),
-                "/bugs/YT838/" + model);
+            "/bugs/YT838/" + model);
     }
 }

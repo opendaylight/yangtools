@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -20,16 +19,15 @@ import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
-public class YT1201Test extends AbstractYangTest {
+class YT1201Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
 
     @Test
-    public void testWhenPrefixes() {
+    void testWhenPrefixes() {
         final DataSchemaNode bar = assertEffectiveModelDir("/bugs/YT1201/").getDataChildByName(BAR);
-        assertThat(bar, instanceOf(ContainerSchemaNode.class));
-        final YangExpr when = ((ContainerSchemaNode) bar).getWhenCondition().get().getRootExpr();
-        assertThat(when, instanceOf(Relative.class));
-        assertEquals(List.of(YangXPathAxis.CHILD.asStep(FOO)), ((Relative) when).getSteps());
+        final YangExpr when = assertInstanceOf(ContainerSchemaNode.class, bar).getWhenCondition().orElseThrow()
+            .getRootExpr();
+        assertEquals(List.of(YangXPathAxis.CHILD.asStep(FOO)), assertInstanceOf(Relative.class, when).getSteps());
     }
 }

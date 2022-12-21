@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class IdentityIssueIetfRoutingTest extends AbstractYangTest {
+class IdentityIssueIetfRoutingTest extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         assertEffectiveModelDir("/bugs/identity-ietf-routing-test/");
     }
 }
