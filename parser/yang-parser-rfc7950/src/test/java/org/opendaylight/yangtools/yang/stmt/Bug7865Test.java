@@ -7,35 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug7865Test extends AbstractYangTest {
+class Bug7865Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
-        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug7865");
-        final DataSchemaNode root = context.getDataChildByName(foo("root"));
-        assertTrue(root instanceof ContainerSchemaNode);
-        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = ((ContainerSchemaNode) root)
-            .asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+    void test() {
+        final var context = assertEffectiveModelDir("/bugs/bug7865");
+        final var unknownSchemaNodes = assertInstanceOf(ContainerSchemaNode.class,
+            context.getDataChildByName(foo("root"))).asEffectiveStatement().getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
 
-        final UnrecognizedStatement unknownNode = unknownSchemaNodes.iterator().next();
-        final Collection<? extends UnrecognizedStatement> subUnknownSchemaNodes =
-            unknownNode.declaredSubstatements(UnrecognizedStatement.class);
+        final var unknownNode = unknownSchemaNodes.iterator().next();
+        final var subUnknownSchemaNodes = unknownNode.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, subUnknownSchemaNodes.size());
 
-        final UnrecognizedStatement subUnknownNode = subUnknownSchemaNodes.iterator().next();
-        final Collection<? extends UnrecognizedStatement> subSubUnknownSchemaNodes =
-            subUnknownNode.declaredSubstatements(UnrecognizedStatement.class);
+        final var subUnknownNode = subUnknownSchemaNodes.iterator().next();
+        final var subSubUnknownSchemaNodes = subUnknownNode.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, subSubUnknownSchemaNodes.size());
 
         assertEquals("p", subSubUnknownSchemaNodes.iterator().next().argument());

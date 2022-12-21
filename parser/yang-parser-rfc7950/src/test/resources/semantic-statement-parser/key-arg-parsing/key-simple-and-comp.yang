@@ -1,20 +1,24 @@
 module key-simple-and-comp {
-	namespace root;
-	prefix root;
+    namespace root;
+    prefix root;
 
-	list simple {
-		key "key1";
-		container key1 {
-		}
-	}
+    list simple {
+        key "key1";
+        leaf key1 {
+          type string;
+        }
+    }
 
-	list comp {
-		key "key1 key2 key3";
-		container key1 {
+    list comp {
+        key "key1 key2 key3";
+        leaf key1 {
+          type string;
         }
-		container key2 {
+        leaf key2 {
+          type string;
         }
-		container key3 {
+        leaf key3 {
+          type string;
         }
-	}
+    }
 }

@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.Matchers.startsWith;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1042Test extends AbstractYangTest {
+class YT1042Test extends AbstractYangTest {
     @Test
-    public void testSubmoduleConflict() {
+    void testSubmoduleConflict() {
         assertSourceExceptionDir("/bugs/YT1042",
             startsWith("Cannot add data tree child with name (foo)foo, a conflicting child already exists"));
     }

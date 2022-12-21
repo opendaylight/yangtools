@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -28,12 +28,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-public class ThirdPartyExtensionPluginTest {
+class ThirdPartyExtensionPluginTest {
     private static final String NS = "urn:opendaylight:yang:extension:third-party";
     private static final String REV = "2016-06-09";
 
     @Test
-    public void test() throws URISyntaxException, ReactorException, IOException, YangSyntaxErrorException {
+    void test() throws URISyntaxException, ReactorException, IOException, YangSyntaxErrorException {
         final BuildAction reactor = RFC7950Reactors.defaultReactorBuilder()
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                 new ThirdPartyExtensionSupport(YangParserConfiguration.DEFAULT))
@@ -54,7 +54,7 @@ public class ThirdPartyExtensionPluginTest {
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
         assertThat(unknownSchemaNode, isA(ThirdPartyExtensionEffectiveStatement.class));
         final ThirdPartyExtensionEffectiveStatement thirdPartyExtensionStmt =
-                (ThirdPartyExtensionEffectiveStatement) unknownSchemaNode;
+            (ThirdPartyExtensionEffectiveStatement) unknownSchemaNode;
         assertEquals("Third-party namespace test.", thirdPartyExtensionStmt.getValueFromNamespace());
         assertEquals("plugin test", thirdPartyExtensionStmt.argument());
     }
