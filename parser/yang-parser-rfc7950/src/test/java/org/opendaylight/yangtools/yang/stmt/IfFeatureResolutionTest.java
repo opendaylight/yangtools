@@ -5,15 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,29 +18,18 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 public class IfFeatureResolutionTest {
-
-    private static final StatementStreamSource FOO_MODULE = sourceForResource("/if-feature-resolution-test/foo.yang");
-    private static final StatementStreamSource BAR_MODULE = sourceForResource("/if-feature-resolution-test/bar.yang");
-
     @Test
-    public void testSomeFeaturesSupported() throws ReactorException {
-        final Set<QName> supportedFeatures = ImmutableSet.of(
+    public void testSomeFeaturesSupported() throws Exception {
+        final var schemaContext = StmtTestUtils.parseYangSources("/if-feature-resolution-test",
+            Set.of(
                 QName.create("foo-namespace", "test-feature-1"),
                 QName.create("foo-namespace", "test-feature-2"),
                 QName.create("foo-namespace", "test-feature-3"),
-                QName.create("bar-namespace", "imp-feature"));
-
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, BAR_MODULE)
-                .setSupportedFeatures(supportedFeatures)
-                .buildEffective();
-        assertNotNull(schemaContext);
+                QName.create("bar-namespace", "imp-feature")),
+            YangParserConfiguration.DEFAULT);
 
         final Module testModule = schemaContext.findModule("foo").get();
         assertEquals(9, testModule.getChildNodes().size());
@@ -142,11 +128,9 @@ public class IfFeatureResolutionTest {
     }
 
     @Test
-    public void testAllFeaturesSupported() throws ReactorException {
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, BAR_MODULE)
-                .buildEffective();
-        assertNotNull(schemaContext);
+    public void testAllFeaturesSupported() throws Exception {
+        final var schemaContext = StmtTestUtils.parseYangSources("/if-feature-resolution-test",
+                YangParserConfiguration.DEFAULT);
 
         final Module testModule = schemaContext.findModules("foo").iterator().next();
         assertNotNull(testModule);
@@ -268,12 +252,9 @@ public class IfFeatureResolutionTest {
     }
 
     @Test
-    public void testNoFeaturesSupported() throws ReactorException {
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, BAR_MODULE)
-                .setSupportedFeatures(ImmutableSet.of())
-                .buildEffective();
-        assertNotNull(schemaContext);
+    public void testNoFeaturesSupported() throws Exception {
+        final var schemaContext = StmtTestUtils.parseYangSources("/if-feature-resolution-test",
+            Set.of(), YangParserConfiguration.DEFAULT);
 
         final Module testModule = schemaContext.findModules("foo").iterator().next();
         assertNotNull(testModule);
