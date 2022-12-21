@@ -7,32 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class YangTypes2StmtTest {
-
-    private static final StatementStreamSource TYPEFILE1 = sourceForResource("/semantic-statement-parser/types2.yang");
-    private static final StatementStreamSource TYPEFILE2 = sourceForResource("/semantic-statement-parser/types.yang");
-    private static final StatementStreamSource TYPEFILE3 = sourceForResource(
-            "/semantic-statement-parser/simple-types.yang");
-    private static final StatementStreamSource TYPEFILE4 = sourceForResource(
-            "/semantic-statement-parser/identityreftest.yang");
-
+class YangTypes2StmtTest extends AbstractYangTest {
     private static final QNameModule TYPES2_MODULE = QNameModule.create(XMLNamespace.of("types2"));
 
     private static final QName LF_DECIMAL = QName.create(TYPES2_MODULE, "lf-decimal");
@@ -48,17 +35,16 @@ public class YangTypes2StmtTest {
     private static final QName LF_BOOL = QName.create(TYPES2_MODULE, "lf-bool");
 
     @Test
-    public void readAndParseYangFileTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, TYPEFILE4)
-                .buildEffective();
-        assertNotNull(result);
+    void readAndParseYangFileTest() {
+        final var result = assertEffectiveModel(
+            "/semantic-statement-parser/types2.yang", "/semantic-statement-parser/types.yang",
+            "/semantic-statement-parser/simple-types.yang", "/semantic-statement-parser/identityreftest.yang");
 
         final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.getDataChildByName(LF_DECIMAL);
         assertNotNull(lfDecimalNode);
 
-        assertTrue(lfDecimalNode.getType() instanceof DecimalTypeDefinition);
-        final DecimalTypeDefinition lfDecimalNodeType = (DecimalTypeDefinition) lfDecimalNode.getType();
+        final DecimalTypeDefinition lfDecimalNodeType =
+            assertInstanceOf(DecimalTypeDefinition.class, lfDecimalNode.getType());
         assertEquals(2, lfDecimalNodeType.getFractionDigits());
 
         final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.getDataChildByName(LF_INT8);

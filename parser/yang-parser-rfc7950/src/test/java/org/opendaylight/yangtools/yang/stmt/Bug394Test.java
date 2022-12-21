@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -26,15 +26,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 /**
  * Test antlr grammar capability to parse nested unknown nodes.
  */
-public class Bug394Test extends AbstractYangTest {
+class Bug394Test extends AbstractYangTest {
     @Test
-    public void testParseList() throws Exception {
+    void testParseList() throws Exception {
         final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug394-retest");
         final Module bug394 = context.findModules("bug394").iterator().next();
         final Module bug394_ext = context.findModules("bug394-ext").iterator().next();
 
         final ContainerSchemaNode logrecords = (ContainerSchemaNode) bug394.getDataChildByName(QName.create(
-                bug394.getQNameModule(), "logrecords"));
+            bug394.getQNameModule(), "logrecords"));
         assertNotNull(logrecords);
 
         final Collection<? extends UnrecognizedStatement> nodes = logrecords.asEffectiveStatement().getDeclared()
