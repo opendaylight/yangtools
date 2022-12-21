@@ -8,25 +8,21 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class Bug5946Test {
+class Bug5946Test extends AbstractYangTest {
     private static final String NS = "foo";
     private static final String REV = "2016-05-26";
     private static final QName L1 = QName.create(NS, REV, "l1");
@@ -41,10 +37,8 @@ public class Bug5946Test {
     private static final SchemaNodeIdentifier C_L3_ID = SchemaNodeIdentifier.Descendant.of(C, L3);
 
     @Test
-    public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources(new File(getClass()
-                .getResource("/bugs/bug5946/foo.yang").toURI()));
-        assertNotNull(context);
+    void test() throws Exception {
+        final var context = assertEffectiveModel("/bugs/bug5946/foo.yang");
 
         var uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
         assertNotNull(uniqueConstraints);
@@ -63,7 +57,7 @@ public class Bug5946Test {
         boolean l1l2 = false;
         boolean l1cl3 = false;
         boolean cl3l2 = false;
-        for (UniqueEffectiveStatement uniqueConstraint : multipleUniqueConstraints) {
+        for (var uniqueConstraint : multipleUniqueConstraints) {
             var uniqueConstraintTag = uniqueConstraint.argument();
             if (uniqueConstraintTag.contains(L1_ID) && uniqueConstraintTag.contains(L2_ID)) {
                 l1l2 = true;
@@ -77,18 +71,15 @@ public class Bug5946Test {
     }
 
     @Test
-    public void testInvalid() throws Exception {
-        final var cause = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
-            new File(getClass().getResource("/bugs/bug5946/foo-invalid.yang").toURI())))
-            .getCause();
-        assertThat(cause.getMessage(), startsWith("Unique statement argument '/simple-unique/l1' contains schema node "
-            + "identifier '/simple-unique/l1' which is not in the descendant node identifier form."));
+    void testInvalid() throws Exception {
+        assertSourceException(
+            startsWith("Unique statement argument '/simple-unique/l1' contains schema node identifier "
+                + "'/simple-unique/l1' which is not in the descendant node identifier form."),
+            "/bugs/bug5946/foo-invalid.yang");
     }
 
-    private static @NonNull Collection<? extends @NonNull UniqueEffectiveStatement> getListConstraints(
+    private static  @NonNull Collection<? extends @NonNull UniqueEffectiveStatement> getListConstraints(
             final SchemaContext context, final QName listQName) {
-        DataSchemaNode dataChildByName = context.getDataChildByName(listQName);
-        assertTrue(dataChildByName instanceof ListSchemaNode);
-        return ((ListSchemaNode) dataChildByName).getUniqueConstraints();
+        return assertInstanceOf(ListSchemaNode.class, context.getDataChildByName(listQName)).getUniqueConstraints();
     }
 }

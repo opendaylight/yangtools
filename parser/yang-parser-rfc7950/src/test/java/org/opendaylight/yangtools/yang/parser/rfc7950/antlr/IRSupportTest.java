@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport.trimWhitespace;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class IRSupportTest {
+class IRSupportTest {
     @Test
-    public void testTrimWhitespace() {
+    void testTrimWhitespace() {
         assertEquals("\n", trimWhitespace("\n", 0));
         assertEquals("\n", trimWhitespace("\n", 5));
         assertEquals("\n\n\n\n", trimWhitespace("\n\n\n\n", 0));

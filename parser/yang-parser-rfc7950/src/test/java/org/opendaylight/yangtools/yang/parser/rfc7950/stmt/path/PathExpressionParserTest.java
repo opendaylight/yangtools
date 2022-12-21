@@ -11,19 +11,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class PathExpressionParserTest {
     @Mock
     public StmtContext<?, ?, ?> ctx;
@@ -51,13 +51,13 @@ public class PathExpressionParserTest {
     @SuppressWarnings("exports")
     public final PathExpressionParser parser = new PathExpressionParser();
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         doReturn(ref).when(ctx).sourceReference();
     }
 
     @Test
-    public void testDerefPath() {
+    void testDerefPath() {
         // deref() is not valid as per RFC7950, but we tolarate it.
         final PathExpression deref = parser.parseExpression(ctx, "deref(../id)/../type");
 
@@ -72,7 +72,7 @@ public class PathExpressionParserTest {
     }
 
     @Test
-    public void testInvalidLeftParent() {
+    void testInvalidLeftParent() {
         try {
             parser.parseExpression(ctx, "foo(");
             fail("SourceException should have been thrown");
@@ -84,7 +84,7 @@ public class PathExpressionParserTest {
     }
 
     @Test
-    public void testInvalidRightParent() {
+    void testInvalidRightParent() {
         try {
             parser.parseExpression(ctx, "foo)");
             fail("SourceException should have been thrown");
@@ -96,7 +96,7 @@ public class PathExpressionParserTest {
     }
 
     @Test
-    public void testInvalidIdentifier() {
+    void testInvalidIdentifier() {
         try {
             parser.parseExpression(ctx, "foo%");
             fail("SourceException should have been thrown");
@@ -107,7 +107,7 @@ public class PathExpressionParserTest {
     }
 
     @Test
-    public void testCurrentPredicateParsing() {
+    void testCurrentPredicateParsing() {
         final YangLocationPath path = ((LocationPathSteps) parser.parseExpression(ctx,
             "/device_types/device_type[type = current()/../type_text]/desc").getSteps()).getLocationPath();
         assertTrue(path.isAbsolute());

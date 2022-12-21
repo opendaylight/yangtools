@@ -7,94 +7,71 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-public class Bug6180Test {
-
+class Bug6180Test extends AbstractYangTest {
     @Test
-    public void stringTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
-                "/bugs/bug6180/string-test.yang").toURI()));
-        assertNotNull(schemaContext);
+    void stringTest() {
+        final var schemaContext = assertEffectiveModel("/bugs/bug6180/string-test.yang");
         assertEquals(1, schemaContext.getModules().size());
-        final Module module = schemaContext.getModules().iterator().next();
+        final var module = schemaContext.getModules().iterator().next();
         assertEquals(Optional.of("    1. this text contains \"string enclosed in double quotes\" and"
-                + " special characters: \\,\n,\t          2. this text contains \"string enclosed in double quotes\""
-                + " and special characters: \\,\n,\n,                     3. this text contains \"string enclosed in"
-                + " double quotes\" and special characters: \\,\n,\t      "), module.getDescription());
+            + " special characters: \\,\n,\t          2. this text contains \"string enclosed in double quotes\""
+            + " and special characters: \\,\n,\n,                     3. this text contains \"string enclosed in"
+            + " double quotes\" and special characters: \\,\n,\t      "), module.getDescription());
     }
 
     @Test
-    public void doubleQuotesTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
-                "/bugs/bug6180/double-quotes.yang").toURI()));
-        assertNotNull(schemaContext);
-        verifyDoubleQuotesExpression(schemaContext);
+    void doubleQuotesTest() {
+        verifyDoubleQuotesExpression(assertEffectiveModel("/bugs/bug6180/double-quotes.yang"));
     }
 
     @Test
-    public void doubleQuotesSinbleInsideTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
-                "/bugs/bug6180/double-quotes-single-inside.yang").toURI()));
-        assertNotNull(schemaContext);
-        verifySingleQuotesExpression(schemaContext);
+    void doubleQuotesSinbleInsideTest() {
+        verifySingleQuotesExpression(assertEffectiveModel("/bugs/bug6180/double-quotes-single-inside.yang"));
     }
 
     @Test
-    public void singleQuotesTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
-                "/bugs/bug6180/single-quotes.yang").toURI()));
-        assertNotNull(schemaContext);
-        verifyDoubleQuotesExpression(schemaContext);
+    void singleQuotesTest() {
+        verifyDoubleQuotesExpression(assertEffectiveModel("/bugs/bug6180/single-quotes.yang"));
     }
 
-    private static void verifyDoubleQuotesExpression(final SchemaContext schemaContext) {
-        final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
-        assertTrue(dataNodeBar instanceof ContainerSchemaNode);
-        final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
+    private static void verifyDoubleQuotesExpression(final EffectiveModelContext schemaContext) {
+        final var bar = assertInstanceOf(ContainerSchemaNode.class,
+            schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar")));
         assertEquals("/foo != \"bar\"", bar.getWhenCondition().orElseThrow().toString());
 
-        final Collection<? extends TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
+        final var typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
-        final TypeDefinition<?> type = typeDefinitions.iterator().next();
-        assertTrue(type instanceof StringTypeDefinition);
-        final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
+        final var patternConstraints = assertInstanceOf(StringTypeDefinition.class, typeDefinitions.iterator().next())
+            .getPatternConstraints();
         assertEquals(1, patternConstraints.size());
-        final PatternConstraint pattern = patternConstraints.iterator().next();
+        final var pattern = patternConstraints.iterator().next();
         assertEquals("^(?:\".*\")$", pattern.getJavaPatternString());
         assertTrue(Pattern.compile(pattern.getJavaPatternString()).matcher("\"enclosed string in quotes\"").matches());
     }
 
-    private static void verifySingleQuotesExpression(final SchemaContext schemaContext) {
-        final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
-        assertTrue(dataNodeBar instanceof ContainerSchemaNode);
-        final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
+    private static void verifySingleQuotesExpression(final EffectiveModelContext schemaContext) {
+        final var bar = assertInstanceOf(ContainerSchemaNode.class,
+            schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar")));
         assertEquals("/foo != 'bar'", bar.getWhenCondition().orElseThrow().toString());
 
-        final Collection<? extends TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
+        final var typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
-        final TypeDefinition<?> type = typeDefinitions.iterator().next();
-        assertTrue(type instanceof StringTypeDefinition);
-        final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
+        final var patternConstraints = assertInstanceOf(StringTypeDefinition.class, typeDefinitions.iterator().next())
+            .getPatternConstraints();
         assertEquals(1, patternConstraints.size());
-        final PatternConstraint pattern = patternConstraints.iterator().next();
+        final var pattern = patternConstraints.iterator().next();
         assertEquals("^(?:'.*')$", pattern.getJavaPatternString());
         assertTrue(Pattern.compile(pattern.getJavaPatternString()).matcher("'enclosed string in quotes'").matches());
     }

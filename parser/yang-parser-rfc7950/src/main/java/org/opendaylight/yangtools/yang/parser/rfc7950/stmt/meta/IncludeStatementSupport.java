@@ -116,7 +116,7 @@ public final class IncludeStatementSupport
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 InferenceException.throwIf(failed.contains(requiresCtxPrerequisite), stmt,
-                    "Included submodule '%s' was not found: ", stmt.argument());
+                    "Included submodule '%s' was not found", stmt.rawArgument());
             }
         });
     }

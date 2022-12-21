@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
-public class AugmentTest extends AbstractYangTest {
+class AugmentTest extends AbstractYangTest {
     private static final QNameModule FOO = QNameModule.create(
         XMLNamespace.of("urn:opendaylight.foo"), Revision.of("2013-10-13"));
     private static final QNameModule BAR = QNameModule.create(
@@ -47,13 +47,13 @@ public class AugmentTest extends AbstractYangTest {
 
     private static EffectiveModelContext AUGMENT_IN_AUGMENT;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    @BeforeAll
+    static void beforeClass() throws Exception {
         AUGMENT_IN_AUGMENT = assertEffectiveModelDir("/augment-test/augment-in-augment");
     }
 
     @Test
-    public void testAugmentParsing() {
+    void testAugmentParsing() {
         // foo.yang
         final Module module1 = AUGMENT_IN_AUGMENT.findModules("foo").iterator().next();
         var augmentations = module1.getAugmentations();
@@ -70,13 +70,13 @@ public class AugmentTest extends AbstractYangTest {
         }
 
         final LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augment.getDataChildByName(QName.create(
-                module1.getQNameModule(), "ds0ChannelNumber"));
+            module1.getQNameModule(), "ds0ChannelNumber"));
         final LeafSchemaNode interfaceId = (LeafSchemaNode) augment.getDataChildByName(QName.create(
-                module1.getQNameModule(), "interface-id"));
+            module1.getQNameModule(), "interface-id"));
         final ContainerSchemaNode schemas = (ContainerSchemaNode) augment.getDataChildByName(QName.create(
-                module1.getQNameModule(), "schemas"));
+            module1.getQNameModule(), "schemas"));
         final ChoiceSchemaNode odl = (ChoiceSchemaNode) augment.getDataChildByName(QName.create(
-                module1.getQNameModule(), "odl"));
+            module1.getQNameModule(), "odl"));
 
         assertNotNull(ds0ChannelNumber);
         assertNotNull(interfaceId);
@@ -123,43 +123,43 @@ public class AugmentTest extends AbstractYangTest {
 
         assertEquals(1, augment1.getChildNodes().size());
         final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) augment1.getDataChildByName(QName.create(
-                module3.getQNameModule(), "augment-holder"));
+            module3.getQNameModule(), "augment-holder"));
         assertNotNull(augmentHolder);
 
         assertEquals(1, augment2.getChildNodes().size());
         final ContainerSchemaNode augmentHolder2 = (ContainerSchemaNode) augment2.getDataChildByName(QName.create(
-                module3.getQNameModule(), "augment-holder2"));
+            module3.getQNameModule(), "augment-holder2"));
         assertNotNull(augmentHolder2);
 
         assertEquals(1, augment3.getChildNodes().size());
         final CaseSchemaNode pause = (CaseSchemaNode) augment3.getDataChildByName(QName.create(
-                module3.getQNameModule(), "pause"));
+            module3.getQNameModule(), "pause"));
         assertNotNull(pause);
     }
 
     @Test
-    public void testAugmentResolving() {
+    void testAugmentResolving() {
         final Module module2 = AUGMENT_IN_AUGMENT.findModules("bar").iterator().next();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
-                module2.getQNameModule(), "interfaces"));
+            module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
-                module2.getQNameModule(), "ifEntry"));
+            module2.getQNameModule(), "ifEntry"));
 
         // baz.yang
         // augment "/br:interfaces/br:ifEntry" {
         final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(BAZ,
-                "augment-holder"));
+            "augment-holder"));
         checkIsAugmenting(augmentHolder, true);
         assertEquals(Q2, augmentHolder.getQName());
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
         final LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO,
-                "ds0ChannelNumber"));
+            "ds0ChannelNumber"));
         final LeafSchemaNode interfaceId = (LeafSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO,
-                "interface-id"));
+            "interface-id"));
         final ContainerSchemaNode schemas = (ContainerSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO,
-                "schemas"));
+            "schemas"));
         final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO, "odl"));
 
         assertNotNull(ds0ChannelNumber);
@@ -181,14 +181,14 @@ public class AugmentTest extends AbstractYangTest {
     }
 
     @Test
-    public void testAugmentedChoice() {
+    void testAugmentedChoice() {
         final Module module2 = AUGMENT_IN_AUGMENT.findModules("bar").iterator().next();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
-                module2.getQNameModule(), "interfaces"));
+            module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
-                module2.getQNameModule(), "ifEntry"));
+            module2.getQNameModule(), "ifEntry"));
         final ContainerSchemaNode augmentedHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(
-                BAZ, "augment-holder"));
+            BAZ, "augment-holder"));
         checkIsAugmenting(augmentedHolder, true);
 
         // foo.yang
@@ -253,7 +253,7 @@ public class AugmentTest extends AbstractYangTest {
     }
 
     @Test
-    public void testAugmentRpc() throws Exception {
+    void testAugmentRpc() throws Exception {
         final EffectiveModelContext context = assertEffectiveModelDir("/augment-test/rpc");
         final XMLNamespace NS_BAR = XMLNamespace.of("urn:opendaylight:bar");
         final XMLNamespace NS_FOO = XMLNamespace.of("urn:opendaylight:foo");
@@ -277,7 +277,7 @@ public class AugmentTest extends AbstractYangTest {
         final QName inputQName = QName.create(NS_BAR, revision, "input");
         assertEquals(inputQName, input.getQName());
         final ChoiceSchemaNode arguments = (ChoiceSchemaNode) input.getDataChildByName(QName.create(NS_BAR, revision,
-                "arguments"));
+            "arguments"));
         final QName argumentsQName = QName.create(NS_BAR, revision, "arguments");
         assertEquals(argumentsQName, arguments.getQName());
         assertFalse(arguments.isAugmenting());
@@ -321,19 +321,19 @@ public class AugmentTest extends AbstractYangTest {
     }
 
     @Test
-    public void testAugmentInUsesResolving() throws Exception {
+    void testAugmentInUsesResolving() throws Exception {
         final EffectiveModelContext context = assertEffectiveModelDir("/augment-test/augment-in-uses");
         assertEquals(1, context.getModules().size());
 
         final Module test = context.getModules().iterator().next();
         final DataNodeContainer links = (DataNodeContainer) test.getDataChildByName(QName.create(test.getQNameModule(),
-                "links"));
+            "links"));
         final DataNodeContainer link = (DataNodeContainer) links.getDataChildByName(QName.create(test.getQNameModule(),
-                "link"));
+            "link"));
         final DataNodeContainer nodes = (DataNodeContainer) link.getDataChildByName(QName.create(test.getQNameModule(),
-                "nodes"));
+            "nodes"));
         final ContainerSchemaNode node = (ContainerSchemaNode) nodes.getDataChildByName(QName.create(
-                test.getQNameModule(), "node"));
+            test.getQNameModule(), "node"));
         final var augments = node.getAvailableAugmentations();
         assertEquals(1, augments.size());
         assertEquals(1, node.getChildNodes().size());
