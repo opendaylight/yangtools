@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public class YinFileTypeDefStmtTest extends AbstractYinModulesTest {
+class YinFileTypeDefStmtTest extends AbstractYinModulesTest {
     @Test
-    public void testTypedef() {
+    void testTypedef() {
         Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 

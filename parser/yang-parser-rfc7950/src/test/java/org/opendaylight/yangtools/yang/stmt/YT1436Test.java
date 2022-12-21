@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1436Test extends AbstractYangTest {
+class YT1436Test extends AbstractYangTest {
     @Test
-    public void testUniqueLeafFromOtherSubmodule() {
+    void testUniqueLeafFromOtherSubmodule() {
         assertEffectiveModelDir("/bugs/YT1436/unique");
     }
 
     @Test
-    public void testAugmentGroupingFromOtherSubmodule() {
+    void testAugmentGroupingFromOtherSubmodule() {
         assertEffectiveModelDir("/bugs/YT1436/augment");
     }
 }
