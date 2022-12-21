@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
@@ -149,11 +148,12 @@ public final class UniqueStatementSupport
 
         final var uniqueConstraintNodes = new HashSet<Descendant>();
         for (var uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
-            final var nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
-            SourceException.throwIf(nodeIdentifier instanceof Absolute, ctx,
-                "Unique statement argument '%s' contains schema node identifier '%s' which is not in the descendant "
-                    + "node identifier form.", argumentValue, uniqueArgToken);
-            uniqueConstraintNodes.add((Descendant) nodeIdentifier);
+            if (ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken) instanceof Descendant descendant) {
+                uniqueConstraintNodes.add(descendant);
+            } else {
+                throw new SourceException(ctx, "Unique statement argument '%s' contains schema node identifier '%s' "
+                    + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
+            }
         }
         return ImmutableSet.copyOf(uniqueConstraintNodes);
     }
