@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -30,14 +28,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class RpcStmtTest extends AbstractYangTest {
+class RpcStmtTest extends AbstractYangTest {
     @Test
-    public void rpcTest() throws ReactorException {
+    void rpcTest() throws ReactorException {
         final EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/model/baz.yang"))
-                .addSource(sourceForResource("/model/bar.yang"))
-                .addSource(sourceForResource("/rpc-stmt-test/foo.yang"))
-                .buildEffective();
+            .addSource(sourceForResource("/model/baz.yang"))
+            .addSource(sourceForResource("/model/bar.yang"))
+            .addSource(sourceForResource("/rpc-stmt-test/foo.yang"))
+            .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("baz").iterator().next();
@@ -79,26 +77,26 @@ public class RpcStmtTest extends AbstractYangTest {
             }
         }
 
-        assertFalse(fooRpc1.equals(null));
-        assertFalse(fooRpc1.equals("str"));
-        assertFalse(fooRpc1.equals(fooRpc2));
+        assertNotEquals(null, fooRpc1);
+        assertNotEquals("str", fooRpc1);
+        assertNotEquals(fooRpc1, fooRpc2);
 
         assertNotEquals(fooRpc1.getInput().hashCode(), fooRpc2.getInput().hashCode());
         assertNotEquals(fooRpc1.getOutput().hashCode(), fooRpc2.getOutput().hashCode());
 
-        assertTrue(fooRpc1.getInput().equals(fooRpc1.getInput()));
-        assertFalse(fooRpc1.getInput().equals(null));
-        assertFalse(fooRpc1.getInput().equals("str"));
-        assertFalse(fooRpc1.getInput().equals(fooRpc2.getInput()));
+        assertEquals(fooRpc1.getInput(), fooRpc1.getInput());
+        assertNotEquals(null, fooRpc1.getInput());
+        assertNotEquals("str", fooRpc1.getInput());
+        assertNotEquals(fooRpc1.getInput(), fooRpc2.getInput());
 
-        assertTrue(fooRpc1.getOutput().equals(fooRpc1.getOutput()));
-        assertFalse(fooRpc1.getOutput().equals(null));
-        assertFalse(fooRpc1.getOutput().equals("str"));
-        assertFalse(fooRpc1.getOutput().equals(fooRpc2.getOutput()));
+        assertEquals(fooRpc1.getOutput(), fooRpc1.getOutput());
+        assertNotEquals(null, fooRpc1.getOutput());
+        assertNotEquals("str", fooRpc1.getOutput());
+        assertNotEquals(fooRpc1.getOutput(), fooRpc2.getOutput());
     }
 
     @Test
-    public void testImplicitInputAndOutput() {
+    void testImplicitInputAndOutput() {
         final var context = assertEffectiveModel("/rpc-stmt-test/bar.yang");
 
         final Module barModule = context.findModule("bar", Revision.of("2016-11-25")).get();

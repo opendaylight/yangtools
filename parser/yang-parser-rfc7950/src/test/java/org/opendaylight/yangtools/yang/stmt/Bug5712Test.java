@@ -8,17 +8,17 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public class Bug5712Test extends AbstractYangTest {
+class Bug5712Test extends AbstractYangTest {
     @Test
-    public void testTypedefWithNewStatementParser() {
+    void testTypedefWithNewStatementParser() {
         final var badModule = assertEffectiveModelDir("/bugs/bug5712").findModules("bad").iterator().next();
         assertNotNull(badModule);
         checkThing2TypeDef(badModule);

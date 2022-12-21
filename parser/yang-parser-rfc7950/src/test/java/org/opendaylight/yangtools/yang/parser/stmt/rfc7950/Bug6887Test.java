@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -27,15 +27,15 @@ import org.opendaylight.yangtools.yang.model.ri.type.BitBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumPairBuilder;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6887Test extends AbstractYangTest {
+class Bug6887Test extends AbstractYangTest {
 
     @Test
-    public void testRestrictedEnumeration() {
+    void testRestrictedEnumeration() {
         final var context = assertEffectiveModel("/rfc7950/bug6887/foo.yang");
 
         final Module foo = context.findModule("foo", Revision.of("2017-01-26")).get();
         final LeafSchemaNode myEnumerationLeaf = (LeafSchemaNode) foo.getDataChildByName(
-                QName.create(foo.getQNameModule(), "my-enumeration-leaf"));
+            QName.create(foo.getQNameModule(), "my-enumeration-leaf"));
 
         EnumTypeDefinition enumerationType = (EnumTypeDefinition) myEnumerationLeaf.getType();
 
@@ -58,7 +58,7 @@ public class Bug6887Test extends AbstractYangTest {
         assertContainsEnums(enums, whiteEnum, yellowEnum, redEnum, blackEnum);
 
         final LeafSchemaNode myEnumerationLeaf2 = (LeafSchemaNode) foo.getDataChildByName(
-                QName.create(foo.getQNameModule(), "my-enumeration-leaf-2"));
+            QName.create(foo.getQNameModule(), "my-enumeration-leaf-2"));
 
         enumerationType = (EnumTypeDefinition) myEnumerationLeaf2.getType();
         enums = enumerationType.getValues();
@@ -67,55 +67,55 @@ public class Bug6887Test extends AbstractYangTest {
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration() {
+    void testInvalidRestrictedEnumeration() {
         assertSourceException(startsWith("Enum 'purple' is not a subset of its base enumeration type "
-                + "(foo?revision=2017-02-02)my-derived-enumeration-type."), "/rfc7950/bug6887/foo-invalid.yang");
+            + "(foo?revision=2017-02-02)my-derived-enumeration-type."), "/rfc7950/bug6887/foo-invalid.yang");
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration2() {
+    void testInvalidRestrictedEnumeration2() {
         assertInvalidEnumDefinitionException(startsWith("Enum 'magenta' is not a subset of its base enumeration type "
-                + "(foo?revision=2017-02-02)my-base-enumeration-type."), "/rfc7950/bug6887/foo-invalid-2.yang");
+            + "(foo?revision=2017-02-02)my-base-enumeration-type."), "/rfc7950/bug6887/foo-invalid-2.yang");
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration3() {
+    void testInvalidRestrictedEnumeration3() {
         assertInvalidEnumDefinitionException(startsWith("Value of enum 'red' must be the same as the value of "
-                + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
-                + "my-derived-enumeration-type."), "/rfc7950/bug6887/foo-invalid-3.yang");
+            + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
+            + "my-derived-enumeration-type."), "/rfc7950/bug6887/foo-invalid-3.yang");
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration4() {
+    void testInvalidRestrictedEnumeration4() {
         assertInvalidEnumDefinitionException(startsWith("Value of enum 'black' must be the same as the value of "
-                + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
-                + "my-base-enumeration-type."), "/rfc7950/bug6887/foo-invalid-4.yang");
+            + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
+            + "my-base-enumeration-type."), "/rfc7950/bug6887/foo-invalid-4.yang");
     }
 
     @Test
-    public void testValidYang10EnumerationWithUnknownStatements() {
+    void testValidYang10EnumerationWithUnknownStatements() {
         assertEffectiveModel("/rfc7950/bug6887/foo10-valid.yang");
     }
 
     @Test
-    public void testInvalidYang10RestrictedEnumeration() {
+    void testInvalidYang10RestrictedEnumeration() {
         assertSourceException(startsWith("Restricted enumeration type is not allowed in YANG version 1 [at "),
-                "/rfc7950/bug6887/foo10-invalid.yang");
+            "/rfc7950/bug6887/foo10-invalid.yang");
     }
 
     @Test
-    public void testInvalidYang10RestrictedEnumeration2() {
+    void testInvalidYang10RestrictedEnumeration2() {
         assertSourceException(startsWith("Restricted enumeration type is not allowed in YANG version 1 [at "),
-                "/rfc7950/bug6887/foo10-invalid-2.yang");
+            "/rfc7950/bug6887/foo10-invalid-2.yang");
     }
 
     @Test
-    public void testRestrictedBits() {
+    void testRestrictedBits() {
         final var context = assertEffectiveModel("/rfc7950/bug6887/bar.yang");
 
         final Module bar = context.findModule("bar", Revision.of("2017-02-02")).get();
         final LeafSchemaNode myBitsLeaf = (LeafSchemaNode) bar.getDataChildByName(
-                QName.create(bar.getQNameModule(), "my-bits-leaf"));
+            QName.create(bar.getQNameModule(), "my-bits-leaf"));
 
         BitsTypeDefinition bitsType = (BitsTypeDefinition) myBitsLeaf.getType();
 
@@ -143,7 +143,7 @@ public class Bug6887Test extends AbstractYangTest {
         assertContainsBits(bits, bitA, bitB, bitC, bitD);
 
         final LeafSchemaNode myBitsLeaf2 = (LeafSchemaNode) bar.getDataChildByName(
-                QName.create(bar.getQNameModule(), "my-bits-leaf-2"));
+            QName.create(bar.getQNameModule(), "my-bits-leaf-2"));
 
         bitsType = (BitsTypeDefinition) myBitsLeaf2.getType();
         bits = bitsType.getBits();
@@ -155,46 +155,46 @@ public class Bug6887Test extends AbstractYangTest {
     }
 
     @Test
-    public void testInvalidRestrictedBits() {
+    void testInvalidRestrictedBits() {
         assertSourceException(startsWith("Bit 'bit-w' is not a subset of its base bits type "
-                + "(bar?revision=2017-02-02)my-derived-bits-type."), "/rfc7950/bug6887/bar-invalid.yang");
+            + "(bar?revision=2017-02-02)my-derived-bits-type."), "/rfc7950/bug6887/bar-invalid.yang");
     }
 
     @Test
-    public void testInvalidRestrictedBits2() {
+    void testInvalidRestrictedBits2() {
         assertInvalidBitDefinitionException(startsWith("Bit 'bit-x' is not a subset of its base bits type "
-                + "(bar?revision=2017-02-02)my-base-bits-type."), "/rfc7950/bug6887/bar-invalid-2.yang");
+            + "(bar?revision=2017-02-02)my-base-bits-type."), "/rfc7950/bug6887/bar-invalid-2.yang");
     }
 
     @Test
-    public void testInvalidRestrictedBits3() {
+    void testInvalidRestrictedBits3() {
         assertInvalidBitDefinitionException(startsWith("Position of bit 'bit-c' must be the same as the position of "
-                + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-derived-bits-type."),
-                "/rfc7950/bug6887/bar-invalid-3.yang");
+            + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-derived-bits-type."),
+            "/rfc7950/bug6887/bar-invalid-3.yang");
     }
 
     @Test
-    public void testInvalidRestrictedBits4() {
+    void testInvalidRestrictedBits4() {
         assertInvalidBitDefinitionException(startsWith("Position of bit 'bit-d' must be the same as the position of "
-                + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-base-bits-type."),
-                "/rfc7950/bug6887/bar-invalid-4.yang");
+            + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-base-bits-type."),
+            "/rfc7950/bug6887/bar-invalid-4.yang");
     }
 
     @Test
-    public void testValidYang10BitsWithUnknownStatements() {
+    void testValidYang10BitsWithUnknownStatements() {
         assertEffectiveModel("/rfc7950/bug6887/bar10-valid.yang");
     }
 
     @Test
-    public void testInvalidYang10RestrictedBits() {
+    void testInvalidYang10RestrictedBits() {
         assertSourceException(startsWith("Restricted bits type is not allowed in YANG version 1 [at "),
-                "/rfc7950/bug6887/bar10-invalid.yang");
+            "/rfc7950/bug6887/bar10-invalid.yang");
     }
 
     @Test
-    public void testInvalidYang10RestrictedBits2() {
+    void testInvalidYang10RestrictedBits2() {
         assertSourceException(startsWith("Restricted bits type is not allowed in YANG version 1 [at "),
-                "/rfc7950/bug6887/bar10-invalid-2.yang");
+            "/rfc7950/bug6887/bar10-invalid-2.yang");
     }
 
     private static EnumPair createEnumPair(final String name, final int value) {

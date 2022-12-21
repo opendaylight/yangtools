@@ -7,21 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1445Test  extends AbstractYangTest {
+class YT1445Test  extends AbstractYangTest {
     @Test
-    public void testUniqueTopLevelGrouping() {
+    void testUniqueTopLevelGrouping() {
         assertEffectiveModel("/bugs/YT1445/top-level-grouping/foo.yang");
     }
 
     @Test
-    public void testUniqueInListGrouping() {
+    void testUniqueInListGrouping() {
         assertEffectiveModel("/bugs/YT1445/list-grouping/foo.yang");
     }
 
     @Test
-    public void testUniqueInGroupingUsedByGrouping() {
+    void testUniqueInGroupingUsedByGrouping() {
         assertEffectiveModel("/bugs/YT1445/nested-grouping/foo.yang");
     }
 }
