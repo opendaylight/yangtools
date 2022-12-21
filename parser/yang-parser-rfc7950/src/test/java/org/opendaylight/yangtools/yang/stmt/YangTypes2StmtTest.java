@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -24,14 +24,14 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class YangTypes2StmtTest {
+class YangTypes2StmtTest {
 
     private static final StatementStreamSource TYPEFILE1 = sourceForResource("/semantic-statement-parser/types2.yang");
     private static final StatementStreamSource TYPEFILE2 = sourceForResource("/semantic-statement-parser/types.yang");
     private static final StatementStreamSource TYPEFILE3 = sourceForResource(
-            "/semantic-statement-parser/simple-types.yang");
+        "/semantic-statement-parser/simple-types.yang");
     private static final StatementStreamSource TYPEFILE4 = sourceForResource(
-            "/semantic-statement-parser/identityreftest.yang");
+        "/semantic-statement-parser/identityreftest.yang");
 
     private static final QNameModule TYPES2_MODULE = QNameModule.create(XMLNamespace.of("types2"));
 
@@ -48,10 +48,10 @@ public class YangTypes2StmtTest {
     private static final QName LF_BOOL = QName.create(TYPES2_MODULE, "lf-bool");
 
     @Test
-    public void readAndParseYangFileTest() throws ReactorException {
+    void readAndParseYangFileTest() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, TYPEFILE4)
-                .buildEffective();
+            .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, TYPEFILE4)
+            .buildEffective();
         assertNotNull(result);
 
         final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.getDataChildByName(LF_DECIMAL);

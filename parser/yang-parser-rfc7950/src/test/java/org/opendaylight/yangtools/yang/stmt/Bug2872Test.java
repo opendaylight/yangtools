@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
-public class Bug2872Test extends AbstractYangTest {
+class Bug2872Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
         final var schema = assertEffectiveModelDir("/bugs/bug2872");
 
         final QNameModule bug2872module = QNameModule.create(XMLNamespace.of("bug2872"), Revision.of("2016-06-08"));

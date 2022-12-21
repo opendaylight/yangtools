@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
@@ -23,9 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
-public class YT1212Test extends AbstractYangTest {
+class YT1212Test extends AbstractYangTest {
     @Test
-    public void testActiontatementReuse() {
+    void testActiontatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/anyxml.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -44,7 +44,7 @@ public class YT1212Test extends AbstractYangTest {
     }
 
     @Test
-    public void testLeafStatementReuse() {
+    void testLeafStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/leaf.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
@@ -63,7 +63,7 @@ public class YT1212Test extends AbstractYangTest {
     }
 
     @Test
-    public void testContainerStatementReuse() {
+    void testContainerStatementReuse() {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/container.yang")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 

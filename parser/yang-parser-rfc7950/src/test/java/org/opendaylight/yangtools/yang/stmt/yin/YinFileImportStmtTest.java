@@ -10,20 +10,20 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
-public class YinFileImportStmtTest extends AbstractYinModulesTest {
+class YinFileImportStmtTest extends AbstractYinModulesTest {
 
     @Test
-    public void testImport() {
+    void testImport() {
         Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
         assertNotNull(testModule);
 

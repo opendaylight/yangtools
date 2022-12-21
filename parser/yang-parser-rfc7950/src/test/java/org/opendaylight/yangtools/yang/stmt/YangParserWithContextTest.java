@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
@@ -18,7 +19,7 @@ import com.google.common.collect.Range;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint8;
@@ -49,7 +50,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class YangParserWithContextTest {
+class YangParserWithContextTest {
     private static final XMLNamespace T1_NS = XMLNamespace.of("urn:simple.demo.test1");
     private static final XMLNamespace T2_NS = XMLNamespace.of("urn:simple.demo.test2");
     private static final XMLNamespace T3_NS = XMLNamespace.of("urn:simple.demo.test3");
@@ -60,26 +61,26 @@ public class YangParserWithContextTest {
     private static final StatementStreamSource FOO = sourceForResource("/model/foo.yang");
     private static final StatementStreamSource SUBFOO = sourceForResource("/model/subfoo.yang");
 
-    private static final StatementStreamSource[] IETF = new StatementStreamSource[] {
-            sourceForResource("/ietf/iana-afn-safi@2012-06-04.yang"),
-            sourceForResource("/ietf/iana-if-type@2012-06-05.yang"),
-            sourceForResource("/ietf/iana-timezones@2012-07-09.yang"),
-            sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"),
-            sourceForResource("/ietf/ietf-yang-types@2010-09-24.yang"),
-            sourceForResource("/ietf/network-topology@2013-07-12.yang"),
-            sourceForResource("/ietf/network-topology@2013-10-21.yang") };
+    private static final StatementStreamSource[] IETF = new StatementStreamSource[]{
+        sourceForResource("/ietf/iana-afn-safi@2012-06-04.yang"),
+        sourceForResource("/ietf/iana-if-type@2012-06-05.yang"),
+        sourceForResource("/ietf/iana-timezones@2012-07-09.yang"),
+        sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"),
+        sourceForResource("/ietf/ietf-yang-types@2010-09-24.yang"),
+        sourceForResource("/ietf/network-topology@2013-07-12.yang"),
+        sourceForResource("/ietf/network-topology@2013-10-21.yang")};
 
     @Test
-    public void testTypeFromContext() throws ReactorException {
+    void testTypeFromContext() throws ReactorException {
         final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(IETF)
-                .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
-                .addSource(sourceForResource("/context-test/test1.yang"))
-                .buildEffective();
+            .addSources(IETF)
+            .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
+            .addSource(sourceForResource("/context-test/test1.yang"))
+            .buildEffective();
 
         final Module module = context.findModule("test1", Revision.of("2013-06-18")).get();
         final LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName(QName.create(module.getQNameModule(),
-                "id"));
+            "id"));
 
         assertTrue(leaf.getType() instanceof Uint16TypeDefinition);
         final Uint16TypeDefinition leafType = (Uint16TypeDefinition) leaf.getType();
@@ -104,10 +105,10 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testUsesFromContext() throws ReactorException {
+    void testUsesFromContext() throws ReactorException {
         final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
-                .buildEffective();
+            .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
+            .buildEffective();
 
         final Module testModule = context.findModule("test2", Revision.of("2013-06-18")).get();
         final Module contextModule = context.findModules(XMLNamespace.of("urn:opendaylight.baz")).iterator().next();
@@ -118,9 +119,9 @@ public class YangParserWithContextTest {
 
         // get node containing uses
         final ContainerSchemaNode peer = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "peer"));
+            testModule.getQNameModule(), "peer"));
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "destination"));
+            testModule.getQNameModule(), "destination"));
 
         // check uses
         final var uses = destination.getUses();
@@ -128,59 +129,59 @@ public class YangParserWithContextTest {
 
         // check uses process
         final AnyxmlSchemaNode data_u = (AnyxmlSchemaNode) destination.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "data"));
+            testModule.getQNameModule(), "data"));
         assertNotNull(data_u);
         assertTrue(data_u.isAddedByUses());
 
         final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(QName.create(
-                contextModule.getQNameModule(), "data"));
+            contextModule.getQNameModule(), "data"));
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());
-        assertFalse(data_u.equals(data_g));
+        assertNotEquals(data_u, data_g);
 
         final ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "how"));
+            testModule.getQNameModule(), "how"));
         assertNotNull(how_u);
         assertTrue(how_u.isAddedByUses());
 
         final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(QName.create(
-                contextModule.getQNameModule(), "how"));
+            contextModule.getQNameModule(), "how"));
         assertNotNull(how_g);
         assertFalse(how_g.isAddedByUses());
-        assertFalse(how_u.equals(how_g));
+        assertNotEquals(how_u, how_g);
 
         final LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "address"));
+            testModule.getQNameModule(), "address"));
         assertNotNull(address_u);
         assertTrue(address_u.isAddedByUses());
 
         final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
-                contextModule.getQNameModule(), "address"));
+            contextModule.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
-        assertFalse(address_u.equals(address_g));
+        assertNotEquals(address_u, address_g);
 
         final ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "port"));
+            testModule.getQNameModule(), "port"));
         assertNotNull(port_u);
         assertTrue(port_u.isAddedByUses());
 
         final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(QName.create(
-                contextModule.getQNameModule(), "port"));
+            contextModule.getQNameModule(), "port"));
         assertNotNull(port_g);
         assertFalse(port_g.isAddedByUses());
-        assertFalse(port_u.equals(port_g));
+        assertNotEquals(port_u, port_g);
 
         final ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "addresses"));
+            testModule.getQNameModule(), "addresses"));
         assertNotNull(addresses_u);
         assertTrue(addresses_u.isAddedByUses());
 
         final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(QName.create(
-                contextModule.getQNameModule(), "addresses"));
+            contextModule.getQNameModule(), "addresses"));
         assertNotNull(addresses_g);
         assertFalse(addresses_g.isAddedByUses());
-        assertFalse(addresses_u.equals(addresses_g));
+        assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
         final var groupings_u = destination.getGroupings();
@@ -194,16 +195,16 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testUsesRefineFromContext() throws ReactorException {
+    void testUsesRefineFromContext() throws ReactorException {
         final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
-                .buildEffective();
+            .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
+            .buildEffective();
 
         final Module module = context.findModule("test2", Revision.of("2013-06-18")).get();
         final ContainerSchemaNode peer = (ContainerSchemaNode) module.getDataChildByName(QName.create(
-                module.getQNameModule(), "peer"));
+            module.getQNameModule(), "peer"));
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
-                module.getQNameModule(), "destination"));
+            module.getQNameModule(), "destination"));
         final var usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
@@ -262,12 +263,12 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testIdentity() throws ReactorException {
+    void testIdentity() throws ReactorException {
         final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(IETF)
-                .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
-                .addSource(sourceForResource("/context-test/test3.yang"))
-                .buildEffective();
+            .addSources(IETF)
+            .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
+            .addSource(sourceForResource("/context-test/test3.yang"))
+            .buildEffective();
 
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
         final var identities = module.getIdentities();
@@ -287,12 +288,12 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testUnknownNodes() throws ReactorException {
+    void testUnknownNodes() throws ReactorException {
         final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(IETF)
-                .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
-                .addSource(sourceForResource("/context-test/test3.yang"))
-                .buildEffective();
+            .addSources(IETF)
+            .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
+            .addSource(sourceForResource("/context-test/test3.yang"))
+            .buildEffective();
 
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
         final ContainerStatement network = ((ContainerSchemaNode) module.getDataChildByName(
@@ -309,44 +310,44 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testAugment() throws Exception {
+    void testAugment() throws Exception {
         final Module t4 = TestUtils.parseYangSource(
             "/context-augment-test/test1.yang", "/context-augment-test/test2.yang",
             "/context-augment-test/test3.yang", "/context-augment-test/test4.yang")
             .findModules("test4").iterator().next();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) t4.getDataChildByName(QName.create(
-                t4.getQNameModule(), "interfaces"));
+            t4.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(t4.getQNameModule(),
-                "ifEntry"));
+            "ifEntry"));
 
         // test augmentation process
         final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(T3_NS,
-                REV, "augment-holder"));
+            REV, "augment-holder"));
         assertNotNull(augmentHolder);
         final DataSchemaNode ds0 = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "ds0ChannelNumber"));
         assertNotNull(ds0);
         final DataSchemaNode interfaceId = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "interface-id"));
         assertNotNull(interfaceId);
         final DataSchemaNode higherLayerIf = augmentHolder.getDataChildByName(QName.create(T2_NS, REV,
-                "higher-layer-if"));
+            "higher-layer-if"));
         assertNotNull(higherLayerIf);
         final ContainerSchemaNode schemas = (ContainerSchemaNode) augmentHolder.getDataChildByName(QName.create(T2_NS,
-                REV, "schemas"));
+            REV, "schemas"));
         assertNotNull(schemas);
         assertNotNull(schemas.getDataChildByName(QName.create(T1_NS, REV, "id")));
 
         // test augment target after augmentation: check if it is same instance
         final ListSchemaNode ifEntryAfterAugment = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
-                t4.getQNameModule(), "ifEntry"));
+            t4.getQNameModule(), "ifEntry"));
         assertTrue(ifEntry == ifEntryAfterAugment);
     }
 
     @Test
-    public void testDeviation() throws ReactorException {
+    void testDeviation() throws ReactorException {
         final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/model/bar.yang"))
-                .addSource(sourceForResource("/context-test/deviation-test.yang"))
-                .buildEffective();
+            .addSource(sourceForResource("/model/bar.yang"))
+            .addSource(sourceForResource("/context-test/deviation-test.yang"))
+            .buildEffective();
 
         final Module testModule = context.findModule("deviation-test", Revision.of("2013-02-27")).get();
         final var deviations = testModule.getDeviations();
@@ -359,7 +360,7 @@ public class YangParserWithContextTest {
         final Revision expectedRev = Revision.of("2013-07-03");
 
         assertEquals(Absolute.of(
-            QName.create(expectedNS, expectedRev, "interfaces"), QName.create(expectedNS, expectedRev, "ifEntry")),
+                QName.create(expectedNS, expectedRev, "interfaces"), QName.create(expectedNS, expectedRev, "ifEntry")),
             dev.getTargetPath());
         assertEquals(DeviateKind.ADD, dev.getDeviates().iterator().next().getDeviateType());
     }

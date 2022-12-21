@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -20,11 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-public class Bug7879Test extends AbstractYangTest {
+class Bug7879Test extends AbstractYangTest {
     private static final XMLNamespace NS = XMLNamespace.of("my-model-ns");
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final ModuleEffectiveStatement module = assertEffectiveModelDir("/bugs/bug7879")
             .getModuleStatement(qn("my-model"));
 

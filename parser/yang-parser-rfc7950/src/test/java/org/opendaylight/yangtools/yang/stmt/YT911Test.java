@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-public class YT911Test extends AbstractYangTest {
+class YT911Test extends AbstractYangTest {
     private static final QName FOO = QName.create("foo", "2018-10-22", "foo");
     private static final QName BAR = QName.create(FOO, "bar");
 
     @Test
-    public void testAugmentationConfig() {
+    void testAugmentationConfig() {
         final var context = assertEffectiveModel("/bugs/YT911/foo.yang");
         final DataSchemaNode foo = context.findDataChildByName(FOO).get();
         assertEquals(Optional.of(Boolean.FALSE), foo.effectiveConfig());

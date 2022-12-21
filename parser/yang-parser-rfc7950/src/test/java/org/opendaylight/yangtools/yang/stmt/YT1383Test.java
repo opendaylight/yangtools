@@ -9,19 +9,19 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 
-public class YT1383Test extends AbstractYangTest {
+class YT1383Test extends AbstractYangTest {
     @Test
-    public void testDeclaredImplicitCase() {
+    void testDeclaredImplicitCase() {
         final var foo = assertEffectiveModel("/bugs/YT1383/foo.yang").getModuleStatements().values().iterator()
             .next().findFirstEffectiveSubstatement(ChoiceEffectiveStatement.class).orElseThrow();
 

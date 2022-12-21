@@ -11,11 +11,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -26,9 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6870Test extends AbstractYangTest {
+class Bug6870Test extends AbstractYangTest {
     @Test
-    public void valid11Test() {
+    void valid11Test() {
         final var context = assertEffectiveModel("/rfc7950/bug6870/foo.yang");
         assertModifier(context, ModifierKind.INVERT_MATCH, QName.create("foo", "root"), QName.create("foo", "my-leaf"));
         assertModifier(context, null, QName.create("foo", "root"), QName.create("foo", "my-leaf-2"));
@@ -48,13 +48,13 @@ public class Bug6870Test extends AbstractYangTest {
     }
 
     @Test
-    public void invalid11Test() {
+    void invalid11Test() {
         assertSourceException(startsWith("'Invert-match' is not valid argument of modifier statement"),
             "/rfc7950/bug6870/invalid11.yang");
     }
 
     @Test
-    public void invalid10Test() {
+    void invalid10Test() {
         assertSourceException(startsWith("modifier is not a YANG statement or use of extension"),
             "/rfc7950/bug6870/invalid10.yang");
     }

@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1346Test extends AbstractYangTest {
+class YT1346Test extends AbstractYangTest {
     @Test
-    public void testUsesAugmentUsesException() {
+    void testUsesAugmentUsesException() {
         assertEffectiveModel("/bugs/YT1346/foo.yang");
     }
 }

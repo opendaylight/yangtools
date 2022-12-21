@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class YT1039Test extends AbstractYangTest {
+class YT1039Test extends AbstractYangTest {
     @Test
-    public void testUsesRefineAnyxml() {
+    void testUsesRefineAnyxml() {
         assertEquals(2, assertEffectiveModelDir("/bugs/YT1039").getModuleStatements().size());
     }
 }

@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -23,11 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 
-public class YT971Test extends AbstractYangTest {
+class YT971Test extends AbstractYangTest {
     private static final QNameModule NAMESPACE = QNameModule.create(XMLNamespace.of("test"), Revision.of("2019-03-25"));
 
     @Test
-    public void testEscapeLexer() {
+    void testEscapeLexer() {
         final var context = assertEffectiveModel("/bugs/YT971/test.yang");
 
         final DataSchemaNode someContainer = context.getDataChildByName(
@@ -39,7 +39,7 @@ public class YT971Test extends AbstractYangTest {
         assertThat(someLeaf, instanceOf(LeafSchemaNode.class));
         final LeafSchemaNode leafSchemaNode = (LeafSchemaNode) someLeaf;
         assertEquals(Optional.of("Some string that ends with a backslash (with escape backslash too) \\"),
-                     leafSchemaNode.getDescription());
+            leafSchemaNode.getDescription());
         assertThat(leafSchemaNode.getType(), instanceOf(Int16TypeDefinition.class));
 
         final DataSchemaNode someOtherLeaf = containerSchemaNode.getDataChildByName(

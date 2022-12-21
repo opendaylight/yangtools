@@ -11,11 +11,11 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIn.in;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6897Test extends AbstractYangTest {
+class Bug6897Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void notificationsInDataContainersTest() {
+    void notificationsInDataContainersTest() {
         final var context = assertEffectiveModel("/rfc7950/notifications-in-data-nodes/foo.yang");
 
         assertContainsNotifications(context, "root", "grp-notification", "aug-notification");
@@ -51,8 +51,7 @@ public class Bug6897Test extends AbstractYangTest {
 
     private static void assertContainsNotifications(final SchemaContext schemaContext, final String dataContainerName,
             final String... notificationNames) {
-        final DataSchemaNode dataChildByName = schemaContext.getDataChildByName(
-            QName.create(FOO_NS, dataContainerName));
+        final var dataChildByName = schemaContext.getDataChildByName(QName.create(FOO_NS, dataContainerName));
         assertThat(dataChildByName, instanceOf(NotificationNodeContainer.class));
         assertContainsNotifications((NotificationNodeContainer) dataChildByName, notificationNames);
     }
@@ -72,20 +71,20 @@ public class Bug6897Test extends AbstractYangTest {
     }
 
     @Test
-    public void invalid10Test() {
+    void invalid10Test() {
         assertInvalidSubstatementException(startsWith("NOTIFICATION is not valid for"),
             "/rfc7950/notifications-in-data-nodes/foo10.yang");
     }
 
     @Test
-    public void invalid11Test() {
+    void invalid11Test() {
         assertSourceException(
             startsWith("Notification (foo)grp-notification is defined within an rpc, action, or another notification"),
             "/rfc7950/notifications-in-data-nodes/foo-invalid.yang");
     }
 
     @Test
-    public void testNotificationWithinListWithoutKey() {
+    void testNotificationWithinListWithoutKey() {
         assertSourceException(
             startsWith("Notification (bar-namespace?revision=2016-12-08)my-notification is defined within a list that "
                 + "has no key statement"),
@@ -93,7 +92,7 @@ public class Bug6897Test extends AbstractYangTest {
     }
 
     @Test
-    public void testNotificationInUsedGroupingWithinCase() {
+    void testNotificationInUsedGroupingWithinCase() {
         assertSourceException(
             startsWith("Notification (baz-namespace?revision=2016-12-08)notification-in-grouping is defined within a "
                 + "case statement"),

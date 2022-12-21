@@ -8,19 +8,19 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class IdentityStatementTest extends AbstractYangTest {
+class IdentityStatementTest extends AbstractYangTest {
 
     @Test
-    public void testMultipleBaseIdentities() {
+    void testMultipleBaseIdentities() {
         final var context = assertEffectiveModel("/rfc7950/identity-stmt/foo.yang");
 
         final Module foo = context.findModule("foo", Revision.of("2016-12-21")).get();
@@ -33,8 +33,8 @@ public class IdentityStatementTest extends AbstractYangTest {
     }
 
     @Test
-    public void testInvalidYang10() {
+    void testInvalidYang10() {
         assertInvalidSubstatementException(startsWith("Maximal count of BASE for IDENTITY is 1, detected 3."),
-                "/rfc7950/identity-stmt/foo10.yang");
+            "/rfc7950/identity-stmt/foo10.yang");
     }
 }
