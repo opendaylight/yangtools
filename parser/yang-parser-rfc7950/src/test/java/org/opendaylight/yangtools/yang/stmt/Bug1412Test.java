@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -23,13 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
  * <p>
  * Note: Everything under unknown node is unknown node.
  */
-public class Bug1412Test extends AbstractYangTest {
+class Bug1412Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final Module bug1412 = assertEffectiveModelDir("/bugs/bug1412").findModules("bug1412").iterator().next();
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
-                bug1412.getQNameModule(), "node"));
+            bug1412.getQNameModule(), "node"));
         var unknownNodes = node.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         final UnrecognizedStatement action = unknownNodes.iterator().next();

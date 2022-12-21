@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
@@ -22,15 +22,15 @@ public abstract class AbstractYinModulesTest {
 
     static SchemaContext context;
 
-    @BeforeClass
-    public static void beforeClass() throws ReactorException, SAXException, IOException, URISyntaxException {
+    @BeforeAll
+    static void beforeClass() throws ReactorException, SAXException, IOException, URISyntaxException {
         context = TestUtils.loadYinModules(
             AbstractYinModulesTest.class.getResource("/semantic-statement-parser/yin/modules").toURI());
         assertEquals(9, context.getModules().size());
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         context = null;
     }
 }

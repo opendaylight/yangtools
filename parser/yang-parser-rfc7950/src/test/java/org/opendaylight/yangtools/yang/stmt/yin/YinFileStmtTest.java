@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -27,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.xml.sax.SAXException;
 
-public class YinFileStmtTest {
+class YinFileStmtTest {
 
     private static final StatementStreamSource YIN_FILE = createSource("test.yin");
     private static final StatementStreamSource EXT_FILE = createSource("extension.yin");
@@ -45,25 +46,27 @@ public class YinFileStmtTest {
     }
 
     @Test
-    public void readAndParseYinFileTestModel() throws ReactorException {
+    void readAndParseYinFileTestModel() throws ReactorException {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE)
-                .buildEffective();
+            .addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE)
+            .buildEffective();
         assertNotNull(result);
     }
 
     // parsing yin file whose import statement references a module which does not exist
-    @Test(expected = SomeModifiersUnresolvedException.class)
-    public void readAndParseInvalidYinFileTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+    @Test
+    void readAndParseInvalidYinFileTest() throws ReactorException {
+        assertThrows(SomeModifiersUnresolvedException.class, () -> {
+            SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(INVALID_YIN_FILE)
                 .buildEffective();
-        assertNotNull(result);
+            assertNotNull(result);
+        });
     }
 
     // parsing yin file with duplicate key name in a list statement
     @Test
-    public void readAndParseInvalidYinFileTest2() {
+    void readAndParseInvalidYinFileTest2() {
         BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(INVALID_YIN_FILE_2);
 
         try {

@@ -7,31 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6884Test extends AbstractYangTest {
+class Bug6884Test extends AbstractYangTest {
     @Test
-    public void testYang11() {
+    void testYang11() {
         final var schemaContext = assertEffectiveModelDir("/rfc7950/bug6884/yang1-1");
         final DataSchemaNode node = schemaContext.findDataTreeChild(foo("sub-root"), foo("sub-foo-2-con")).orElse(null);
-        assertThat(node, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, node);
     }
 
     @Test
-    public void testCircularIncludesYang10() {
+    void testCircularIncludesYang10() {
         final var schemaContext = assertEffectiveModelDir("/rfc7950/bug6884/circular-includes");
         DataSchemaNode node = schemaContext.findDataTreeChild(foo("sub-root"), foo("sub-foo-2-con")).orElse(null);
-        assertThat(node, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, node);
 
         node = schemaContext.findDataTreeChild(foo("sub-root-2"), foo("sub-foo-con")).orElse(null);
-        assertThat(node, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, node);
     }
 
     private static QName foo(final String localName) {
