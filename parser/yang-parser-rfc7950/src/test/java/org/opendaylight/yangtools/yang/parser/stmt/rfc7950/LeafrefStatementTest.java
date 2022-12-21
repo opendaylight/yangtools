@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class LeafrefStatementTest extends AbstractYangTest {
+class LeafrefStatementTest extends AbstractYangTest {
 
     @Test
-    public void testRequireInstanceInLeafrefs() {
+    void testRequireInstanceInLeafrefs() {
         final var context = assertEffectiveModel("/rfc7950/leafref-stmt/foo.yang");
 
         final Module foo = context.findModule("foo", Revision.of("2016-12-20")).get();
@@ -36,15 +36,15 @@ public class LeafrefStatementTest extends AbstractYangTest {
         assertTrue(leafrefTypeDefinition.requireInstance());
 
         final LeafSchemaNode leafrefA = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-                "leafref-a"));
+            "leafref-a"));
         assertRequireInstanceInLeafref(leafrefA, true);
 
         final LeafSchemaNode leafrefB = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-                "leafref-b"));
+            "leafref-b"));
         assertRequireInstanceInLeafref(leafrefB, true);
 
         final LeafSchemaNode leafrefC = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-                "leafref-c"));
+            "leafref-c"));
         assertRequireInstanceInLeafref(leafrefC, true);
     }
 
@@ -54,8 +54,8 @@ public class LeafrefStatementTest extends AbstractYangTest {
     }
 
     @Test
-    public void testInvalidYang10() {
+    void testInvalidYang10() {
         assertInvalidSubstatementException(startsWith("REQUIRE_INSTANCE is not valid for TYPE"),
-                "/rfc7950/leafref-stmt/foo10.yang");
+            "/rfc7950/leafref-stmt/foo10.yang");
     }
 }

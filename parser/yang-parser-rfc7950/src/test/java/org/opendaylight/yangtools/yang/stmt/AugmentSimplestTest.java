@@ -7,27 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
-public class AugmentSimplestTest {
+class AugmentSimplestTest {
 
     private static final StatementStreamSource AUGMENTED = sourceForResource(
         "/semantic-statement-parser/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/semantic-statement-parser/root.yang");
 
     @Test
-    public void readAndParseYangFileTest() throws SourceException, ReactorException {
+    void readAndParseYangFileTest() throws SourceException, ReactorException {
         ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(AUGMENTED, ROOT)
-                .build();
+            .addSources(AUGMENTED, ROOT)
+            .build();
         assertNotNull(result);
     }
 }

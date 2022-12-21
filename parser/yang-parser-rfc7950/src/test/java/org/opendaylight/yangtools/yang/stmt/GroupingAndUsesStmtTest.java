@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -24,28 +21,20 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class GroupingAndUsesStmtTest {
-
-    private static final StatementStreamSource MODULE = sourceForResource("/model/bar.yang");
-    private static final StatementStreamSource SUBMODULE = sourceForResource("/model/subfoo.yang");
-    private static final StatementStreamSource GROUPING_MODULE = sourceForResource("/model/baz.yang");
-    private static final StatementStreamSource USES_MODULE = sourceForResource("/model/foo.yang");
+class GroupingAndUsesStmtTest extends AbstractYangTest {
+    private static final String MODULE = "/model/bar.yang";
+    private static final String SUBMODULE = "/model/subfoo.yang";
+    private static final String GROUPING_MODULE = "/model/baz.yang";
+    private static final String USES_MODULE = "/model/foo.yang";
 
     @Test
-    public void groupingTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(MODULE, GROUPING_MODULE)
-                .buildEffective();
-        assertNotNull(result);
+    void groupingTest() {
+        final var result = assertEffectiveModel(MODULE, GROUPING_MODULE);
 
         final Module testModule = result.findModules("baz").iterator().next();
         assertNotNull(testModule);
@@ -79,19 +68,16 @@ public class GroupingAndUsesStmtTest {
         assertEquals(1, grouping.getTypeDefinitions().size());
         assertEquals("group-type", grouping.getTypeDefinitions().iterator().next().getQName().getLocalName());
 
-        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = grouping.asEffectiveStatement()
-            .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+        final var unknownSchemaNodes = grouping.asEffectiveStatement().getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
         final UnrecognizedStatement extensionUse = unknownSchemaNodes.iterator().next();
         assertEquals("opendaylight", extensionUse.statementDefinition().getStatementName().getLocalName());
     }
 
     @Test
-    public void usesAndRefinesTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE)
-                .buildEffective();
-        assertNotNull(result);
+    void usesAndRefinesTest() {
+        final var result = assertEffectiveModel(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE);
 
         final Module testModule = result.findModules("foo").iterator().next();
 
@@ -114,11 +100,11 @@ public class GroupingAndUsesStmtTest {
         final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
         assertEquals(4, refines.size());
 
-        assertEquals(ImmutableList.of(
-            Descendant.of(QName.create(peer, "address")),
-            Descendant.of(QName.create(peer, "port")),
-            Descendant.of(QName.create(peer, "addresses")),
-            Descendant.of(QName.create(peer, "addresses"), QName.create(peer, "id"))),
-            new ArrayList<>(refines.keySet()));
+        assertEquals(List.of(
+                Descendant.of(QName.create(peer, "address")),
+                Descendant.of(QName.create(peer, "port")),
+                Descendant.of(QName.create(peer, "addresses")),
+                Descendant.of(QName.create(peer, "addresses"), QName.create(peer, "id"))),
+            List.copyOf(refines.keySet()));
     }
 }

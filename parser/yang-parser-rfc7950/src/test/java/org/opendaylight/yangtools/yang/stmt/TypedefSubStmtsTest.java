@@ -7,34 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collection;
 import java.util.Optional;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.junit.jupiter.api.Test;
 
-public class TypedefSubStmtsTest {
-
+class TypedefSubStmtsTest extends AbstractYangTest {
     @Test
-    public void typedefSubStmtsTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/typedef-substmts-test/typedef-substmts-test.yang"))
-                .buildEffective();
-        assertNotNull(result);
+    void typedefSubStmtsTest() {
+        final var result = assertEffectiveModel("/typedef-substmts-test/typedef-substmts-test.yang");
 
-        Collection<? extends TypeDefinition<?>> typedefs = result.getTypeDefinitions();
+        final var typedefs = result.getTypeDefinitions();
         assertEquals(1, typedefs.size());
 
-        TypeDefinition<?> typedef = typedefs.iterator().next();
+        final var typedef = typedefs.iterator().next();
         assertEquals("time-of-the-day", typedef.getQName().getLocalName());
         assertEquals("string", typedef.getBaseType().getQName().getLocalName());
         assertEquals(Optional.of("24-hour-clock"), typedef.getUnits());
-        assertEquals("1am", typedef.getDefaultValue().map(Object::toString).orElse(null));
+        assertEquals("1am", typedef.getDefaultValue().map(Object::toString).orElseThrow());
     }
 }

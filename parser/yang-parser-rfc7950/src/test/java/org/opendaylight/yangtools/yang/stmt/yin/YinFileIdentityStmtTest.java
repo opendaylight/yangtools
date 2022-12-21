@@ -10,19 +10,19 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-public class YinFileIdentityStmtTest extends AbstractYinModulesTest {
+class YinFileIdentityStmtTest extends AbstractYinModulesTest {
     @Test
-    public void testIdentity() {
+    void testIdentity() {
         Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
