@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -24,12 +25,12 @@ public class Bug6183Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void testYang10() {
+    void testYang10() {
         assertSchemaContext(assertEffectiveModelDir("/bugs/bug6183/yang10"));
     }
 
     @Test
-    public void testYang11() {
+    void testYang11() {
         assertSchemaContext(assertEffectiveModelDir("/bugs/bug6183/yang11"));
     }
 
@@ -38,12 +39,11 @@ public class Bug6183Test extends AbstractYangTest {
         assertEquals(1, context.getModules().size());
         assertEquals(4, context.getModules().iterator().next().getAugmentations().size());
 
-        assertTrue(context.getDataChildByName(foo("before")) instanceof ContainerSchemaNode);
-        assertTrue(context.getDataChildByName(foo("after")) instanceof ContainerSchemaNode);
+        assertInstanceOf(ContainerSchemaNode.class, context.getDataChildByName(foo("before")));
+        assertInstanceOf(ContainerSchemaNode.class, context.getDataChildByName(foo("after")));
 
         final DataSchemaNode dataChildByName = context.getDataChildByName(foo("my-choice"));
-        assertTrue(dataChildByName instanceof ChoiceSchemaNode);
-        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) dataChildByName;
+        final ChoiceSchemaNode myChoice = assertInstanceOf(ChoiceSchemaNode.class, dataChildByName);
 
         assertEquals(4, myChoice.getCases().size());
 
@@ -84,14 +84,12 @@ public class Bug6183Test extends AbstractYangTest {
     private static ContainerSchemaNode getContainerSchemaNode(final DataNodeContainer parent,
             final String containerName) {
         final DataSchemaNode dataChildByName = parent.getDataChildByName(foo(containerName));
-        assertTrue(dataChildByName instanceof ContainerSchemaNode);
-        return (ContainerSchemaNode) dataChildByName;
+        return assertInstanceOf(ContainerSchemaNode.class, dataChildByName);
     }
 
     private static LeafSchemaNode getLeafSchemaNode(final DataNodeContainer parent, final String leafName) {
         final DataSchemaNode dataChildByName = parent.getDataChildByName(foo(leafName));
-        assertTrue(dataChildByName instanceof LeafSchemaNode);
-        return (LeafSchemaNode) dataChildByName;
+        return assertInstanceOf(LeafSchemaNode.class, dataChildByName);
     }
 
     private static QName foo(final String localName) {

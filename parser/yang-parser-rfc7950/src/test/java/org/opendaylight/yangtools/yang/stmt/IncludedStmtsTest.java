@@ -10,44 +10,38 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class IncludedStmtsTest {
-    private static SchemaContext result;
+class IncludedStmtsTest extends AbstractYangTest {
+    private static EffectiveModelContext result;
 
-    @BeforeClass
-    public static void setup() throws ReactorException {
-        result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/included-statements-test/root-module.yang"))
-                .addSource(sourceForResource("/included-statements-test/child-module.yang"))
-                .buildEffective();
+    @BeforeAll
+    static void setup() {
+        result = assertEffectiveModelDir("/included-statements-test");
     }
 
-    @AfterClass
-    public static void teardown() {
+    @AfterAll
+    static void teardown() {
         result = null;
     }
 
     @Test
-    public void includedTypedefsTest() {
+    void includedTypedefsTest() {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
@@ -64,7 +58,7 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void includedFeaturesTest() {
+    void includedFeaturesTest() {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
@@ -79,7 +73,7 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void includedContainersAndListsTest() {
+    void includedContainersAndListsTest() {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
@@ -99,7 +93,7 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void submoduleNamespaceTest() {
+    void submoduleNamespaceTest() {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 

@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -30,30 +30,30 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EffectiveModulesAndSubmodulesTest {
+class EffectiveModulesAndSubmodulesTest {
     private static final Logger LOG = LoggerFactory.getLogger(EffectiveModulesAndSubmodulesTest.class);
     private static final StatementStreamSource ROOT_MODULE = sourceForResource(
-            "/stmt-test/submodules/root-module.yang");
+        "/stmt-test/submodules/root-module.yang");
     private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
-            "/stmt-test/submodules/imported-module.yang");
+        "/stmt-test/submodules/imported-module.yang");
     private static final StatementStreamSource SUBMODULE_1 = sourceForResource(
-            "/stmt-test/submodules/submodule-1.yang");
+        "/stmt-test/submodules/submodule-1.yang");
     private static final StatementStreamSource SUBMODULE_2 = sourceForResource(
-            "/stmt-test/submodules/submodule-2.yang");
+        "/stmt-test/submodules/submodule-2.yang");
     private static final StatementStreamSource SUBMODULE_TO_SUBMODULE_1 = sourceForResource(
-            "/stmt-test/submodules/submodule-to-submodule-1.yang");
+        "/stmt-test/submodules/submodule-to-submodule-1.yang");
 
     private static final QNameModule ROOT = QNameModule.create(XMLNamespace.of("root-module"));
 
     @Test
-    public void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1)
-                .buildEffective();
+    void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
+        final var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1)
+            .buildEffective();
 
         assertNotNull(result);
 
-        final Collection<? extends Module> modules = result.getModules();
+        final var modules = result.getModules();
         assertNotNull(modules);
         assertEquals(2, modules.size());
 
@@ -76,8 +76,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertNotNull(root);
         assertNotNull(imported);
 
-        final Collection<? extends DataSchemaNode> rootChildNodes = root.getChildNodes();
-        final Collection<? extends DataSchemaNode> importedChildNodes = imported.getChildNodes();
+        final var rootChildNodes = root.getChildNodes();
+        final var importedChildNodes = imported.getChildNodes();
 
         assertNotNull(rootChildNodes);
         assertNotNull(importedChildNodes);
@@ -85,8 +85,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(3, rootChildNodes.size());
         assertEquals(1, importedChildNodes.size());
 
-        final Collection<? extends Submodule> rootSubmodules = root.getSubmodules();
-        final Collection<? extends Submodule> importedSubmodules = imported.getSubmodules();
+        final var rootSubmodules = root.getSubmodules();
+        final var importedSubmodules = imported.getSubmodules();
 
         assertNotNull(rootSubmodules);
         assertNotNull(importedSubmodules);
@@ -96,7 +96,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
         Submodule sub1 = null;
         Submodule sub2 = null;
-        for (final Submodule rootSubmodule : rootSubmodules) {
+        for (var rootSubmodule : rootSubmodules) {
             switch (rootSubmodule.getName()) {
                 case "submodule-1":
                     sub1 = rootSubmodule;
@@ -114,8 +114,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(ROOT, sub1.getQNameModule());
         assertEquals(ROOT, sub2.getQNameModule());
 
-        final Collection<? extends DataSchemaNode> sub1ChildNodes = sub1.getChildNodes();
-        final Collection<? extends DataSchemaNode> sub2ChildNodes = sub2.getChildNodes();
+        final var sub1ChildNodes = sub1.getChildNodes();
+        final var sub2ChildNodes = sub2.getChildNodes();
 
         assertNotNull(sub1ChildNodes);
         assertNotNull(sub2ChildNodes);
@@ -123,8 +123,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(1, sub1ChildNodes.size());
         assertEquals(1, sub2ChildNodes.size());
 
-        final Collection<? extends Submodule> sub1Submodules = sub1.getSubmodules();
-        final Collection<? extends Submodule> sub2Submodules = sub2.getSubmodules();
+        final var sub1Submodules = sub1.getSubmodules();
+        final var sub2Submodules = sub2.getSubmodules();
 
         assertNotNull(sub1Submodules);
         assertNotNull(sub2Submodules);
@@ -133,7 +133,7 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(0, sub2Submodules.size());
 
         Submodule sub1Submodule = null;
-        for (final Submodule submodule : sub1Submodules) {
+        for (var submodule : sub1Submodules) {
             switch (submodule.getName()) {
                 case "submodule-to-submodule-1":
                     sub1Submodule = submodule;
@@ -146,11 +146,11 @@ public class EffectiveModulesAndSubmodulesTest {
 
         assertEquals(ROOT, sub1Submodule.getQNameModule());
 
-        final Collection<? extends DataSchemaNode> sub1SubmoduleChildNodes = sub1Submodule.getChildNodes();
+        final var sub1SubmoduleChildNodes = sub1Submodule.getChildNodes();
         assertNotNull(sub1SubmoduleChildNodes);
         assertEquals(1, sub1SubmoduleChildNodes.size());
 
-        final Collection<? extends Submodule> sub1SubmoduleSubmodules = sub1Submodule.getSubmodules();
+        final var sub1SubmoduleSubmodules = sub1Submodule.getSubmodules();
         assertNotNull(sub1SubmoduleSubmodules);
         assertEquals(0, sub1SubmoduleSubmodules.size());
 
@@ -159,22 +159,23 @@ public class EffectiveModulesAndSubmodulesTest {
         getDataChildByNameSubTest(result, root);
     }
 
-    private static void getDataChildByNameSubTest(final SchemaContext result, final Module root) {
+    private static void getDataChildByNameSubTest(final EffectiveModelContext result, final Module root) {
         final DataSchemaNode containerInRoot = result.getDataChildByName(QName
-                .create(root.getQNameModule(), "container-in-root-module"));
+            .create(root.getQNameModule(), "container-in-root-module"));
         assertNotNull(containerInRoot);
         assertEquals(Optional.of("desc"), containerInRoot.getDescription());
     }
 
-    private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported) {
-        final Module foundRoot = result.findModule("root-module").get();
-        final Collection<? extends Module> foundRoots = result.findModules(XMLNamespace.of("root-module"));
-        final Module foundRoot3 = result.findModule(XMLNamespace.of("root-module")).get();
+    private static void findModulesSubTest(final EffectiveModelContext result, final Module root,
+            final Module imported) {
+        final var foundRoot = result.findModule("root-module").get();
+        final var foundRoots = result.findModules(XMLNamespace.of("root-module"));
+        final var foundRoot3 = result.findModule(XMLNamespace.of("root-module")).get();
 
         assertNotNull(foundRoot);
         assertNotNull(foundRoots);
         assertEquals(1, foundRoots.size());
-        final Module foundRoot2 = foundRoots.iterator().next();
+        final var foundRoot2 = foundRoots.iterator().next();
 
         assertNotNull(foundRoot2);
         assertNotNull(foundRoot3);
@@ -183,14 +184,14 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot2);
         assertEquals(root, foundRoot3);
 
-        final Module foundImported = result.findModule("imported-module").get();
-        final Collection<? extends Module> foundImporteds = result.findModules(XMLNamespace.of("imported-module"));
-        final Module foundImported3 = result.findModule(XMLNamespace.of("imported-module")).get();
+        final var foundImported = result.findModule("imported-module").get();
+        final var foundImporteds = result.findModules(XMLNamespace.of("imported-module"));
+        final var foundImported3 = result.findModule(XMLNamespace.of("imported-module")).get();
 
         assertNotNull(foundImported);
         assertNotNull(foundImporteds);
         assertEquals(1, foundImporteds.size());
-        final Module foundImported2 = foundImporteds.iterator().next();
+        final var foundImported2 = foundImporteds.iterator().next();
 
         assertNotNull(foundImported2);
         assertNotNull(foundImported3);
@@ -199,22 +200,22 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(imported, foundImported2);
         assertEquals(imported, foundImported3);
 
-        assertFalse(root.equals(imported));
+        assertNotEquals(root, imported);
     }
 
     private static void printReferences(final ModuleLike module, final boolean isSubmodule, final String indent) {
         LOG.debug("{}{} {}", indent, isSubmodule ? "Submodule" : "Module", module.getName());
-        for (final Submodule submodule : module.getSubmodules()) {
+        for (var submodule : module.getSubmodules()) {
             printReferences(submodule, true, indent + "      ");
             printChilds(submodule.getChildNodes(), indent + "            ");
         }
     }
 
     private static void printChilds(final Collection<? extends DataSchemaNode> childNodes, final String indent) {
-        for (final DataSchemaNode child : childNodes) {
+        for (var child : childNodes) {
             LOG.debug("{}{} {}", indent, "Child", child.getQName().getLocalName());
-            if (child instanceof DataNodeContainer) {
-                printChilds(((DataNodeContainer) child).getChildNodes(), indent + "      ");
+            if (child instanceof DataNodeContainer container) {
+                printChilds(container.getChildNodes(), indent + "      ");
             }
         }
     }

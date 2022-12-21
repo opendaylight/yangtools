@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Bug6131Test extends AbstractYangTest {
+class Bug6131Test extends AbstractYangTest {
     @Test
-    public void test() {
+    void test() {
+        // FIXME: better exception?
         assertThrows(NullPointerException.class, () -> TestUtils.loadModules("/bugs/bug6131"));
     }
 }

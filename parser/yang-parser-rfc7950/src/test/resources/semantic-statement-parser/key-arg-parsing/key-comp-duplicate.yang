@@ -1,14 +1,10 @@
 module key-comp-duplicate {
-	namespace root;
-	prefix root;
+    namespace root;
+    prefix root;
 
-	list comp {
-		key "key1 key2 key2";
-		container key1 {
-        }
-		container key2 {
-        }
-		container key3 {
-        }
-	}
+    list comp {
+        key "key1 key2 key2";
+        container key1;
+        container key2;
+    }
 }

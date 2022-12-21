@@ -1,0 +1,4 @@
+module root-module {
+  namespace root-module;
+  prefix rm;
+}
