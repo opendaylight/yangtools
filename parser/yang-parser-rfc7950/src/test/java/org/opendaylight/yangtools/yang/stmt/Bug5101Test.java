@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Iterator;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -22,37 +21,36 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-public class Bug5101Test extends AbstractYangTest {
+class Bug5101Test extends AbstractYangTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/bug5101.yang")
             .getModuleStatement(QName.create("foo", "2016-01-29", "foo"));
 
         final ContainerEffectiveStatement myContainerInGrouping = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
             .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElse(null);
-        assertThat(myContainerInGrouping, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, myContainerInGrouping);
         assertEquals(Status.DEPRECATED, ((ContainerSchemaNode) myContainerInGrouping).getStatus());
 
         // This relies on schema definition order
         final Iterator<ContainerEffectiveStatement> containers =
             module.streamEffectiveSubstatements(ContainerEffectiveStatement.class)
-            .collect(Collectors.toList()).iterator();
+                .collect(Collectors.toList()).iterator();
 
         final ContainerEffectiveStatement root = containers.next();
-        assertThat(root, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, root);
         assertEquals(Status.CURRENT, ((ContainerSchemaNode) root).getStatus());
 
         final ContainerEffectiveStatement rootMyContainer = root
             .streamEffectiveSubstatements(ContainerEffectiveStatement.class)
             .findAny().orElse(null);
-        assertThat(rootMyContainer, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, rootMyContainer);
         assertEquals(Status.DEPRECATED, ((ContainerSchemaNode) rootMyContainer).getStatus());
 
         final ContainerEffectiveStatement myContainer = containers.next();
         assertFalse(containers.hasNext());
-        assertThat(myContainer, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, myContainer);
         assertEquals(Status.DEPRECATED, ((ContainerSchemaNode) myContainer).getStatus());
-
     }
 }

@@ -7,54 +7,54 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class ListKeysTest {
+class ListKeysTest {
     @Test
-    public void correctListKeysTest() throws Exception {
+    void correctListKeysTest() throws Exception {
         TestUtils.parseYangSource("/list-keys-test/correct-list-keys-test.yang");
     }
 
     @Test
-    public void incorrectListKeysTest1() {
+    void incorrectListKeysTest1() {
         final ReactorException ex = assertThrows(ReactorException.class,
             () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test.yang"));
         final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
+        assertInstanceOf(SourceException.class, cause);
         assertThat(cause.getMessage(), startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
     }
 
     @Test
-    public void incorrectListKeysTest2() {
+    void incorrectListKeysTest2() {
         final ReactorException ex = assertThrows(ReactorException.class,
             () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test2.yang"));
         final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
+        assertInstanceOf(SourceException.class, cause);
         assertThat(cause.getMessage(), startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
     }
 
     @Test
-    public void incorrectListKeysTest3() {
+    void incorrectListKeysTest3() {
         final ReactorException ex = assertThrows(ReactorException.class,
             () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test3.yang"));
         final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
+        assertInstanceOf(SourceException.class, cause);
         assertThat(cause.getMessage(), startsWith("Key 'grp_list' misses node 'grp_list'"));
     }
 
     @Test
-    public void incorrectListKeysTest4()  {
+    void incorrectListKeysTest4()  {
         final ReactorException ex = assertThrows(ReactorException.class,
             () -> TestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test4.yang"));
         final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
+        assertInstanceOf(SourceException.class, cause);
         assertThat(cause.getMessage(), startsWith("Key 'grp_leaf' misses node 'grp_leaf'"));
     }
 }
