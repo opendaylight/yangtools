@@ -1,4 +1,4 @@
-grammar instanceIdentifier;
+lexer grammar instanceIdentifierLexer;
 
 /*
  * YANG 1.1 instance-identifier grammar, as defined in
@@ -10,42 +10,12 @@ grammar instanceIdentifier;
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-instanceIdentifier : ('/' pathArgument)+ EOF
-  ;
-
-pathArgument : nodeIdentifier predicate?
-  ;
-
-nodeIdentifier : Identifier ':' Identifier
-  ;
-
-predicate : keyPredicate+
-  | leafListPredicate
-  | pos
-  ;
-
-keyPredicate : '[' WSP? keyPredicateExpr WSP? ']'
-  ;
-
-keyPredicateExpr  : nodeIdentifier eqQuotedString
-  ;
-
-leafListPredicate : '[' WSP? leafListPredicateExpr WSP? ']'
-  ;
-
-leafListPredicateExpr : '.' eqQuotedString
-  ;
-
-// Common tail of leafListPredicateExpr and keyPredicateExpr
-eqQuotedString : WSP? '=' WSP? quotedString
-  ;
-
-pos : '[' WSP? PositiveIntegerValue WSP? ']'
-  ;
-
-quotedString : '\'' STRING '\''
-  | '"' STRING '"'
-  ;
+COLON : ':' ;
+DOT : '.' ;
+EQ : '=' ;
+LBRACKET : '[' ;
+RBRACKET : ']' ;
+SLASH : '/' ;
 
 Identifier : [a-zA-Z][a-zA-Z0-9_\-.]*
   ;
@@ -53,16 +23,40 @@ Identifier : [a-zA-Z][a-zA-Z0-9_\-.]*
 PositiveIntegerValue : [1-9][0-9]*
   ;
 
-STRING : YANGCHAR+
-  ;
-
 WSP : [ \t]+
   ;
+
+// Double/single-quoted strings. We deal with these using specialized modes.
+DQUOT_START : '"' -> pushMode(DQUOT_STRING_MODE), skip;
+SQUOT_START : '\'' -> pushMode(SQUOT_STRING_MODE), skip;
+
+//
+// Double-quoted string lexing mode. We do not need to recognize all possible
+// escapes here -- just enough not to get confused by runs of backslashes and
+// recognize escaped double quotes.
+//
+mode DQUOT_STRING_MODE;
+DQUOT_STRING : (YANGCHAR | '\'' | ('\\' [nt"\\]))+ ;
+DQUOT_END : '"' -> popMode;
+
+//
+// Single-quoted string lexing mode. We do not interpret anything within single
+// quotes.
+//
+mode SQUOT_STRING_MODE;
+SQUOT_STRING : (YANGCHAR | '"' | '\\')+ ;
+SQUOT_END : '\'' -> popMode;
 
 fragment
 YANGCHAR : '\t'..'\n'
   | '\r'
-  | '\u0020'..'\uD7FF'
+
+  // | '\u0020'..'\uD7FF' without "'", '"' and '\'
+  | '\u0020'..'\u0021' // 0x22 = "
+  | '\u0023'..'\u0026' // 0x27 = '
+  | '\u0028'..'\u005B' // 0x5C = \
+  | '\u005D'..'\uD7FF'
+
   | '\uE000'..'\uFDCF'
   | '\uFDF0'..'\uFFFD'
   | '\u{10000}'..'\u{1FFFD}'
