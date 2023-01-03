@@ -15,11 +15,9 @@ import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyTo
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser;
@@ -104,7 +102,7 @@ abstract class InstanceIdentifierParser {
         listener.reportError();
 
         final int length = id.getChildCount();
-        final List<Step> steps = new ArrayList<>(length / 2);
+        final var steps = new ArrayList<Step>(length / 2);
         for (int i = 1; i < length; i += 2) {
             steps.add(parsePathArgument(getChild(id, PathArgumentContext.class, i)));
         }
@@ -121,37 +119,31 @@ abstract class InstanceIdentifierParser {
         final String prefix = verifyIdentifier(childExpr, 0);
         final String localName = verifyIdentifier(childExpr, 2);
 
-        switch (expr.getChildCount()) {
-            case 1:
-                return createChildStep(prefix, localName, ImmutableSet.of());
-            case 2:
-                return createChildStep(prefix, localName, parsePredicate(getChild(expr, PredicateContext.class, 1)));
-            default:
-                throw illegalShape(expr);
-        }
+        return switch (expr.getChildCount()) {
+            case 1 -> createChildStep(prefix, localName, ImmutableSet.of());
+            case 2 -> createChildStep(prefix, localName, parsePredicate(getChild(expr, PredicateContext.class, 1)));
+            default -> throw illegalShape(expr);
+        };
     }
 
     private Collection<YangExpr> parsePredicate(final PredicateContext expr) {
-        final ParseTree first = expr.getChild(0);
-        if (first instanceof LeafListPredicateContext) {
+        final var first = expr.getChild(0);
+        if (first instanceof LeafListPredicateContext llp) {
             return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(YangLocationPath.self(),
-                parseEqStringValue(getChild(((LeafListPredicateContext) first)
-                    .getChild(LeafListPredicateExprContext.class, 0), EqQuotedStringContext.class, 1))));
-        } else if (first instanceof PosContext) {
+                parseEqStringValue(getChild(llp.getChild(LeafListPredicateExprContext.class, 0),
+                    EqQuotedStringContext.class, 1))));
+        } else if (first instanceof PosContext pc) {
             return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(FunctionSupport.POSITION,
-                mathSupport.createNumber(((PosContext) first).getToken(instanceIdentifierParser.PositiveIntegerValue, 0)
-                    .getText())));
+                mathSupport.createNumber(pc.getToken(instanceIdentifierParser.PositiveIntegerValue, 0).getText())));
         }
 
         final int length = expr.getChildCount();
-        final List<YangExpr> ret = new ArrayList<>(length);
+        final var ret = new ArrayList<YangExpr>(length);
         for (int i = 0; i < length; ++i) {
-            final KeyPredicateExprContext pred = getChild(expr, KeyPredicateContext.class, i)
-                    .getChild(KeyPredicateExprContext.class, 0);
+            final var pred = getChild(expr, KeyPredicateContext.class, i).getChild(KeyPredicateExprContext.class, 0);
             ret.add(YangBinaryOperator.EQUALS.exprWith(
                 createChildExpr(getChild(pred, NodeIdentifierContext.class, 0)),
                 parseEqStringValue(getChild(pred, EqQuotedStringContext.class, 1))));
-
         }
 
         return ret;
