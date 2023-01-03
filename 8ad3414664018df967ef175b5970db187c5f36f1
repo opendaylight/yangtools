@@ -36,6 +36,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aaebae80_f244de6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-03T21:35:07Z",
+      "side": 1,
+      "message": "Ah, right, I see. Now this has a tie-in with escaping, which we\u0027ll solve with a modal lexer.\n\nThat eliminates the need for additional fragments.",
+      "parentUuid": "011357fa_bd5a7f98",
+      "revId": "8ad3414664018df967ef175b5970db187c5f36f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fdb59b63_7af5b371",

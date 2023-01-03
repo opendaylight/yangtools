@@ -22,6 +22,30 @@
       },
       "revId": "781e8a71e247abd718dbff43fd38d04dee967903",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fe985fd_3a98efee",
+        "filename": "xpath/yang-xpath-impl/src/main/antlr4/org/opendaylight/yangtools/yang/xpath/antlr/instanceIdentifier.g4",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-03T21:35:07Z",
+      "side": 1,
+      "message": "Actually, this ends up being simple: since the ABNF is YANG, interpretation should follow section 6.1.3 and we care only about YANG-1.1 strictness.",
+      "parentUuid": "bd68893a_51591412",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 12
+      },
+      "revId": "781e8a71e247abd718dbff43fd38d04dee967903",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
