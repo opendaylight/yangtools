@@ -20,6 +20,8 @@ import java.util.Collection;
 import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierLexer;
@@ -94,6 +96,38 @@ abstract class InstanceIdentifierParser {
         @Override
         QNameStep createChildStep(final String localName, final Collection<YangExpr> predicates) {
             return YangXPathAxis.CHILD.asStep(UnresolvedQName.Unqualified.of(localName), predicates);
+        }
+
+        @Override
+        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+        }
+    }
+
+    static final class Unqualified extends InstanceIdentifierParser {
+        private final YangNamespaceContext namespaceContext;
+        private final QNameModule defaultNamespace;
+
+        Unqualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
+                final QNameModule defaultNamespace) {
+            super(mathMode);
+            this.namespaceContext = requireNonNull(namespaceContext);
+            this.defaultNamespace = requireNonNull(defaultNamespace);
+        }
+
+        @Override
+        YangQNameExpr createExpr(final String localName) {
+            return YangQNameExpr.of(QName.create(defaultNamespace, localName));
+        }
+
+        @Override
+        YangQNameExpr createExpr(final String prefix, final String localName) {
+            return YangQNameExpr.of(namespaceContext.createQName(prefix, localName));
+        }
+
+        @Override
+        QNameStep createChildStep(final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(QName.create(defaultNamespace, localName), predicates);
         }
 
         @Override
