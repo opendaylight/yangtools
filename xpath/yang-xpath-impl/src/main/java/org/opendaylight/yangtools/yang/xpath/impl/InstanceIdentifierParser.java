@@ -20,6 +20,8 @@ import java.util.Collection;
 import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierLexer;
@@ -46,7 +48,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathSupport;
 
-abstract class InstanceIdentifierParser {
+abstract sealed class InstanceIdentifierParser {
     static final class Base extends InstanceIdentifierParser {
         Base(final YangXPathMathMode mathMode) {
             super(mathMode);
@@ -73,12 +75,29 @@ abstract class InstanceIdentifierParser {
         }
     }
 
-    static final class Qualified extends InstanceIdentifierParser {
+    private static abstract sealed class AbstractBound extends InstanceIdentifierParser {
         private final YangNamespaceContext namespaceContext;
 
-        Qualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+        AbstractBound(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
             super(mathMode);
             this.namespaceContext = requireNonNull(namespaceContext);
+        }
+
+        @Override
+        final YangQNameExpr createExpr(final String prefix, final String localName) {
+            return YangQNameExpr.of(namespaceContext.createQName(prefix, localName));
+        }
+
+        @Override
+        final QNameStep createChildStep(final String prefix, final String localName,
+                final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+        }
+    }
+
+    static final class Qualified extends AbstractBound {
+        Qualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+            super(mathMode, namespaceContext);
         }
 
         @Override
@@ -87,18 +106,28 @@ abstract class InstanceIdentifierParser {
         }
 
         @Override
-        YangQNameExpr createExpr(final String prefix, final String localName) {
-            return YangQNameExpr.of(namespaceContext.createQName(prefix, localName));
+        QNameStep createChildStep(final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(UnresolvedQName.Unqualified.of(localName), predicates);
+        }
+    }
+
+    static final class Unqualified extends AbstractBound {
+        private final QNameModule defaultNamespace;
+
+        Unqualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
+                final QNameModule defaultNamespace) {
+            super(mathMode, namespaceContext);
+            this.defaultNamespace = requireNonNull(defaultNamespace);
+        }
+
+        @Override
+        YangQNameExpr createExpr(final String localName) {
+            return YangQNameExpr.of(QName.create(defaultNamespace, localName));
         }
 
         @Override
         QNameStep createChildStep(final String localName, final Collection<YangExpr> predicates) {
-            return YangXPathAxis.CHILD.asStep(UnresolvedQName.Unqualified.of(localName), predicates);
-        }
-
-        @Override
-        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
-            return YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+            return YangXPathAxis.CHILD.asStep(QName.create(defaultNamespace, localName), predicates);
         }
     }
 
