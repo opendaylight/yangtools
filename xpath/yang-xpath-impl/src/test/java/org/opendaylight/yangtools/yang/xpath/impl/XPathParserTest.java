@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.xpath.impl;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.common.collect.ImmutableBiMap;
 import java.util.List;
-import javax.xml.xpath.XPathExpressionException;
-import org.eclipse.jdt.annotation.Nullable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,100 +27,95 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
-@SuppressWarnings("null")
-public class XPathParserTest {
+class XPathParserTest {
     private static final QNameModule DEFNS = QNameModule.create(XMLNamespace.of("defaultns"));
     private static final YangNamespaceContext CONTEXT = new BiMapYangNamespaceContext(ImmutableBiMap.of(
         "def", DEFNS,
         "foo", QNameModule.create(XMLNamespace.of("foo")),
         "bar", QNameModule.create(XMLNamespace.of("bar"))));
 
-    private @Nullable AntlrXPathParser parser;
+    private static final AntlrXPathParser PARSER =
+        new AntlrXPathParser.Unqualified(YangXPathMathMode.IEEE754, CONTEXT, DEFNS);
 
-    @BeforeEach
-    public void before() {
-        parser = new AntlrXPathParser.Unqualified(YangXPathMathMode.IEEE754, CONTEXT, DEFNS);
+    @Test
+    void testSmoke() throws Exception {
+        assertExpr("../a[foo = current()/foo]");
+
+        assertExpr("3 + 5");
+        assertExpr("/a/b");
+        assertExpr("a/b");
+        assertExpr("./a/b");
+        assertExpr("../a/b");
+        assertExpr("foo:foo");
+        assertExpr("@foo");
+        assertExpr("@foo:foo");
+        assertExpr("current()");
+        assertExpr("foo:self()");
+        assertExpr("foo:comment()");
+        assertExpr("/a[foo = 2 and bar = 3]");
+        assertExpr("/a[foo = \"2\" and bar = '3']");
+        assertExpr("/foo:a[foo = 2 and bar = 3]");
+        assertExpr("//a[foo = 2 and bar = 3]");
+        assertExpr("//foo:a[foo=2 and bar:bar=3]");
+        assertExpr("a//b[foo = 2]");
+        assertExpr("foo:a//b[foo = 2]");
+        assertExpr("$foo:comment");
+        assertExpr("$comment");
+        assertExpr("$self");
     }
 
     @Test
-    public void testSmoke() throws XPathExpressionException {
-        parseExpr("../a[foo = current()/foo]");
-
-        parseExpr("3 + 5");
-        parseExpr("/a/b");
-        parseExpr("a/b");
-        parseExpr("./a/b");
-        parseExpr("../a/b");
-        parseExpr("foo:foo");
-        parseExpr("@foo");
-        parseExpr("@foo:foo");
-        parseExpr("current()");
-        parseExpr("foo:self()");
-        parseExpr("foo:comment()");
-        parseExpr("/a[foo = 2 and bar = 3]");
-        parseExpr("/a[foo = \"2\" and bar = '3']");
-        parseExpr("/foo:a[foo = 2 and bar = 3]");
-        parseExpr("//a[foo = 2 and bar = 3]");
-        parseExpr("//foo:a[foo=2 and bar:bar=3]");
-        parseExpr("a//b[foo = 2]");
-        parseExpr("foo:a//b[foo = 2]");
-        parseExpr("$foo:comment");
-        parseExpr("$comment");
-        parseExpr("$self");
+    void testUnionSquashingOne() throws Exception {
+        final var expr = assertExpr("a");
+        assertEquals(expr, assertExpr("a|a"));
+        assertEquals(expr, assertExpr("a|a|a"));
+        assertEquals(expr, assertExpr("a|a|a|a"));
     }
 
     @Test
-    public void testUnionSquashing() throws XPathExpressionException {
-        final YangExpr a = parseExpr("a");
-        assertEquals(a, parseExpr("a|a"));
-        assertEquals(a, parseExpr("a|a|a"));
-        assertEquals(a, parseExpr("a|a|a|a"));
-
-        final YangExpr ab = parseExpr("a|b");
-        assertEquals(ab, parseExpr("a|b|a"));
-        assertEquals(ab, parseExpr("a|b|a|b"));
-        assertEquals(ab, parseExpr("a|a|b|a|b"));
-        assertEquals(ab, parseExpr("a|b|b|a|b"));
-        assertEquals(ab, parseExpr("a|b|a|a|b"));
+    void testUnionSquashingTwo() throws Exception {
+        final var expr = assertExpr("a|b");
+        assertEquals(expr, assertExpr("a|b|a"));
+        assertEquals(expr, assertExpr("a|b|a|b"));
+        assertEquals(expr, assertExpr("a|a|b|a|b"));
+        assertEquals(expr, assertExpr("a|b|b|a|b"));
+        assertEquals(expr, assertExpr("a|b|a|a|b"));
     }
 
     @Test
-    public void testNumberSquashing() throws XPathExpressionException {
-        final YangExpr two = parseExpr("2");
-        assertEquals(two, parseExpr("1 + 1"));
-        assertEquals(two, parseExpr("3 - 1"));
-        assertEquals(two, parseExpr("2 * 1"));
-        assertEquals(two, parseExpr("4 div 2"));
-        assertEquals(two, parseExpr("6 mod 4"));
+    void testNumberSquashing() throws Exception {
+        final var expr = assertExpr("2");
+        assertEquals(expr, assertExpr("1 + 1"));
+        assertEquals(expr, assertExpr("3 - 1"));
+        assertEquals(expr, assertExpr("2 * 1"));
+        assertEquals(expr, assertExpr("4 div 2"));
+        assertEquals(expr, assertExpr("6 mod 4"));
     }
 
     @Test
-    public void testSameExprSquashing() throws XPathExpressionException {
+    void testSameExprSquashing() throws Exception {
         // Expressions
-        assertEquals(YangBooleanConstantExpr.FALSE, parseExpr("/a != /a"));
-        assertEquals(YangBooleanConstantExpr.TRUE, parseExpr("/a = /a"));
+        assertEquals(YangBooleanConstantExpr.FALSE, assertExpr("/a != /a"));
+        assertEquals(YangBooleanConstantExpr.TRUE, assertExpr("/a = /a"));
 
         // Numbers
-        assertEquals(YangBooleanConstantExpr.FALSE, parseExpr("2 != 2"));
-        assertEquals(YangBooleanConstantExpr.FALSE, parseExpr("2 != (1 + 1)"));
-        assertEquals(YangBooleanConstantExpr.TRUE, parseExpr("2 = 2"));
-        assertEquals(YangBooleanConstantExpr.TRUE, parseExpr("2 = (1 + 1)"));
+        assertEquals(YangBooleanConstantExpr.FALSE, assertExpr("2 != 2"));
+        assertEquals(YangBooleanConstantExpr.FALSE, assertExpr("2 != (1 + 1)"));
+        assertEquals(YangBooleanConstantExpr.TRUE, assertExpr("2 = 2"));
+        assertEquals(YangBooleanConstantExpr.TRUE, assertExpr("2 = (1 + 1)"));
     }
 
     @Test
-    public void testGreaterEqualReference() throws XPathExpressionException {
-        final YangExpr expr = parseExpr(". >= ../lower-port");
-        assertThat(expr, isA(YangBinaryExpr.class));
-
-        final YangBinaryExpr binary = (YangBinaryExpr) expr;
-        assertEquals(YangBinaryOperator.GTE, binary.getOperator());
-        assertEquals(YangLocationPath.self(), binary.getLeftExpr());
+    void testGreaterEqualReference() throws Exception {
+        final var expr = assertInstanceOf(YangBinaryExpr.class, assertExpr(". >= ../lower-port"));
+        assertEquals(YangBinaryOperator.GTE, expr.getOperator());
+        assertEquals(YangLocationPath.self(), expr.getLeftExpr());
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
-            YangXPathAxis.CHILD.asStep(QName.create(DEFNS, "lower-port"))), binary.getRightExpr());
+            YangXPathAxis.CHILD.asStep(QName.create(DEFNS, "lower-port"))), expr.getRightExpr());
     }
 
     @Test
-    public void testAnd() throws XPathExpressionException {
+    void testAnd() throws Exception {
         assertRelative("and");
         assertRelative("or");
         assertRelative("div");
@@ -132,13 +123,12 @@ public class XPathParserTest {
         assertRelative("andor");
     }
 
-    private void assertRelative(final String str) throws XPathExpressionException {
-        final YangExpr expr = parseExpr(str);
-        assertThat(expr, isA(Relative.class));
-        assertEquals(List.of(YangXPathAxis.CHILD.asStep(QName.create(DEFNS, str))), ((Relative) expr).getSteps());
+    private static void assertRelative(final String str) throws Exception {
+        final var expr = assertInstanceOf(Relative.class, assertExpr(str));
+        assertEquals(List.of(YangXPathAxis.CHILD.asStep(QName.create(DEFNS, str))), expr.getSteps());
     }
 
-    private YangExpr parseExpr(final String xpath) throws XPathExpressionException {
-        return parser.parseExpression(xpath).getRootExpr();
+    private static YangExpr assertExpr(final String xpath) throws Exception {
+        return PARSER.parseExpression(xpath).getRootExpr();
     }
 }
