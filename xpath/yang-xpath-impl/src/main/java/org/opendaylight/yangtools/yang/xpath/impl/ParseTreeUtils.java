@@ -19,7 +19,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  */
 final class ParseTreeUtils {
     private ParseTreeUtils() {
-
+        // Hidden on purpose
     }
 
     static <T extends ParseTree> T getChild(final ParseTree parent, final Class<T> type, final int offset) {
@@ -41,28 +41,28 @@ final class ParseTreeUtils {
     }
 
     static TerminalNode verifyTerminal(final ParseTree tree) {
-        if (tree instanceof TerminalNode) {
-            return (TerminalNode) tree;
+        if (tree instanceof TerminalNode terminal) {
+            return terminal;
         }
-        throw new VerifyException(String.format("'%s' is not a terminal node", tree.getText()));
+        throw new VerifyException("'%s' is not a terminal node".formatted(tree.getText()));
     }
 
     static Token verifyToken(final ParseTree parent, final int offset, final int expected) {
-        final TerminalNode node = verifyTerminal(parent.getChild(offset));
-        final Token ret = node.getSymbol();
-        final int type = ret.getType();
+        final var node = verifyTerminal(parent.getChild(offset));
+        final var token = node.getSymbol();
+        final int type = token.getType();
         verify(type == expected, "Item %s has type %s, expected %s", node, type, expected);
-        return ret;
+        return token;
     }
 
     static <T extends ParseTree> T verifyTree(final Class<T> type, final ParseTree tree) {
         if (type.isInstance(tree)) {
             return type.cast(tree);
         }
-        throw new VerifyException(String.format("'%s' does not have expected type %s", tree.getText(), type));
+        throw new VerifyException("'%s' does not have expected type %s".formatted(tree.getText(), type));
     }
 
     static VerifyException illegalShape(final ParseTree tree) {
-        return new VerifyException(String.format("Invalid parser shape of '%s'", tree.getText()));
+        return new VerifyException("Invalid parser shape of '%s'".formatted(tree.getText()));
     }
 }
