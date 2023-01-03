@@ -21,6 +21,8 @@ import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierLexer;
@@ -89,6 +91,34 @@ abstract class InstanceIdentifierParser {
                 final Collection<YangExpr> predicates) {
             return prefix == null ? YangXPathAxis.CHILD.asStep(UnresolvedQName.Unqualified.of(localName), predicates)
                 : YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+        }
+    }
+
+    static final class Unqualified extends InstanceIdentifierParser {
+        private final YangNamespaceContext namespaceContext;
+        private final QNameModule defaultNamespace;
+
+        Unqualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
+                final QNameModule defaultNamespace) {
+            super(mathMode);
+            this.namespaceContext = requireNonNull(namespaceContext);
+            this.defaultNamespace = requireNonNull(defaultNamespace);
+        }
+
+        @Override
+        YangQNameExpr createExpr(final @Nullable String prefix, final String localName) {
+            return YangQNameExpr.of(createQName(prefix, localName));
+        }
+
+        @Override
+        QNameStep createChildStep(final @Nullable String prefix, final String localName,
+                final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(createQName(prefix, localName), predicates);
+        }
+
+        private QName createQName(final @Nullable String prefix, final String localName) {
+            return prefix == null ? QName.create(defaultNamespace, localName)
+                : namespaceContext.createQName(prefix, localName);
         }
     }
 
