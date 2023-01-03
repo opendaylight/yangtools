@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2edafd55_30390202",
+        "filename": "xpath/yang-xpath-impl/src/main/antlr4/org/opendaylight/yangtools/yang/xpath/antlr/instanceIdentifier.g4",
+        "patchSetId": 12
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-03T21:35:59Z",
+      "side": 1,
+      "message": "bug in RFC6020, as explained in https://mailarchive.ietf.org/arch/msg/netmod/xSR_hu6ry4EWfrvIY5NqcmC7ZoM/",
+      "range": {
+        "startLine": 54,
+        "startChar": 2,
+        "endLine": 54,
+        "endChar": 59
+      },
+      "revId": "1326ebc29dae21eccd5b44c1b4968d5cca3c0ea0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
