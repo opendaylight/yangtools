@@ -60,12 +60,15 @@ class InstanceIdentifierParserTest {
     private static final InstanceIdentifierParser BASE = new InstanceIdentifierParser.Base(YangXPathMathMode.IEEE754);
     private static final InstanceIdentifierParser QUALIFIED =
         new InstanceIdentifierParser.Qualified(YangXPathMathMode.IEEE754, CONTEXT);
+    private static final InstanceIdentifierParser UNQUALIFIED =
+        new InstanceIdentifierParser.Unqualified(YangXPathMathMode.IEEE754, CONTEXT, DEFNS);
 
     @ParameterizedTest(name = "Smoke test: {0}")
     @MethodSource("smokeTestArgs")
     void smokeTest(final String input) throws Exception {
         parseBase(input);
         parseQualified(input);
+        parseUnqualified(input);
     }
 
     private static List<String> smokeTestArgs() {
@@ -164,12 +167,16 @@ class InstanceIdentifierParserTest {
         );
     }
 
+    private static Absolute parseBase(final String literal) throws XPathExpressionException {
+        return BASE.interpretAsInstanceIdentifier(YangLiteralExpr.of(literal));
+    }
+
     private static Absolute parseQualified(final String literal) throws XPathExpressionException {
         return QUALIFIED.interpretAsInstanceIdentifier(YangLiteralExpr.of(literal));
     }
 
-    private static Absolute parseBase(final String literal) throws XPathExpressionException {
-        return BASE.interpretAsInstanceIdentifier(YangLiteralExpr.of(literal));
+    private static Absolute parseUnqualified(final String literal) throws XPathExpressionException {
+        return UNQUALIFIED.interpretAsInstanceIdentifier(YangLiteralExpr.of(literal));
     }
 
     private static YangExpr toNumberExpr(final int number) {
