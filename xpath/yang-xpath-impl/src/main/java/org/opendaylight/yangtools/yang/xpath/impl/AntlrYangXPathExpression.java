@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Absolute;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr.Resolved;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
@@ -113,8 +113,7 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
     }
 
     @Override
-    public final YangLocationPath interpretAsInstanceIdentifier(final YangLiteralExpr expr)
-            throws XPathExpressionException {
+    public final Absolute interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
         return createInstanceIdentifierParser().interpretAsInstanceIdentifier(expr);
     }
 
