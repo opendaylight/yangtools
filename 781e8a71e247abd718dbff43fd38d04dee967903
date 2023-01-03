@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd68893a_51591412",
+        "filename": "xpath/yang-xpath-impl/src/main/antlr4/org/opendaylight/yangtools/yang/xpath/antlr/instanceIdentifier.g4",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-03T14:41:04Z",
+      "side": 1,
+      "message": "so this is problematic, as we need to constrain STRING somehow.\nthere are two options, it is either https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3 or it is XPath based on (\u0027subset of the XPath abbreviated syntax\u0027 in section 9.13).\n\nI suspect we need to go with RFC7950, which further means we also need to bring YangVersion to the picture.\n\nAlternatively, we should take a peek at what InstanceIdentifierCodec(s) are doing exactly.",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 12
+      },
+      "revId": "781e8a71e247abd718dbff43fd38d04dee967903",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
