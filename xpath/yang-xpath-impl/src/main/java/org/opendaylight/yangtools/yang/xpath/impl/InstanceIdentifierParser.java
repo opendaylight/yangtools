@@ -22,6 +22,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierLexer;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.EqQuotedStringContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.InstanceIdentifierContext;
@@ -34,7 +35,6 @@ import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.Path
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.PosContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.PredicateContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.QuotedStringContext;
-import org.opendaylight.yangtools.yang.xpath.antlr.xpathLexer;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
@@ -92,7 +92,7 @@ abstract class InstanceIdentifierParser {
     }
 
     final Absolute interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
-        final xpathLexer lexer = new xpathLexer(CharStreams.fromString(expr.getLiteral()));
+        final instanceIdentifierLexer lexer = new instanceIdentifierLexer(CharStreams.fromString(expr.getLiteral()));
         final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
         final CapturingErrorListener listener = new CapturingErrorListener();
         lexer.removeErrorListeners();
