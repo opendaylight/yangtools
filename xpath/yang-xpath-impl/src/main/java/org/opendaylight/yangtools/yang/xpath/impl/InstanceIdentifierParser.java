@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.getChild;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.illegalShape;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyTerminal;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyToken;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +24,6 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.EqQuotedStringContext;
-import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.InstanceIdentifierContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.KeyPredicateContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.KeyPredicateExprContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.LeafListPredicateContext;
@@ -90,15 +91,16 @@ abstract class InstanceIdentifierParser {
     }
 
     final Absolute interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
-        final xpathLexer lexer = new xpathLexer(CharStreams.fromString(expr.getLiteral()));
-        final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
-        final CapturingErrorListener listener = new CapturingErrorListener();
+        final var literal = expr.getLiteral();
+        final var lexer = new xpathLexer(CharStreams.fromString(literal, literal));
+        final var parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
+        final var listener = new CapturingErrorListener();
         lexer.removeErrorListeners();
         lexer.addErrorListener(listener);
         parser.removeErrorListeners();
         parser.addErrorListener(listener);
 
-        final InstanceIdentifierContext id = parser.instanceIdentifier();
+        final var id = parser.instanceIdentifier();
         listener.reportError();
 
         final int length = id.getChildCount();
@@ -158,7 +160,53 @@ abstract class InstanceIdentifierParser {
     }
 
     private static YangLiteralExpr parseEqStringValue(final EqQuotedStringContext expr) {
-        return YangLiteralExpr.of(verifyToken(getChild(expr, QuotedStringContext.class, expr.getChildCount() - 1), 1,
-            instanceIdentifierParser.STRING).getText());
+        final var quotedString = getChild(expr, QuotedStringContext.class, expr.getChildCount() - 1);
+        final var literal = switch (quotedString.getChildCount()) {
+            case 1 -> "";
+            case 2 -> {
+                final var terminal = verifyTerminal(quotedString.getChild(0));
+                final var token = terminal.getSymbol();
+                final var text = switch (token.getType()) {
+                    case instanceIdentifierParser.DQUOT_STRING -> unescape(token.getText());
+                    case instanceIdentifierParser.SQUOT_STRING -> token.getText();
+                    default -> throw illegalShape(terminal);
+                };
+                yield text;
+            }
+            default -> throw illegalShape(quotedString);
+        };
+        return YangLiteralExpr.of(literal);
+    }
+
+    private static String unescape(final String escaped) {
+        final int firstEscape = escaped.indexOf('\\');
+        return firstEscape == -1 ? escaped : unescape(escaped, firstEscape);
+    }
+
+    private static String unescape(final String escaped, final int firstEscape) {
+        // Sizing: optimize allocation for only a single escape
+        final int length = escaped.length();
+        final var sb = new StringBuilder(length - 1).append(escaped, 0, firstEscape);
+
+        int esc = firstEscape;
+        while (true) {
+            final var ch = escaped.charAt(esc + 1);
+            sb.append(
+                switch (ch) {
+                    case 'n' -> '\n';
+                    case 't' -> '\t';
+                    case '"' -> '"';
+                    case '\\' -> '\\';
+                    default -> throw new VerifyException("Unexpected escaped char '" + ch + "'");
+                });
+
+            final int start = esc + 2;
+            esc = escaped.indexOf('\\', start);
+            if (esc == -1) {
+                return sb.append(escaped, start, length).toString();
+            }
+
+            sb.append(escaped, start, esc);
+        }
     }
 }
