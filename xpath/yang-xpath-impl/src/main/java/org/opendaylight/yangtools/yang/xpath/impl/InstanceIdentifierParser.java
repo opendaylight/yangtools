@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.getChild;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.illegalShape;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyTerminal;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyToken;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -158,7 +160,50 @@ abstract class InstanceIdentifierParser {
     }
 
     private static YangLiteralExpr parseEqStringValue(final EqQuotedStringContext expr) {
-        return YangLiteralExpr.of(verifyToken(getChild(expr, QuotedStringContext.class, expr.getChildCount() - 1), 1,
-            instanceIdentifierParser.STRING).getText());
+        final var quotedString = getChild(expr, QuotedStringContext.class, expr.getChildCount() - 1);
+        return YangLiteralExpr.of(switch (quotedString.getChildCount()) {
+            case 1 -> "";
+            case 2 -> {
+                final var terminal = verifyTerminal(quotedString.getChild(0));
+                final var token = terminal.getSymbol();
+                yield switch (token.getType()) {
+                    case instanceIdentifierParser.DQUOT_STRING -> unescape(token.getText());
+                    case instanceIdentifierParser.SQUOT_STRING -> token.getText();
+                    default -> throw illegalShape(terminal);
+                };
+            }
+            default -> throw illegalShape(quotedString);
+        });
+    }
+
+    private static String unescape(final String escaped) {
+        final int firstEscape = escaped.indexOf('\\');
+        return firstEscape == -1 ? escaped : unescape(escaped, firstEscape);
+    }
+
+    private static String unescape(final String escaped, final int firstEscape) {
+        // Sizing: optimize allocation for only a single escape
+        final int length = escaped.length();
+        final var sb = new StringBuilder(length - 1).append(escaped, 0, firstEscape);
+
+        int esc = firstEscape;
+        while (true) {
+            final var ch = escaped.charAt(esc + 1);
+            sb.append(switch (ch) {
+                case 'n' -> '\n';
+                case 't' -> '\t';
+                case '"' -> '"';
+                case '\\' -> '\\';
+                default -> throw new VerifyException("Unexpected escaped char '" + ch + "'");
+            });
+
+            final int start = esc + 2;
+            esc = escaped.indexOf('\\', start);
+            if (esc == -1) {
+                return sb.append(escaped, start, length).toString();
+            }
+
+            sb.append(escaped, start, esc);
+        }
     }
 }
