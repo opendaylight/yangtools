@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Throwables;
+import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -31,11 +32,16 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Abstract base class containing useful utilities and assertions.
  */
 public abstract class AbstractYangTest {
-    @SuppressWarnings("checkstyle:illegalCatch")
     public static @NonNull EffectiveModelContext assertEffectiveModel(final String... yangResourceName) {
+        return assertEffectiveModel(List.of(yangResourceName), null);
+    }
+
+    @SuppressWarnings("checkstyle:illegalCatch")
+    public static @NonNull EffectiveModelContext assertEffectiveModel(final List<String> yangResourceName,
+        final @Nullable Set<QName> supportedFeatures) {
         final EffectiveModelContext ret;
         try {
-            ret = TestUtils.parseYangSource(yangResourceName);
+            ret = TestUtils.parseYangSource(yangResourceName, supportedFeatures);
         } catch (Exception e) {
             Throwables.throwIfUnchecked(e);
             throw new AssertionError("Failed to assemble effective model", e);
