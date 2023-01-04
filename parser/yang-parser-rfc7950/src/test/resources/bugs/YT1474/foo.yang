@@ -1,0 +1,10 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  container foo {
+    leaf foo-leaf {
+      type string;
+    }
+  }
+}

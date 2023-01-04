@@ -850,13 +850,13 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
 
         // There are three possibilities:
-        // - REFCOUNT_NONE, in which case we need to search next parent
+        // - REFCOUNT_NONE, in which case we need to check if this statement or its parents are holding a reference
         // - negative (< REFCOUNT_NONE), meaning parent is in some stage of sweeping, hence it does not have
         //   a reference to us
         // - positive (> REFCOUNT_NONE), meaning parent has an explicit refcount which is holding us down
         final int refs = refcount;
         if (refs == REFCOUNT_NONE) {
-            return parentRefcount();
+            return noImplictRef() && noParentRef() ? PARENTREF_ABSENT : PARENTREF_PRESENT;
         }
         return refs < REFCOUNT_NONE ? PARENTREF_ABSENT : PARENTREF_PRESENT;
     }
