@@ -79,10 +79,18 @@ public final class TestUtils {
     }
 
     public static EffectiveModelContext parseYangSource(final String... yangSourceFilePath) throws Exception {
+        return parseYangSource(List.of(yangSourceFilePath), null);
+    }
+
+    public static EffectiveModelContext parseYangSource(final List<String> yangSourceFilePath,
+        final @Nullable Set<QName> supportedFeatures) throws Exception {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild();
         for (var resourcePath : yangSourceFilePath) {
             reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
                 TestUtils.class.getResource(resourcePath).toURI()))));
+        }
+        if (supportedFeatures != null) {
+            reactor.setSupportedFeatures(supportedFeatures);
         }
         return reactor.buildEffective();
     }
