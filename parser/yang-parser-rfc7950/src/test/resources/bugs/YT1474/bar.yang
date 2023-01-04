@@ -1,0 +1,15 @@
+module bar {
+  namespace "urn:bar";
+  prefix "bar";
+
+  import foo {
+    prefix foo;
+  }
+
+  grouping bar-group {
+  }
+
+  augment "/foo:foo" {
+    uses bar-group;
+  }
+}

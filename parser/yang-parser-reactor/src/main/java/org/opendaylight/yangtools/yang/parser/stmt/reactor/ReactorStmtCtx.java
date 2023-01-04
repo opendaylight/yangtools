@@ -849,16 +849,10 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             return PARENTREF_UNKNOWN;
         }
 
-        // There are three possibilities:
-        // - REFCOUNT_NONE, in which case we need to search next parent
-        // - negative (< REFCOUNT_NONE), meaning parent is in some stage of sweeping, hence it does not have
-        //   a reference to us
-        // - positive (> REFCOUNT_NONE), meaning parent has an explicit refcount which is holding us down
-        final int refs = parent.refcount;
-        if (refs == REFCOUNT_NONE) {
-            return parent.parentRefcount();
-        }
-        return refs < REFCOUNT_NONE ? PARENTREF_ABSENT : PARENTREF_PRESENT;
+        // Now, if parent refcount is negative (< REFCOUNT_NONE), it is in some stage of sweeping, hence it does not
+        // have a reference to us. If its refcount is non-negative, it is holding us down, and it will update us via
+        // markNoParentRef().
+        return parent.refcount < REFCOUNT_NONE ? PARENTREF_ABSENT : PARENTREF_PRESENT;
     }
 
     private boolean isAwaitingChildren() {
