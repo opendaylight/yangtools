@@ -16,7 +16,7 @@ abstract class AbstractInteriorContextNode<T extends PathArgument> extends DataS
     }
 
     @Override
-    public final boolean isLeaf() {
+    public boolean isLeaf() {
         return false;
     }
 }

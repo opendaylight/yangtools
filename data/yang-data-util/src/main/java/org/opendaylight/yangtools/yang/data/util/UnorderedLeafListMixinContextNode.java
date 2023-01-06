@@ -32,4 +32,14 @@ class UnorderedLeafListMixinContextNode extends AbstractListLikeContextNode<Node
         // FIXME: requireNonNull, common code with UnkeyedListMixinNode
         return getIdentifier().getNodeType().equals(child) ? innerOp : null;
     }
+
+    @Override
+    public final boolean isLeaf() {
+        return true;
+    }
+
+    @Override
+    public final boolean isKeyedEntry() {
+        return true;
+    }
 }
