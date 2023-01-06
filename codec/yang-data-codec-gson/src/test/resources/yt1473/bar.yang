@@ -1,0 +1,11 @@
+module bar {
+  namespace bar;
+  prefix bar;
+
+  import foo { prefix foo; }
+
+  identity two {
+    base foo:one;
+  }
+}
+  
