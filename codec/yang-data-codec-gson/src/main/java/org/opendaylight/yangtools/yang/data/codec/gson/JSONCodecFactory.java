@@ -14,7 +14,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -136,12 +138,13 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     }
 
     @Override
-    protected final JSONCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
+    protected final JSONCodec<QName> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
         return new IdentityrefJSONCodec(getEffectiveModelContext(), module);
     }
 
     @Override
-    protected final JSONCodec<?> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
+    protected final JSONCodec<YangInstanceIdentifier> instanceIdentifierCodec(
+            final InstanceIdentifierTypeDefinition type) {
         return iidCodec;
     }
 
