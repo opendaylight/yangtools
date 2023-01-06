@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIde
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
@@ -64,8 +64,15 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
             final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
-        checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver);
+        final XmlCodec<?> objectXmlCodec;
+        if (schemaNode instanceof LeafSchemaNode leafSchemaNode) {
+            objectXmlCodec = codecFactory.codecFor(leafSchemaNode, resolver);
+        } else if (schemaNode instanceof LeafListSchemaNode leafListSchemaNode) {
+            objectXmlCodec = codecFactory.codecFor(leafListSchemaNode, resolver);
+        } else {
+            throw new IllegalArgumentException("schemaNode " + schemaNode
+                    + " must be of type LeafSchemaNode or LeafListSchemaNode");
+        }
         return objectXmlCodec.parseValue(getNamespaceContext(), value);
     }
 

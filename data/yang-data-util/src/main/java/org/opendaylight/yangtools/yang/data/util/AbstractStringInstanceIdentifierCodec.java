@@ -80,8 +80,13 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         return sb.toString();
     }
 
-    private static StringBuilder appendValue(final StringBuilder sb, final QNameModule currentModule,
+    private StringBuilder appendValue(final StringBuilder sb, final QNameModule currentModule,
             final Object value) {
+        if (value instanceof QName qname) {
+            // QName implies identity-ref, which can never be escaped
+            return appendQName(sb.append('\''), qname, currentModule).append('\'');
+        }
+
         final var str = String.valueOf(value);
 
         return str.indexOf('\'') == -1

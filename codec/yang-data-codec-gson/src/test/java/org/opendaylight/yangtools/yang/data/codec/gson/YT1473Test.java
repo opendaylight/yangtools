@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -116,7 +115,8 @@ class YT1473Test {
         assertTrue(normalizedNode1 instanceof MapNode);
         final MapNode mapNode = (MapNode) normalizedNode1;
         assertEquals(1, mapNode.size());
-        assertNotNull(mapNode.childByArg(NodeIdentifierWithPredicates.of(FOO_BAZ, FOO_ID, output)));
+        var child = mapNode.body().iterator().next();
+        assertEquals(NodeIdentifierWithPredicates.of(FOO_BAZ, FOO_ID, output), child.getIdentifier());
 
         // case 2: leaf of type 'instance-identifier' -> { "bar:baz" : "<input>" }
         final String json2 = GSON.toJson(Map.of("bar:baz", input));
@@ -127,25 +127,17 @@ class YT1473Test {
 
     private static Stream<Arguments> testArgs() {
         return Stream.of(
+                // strings
                 Arguments.of("/foo:foo[str='str\"']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"")),
                 Arguments.of("/bar:str[.='str\"']", buildYangInstanceIdentifier(BAR_STR,"str\"")),
                 Arguments.of("/foo:foo[str=\"str'\\\"\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"")),
-                Arguments.of("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR,"str'\""))
+                Arguments.of("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR,"str'\"")),
+                // identity-ref
+                Arguments.of("/foo:bar[qname='one']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)),
+                Arguments.of("/bar:foo[.='foo:one']", buildYangInstanceIdentifier(BAR_FOO, FOO_ONE)),
+                Arguments.of("/foo:bar[qname='bar:two']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)),
+                Arguments.of("/bar:foo[.='two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO))
         );
-    }
-
-    @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefSame() throws Exception {
-        // TODO: an improvement is to use just 'one' as the namespace is the same as the leaf (see RFC7951 section 6.8)
-        assertEquals("/foo:bar[foo:qname='foo:one']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)));
-    }
-
-    @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefOther() throws Exception {
-        // No escaping is needed, use double quotes and escape
-        assertEquals("/foo:bar[qname='bar:two']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
     }
 
     @Test
@@ -154,12 +146,6 @@ class YT1473Test {
         assertEquals("/foo:baz[id=\"/foo:bar[qname='bar:two']\"]", write(
                 buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)))
         );
-    }
-
-    @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityValue() throws Exception {
-        assertEquals("/bar:foo[.='foo:one']", write(buildYangInstanceIdentifier(BAR_FOO, FOO_ONE)));
     }
 
     @Test
