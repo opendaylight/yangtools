@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -83,7 +85,7 @@ public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>
     }
 
     @Override
-    protected final JSONCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
+    protected final JSONCodec<QName> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
         return new IdentityrefJSONCodec(getEffectiveModelContext(), module);
     }
 
@@ -143,7 +145,7 @@ public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>
     }
 
     @Override
-    protected abstract JSONCodec<?> instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
+    protected abstract JSONCodec<YangInstanceIdentifier> instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
 
     // Returns a one-off factory for the purposes of normalizing an anydata tree.
     //

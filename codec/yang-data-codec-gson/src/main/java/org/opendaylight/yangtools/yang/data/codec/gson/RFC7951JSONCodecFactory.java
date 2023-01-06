@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
@@ -22,7 +23,7 @@ final class RFC7951JSONCodecFactory extends JSONCodecFactory {
     }
 
     @Override
-    protected JSONCodec<?> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
+    protected JSONCodec<YangInstanceIdentifier> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
         return iidCodec;
     }
 
