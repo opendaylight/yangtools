@@ -1,0 +1,20 @@
+module bar {
+  namespace barns;
+  prefix bar;
+
+  import foo { prefix foo; }
+
+  identity two {
+    base foo:one;
+  }
+
+  leaf foo {
+    type identityref {
+      base foo:one;
+    }
+  }
+
+  leaf bar {
+    type instance-identifier;
+  }
+}
