@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
 import javax.xml.XMLConstants;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,6 +32,14 @@ import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 @Beta
 public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec<YangInstanceIdentifier>
         implements InstanceIdentifierCodec<String> {
+    // Escaper as per https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3
+    private static final Escaper DQUOT_ESCAPER = Escapers.builder()
+        .addEscape('\n', "\\n")
+        .addEscape('\t', "\\t")
+        .addEscape('"', "\\\"")
+        .addEscape('\\', "\\\\")
+        .build();
+
     @Override
     protected final String serializeImpl(final YangInstanceIdentifier data) {
         final StringBuilder sb = new StringBuilder();
@@ -58,14 +68,49 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
             if (arg instanceof NodeIdentifierWithPredicates nip) {
                 for (var entry : nip.entrySet()) {
-                    appendQName(sb.append('['), entry.getKey(), lastModule);
-                    sb.append("='").append(String.valueOf(entry.getValue())).append("']");
+                    final var keyName = entry.getKey();
+                    appendQName(sb.append('['), keyName, lastModule).append('=');
+                    appendValue(sb, keyName.getModule(), entry.getValue()).append(']');
                 }
             } else if (arg instanceof NodeWithValue<?> val) {
-                sb.append("[.='").append(val.getValue()).append("']");
+                appendValue(sb.append("[.="), lastModule, val.getValue()).append(']');
             }
         }
         return sb.toString();
+    }
+
+    private static StringBuilder appendValue(final StringBuilder sb, final QNameModule currentModule,
+            final Object value) {
+        final var str = String.valueOf(value);
+
+        // We have two specifications here: Section 6.1.3 of both RFC6020 and RFC7950:
+        //
+        // RFC6020 Section 6.1.3:
+        //        If a string contains any space or tab characters, a semicolon (";"),
+        //        braces ("{" or "}"), or comment sequences ("//", "/*", or "*/"), then
+        //        it MUST be enclosed within double or single quotes.
+        //
+        // RFC7950 Section 6.1.3:
+        //        An unquoted string is any sequence of characters that does not
+        //        contain any space, tab, carriage return, or line feed characters, a
+        //        single or double quote character, a semicolon (";"), braces ("{" or
+        //        "}"), or comment sequences ("//", "/*", or "*/").
+        //
+        // Plus the common part:
+        //        A single-quoted string (enclosed within ' ') preserves each character
+        //        within the quotes.  A single quote character cannot occur in a
+        //        single-quoted string, even when preceded by a backslash.
+        //
+        // Unquoted strings are not interesting, as we are embedding the value in a string, not a YANG document, hence
+        // we have to use quotes. Single-quoted case is simpler, as it does not involve any escaping. The only case
+        // where we cannot use it is when the value itself has a single-quote in itself -- then we call back to
+        // double-quoting.
+
+        return str.indexOf('\'') == -1
+            // No escaping needed, use single quotes
+            ? sb.append('\'').append(str).append('\'')
+            // Escaping needed: use double quotes
+            : sb.append('"').append(DQUOT_ESCAPER.escape(str)).append('"');
     }
 
     /**
