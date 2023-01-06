@@ -1,0 +1,29 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  identity one;
+
+  list foo {
+    key str;
+    leaf str {
+      type string;
+    }
+  }
+
+  list bar {
+    key qname;
+    leaf qname {
+      type identityref {
+        base one;
+      }
+    }
+  }
+
+  list baz {
+    key id;
+    leaf id {
+      type instance-identifier;
+    }
+  }
+}
