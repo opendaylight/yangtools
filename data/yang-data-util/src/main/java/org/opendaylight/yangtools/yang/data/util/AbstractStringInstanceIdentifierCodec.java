@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Map.Entry;
 import javax.xml.XMLConstants;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -20,7 +19,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
@@ -37,7 +35,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         final StringBuilder sb = new StringBuilder();
         DataSchemaContextNode<?> current = getDataContextTree().getRoot();
         QNameModule lastModule = null;
-        for (PathArgument arg : data.getPathArguments()) {
+        for (var arg : data.getPathArguments()) {
             current = current.getChild(arg);
             checkArgument(current != null, "Invalid input %s: schema for argument %s (after %s) not found", data, arg,
                     sb);
@@ -53,18 +51,18 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
                 continue;
             }
 
-            final QName qname = arg.getNodeType();
+            final var qname = arg.getNodeType();
             sb.append('/');
             appendQName(sb, qname, lastModule);
             lastModule = qname.getModule();
 
-            if (arg instanceof NodeIdentifierWithPredicates) {
-                for (Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg).entrySet()) {
+            if (arg instanceof NodeIdentifierWithPredicates nip) {
+                for (var entry : nip.entrySet()) {
                     appendQName(sb.append('['), entry.getKey(), lastModule);
                     sb.append("='").append(String.valueOf(entry.getValue())).append("']");
                 }
-            } else if (arg instanceof NodeWithValue) {
-                sb.append("[.='").append(((NodeWithValue<?>) arg).getValue()).append("']");
+            } else if (arg instanceof NodeWithValue<?> val) {
+                sb.append("[.='").append(val.getValue()).append("']");
             }
         }
         return sb.toString();
@@ -97,9 +95,8 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
     @Override
     protected final YangInstanceIdentifier deserializeImpl(final String data) {
-        XpathStringParsingPathArgumentBuilder builder = new XpathStringParsingPathArgumentBuilder(this,
-            requireNonNull(data));
-        return YangInstanceIdentifier.create(builder.build());
+        return YangInstanceIdentifier.create(
+            new XpathStringParsingPathArgumentBuilder(this, requireNonNull(data)).build());
     }
 
     /**
