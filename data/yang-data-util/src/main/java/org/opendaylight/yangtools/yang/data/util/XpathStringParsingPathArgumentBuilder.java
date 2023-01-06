@@ -52,14 +52,15 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private static final CharMatcher IDENTIFIER = IDENTIFIER_FIRST_CHAR.or(CharMatcher.inRange('0', '9'))
             .or(CharMatcher.anyOf(".-")).precomputed();
 
-    private static final CharMatcher QUOTE = CharMatcher.anyOf("'\"");
-
     private static final char SLASH = '/';
+    private static final char BACKSLASH = '\\';
     private static final char COLON = ':';
     private static final char DOT = '.';
     private static final char EQUALS = '=';
     private static final char PRECONDITION_START = '[';
     private static final char PRECONDITION_END = ']';
+    private static final char SQUOT = '\'';
+    private static final char DQUOT = '"';
 
     private final List<PathArgument> product = new ArrayList<>();
     private final AbstractStringInstanceIdentifierCodec codec;
@@ -231,10 +232,14 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      */
     private void checkValid(final boolean condition, final String errorMsg, final Object... attributes) {
         if (!condition) {
-            throw new IllegalArgumentException(String.format(
-                "Could not parse Instance Identifier '%s'. Offset: %s : Reason: %s", data, offset,
-                String.format(errorMsg, attributes)));
+            throw iae(errorMsg, attributes);
         }
+    }
+
+    private @NonNull IllegalArgumentException iae(final String errorMsg, final Object... attributes) {
+        return new IllegalArgumentException(
+            String.format("Could not parse Instance Identifier '%s'. Offset: %s : Reason: %s", data, offset,
+                String.format(errorMsg, attributes)));
     }
 
     /**
@@ -243,15 +248,77 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      * @return String literal
      */
     private String nextQuotedValue() {
-        final char quoteChar = currentChar();
-        checkValid(QUOTE.matches(quoteChar), "Value must be qoute escaped with ''' or '\"'.");
+        switch (currentChar()) {
+            case SQUOT:
+                return nextSingleQuotedValue();
+            case DQUOT:
+                return nextDoubleQuotedValue();
+            default:
+                throw iae("Value must be quote escaped with ''' or '\"'.");
+        }
+    }
+
+    // Simple: just look for the matching single quote and return substring
+    private String nextSingleQuotedValue() {
         skipCurrentChar();
-        final int valueStart = offset;
-        final int endQoute = data.indexOf(quoteChar, offset);
-        final String value = data.substring(valueStart, endQoute);
-        offset = endQoute;
+        final int start = offset;
+        final int end = data.indexOf(SQUOT, start);
+        checkValid(end != -1, "Closing single quote not found");
+        offset = end;
         skipCurrentChar();
-        return value;
+        return data.substring(start, end);
+    }
+
+    // Complicated: we need to potentially un-escape
+    private String nextDoubleQuotedValue() {
+        skipCurrentChar();
+
+        final int maxIndex = data.length() - 1;
+        final var sb = new StringBuilder();
+        while (true) {
+            final int nextStart = offset;
+
+            // Find next double quotes
+            final int nextEnd = data.indexOf(DQUOT, nextStart);
+            checkValid(nextEnd != -1, "Closing double quote not found");
+            offset = nextEnd;
+
+            // Find next backslash
+            final int nextBackslash = data.indexOf(BACKSLASH, nextStart);
+            if (nextBackslash == -1 || nextBackslash > nextEnd) {
+                // No backslash between nextStart and nextEnd -- just copy characters and terminate
+                offset = nextEnd;
+                skipCurrentChar();
+                return sb.append(data, nextStart, nextEnd).toString();
+            }
+
+            // Validate escape completeness and append buffer
+            checkValid(nextBackslash != maxIndex, "Incomplete escape");
+            sb.append(data, nextStart, nextBackslash);
+
+            // Adjust offset before potentially referencing it and
+            offset = nextBackslash;
+            sb.append(unescape(data.charAt(nextBackslash + 1)));
+
+            // Rinse and repeat
+            offset = nextBackslash + 2;
+        }
+    }
+
+    // As per https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3
+    private char unescape(final char escape) {
+        switch (escape) {
+            case 'n':
+                return '\n';
+            case 't':
+                return '\t';
+            case DQUOT:
+                return DQUOT;
+            case BACKSLASH:
+                return BACKSLASH;
+            default:
+                throw iae("Unrecognized escape");
+        }
     }
 
     /**

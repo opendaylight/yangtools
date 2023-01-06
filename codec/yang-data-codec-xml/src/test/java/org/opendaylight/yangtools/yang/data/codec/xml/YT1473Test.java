@@ -80,7 +80,6 @@ public class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: string escaping needs to work")
     public void testSerializeEscaped() throws Exception {
         // Escaping is needed, use double quotes and escape
         assertSerdes("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR, "str'\""));
