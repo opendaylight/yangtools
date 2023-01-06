@@ -22,6 +22,10 @@ module bar {
     type instance-identifier;
   }
 
+  leaf-list bee {
+    type foo:bitz;
+  }
+
   leaf baz {
     type instance-identifier;
   }

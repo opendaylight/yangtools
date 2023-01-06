@@ -89,8 +89,13 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
             // QName implies identity-ref, which can never be escaped
             return appendQName(sb.append('\''), qname, currentModule).append('\'');
         }
+        if (value instanceof Iterable<?>) {
+            // serialize bits as space separated;
+            // TODO remove as obsolete after dedicated Bits type is implemented via YANGTOOLS-1426
+            return sb.append('\'').append(String.join(" ", (Iterable) value)).append('\'');
+        }
 
-        final var str = String.valueOf(value);
+        final var str = value instanceof YangInstanceIdentifier id ? serialize(id) : String.valueOf(value);
 
         return DQUOT_MATCHER.matchesAnyOf(str)
             // Escaping needed: use double quotes
