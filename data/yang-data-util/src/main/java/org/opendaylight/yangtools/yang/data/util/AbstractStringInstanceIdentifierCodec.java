@@ -87,7 +87,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
             return appendQName(sb.append('\''), qname, currentModule).append('\'');
         }
 
-        final var str = String.valueOf(value);
+        final var str = value instanceof YangInstanceIdentifier id ? serialize(id) : String.valueOf(value);
 
         return str.indexOf('\'') == -1
             // No escaping needed, use single quotes

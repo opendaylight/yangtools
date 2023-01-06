@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -38,6 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -99,7 +98,10 @@ class YT1473Test {
     @ParameterizedTest(name = "Serialize key value: {0}")
     @MethodSource("testArgs")
     void serialize(final String output, final YangInstanceIdentifier input) throws Exception {
-        assertEquals(output, write(input));
+        doReturn(writer).when(writer).value(anyString());
+        CODEC.writeValue(writer, input);
+        verify(writer).value(captor.capture());
+        assertEquals(output, captor.getValue());
     }
 
     @ParameterizedTest(name = "Parse key value: {0}")
@@ -115,7 +117,7 @@ class YT1473Test {
         assertTrue(normalizedNode1 instanceof MapNode);
         final MapNode mapNode = (MapNode) normalizedNode1;
         assertEquals(1, mapNode.size());
-        var child = mapNode.body().iterator().next();
+        final MapEntryNode child = mapNode.body().iterator().next();
         assertEquals(NodeIdentifierWithPredicates.of(FOO_BAZ, FOO_ID, output), child.getIdentifier());
 
         // case 2: leaf of type 'instance-identifier' -> { "bar:baz" : "<input>" }
@@ -129,30 +131,20 @@ class YT1473Test {
         return Stream.of(
                 // strings
                 Arguments.of("/foo:foo[str='str\"']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"")),
-                Arguments.of("/bar:str[.='str\"']", buildYangInstanceIdentifier(BAR_STR,"str\"")),
+                Arguments.of("/bar:str[.='str\"']", buildYangInstanceIdentifier(BAR_STR, "str\"")),
                 Arguments.of("/foo:foo[str=\"str'\\\"\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"")),
-                Arguments.of("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR,"str'\"")),
+                Arguments.of("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR, "str'\"")),
                 // identity-ref
                 Arguments.of("/foo:bar[qname='one']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)),
                 Arguments.of("/bar:foo[.='foo:one']", buildYangInstanceIdentifier(BAR_FOO, FOO_ONE)),
                 Arguments.of("/foo:bar[qname='bar:two']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)),
-                Arguments.of("/bar:foo[.='two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO))
+                Arguments.of("/bar:foo[.='two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO)),
+                // instance-identifier
+                Arguments.of("/foo:baz[id=\"/foo:bar[qname='bar:two']\"]", buildYangInstanceIdentifier(FOO_BAZ, FOO_ID,
+                        buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO))),
+                Arguments.of("/bar:bar[.=\"/foo:bar[qname='one']\"]", buildYangInstanceIdentifier(BAR_BAR,
+                        buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)))
         );
-    }
-
-    @Test
-    @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
-    public void testSerializeInstanceIdentifierRef() throws Exception {
-        assertEquals("/foo:baz[id=\"/foo:bar[qname='bar:two']\"]", write(
-                buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)))
-        );
-    }
-
-    @Test
-    @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
-    public void testSerializeInstanceIdentifierValue() throws Exception {
-        assertEquals("/bar:bar[.=\"/foo:bar/bar[qname='bar:two'\"]']",
-                write(buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO))));
     }
 
     private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final QName key,
@@ -161,15 +153,8 @@ class YT1473Test {
                 new NodeIdentifier(node), NodeIdentifierWithPredicates.of(node, key, value));
     }
 
-    private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName nodeQName, final Object value) {
-        return YangInstanceIdentifier.create(new NodeWithValue<>(nodeQName, value));
-    }
-
-    private String write(final YangInstanceIdentifier yangInstanceIdentifier) throws Exception {
-        doReturn(writer).when(writer).value(anyString());
-        CODEC.writeValue(writer, yangInstanceIdentifier);
-        verify(writer).value(captor.capture());
-        return captor.getValue();
+    private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final Object value) {
+        return YangInstanceIdentifier.create(new NodeWithValue<>(node, value));
     }
 
     private static NormalizedNode jsonToNormalizedNode(final String json) throws Exception {
