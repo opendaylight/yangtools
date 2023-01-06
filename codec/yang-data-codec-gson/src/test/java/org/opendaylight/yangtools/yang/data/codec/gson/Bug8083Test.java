@@ -164,7 +164,7 @@ public class Bug8083Test {
         assertTrue(foo instanceof LeafSchemaNode);
         final TypeDefinition<? extends TypeDefinition<?>> type = ((LeafSchemaNode) foo).getType();
         assertTrue(type instanceof InstanceIdentifierTypeDefinition);
-        return (JSONCodec<YangInstanceIdentifier>) supplier.createSimple(FULL_SCHEMA_CONTEXT)
+        return supplier.createSimple(FULL_SCHEMA_CONTEXT)
                 .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
     }
 
