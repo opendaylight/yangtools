@@ -17,7 +17,6 @@ import static org.mockito.Mockito.verify;
 import com.google.gson.stream.JsonWriter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -90,7 +89,6 @@ public class YT1473Test {
     }
 
     @Test
-    @Ignore("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
     public void testSerializeInstanceIdentifierRef() throws Exception {
         assertEquals("/foo:baz[id=\"/foo:bar[qname='bar:one']\"]",
             write(new NodeIdentifier(BAZ), NodeIdentifierWithPredicates.of(BAZ, ID, YangInstanceIdentifier.create(
@@ -104,7 +102,6 @@ public class YT1473Test {
     }
 
     @Test
-    @Ignore("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
     public void testSerializeInstanceIdentifierValue() throws Exception {
         assertEquals("/bar:bar[.=\"/foo:bar/bar[qname='barn:one'\"]']",
             write(new NodeWithValue<>(BAR_LEAF, YangInstanceIdentifier.create(
