@@ -55,6 +55,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private static final CharMatcher QUOTE = CharMatcher.anyOf("'\"");
 
     private static final char SLASH = '/';
+    private static final char BACKSLASH = '\\';
     private static final char COLON = ':';
     private static final char DOT = '.';
     private static final char EQUALS = '=';
@@ -244,14 +245,31 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      */
     private String nextQuotedValue() {
         final char quoteChar = currentChar();
-        checkValid(QUOTE.matches(quoteChar), "Value must be qoute escaped with ''' or '\"'.");
+        checkValid(QUOTE.matches(quoteChar), "Value must be quote escaped with ''' or '\"'.");
         skipCurrentChar();
-        final int valueStart = offset;
-        final int endQoute = data.indexOf(quoteChar, offset);
-        final String value = data.substring(valueStart, endQoute);
-        offset = endQoute;
+        final int valueStartIndex = offset;
+        final int endQuoteIndex = getEndQuoteIndex(quoteChar);
+        final String value = data.substring(valueStartIndex, endQuoteIndex)
+                .replace("" + BACKSLASH + quoteChar, "" + quoteChar); // unescape escaped quotes within value
+        offset = endQuoteIndex;
         skipCurrentChar();
         return value;
+    }
+
+    /**
+     * Finds an index of ending quote char ignoring escaped ones.
+     *
+     * @param quoteChar quote char
+     * @return index of next quote char
+     */
+    private int getEndQuoteIndex(final char quoteChar) {
+        int endQuoteIndex;
+        int fromIndex = offset;
+        do {
+            endQuoteIndex = data.indexOf(quoteChar, fromIndex);
+            fromIndex = endQuoteIndex + 1;
+        } while (endQuoteIndex > 0 && data.charAt(endQuoteIndex - 1) == BACKSLASH);
+        return endQuoteIndex;
     }
 
     /**
