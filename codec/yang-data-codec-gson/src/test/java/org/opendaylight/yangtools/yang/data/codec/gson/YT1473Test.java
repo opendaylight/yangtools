@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonWriter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -103,7 +102,6 @@ class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
     void testSerializeInstanceIdentifierRef() throws Exception {
         assertSerdes("/foo:baz[id=\"/foo:bar[qname='bar:two']\"]",
             buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
@@ -116,7 +114,6 @@ class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
     void testSerializeInstanceIdentifierValue() throws Exception {
         assertSerdes("/bar:bar[.=\"/foo:bar[qname='bar:two']\"]",
             buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
@@ -125,7 +122,6 @@ class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: bits values need to be recognized and properly encoded and escaped")
     void testSerializeBits() throws Exception {
         assertSerdes("/foo:bee[bts='one two']",
             buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("one", "two")));
