@@ -92,7 +92,6 @@ public class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     public void testSerializeIdentity() throws Exception {
         assertSerdes("/foo:bar[foo:qname='foo:one']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE));
         assertSerdes("/foo:bar[foo:qname='bar:two']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO));
@@ -106,7 +105,6 @@ public class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     public void testSerializeIdentityValue() throws Exception {
         assertSerdes("/bar:foo[.='foo:one']", buildYangInstanceIdentifier(BAR_FOO, FOO_ONE));
         assertSerdes("/bar:foo[.='bar:two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO));

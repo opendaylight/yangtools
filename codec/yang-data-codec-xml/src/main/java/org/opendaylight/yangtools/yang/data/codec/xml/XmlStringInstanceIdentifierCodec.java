@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIde
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
@@ -38,8 +38,8 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
 
     XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory xmlCodecFactory) {
         this.context = requireNonNull(context);
-        this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = requireNonNull(xmlCodecFactory);
+        dataContextTree = DataSchemaContextTree.from(context);
+        codecFactory = requireNonNull(xmlCodecFactory);
     }
 
     @Override
@@ -64,8 +64,15 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
             final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
-        checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver);
+        final XmlCodec<?> objectXmlCodec;
+        if (schemaNode instanceof LeafSchemaNode) {
+            objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver);
+        } else if (schemaNode instanceof LeafListSchemaNode) {
+            objectXmlCodec = codecFactory.codecFor((LeafListSchemaNode) schemaNode, resolver);
+        } else {
+            throw new IllegalArgumentException("schemaNode " + schemaNode
+                    + " must be of type LeafSchemaNode or LeafListSchemaNode");
+        }
         return objectXmlCodec.parseValue(getNamespaceContext(), value);
     }
 
