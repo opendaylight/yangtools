@@ -70,7 +70,6 @@ public class YT1473Test {
     }
 
     @Test
-    @Ignore("YT-1473: string escaping needs to work")
     public void testSerializeEscaped() throws Exception {
         // Escaping is needed, use double quotes and escape
         assertEquals("/foo:foo[str=\"str'\\\"\"]",
