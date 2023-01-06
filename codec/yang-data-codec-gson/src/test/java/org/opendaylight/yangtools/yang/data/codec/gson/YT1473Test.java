@@ -8,17 +8,28 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import java.io.StringReader;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -28,13 +39,18 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class YT1473Test {
+class YT1473Test {
 
     private static final String FOO_NS = "foons"; // namespace for prefix 'foo'
     private static final QName FOO_FOO = QName.create(FOO_NS, "foo"); // list with key 'str'
@@ -46,10 +62,15 @@ public class YT1473Test {
     private static final QName FOO_ID = QName.create(FOO_NS, "id"); // key of type 'instance-identifier'
 
     private static final String BAR_NS = "barns"; // namespace for prefix 'bar'
-    private static final QName BAR_FOO = QName.create(BAR_NS, "foo"); // leaf of type 'foo:one' based
-    private static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf of type 'instance-identifier'
     private static final QName BAR_TWO = QName.create(BAR_NS, "two"); // identity inheriting 'foo:one'
+    private static final QName BAR_STR = QName.create(BAR_NS, "str"); // leaf-list of type 'string'
+    private static final QName BAR_FOO = QName.create(BAR_NS, "foo"); // leaf-list of type 'foo:one' based
+    private static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf-list of type 'instance-identifier'
+    private static final QName BAR_BAZ = QName.create(BAR_NS, "baz"); // leaf of type 'instance-identifier'
 
+
+    private static final Gson GSON = new GsonBuilder().create();
+    private static JSONCodecFactory CODEC_FACTORY;
     private static JSONCodec<YangInstanceIdentifier> CODEC;
 
     @Mock
@@ -58,7 +79,7 @@ public class YT1473Test {
     private ArgumentCaptor<String> captor;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         final var modelContext = YangParserTestUtils.parseYangResourceDirectory("/yt1473");
         final var baz = modelContext.getDataChildByName(FOO_BAZ);
         assertTrue(baz instanceof ListSchemaNode);
@@ -66,26 +87,51 @@ public class YT1473Test {
         assertTrue(id instanceof LeafSchemaNode);
         final var type = ((LeafSchemaNode) id).getType();
         assertTrue(type instanceof InstanceIdentifierTypeDefinition);
-        CODEC = JSONCodecFactorySupplier.RFC7951.getShared(modelContext)
-                .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+        CODEC_FACTORY = JSONCodecFactorySupplier.RFC7951.getShared(modelContext);
+        CODEC = CODEC_FACTORY.instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
+        CODEC_FACTORY = null;
         CODEC = null;
     }
 
-    @Test
-    public void testSerializeSimple() throws Exception {
-        // No escaping needed, use single quotes
-        assertEquals("/foo:foo[str='str\"']", write(buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"")));
+    @ParameterizedTest(name = "Serialize key value: {0}")
+    @MethodSource("testArgs")
+    void serialize(final String output, final YangInstanceIdentifier input) throws Exception {
+        assertEquals(output, write(input));
     }
 
-    @Test
-    @Disabled("YT-1473: string escaping needs to work")
-    public void testSerializeEscaped() throws Exception {
-        // Escaping is needed, use double quotes and escape
-        assertEquals("/foo:foo[str=\"str'\\\"\"]", write(buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"")));
+    @ParameterizedTest(name = "Parse key value: {0}")
+    @MethodSource("testArgs")
+    void parse(final String input, final YangInstanceIdentifier output) throws Exception {
+
+        // using GSON for ease of escaping quotes within JSON value
+
+        // case 1: list with key of type 'instance-identifier' -> { "foo:baz" : [ { "id" : "<input>" } ] }
+        final String json1 = GSON.toJson(Map.of("foo:baz", List.of(Map.of("id", input))));
+        final NormalizedNode normalizedNode1 = jsonToNormalizedNode(json1);
+        assertEquals(new NodeIdentifier(FOO_BAZ), normalizedNode1.getIdentifier());
+        assertTrue(normalizedNode1 instanceof MapNode);
+        final MapNode mapNode = (MapNode) normalizedNode1;
+        assertEquals(1, mapNode.size());
+        assertNotNull(mapNode.childByArg(NodeIdentifierWithPredicates.of(FOO_BAZ, FOO_ID, output)));
+
+        // case 2: leaf of type 'instance-identifier' -> { "bar:baz" : "<input>" }
+        final String json2 = GSON.toJson(Map.of("bar:baz", input));
+        final NormalizedNode normalizedNode2 = jsonToNormalizedNode(json2);
+        assertEquals(new NodeIdentifier(BAR_BAZ), normalizedNode2.getIdentifier());
+        assertEquals(output, normalizedNode2.body());
+    }
+
+    private static Stream<Arguments> testArgs() {
+        return Stream.of(
+                Arguments.of("/foo:foo[str='str\"']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"")),
+                Arguments.of("/bar:str[.='str\"']", buildYangInstanceIdentifier(BAR_STR,"str\"")),
+                Arguments.of("/foo:foo[str=\"str'\\\"\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"")),
+                Arguments.of("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR,"str'\""))
+        );
     }
 
     @Test
@@ -129,8 +175,8 @@ public class YT1473Test {
                 new NodeIdentifier(node), NodeIdentifierWithPredicates.of(node, key, value));
     }
 
-    private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName nodeQName, final Object value) {
-        return YangInstanceIdentifier.create(new NodeWithValue<>(nodeQName, value));
+    private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final Object value) {
+        return YangInstanceIdentifier.create(new NodeIdentifier(node), new NodeWithValue<>(node, value));
     }
 
     private String write(final YangInstanceIdentifier yangInstanceIdentifier) throws Exception {
@@ -138,5 +184,13 @@ public class YT1473Test {
         CODEC.writeValue(writer, yangInstanceIdentifier);
         verify(writer).value(captor.capture());
         return captor.getValue();
+    }
+
+    private static NormalizedNode jsonToNormalizedNode(final String json) throws Exception {
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, CODEC_FACTORY);
+        jsonParser.parse(new JsonReader(new StringReader(json)));
+        return result.getResult();
     }
 }
