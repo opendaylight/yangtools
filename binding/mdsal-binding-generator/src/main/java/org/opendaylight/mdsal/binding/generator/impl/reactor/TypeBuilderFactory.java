@@ -71,8 +71,8 @@ public abstract class TypeBuilderFactory implements Immutable {
         @Override
         void addCodegenInformation(final EffectiveStatement<?, ?> stmt,
                 final GeneratedTypeBuilderBase<?> builder) {
-            if (stmt instanceof DocumentedNode) {
-                addCodegenInformation((DocumentedNode) stmt, builder);
+            if (stmt instanceof DocumentedNode documented) {
+                addCodegenInformation(documented, builder);
             }
         }
 
@@ -96,15 +96,13 @@ public abstract class TypeBuilderFactory implements Immutable {
         @Override
         void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
                 final GeneratedTypeBuilderBase<?> builder) {
-            if (stmt instanceof DocumentedNode) {
-                final DocumentedNode node = (DocumentedNode) stmt;
-                TypeComments.description(node).ifPresent(builder::addComment);
-                node.getDescription().ifPresent(builder::setDescription);
-                node.getReference().ifPresent(builder::setReference);
+            if (stmt instanceof DocumentedNode documented) {
+                TypeComments.description(documented).ifPresent(builder::addComment);
+                documented.getDescription().ifPresent(builder::setDescription);
+                documented.getReference().ifPresent(builder::setReference);
             }
-            if (stmt instanceof SchemaNode) {
-                YangSourceDefinition.of(module.statement(), (SchemaNode) stmt)
-                    .ifPresent(builder::setYangSourceDefinition);
+            if (stmt instanceof SchemaNode schema) {
+                YangSourceDefinition.of(module.statement(), schema).ifPresent(builder::setYangSourceDefinition);
             }
         }
 

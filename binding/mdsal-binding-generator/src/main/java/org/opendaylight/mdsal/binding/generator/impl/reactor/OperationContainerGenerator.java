@@ -57,7 +57,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final AbstractCompositeGenerator<?, ?> parent = getParent();
-        if (parent instanceof ActionGenerator && ((ActionGenerator) parent).isAddedByUses()) {
+        if (parent instanceof ActionGenerator actionParent && actionParent.isAddedByUses()) {
             //        final ActionDefinition orig = findOrigAction(parentSchema, action).get();
             //        // Original definition may live in a different module, make sure we account for that
             //        final ModuleContext origContext = moduleContext(

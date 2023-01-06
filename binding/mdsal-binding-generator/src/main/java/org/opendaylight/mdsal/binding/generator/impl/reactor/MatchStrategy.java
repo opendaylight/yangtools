@@ -31,11 +31,8 @@ abstract class MatchStrategy {
         AbstractExplicitGenerator<?, ?> findGenerator(final EffectiveStatement<?, ?> needle,
                 final Iterable<? extends Generator> haystack) {
             for (Generator gen : haystack) {
-                if (gen instanceof AbstractExplicitGenerator) {
-                    final AbstractExplicitGenerator<?, ?> ret = (AbstractExplicitGenerator<?, ?>) gen;
-                    if (needle == ret.statement()) {
-                        return ret;
-                    }
+                if (gen instanceof AbstractExplicitGenerator<?, ?> ret && needle == ret.statement()) {
+                    return ret;
                 }
             }
             return null;
@@ -59,11 +56,8 @@ abstract class MatchStrategy {
         AbstractExplicitGenerator<?, ?> findGenerator(final QName needle,
                 final Iterable<? extends Generator> haystack) {
             for (Generator gen : haystack) {
-                if (gen instanceof AbstractExplicitGenerator) {
-                    final AbstractExplicitGenerator<?, ?> ret = (AbstractExplicitGenerator<?, ?>) gen;
-                    if (needle.equals(ret.statement().argument())) {
-                        return ret;
-                    }
+                if (gen instanceof AbstractExplicitGenerator<?, ?> ret && needle.equals(ret.statement().argument())) {
+                    return ret;
                 }
             }
             return null;

@@ -92,17 +92,15 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
         // those two we only generate things for 'module'.
         if (!(statement instanceof ModuleEffectiveStatement)) {
             for (var stmt : statement.effectiveSubstatements()) {
-                if (stmt instanceof AugmentEffectiveStatement) {
-                    processAugment(resolver, resolver.getAugment((AugmentEffectiveStatement) stmt));
+                if (stmt instanceof AugmentEffectiveStatement augment) {
+                    processAugment(resolver, resolver.getAugment(augment));
                 }
             }
         }
 
         // Now construct RuntimeTypes for each schema tree child of stmt
         for (var stmt : statement.effectiveSubstatements()) {
-            if (stmt instanceof SchemaTreeEffectiveStatement) {
-                final var child = (SchemaTreeEffectiveStatement<?>) stmt;
-
+            if (stmt instanceof SchemaTreeEffectiveStatement<?> child) {
                 // Try valid augments first: they should be empty most of the time and filter all the cases where we
                 // would not find the streamChild among our local and grouping statements. Note that unlike all others,
                 // such matches are not considered to be children in Binding DataObject tree, they are only considered
@@ -132,8 +130,8 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
                 @SuppressWarnings("unchecked")
                 final AbstractExplicitGenerator<S, ?> gen = (AbstractExplicitGenerator<S, ?>) child;
                 final EffectiveStatement<?, ?> genStmt = gen.statement();
-                if (genStmt instanceof SchemaTreeEffectiveStatement
-                    && localName.equals(((SchemaTreeEffectiveStatement<?>) genStmt).argument().getLocalName())) {
+                if (genStmt instanceof SchemaTreeEffectiveStatement<?> schemaStmt
+                    && localName.equals(schemaStmt.argument().getLocalName())) {
                     return gen;
                 }
             }

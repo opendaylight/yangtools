@@ -243,12 +243,10 @@ public abstract class Generator implements Iterable<Generator> {
             }
 
             // if we into a choice we need to follow the hierararchy of that choice
-            if (ancestor instanceof AbstractAugmentGenerator augment) {
-                final AbstractCompositeGenerator<?, ?> target = augment.targetGenerator();
-                if (target instanceof ChoiceGenerator) {
-                    ancestor = target;
-                    continue;
-                }
+            if (ancestor instanceof AbstractAugmentGenerator augment
+                && augment.targetGenerator() instanceof ChoiceGenerator targetChoice) {
+                ancestor = targetChoice;
+                continue;
             }
 
             break;

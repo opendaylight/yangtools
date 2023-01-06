@@ -81,8 +81,8 @@ final class NotificationGenerator
         }
 
         final Type parentType = Type.of(parent.typeName());
-        if (parent instanceof ListGenerator) {
-            final KeyGenerator keyGen = ((ListGenerator) parent).keyGenerator();
+        if (parent instanceof ListGenerator listGen) {
+            final KeyGenerator keyGen = listGen.keyGenerator();
             if (keyGen != null) {
                 return BindingTypes.keyedListNotification(builder, parentType, keyGen.getGeneratedType(builderFactory));
             }

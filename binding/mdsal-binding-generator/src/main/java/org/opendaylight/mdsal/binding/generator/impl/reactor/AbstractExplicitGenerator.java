@@ -159,12 +159,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     @Override
     public final boolean isAddedByUses() {
-        return statement instanceof AddedByUsesAware && ((AddedByUsesAware) statement).isAddedByUses();
+        return statement instanceof AddedByUsesAware aware && aware.isAddedByUses();
     }
 
     @Override
     public final boolean isAugmenting() {
-        return statement instanceof CopyableNode && ((CopyableNode) statement).isAugmenting();
+        return statement instanceof CopyableNode copyable && copyable.isAugmenting();
     }
 
     /**
@@ -257,12 +257,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     final @Nullable AbstractExplicitGenerator<?, ?> findLocalSchemaTreeGenerator(final QName qname) {
         for (Generator child : this) {
-            if (child instanceof AbstractExplicitGenerator) {
-                final AbstractExplicitGenerator<?, ?> gen = (AbstractExplicitGenerator<?, ?>) child;
-                final EffectiveStatement<?, ?> stmt = gen.statement();
-                if (stmt instanceof SchemaTreeEffectiveStatement && qname.equals(stmt.argument())) {
-                    return gen;
-                }
+            if (child instanceof AbstractExplicitGenerator<?, ?> gen
+                && gen.statement() instanceof SchemaTreeEffectiveStatement<?> stmt && qname.equals(stmt.argument())) {
+                return gen;
             }
         }
         return null;

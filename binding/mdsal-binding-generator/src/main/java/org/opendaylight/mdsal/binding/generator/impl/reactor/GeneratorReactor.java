@@ -136,8 +136,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         final var augments = new ArrayList<AugmentRequirement>();
         for (ModuleGenerator module : children) {
             for (Generator gen : module) {
-                if (gen instanceof ModuleAugmentGenerator) {
-                    augments.add(((ModuleAugmentGenerator) gen).startLinkage(this));
+                if (gen instanceof ModuleAugmentGenerator moduleGen) {
+                    augments.add(moduleGen.startLinkage(this));
                 }
             }
         }
@@ -245,8 +245,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         for (Generator gen : parent) {
             gen.ensureMember();
             collectCollisionDomains(result, gen);
-            if (gen instanceof AbstractCompositeGenerator) {
-                result.add(((AbstractCompositeGenerator<?, ?>) gen).domain());
+            if (gen instanceof AbstractCompositeGenerator<?, ?> compositeGen) {
+                result.add(compositeGen.domain());
             }
         }
     }
@@ -349,8 +349,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         // Now kick of the search
         final List<EffectiveStatement<?, ?>> stmtPath = inferenceStack.toInference().statementPath();
         final AbstractExplicitGenerator<?, ?> found = gen.findGenerator(stmtPath);
-        if (found instanceof AbstractTypeAwareGenerator) {
-            return (AbstractTypeAwareGenerator<?, ?, ?>) found;
+        if (found instanceof AbstractTypeAwareGenerator<?, ?, ?> typeAware) {
+            return typeAware;
         }
         throw new VerifyException("Statements " + stmtPath + " resulted in unexpected " + found);
     }
@@ -358,9 +358,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     // Note: unlike other methods, this method pushes matching child to the stack
     private void linkUsesDependencies(final Iterable<? extends Generator> parent) {
         for (Generator child : parent) {
-            if (child instanceof AbstractCompositeGenerator) {
-                LOG.trace("Visiting composite {}", child);
-                final var composite = (AbstractCompositeGenerator<?, ?>) child;
+            if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
+                LOG.trace("Visiting composite {}", composite);
                 stack.push(composite);
                 composite.linkUsesDependencies(this);
                 linkUsesDependencies(composite);
@@ -395,8 +394,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
     private void linkDependencies(final Iterable<? extends Generator> parent) {
         for (Generator child : parent) {
-            if (child instanceof AbstractDependentGenerator) {
-                ((AbstractDependentGenerator<?, ?>) child).linkDependencies(this);
+            if (child instanceof AbstractDependentGenerator<?, ?> dependent) {
+                dependent.linkDependencies(this);
             } else if (child instanceof AbstractCompositeGenerator) {
                 stack.push(child);
                 linkDependencies(child);
@@ -408,8 +407,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     private void bindTypeDefinition(final Iterable<? extends Generator> parent) {
         for (Generator child : parent) {
             stack.push(child);
-            if (child instanceof AbstractTypeObjectGenerator) {
-                ((AbstractTypeObjectGenerator<?, ?>) child).bindTypeDefinition(this);
+            if (child instanceof AbstractTypeObjectGenerator<?, ?> typeObject) {
+                typeObject.bindTypeDefinition(this);
             } else if (child instanceof AbstractCompositeGenerator) {
                 bindTypeDefinition(child);
             }

@@ -41,8 +41,8 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // - being a child of an augment (i.e. augmented into a choice)
         final AbstractCompositeGenerator<?, ?> parent = getParent();
         final ChoiceGenerator choice;
-        if (parent instanceof AbstractAugmentGenerator) {
-            final AbstractCompositeGenerator<?, ?> target = ((AbstractAugmentGenerator) parent).targetGenerator();
+        if (parent instanceof AbstractAugmentGenerator augGen) {
+            final AbstractCompositeGenerator<?, ?> target = augGen.targetGenerator();
             verify(target instanceof ChoiceGenerator, "Unexpected parent augment %s target %s", parent, target);
             choice = (ChoiceGenerator) target;
         } else {

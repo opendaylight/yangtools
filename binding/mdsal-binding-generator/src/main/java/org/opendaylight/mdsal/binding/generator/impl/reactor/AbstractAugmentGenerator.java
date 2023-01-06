@@ -129,8 +129,7 @@ abstract class AbstractAugmentGenerator
             if (gen == this) {
                 break;
             }
-            if (gen instanceof AbstractAugmentGenerator
-                && target.equalRoot(((AbstractAugmentGenerator) gen).targetGenerator().getMember())) {
+            if (gen instanceof AbstractAugmentGenerator aug && target.equalRoot(aug.targetGenerator().getMember())) {
                 offset++;
             }
         }
