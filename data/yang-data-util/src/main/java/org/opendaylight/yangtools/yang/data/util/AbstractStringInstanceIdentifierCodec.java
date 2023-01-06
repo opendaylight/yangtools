@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
+import java.util.Set;
 import javax.xml.XMLConstants;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -85,8 +86,25 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
             // QName implies identity-ref, which can never be escaped
             return appendQName(sb.append('\''), (QName) value, currentModule).append('\'');
         }
+        // FIXME: YANGTOOLS-1426: update once we have a dedicated type
+        if (value instanceof Set) {
+            final var bits = (Set<?>) value;
+            // Set implies bits, which can never be escaped and need to be serialized as space-separated items
+            sb.append('\'');
 
-        final var str = String.valueOf(value);
+            final var it = bits.iterator();
+            if (it.hasNext()) {
+                sb.append(checkBitsItem(it.next()));
+                while (it.hasNext()) {
+                    sb.append(' ').append(checkBitsItem(it.next()));
+                }
+            }
+
+            return sb.append('\'');
+        }
+
+        final String str = value instanceof YangInstanceIdentifier ? serialize((YangInstanceIdentifier) value)
+            : String.valueOf(value);
 
         // We have two specifications here: Section 6.1.3 of both RFC6020 and RFC7950:
         //
@@ -160,5 +178,13 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         // This implementation handles both XML encoding, where we follow XML namespace rules and old JSON encoding,
         // which is the same thing: always encode prefixes
         return createQName(XMLConstants.DEFAULT_NS_PREFIX, localName);
+    }
+
+    // FIXME: YANGTOOLS-1426: this will not be necessary when we have dedicated bits type
+    private static @NonNull String checkBitsItem(final Object obj) {
+        if (obj instanceof String) {
+            return (String) obj;
+        }
+        throw new IllegalArgumentException("Unexpected bits component " + obj);
     }
 }
