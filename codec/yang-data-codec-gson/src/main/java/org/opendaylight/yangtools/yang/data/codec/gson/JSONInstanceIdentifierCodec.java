@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.gson.stream.JsonWriter;
@@ -19,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIde
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
@@ -31,8 +31,8 @@ abstract class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceI
 
     JSONInstanceIdentifierCodec(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
         this.context = requireNonNull(context);
-        this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = requireNonNull(jsonCodecFactory);
+        dataContextTree = DataSchemaContextTree.from(context);
+        codecFactory = requireNonNull(jsonCodecFactory);
     }
 
     @Override
@@ -56,9 +56,13 @@ abstract class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceI
     protected final Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
             final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
-        checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final JSONCodec<?> objectJSONCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver);
-        return objectJSONCodec.parseValue(null, value);
+        if (schemaNode instanceof LeafSchemaNode) {
+            return codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver).parseValue(null, value);
+        } else if (schemaNode instanceof LeafListSchemaNode) {
+            return codecFactory.codecFor((LeafListSchemaNode) schemaNode, resolver).parseValue(null, value);
+        }
+        throw new IllegalArgumentException("schemaNode " + schemaNode
+                + " must be of type LeafSchemaNode or LeafListSchemaNode");
     }
 
     @Override
