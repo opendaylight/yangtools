@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIde
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
@@ -82,8 +83,12 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
     protected final Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
             final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
-        checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        return codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver).parseValue(null, value);
+        if (schemaNode instanceof LeafSchemaNode leafSchemaNode) {
+            return codecFactory.codecFor(leafSchemaNode, resolver).parseValue(null, value);
+        } else if (schemaNode instanceof LeafListSchemaNode leafListSchemaNode) {
+            return codecFactory.codecFor(leafListSchemaNode, resolver).parseValue(null, value);
+        }
+        throw new IllegalArgumentException("schemaNode must be of type LeafSchemaNode or LeafListSchemaNode");
     }
 
     @Override

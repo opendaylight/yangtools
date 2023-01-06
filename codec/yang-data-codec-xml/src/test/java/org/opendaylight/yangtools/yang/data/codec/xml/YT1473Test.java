@@ -123,25 +123,19 @@ public class YT1473Test {
 
     private static Stream<Arguments> testArgs() {
         return Stream.of(
+                // strings
                 Arguments.of("/foo:foo[foo:str='str\"']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"")),
                 Arguments.of("/bar:str[.='str\"']", buildYangInstanceIdentifier(BAR_STR,"str\"")),
                 Arguments.of("/foo:foo[foo:str=\"str'\\\"\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"")),
-                Arguments.of("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR,"str'\""))
+                Arguments.of("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR,"str'\"")),
+                // identity-ref
+                Arguments.of("/foo:bar[foo:qname='foo:one']",
+                        buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)),
+                Arguments.of("/bar:foo[.='foo:one']", buildYangInstanceIdentifier(BAR_FOO, FOO_ONE)),
+                Arguments.of("/foo:bar[foo:qname='bar:two']",
+                        buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)),
+                Arguments.of("/bar:foo[.='bar:two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO))
         );
-    }
-
-    @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefSame() throws Exception {
-        // TODO: an improvement is to use just 'one' as the namespace is the same as the leaf (see RFC7951 section 6.8)
-        assertEquals("/foo:bar[qname='one']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)));
-    }
-
-    @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefOther() throws Exception {
-        // No escaping is needed, use double quotes and escape
-        assertEquals("/foo:bar[qname='bar:two']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
     }
 
     @Test
@@ -150,12 +144,6 @@ public class YT1473Test {
         assertEquals("/foo:baz[id=\"/foo:bar[qname='bar:two']\"]", write(
                 buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)))
         );
-    }
-
-    @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityValue() throws Exception {
-        assertEquals("/bar:foo[.='foo:one']", write(buildYangInstanceIdentifier(BAR_FOO, FOO_ONE)));
     }
 
     @Test
