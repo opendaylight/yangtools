@@ -73,15 +73,12 @@ public class YT1473Test {
     }
 
     @Test
-    @Ignore("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     public void testSerializeIdentityRefSame() throws Exception {
-        // TODO: an improvement is to use just 'one' as the namespace is the same as the leaf (see RFC7951 section 6.8)
-        assertEquals("/foo:bar[qname='foo:one']",
+        assertEquals("/foo:bar[qname='one']",
             write(new NodeIdentifier(BAR), NodeIdentifierWithPredicates.of(BAR, QNAME, QName.create("foo", "one"))));
     }
 
     @Test
-    @Ignore("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     public void testSerializeIdentityRefOther() throws Exception {
         // No escaping is needed, use double quotes and escape
         assertEquals("/foo:bar[qname='bar:one']",
