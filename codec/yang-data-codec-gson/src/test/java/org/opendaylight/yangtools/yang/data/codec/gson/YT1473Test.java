@@ -92,13 +92,11 @@ class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     void testSerializeIdentityRefSame() throws Exception {
         assertSerdes("/foo:bar[qname='one']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE));
     }
 
     @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     void testSerializeIdentityRefOther() throws Exception {
         // No escaping is needed, use double quotes and escape
         assertSerdes("/foo:bar[qname='bar:two']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO));
@@ -112,7 +110,6 @@ class YT1473Test {
     }
 
     @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     void testSerializeIdentityValue() throws Exception {
         assertSerdes("/bar:foo[.='foo:one']", buildYangInstanceIdentifier(BAR_FOO, FOO_ONE));
         assertSerdes("/bar:foo[.='two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO));
