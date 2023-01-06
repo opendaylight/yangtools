@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
 import javax.xml.XMLConstants;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,6 +32,14 @@ import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 @Beta
 public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec<YangInstanceIdentifier>
         implements InstanceIdentifierCodec<String> {
+    // Escaper as per https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3
+    private static final Escaper DQUOT_ESCAPER = Escapers.builder()
+        .addEscape('\n', "\\n")
+        .addEscape('\t', "\\t")
+        .addEscape('"', "\\\"")
+        .addEscape('\\', "\\\\")
+        .build();
+
     @Override
     protected final String serializeImpl(final YangInstanceIdentifier data) {
         final StringBuilder sb = new StringBuilder();
@@ -58,14 +68,27 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
             if (arg instanceof NodeIdentifierWithPredicates nip) {
                 for (var entry : nip.entrySet()) {
-                    appendQName(sb.append('['), entry.getKey(), lastModule);
-                    sb.append("='").append(String.valueOf(entry.getValue())).append("']");
+                    final var keyName = entry.getKey();
+                    appendQName(sb.append('['), keyName, lastModule).append('=');
+                    appendValue(sb, encodeValue(keyName.getModule(), entry.getValue())).append(']');
                 }
             } else if (arg instanceof NodeWithValue<?> val) {
-                sb.append("[.='").append(val.getValue()).append("']");
+                appendValue(sb.append("[.="), encodeValue(lastModule, val.getValue())).append(']');
             }
         }
         return sb.toString();
+    }
+
+    private static @NonNull String encodeValue(final QNameModule currentModule, final Object value) {
+        return String.valueOf(value);
+    }
+
+    private static StringBuilder appendValue(final StringBuilder sb, final @NonNull String value) {
+        return value.indexOf('\'') == -1
+            // No escaping needed, use single quotes
+            ? sb.append('\'').append(value).append('\'')
+                // Escaping needed: use double quotes
+                : sb.append('"').append(DQUOT_ESCAPER.escape(value)).append('"');
     }
 
     /**
