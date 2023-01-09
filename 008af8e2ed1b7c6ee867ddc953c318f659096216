@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "897445e9_49336b93",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-01-09T11:07:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "015f4620_d30247ce",
+      "range": {
+        "startLine": 11,
+        "startChar": 6,
+        "endLine": 11,
+        "endChar": 57
+      },
+      "revId": "008af8e2ed1b7c6ee867ddc953c318f659096216",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "400b0b9e_83f9ef08",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-01-02T13:05:54Z",
       "side": 1,
       "message": "we have Java 17, please use instanceof expression",
+      "range": {
+        "startLine": 181,
+        "startChar": 18,
+        "endLine": 181,
+        "endChar": 85
+      },
+      "revId": "008af8e2ed1b7c6ee867ddc953c318f659096216",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7bc926a_9ab9a50c",
+        "filename": "model/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/YangOrganizationTreeIterator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-01-09T11:07:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "400b0b9e_83f9ef08",
       "range": {
         "startLine": 181,
         "startChar": 18,
@@ -93,6 +141,54 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b918b42c_72891617",
+        "filename": "model/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/YangOrganizationTreeIterator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-01-09T11:07:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "db34eb5b_07147c5a",
+      "range": {
+        "startLine": 185,
+        "startChar": 47,
+        "endLine": 185,
+        "endChar": 50
+      },
+      "revId": "008af8e2ed1b7c6ee867ddc953c318f659096216",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd976f69_0fd11400",
+        "filename": "model/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/YangOrganizationTreeIterator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-01-09T11:07:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fcdbe6ba_26818481",
+      "range": {
+        "startLine": 185,
+        "startChar": 53,
+        "endLine": 185,
+        "endChar": 61
+      },
+      "revId": "008af8e2ed1b7c6ee867ddc953c318f659096216",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be4b6705_daf892e5",
@@ -106,6 +202,30 @@
       "writtenOn": "2023-01-02T13:05:54Z",
       "side": 1,
       "message": "- always \u0027} else {\u0027\n- if the previous branch just returns (as here), do not use else for brewity",
+      "range": {
+        "startLine": 187,
+        "startChar": 16,
+        "endLine": 188,
+        "endChar": 22
+      },
+      "revId": "008af8e2ed1b7c6ee867ddc953c318f659096216",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0e70708b_f43ca44b",
+        "filename": "model/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/YangOrganizationTreeIterator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-01-09T11:07:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be4b6705_daf892e5",
       "range": {
         "startLine": 187,
         "startChar": 16,
