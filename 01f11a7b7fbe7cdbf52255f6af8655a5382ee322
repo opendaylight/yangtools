@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "68e9efd2_586e9c41",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T07:08:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2767b89a_9c0068e1",
+      "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bea1a22e_4539cedc",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-01-04T11:05:23Z",
       "side": 1,
       "message": "Consider using `Comparator.comparingInt(Entry::getValue)`",
+      "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eeeb86a0_bee77478",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T07:08:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bea1a22e_4539cedc",
       "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f006d1d_71e6c098",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T07:08:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75702dac_79d3c8fb",
+      "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fa6c3394_a29c5b66",
@@ -65,6 +119,24 @@
       "writtenOn": "2023-01-04T11:05:23Z",
       "side": 1,
       "message": "Redundant empty line",
+      "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ebf52f8e_f953314e",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T07:08:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa6c3394_a29c5b66",
       "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -86,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e67b4cb_ce4625b7",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T07:08:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6fffad7d_cbb23cc0",
+      "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ceb0236a_261cbb82",
@@ -103,6 +193,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3697492f_7b2273c5",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodecTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T07:08:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ceb0236a_261cbb82",
+      "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4d1ee740_dbc44a5f",
@@ -116,6 +224,24 @@
       "writtenOn": "2023-01-04T11:05:23Z",
       "side": 1,
       "message": "This class miss final keyword for int values.",
+      "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "104c3ae4_e5e73e19",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodecTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T07:08:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d1ee740_dbc44a5f",
       "revId": "01f11a7b7fbe7cdbf52255f6af8655a5382ee322",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
