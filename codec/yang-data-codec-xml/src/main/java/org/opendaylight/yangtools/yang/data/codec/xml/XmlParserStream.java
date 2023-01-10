@@ -350,8 +350,11 @@ public final class XmlParserStream implements Closeable, Flushable {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
 
-            read(reader, nodeDataWithSchema, reader.getLocalName());
-            nodeDataWithSchema.write(writer);
+            if (reader.isStartElement()) {
+                // read data if only it's a start element; end element means empty parent
+                read(reader, nodeDataWithSchema, reader.getLocalName());
+                nodeDataWithSchema.write(writer);
+            }
         }
 
         return this;

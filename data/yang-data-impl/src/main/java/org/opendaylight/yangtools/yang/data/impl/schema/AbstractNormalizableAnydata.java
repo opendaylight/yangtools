@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableMetadataNormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
@@ -36,8 +37,11 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
         } catch (IOException e) {
             throw new AnydataNormalizationException("Failed to normalize anydata", e);
         }
-
-        return ImmutableMetadataNormalizedAnydata.ofOptional(inference, result.getResult(), result.getMetadata());
+        final NormalizedNode data = result.getResult();
+        if (data == null) {
+            throw new AnydataNormalizationException("No anydata content found to normalize");
+        }
+        return ImmutableMetadataNormalizedAnydata.ofOptional(inference, data, result.getMetadata());
     }
 
     @Override
