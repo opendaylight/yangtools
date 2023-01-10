@@ -57,8 +57,6 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
 
         try {
             final XMLStreamReader reader = toStreamReader();
-            reader.nextTag();
-
             xmlParser.parse(reader).flush();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to parse payload", e);
