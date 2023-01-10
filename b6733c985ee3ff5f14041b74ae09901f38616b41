@@ -33,6 +33,24 @@
       "message": "final",
       "revId": "b6733c985ee3ff5f14041b74ae09901f38616b41",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "274ee99f_c0375f6c",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/AnydataNormalizeToContainerTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-10T16:16:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7fa8e38e_8d5adb52",
+      "revId": "b6733c985ee3ff5f14041b74ae09901f38616b41",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
