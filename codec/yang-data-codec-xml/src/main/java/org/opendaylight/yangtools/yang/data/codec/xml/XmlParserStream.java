@@ -473,16 +473,17 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
 
         if (parent instanceof LeafListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema) {
-            String xmlElementName = in.getLocalName();
-            while (xmlElementName.equals(parent.getSchema().getQName().getLocalName())) {
+            final String localName = in.getLocalName();
+            final String namespaceURI = in.getNamespaceURI();
+            // aggregate current and subsequent nodes having same localName and namespace
+            // into set of entries belonging to current parent node
+            while (localName.equals(in.getLocalName()) && namespaceURI.equals(in.getNamespaceURI())) {
                 read(in, newEntryNode(parent), rootElement);
                 if (in.getEventType() == XMLStreamConstants.END_DOCUMENT
                         || in.getEventType() == XMLStreamConstants.END_ELEMENT) {
                     break;
                 }
-                xmlElementName = in.getLocalName();
             }
-
             return;
         }
 

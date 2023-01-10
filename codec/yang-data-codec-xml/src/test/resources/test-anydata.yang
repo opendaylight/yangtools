@@ -11,6 +11,22 @@ module test-anydata {
         leaf cont-leaf {
             type string;
         }
+        leaf empty-leaf {
+            type empty;
+        }
+        container bar {
+            leaf cont-leaf {
+                type string;
+            }
+        }
+    }
+    list lst {
+        leaf cont-leaf {
+            type string;
+        }
+        leaf-list my-leafs {
+            type string;
+        }
     }
 }
 
