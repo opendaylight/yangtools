@@ -16,6 +16,24 @@
       "message": "We can have just two lines here:\n```\nfinal AnydataNormalizationException thrown \u003d assertThrows(AnydataNormalizationException.class, () -\u003e\n```\nand \n```\n        domSourceAnydata.normalizeTo(DefaultSchemaTreeInference.of(SCHEMA_CONTEXT, Absolute.of(CONT_QNAME))));\n```",
       "revId": "802f052d57525314228a542eef86e0abf8348aa7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52d26c93_d109884f",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/AnydataNormalizeToContainerTest.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-11T10:41:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e4844a7_c5ece7da",
+      "revId": "802f052d57525314228a542eef86e0abf8348aa7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
