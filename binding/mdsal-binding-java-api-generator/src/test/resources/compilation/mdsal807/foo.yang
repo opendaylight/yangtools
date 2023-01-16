@@ -1,0 +1,12 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  typedef table-config {
+    type bits {
+      bit OFPTC_DEPRECATED_MASK {
+        position 3;
+      }
+    }
+  }
+}

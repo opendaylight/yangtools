@@ -435,7 +435,7 @@ class ClassTemplate extends BaseTemplate {
             «val propType = prop.returnType»
             «IF !(INSTANCE_IDENTIFIER.identifier.equals(propType.identifier))»
             public static «genTO.name» getDefaultInstance(final String defaultValue) {
-                «IF allProperties.size > 1»
+                «IF propType.equals(Types.primitiveBooleanType())»
                     «bitsArgs»
                 «ELSEIF VALUEOF_TYPES.contains(propType)»
                     return new «genTO.name»(«propType.importedName».valueOf(defaultValue));
