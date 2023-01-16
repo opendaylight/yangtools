@@ -125,7 +125,7 @@ public final class TestingNormalizedNodeStructuresCreator {
     private static LeafNode<Object> lf15_11Node() {
         return Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf15_11")))
-                .withValue(ImmutableSet.of("one", "two")).build();
+                .withValue("03").build();
     }
 
     private static SystemMapNode childLst11() {
