@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0651141c_5d1d5639",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/YT1473Test.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-16T16:21:59Z",
+      "side": 1,
+      "message": "I would expect that just `@Disabled` disappears...",
+      "revId": "5641e590852622a912cc6af6248284fec49ac9c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dfd598d_1c44ee6e",
+        "filename": "codec/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStringInstanceIdentifierCodec.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-16T16:21:59Z",
+      "side": 1,
+      "message": "`schemaNode {} must be of type LeafSchemaNode or LeafListSchemaNode, schemaNode`",
+      "revId": "5641e590852622a912cc6af6248284fec49ac9c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f21f8b3f_7c0a97cc",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractStringInstanceIdentifierCodec.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-16T16:21:59Z",
+      "side": 1,
+      "message": "I have seen similar method/code in the previous code/patches",
+      "revId": "5641e590852622a912cc6af6248284fec49ac9c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
