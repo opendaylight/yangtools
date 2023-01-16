@@ -15,7 +15,6 @@ import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -64,30 +63,10 @@ public class Bug4969Test {
         assertNotNull(ref3);
         assertNotNull(ref4);
 
-        final Object value1 = ref1.body();
-        final Object value2 = ref2.body();
-        final Object value3 = ref3.body();
-        final Object value4 = ref4.body();
-
-        assertTrue(value1 instanceof Set);
-        assertTrue(value2 instanceof Set);
-        assertTrue(value3 instanceof Set);
-        assertTrue(value4 instanceof Set);
-
-        final Set<?> set1 = (Set<?>) value1;
-        final Set<?> set2 = (Set<?>) value2;
-        final Set<?> set3 = (Set<?>) value3;
-        final Set<?> set4 = (Set<?>) value4;
-
-        assertEquals(1, set1.size());
-        assertEquals(2, set2.size());
-        assertEquals(3, set3.size());
-        assertEquals(4, set4.size());
-
-        assertTrue(set1.contains("a"));
-        assertTrue(set2.contains("a") && set2.contains("b"));
-        assertTrue(set3.contains("a") && set3.contains("b") && set3.contains("c"));
-        assertTrue(set4.contains("a") && set4.contains("b") && set4.contains("c") && set4.contains("d"));
+        assertEquals("01", ref1.body()); // bit "a" (0)
+        assertEquals("03", ref2.body()); // bits "a","b" (0,1)
+        assertEquals("07", ref3.body()); // bits "a","b","c" (0-2)
+        assertEquals("0F", ref4.body()); // bits "a","b","c","d" (0-3)
     }
 
     @Test
