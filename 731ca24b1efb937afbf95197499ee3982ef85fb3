@@ -151,6 +151,30 @@
       },
       "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c8dc88b_e14ecd94",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-16T09:31:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93413077_b517b4bf",
+      "range": {
+        "startLine": 54,
+        "startChar": 46,
+        "endLine": 54,
+        "endChar": 54
+      },
+      "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
