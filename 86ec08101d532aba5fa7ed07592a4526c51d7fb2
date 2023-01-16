@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffa55b28_27ecd82d",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 11
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-16T16:15:02Z",
+      "side": 1,
+      "message": "Please remove this \"white chars\"",
+      "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2cd5dcc_cd6862ac",
+        "filename": "codec/yang-data-codec-xml/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 11
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-16T16:15:02Z",
+      "side": 1,
+      "message": "Please remove these \"white chars\"",
+      "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
