@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * Data container is an interface which has structured contents.
+ * Data container is an interface which has structured contents and can can as an interior node of a
+ * {@link DataContainer}.
  *
  * @author Tony Tkacik
  */

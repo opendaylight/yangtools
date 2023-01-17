@@ -12,5 +12,5 @@ package org.opendaylight.yangtools.yang.binding;
  *
  * @author Jie Han
  */
-public sealed interface BindingObject permits Annotation, BaseIdentity, DataObject, OpaqueObject, TypeObject {
+public sealed interface BindingObject permits Annotation, BaseIdentity, DataObject, OpaqueObject, TypeObject, YangData {
 }
