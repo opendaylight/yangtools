@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Marker interface for all interfaces generated for {@code output} statement within an {@code action} or an {@code rpc}
  * statement.
- *
- * @author Robert Varga
  */
-@Beta
+// FIXME: this should not really be a DataObject, but a separate DataContainer and a BindingObject
 public interface RpcOutput extends DataObject {
     @Override
     Class<? extends RpcOutput> implementedInterface();

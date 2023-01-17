@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.binding;
  * Marker interface for all interfaces generated for {@code input} statement within an {@code action} or an {@code rpc}
  * statement.
  */
+// FIXME: this should not really be a DataObject, but a separate DataContainer and a BindingObject
 public interface RpcInput extends DataObject {
     @Override
     Class<? extends RpcInput> implementedInterface();
