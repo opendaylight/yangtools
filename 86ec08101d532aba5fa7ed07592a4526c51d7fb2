@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f6c7b84_f9980895",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 11
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-17T19:10:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ffa55b28_27ecd82d",
+      "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d2cd5dcc_cd6862ac",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-01-16T16:15:02Z",
       "side": 1,
       "message": "Please remove these \"white chars\"",
+      "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3366d823_c317b307",
+        "filename": "codec/yang-data-codec-xml/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 11
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-17T19:10:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2cd5dcc_cd6862ac",
       "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
