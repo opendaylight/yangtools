@@ -7,11 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -267,15 +267,19 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     final @NonNull QName getQName() {
         final Object arg = statement.argument();
-        verify(arg instanceof QName, "Unexpected argument %s", arg);
-        return (QName) arg;
+        if (arg instanceof QName qname) {
+            return qname;
+        }
+        throw new VerifyException("Unexpected argument " + arg);
     }
 
     @NonNull AbstractQName localName() {
         // FIXME: this should be done in a nicer way
-        final Object argument = statement.argument();
-        verify(argument instanceof AbstractQName, "Illegal argument %s", argument);
-        return (AbstractQName) argument;
+        final Object arg = statement.argument();
+        if (arg instanceof AbstractQName aqn) {
+            return aqn;
+        }
+        throw new VerifyException("Illegal argument " + arg);
     }
 
     @Override
