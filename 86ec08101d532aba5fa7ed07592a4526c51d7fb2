@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52233d4a_4b00bffe",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/TestingNormalizedNodeStructuresCreator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-17T19:21:01Z",
+      "side": 0,
+      "message": "This should remain: ContainerNode-\u003eLeafSetNode-\u003eLeafSetEntryNode",
+      "range": {
+        "startLine": 196,
+        "startChar": 16,
+        "endLine": 196,
+        "endChar": 74
+      },
+      "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
