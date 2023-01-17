@@ -22,6 +22,29 @@
       },
       "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf40b4ab_e183cb5b",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractInteriorContextNode.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-17T19:29:08Z",
+      "side": 0,
+      "message": "isLeaf() in terms of ContextNode tree structure. Interior nodes are by definition not leaf nodes.",
+      "range": {
+        "startLine": 19,
+        "startChar": 11,
+        "endLine": 19,
+        "endChar": 16
+      },
+      "revId": "86ec08101d532aba5fa7ed07592a4526c51d7fb2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
