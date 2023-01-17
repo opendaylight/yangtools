@@ -162,7 +162,7 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     }
 
     final OriginalStmtCtx<?, ?, ?> getResumedSubstatement() {
-        final var local = verifyNotNull(effective);
+        final var local = verifyNotNull(effective, "Effective substatements no longer available in %s", this);
         verify(!local.isEmpty(), "Unexpected empty statements");
         final var ret = local.get(0);
         verify(ret instanceof OriginalStmtCtx, "Unexpected statement %s", ret);

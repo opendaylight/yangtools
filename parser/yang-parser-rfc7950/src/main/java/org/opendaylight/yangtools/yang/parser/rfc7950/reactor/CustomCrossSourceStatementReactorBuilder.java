@@ -146,6 +146,6 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     }
 
     private StatementSupportBundle.@NonNull Builder getBuilder(final ModelProcessingPhase phase) {
-        return verifyNotNull(reactorSupportBundles.get(phase));
+        return verifyNotNull(reactorSupportBundles.get(phase), "No builder for %s found", phase);
     }
 }

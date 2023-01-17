@@ -64,7 +64,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
-        return verifyNotNull(substatements);
+        return verifyNotNull(substatements, "Substatements no longer available in %s", this);
     }
 
     @Override
