@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
 public final class ParserStreamUtils {
     private ParserStreamUtils() {
@@ -48,6 +49,11 @@ public final class ParserStreamUtils {
                     }
                 }
             }
+        }
+        if (potentialChildNode == null && dataSchemaNode instanceof NotificationDefinition notification
+                && notification.getQName().getLocalName().equals(childName)
+                && notification.getQName().getNamespace().equals(namespace)) {
+            potentialChildNode = dataSchemaNode;
         }
         if (potentialChildNode != null) {
             result.push(potentialChildNode);
