@@ -1,0 +1,37 @@
+module notification-test {
+  namespace "test:notification";
+  prefix tn;
+
+  notification leaf-event {
+    leaf lf {
+      type string;
+    }
+  }
+
+  notification container-event {
+    container cont {
+      leaf lf {
+        type string;
+      }
+    }
+  }
+
+  notification list-event {
+    list lst {
+      key lf;
+      leaf lf {
+          type string;
+      }
+    }
+  }
+
+  notification group-event {
+    uses grp;
+  }
+
+  grouping grp {
+    leaf lf {
+      type string;
+    }
+  }
+}

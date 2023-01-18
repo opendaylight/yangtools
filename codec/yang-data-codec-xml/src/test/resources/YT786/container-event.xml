@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<container-event xmlns="test:notification">
+    <cont>
+        <lf>test</lf>
+    </cont>
+</container-event>
