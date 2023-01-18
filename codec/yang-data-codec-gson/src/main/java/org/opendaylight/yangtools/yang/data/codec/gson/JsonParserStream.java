@@ -331,6 +331,11 @@ public final class JsonParserStream implements Closeable, Flushable {
                             .addChild(childDataSchemaNodes, ChildReusePolicy.NOOP);
                     if (newChild instanceof AnyXmlNodeDataWithSchema anyxml) {
                         readAnyXmlValue(in, anyxml, jsonElementName);
+                    } else if (newChild.getSchema().equals(parent.getSchema())) {
+                        // Notification case: when actual notification container node is
+                        // being created under wrapper root node (created out of same schema root)
+                        // there is no need for entering/exiting the stack
+                        read(in, newChild);
                     } else {
                         stack.enterDataTree(qname);
                         read(in, newChild);
@@ -442,6 +447,10 @@ public final class JsonParserStream implements Closeable, Flushable {
                     potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
                 }
             }
+        }
+        if (potentialUris.isEmpty() && dataSchemaNode instanceof NotificationDefinition notification
+                && notification.getQName().getLocalName().equals(elementName)) {
+            potentialUris.add(notification.getQName().getNamespace());
         }
         return potentialUris;
     }
