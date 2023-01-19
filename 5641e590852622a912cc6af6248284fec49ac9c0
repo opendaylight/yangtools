@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f1a3554_732f1c34",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/YT1473Test.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T09:32:33Z",
+      "side": 1,
+      "message": "it enables tests for 2 way conversion for these cases, not just writing.",
+      "parentUuid": "0651141c_5d1d5639",
+      "revId": "5641e590852622a912cc6af6248284fec49ac9c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8dfd598d_1c44ee6e",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5464086_6f60d064",
+        "filename": "codec/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStringInstanceIdentifierCodec.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T09:32:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8dfd598d_1c44ee6e",
+      "revId": "5641e590852622a912cc6af6248284fec49ac9c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f21f8b3f_7c0a97cc",
@@ -48,6 +84,24 @@
       "writtenOn": "2023-01-16T16:21:59Z",
       "side": 1,
       "message": "I have seen similar method/code in the previous code/patches",
+      "revId": "5641e590852622a912cc6af6248284fec49ac9c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "90f33b01_7bd881c5",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractStringInstanceIdentifierCodec.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T09:32:33Z",
+      "side": 1,
+      "message": "it\u0027s a gradual update of same method",
+      "parentUuid": "f21f8b3f_7c0a97cc",
       "revId": "5641e590852622a912cc6af6248284fec49ac9c0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
