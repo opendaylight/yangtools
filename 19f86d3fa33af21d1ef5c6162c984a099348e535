@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b4a9049_2aeaaab1",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 7
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T10:04:13Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8eea583e_3c7e85a3",
+      "revId": "19f86d3fa33af21d1ef5c6162c984a099348e535",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "16364d67_d358ce46",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "78d4e303_7b2eee60",
+        "filename": "codec/yang-data-codec-xml/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 7
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T10:04:13Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "16364d67_d358ce46",
+      "revId": "19f86d3fa33af21d1ef5c6162c984a099348e535",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "608b435f_5774cc5b",
@@ -48,6 +84,24 @@
       "writtenOn": "2023-01-16T16:24:03Z",
       "side": 1,
       "message": "`value instanceof Iterable\u003c?\u003e iterable`",
+      "revId": "19f86d3fa33af21d1ef5c6162c984a099348e535",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23c5dc1d_07b28ef8",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractStringInstanceIdentifierCodec.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T10:04:13Z",
+      "side": 1,
+      "message": "it does not work with generics",
+      "parentUuid": "608b435f_5774cc5b",
       "revId": "19f86d3fa33af21d1ef5c6162c984a099348e535",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
