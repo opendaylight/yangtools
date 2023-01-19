@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ced69482_99345922",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T08:20:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b98b61d_25e245ab",
+      "revId": "986e8a05e0d4e5be49fd02915326a8a51574aa7f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "56844775_23e02608",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "50856cbc_bc947e84",
+        "filename": "codec/yang-data-codec-xml/src/test/resources/yt1473/bar.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T08:20:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56844775_23e02608",
+      "revId": "986e8a05e0d4e5be49fd02915326a8a51574aa7f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "75d8475e_53cac05e",
@@ -48,6 +84,24 @@
       "writtenOn": "2023-01-16T16:18:53Z",
       "side": 1,
       "message": "IMO: Leaf and leaf list are different types",
+      "revId": "986e8a05e0d4e5be49fd02915326a8a51574aa7f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b8eb927_62f3f5db",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/UnorderedLeafListMixinContextNode.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-19T08:20:00Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "75d8475e_53cac05e",
       "revId": "986e8a05e0d4e5be49fd02915326a8a51574aa7f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
