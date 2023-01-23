@@ -7,7 +7,6 @@
  */
 module org.opendaylight.mdsal.binding.spec.util {
     exports org.opendaylight.mdsal.binding.spec.reflect;
-    exports org.opendaylight.mdsal.binding.spec.util;
 
     uses org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 

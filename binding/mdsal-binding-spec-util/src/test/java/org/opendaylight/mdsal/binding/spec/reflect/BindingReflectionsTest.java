@@ -10,17 +10,13 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.spec.util.FooChild;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
-import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -37,8 +33,6 @@ public class BindingReflectionsTest {
         assertTrue("Should be BindingClass", BindingReflections.isBindingClass(DataObject.class));
         assertFalse("Should not be Notification", BindingReflections.isNotification(DataObject.class));
 
-        final ChildOf<?> childOf = mock(FooChild.class);
-        doReturn(FooChild.class).when(childOf).implementedInterface();
         assertTrue(BindingReflections.isRpcMethod(TestImplementation.class.getDeclaredMethod("rpcMethodTest")));
         assertEquals(TestImplementation.class, BindingReflections.findAugmentationTarget(TestImplementation.class));
 
