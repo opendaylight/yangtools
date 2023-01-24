@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6679046c_84a3c942",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/XpathStringParsingPathArgumentBuilder.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-24T20:05:39Z",
+      "side": 1,
+      "message": "so here we are updating offset, but in returns we do not -- I wonder why is that.\nanyway, this needs another pair of eyes to check if it is correct",
+      "range": {
+        "startLine": 268,
+        "startChar": 8,
+        "endLine": 268,
+        "endChar": 26
+      },
+      "revId": "531e1ff908962141502369eafe01a2098e252b29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
