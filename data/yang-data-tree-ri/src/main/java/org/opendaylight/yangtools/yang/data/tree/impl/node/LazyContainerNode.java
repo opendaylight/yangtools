@@ -31,7 +31,7 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     @Override
     public MutableTreeNode mutable() {
         final Map<PathArgument, TreeNode> snapshot = snapshotChildren();
-        if (snapshot.size() == castData().body().size()) {
+        if (snapshot.size() == castData().size()) {
             return new MaterializedMutableContainerNode(this, snapshot);
         }
         return new LazyMutableContainerNode(this, snapshot);
