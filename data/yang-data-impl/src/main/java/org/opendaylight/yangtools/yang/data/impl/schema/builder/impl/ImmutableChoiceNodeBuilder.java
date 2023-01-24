@@ -37,11 +37,10 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
     }
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
-        if (!(node instanceof ImmutableChoiceNode)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        if (!(node instanceof ImmutableChoiceNode immutableNode)) {
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
-
-        return new ImmutableChoiceNodeBuilder((ImmutableChoiceNode)node);
+        return new ImmutableChoiceNodeBuilder(immutableNode);
     }
 
     @Override

@@ -49,10 +49,7 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
      * @return Unmodifiable view
      */
     static Map<PathArgument, DataContainerChild> create(final Map<PathArgument, DataContainerChild> map) {
-        if (map instanceof UnmodifiableChildrenMap) {
-            return map;
-        }
-        if (map instanceof ImmutableMap) {
+        if (map instanceof UnmodifiableChildrenMap || map instanceof ImmutableMap) {
             return map;
         }
         if (map.isEmpty()) {
@@ -61,7 +58,6 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
         if (map.size() < WRAP_THRESHOLD) {
             return ImmutableMap.copyOf(map);
         }
-
         return new UnmodifiableChildrenMap(map);
     }
 
@@ -154,8 +150,8 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
     @Override
     @SuppressWarnings("unchecked")
     public Map<PathArgument, DataContainerChild> createMutableClone() {
-        if (delegate instanceof HashMap) {
-            return (Map<PathArgument, DataContainerChild>) ((HashMap<?, ?>) delegate).clone();
+        if (delegate instanceof HashMap<?, ?> hashMap) {
+            return (Map<PathArgument, DataContainerChild>) hashMap.clone();
         }
         return new HashMap<>(delegate);
     }

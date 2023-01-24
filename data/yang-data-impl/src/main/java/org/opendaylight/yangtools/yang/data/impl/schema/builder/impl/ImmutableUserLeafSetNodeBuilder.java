@@ -45,7 +45,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
     public static <T> @NonNull ListNodeBuilder<T, UserLeafSetNode<T>> create(
             final UserLeafSetNode<T> node) {
         if (!(node instanceof ImmutableUserLeafSetNode<?>)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
 
         return new ImmutableUserLeafSetNodeBuilder<>((ImmutableUserLeafSetNode<T>) node);
@@ -143,8 +143,8 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
 
         @Override
         protected boolean valueEquals(final UserLeafSetNode<?> other) {
-            if (other instanceof ImmutableUserLeafSetNode) {
-                return children.equals(((ImmutableUserLeafSetNode<?>) other).children);
+            if (other instanceof ImmutableUserLeafSetNode<?> immutableOther) {
+                return children.equals(immutableOther.children);
             }
             // Note: performs a size() check first
             return Iterables.elementsEqual(children.values(), other.body());

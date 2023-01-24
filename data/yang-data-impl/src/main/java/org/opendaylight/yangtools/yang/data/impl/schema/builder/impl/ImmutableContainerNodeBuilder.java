@@ -38,10 +38,10 @@ public class ImmutableContainerNodeBuilder
     }
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerNode node) {
-        if (!(node instanceof ImmutableContainerNode)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        if (!(node instanceof ImmutableContainerNode immutableNode)) {
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
-        return new ImmutableContainerNodeBuilder((ImmutableContainerNode) node);
+        return new ImmutableContainerNodeBuilder(immutableNode);
     }
 
     @Override

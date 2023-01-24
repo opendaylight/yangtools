@@ -154,21 +154,21 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     private boolean writeChildren(final Iterable<? extends NormalizedNode> children, final SchemaNode parentSchemaNode,
             final boolean endParent) throws IOException {
         // Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
-        final Multimap<QName, NormalizedNode> qnameToNodes = ArrayListMultimap.create();
+        final var qnameToNodes = ArrayListMultimap.<QName, NormalizedNode>create();
         for (final NormalizedNode child : children) {
             putChild(qnameToNodes, child);
         }
 
-        if (parentSchemaNode instanceof DataNodeContainer) {
-            if (parentSchemaNode instanceof ListSchemaNode && qnameToNodes.containsKey(parentSchemaNode.getQName())) {
+        if (parentSchemaNode instanceof DataNodeContainer parentContainer) {
+            if (parentContainer instanceof ListSchemaNode && qnameToNodes.containsKey(parentSchemaNode.getQName())) {
                 write(qnameToNodes.get(parentSchemaNode.getQName()), parentSchemaNode);
             } else {
-                for (final DataSchemaNode schemaNode : ((DataNodeContainer) parentSchemaNode).getChildNodes()) {
+                for (final DataSchemaNode schemaNode : parentContainer.getChildNodes()) {
                     write(qnameToNodes.get(schemaNode.getQName()), schemaNode);
                 }
             }
-        } else if (parentSchemaNode instanceof ChoiceSchemaNode) {
-            for (final CaseSchemaNode ccNode : ((ChoiceSchemaNode) parentSchemaNode).getCases()) {
+        } else if (parentSchemaNode instanceof ChoiceSchemaNode parentChoice) {
+            for (final CaseSchemaNode ccNode : parentChoice.getCases()) {
                 for (final DataSchemaNode dsn : ccNode.getChildNodes()) {
                     if (qnameToNodes.containsKey(dsn.getQName())) {
                         write(qnameToNodes.get(dsn.getQName()), dsn);
@@ -195,8 +195,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     }
 
     private static void putChild(final Multimap<QName, NormalizedNode> qnameToNodes, final NormalizedNode child) {
-        if (child instanceof AugmentationNode) {
-            for (DataContainerChild grandChild : ((AugmentationNode) child).body()) {
+        if (child instanceof AugmentationNode augmentChild) {
+            for (DataContainerChild grandChild : augmentChild.body()) {
                 putChild(qnameToNodes, grandChild);
             }
         } else {

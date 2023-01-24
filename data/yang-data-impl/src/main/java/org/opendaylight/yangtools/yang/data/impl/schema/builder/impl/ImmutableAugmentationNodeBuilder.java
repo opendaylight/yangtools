@@ -42,21 +42,20 @@ public class ImmutableAugmentationNodeBuilder
 
     public static @NonNull DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
             final AugmentationNode node) {
-        if (!(node instanceof ImmutableAugmentationNode)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        if (!(node instanceof ImmutableAugmentationNode immutableNode)) {
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
-
-        return new ImmutableAugmentationNodeBuilder((ImmutableAugmentationNode)node);
+        return new ImmutableAugmentationNodeBuilder(immutableNode);
     }
 
     @Override
     public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(
             final DataContainerChild child) {
         // Check nested augments
-        if (child instanceof AugmentationNode) {
-            final AugmentationIdentifier myId = getNodeIdentifier();
+        if (child instanceof AugmentationNode aug) {
+            final var myId = getNodeIdentifier();
             throw new DataValidationException(String.format(
-                "Unable to add: %s, as a child for: %s, Nested augmentations are not permitted", child.getIdentifier(),
+                "Unable to add: %s, as a child for: %s, Nested augmentations are not permitted", aug.getIdentifier(),
                 myId == null ? this : myId));
         }
 

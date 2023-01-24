@@ -26,10 +26,10 @@ final class InterningLeafNodeBuilder<T> extends ImmutableLeafNodeBuilder<T> {
     }
 
     static <T> @Nullable InterningLeafNodeBuilder<T> forSchema(final @Nullable DataSchemaNode schema) {
-        if (schema instanceof LeafSchemaNode) {
-            final Optional<Interner<LeafNode<T>>> interner = LeafInterner.forSchema((LeafSchemaNode)schema);
+        if (schema instanceof LeafSchemaNode leafSchema) {
+            final Optional<Interner<LeafNode<T>>> interner = LeafInterner.forSchema(leafSchema);
             if (interner.isPresent()) {
-                return new InterningLeafNodeBuilder<>(interner.get());
+                return new InterningLeafNodeBuilder<>(interner.orElseThrow());
             }
         }
         return null;

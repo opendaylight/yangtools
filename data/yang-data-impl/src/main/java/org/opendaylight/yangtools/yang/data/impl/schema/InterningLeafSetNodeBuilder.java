@@ -31,7 +31,7 @@ final class InterningLeafSetNodeBuilder<T> extends ImmutableLeafSetNodeBuilder<T
     }
 
     private static @Nullable LeafsetEntryInterner getInterner(final @Nullable DataSchemaNode schema) {
-        return schema instanceof LeafListSchemaNode ? LeafsetEntryInterner.forSchema((LeafListSchemaNode) schema)
+        return schema instanceof LeafListSchemaNode leafListSchema ? LeafsetEntryInterner.forSchema(leafListSchema)
                 : null;
     }
 

@@ -145,8 +145,8 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
 
         @Override
         protected boolean valueEquals(final SystemLeafSetNode<?> other) {
-            if (other instanceof ImmutableLeafSetNode) {
-                return children.equals(((ImmutableLeafSetNode<?>) other).children);
+            if (other instanceof ImmutableLeafSetNode<?> otherImmutable) {
+                return children.equals(otherImmutable.children);
             }
             if (size() != other.size()) {
                 return false;

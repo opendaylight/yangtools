@@ -50,7 +50,7 @@ final class LazyValues extends AbstractCollection<DataContainerChild> {
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof LazyValues && map.equals(((LazyValues)obj).map);
+        return this == obj || obj instanceof LazyValues other && map.equals(other.map);
     }
 
     private static final class Iter implements Iterator<DataContainerChild> {
@@ -67,10 +67,10 @@ final class LazyValues extends AbstractCollection<DataContainerChild> {
 
         @Override
         public DataContainerChild next() {
-            final Entry<PathArgument, Object> entry = iterator.next();
-            final Object value = entry.getValue();
-            return value instanceof DataContainerChild ? (DataContainerChild) value
-                    : LazyLeafOperations.coerceLeaf(entry.getKey(), value);
+            final var entry = iterator.next();
+            final var value = entry.getValue();
+            return value instanceof DataContainerChild child ? child
+                : LazyLeafOperations.coerceLeaf(entry.getKey(), value);
         }
     }
 }

@@ -41,10 +41,10 @@ public class ImmutableUnkeyedListEntryNodeBuilder
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
             final UnkeyedListEntryNode node) {
-        if (!(node instanceof ImmutableUnkeyedListEntryNode)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        if (!(node instanceof ImmutableUnkeyedListEntryNode immutableNode)) {
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
-        return new ImmutableUnkeyedListEntryNodeBuilder((ImmutableUnkeyedListEntryNode) node);
+        return new ImmutableUnkeyedListEntryNodeBuilder(immutableNode);
     }
 
     @Override
