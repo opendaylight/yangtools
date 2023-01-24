@@ -80,7 +80,7 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
          */
         if (!version.equals(subtreeVersion)) {
             final Map<PathArgument, TreeNode> newChildren = MapAdaptor.getDefaultInstance().optimize(children);
-            final int dataSize = getData().body().size();
+            final int dataSize = getData().size();
             final int childrenSize = newChildren.size();
             if (dataSize != childrenSize) {
                 verify(dataSize > childrenSize, "Detected %s modified children, data has only %s",
