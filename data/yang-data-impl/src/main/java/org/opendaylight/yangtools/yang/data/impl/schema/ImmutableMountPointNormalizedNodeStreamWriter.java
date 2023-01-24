@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
 import org.opendaylight.yangtools.rfc8528.data.util.ImmutableMountPointNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
@@ -50,12 +49,12 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
             public void close() throws IOException {
                 super.close();
 
-                final NormalizedNode data = mountResult.getResult();
-                if (!(data instanceof ContainerNode)) {
+                final var data = mountResult.getResult();
+                if (!(data instanceof ContainerNode container)) {
                     throw new IOException("Unhandled mount data " + data);
                 }
 
-                writeChild(ImmutableMountPointNode.of(mountId, mountCtx, (ContainerNode) data));
+                writeChild(ImmutableMountPointNode.of(mountId, mountCtx, container));
             }
         };
     }

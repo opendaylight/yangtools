@@ -70,6 +70,6 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
 
     @Override
     protected String serializeImpl(final Object data) {
-        return data instanceof byte[] ? Base64.getEncoder().encodeToString((byte[]) data) : data.toString();
+        return data instanceof byte[] bytes ? Base64.getEncoder().encodeToString(bytes) : data.toString();
     }
 }

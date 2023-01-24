@@ -33,21 +33,20 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     private @Nullable NodeIdentifier nodeIdentifier = null;
 
     protected ImmutableMapNodeBuilder() {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        value = new HashMap<>(DEFAULT_CAPACITY);
     }
 
     protected ImmutableMapNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
-            this.value = Maps.newHashMapWithExpectedSize(sizeHint);
+            value = Maps.newHashMapWithExpectedSize(sizeHint);
         } else {
-            this.value = new HashMap<>(DEFAULT_CAPACITY);
+            value = new HashMap<>(DEFAULT_CAPACITY);
         }
     }
 
     protected ImmutableMapNodeBuilder(final SystemMapNode node) {
-        this.nodeIdentifier = node.getIdentifier();
-        this.value = MapAdaptor.getDefaultInstance().takeSnapshot(
-            node instanceof ImmutableMapNode ? ((ImmutableMapNode) node).children : node.asMap());
+        nodeIdentifier = node.getIdentifier();
+        value = MapAdaptor.getDefaultInstance().takeSnapshot(accessChildren(node));
     }
 
     public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create() {
@@ -64,13 +63,13 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
     @Override
     public ImmutableMapNodeBuilder withChild(final MapEntryNode child) {
-        this.value.put(child.getIdentifier(), child);
+        value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
     public ImmutableMapNodeBuilder withoutChild(final PathArgument key) {
-        this.value.remove(key);
+        value.remove(key);
         return this;
     }
 
@@ -86,7 +85,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
     @Override
     public ImmutableMapNodeBuilder withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
-        this.nodeIdentifier = withNodeIdentifier;
+        nodeIdentifier = withNodeIdentifier;
         return this;
     }
 
@@ -143,9 +142,11 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
         @Override
         protected boolean valueEquals(final SystemMapNode other) {
-            final Map<NodeIdentifierWithPredicates, MapEntryNode> otherChildren =
-                other instanceof ImmutableMapNode ? ((ImmutableMapNode) other).children : other.asMap();
-            return children.equals(otherChildren);
+            return children.equals(accessChildren(other));
         }
+    }
+
+    private static @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> accessChildren(final SystemMapNode node) {
+        return node instanceof ImmutableMapNode immutableNode ? immutableNode.children : node.asMap();
     }
 }

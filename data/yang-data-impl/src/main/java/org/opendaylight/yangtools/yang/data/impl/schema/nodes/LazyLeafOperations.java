@@ -51,11 +51,11 @@ public final class LazyLeafOperations {
 
     private static @NonNull DataContainerChild decodeExpendableChild(final PathArgument key,
             final @NonNull Object value) {
-        return value instanceof DataContainerChild ? (DataContainerChild) value : coerceLeaf(key, value);
+        return value instanceof DataContainerChild child ? child : coerceLeaf(key, value);
     }
 
     private static @NonNull Object encodeExpendableChild(final @NonNull DataContainerChild node) {
-        return node instanceof LeafNode ? verifyEncode(((LeafNode<?>) node).body()) : node;
+        return node instanceof LeafNode<?> leafNode ? verifyEncode(leafNode.body()) : node;
     }
 
     private static @NonNull Object verifyEncode(final @NonNull Object value) {

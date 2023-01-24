@@ -28,16 +28,16 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     private boolean dirty;
 
     protected ImmutableUnkeyedListNodeBuilder() {
-        this.value = new LinkedList<>();
-        this.dirty = false;
+        value = new LinkedList<>();
+        dirty = false;
     }
 
     protected ImmutableUnkeyedListNodeBuilder(final ImmutableUnkeyedListNode node) {
-        this.nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.getIdentifier();
         // FIXME: clean this up, notably reuse unmodified lists
-        this.value = new LinkedList<>();
+        value = new LinkedList<>();
         Iterables.addAll(value, node.body());
-        this.dirty = true;
+        dirty = true;
     }
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
@@ -50,11 +50,10 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(
             final UnkeyedListNode node) {
-        if (!(node instanceof ImmutableUnkeyedListNode)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        if (!(node instanceof ImmutableUnkeyedListNode immutableNode)) {
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
-
-        return new ImmutableUnkeyedListNodeBuilder((ImmutableUnkeyedListNode) node);
+        return new ImmutableUnkeyedListNodeBuilder(immutableNode);
     }
 
     private void checkDirty() {
@@ -67,7 +66,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withChild(final UnkeyedListEntryNode child) {
         checkDirty();
-        this.value.add(child);
+        value.add(child);
         return this;
     }
 
@@ -92,7 +91,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withNodeIdentifier(
             final NodeIdentifier withNodeIdentifier) {
-        this.nodeIdentifier = withNodeIdentifier;
+        nodeIdentifier = withNodeIdentifier;
         return this;
     }
 
@@ -189,8 +188,8 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         @Override
         protected boolean valueEquals(final UnkeyedListNode other) {
             final Collection<UnkeyedListEntryNode> otherChildren;
-            if (other instanceof ImmutableUnkeyedListNode) {
-                otherChildren = ((ImmutableUnkeyedListNode) other).children;
+            if (other instanceof ImmutableUnkeyedListNode immutableOther) {
+                otherChildren = immutableOther.children;
             } else {
                 otherChildren = other.body();
             }

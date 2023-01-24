@@ -59,8 +59,8 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument,
 
     @Override
     protected boolean valueEquals(final N other) {
-        if (other instanceof AbstractImmutableDataContainerNode) {
-            return children.equals(((AbstractImmutableDataContainerNode<?, ?>) other).children);
+        if (other instanceof AbstractImmutableDataContainerNode<?, ?> immutableContainer) {
+            return children.equals(immutableContainer.children);
         }
         if (size() != other.size()) {
             return false;

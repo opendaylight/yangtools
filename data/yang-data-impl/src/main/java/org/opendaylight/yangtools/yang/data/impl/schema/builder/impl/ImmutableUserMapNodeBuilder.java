@@ -59,11 +59,10 @@ public class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEnt
     }
 
     public static @NonNull CollectionNodeBuilder<MapEntryNode, UserMapNode> create(final UserMapNode node) {
-        if (!(node instanceof ImmutableUserMapNode)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        if (!(node instanceof ImmutableUserMapNode immutableNode)) {
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
-
-        return new ImmutableUserMapNodeBuilder((ImmutableUserMapNode) node);
+        return new ImmutableUserMapNodeBuilder(immutableNode);
     }
 
     private void checkDirty() {
@@ -175,12 +174,8 @@ public class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEnt
 
         @Override
         protected boolean valueEquals(final UserMapNode other) {
-            final Map<NodeIdentifierWithPredicates, MapEntryNode> otherChildren;
-            if (other instanceof ImmutableUserMapNode) {
-                otherChildren = ((ImmutableUserMapNode) other).children;
-            } else {
-                otherChildren = other.asMap();
-            }
+            final var otherChildren = other instanceof ImmutableUserMapNode immutableOther ? immutableOther.children
+                : other.asMap();
             return Iterables.elementsEqual(children.values(), otherChildren.values());
         }
     }

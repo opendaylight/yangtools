@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
  * General validator for container like statements, e.g. container, list-entry, choice, augment
@@ -32,10 +31,10 @@ public class DataNodeContainerValidator {
 
     public DataNodeContainerValidator(final DataNodeContainer schema) {
         this.schema = requireNonNull(schema, "Schema was null");
-        this.childNodes = getChildNodes(schema);
+        childNodes = getChildNodes(schema);
 
-        if (schema instanceof AugmentationTarget) {
-            for (AugmentationSchemaNode augmentation : ((AugmentationTarget) schema).getAvailableAugmentations()) {
+        if (schema instanceof AugmentationTarget target) {
+            for (var augmentation : target.getAvailableAugmentations()) {
                 augments.add(DataSchemaContextNode.augmentationIdentifierFrom(augmentation));
             }
         }
@@ -65,9 +64,9 @@ public class DataNodeContainerValidator {
     private static Set<QName> getChildNodes(final DataNodeContainer nodeContainer) {
         Set<QName> allChildNodes = new HashSet<>();
 
-        for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
-            if (childSchema instanceof CaseSchemaNode) {
-                allChildNodes.addAll(getChildNodes((DataNodeContainer) childSchema));
+        for (var childSchema : nodeContainer.getChildNodes()) {
+            if (childSchema instanceof CaseSchemaNode caseChildSchema) {
+                allChildNodes.addAll(getChildNodes(caseChildSchema));
             } else if (!(childSchema instanceof AugmentationSchemaNode)) {
                 allChildNodes.add(childSchema.getQName());
             }

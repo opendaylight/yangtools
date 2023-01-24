@@ -212,8 +212,8 @@ public final class ImmutableNodes {
                 // leaf-list entry nodes are special: they require a value and we can derive it from our instance
                 // identitifier
                 final var lastArg = id.getLastPathArgument();
-                if (lastArg instanceof NodeWithValue) {
-                    writer.scalarValue(((NodeWithValue<?>) lastArg).getValue());
+                if (lastArg instanceof NodeWithValue<?> withValue) {
+                    writer.scalarValue(withValue.getValue());
                 }
             }
         } catch (IOException e) {

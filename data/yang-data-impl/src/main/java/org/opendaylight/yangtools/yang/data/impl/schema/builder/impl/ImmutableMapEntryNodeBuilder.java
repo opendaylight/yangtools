@@ -57,11 +57,10 @@ public class ImmutableMapEntryNodeBuilder
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final MapEntryNode node) {
-        if (!(node instanceof ImmutableMapEntryNode)) {
+        if (!(node instanceof ImmutableMapEntryNode immutableNode)) {
             throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
-
-        return new ImmutableMapEntryNodeBuilder((ImmutableMapEntryNode)node);
+        return new ImmutableMapEntryNodeBuilder(immutableNode);
     }
 
     private static void fillQNames(final Iterable<DataContainerChild> iterable, final Map<QName, PathArgument> out) {
