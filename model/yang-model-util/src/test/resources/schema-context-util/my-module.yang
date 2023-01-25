@@ -29,6 +29,7 @@ module my-module {
     container my-container {
         leaf my-leaf-in-container {
             type int32;
+            status deprecated;
         }
         uses my-grouping;
         list my-list {
@@ -118,14 +119,11 @@ module my-module {
     grouping my-name {
         choice my-choice {
             case case-one {
-                container one {
-                    //empty
-                }
+                container one;
             }
             case case-two {
-                container two {
-                    //empty
-                }
+                container two;
+                status obsolete;
             }
         }
     }
