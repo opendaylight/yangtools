@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 
 /**
  * Data Schema Node represents abstract supertype from which all data tree definitions are derived. Unlike what
@@ -44,6 +45,8 @@ public interface DataSchemaNode extends SchemaNode, CopyableNode, WhenConditionA
      * Return the effective value of {@code config} substatement, if applicable.
      *
      * @return Effective {@code config} value, or {@link Optional#empty()} not applicable.
+     * @deprecated Use {@link ConfigEffectiveStatement} semantics instead.
      */
+    @Deprecated
     Optional<Boolean> effectiveConfig();
 }
