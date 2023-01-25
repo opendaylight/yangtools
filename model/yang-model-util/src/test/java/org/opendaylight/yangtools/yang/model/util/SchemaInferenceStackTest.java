@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
@@ -97,6 +98,46 @@ class SchemaInferenceStackTest {
         assertNotExistentTypedef(stack, "module (uri:my-module?revision=2014-10-07)my-module");
         stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-container"));
         assertNotExistentTypedef(stack, "schema parent (uri:my-module?revision=2014-10-07)my-container");
+    }
+
+    @Test
+    void rootIsCurrent() {
+        final var stack = SchemaInferenceStack.of(context);
+        assertEquals(Status.CURRENT, stack.effectiveStatus());
+    }
+
+    @Test
+    void myGroupingIsCurrent() {
+        final var stack = SchemaInferenceStack.of(context);
+        stack.enterGrouping(QName.create(myModule.getQNameModule(), "my-grouping"));
+        assertEquals(Status.CURRENT, stack.effectiveStatus());
+    }
+
+    @Test
+    void myLeafInContainerIsDeprecated() {
+        final var stack = SchemaInferenceStack.of(context);
+        stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-container"));
+        stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-leaf-in-container"));
+        assertEquals(Status.DEPRECATED, stack.effectiveStatus());
+    }
+
+    @Test
+    void twoInGroupingIsObsolete() {
+        final var stack = SchemaInferenceStack.of(context);
+        stack.enterGrouping(QName.create(myModule.getQNameModule(), "my-name"));
+        stack.enterDataTree(QName.create(myModule.getQNameModule(), "two"));
+        assertEquals(Status.OBSOLETE, stack.effectiveStatus());
+    }
+
+    @Test
+    void twoInMyNameInputIsObsolete() {
+        final var stack = SchemaInferenceStack.of(context);
+        stack.enterSchemaTree(QName.create(myModule.getQNameModule(), "my-name"));
+        stack.enterSchemaTree(QName.create(myModule.getQNameModule(), "input"));
+        stack.enterSchemaTree(QName.create(myModule.getQNameModule(), "my-choice"));
+        stack.enterSchemaTree(QName.create(myModule.getQNameModule(), "case-two"));
+        stack.enterSchemaTree(QName.create(myModule.getQNameModule(), "two"));
+        assertEquals(Status.OBSOLETE, stack.effectiveStatus());
     }
 
     private static void assertNotExistentGrouping(final SchemaInferenceStack stack, final String parentDesc) {

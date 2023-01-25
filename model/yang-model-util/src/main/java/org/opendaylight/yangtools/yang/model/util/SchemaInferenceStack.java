@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -58,6 +59,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -365,6 +367,48 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public boolean inGrouping() {
         return groupingDepth != 0;
+    }
+
+    /**
+     * Return the effective {@code status} of the {@link #currentStatement()}, if present. This method operates on
+     * the effective view of the model and therefore does not reflect status the declaration hierarchy. Most notably
+     * this YANG snippet:
+     * <pre>
+     * {@code
+     *   module foo {
+     *     grouping foo {
+     *       status obsolete;
+     *       leaf bar { type string; }
+     *     }
+     *
+     *     container foo {
+     *       status deprecated;
+     *       uses bar;
+     *     }
+     *
+     *     uses foo;
+     *   }
+     * }
+     * <pre>
+     * will cause this method to report the status of {@code leaf bar} as:
+     * <ul>
+     *   <li>{@link Status#OBSOLETE} at its original declaration site in {@code grouping foo}</li>
+     *   <li>{@link Status#DEPRECATED} at its instantiation in {@code container foo}</li>
+     *   <li>{@link Status#CURRENT} at its instantiation in {@code module foo}</li>
+     * </ul>
+     *
+     * @return {@link Status#CURRENT} if {@link #isEmpty()}, or the status of current statement as implied by its direct
+     *         and its ancestors' substaments.
+     */
+    public @NonNull Status effectiveStatus() {
+        final var it = reconstructDeque().descendingIterator();
+        while (it.hasNext()) {
+            final var optStatus = it.next().findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class);
+            if (optStatus.isPresent()) {
+                return optStatus.orElseThrow();
+            }
+        }
+        return Status.CURRENT;
     }
 
     /**
@@ -694,10 +738,13 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull SchemaTreeInference toSchemaTreeInference() {
         checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
-        final var cleanDeque = clean ? deque : reconstructSchemaInferenceStack().deque;
-        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(), cleanDeque.stream()
+        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(), reconstructDeque().stream()
             .map(stmt -> (SchemaTreeEffectiveStatement<?>) stmt)
             .collect(ImmutableList.toImmutableList()));
+    }
+
+    private ArrayDeque<EffectiveStatement<?, ?>> reconstructDeque() {
+        return clean ? deque : reconstructSchemaInferenceStack().deque;
     }
 
     /**
