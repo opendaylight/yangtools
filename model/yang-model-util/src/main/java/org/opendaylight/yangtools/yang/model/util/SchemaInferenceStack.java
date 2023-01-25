@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -57,6 +58,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -354,6 +356,27 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public boolean inGrouping() {
         return groupingDepth != 0;
+    }
+
+    /**
+     * Return the effective {@code status} of the {@link #currentStatement()}, if present.
+     *
+     * @return {@link Status#CURRENT} if {@link #isEmpty()}, or the status of current statement as implied by its,
+     *         and its ancestor's substaments.
+     */
+    public @NonNull Status effectiveStatus() {
+        if (isEmpty()) {
+            return Status.CURRENT;
+        }
+
+        final var it = reconstructDeque().descendingIterator();
+        while (it.hasNext()) {
+            final var optStatus = it.next().findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class);
+            if (optStatus.isPresent()) {
+                return optStatus.orElseThrow();
+            }
+        }
+        return Status.CURRENT;
     }
 
     /**
@@ -683,10 +706,13 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull SchemaTreeInference toSchemaTreeInference() {
         checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
-        final var cleanDeque = clean ? deque : reconstructSchemaInferenceStack().deque;
-        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(), cleanDeque.stream()
+        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(), reconstructDeque().stream()
             .map(stmt -> (SchemaTreeEffectiveStatement<?>) stmt)
             .collect(ImmutableList.toImmutableList()));
+    }
+
+    private ArrayDeque<EffectiveStatement<?, ?>> reconstructDeque() {
+        return clean ? deque : reconstructSchemaInferenceStack().deque;
     }
 
     /**
