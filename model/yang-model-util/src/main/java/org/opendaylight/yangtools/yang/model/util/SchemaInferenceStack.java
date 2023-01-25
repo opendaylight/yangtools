@@ -50,6 +50,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -128,6 +129,27 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         public @NonNull SchemaInferenceStack toSchemaInferenceStack() {
             return new SchemaInferenceStack(getEffectiveModelContext(), deque, currentModule, groupingDepth, clean);
         }
+    }
+
+    /**
+     * Effective value of {@link ConfigEffectiveStatement}. Interpretation of {@code config} statement depends
+     * on parent statements. While it nominally is either {@code false} or {@code true}, in some contexts, like inside
+     * a {@code grouping}, the value is undefined.
+     */
+    @Beta
+    public enum EffectiveConfig {
+        /**
+         * Only represents {@code config false} data.
+         */
+        FALSE,
+        /**
+         * Potentially represents {@code config false} or {@code config true} data.
+         */
+        TRUE,
+        /**
+         * The value of {@code status} statement is ignored in this context.
+         */
+        IGNORED;
     }
 
     private static final String VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE_PROP =
@@ -356,6 +378,20 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public boolean inGrouping() {
         return groupingDepth != 0;
+    }
+
+    /**
+     * Return the effective {@code config} of the {@link #currentStatement()}, if present.
+     */
+    public @NonNull EffectiveConfig effectiveConfig() {
+        if (isEmpty()) {
+            return EffectiveConfig.TRUE;
+        }
+        if (inGrouping()) {
+            return EffectiveConfig.IGNORED;
+        }
+
+        // FIXME: finish this up: consider YangData and otherwise reconstructQueue() and walk all parents
     }
 
     /**
