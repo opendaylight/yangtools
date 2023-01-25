@@ -11,22 +11,24 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 
 /**
  * Node which can have documentation assigned.
  */
 public interface DocumentedNode {
     /**
-     * Returns the value of the argument of YANG <code>description</code> keyword.
+     * Returns the value of the argument of YANG {@code description} keyword.
      *
-     * @return string with the description, or empty if description was not provided.
+     * @return string with the description, or {@link Optional#empty()} if description was not provided.
      */
     Optional<String> getDescription();
 
     /**
-     * Returns the value of the argument of YANG <code>reference</code> keyword.
+     * Returns the value of the argument of YANG {@code reference} keyword.
      *
-     * @return string with reference to some other document, or empty if reference was not provided.
+     * @return string with reference to some other document, or {@link Optional#empty()} if reference was not provided.
      */
     Optional<String> getReference();
 
@@ -39,12 +41,18 @@ public interface DocumentedNode {
         return ImmutableList.of();
     }
 
+    /**
+     * A {@link DocumentedNode} which also has as {@link Status}.
+     *
+     * @deprecated This interface is scheduled for removal. Users accessing it are advised to use
+     *             {@link EffectiveStatement} interfaces and follow {@link StatusEffectiveStatement} contract.
+     */
+    @Deprecated
     interface WithStatus extends DocumentedNode {
         /**
-         * Returns status of the instance of the type <code>SchemaNode</code>.
+         * Returns status of the instance of the type {@code SchemaNode}.
          *
-         * @return status of this node which represents the argument of the YANG
-         *         <code>status</code> substatement
+         * @return status of this node which represents the argument of the YANG {@code status} substatement
          */
         @NonNull Status getStatus();
     }
