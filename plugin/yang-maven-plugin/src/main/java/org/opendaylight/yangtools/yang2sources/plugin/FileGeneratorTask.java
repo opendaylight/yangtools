@@ -11,20 +11,19 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
+import com.google.common.hash.Hashing;
+import com.google.common.hash.HashingOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNull;
@@ -49,16 +48,13 @@ final class FileGeneratorTask extends GeneratorTask<FileGeneratorTaskFactory> {
     FileGeneratorTask(final @NonNull FileGeneratorTaskFactory factory, final @NonNull ContextHolder context,
             final MavenProject project) {
         super(factory, context);
-
-        final Build build = project.getBuild();
-        final String buildDirectory = build.getDirectory();
-        this.buildDir = new File(buildDirectory);
-        this.suffix = factory.getIdentifier();
-        this.project = project;
+        this.project = requireNonNull(project);
+        buildDir = new File(project.getBuild().getDirectory());
+        suffix = factory.getIdentifier();
     }
 
     @Override
-    Collection<File> execute(final FileGeneratorTaskFactory factory, final ContextHolder modelContext,
+    List<FileHash> execute(final FileGeneratorTaskFactory factory, final ContextHolder modelContext,
             final BuildContext buildContext) throws FileGeneratorException, IOException {
         // Step one: determine what files are going to be generated
         final Stopwatch sw = Stopwatch.createStarted();
@@ -106,9 +102,9 @@ final class FileGeneratorTask extends GeneratorTask<FileGeneratorTaskFactory> {
 
         // Step four: submit all code generation tasks (via parallelStream()) and wait for them to complete
         sw.reset().start();
-        final List<File> result = dirs.values().parallelStream()
+        final var result = dirs.values().parallelStream()
                 .map(WriteTask::generateFile)
-                .collect(Collectors.toList());
+                .collect(ImmutableList.toImmutableList());
         LOG.debug("Generated {} files in {}", result.size(), sw);
 
         return result;
@@ -186,13 +182,13 @@ final class FileGeneratorTask extends GeneratorTask<FileGeneratorTaskFactory> {
             this.file = requireNonNull(file);
         }
 
-        File generateFile() {
-            try (OutputStream stream = buildContext.newFileOutputStream(target)) {
-                file.writeBody(stream);
+        FileHash generateFile() {
+            try (var out = new HashingOutputStream(Hashing.crc32c(), buildContext.newFileOutputStream(target))) {
+                file.writeBody(out);
+                return new FileHash(target.getPath(), out.hash().asInt());
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }
-            return target;
         }
     }
 }

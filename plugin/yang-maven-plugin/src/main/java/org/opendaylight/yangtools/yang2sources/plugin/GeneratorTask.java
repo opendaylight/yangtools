@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -32,10 +31,10 @@ abstract class GeneratorTask<T extends GeneratorTaskFactory> extends ParserConfi
         return factory.parserConfig();
     }
 
-    final Collection<File> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
+    final List<FileHash> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
         return execute(factory, context, buildContext);
     }
 
-    abstract Collection<File> execute(T factory, ContextHolder modelContext, BuildContext buildContext)
+    abstract List<FileHash> execute(T factory, ContextHolder modelContext, BuildContext buildContext)
         throws FileGeneratorException, IOException;
 }
