@@ -17,9 +17,7 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +61,7 @@ final class GeneratorTask extends ParserConfigAware {
         return factory.parserConfig();
     }
 
-    Collection<File> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
+    List<FileState> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
         // Step one: determine what files are going to be generated
         final Stopwatch sw = Stopwatch.createStarted();
         final FileGenerator gen = factory.generator();
@@ -110,7 +108,7 @@ final class GeneratorTask extends ParserConfigAware {
 
         // Step four: submit all code generation tasks (via parallelStream()) and wait for them to complete
         sw.reset().start();
-        final List<File> result = dirs.values().parallelStream()
+        final var result = dirs.values().parallelStream()
                 .map(WriteTask::generateFile)
                 .collect(Collectors.toList());
         LOG.debug("Generated {} files in {}", result.size(), sw);
@@ -190,13 +188,13 @@ final class GeneratorTask extends ParserConfigAware {
             this.file = requireNonNull(file);
         }
 
-        File generateFile() {
-            try (OutputStream stream = buildContext.newFileOutputStream(target)) {
-                file.writeBody(stream);
+        FileState generateFile() {
+            try (var out = new CapturingOutputStream(buildContext.newFileOutputStream(target))) {
+                file.writeBody(out);
+                return new FileState(target.getPath(), out.size(), out.crc32c());
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }
-            return target;
         }
     }
 }
