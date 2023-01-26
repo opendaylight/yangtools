@@ -247,7 +247,7 @@ class YangToSourcesProcessor {
             }
 
             try {
-                generators.add(FileGeneratorTaskFactory.of(entry.getValue(), arg));
+                generators.add(GeneratorTaskFactory.of(entry.getValue(), arg));
             } catch (FileGeneratorException e) {
                 throw new MojoExecutionException("File generator " + id + " failed", e);
             }
@@ -328,7 +328,7 @@ class YangToSourcesProcessor {
             }
 
             final Stopwatch sw = Stopwatch.createStarted();
-            final GeneratorTask<?> task = factory.createTask(project, context);
+            final GeneratorTask task = factory.createTask(project, context);
             LOG.debug("{} Task {} initialized in {}", LOG_PREFIX, task, sw);
 
             final Collection<File> files;
