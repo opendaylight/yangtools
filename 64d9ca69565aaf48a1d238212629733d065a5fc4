@@ -35,6 +35,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "939ea0f8_dfae0796",
+        "filename": "plugin/yang-maven-plugin/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9fb08c89_f9b2231d",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fad99539_712aa26c",
@@ -48,6 +66,24 @@
       "writtenOn": "2023-01-26T15:51:01Z",
       "side": 1,
       "message": "Please use `var` here, as it is already being used in the try block. Additionally, please maintain this consistency in code style across all methods.",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "322f0236_a463dfbd",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContext.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fad99539_712aa26c",
       "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -69,6 +105,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "930b51df_7d0a32fc",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContext.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f44bdf87_f18ca250",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fe3b6274_e9bab387",
@@ -82,6 +136,24 @@
       "writtenOn": "2023-01-26T15:51:01Z",
       "side": 1,
       "message": "Missing `final` keyword here and also in methods `toWritableStatements` and `writeTo` below.",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9d002ca_a64cd867",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "for exceptions \u0027final\u0027 is superfluous",
+      "parentUuid": "fe3b6274_e9bab387",
       "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -103,6 +175,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a26445c5_780d5fd2",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34347974_00b36518",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be36099a_11032aef",
@@ -116,6 +206,24 @@
       "writtenOn": "2023-01-26T15:51:01Z",
       "side": 1,
       "message": "final",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1a29413_c4520eec",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be36099a_11032aef",
       "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -137,6 +245,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a93d70b9_82f74b08",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "066c82a4_8462b475",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7e0ee545_66e605c4",
@@ -150,6 +276,24 @@
       "writtenOn": "2023-01-26T15:51:01Z",
       "side": 1,
       "message": "final",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4c2d6ae_4f23e389",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-01-26T17:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e0ee545_66e605c4",
       "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
