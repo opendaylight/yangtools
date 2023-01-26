@@ -14,8 +14,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,6 +65,7 @@ class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
     private static final String META_INF_STR = "META-INF";
     private static final String YANG_STR = "yang";
+    private static final String BUILD_CONTEXT_STATE_NAME = YangToSourcesProcessor.class.getName();
 
     static final String META_INF_YANG_STRING = META_INF_STR + File.separator + YANG_STR;
     static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
@@ -112,6 +114,11 @@ class YangToSourcesProcessor {
     }
 
     void conditionalExecute(final boolean skip) throws MojoExecutionException, MojoFailureException {
+        var prevState = buildContext.getValue(BUILD_CONTEXT_STATE_NAME);
+        if (prevState == null) {
+            // FIXME: look for persisted state and restore it
+        }
+
         /*
          * Collect all files which affect YANG context. This includes all
          * files in current project and optionally any jars/files in the
@@ -186,8 +193,8 @@ class YangToSourcesProcessor {
         LOG.debug("Found project files: {}", yangFilesInProject);
         LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
 
-        // FIXME: store these files into state, so that we can verify/clean up
-        final Builder<File> files = ImmutableSet.builder();
+        final var outputFiles = ImmutableList.<FileState>builder();
+
         for (YangParserConfiguration parserConfig : parserConfigs) {
             final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject,
                 parserConfig, dependencies, parsed);
@@ -208,7 +215,7 @@ class YangToSourcesProcessor {
 
                     LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(),
                         sw);
-                    files.addAll(generateSources(holder, codeGenerators, parserConfig));
+                    outputFiles.addAll(generateSources(holder, codeGenerators, parserConfig));
                 } else {
                     LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
                 }
@@ -229,6 +236,22 @@ class YangToSourcesProcessor {
         YangProvider.setResource(generatedServicesDir, project);
         LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
             META_INF_YANG_SERVICES_STRING_JAR);
+
+        final var uniqueOutputFiles = new LinkedHashMap<String, FileState>();
+        for (var fileHash : outputFiles.build()) {
+            final var prev = uniqueOutputFiles.putIfAbsent(fileHash.path(), fileHash);
+            if (prev != null) {
+                throw new MojoFailureException("Duplicate files " + prev + " and " + fileHash);
+            }
+        }
+
+        // FIXME: store these files into state, so that we can verify/clean up
+        final var outputState = new YangToSourcesState(ImmutableMap.copyOf(uniqueOutputFiles));
+        buildContext.setValue(BUILD_CONTEXT_STATE_NAME, outputState);
+        if (buildContext.getValue(BUILD_CONTEXT_STATE_NAME) == null) {
+            LOG.debug("{} BuildContext did not retain output state, persisting");
+            // FIXME: persist in target/ directory (there is a maven best practice where)
+        }
     }
 
     private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException {
@@ -320,9 +343,10 @@ class YangToSourcesProcessor {
     /**
      * Call generate on every generator from plugin configuration.
      */
-    private Set<File> generateSources(final ContextHolder context, final Collection<GeneratorTaskFactory> generators,
-            final YangParserConfiguration parserConfig) throws MojoFailureException {
-        final Builder<File> allFiles = ImmutableSet.builder();
+    private List<FileState> generateSources(final ContextHolder context,
+            final Collection<GeneratorTaskFactory> generators, final YangParserConfiguration parserConfig)
+                throws MojoFailureException {
+        final var generatorToFiles = ImmutableList.<FileState>builder();
         for (GeneratorTaskFactory factory : generators) {
             if (!parserConfig.equals(factory.parserConfig())) {
                 continue;
@@ -332,26 +356,22 @@ class YangToSourcesProcessor {
             final GeneratorTask task = factory.createTask(project, context);
             LOG.debug("{} Task {} initialized in {}", LOG_PREFIX, task, sw);
 
-            final Collection<File> files;
+            final List<FileState> files;
             try {
                 files = task.execute(buildContext);
             } catch (FileGeneratorException | IOException e) {
                 throw new MojoFailureException(LOG_PREFIX + " Generator " + factory + " failed", e);
             }
 
-            LOG.debug("{} Sources generated by {}: {}", LOG_PREFIX, factory.generatorName(), files);
+            final String generatorName = factory.generatorName();
+            LOG.debug("{} Sources generated by {}: {}", LOG_PREFIX, generatorName, files);
 
-            final int fileCount;
-            if (files != null) {
-                fileCount = files.size();
-                allFiles.addAll(files);
-            } else {
-                fileCount = 0;
-            }
+            final int fileCount = files.size();
+            generatorToFiles.addAll(files);
 
-            LOG.info("{} Sources generated by {}: {} in {}", LOG_PREFIX, factory.generatorName(), fileCount, sw);
+            LOG.info("{} Sources generated by {}: {} in {}", LOG_PREFIX, generatorName, fileCount, sw);
         }
 
-        return allFiles.build();
+        return generatorToFiles.build();
     }
 }
