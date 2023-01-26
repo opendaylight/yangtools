@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -72,7 +73,7 @@ class YangToSourcesProcessor {
     private final File yangFilesRootDir;
     private final Set<File> excludedFiles;
     private final Map<String, FileGeneratorArg> fileGeneratorArgs;
-    private final MavenProject project;
+    private final @NonNull MavenProject project;
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
     private final YangProvider yangProvider;
@@ -247,7 +248,7 @@ class YangToSourcesProcessor {
             }
 
             try {
-                generators.add(FileGeneratorTaskFactory.of(entry.getValue(), arg));
+                generators.add(GeneratorTaskFactory.of(entry.getValue(), arg));
             } catch (FileGeneratorException e) {
                 throw new MojoExecutionException("File generator " + id + " failed", e);
             }
@@ -328,7 +329,7 @@ class YangToSourcesProcessor {
             }
 
             final Stopwatch sw = Stopwatch.createStarted();
-            final GeneratorTask<?> task = factory.createTask(project, context);
+            final GeneratorTask task = factory.createTask(project, context);
             LOG.debug("{} Task {} initialized in {}", LOG_PREFIX, task, sw);
 
             final Collection<File> files;
