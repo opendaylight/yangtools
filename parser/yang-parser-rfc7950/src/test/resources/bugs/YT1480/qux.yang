@@ -1,0 +1,18 @@
+module qux {
+  namespace "urn:qux";
+  prefix "qux";
+
+  import foo {
+    prefix foo;
+  }
+
+  import baz {
+    prefix baz;
+  }
+
+  deviation /foo:foo/baz:cntr/baz:baz-leaf {
+    deviate add {
+      default "baz";
+    }
+  }
+}
