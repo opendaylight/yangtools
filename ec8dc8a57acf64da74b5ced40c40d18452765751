@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "43e5a1dd_170492b9",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2023-01-27T09:11:50Z",
+      "side": 1,
+      "message": "Try to follow a unified style, `final var` everywhere.",
+      "revId": "ec8dc8a57acf64da74b5ced40c40d18452765751",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce782a92_ddd28a70",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2023-01-27T09:11:50Z",
+      "side": 1,
+      "message": "Try to follow a unifield style, `final var` everywhere.",
+      "revId": "ec8dc8a57acf64da74b5ced40c40d18452765751",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
