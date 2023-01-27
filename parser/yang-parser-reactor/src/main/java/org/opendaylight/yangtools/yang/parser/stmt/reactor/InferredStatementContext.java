@@ -430,7 +430,22 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return null;
         }
 
-        final QName templateQName = qname.bindTo(StmtContextUtils.getRootModuleQName(prototype));
+        // Determine if the requested QName can be satisfied from the prototype: for that to happen it has to match
+        // our transformation implied by targetModule.
+        final var requestedNamespace = qname.getModule();
+        final QName templateQName;
+        if (targetModule != null) {
+            if (!targetModule.equals(requestedNamespace)) {
+                return null;
+            }
+            templateQName = qname.bindTo(StmtContextUtils.getRootModuleQName(prototype));
+        } else {
+            if (!StmtContextUtils.getRootModuleQName(prototype).equals(requestedNamespace)) {
+                return null;
+            }
+            templateQName = qname;
+        }
+
         LOG.debug("Materializing child {} from {}", qname, templateQName);
 
         final StmtContext<?, ?, ?> template;

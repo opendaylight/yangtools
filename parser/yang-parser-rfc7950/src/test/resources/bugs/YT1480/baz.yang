@@ -1,0 +1,16 @@
+module baz {
+  namespace "urn:baz";
+  prefix "baz";
+
+  import foo {
+    prefix foo;
+  }
+
+  augment /foo:foo {
+    container cntr {
+      leaf baz-leaf {
+        type string;
+      }
+    }
+  }
+}
