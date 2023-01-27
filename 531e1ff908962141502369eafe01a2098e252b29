@@ -22,6 +22,30 @@
       },
       "revId": "531e1ff908962141502369eafe01a2098e252b29",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf8c5f10_a82a480b",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/XpathStringParsingPathArgumentBuilder.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-27T13:36:37Z",
+      "side": 1,
+      "message": "on return offset value should to point the character next to closing quote - fixed",
+      "parentUuid": "6679046c_84a3c942",
+      "range": {
+        "startLine": 268,
+        "startChar": 8,
+        "endLine": 268,
+        "endChar": 26
+      },
+      "revId": "531e1ff908962141502369eafe01a2098e252b29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

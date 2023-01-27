@@ -39,6 +39,30 @@
       },
       "revId": "8880a9a6819bbf1f72bf82df2a158797ffa479f0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d78d2a87_491fc9ba",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/XpathStringParsingPathArgumentBuilder.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-27T13:36:37Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "751fa6b2_5489a56d",
+      "range": {
+        "startLine": 253,
+        "startChar": 30,
+        "endLine": 253,
+        "endChar": 39
+      },
+      "revId": "8880a9a6819bbf1f72bf82df2a158797ffa479f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
