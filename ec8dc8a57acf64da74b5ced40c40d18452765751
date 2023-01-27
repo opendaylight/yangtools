@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6aacd43_6f0c29ab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2023-01-27T12:09:12Z",
+      "side": 1,
+      "message": "need rebase",
+      "revId": "ec8dc8a57acf64da74b5ced40c40d18452765751",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "43e5a1dd_170492b9",
@@ -18,6 +35,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7598aa0_33f337fb",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2023-01-27T12:09:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43e5a1dd_170492b9",
+      "revId": "ec8dc8a57acf64da74b5ced40c40d18452765751",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ce782a92_ddd28a70",
@@ -31,6 +66,24 @@
       "writtenOn": "2023-01-27T09:11:50Z",
       "side": 1,
       "message": "Try to follow a unifield style, `final var` everywhere.",
+      "revId": "ec8dc8a57acf64da74b5ced40c40d18452765751",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3f5488a_c6ed761d",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2023-01-27T12:09:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce782a92_ddd28a70",
       "revId": "ec8dc8a57acf64da74b5ced40c40d18452765751",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
