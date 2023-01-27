@@ -1,0 +1,13 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  grouping foo-group {
+    container foo {
+      container cntr {
+      }
+    }
+  }
+
+  uses foo-group;
+}
