@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f01a3c21_ba0f95eb",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-30T14:55:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f8c80a5_13bbfd64",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1b9e273f_61a5a94a",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-01-30T14:32:39Z",
       "side": 1,
       "message": "Missing private",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65c03454_c482d975",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-30T14:55:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b9e273f_61a5a94a",
       "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "74b84ecb_c228e845",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-30T14:55:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4fa12877_ced0b678",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "92eacfeb_d76f914c",
@@ -69,6 +123,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6692e9b_e408c945",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-30T14:55:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92eacfeb_d76f914c",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e2e85374_14ddcdd9",
@@ -82,6 +154,24 @@
       "writtenOn": "2023-01-30T14:32:39Z",
       "side": 1,
       "message": "Missing final keyword for \"int\" parameters in this class.",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33c6a572_900b8ba2",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsCodecStringTest.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-30T14:55:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2e85374_14ddcdd9",
       "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
