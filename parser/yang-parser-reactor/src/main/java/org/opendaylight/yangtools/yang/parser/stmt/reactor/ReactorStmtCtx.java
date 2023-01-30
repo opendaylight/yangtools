@@ -837,15 +837,15 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     private byte calculateParentRefcount() {
         final ReactorStmtCtx<?, ?, ?> parent = getParentContext();
-        if (parent == null) {
-            return PARENTREF_ABSENT;
-        }
+        return parent == null ? PARENTREF_ABSENT : parent.refcountForChild();
+    }
 
+    private byte refcountForChild() {
         // A slight wrinkle here is that our machinery handles only PRESENT -> ABSENT invalidation and we can reach here
         // while inference is still ongoing and hence we may not have a complete picture about existing references. We
         // could therefore end up caching an ABSENT result and then that information becoming stale as a new reference
         // is introduced.
-        if (parent.executionOrder() < ExecutionOrder.EFFECTIVE_MODEL) {
+        if (executionOrder() < ExecutionOrder.EFFECTIVE_MODEL) {
             return PARENTREF_UNKNOWN;
         }
 
@@ -854,9 +854,9 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         // - negative (< REFCOUNT_NONE), meaning parent is in some stage of sweeping, hence it does not have
         //   a reference to us
         // - positive (> REFCOUNT_NONE), meaning parent has an explicit refcount which is holding us down
-        final int refs = parent.refcount;
+        final int refs = refcount;
         if (refs == REFCOUNT_NONE) {
-            return parent.parentRefcount();
+            return parentRefcount();
         }
         return refs < REFCOUNT_NONE ? PARENTREF_ABSENT : PARENTREF_PRESENT;
     }
