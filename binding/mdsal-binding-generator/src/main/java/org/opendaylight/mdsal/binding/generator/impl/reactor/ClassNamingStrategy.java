@@ -11,7 +11,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
@@ -33,9 +32,7 @@ abstract class ClassNamingStrategy implements Immutable {
      *
      * @return Simple class name
      */
-    @NonNull  String simpleClassName() {
-        return BindingMapping.getClassName(nodeIdentifier().getLocalName());
-    }
+    abstract @NonNull String simpleClassName();
 
     /**
      * Return the fallback naming strategy. The fallback is used if this strategy ends up being insufficient in

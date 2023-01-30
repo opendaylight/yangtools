@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 @NonNullByDefault
@@ -25,6 +26,11 @@ final class CamelCaseNamingStrategy extends AbstractNamespacedNamingStrategy {
     @Override
     AbstractQName nodeIdentifier() {
         return nodeIdentifier;
+    }
+
+    @Override
+    String simpleClassName() {
+        return BindingMapping.getClassName(nodeIdentifier.getLocalName());
     }
 
     @Override
