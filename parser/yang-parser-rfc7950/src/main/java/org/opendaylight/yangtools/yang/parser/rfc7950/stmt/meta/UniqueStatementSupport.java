@@ -191,7 +191,8 @@ public final class UniqueStatementSupport
         }
 
         private boolean isApplicable() {
-            return list.isSupportedToBuildEffective() && unique.isSupportedToBuildEffective();
+            return list.isSupportedToBuildEffective() && list.isSupportedByFeatures()
+                && unique.isSupportedToBuildEffective();
         }
     }
 

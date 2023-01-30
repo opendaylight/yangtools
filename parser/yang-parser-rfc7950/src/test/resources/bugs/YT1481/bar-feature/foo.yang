@@ -1,0 +1,23 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  feature bar-feature;
+
+  container foo {
+    list bar {
+      if-feature bar-feature;
+
+      key baz;
+      unique qux;
+
+      leaf baz {
+        type string;
+      }
+
+      leaf qux {
+        type string;
+      }
+    }
+  }
+}
