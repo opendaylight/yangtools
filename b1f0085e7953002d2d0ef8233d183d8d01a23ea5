@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f8c80a5_13bbfd64",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2023-01-30T14:32:39Z",
+      "side": 1,
+      "message": "Replace with:\n`Comparator.comparing(Bit::getPosition)`",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1b9e273f_61a5a94a",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2023-01-30T14:32:39Z",
+      "side": 1,
+      "message": "Missing private",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4fa12877_ced0b678",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2023-01-30T14:32:39Z",
+      "side": 1,
+      "message": "Should be private",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92eacfeb_d76f914c",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2023-01-30T14:32:39Z",
+      "side": 1,
+      "message": "Please remove double space between `@NonNull  String`",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2e85374_14ddcdd9",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsCodecStringTest.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2023-01-30T14:32:39Z",
+      "side": 1,
+      "message": "Missing final keyword for \"int\" parameters in this class.",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
