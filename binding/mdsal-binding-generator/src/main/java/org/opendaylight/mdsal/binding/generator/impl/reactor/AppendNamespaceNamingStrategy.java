@@ -12,10 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
-final class CamelCaseWithNamespaceNamingStrategy extends ClassNamingStrategy {
-    private final CamelCaseNamingStrategy delegate;
+final class AppendNamespaceNamingStrategy extends ClassNamingStrategy {
+    private final AbstractNamespacedNamingStrategy delegate;
 
-    CamelCaseWithNamespaceNamingStrategy(final CamelCaseNamingStrategy delegate) {
+    AppendNamespaceNamingStrategy(final AbstractNamespacedNamingStrategy delegate) {
         this.delegate = requireNonNull(delegate);
     }
 
