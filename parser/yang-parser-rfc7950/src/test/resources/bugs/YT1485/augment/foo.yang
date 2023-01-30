@@ -1,0 +1,17 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  feature foo-feature;
+
+  container foo {
+  }
+
+  augment /foo:foo {
+    if-feature foo-feature;
+
+    leaf foo-leaf {
+      type string;
+    }
+  }
+}
