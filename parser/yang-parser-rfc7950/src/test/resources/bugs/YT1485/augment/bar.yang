@@ -1,0 +1,12 @@
+module bar {
+  namespace "urn:bar";
+  prefix "bar";
+
+  import foo {
+    prefix foo;
+  }
+
+  deviation /foo:foo/foo:foo-leaf {
+   deviate not-supported;
+  }
+}

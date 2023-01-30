@@ -52,6 +52,8 @@ final class AugmentInferenceAction implements InferenceAction {
     private final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
     private final AbstractAugmentStatementSupport statementSupport;
 
+    private boolean targetUnavailable;
+
     AugmentInferenceAction(final AbstractAugmentStatementSupport statementSupport,
             final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode,
             final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target) {
@@ -62,8 +64,9 @@ final class AugmentInferenceAction implements InferenceAction {
 
     @Override
     public void apply(final InferenceContext ctx) {
-        if (!augmentNode.isSupportedToBuildEffective()) {
-            // We are not building effective model, hence we should not be performing any effects
+        if (targetUnavailable) {
+            // Target node is not available, no further processing and the augment should not leak into effective world
+            augmentNode.setUnsupported();
             return;
         }
 
@@ -112,7 +115,7 @@ final class AugmentInferenceAction implements InferenceAction {
     @Override
     public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
         if (target.equals(unavail)) {
-            augmentNode.setUnsupported();
+            targetUnavailable = true;
         } else {
             prerequisiteFailed(List.of(unavail));
         }
