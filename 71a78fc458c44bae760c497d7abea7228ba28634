@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0e22f86_38a0cae5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 18
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-31T12:26:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2eb99d5_b3ce5baa",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "12482ea4_7df0cf85",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-01-31T11:47:36Z",
       "side": 1,
       "message": "@NonNull\nOne line below you require it to be nonnull.",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c1b0e4f_9bb0e252",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-31T12:26:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12482ea4_7df0cf85",
       "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f7014bf_2a464f5f",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-31T12:26:14Z",
+      "side": 1,
+      "message": "left as is, because thrown \nIllegalArgumentException indicates problems with inputs (current case) \nwhile IllegalStateException indicates problems with codec (false)",
+      "parentUuid": "d28da4cc_403383b3",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ee664819_b2cc52ca",
@@ -65,6 +119,24 @@
       "writtenOn": "2023-01-31T11:47:36Z",
       "side": 1,
       "message": "These two methods are far away from its users - what about to move it closer?",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4ba4831_7d3190ee",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsCodecStringTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-31T12:26:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee664819_b2cc52ca",
       "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
