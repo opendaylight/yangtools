@@ -101,7 +101,7 @@ final class CollisionDomain {
 
         @Override
         final String computeCurrentPackage() {
-            return packageString(strategy.nodeIdentifier());
+            return strategy.childPackage();
         }
 
         @Override
@@ -122,8 +122,7 @@ final class CollisionDomain {
 
         @Override
         boolean equalRoot(final Member other) {
-            return other instanceof Primary primary
-                && strategy.nodeIdentifier().getLocalName().equals(primary.strategy.nodeIdentifier().getLocalName());
+            return other instanceof Primary primary && strategy.rootName().equals(primary.strategy.rootName());
         }
     }
 
@@ -331,8 +330,8 @@ final class CollisionDomain {
         return member;
     }
 
-    private static @NonNull String packageString(final AbstractQName component) {
-        // Replace dashes with dots, as dashes are not allowed in package names
+    // Replace dashes with dots, as dashes are not allowed in package names
+    static @NonNull String packageString(final AbstractQName component) {
         return component.getLocalName().replace('-', '.');
     }
 }

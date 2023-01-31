@@ -12,22 +12,15 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 @NonNullByDefault
-final class CamelCaseNamingStrategy extends ClassNamingStrategy {
+final class CamelCaseNamingStrategy extends YangIdentifierClassNamingStrategy {
     private final StatementNamespace namespace;
-    private final AbstractQName nodeIdentifier;
 
     CamelCaseNamingStrategy(final StatementNamespace namespace, final AbstractQName nodeIdentifier) {
+        super(nodeIdentifier);
         this.namespace = requireNonNull(namespace);
-        this.nodeIdentifier = requireNonNull(nodeIdentifier);
-    }
-
-    @Override
-    AbstractQName nodeIdentifier() {
-        return nodeIdentifier;
     }
 
     StatementNamespace namespace() {
@@ -40,12 +33,7 @@ final class CamelCaseNamingStrategy extends ClassNamingStrategy {
     }
 
     @Override
-    String simpleClassName() {
-        return BindingMapping.getClassName(nodeIdentifier.getLocalName());
-    }
-
-    @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("localName", nodeIdentifier.getLocalName()).add("namespace", namespace);
+        return super.addToStringAttributes(helper).add("namespace", namespace);
     }
 }

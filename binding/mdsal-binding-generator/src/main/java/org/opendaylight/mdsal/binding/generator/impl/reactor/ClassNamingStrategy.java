@@ -12,21 +12,12 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 /**
  * Enumeration of known strategies for translating a YANG node identifier into a Java package name segment or a Java
  * simple class name.
  */
 abstract class ClassNamingStrategy implements Immutable {
-    /**
-     * Return the YANG node identifier backing this naming strategy. Only the {@link AbstractQName#getLocalName()} part
-     * of the identifier is significant.
-     *
-     * @return YANG node identifier.
-     */
-    abstract @NonNull AbstractQName nodeIdentifier();
-
     /**
      * Return the simple Java class name assigned by this naming strategy.
      *
@@ -41,6 +32,16 @@ abstract class ClassNamingStrategy implements Immutable {
      * @return Fallback strategy, {@code null} if there is no fallback.
      */
     abstract @Nullable ClassNamingStrategy fallback();
+
+    // FIXME: document this method
+    abstract @NonNull String rootName();
+
+    /**
+     * Return the {@code Java package name} allocated for any classes generated as children of this strategy.
+     *
+     * @return A package fragment name, for example {@code "foo.bar.baz"}
+     */
+    abstract @NonNull String childPackage();
 
     @Override
     public final String toString() {

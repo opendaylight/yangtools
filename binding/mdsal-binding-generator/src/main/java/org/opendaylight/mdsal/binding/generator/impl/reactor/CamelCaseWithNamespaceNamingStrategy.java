@@ -10,18 +10,12 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 final class CamelCaseWithNamespaceNamingStrategy extends ClassNamingStrategy {
     private final CamelCaseNamingStrategy delegate;
 
     CamelCaseWithNamespaceNamingStrategy(final CamelCaseNamingStrategy delegate) {
         this.delegate = requireNonNull(delegate);
-    }
-
-    @Override
-    AbstractQName nodeIdentifier() {
-        return delegate.nodeIdentifier();
     }
 
     @Override
@@ -41,6 +35,16 @@ final class CamelCaseWithNamespaceNamingStrategy extends ClassNamingStrategy {
         //        namespace (which did not add a suffix), we can try to assign a statement-derived suffix. To make
         //        things easier, we use two-characters: AC, AD, AU, AX, CA, CH, CO, IP, LE, LI, LL, NO, OP, RP.
         return null;
+    }
+
+    @Override
+    String rootName() {
+        return delegate.rootName();
+    }
+
+    @Override
+    String childPackage() {
+        return delegate.childPackage();
     }
 
     @Override

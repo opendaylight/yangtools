@@ -7,37 +7,18 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static java.util.Objects.requireNonNull;
-
-import com.google.common.base.MoreObjects.ToStringHelper;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
-final class ModuleNamingStrategy extends ClassNamingStrategy {
-    private final @NonNull AbstractQName name;
-
+@NonNullByDefault
+final class ModuleNamingStrategy extends YangIdentifierClassNamingStrategy {
     ModuleNamingStrategy(final AbstractQName name) {
-        this.name = requireNonNull(name);
+        super(name);
     }
 
     @Override
-    AbstractQName nodeIdentifier() {
-        return name;
-    }
-
-    @Override
-    String simpleClassName() {
-        return BindingMapping.getClassName(name.getLocalName());
-    }
-
-    @Override
-    ClassNamingStrategy fallback() {
+    @Nullable ClassNamingStrategy fallback() {
         return null;
-    }
-
-    @Override
-    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("localName", name.getLocalName());
     }
 }
