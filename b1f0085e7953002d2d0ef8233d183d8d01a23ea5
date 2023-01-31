@@ -174,6 +174,24 @@
       "parentUuid": "e2e85374_14ddcdd9",
       "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "026a932b_db75b054",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsCodecStringTest.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2023-01-31T08:54:47Z",
+      "side": 1,
+      "message": "You have missed this one:\nhttps://git.opendaylight.org/gerrit/c/yangtools/+/102901/17/data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsCodecStringTest.java#77\n\n`toBitNames(int... selectedIndexes)`",
+      "parentUuid": "33c6a572_900b8ba2",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
