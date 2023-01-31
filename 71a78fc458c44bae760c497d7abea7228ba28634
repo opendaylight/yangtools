@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2eb99d5_b3ce5baa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 18
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-31T11:47:36Z",
+      "side": 1,
+      "message": "Please use first capital letter.",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12482ea4_7df0cf85",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-31T11:47:36Z",
+      "side": 1,
+      "message": "@NonNull\nOne line below you require it to be nonnull.",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d28da4cc_403383b3",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-31T11:47:36Z",
+      "side": 1,
+      "message": "IMO `checkState`",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ee664819_b2cc52ca",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsCodecStringTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-01-31T11:47:36Z",
+      "side": 1,
+      "message": "These two methods are far away from its users - what about to move it closer?",
+      "revId": "71a78fc458c44bae760c497d7abea7228ba28634",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
