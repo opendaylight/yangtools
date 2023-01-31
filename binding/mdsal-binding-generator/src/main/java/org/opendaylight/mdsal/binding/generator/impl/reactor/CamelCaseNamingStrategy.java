@@ -10,22 +10,33 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 @NonNullByDefault
-final class CamelCaseNamingStrategy extends AbstractNamespacedNamingStrategy {
+final class CamelCaseNamingStrategy extends ClassNamingStrategy {
+    private final StatementNamespace namespace;
     private final AbstractQName nodeIdentifier;
 
     CamelCaseNamingStrategy(final StatementNamespace namespace, final AbstractQName nodeIdentifier) {
-        super(namespace);
+        this.namespace = requireNonNull(namespace);
         this.nodeIdentifier = requireNonNull(nodeIdentifier);
     }
 
     @Override
     AbstractQName nodeIdentifier() {
         return nodeIdentifier;
+    }
+
+    StatementNamespace namespace() {
+        return namespace;
+    }
+
+    @Override
+    @NonNull ClassNamingStrategy fallback() {
+        return new CamelCaseWithNamespaceNamingStrategy(this);
     }
 
     @Override
@@ -35,6 +46,6 @@ final class CamelCaseNamingStrategy extends AbstractNamespacedNamingStrategy {
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper.add("localName", nodeIdentifier.getLocalName()));
+        return helper.add("localName", nodeIdentifier.getLocalName()).add("namespace", namespace);
     }
 }
