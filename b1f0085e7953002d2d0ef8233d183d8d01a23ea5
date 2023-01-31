@@ -192,6 +192,24 @@
       "parentUuid": "33c6a572_900b8ba2",
       "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "39430e9e_5cb76b0b",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsCodecStringTest.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-01-31T09:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "026a932b_db75b054",
+      "revId": "b1f0085e7953002d2d0ef8233d183d8d01a23ea5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
