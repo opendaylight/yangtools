@@ -16,7 +16,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.Serial;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -37,7 +36,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
      * through {@link #bindTo(YangNamespaceContext)}.
      */
     public static final class Qualified extends UnresolvedQName implements Comparable<Qualified> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
         private static final Interner<Qualified> INTERNER = Interners.newWeakInterner();
 
@@ -135,11 +134,11 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
      * {@link #bindTo(QNameModule)}.
      */
     public static final class Unqualified extends UnresolvedQName implements Comparable<Unqualified> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
         private static final Interner<Unqualified> INTERNER = Interners.newWeakInterner();
 
-        private Unqualified(final String localName) {
+        Unqualified(final String localName) {
             super(localName);
         }
 
@@ -165,6 +164,11 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
          */
         public static Unqualified readFrom(final DataInput in) throws IOException {
             return of(in.readUTF());
+        }
+
+        @Override
+        public Unqualified toUnqualified() {
+            return this;
         }
 
         @Override
@@ -219,7 +223,7 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
         }
     }
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private UnresolvedQName(final String localName) {

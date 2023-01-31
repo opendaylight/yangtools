@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.WritableObject;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
 /**
  * Abstract superclass for sharing QName references, which can either be resolved {@link QName}s or unresolved
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  */
 @NonNullByDefault
 public abstract sealed class AbstractQName implements Identifier, WritableObject permits QName, UnresolvedQName {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final String localName;
@@ -68,6 +68,15 @@ public abstract sealed class AbstractQName implements Identifier, WritableObject
     }
 
     /**
+     * Returns an {@link Unqualified} identifier formed by capturing {@link #getLocalName()}.
+     *
+     * @return An unqualified {@link UnresolvedQName}
+     */
+    public Unqualified toUnqualified() {
+        return new Unqualified(localName);
+    }
+
+    /**
      * Check whether a string is a valid {@code localName}.
      *
      * @param str String to check
@@ -77,7 +86,7 @@ public abstract sealed class AbstractQName implements Identifier, WritableObject
         return str != null && !str.isEmpty() && checkContent(str);
     }
 
-    @Serial
+    @java.io.Serial
     abstract Object writeReplace();
 
     static final String checkLocalName(final @Nullable String localName) {
