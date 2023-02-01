@@ -29,8 +29,10 @@ import org.opendaylight.mdsal.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.YangDataRuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
@@ -99,6 +101,12 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     @Override
     public Optional<OutputRuntimeType> findRpcOutput(final QName rpcName) {
         return Optional.ofNullable(rpcOutputs.get(requireNonNull(rpcName)));
+    }
+
+    @Override
+    public Optional<YangDataRuntimeType> findYangData(final YangDataName templateName) {
+        final var module = modulesByNamespace.get(templateName.module());
+        return module == null ? Optional.empty() : Optional.ofNullable(module.yangDataChild(templateName));
     }
 
     @Override

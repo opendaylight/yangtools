@@ -16,6 +16,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
@@ -32,6 +33,8 @@ public interface BindingRuntimeTypes extends EffectiveModelContextProvider, Runt
     Optional<InputRuntimeType> findRpcInput(QName rpcName);
 
     Optional<OutputRuntimeType> findRpcOutput(QName rpcName);
+
+    Optional<YangDataRuntimeType> findYangData(YangDataName templateName);
 
     default @Nullable RuntimeType schemaTreeChild(final Absolute path) {
         final var it = path.getNodeIdentifiers().iterator();

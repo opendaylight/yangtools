@@ -8,6 +8,8 @@
 package org.opendaylight.mdsal.binding.runtime.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -17,4 +19,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 public interface ModuleRuntimeType extends CompositeRuntimeType {
     @Override
     ModuleEffectiveStatement statement();
+
+    /**
+     * Look up a child {@link YangDataRuntimeType} by its {@link YangDataName}.
+     *
+     * @param templateName Yang Data template name
+     * @return YangDataRuntimeType or {@code null} if not found
+     */
+    @Nullable YangDataRuntimeType yangDataChild(YangDataName templateName);
 }
