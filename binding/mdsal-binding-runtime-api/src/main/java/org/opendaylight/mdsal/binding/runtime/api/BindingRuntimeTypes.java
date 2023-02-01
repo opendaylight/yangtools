@@ -36,8 +36,8 @@ public interface BindingRuntimeTypes extends EffectiveModelContextProvider, Runt
     default @Nullable RuntimeType schemaTreeChild(final Absolute path) {
         final var it = path.getNodeIdentifiers().iterator();
         var tmp = schemaTreeChild(it.next());
-        while (it.hasNext() && tmp instanceof RuntimeTypeContainer) {
-            tmp = ((RuntimeTypeContainer) tmp).schemaTreeChild(it.next());
+        while (it.hasNext() && tmp instanceof RuntimeTypeContainer container) {
+            tmp = container.schemaTreeChild(it.next());
         }
         return tmp;
     }
