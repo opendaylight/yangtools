@@ -23,7 +23,9 @@ import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
+import org.opendaylight.yangtools.yang.binding.YangData;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 @Beta
@@ -84,5 +86,10 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     @Override
     public Class<? extends RpcOutput> getRpcOutput(final QName rpcName) {
         return delegate().getRpcOutput(rpcName);
+    }
+
+    @Override
+    public Class<? extends YangData<?>> getYangDataClass(final YangDataName templateName) {
+        return delegate().getYangDataClass(templateName);
     }
 }

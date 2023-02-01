@@ -19,7 +19,9 @@ import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
+import org.opendaylight.yangtools.yang.binding.YangData;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -105,4 +107,6 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
     @NonNull Class<?> getClassForSchema(Absolute schema);
 
     @NonNull Class<? extends BaseIdentity> getIdentityClass(QName input);
+
+    @NonNull Class<? extends YangData<?>> getYangDataClass(YangDataName templateName);
 }
