@@ -108,9 +108,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @return Corresponding namespace
      * @throws UnsupportedOperationException if this node does not have a corresponding namespace
      */
-    @NonNull StatementNamespace namespace() {
-        return StatementNamespace.DEFAULT;
-    }
+    abstract @NonNull StatementNamespace namespace();
 
     @NonNull ModuleGenerator currentModule() {
         return getParent().currentModule();

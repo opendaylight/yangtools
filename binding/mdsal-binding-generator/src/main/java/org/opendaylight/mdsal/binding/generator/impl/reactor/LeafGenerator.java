@@ -21,6 +21,11 @@ final class LeafGenerator extends AbstractTypeAwareGenerator<LeafEffectiveStatem
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.LEAF;
+    }
+
+    @Override
     LeafRuntimeType createExternalRuntimeType(final Type type) {
         return new DefaultLeafRuntimeType(type, statement());
     }

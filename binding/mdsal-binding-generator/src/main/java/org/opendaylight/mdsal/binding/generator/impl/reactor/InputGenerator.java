@@ -29,6 +29,11 @@ public final class InputGenerator extends OperationContainerGenerator<InputEffec
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.INPUT;
+    }
+
+    @Override
     Member createMember(final CollisionDomain domain, final Member parent) {
         return domain.addSecondary(this, parent);
     }

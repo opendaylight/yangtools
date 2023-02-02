@@ -64,6 +64,11 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.CHOICE;
+    }
+
+    @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         // No-op
     }

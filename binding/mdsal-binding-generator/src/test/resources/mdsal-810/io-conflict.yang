@@ -1,0 +1,8 @@
+module io-conflict {
+  namespace io-conflict;
+  prefix ic;
+
+  rpc foo;              // results FooInput/FooOutput
+  container foo-input;  // results in FooInput
+  container foo-output; // results in FooOutput
+}

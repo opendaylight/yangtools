@@ -1,0 +1,7 @@
+module root-conflict { // results in RootConflictData
+  namespace root-conflict;
+  prefix rc;
+
+  container root-conflict-data; // results in RootConflictData as well
+}
+

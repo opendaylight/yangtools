@@ -42,6 +42,11 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
             .orElse(null);
     }
 
+    @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.LIST;
+    }
+
     @Nullable KeyGenerator keyGenerator() {
         return keyGen;
     }

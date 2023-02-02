@@ -1,0 +1,14 @@
+module key-conflict {
+  namespace key-conflict;
+  prefix kc;
+
+  list foo { // results Foo
+    key bar;  // triggers FooKey as a sibling to Foo
+    leaf bar {
+      type string;
+    }
+  }
+
+  container foo-key; // results in FooKey
+}
+

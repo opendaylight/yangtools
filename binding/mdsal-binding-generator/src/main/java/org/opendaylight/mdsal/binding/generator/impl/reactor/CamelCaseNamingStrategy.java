@@ -29,7 +29,8 @@ final class CamelCaseNamingStrategy extends YangIdentifierClassNamingStrategy {
 
     @Override
     @NonNull ClassNamingStrategy fallback() {
-        return new CamelCaseWithNamespaceNamingStrategy(this);
+        return namespace.resistant() ? new ResistedCamelCaseNamingStrategy(this)
+            : new CamelCaseWithNamespaceNamingStrategy(this);
     }
 
     @Override

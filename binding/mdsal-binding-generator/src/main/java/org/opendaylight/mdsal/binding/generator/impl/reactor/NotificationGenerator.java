@@ -31,6 +31,11 @@ final class NotificationGenerator
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.NOTIFICATION;
+    }
+
+    @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterSchemaTree(statement().argument());
     }

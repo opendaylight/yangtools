@@ -29,6 +29,11 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.CASE;
+    }
+
+    @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         // No-op
     }

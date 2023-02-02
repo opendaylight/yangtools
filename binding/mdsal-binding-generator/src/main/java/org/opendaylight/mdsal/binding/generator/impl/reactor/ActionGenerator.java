@@ -26,6 +26,11 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.ACTION;
+    }
+
+    @Override
     ClassPlacement classPlacement() {
         // We do not generate Actions for groupings as they are inexact, and do not capture an actual instantiation --
         // therefore they do not have an InstanceIdentifier. We still need to allocate a package name for the purposes

@@ -26,6 +26,11 @@ public final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveS
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.RPC;
+    }
+
+    @Override
     ClassPlacement classPlacement() {
         return ClassPlacement.TOP_LEVEL;
     }

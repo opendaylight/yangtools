@@ -35,6 +35,11 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
         }
 
         @Override
+        StatementNamespace namespace() {
+            return StatementNamespace.ANYDATA;
+        }
+
+        @Override
         AnydataRuntimeType createExternalRuntimeType(final GeneratedType type) {
             return new DefaultAnydataRuntimeType(type, statement());
         }
@@ -49,6 +54,11 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
     static final class Anyxml extends OpaqueObjectGenerator<AnyxmlEffectiveStatement, AnyxmlRuntimeType> {
         Anyxml(final AnyxmlEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
             super(statement, parent);
+        }
+
+        @Override
+        StatementNamespace namespace() {
+            return StatementNamespace.ANYXML;
         }
 
         @Override

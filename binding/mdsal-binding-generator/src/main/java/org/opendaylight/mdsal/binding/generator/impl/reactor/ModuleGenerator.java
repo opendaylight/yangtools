@@ -52,6 +52,11 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.DATA_ROOT;
+    }
+
+    @Override
     ModuleGenerator currentModule() {
         return this;
     }

@@ -32,6 +32,11 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.CONTAINER;
+    }
+
+    @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterDataTree(statement().argument());
     }

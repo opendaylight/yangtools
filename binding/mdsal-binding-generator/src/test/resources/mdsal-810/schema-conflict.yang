@@ -1,0 +1,18 @@
+module schema-conflict {
+  yang-version 1.1;
+  namespace schema-conflict;
+  prefix sc;
+
+  anydata foo.bar;
+  anyxml foo-bar;
+  container Foo.Bar;
+  list Foo-Bar;
+  leaf foo.Bar {
+    type string;
+  }
+  leaf-list foo-Bar {
+    type uint32;
+  }
+  notification Foo.bar;
+  rpc Foo-bar;
+}

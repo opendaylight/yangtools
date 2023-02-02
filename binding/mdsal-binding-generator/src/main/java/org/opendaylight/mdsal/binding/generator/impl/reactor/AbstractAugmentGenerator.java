@@ -98,6 +98,11 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
+    final StatementNamespace namespace() {
+        return StatementNamespace.AUGMENT;
+    }
+
+    @Override
     final void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterSchemaTree(statement().argument());
     }
@@ -120,7 +125,7 @@ abstract class AbstractAugmentGenerator
         final AbstractQName explicitIdentifier = statement()
             .findFirstEffectiveSubstatementArgument(AugmentIdentifierEffectiveStatement.class).orElse(null);
         if (explicitIdentifier != null) {
-            return domain.addPrimary(this, new CamelCaseNamingStrategy(StatementNamespace.DEFAULT, explicitIdentifier));
+            return domain.addPrimary(this, new CamelCaseNamingStrategy(StatementNamespace.AUGMENT, explicitIdentifier));
         }
 
         final Member target = targetGenerator().getMember();

@@ -27,6 +27,11 @@ public final class OutputGenerator extends OperationContainerGenerator<OutputEff
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.OUTPUT;
+    }
+
+    @Override
     Member createMember(final CollisionDomain domain, final Member parent) {
         return domain.addSecondary(this, parent);
     }

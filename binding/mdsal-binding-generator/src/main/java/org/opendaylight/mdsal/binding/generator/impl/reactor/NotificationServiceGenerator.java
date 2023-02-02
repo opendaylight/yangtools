@@ -36,6 +36,11 @@ final class NotificationServiceGenerator extends AbstractImplicitGenerator {
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.NOTIFICATION_LISTENER;
+    }
+
+    @Override
     String classSuffix() {
         return BindingMapping.NOTIFICATION_LISTENER_SUFFIX;
     }

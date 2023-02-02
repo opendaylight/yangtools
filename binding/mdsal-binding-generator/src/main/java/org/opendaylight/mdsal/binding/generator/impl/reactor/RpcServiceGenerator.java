@@ -42,6 +42,11 @@ final class RpcServiceGenerator extends AbstractImplicitGenerator {
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.RPC_SERVICE;
+    }
+
+    @Override
     String classSuffix() {
         return BindingMapping.RPC_SERVICE_SUFFIX;
     }

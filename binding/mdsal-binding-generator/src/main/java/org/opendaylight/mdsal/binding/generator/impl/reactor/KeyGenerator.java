@@ -32,6 +32,11 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
+    StatementNamespace namespace() {
+        return StatementNamespace.KEY;
+    }
+
+    @Override
     void pushToInference(final SchemaInferenceStack inferenceStack) {
         throw new UnsupportedOperationException();
     }
