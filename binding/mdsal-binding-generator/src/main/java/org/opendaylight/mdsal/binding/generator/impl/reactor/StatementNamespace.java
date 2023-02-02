@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -54,7 +53,7 @@ enum StatementNamespace {
         this.suffix = requireNonNull(suffix);
     }
 
-    @NonNull String appendSuffix(final String str) {
-        return suffix.isEmpty() ? verifyNotNull(str) : str + suffix;
+    @NonNull String suffix() {
+        return suffix;
     }
 }

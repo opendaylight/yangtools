@@ -20,7 +20,10 @@ final class CamelCaseWithNamespaceNamingStrategy extends ClassNamingStrategy {
 
     @Override
     String simpleClassName() {
-        return delegate.namespace().appendSuffix(delegate.simpleClassName());
+        final var delegateName = delegate.simpleClassName();
+        final var suffix = delegate.namespace().suffix();
+
+        return suffix.isEmpty() ? delegateName : delegateName + suffix;
     }
 
     @Override
