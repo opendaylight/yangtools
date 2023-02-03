@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:container-lvl1 xmlns:tns="test-ns">
+    <tnsa:container-aug xmlns:tnsa="test-ns-aug">
+        <tnsa:leaf-aug>data</tnsa:leaf-aug>
+    </tnsa:container-aug>
+</tns:container-lvl1>
