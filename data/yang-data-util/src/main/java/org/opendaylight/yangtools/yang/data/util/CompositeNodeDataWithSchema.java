@@ -111,8 +111,17 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
      */
     private final List<AbstractNodeDataWithSchema<?>> children = new ArrayList<>();
 
+    /**
+     * indicates augmented child elements require to be wrapped with AugmentationNode.
+     */
+    private boolean writeAugmentationNode = true;
+
     public CompositeNodeDataWithSchema(final T schema) {
         super(schema);
+    }
+
+    public void setWriteAugmentationNode(final boolean writeAugmentationNode) {
+        this.writeAugmentationNode = writeAugmentationNode;
     }
 
     void addChild(final AbstractNodeDataWithSchema<?> newChild) {
@@ -262,15 +271,16 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
                 : augmentationsToChild.asMap().entrySet()) {
             final Collection<AbstractNodeDataWithSchema<?>> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
-                // FIXME: can we get the augmentation schema?
-                writer.startAugmentationNode(DataSchemaContextNode.augmentationIdentifierFrom(
-                    augmentationToChild.getKey()));
-
+                if (writeAugmentationNode) {
+                    writer.startAugmentationNode(
+                            DataSchemaContextNode.augmentationIdentifierFrom(augmentationToChild.getKey()));
+                }
                 for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer, metaWriter);
                 }
-
-                writer.endNode();
+                if (writeAugmentationNode) {
+                    writer.endNode();
+                }
             }
         }
     }
