@@ -146,7 +146,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final SchemaInferenceStack stack;
     private final XmlCodecFactory codecs;
-    private final DataSchemaNode parentNode;
+    private final DataSchemaNode rootNode;
     private final boolean strictParsing;
 
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
@@ -159,16 +159,16 @@ public final class XmlParserStream implements Closeable, Flushable {
         if (!stack.isEmpty()) {
             final var stmt = stack.currentStatement();
             if (stmt instanceof DataSchemaNode data) {
-                parentNode = data;
+                rootNode = data;
             } else if (stmt instanceof OperationDefinition oper) {
-                parentNode = OperationAsContainer.of(oper);
+                rootNode = OperationAsContainer.of(oper);
             } else if (stmt instanceof NotificationDefinition notif) {
-                parentNode = NotificationAsContainer.of(notif);
+                rootNode = NotificationAsContainer.of(notif);
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + stmt);
             }
         } else {
-            parentNode = stack.getEffectiveModelContext();
+            rootNode = stack.getEffectiveModelContext();
         }
     }
 
@@ -177,12 +177,12 @@ public final class XmlParserStream implements Closeable, Flushable {
      *
      * @param writer Output writer
      * @param codecs Shared codecs
-     * @param parentNode Parent root node
+     * @param rootNode Root node inference
      * @return A new stream instance
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final EffectiveStatementInference parentNode) {
-        return create(writer, codecs, parentNode, true);
+            final EffectiveStatementInference rootNode) {
+        return create(writer, codecs, rootNode, true);
     }
 
     /**
@@ -190,7 +190,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *
      * @param writer Output writer
      * @param codecs Shared codecs
-     * @param parentNode Parent root node
+     * @param rootNode Root node inference
      * @param strictParsing parsing mode
      *            if set to true, the parser will throw an exception if it encounters unknown child nodes
      *            (nodes, that are not defined in the provided SchemaContext) in containers and lists
@@ -198,8 +198,8 @@ public final class XmlParserStream implements Closeable, Flushable {
      * @return A new stream instance
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final EffectiveStatementInference parentNode, final boolean strictParsing) {
-        return new XmlParserStream(writer, codecs, SchemaInferenceStack.ofInference(parentNode), strictParsing);
+            final EffectiveStatementInference rootNode, final boolean strictParsing) {
+        return new XmlParserStream(writer, codecs, SchemaInferenceStack.ofInference(rootNode), strictParsing);
     }
 
     /**
@@ -228,8 +228,8 @@ public final class XmlParserStream implements Closeable, Flushable {
      * instead and maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
-            final EffectiveStatementInference parentNode) {
-        return create(writer, parentNode, true);
+            final EffectiveStatementInference rootNode) {
+        return create(writer, rootNode, true);
     }
 
     /**
@@ -238,8 +238,8 @@ public final class XmlParserStream implements Closeable, Flushable {
      * instead and maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
-            final EffectiveStatementInference parentNode, final boolean strictParsing) {
-        return create(writer, XmlCodecFactory.create(parentNode.getEffectiveModelContext()), parentNode, strictParsing);
+            final EffectiveStatementInference rootNode, final boolean strictParsing) {
+        return create(writer, XmlCodecFactory.create(rootNode.getEffectiveModelContext()), rootNode, strictParsing);
     }
 
     /**
@@ -258,46 +258,46 @@ public final class XmlParserStream implements Closeable, Flushable {
      * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final EffectiveStatementInference parentNode) {
-        return create(writer, mountCtx, parentNode, true);
+            final EffectiveStatementInference rootNode) {
+        return create(writer, mountCtx, rootNode, true);
     }
 
     @Beta
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final Absolute parentNode) {
-        return create(writer, mountCtx, parentNode, true);
+            final Absolute rootNode) {
+        return create(writer, mountCtx, rootNode, true);
     }
 
     @Beta
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final Absolute parentNode, final boolean strictParsing) {
-        return create(writer, XmlCodecFactory.create(mountCtx), parentNode, strictParsing);
+            final Absolute rootNode, final boolean strictParsing) {
+        return create(writer, XmlCodecFactory.create(mountCtx), rootNode, strictParsing);
     }
 
     @Beta
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final Absolute parentNode) {
-        return create(writer, codecs, parentNode, true);
+            final Absolute rootNode) {
+        return create(writer, codecs, rootNode, true);
     }
 
     @Beta
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final Absolute parentNode, final boolean strictParsing) {
+            final Absolute rootNode, final boolean strictParsing) {
         return new XmlParserStream(writer, codecs,
-            SchemaInferenceStack.of(codecs.getEffectiveModelContext(), parentNode), strictParsing);
+            SchemaInferenceStack.of(codecs.getEffectiveModelContext(), rootNode), strictParsing);
     }
 
     @Beta
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final YangInstanceIdentifier parentNode) {
-        return create(writer, mountCtx, parentNode, true);
+            final YangInstanceIdentifier rootNode) {
+        return create(writer, mountCtx, rootNode, true);
     }
 
     @Beta
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final YangInstanceIdentifier parentNode, final boolean strictParsing) {
+            final YangInstanceIdentifier rootNode, final boolean strictParsing) {
         final var init = DataSchemaContextTree.from(mountCtx.getEffectiveModelContext())
-            .enterPath(parentNode)
+            .enterPath(rootNode)
             .orElseThrow();
         return new XmlParserStream(writer, XmlCodecFactory.create(mountCtx), init.stack(), strictParsing);
     }
@@ -308,8 +308,8 @@ public final class XmlParserStream implements Closeable, Flushable {
      * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final EffectiveStatementInference parentNode, final boolean strictParsing) {
-        return create(writer, XmlCodecFactory.create(mountCtx), parentNode, strictParsing);
+            final EffectiveStatementInference rootNode, final boolean strictParsing) {
+        return create(writer, XmlCodecFactory.create(mountCtx), rootNode, strictParsing);
     }
 
     /**
@@ -334,20 +334,20 @@ public final class XmlParserStream implements Closeable, Flushable {
         if (reader.hasNext()) {
             reader.nextTag();
             final AbstractNodeDataWithSchema<?> nodeDataWithSchema;
-            if (parentNode instanceof ContainerLike containerLike) {
+            if (rootNode instanceof ContainerLike containerLike) {
                 nodeDataWithSchema = new ContainerNodeDataWithSchema(containerLike);
-            } else if (parentNode instanceof ListSchemaNode list) {
+            } else if (rootNode instanceof ListSchemaNode list) {
                 nodeDataWithSchema = new ListNodeDataWithSchema(list);
-            } else if (parentNode instanceof AnyxmlSchemaNode anyxml) {
+            } else if (rootNode instanceof AnyxmlSchemaNode anyxml) {
                 nodeDataWithSchema = new AnyXmlNodeDataWithSchema(anyxml);
-            } else if (parentNode instanceof LeafSchemaNode leaf) {
+            } else if (rootNode instanceof LeafSchemaNode leaf) {
                 nodeDataWithSchema = new LeafNodeDataWithSchema(leaf);
-            } else if (parentNode instanceof LeafListSchemaNode leafList) {
+            } else if (rootNode instanceof LeafListSchemaNode leafList) {
                 nodeDataWithSchema = new LeafListNodeDataWithSchema(leafList);
-            } else if (parentNode instanceof AnydataSchemaNode anydata) {
+            } else if (rootNode instanceof AnydataSchemaNode anydata) {
                 nodeDataWithSchema = new AnydataNodeDataWithSchema(anydata);
             } else {
-                throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
+                throw new IllegalStateException("Unsupported schema node type " + rootNode.getClass() + ".");
             }
 
             read(reader, nodeDataWithSchema, reader.getLocalName());
