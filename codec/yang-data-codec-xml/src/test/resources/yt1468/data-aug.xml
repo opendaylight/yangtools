@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container-aug xmlns="test-ns-aug">
+    <leaf-aug>data</leaf-aug>
+</container-aug>

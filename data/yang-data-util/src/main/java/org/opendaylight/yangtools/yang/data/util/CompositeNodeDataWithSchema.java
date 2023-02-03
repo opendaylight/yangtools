@@ -260,18 +260,26 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         for (AbstractNodeDataWithSchema<?> child : children) {
             child.write(writer, metaWriter);
         }
+
+        if (this.getClass().equals(CompositeNodeDataWithSchema.class)) {
+            // CompositeNodeDataWithSchema class instance is only used as a parsing root wrapper.
+            // To avoid returning AugmentationNode as top level node, write augmentation data node unwrapped.
+            for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : augmentationsToChild.values()) {
+                nodeDataWithSchema.write(writer, metaWriter);
+            }
+            return;
+        }
+
+        // for non-root cases wrap augmentation data with AugmentationNode
         for (Entry<AugmentationSchemaNode, Collection<AbstractNodeDataWithSchema<?>>> augmentationToChild
                 : augmentationsToChild.asMap().entrySet()) {
             final Collection<AbstractNodeDataWithSchema<?>> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
-                // FIXME: can we get the augmentation schema?
                 writer.startAugmentationNode(DataSchemaContextNode.augmentationIdentifierFrom(
                     augmentationToChild.getKey()));
-
                 for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer, metaWriter);
                 }
-
                 writer.endNode();
             }
         }
