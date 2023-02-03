@@ -1,0 +1,7 @@
+{
+  "test-ns:container-lvl1": {
+    "test-ns-aug:container-aug": {
+      "leaf-aug": "data"
+    }
+  }
+}
