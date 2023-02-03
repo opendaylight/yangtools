@@ -1,0 +1,9 @@
+module test-model {
+  namespace "test-ns";
+  prefix test-model;
+
+  container container-root {
+    container container-lvl1 {
+    }
+  }
+}
