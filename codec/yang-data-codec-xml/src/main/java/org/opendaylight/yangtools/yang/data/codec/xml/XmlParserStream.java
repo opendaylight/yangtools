@@ -177,7 +177,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *
      * @param writer Output writer
      * @param codecs Shared codecs
-     * @param parentNode Parent root node
+     * @param parentNode Root node inference
      * @return A new stream instance
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
@@ -190,7 +190,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *
      * @param writer Output writer
      * @param codecs Shared codecs
-     * @param parentNode Parent root node
+     * @param parentNode Root node inference
      * @param strictParsing parsing mode
      *            if set to true, the parser will throw an exception if it encounters unknown child nodes
      *            (nodes, that are not defined in the provided SchemaContext) in containers and lists

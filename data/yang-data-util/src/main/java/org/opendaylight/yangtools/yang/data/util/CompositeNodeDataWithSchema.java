@@ -111,8 +111,18 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
      */
     private final List<AbstractNodeDataWithSchema<?>> children = new ArrayList<>();
 
-    public CompositeNodeDataWithSchema(final T schema) {
+    /**
+     * Flag indicating current node is being used as a root wrapper node by parser.
+     */
+    private final boolean isParserRootNode;
+
+    public CompositeNodeDataWithSchema(final T schema, final boolean isParserRootNode) {
         super(schema);
+        this.isParserRootNode = isParserRootNode;
+    }
+
+    public CompositeNodeDataWithSchema(final T schema) {
+        this(schema, false);
     }
 
     void addChild(final AbstractNodeDataWithSchema<?> newChild) {
@@ -258,18 +268,23 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         for (AbstractNodeDataWithSchema<?> child : children) {
             child.write(writer, metaWriter);
         }
+        if (isParserRootNode) {
+            // Current node is a root element wrapper node for data being parsed. To avoid returning
+            // AugmentationNode as top level node, write augmentation data nodes as direct children.
+            for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : augmentationsToChild.values()) {
+                nodeDataWithSchema.write(writer, metaWriter);
+            }
+            return;
+        }
         for (Entry<AugmentationSchemaNode, Collection<AbstractNodeDataWithSchema<?>>> augmentationToChild
                 : augmentationsToChild.asMap().entrySet()) {
             final Collection<AbstractNodeDataWithSchema<?>> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
-                // FIXME: can we get the augmentation schema?
                 writer.startAugmentationNode(DataSchemaContextNode.augmentationIdentifierFrom(
                     augmentationToChild.getKey()));
-
                 for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer, metaWriter);
                 }
-
                 writer.endNode();
             }
         }
