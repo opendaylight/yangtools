@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a802312_fb438d7c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-02-10T08:46:07Z",
+      "side": 1,
+      "message": "Missing any additional description.",
+      "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f38ec7b_9319e1f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-02-10T08:46:07Z",
+      "side": 1,
+      "message": "In addition I am used that test classes and methods are `public`.",
+      "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab42a8fa_4451f2de",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/YT1468Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-02-10T08:46:07Z",
+      "side": 1,
+      "message": "The documentation says that we should provide `parentNode` please fix the docs in `XmlParserStream` class accordingly.",
+      "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6958264_c9ee0263",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-02-10T08:46:07Z",
+      "side": 1,
+      "message": "Does this FIXME relates to problem we are solving?",
+      "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
