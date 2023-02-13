@@ -315,6 +315,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0d1bf25_5819079f",
+        "filename": "plugin/yang-maven-plugin/src/test/resources/rebuild-context/modified/bar.yang",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-13T08:53:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f0f59e52_43d28bd3",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c35fe0cb_25774bac",
@@ -332,6 +350,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b53decfc_dee98ce2",
+        "filename": "plugin/yang-maven-plugin/src/test/resources/rebuild-context/original/bar.yang",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-13T08:53:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c35fe0cb_25774bac",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8ca23cf5_c3ca9f5a",
@@ -345,6 +381,24 @@
       "writtenOn": "2023-01-26T15:51:01Z",
       "side": 1,
       "message": "Please add an empty line at the end of the file.",
+      "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc02865f_529c7313",
+        "filename": "plugin/yang-maven-plugin/src/test/resources/rebuild-context/whitespaces/bar.yang",
+        "patchSetId": 10
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-13T08:53:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8ca23cf5_c3ca9f5a",
       "revId": "64d9ca69565aaf48a1d238212629733d065a5fc4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
