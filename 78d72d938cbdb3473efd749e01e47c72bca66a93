@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "1df5daea_06f4c3be",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-13T11:02:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a802312_fb438d7c",
+      "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "8f38ec7b_9319e1f1",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 4
@@ -52,6 +70,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcbe1261_532eb47c",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/YT1468Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-13T11:02:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ab42a8fa_4451f2de",
+      "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b6958264_c9ee0263",
@@ -65,6 +101,24 @@
       "writtenOn": "2023-02-10T08:46:07Z",
       "side": 1,
       "message": "Does this FIXME relates to problem we are solving?",
+      "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f05933b1_c997d030",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-13T11:02:10Z",
+      "side": 1,
+      "message": "seems to be, removed",
+      "parentUuid": "b6958264_c9ee0263",
       "revId": "78d72d938cbdb3473efd749e01e47c72bca66a93",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
