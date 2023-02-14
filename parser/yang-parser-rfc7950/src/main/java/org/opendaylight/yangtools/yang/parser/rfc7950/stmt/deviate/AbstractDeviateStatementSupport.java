@@ -213,19 +213,12 @@ abstract class AbstractDeviateStatementSupport
     }
 
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
-        switch (deviateKind) {
-            case NOT_SUPPORTED:
-                return DEVIATE_NOT_SUPPORTED_SUBSTATEMENT_VALIDATOR;
-            case ADD:
-                return DEVIATE_ADD_SUBSTATEMENT_VALIDATOR;
-            case REPLACE:
-                return DEVIATE_REPLACE_SUBSTATEMENT_VALIDATOR;
-            case DELETE:
-                return DEVIATE_DELETE_SUBSTATEMENT_VALIDATOR;
-            default:
-                throw new IllegalStateException(String.format(
-                        "Substatement validator for deviate %s has not been defined.", deviateKind));
-        }
+        return switch (deviateKind) {
+            case NOT_SUPPORTED -> DEVIATE_NOT_SUPPORTED_SUBSTATEMENT_VALIDATOR;
+            case ADD -> DEVIATE_ADD_SUBSTATEMENT_VALIDATOR;
+            case REPLACE -> DEVIATE_REPLACE_SUBSTATEMENT_VALIDATOR;
+            case DELETE -> DEVIATE_DELETE_SUBSTATEMENT_VALIDATOR;
+        };
     }
 
     private static boolean isDeviationSupported(
