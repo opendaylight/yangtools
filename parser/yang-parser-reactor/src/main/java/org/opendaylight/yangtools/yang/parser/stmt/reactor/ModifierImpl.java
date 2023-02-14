@@ -93,7 +93,7 @@ final class ModifierImpl implements ModelActionBuilder {
                     final ModelProcessingPhase phase)  {
         checkNotRegistered();
 
-        AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
+        final var addedToNs = new AddedToNamespace<C>(this, phase);
         addReq(addedToNs);
         contextImpl(context).onNamespaceItemAddedAction(namespace, key, addedToNs);
         return addedToNs;
@@ -104,7 +104,7 @@ final class ModifierImpl implements ModelActionBuilder {
                     final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase)  {
         checkNotRegistered();
 
-        AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
+        final var addedToNs = new AddedToNamespace<C>(this, phase);
         addReq(addedToNs);
         contextImpl(context).onNamespaceItemAddedAction(namespace, phase, criterion, addedToNs);
         return addedToNs;
@@ -114,7 +114,7 @@ final class ModifierImpl implements ModelActionBuilder {
             final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        PhaseFinished<C> phaseFin = new PhaseFinished<>();
+        final var phaseFin = new PhaseFinished<C>(this);
         addReq(phaseFin);
         addBootstrap(() -> contextImpl(context).addPhaseCompletedListener(phase, phaseFin));
         return phaseFin;
@@ -126,7 +126,7 @@ final class ModifierImpl implements ModelActionBuilder {
                     final K key, final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        final PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(EFFECTIVE_MODEL);
+        final var mod = new PhaseModificationInNamespace<C>(this, EFFECTIVE_MODEL);
         addReq(mod);
         addMutation(mod);
         contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, mod);
@@ -155,7 +155,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     public <C extends Mutable<?, ?, ?>, T extends C> Prerequisite<C> mutatesCtx(final T context,
             final ModelProcessingPhase phase) {
-        return addMutation(new PhaseMutation<>(contextImpl(context), phase));
+        return addMutation(new PhaseMutation<>(this, contextImpl(context), phase));
     }
 
     @Override
@@ -185,7 +185,7 @@ final class ModifierImpl implements ModelActionBuilder {
                 final Class<N> namespace, final Iterable<K> keys, final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        final var ret = new PhaseRequirementInNamespacePath<StmtContext<?, ?, E>, K, N>(EFFECTIVE_MODEL, keys);
+        final var ret = new PhaseRequirementInNamespacePath<StmtContext<?, ?, E>, K, N>(this, EFFECTIVE_MODEL, keys);
         addReq(ret);
         addBootstrap(() -> ret.hookOnto(context, namespace));
         return ret;
@@ -242,7 +242,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Deprecated
     public <N extends ParserNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> context,
             final Class<N> namespace) {
-        return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
+        return addMutation(new NamespaceMutation<>(this, contextImpl(context), namespace));
     }
 
     @Override
@@ -258,7 +258,7 @@ final class ModifierImpl implements ModelActionBuilder {
                     final Class<N> namespace, final Iterable<K> keys) {
         checkNotRegistered();
 
-        final var ret = new PhaseModificationInNamespacePath<Mutable<?, ?, E>, K, N>(EFFECTIVE_MODEL, keys);
+        final var ret = new PhaseModificationInNamespacePath<Mutable<?, ?, E>, K, N>(this, EFFECTIVE_MODEL, keys);
         addReq(ret);
         addMutation(ret);
         addBootstrap(() -> ret.hookOnto(context, namespace));
@@ -283,15 +283,21 @@ final class ModifierImpl implements ModelActionBuilder {
         bootstraps.add(bootstrap);
     }
 
-    private abstract class AbstractPrerequisite<T> implements Prerequisite<T> {
+    private abstract static class AbstractPrerequisite<T> implements Prerequisite<T> {
+        final @NonNull ModifierImpl modifier;
+
         private boolean done = false;
         private T value;
+
+        AbstractPrerequisite(final ModifierImpl modifier) {
+            this.modifier = requireNonNull(modifier);
+        }
 
         @Override
         @SuppressWarnings("checkstyle:hiddenField")
         public final T resolve(final InferenceContext ctx) {
             checkState(done);
-            checkArgument(ctx == ModifierImpl.this.ctx);
+            checkArgument(ctx == modifier.ctx);
             return verifyNotNull(value, "Attempted to access unavailable prerequisite %s", this);
         }
 
@@ -303,7 +309,7 @@ final class ModifierImpl implements ModelActionBuilder {
         final boolean resolvePrereq(final T value) {
             this.value = value;
             this.done = true;
-            return isApplied();
+            return modifier.isApplied();
         }
 
         final <O> @NonNull Prerequisite<O> transform(final Function<? super T, O> transformation) {
@@ -320,14 +326,16 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private abstract class AbstractPathPrerequisite<C extends StmtContext<?, ?, ?>, K,
+    private abstract static class AbstractPathPrerequisite<C extends StmtContext<?, ?, ?>, K,
             N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded {
         private final ModelProcessingPhase modPhase;
         private final Iterable<K> keys;
         private final Iterator<K> it;
 
-        AbstractPathPrerequisite(final ModelProcessingPhase phase, final Iterable<K> keys) {
+        AbstractPathPrerequisite(final ModifierImpl modifier, final ModelProcessingPhase phase,
+                final Iterable<K> keys) {
+            super(modifier);
             this.modPhase = requireNonNull(phase);
             this.keys = requireNonNull(keys);
             it = keys.iterator();
@@ -342,7 +350,7 @@ final class ModifierImpl implements ModelActionBuilder {
             if (!target.isSupportedByFeatures()) {
                 LOG.debug("Key {} in {} is not supported", key, keys);
                 resolvePrereq(null);
-                action.prerequisiteUnavailable(this);
+                modifier.action.prerequisiteUnavailable(this);
                 return;
             }
 
@@ -351,7 +359,7 @@ final class ModifierImpl implements ModelActionBuilder {
             if (!it.hasNext()) {
                 // Last step: we are done
                 if (resolvePrereq((C) value)) {
-                    tryApply();
+                    modifier.tryApply();
                 }
                 return;
             }
@@ -379,41 +387,50 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private final class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
+    private static final class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
         @SuppressWarnings("unchecked")
-        PhaseMutation(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
+        PhaseMutation(final ModifierImpl modifier, final StatementContextBase<?, ?, ?> context,
+                final ModelProcessingPhase phase) {
+            super(modifier);
             context.addMutation(phase, this);
             resolvePrereq((C) context);
         }
 
         @Override
         public boolean isFinished() {
-            return isApplied();
+            return modifier.isApplied();
         }
     }
 
-    private final class PhaseFinished<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
+    private static final class PhaseFinished<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnPhaseFinished {
+        PhaseFinished(final ModifierImpl modifier) {
+            super(modifier);
+        }
+
         @SuppressWarnings("unchecked")
         @Override
         public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
                 final ModelProcessingPhase finishedPhase) {
-            return resolvePrereq((C) context) || tryApply();
+            return resolvePrereq((C) context) || modifier.tryApply();
         }
     }
 
-    private final class NamespaceMutation<N extends ParserNamespace<?, ?>>
+    private static final class NamespaceMutation<N extends ParserNamespace<?, ?>>
             extends AbstractPrerequisite<Mutable<?, ?, ?>>  {
-        NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
+        NamespaceMutation(final ModifierImpl modifier, final StatementContextBase<?, ?, ?> ctx,
+                final Class<N> namespace) {
+            super(modifier);
             resolvePrereq(ctx);
         }
     }
 
-    private final class AddedToNamespace<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
+    private static final class AddedToNamespace<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, OnPhaseFinished {
         private final ModelProcessingPhase phase;
 
-        AddedToNamespace(final ModelProcessingPhase phase) {
+        AddedToNamespace(final ModifierImpl modifier, final ModelProcessingPhase phase) {
+            super(modifier);
             this.phase = requireNonNull(phase);
         }
 
@@ -427,7 +444,7 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
                 final ModelProcessingPhase finishedPhase) {
-            return resolvePrereq((C) context) || tryApply();
+            return resolvePrereq((C) context) || modifier.tryApply();
         }
 
         @Override
@@ -436,10 +453,11 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private final class PhaseRequirementInNamespacePath<C extends StmtContext<?, ?, ?>, K,
+    private static final class PhaseRequirementInNamespacePath<C extends StmtContext<?, ?, ?>, K,
             N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPathPrerequisite<C, K, N> {
-        PhaseRequirementInNamespacePath(final ModelProcessingPhase phase, final Iterable<K> keys) {
-            super(phase, keys);
+        PhaseRequirementInNamespacePath(final ModifierImpl modifier, final ModelProcessingPhase phase,
+                final Iterable<K> keys) {
+            super(modifier, phase, keys);
         }
 
         @Override
@@ -449,11 +467,12 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private final class PhaseModificationInNamespace<C extends Mutable<?, ?, ?>> extends AbstractPrerequisite<C>
+    private static final class PhaseModificationInNamespace<C extends Mutable<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, ContextMutation {
         private final ModelProcessingPhase modPhase;
 
-        PhaseModificationInNamespace(final ModelProcessingPhase phase) {
+        PhaseModificationInNamespace(final ModifierImpl modifier, final ModelProcessingPhase phase) {
+            super(modifier);
             checkArgument(phase != null, "Model processing phase must not be null");
             this.modPhase = phase;
         }
@@ -469,7 +488,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
         @Override
         public boolean isFinished() {
-            return isApplied();
+            return modifier.isApplied();
         }
     }
 
@@ -478,16 +497,17 @@ final class ModifierImpl implements ModelActionBuilder {
      * target. The mechanics is driven as a sequence of prerequisites along a path: first we hook onto namespace to
      * give us the first step. When it does, we hook onto the first item to provide us the second step and so on.
      */
-    private final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K,
+    private static final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K,
             N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPathPrerequisite<C, K, N>
             implements ContextMutation {
-        PhaseModificationInNamespacePath(final ModelProcessingPhase phase, final Iterable<K> keys) {
-            super(phase, keys);
+        PhaseModificationInNamespacePath(final ModifierImpl modifier, final ModelProcessingPhase phase,
+                final Iterable<K> keys) {
+            super(modifier, phase, keys);
         }
 
         @Override
         public boolean isFinished() {
-            return isApplied();
+            return modifier.isApplied();
         }
 
         @Override
