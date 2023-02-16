@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "518d6486_8b777c77",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/AbstractNormalizableAnydata.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-16T18:08:54Z",
+      "side": 1,
+      "message": "hmm... so we cannot discern if we have an empty anydata content or when the content fails.\n\nSo how do we go about differentiating these two?\n\nIt does feel like we should be emitting an empty ContainerNode for the case of container statement. For lists we should be able to the same. The only case we cannot handle I think is a leaf target which is not either \u0027type empty\u0027 or \u0027type string\u0027.\n\nOpinions?",
+      "range": {
+        "startLine": 42,
+        "startChar": 22,
+        "endLine": 42,
+        "endChar": 51
+      },
+      "revId": "9d45929c89ad33ec4ae1e60c62783be38ec15389",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
