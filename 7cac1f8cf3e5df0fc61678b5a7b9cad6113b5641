@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f0715db_fdfdf7a8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-16T13:52:36Z",
+      "side": 1,
+      "message": "field rename reverted, only javadocs descriptions remain updated",
+      "parentUuid": "8251ba26_71d8e3ac",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 35
+      },
+      "revId": "7cac1f8cf3e5df0fc61678b5a7b9cad6113b5641",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a57ffb54_e3007b35",
@@ -47,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5901f13_60514688",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-16T13:52:36Z",
+      "side": 1,
+      "message": "current tree node implementation contains no information about\nparent (upper level) nodes, it means there is no way to determine\neither current node is a tree root or not.\n\nthe assumption was only parser instantiates current class directly,\nlower-level nodes belong to schema specific implementations, \ndescendants of CompositeNodeDataWithSchema. so instance belonging \nto current class could be used as a tree root indicator.\n\nupdated to use a new property explicitly defined for this purpose.",
+      "parentUuid": "a57ffb54_e3007b35",
+      "range": {
+        "startLine": 264,
+        "startChar": 12,
+        "endLine": 264,
+        "endChar": 69
+      },
+      "revId": "7cac1f8cf3e5df0fc61678b5a7b9cad6113b5641",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2ef5ce5d_3c90dff7",
@@ -60,6 +108,30 @@
       "writtenOn": "2023-02-16T12:16:16Z",
       "side": 1,
       "message": "This is not guaranteed to be true: this is a public class, with a public constructor, so how can you make a definite statement here? :)",
+      "range": {
+        "startLine": 265,
+        "startChar": 61,
+        "endLine": 265,
+        "endChar": 96
+      },
+      "revId": "7cac1f8cf3e5df0fc61678b5a7b9cad6113b5641",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9cbb406_f4009d29",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-16T13:52:36Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2ef5ce5d_3c90dff7",
       "range": {
         "startLine": 265,
         "startChar": 61,
