@@ -22,6 +22,52 @@
       },
       "revId": "7cac1f8cf3e5df0fc61678b5a7b9cad6113b5641",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a57ffb54_e3007b35",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-16T12:16:16Z",
+      "side": 1,
+      "message": "okay, this is just plain ugly -- it is completely not obvious what this is meand to do",
+      "range": {
+        "startLine": 264,
+        "startChar": 12,
+        "endLine": 264,
+        "endChar": 69
+      },
+      "revId": "7cac1f8cf3e5df0fc61678b5a7b9cad6113b5641",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ef5ce5d_3c90dff7",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-16T12:16:16Z",
+      "side": 1,
+      "message": "This is not guaranteed to be true: this is a public class, with a public constructor, so how can you make a definite statement here? :)",
+      "range": {
+        "startLine": 265,
+        "startChar": 61,
+        "endLine": 265,
+        "endChar": 96
+      },
+      "revId": "7cac1f8cf3e5df0fc61678b5a7b9cad6113b5641",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
