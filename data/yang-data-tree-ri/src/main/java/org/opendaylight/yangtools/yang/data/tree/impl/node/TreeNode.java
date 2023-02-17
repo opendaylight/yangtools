@@ -20,8 +20,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
- * A very basic data tree node. It has a version (when it was last modified), a subtree version (when any of its
- * children were modified) and some read-only data.
+ * A very basic data tree node. It has a {@link #getVersion()} (when it was last modified),
+ * a {@link #getSubtreeVersion()} (when any of its children were modified) and some read-only data. In terms of
+ * <a href="https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation">MVCC</a>, the former
+ * corresponds to the this node's current Read Timestamp (RTS(P), where P is this node). The latter is the most recent
+ * Read Timestamp in this node's accessible children.
  *
  * <p>
  * Semantic difference between these two is important when dealing with modifications involving parent/child
