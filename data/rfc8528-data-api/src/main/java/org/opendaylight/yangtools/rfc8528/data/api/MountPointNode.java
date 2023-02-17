@@ -22,8 +22,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.MixinNode;
  * seamless.
  */
 /*
- * FIXME: 7.0.0: The above is not quite right. DataTree instances should be able to handle mount points and correctly
- *               handle them, provided they get enough support from MountPointContext.
+ * FIXME: 11.0.0: The above is not quite right. DataTree instances should be able to handle mount points and correctly
+ *                handle them, provided they get enough support from MountPointContext.
+ * FIXME: 11.0.0: The above is not right, either. This interface should be a YangMountPoint, without implication it is
+ *                an NormalizedNode and instead should be a {@link NormalizedTree} node kept separately.
+ * FIXME: 11.0.0: move this to yang-data-api as NormalizedMountPoint
  */
 @Beta
 public interface MountPointNode extends DataContainerNode, DataContainerChild, MixinNode {
