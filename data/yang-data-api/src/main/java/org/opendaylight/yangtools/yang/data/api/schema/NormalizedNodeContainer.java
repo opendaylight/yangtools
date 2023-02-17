@@ -17,15 +17,11 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <V> Child Node type
  */
-public sealed interface NormalizedNodeContainer<V extends NormalizedNode> extends NormalizedNode, OrderingAware
+public sealed interface NormalizedNodeContainer<V extends NormalizedNode> extends OrderingAware
         permits DistinctNodeContainer, OrderedNodeContainer {
     /**
-     * {@inheritDoc}
-     *
-     * <p>
      * Returns iteration of all child nodes. Order of returned child nodes may be defined by subinterfaces.
      */
-    @Override
     Collection<@NonNull V> body();
 
     /**

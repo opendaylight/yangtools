@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-
 /**
  * Abstract node which does not have value but contains valid {@link DataContainerChild} nodes. Schema of this node is
  * described by instance of {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer}.
@@ -27,8 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *   <li>{@link UnkeyedListEntryNode}</li>
  * </ul>
  */
-public interface DataContainerNode
-        extends DistinctNodeContainer<PathArgument, DataContainerChild>, OrderingAware.System {
+public sealed interface DataContainerNode extends NormalizedNode, DataContainer, OrderingAware.System
+        permits AugmentationNode, ChoiceNode, ContainerNode, MapEntryNode, UnkeyedListEntryNode {
     @Override
     int hashCode();
 
