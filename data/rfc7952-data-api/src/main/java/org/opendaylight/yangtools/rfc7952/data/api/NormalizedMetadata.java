@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
  *
  * @author Robert Varga
  */
+// FIXME: move this interface to yang-data-api
 @Beta
 public interface NormalizedMetadata extends Identifiable<PathArgument>, Immutable {
     /**

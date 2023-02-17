@@ -7,8 +7,37 @@
  */
 
 /**
- * Definition of normalized YANG DOM Model. Normalized DOM Model brings more direct mapping between YANG Model, DOM
- * representation of data.
+ * Definition of YANG Data Object Model. This model is similar in some respects to the
+ * {@code W3C Document Object Model} (W3C DOM), but is a lot more baroque owing to:
+ * <ul>
+ *   <li>the inherent complexities of YANG and the its language extensions</li>
+ *   <li>the fact this a normalized view, e.g. it is bound to an {@link EffectiveModelContext} view of the piece of data
+ *       being modelled</li>
+ * </ul>
+ *
+ * <p>
+ * There are three basic building blocks:
+ * <ul>
+ *   <li>{@link NormalizedTree}, which is akin to a {@code W3C DOM Document}</li>
+ *   <li>{@link NormalizedData}, which is akin to a {@code W3C DOM Element}</li>
+ *   <li>NormalizedMetadata, which is akin to a {@code W3C DOM Attr}</li>
+ * </ul>
+ * There are two critical differences between this model and the Document Object Model:
+ * <ol>
+ *   <li>there is no all-encompassing {@code Node} interface, which would provide general navigability. This difference
+ *       stems from our goal to ensure exact semantics, acknowledging different concepts have inherently different
+ *       lifecycle. In particular, data tends to be stored and transferred verbatim, while metadata tends to be
+ *       discarded and re-generated, and
+ *   </li>
+ *   <li>this model does <em>NOT</em> provide the ability to navigate to parent or siblings. This is done on purpose, as
+ *       implementations of this interfaces are expected to be {@code effective immutable} (to aid
+ *       multi-threaded programming), while at the same time allowing for their efficient implementation by a YANG
+ *       datastore using
+ *       <a href="https://en.wikipedia.org/wiki/Multiversion_concurrency_control">Multiversion concurrency control</a>.
+ *   </li>
+ * </ol>
+ *
+ * FIXME: revise the below
  *
  * <h2>Normalized DOM Model</h2>
  *
@@ -121,7 +150,7 @@
  * The resulting tree organization is following:
  *
  * <ul>
- * <li>(DataContainerNode)
+ *   <li>(DataContainerNode)
  * <ul>
  * <li>(0..n) LeafNode</li>
  * <li>(0..n) LeafSetNode
@@ -158,19 +187,14 @@
  * </ul>
  *
  * <h3>Ordering of child nodes</h3>
- * Ordering of child nodes is not enforced by this API definition, unless
- * explicitly stated by subclasses of
- * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer}
- * which marks nodes with semantic constrain to preserve user-supplied ordering.
+ * Ordering of child nodes is not enforced by this API definition, unless explicitly stated by subclasses of
+ * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer}, which marks nodes with semantic
+ * constraint to preserve user-supplied ordering.
  *
  * <p>
- * Clients should not expect any specific ordering of child nodes for interfaces
- * from this package which does not extend
- * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer},
- * since implementations are not required to have well-defined order, which
- * allows for more efficient implementations. If such ordering is required by
- * clients for serialization / debugability it SHOULD be done externally in
- * code using these interfaces.
- *
+ * Clients should not expect any specific ordering of child nodes for interfaces from this package which does not extend
+ * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer}, since implementations are not required
+ * to have well-defined order, which allows for more efficient implementations. If such ordering is required by clients
+ * for serialization / debugability it SHOULD be done externally in code using these interfaces.
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
