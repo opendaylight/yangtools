@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc7952.data.api;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
@@ -15,10 +15,6 @@ import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 
 /**
  * RFC7952 metadata counterpart to a {@link NormalizedNode}. This interface is meant to be used as a companion to

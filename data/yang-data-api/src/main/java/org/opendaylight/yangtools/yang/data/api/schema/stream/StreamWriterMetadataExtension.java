@@ -5,14 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc7952.data.api;
+package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 
 /**
  * Extension to the NormalizedNodeStreamWriter with metadata support. Semantically this extends the event model of

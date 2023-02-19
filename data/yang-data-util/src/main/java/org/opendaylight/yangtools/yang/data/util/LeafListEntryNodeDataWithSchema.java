@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
-import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 /**

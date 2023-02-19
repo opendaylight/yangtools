@@ -11,7 +11,6 @@ module org.opendaylight.yangtools.yang.data.codec.xml {
     requires transitive org.opendaylight.yangtools.yang.data.api;
     requires transitive org.opendaylight.yangtools.yang.data.util;
     requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.rfc7952.data.api;
     requires transitive org.opendaylight.yangtools.rfc8528.data.api;
 
     requires java.xml;

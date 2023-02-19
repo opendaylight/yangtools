@@ -15,11 +15,11 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Optional;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
 
 /**
  * A simple {@link StreamWriterMetadataExtension} implementation, which takes care of building

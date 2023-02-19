@@ -15,12 +15,12 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
 
 /**
  * A utility class to attach {@link NormalizedMetadata} into a NormalizedNode stream, such as the one produced by
