@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 
 /**
  * A NormalizedNodeResult which also holds NormalizedMetadata structure.

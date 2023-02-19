@@ -12,7 +12,6 @@ module org.opendaylight.yangtools.rfc7952.data.util {
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
-    requires transitive org.opendaylight.yangtools.rfc7952.data.api;
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.data.api;
     requires transitive org.opendaylight.yangtools.yang.data.util;
