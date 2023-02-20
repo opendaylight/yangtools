@@ -22,6 +22,30 @@
       },
       "revId": "9d45929c89ad33ec4ae1e60c62783be38ec15389",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "21260658_ae168d18",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/AbstractNormalizableAnydata.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-20T09:54:41Z",
+      "side": 1,
+      "message": "implementation redone with proper pointing of interference parameter to anydata node as root, not first child",
+      "parentUuid": "518d6486_8b777c77",
+      "range": {
+        "startLine": 42,
+        "startChar": 22,
+        "endLine": 42,
+        "endChar": 51
+      },
+      "revId": "9d45929c89ad33ec4ae1e60c62783be38ec15389",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
