@@ -174,12 +174,12 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
 
     private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
         final SimpleNodeDataWithSchema<?> newChild;
-        if (schema instanceof LeafSchemaNode) {
-            newChild = new LeafNodeDataWithSchema((LeafSchemaNode) schema);
-        } else if (schema instanceof AnyxmlSchemaNode) {
-            newChild = new AnyXmlNodeDataWithSchema((AnyxmlSchemaNode) schema);
-        } else if (schema instanceof AnydataSchemaNode) {
-            newChild = new AnydataNodeDataWithSchema((AnydataSchemaNode) schema);
+        if (schema instanceof LeafSchemaNode leaf) {
+            newChild = new LeafNodeDataWithSchema(leaf);
+        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
+            newChild = new AnyXmlNodeDataWithSchema(anyxml);
+        } else if (schema instanceof AnydataSchemaNode anydata) {
+            newChild = new AnydataNodeDataWithSchema(anydata);
         } else {
             return null;
         }
@@ -205,9 +205,9 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             final DataSchemaNode choiceCandidate, final DataSchemaNode caseCandidate) {
         if (childNodes != null) {
             for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childNodes) {
-                if (nodeDataWithSchema instanceof ChoiceNodeDataWithSchema
+                if (nodeDataWithSchema instanceof ChoiceNodeDataWithSchema childChoice
                         && nodeDataWithSchema.getSchema().getQName().equals(choiceCandidate.getQName())) {
-                    CaseNodeDataWithSchema casePrevious = ((ChoiceNodeDataWithSchema) nodeDataWithSchema).getCase();
+                    CaseNodeDataWithSchema casePrevious = childChoice.getCase();
 
                     checkArgument(casePrevious.getSchema().getQName().equals(caseCandidate.getQName()),
                         "Data from case %s are specified but other data from case %s were specified earlier."
@@ -224,12 +224,12 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     AbstractNodeDataWithSchema<?> addCompositeChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
         final CompositeNodeDataWithSchema<?> newChild;
 
-        if (schema instanceof ListSchemaNode) {
-            newChild = new ListNodeDataWithSchema((ListSchemaNode) schema);
-        } else if (schema instanceof LeafListSchemaNode) {
-            newChild = new LeafListNodeDataWithSchema((LeafListSchemaNode) schema);
-        } else if (schema instanceof ContainerLike) {
-            newChild = new ContainerNodeDataWithSchema((ContainerLike) schema);
+        if (schema instanceof ListSchemaNode list) {
+            newChild = new ListNodeDataWithSchema(list);
+        } else if (schema instanceof LeafListSchemaNode leafList) {
+            newChild = new LeafListNodeDataWithSchema(leafList);
+        } else if (schema instanceof ContainerLike containerLike) {
+            newChild = new ContainerNodeDataWithSchema(containerLike);
         } else {
             newChild = new CompositeNodeDataWithSchema<>(schema);
         }
