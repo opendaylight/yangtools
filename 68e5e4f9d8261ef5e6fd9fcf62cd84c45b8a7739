@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "85e136b8_c765c71e",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/AnydataNormalizeContentTest.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-21T10:48:17Z",
+      "side": 1,
+      "message": "assertInstanceOf() next time, please.",
+      "range": {
+        "startLine": 75,
+        "startChar": 8,
+        "endLine": 75,
+        "endChar": 68
+      },
+      "revId": "68e5e4f9d8261ef5e6fd9fcf62cd84c45b8a7739",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
