@@ -70,9 +70,8 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
     }
 
     private DataSchemaContextNode<?> fromLocalSchema(final PathArgument child) {
-        if (child instanceof AugmentationIdentifier) {
-            return fromSchemaAndQNameChecked(container, ((AugmentationIdentifier) child).getPossibleChildNames()
-                    .iterator().next());
+        if (child instanceof AugmentationIdentifier augId) {
+            return fromSchemaAndQNameChecked(container, augId.getPossibleChildNames().iterator().next());
         }
         return fromSchemaAndQNameChecked(container, child.getNodeType());
     }
