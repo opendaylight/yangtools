@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamReader;
@@ -71,11 +71,8 @@ class AnydataNormalizeContentTest extends AbstractAnydataTest {
                 XmlParserStream.create(streamWriter, Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
         xmlParser.parse(reader);
 
-        final NormalizedNode normalizedNode = result.getResult();
-        assertTrue(normalizedNode instanceof AnydataNode anydataNode
-                && anydataNode.body() instanceof DOMSourceAnydata);
-        final AnydataNode<?> anydataNode = (AnydataNode<?>) normalizedNode;
-        final DOMSourceAnydata domSourceAnydata = (DOMSourceAnydata) anydataNode.body();
+        final AnydataNode<?> anydataNode = assertInstanceOf(AnydataNode.class, result.getResult());
+        final DOMSourceAnydata domSourceAnydata = assertInstanceOf(DOMSourceAnydata.class, anydataNode.body());
 
         final NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(inference);
         assertNotNull(normalizedAnydata);
