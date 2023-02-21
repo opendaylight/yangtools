@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -144,7 +143,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
 
         final AugmentationSchemaNode augSchema;
         if (choiceCandidate.isAugmenting()) {
-            augSchema = findCorrespondingAugment(getSchema(), choiceCandidate);
+            augSchema = NormalizedNodeSchemaUtils.findCorrespondingAugment(getSchema(), choiceCandidate);
         } else {
             augSchema = null;
         }
@@ -186,7 +185,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
 
         final AugmentationSchemaNode augSchema;
         if (schema.isAugmenting()) {
-            augSchema = findCorrespondingAugment(getSchema(), schema);
+            augSchema = NormalizedNodeSchemaUtils.findCorrespondingAugment(getSchema(), schema);
         } else {
             augSchema = null;
         }
@@ -239,9 +238,8 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
 
     final AbstractNodeDataWithSchema<?> addCompositeChild(final CompositeNodeDataWithSchema<?> newChild,
             final ChildReusePolicy policy) {
-        final AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
-        final Collection<AbstractNodeDataWithSchema<?>> view = augSchema == null ? children
-                : augmentationsToChild.get(augSchema);
+        final var augSchema = NormalizedNodeSchemaUtils.findCorrespondingAugment(getSchema(), newChild.getSchema());
+        final var view = augSchema == null ? children : augmentationsToChild.get(augSchema);
 
         return policy.appendChild(view, newChild);
     }
@@ -275,26 +273,5 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
                 writer.endNode();
             }
         }
-    }
-
-    /**
-     * Tries to find in {@code parent} which is dealed as augmentation target node with QName as {@code child}. If such
-     * node is found then it is returned, else null.
-     *
-     * @param parent parent node
-     * @param child child node
-     * @return augmentation schema
-     */
-    private static AugmentationSchemaNode findCorrespondingAugment(final DataSchemaNode parent,
-            final DataSchemaNode child) {
-        if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
-            for (AugmentationSchemaNode augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
-                DataSchemaNode childInAugmentation = augmentation.dataChildByName(child.getQName());
-                if (childInAugmentation != null) {
-                    return augmentation;
-                }
-            }
-        }
-        return null;
     }
 }
