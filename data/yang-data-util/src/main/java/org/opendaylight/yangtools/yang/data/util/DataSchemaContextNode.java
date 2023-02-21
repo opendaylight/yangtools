@@ -73,7 +73,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     // FIXME: remove this constructor. Once we do, adjust 'enterChild' visibility to package-private
     @Deprecated(forRemoval = true, since = "8.0.2")
     protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
-        this(identifier, schema instanceof DataSchemaNode ? (DataSchemaNode) schema : null);
+        this(identifier, schema instanceof DataSchemaNode dataSchema ? dataSchema : null);
     }
 
     /**
@@ -245,20 +245,20 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     }
 
     static @NonNull DataSchemaContextNode<?> of(final @NonNull DataSchemaNode schema) {
-        if (schema instanceof ContainerLike) {
-            return new ContainerContextNode((ContainerLike) schema);
-        } else if (schema instanceof ListSchemaNode) {
-            return fromListSchemaNode((ListSchemaNode) schema);
-        } else if (schema instanceof LeafSchemaNode) {
-            return new LeafContextNode((LeafSchemaNode) schema);
-        } else if (schema instanceof ChoiceSchemaNode) {
-            return new ChoiceNodeContextNode((ChoiceSchemaNode) schema);
-        } else if (schema instanceof LeafListSchemaNode) {
-            return fromLeafListSchemaNode((LeafListSchemaNode) schema);
-        } else if (schema instanceof AnydataSchemaNode) {
-            return new AnydataContextNode((AnydataSchemaNode) schema);
-        } else if (schema instanceof AnyxmlSchemaNode) {
-            return new AnyXmlContextNode((AnyxmlSchemaNode) schema);
+        if (schema instanceof ContainerLike containerLike) {
+            return new ContainerContextNode(containerLike);
+        } else if (schema instanceof ListSchemaNode list) {
+            return fromListSchemaNode(list);
+        } else if (schema instanceof LeafSchemaNode leaf) {
+            return new LeafContextNode(leaf);
+        } else if (schema instanceof ChoiceSchemaNode choice) {
+            return new ChoiceNodeContextNode(choice);
+        } else if (schema instanceof LeafListSchemaNode leafList) {
+            return fromLeafListSchemaNode(leafList);
+        } else if (schema instanceof AnydataSchemaNode anydata) {
+            return new AnydataContextNode(anydata);
+        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
+            return new AnyXmlContextNode(anyxml);
         } else {
             throw new IllegalStateException("Unhandled schema " + schema);
         }
@@ -266,20 +266,20 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
 
     // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
     static @Nullable DataSchemaContextNode<?> lenientOf(final @Nullable DataSchemaNode schema) {
-        if (schema instanceof ContainerLike) {
-            return new ContainerContextNode((ContainerLike) schema);
-        } else if (schema instanceof ListSchemaNode) {
-            return fromListSchemaNode((ListSchemaNode) schema);
-        } else if (schema instanceof LeafSchemaNode) {
-            return new LeafContextNode((LeafSchemaNode) schema);
-        } else if (schema instanceof ChoiceSchemaNode) {
-            return new ChoiceNodeContextNode((ChoiceSchemaNode) schema);
-        } else if (schema instanceof LeafListSchemaNode) {
-            return fromLeafListSchemaNode((LeafListSchemaNode) schema);
-        } else if (schema instanceof AnydataSchemaNode) {
-            return new AnydataContextNode((AnydataSchemaNode) schema);
-        } else if (schema instanceof AnyxmlSchemaNode) {
-            return new AnyXmlContextNode((AnyxmlSchemaNode) schema);
+        if (schema instanceof ContainerLike containerLike) {
+            return new ContainerContextNode(containerLike);
+        } else if (schema instanceof ListSchemaNode list) {
+            return fromListSchemaNode(list);
+        } else if (schema instanceof LeafSchemaNode leaf) {
+            return new LeafContextNode(leaf);
+        } else if (schema instanceof ChoiceSchemaNode choice) {
+            return new ChoiceNodeContextNode(choice);
+        } else if (schema instanceof LeafListSchemaNode leafList) {
+            return fromLeafListSchemaNode(leafList);
+        } else if (schema instanceof AnydataSchemaNode anydata) {
+            return new AnydataContextNode(anydata);
+        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
+            return new AnyXmlContextNode(anyxml);
         } else {
             return null;
         }
