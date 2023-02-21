@@ -36,11 +36,9 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -68,12 +66,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     DataSchemaContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier);
         this.dataSchemaNode = schema;
-    }
-
-    // FIXME: remove this constructor. Once we do, adjust 'enterChild' visibility to package-private
-    @Deprecated(forRemoval = true, since = "8.0.2")
-    protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
-        this(identifier, schema instanceof DataSchemaNode dataSchema ? dataSchema : null);
     }
 
     /**
@@ -145,10 +137,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         return enterChild(requireNonNull(child), requireNonNull(stack));
     }
 
-    // FIXME: make this method package-private once the protected constructor is gone
-    protected abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull QName child,
-        @NonNull SchemaInferenceStack stack);
-
     /**
      * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
      * specified {@link PathArgument}, adjusting provided {@code stack} with inference steps corresponding to
@@ -165,8 +153,9 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         return enterChild(requireNonNull(child), requireNonNull(stack));
     }
 
-    // FIXME: make this method package-private once the protected constructor is gone
-    protected abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull PathArgument child,
+    abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull QName child, @NonNull SchemaInferenceStack stack);
+
+    abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull PathArgument child,
         @NonNull SchemaInferenceStack stack);
 
     /**
@@ -302,17 +291,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         return lenientOf(child);
     }
 
-    /**
-     * Get a {@link DataSchemaContextNode} for a particular {@link DataSchemaNode}.
-     *
-     * @param potential Backing DataSchemaNode
-     * @return A {@link DataSchemaContextNode}, or null if the input is {@code null} or of unhandled type
-     */
-    @Deprecated(forRemoval = true, since = "8.0.2")
-    public static @Nullable DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
-        return lenientOf(potential);
-    }
-
     private static @NonNull DataSchemaContextNode<?> fromListSchemaNode(final ListSchemaNode potential) {
         var keyDefinition = potential.getKeyDefinition();
         if (keyDefinition.isEmpty()) {
@@ -329,19 +307,5 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
             return new OrderedLeafListMixinContextNode(potential);
         }
         return new UnorderedLeafListMixinContextNode(potential);
-    }
-
-    /**
-     * Return a DataSchemaContextNode corresponding to specified {@link EffectiveModelContext}.
-     *
-     * @param ctx EffectiveModelContext
-     * @return A DataSchemaContextNode
-     * @throws NullPointerException if {@code ctx} is null
-     * @deprecated Use {@link DataSchemaContextTree#from(EffectiveModelContext)} and
-     *             {@link DataSchemaContextTree#getRoot()} instead.
-     */
-    @Deprecated(forRemoval = true, since = "8.0.2")
-    public static @NonNull DataSchemaContextNode<?> from(final EffectiveModelContext ctx) {
-        return new ContainerContextNode(ctx);
     }
 }
