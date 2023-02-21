@@ -29,8 +29,8 @@ public final class NormalizedNodeSchemaUtils {
     }
 
     public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild child) {
-        if (child instanceof AugmentationNode) {
-            return detectCase(schema, (AugmentationNode) child);
+        if (child instanceof AugmentationNode augment) {
+            return detectCase(schema, augment);
         }
 
         final QName childId = child.getIdentifier().getNodeType();
@@ -79,13 +79,11 @@ public final class NormalizedNodeSchemaUtils {
      */
     public static AugmentationSchemaNode findCorrespondingAugment(final DataSchemaNode parent,
             final DataSchemaNode child) {
-        if (!(parent instanceof AugmentationTarget) || parent instanceof ChoiceSchemaNode) {
-            return null;
-        }
-
-        for (final AugmentationSchemaNode augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
-            if (augmentation.dataChildByName(child.getQName()) != null) {
-                return augmentation;
+        if (parent instanceof AugmentationTarget target && !(parent instanceof ChoiceSchemaNode)) {
+            for (final AugmentationSchemaNode augmentation : target.getAvailableAugmentations()) {
+                if (augmentation.dataChildByName(child.getQName()) != null) {
+                    return augmentation;
+                }
             }
         }
         return null;
