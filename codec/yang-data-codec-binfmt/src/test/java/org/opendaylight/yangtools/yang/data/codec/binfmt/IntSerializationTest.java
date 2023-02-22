@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import java.util.Collections;
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -18,8 +18,9 @@ import org.junit.runners.Parameterized.Parameters;
 public class IntSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 97, 96, 98, 96, 98, 100, 96, 100, 104 });
+        return Arrays.asList(
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 97, 96, 98, 96, 98, 100, 96, 100, 104 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 97, 96, 98, 96, 98, 100, 96, 100, 104 });
     }
 
     @Parameter(1)
