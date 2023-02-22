@@ -365,40 +365,35 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
     @Override
     public final QName readQName() throws IOException {
         final byte type = input.readByte();
-        switch (type) {
-            case MagnesiumValue.QNAME:
-                return decodeQName();
-            case MagnesiumValue.QNAME_REF_1B:
-                return decodeQNameRef1();
-            case MagnesiumValue.QNAME_REF_2B:
-                return decodeQNameRef2();
-            case MagnesiumValue.QNAME_REF_4B:
-                return decodeQNameRef4();
-            default:
-                throw new InvalidNormalizedNodeStreamException("Unexpected QName type " + type);
-        }
+        return switch (type) {
+            case MagnesiumValue.QNAME -> decodeQName();
+            case MagnesiumValue.QNAME_REF_1B -> decodeQNameRef1();
+            case MagnesiumValue.QNAME_REF_2B -> decodeQNameRef2();
+            case MagnesiumValue.QNAME_REF_4B -> decodeQNameRef4();
+            default -> throw new InvalidNormalizedNodeStreamException("Unexpected QName type " + type);
+        };
     }
 
     @Override
     public final PathArgument readPathArgument() throws IOException {
         final byte header = input.readByte();
-        switch (header & MagnesiumPathArgument.TYPE_MASK) {
-            case MagnesiumPathArgument.AUGMENTATION_IDENTIFIER:
-                return readAugmentationIdentifier(header);
-            case MagnesiumPathArgument.NODE_IDENTIFIER:
+        return switch (header & MagnesiumPathArgument.TYPE_MASK) {
+            case MagnesiumPathArgument.AUGMENTATION_IDENTIFIER -> readAugmentationIdentifier(header);
+            case MagnesiumPathArgument.NODE_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
-                return readNodeIdentifier(header);
-            case MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES:
-                return readNodeIdentifierWithPredicates(header);
-            case MagnesiumPathArgument.NODE_WITH_VALUE:
+                yield readNodeIdentifier(header);
+            }
+            case MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES -> readNodeIdentifierWithPredicates(header);
+            case MagnesiumPathArgument.NODE_WITH_VALUE -> {
                 verifyPathIdentifierOnly(header);
-                return readNodeWithValue(header);
-            case MagnesiumPathArgument.MOUNTPOINT_IDENTIFIER:
+                yield readNodeWithValue(header);
+            }
+            case MagnesiumPathArgument.MOUNTPOINT_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
-                return MountPointIdentifier.create(readNodeIdentifier(header).getNodeType());
-            default:
-                throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument header " + header);
-        }
+                yield MountPointIdentifier.create(readNodeIdentifier(header).getNodeType());
+            }
+            default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument header " + header);
+        };
     }
 
     private AugmentationIdentifier readAugmentationIdentifier() throws IOException {
@@ -407,21 +402,17 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         return result;
     }
 
-    private AugmentationIdentifier readAugmentationIdentifier(final byte header) throws IOException {
+    private @NonNull AugmentationIdentifier readAugmentationIdentifier(final byte header) throws IOException {
         final byte count = mask(header, MagnesiumPathArgument.AID_COUNT_MASK);
-        switch (count) {
-            case MagnesiumPathArgument.AID_COUNT_1B:
-                return readAugmentationIdentifier(input.readUnsignedByte());
-            case MagnesiumPathArgument.AID_COUNT_2B:
-                return readAugmentationIdentifier(input.readUnsignedShort());
-            case MagnesiumPathArgument.AID_COUNT_4B:
-                return readAugmentationIdentifier(input.readInt());
-            default:
-                return readAugmentationIdentifier(rshift(count, MagnesiumPathArgument.AID_COUNT_SHIFT));
-        }
+        return switch (count) {
+            case MagnesiumPathArgument.AID_COUNT_1B -> readAugmentationIdentifier(input.readUnsignedByte());
+            case MagnesiumPathArgument.AID_COUNT_2B -> readAugmentationIdentifier(input.readUnsignedShort());
+            case MagnesiumPathArgument.AID_COUNT_4B -> readAugmentationIdentifier(input.readInt());
+            default -> readAugmentationIdentifier(rshift(count, MagnesiumPathArgument.AID_COUNT_SHIFT));
+        };
     }
 
-    private AugmentationIdentifier readAugmentationIdentifier(final int size) throws IOException {
+    private @NonNull AugmentationIdentifier readAugmentationIdentifier(final int size) throws IOException {
         if (size > 0) {
             final List<QName> qnames = new ArrayList<>(size);
             for (int i = 0; i < size; ++i) {
@@ -435,40 +426,32 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         }
     }
 
-    private NodeIdentifier readNodeIdentifier() throws IOException {
+    private @NonNull NodeIdentifier readNodeIdentifier() throws IOException {
         return decodeNodeIdentifier();
     }
 
-    private NodeIdentifier readNodeIdentifier(final byte header) throws IOException {
-        switch (header & MagnesiumPathArgument.QNAME_MASK) {
-            case MagnesiumPathArgument.QNAME_DEF:
-                return decodeNodeIdentifier();
-            case MagnesiumPathArgument.QNAME_REF_1B:
-                return decodeNodeIdentifierRef1();
-            case MagnesiumPathArgument.QNAME_REF_2B:
-                return decodeNodeIdentifierRef2();
-            case MagnesiumPathArgument.QNAME_REF_4B:
-                return decodeNodeIdentifierRef4();
-            default:
-                throw new InvalidNormalizedNodeStreamException("Invalid QName coding in " + header);
-        }
+    private @NonNull NodeIdentifier readNodeIdentifier(final byte header) throws IOException {
+        return switch (header & MagnesiumPathArgument.QNAME_MASK) {
+            case MagnesiumPathArgument.QNAME_DEF -> decodeNodeIdentifier();
+            case MagnesiumPathArgument.QNAME_REF_1B -> decodeNodeIdentifierRef1();
+            case MagnesiumPathArgument.QNAME_REF_2B -> decodeNodeIdentifierRef2();
+            case MagnesiumPathArgument.QNAME_REF_4B -> decodeNodeIdentifierRef4();
+            default -> throw new InvalidNormalizedNodeStreamException("Invalid QName coding in " + header);
+        };
     }
 
-    private NodeIdentifierWithPredicates readNodeIdentifierWithPredicates(final byte header) throws IOException {
+    private @NonNull  NodeIdentifierWithPredicates readNodeIdentifierWithPredicates(final byte header)
+            throws IOException {
         final QName qname = readNodeIdentifier(header).getNodeType();
-        switch (mask(header, MagnesiumPathArgument.SIZE_MASK)) {
-            case MagnesiumPathArgument.SIZE_1B:
-                return readNodeIdentifierWithPredicates(qname, input.readUnsignedByte());
-            case MagnesiumPathArgument.SIZE_2B:
-                return readNodeIdentifierWithPredicates(qname, input.readUnsignedShort());
-            case MagnesiumPathArgument.SIZE_4B:
-                return readNodeIdentifierWithPredicates(qname, input.readInt());
-            default:
-                return readNodeIdentifierWithPredicates(qname, rshift(header, MagnesiumPathArgument.SIZE_SHIFT));
-        }
+        return switch (mask(header, MagnesiumPathArgument.SIZE_MASK)) {
+            case MagnesiumPathArgument.SIZE_1B -> readNodeIdentifierWithPredicates(qname, input.readUnsignedByte());
+            case MagnesiumPathArgument.SIZE_2B -> readNodeIdentifierWithPredicates(qname, input.readUnsignedShort());
+            case MagnesiumPathArgument.SIZE_4B -> readNodeIdentifierWithPredicates(qname, input.readInt());
+            default -> readNodeIdentifierWithPredicates(qname, rshift(header, MagnesiumPathArgument.SIZE_SHIFT));
+        };
     }
 
-    private NodeIdentifierWithPredicates readNodeIdentifierWithPredicates(final QName qname, final int size)
+    private @NonNull NodeIdentifierWithPredicates readNodeIdentifierWithPredicates(final QName qname, final int size)
             throws IOException {
         if (size == 1) {
             return NodeIdentifierWithPredicates.of(qname, readQName(), readLeafValue());
@@ -485,7 +468,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         }
     }
 
-    private NodeWithValue<?> readNodeWithValue(final byte header) throws IOException {
+    private @NonNull NodeWithValue<?> readNodeWithValue(final byte header) throws IOException {
         final QName qname = readNodeIdentifier(header).getNodeType();
         return new NodeWithValue<>(qname, readLeafValue());
     }
@@ -604,20 +587,14 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
 
     private @NonNull String readString() throws IOException {
         final byte type = input.readByte();
-        switch (type) {
-            case MagnesiumValue.STRING_EMPTY:
-                return "";
-            case MagnesiumValue.STRING_UTF:
-                return input.readUTF();
-            case MagnesiumValue.STRING_2B:
-                return readString2();
-            case MagnesiumValue.STRING_4B:
-                return readString4();
-            case MagnesiumValue.STRING_CHARS:
-                return readCharsString();
-            default:
-                throw new InvalidNormalizedNodeStreamException("Unexpected String type " + type);
-        }
+        return switch (type) {
+            case MagnesiumValue.STRING_EMPTY -> "";
+            case MagnesiumValue.STRING_UTF -> input.readUTF();
+            case MagnesiumValue.STRING_2B -> readString2();
+            case MagnesiumValue.STRING_4B -> readString4();
+            case MagnesiumValue.STRING_CHARS -> readCharsString();
+            default -> throw new InvalidNormalizedNodeStreamException("Unexpected String type " + type);
+        };
     }
 
     private @NonNull String readString2() throws IOException {
