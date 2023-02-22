@@ -170,7 +170,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             for (Method method : properties.keySet()) {
                 LOG.trace("Generating for fixed method {}", method);
                 final String methodName = method.getName();
-                final TypeDescription retType = TypeDescription.ForLoadedType.of(method.getReturnType());
+                final TypeDescription retType = ForLoadedType.of(method.getReturnType());
                 tmp = tmp.defineMethod(methodName, retType, PUB_FINAL).intercept(
                     new SupplierGetterMethodImplementation(methodName, retType));
             }
@@ -205,7 +205,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             for (Method method : simpleProperties.keySet()) {
                 LOG.trace("Generating for simple method {}", method);
                 final String methodName = method.getName();
-                final TypeDescription retType = TypeDescription.ForLoadedType.of(method.getReturnType());
+                final TypeDescription retType = ForLoadedType.of(method.getReturnType());
                 tmp = tmp.defineMethod(methodName, retType, PUB_FINAL).intercept(
                     new SimpleGetterMethodImplementation(methodName, retType));
             }
@@ -214,7 +214,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
                 final Method method = info.getterMethod();
                 LOG.trace("Generating for structured method {}", method);
                 final String methodName = method.getName();
-                final TypeDescription retType = TypeDescription.ForLoadedType.of(method.getReturnType());
+                final TypeDescription retType = ForLoadedType.of(method.getReturnType());
                 tmp = tmp.defineMethod(methodName, retType, PUB_FINAL).intercept(
                         new StructuredGetterMethodImplementation(methodName, retType, entry.getKey()));
 
@@ -290,7 +290,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         if (keyMethod != null) {
             LOG.trace("Generating for key {}", keyMethod);
             final String methodName = keyMethod.getName();
-            final TypeDescription retType = TypeDescription.ForLoadedType.of(keyMethod.getReturnType());
+            final TypeDescription retType = ForLoadedType.of(keyMethod.getReturnType());
             builder = builder.defineMethod(methodName, retType, PUB_FINAL).intercept(
                 new KeyMethodImplementation(methodName, retType));
         }
@@ -351,7 +351,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private abstract static class AbstractCachedMethodImplementation extends AbstractMethodImplementation {
         private static final Generic BB_HANDLE = TypeDefinition.Sort.describe(VarHandle.class);
         private static final Generic BB_OBJECT = TypeDefinition.Sort.describe(Object.class);
-        private static final StackManipulation OBJECT_CLASS = ClassConstant.of(TypeDescription.OBJECT);
+        private static final StackManipulation OBJECT_CLASS = ClassConstant.of(ForLoadedType.of(Object.class));
         private static final StackManipulation LOOKUP = invokeMethod(MethodHandles.class, "lookup");
         private static final StackManipulation FIND_VAR_HANDLE = invokeMethod(Lookup.class,
             "findVarHandle", Class.class, String.class, Class.class);
