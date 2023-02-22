@@ -331,16 +331,12 @@ class InterfaceTemplate extends BaseTemplate {
                 if (thisObj == obj) {
                     return true;
                 }
-                final «type.fullyQualifiedName» other = «CODEHELPERS.importedName».checkCast(«type.fullyQualifiedName».class, obj);
-                if (other == null) {
-                    return false;
-                }
-                «FOR property : ByTypeMemberComparator.sort(typeAnalysis.value)»
-                    if (!«property.importedUtilClass».equals(thisObj.«property.getterName»(), other.«property.getterName»())) {
-                        return false;
-                    }
-                «ENDFOR»
-                return «IF augmentable»thisObj.augmentations().equals(other.augmentations())«ELSE»true«ENDIF»;
+                final var other = «CODEHELPERS.importedName».checkCast(«type.fullyQualifiedName».class, obj);
+                return other != null
+                    «FOR property : ByTypeMemberComparator.sort(typeAnalysis.value)»
+                        && «property.importedUtilClass».equals(thisObj.«property.getterName»(), other.«property.getterName»())
+                    «ENDFOR»
+                    «IF augmentable»&& thisObj.augmentations().equals(other.augmentations())«ENDIF»;
             }
         «ENDIF»
     '''
