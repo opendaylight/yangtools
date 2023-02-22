@@ -38,6 +38,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8040-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-export</artifactId>
         </dependency>
         <dependency>
