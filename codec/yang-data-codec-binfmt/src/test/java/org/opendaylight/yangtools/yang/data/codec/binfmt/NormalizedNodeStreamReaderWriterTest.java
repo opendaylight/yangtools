@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,8 +58,9 @@ import org.xml.sax.InputSource;
 public class NormalizedNodeStreamReaderWriterTest {
     @Parameters(name = "{0} {1}")
     public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 1_049_618, 2_289_103, 139, 825, 103, 229, 99 });
+        return List.of(
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 1_049_618, 2_289_103, 139, 825, 103, 229, 99 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 1_049_587, 2_289_103, 139, 794, 103, 229, 99 });
     }
 
     @Parameter(0)
