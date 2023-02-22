@@ -11,6 +11,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameAwareDataInput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -64,11 +65,35 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
         }
     }
 
-    YangInstanceIdentifier readYangInstanceIdentifier() throws IOException;
+    /**
+     * Read a {@link YangInstanceIdentifier} from the reader.
+     *
+     * @return A YangInstanceIdentifier
+     * @throws IOException if an error occurs
+     */
+    @NonNull YangInstanceIdentifier readYangInstanceIdentifier() throws IOException;
 
-    PathArgument readPathArgument() throws IOException;
+    /**
+     * Read a {@link PathArgument} from the reader.
+     *
+     * @return A PathArgument
+     * @throws IOException if an error occurs
+     */
+    @NonNull PathArgument readPathArgument() throws IOException;
 
-    SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException;
+    /**
+     * Read a {@link PathArgument} from the reader, or {@code null} if the result would have been an
+     * AugmentationIdentifier.
+     *
+     * @return A PathArgument, or {@code null} if the identifier represented a AugmentationIdentifier
+     * @throws IOException if an error occurs
+     */
+    @Deprecated(since = "11.0.0")
+    default @Nullable PathArgument readLegacyPathArgument() throws IOException {
+        return readPathArgument();
+    }
+
+    @NonNull SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException;
 
     /**
      * Return the version of the underlying input stream.
@@ -76,7 +101,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @return Stream version
      * @throws IOException if the version cannot be ascertained
      */
-    NormalizedNodeStreamVersion getVersion() throws IOException;
+    @NonNull NormalizedNodeStreamVersion getVersion() throws IOException;
 
     default Optional<NormalizedNode> readOptionalNormalizedNode() throws IOException {
         return readBoolean() ? Optional.of(readNormalizedNode()) : Optional.empty();
