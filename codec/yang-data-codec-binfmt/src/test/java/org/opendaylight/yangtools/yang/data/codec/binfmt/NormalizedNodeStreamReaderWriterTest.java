@@ -86,6 +86,8 @@ public class NormalizedNodeStreamReaderWriterTest {
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, Unsigned.UINT64,
                 1_049_618, 2_289_103, 139,   825, 103, 229,  99 },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  Unsigned.UINT64,
+                1_049_618, 2_289_103, 139,   825, 103, 229,  99 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM,  Unsigned.UINT64,
                 1_049_618, 2_289_103, 139,   825, 103, 229,  99 });
     }
 

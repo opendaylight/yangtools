@@ -37,6 +37,9 @@ public class YiidSerializationTest extends AbstractSerializationTest {
             },
             new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,
                 96,   98, 158, 359, 164, 372,  612, 2388,   131_684 ,  719_700,   916_815
+            },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM,
+                96,   98, 158, 359, 164, 372,  612, 2388,   131_684 ,  719_700,   916_815
             });
     }
 

@@ -27,7 +27,8 @@ public class BytesSerializationTest extends AbstractSerializationTest {
             new Object[] { NormalizedNodeStreamVersion.LITHIUM,    100, 101, 228, 484, 66020 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   102, 103, 230, 486, 66022 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1,  96,  97, 225, 482, 66020 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,   96,  97, 225, 482, 66020 });
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,   96,  97, 225, 482, 66020 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM,   96,  97, 225, 482, 66020 });
     }
 
     @Parameter(1)

@@ -23,7 +23,8 @@ public class UintSerializationTest extends AbstractSerializationTest {
     public static Iterable<Object[]> data() {
         return Arrays.asList(
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM });
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM });
     }
 
     @Test

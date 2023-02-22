@@ -22,7 +22,8 @@ public class BooleanSerializationTest extends AbstractSerializationTest {
             new Object[] { NormalizedNodeStreamVersion.LITHIUM,    97 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   99 },
             new Object[] { NormalizedNodeStreamVersion.SODIUM_SR1, 96 },
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  96 });
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,  96 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM,  96 });
     }
 
     @Parameter(1)
