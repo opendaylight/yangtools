@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -281,15 +282,15 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
         return children;
     }
 
-    abstract AugmentationIdentifier readAugmentationIdentifier() throws IOException;
+    abstract @NonNull AugmentationIdentifier readAugmentationIdentifier() throws IOException;
 
-    abstract NodeIdentifier readNodeIdentifier() throws IOException;
+    abstract @NonNull NodeIdentifier readNodeIdentifier() throws IOException;
 
-    final AugmentationIdentifier defaultReadAugmentationIdentifier() throws IOException {
+    final @NonNull AugmentationIdentifier defaultReadAugmentationIdentifier() throws IOException {
         return AugmentationIdentifier.create(readQNameSet());
     }
 
-    private NodeIdentifierWithPredicates readNormalizedNodeWithPredicates() throws IOException {
+    private @NonNull NodeIdentifierWithPredicates readNormalizedNodeWithPredicates() throws IOException {
         final QName qname = readQName();
         final int count = input.readInt();
         switch (count) {
@@ -353,7 +354,7 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
         return readYangInstanceIdentifierInternal();
     }
 
-    private YangInstanceIdentifier readYangInstanceIdentifierInternal() throws IOException {
+    private @NonNull YangInstanceIdentifier readYangInstanceIdentifierInternal() throws IOException {
         int size = input.readInt();
         final Builder<PathArgument> pathArguments = ImmutableList.builderWithExpectedSize(size);
         for (int i = 0; i < size; i++) {
@@ -375,14 +376,12 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
     public final PathArgument readPathArgument() throws IOException {
         // read Type
         int type = input.readByte();
-        return  switch (type) {
+        return switch (type) {
             case LithiumPathArgument.AUGMENTATION_IDENTIFIER -> readAugmentationIdentifier();
             case LithiumPathArgument.NODE_IDENTIFIER -> readNodeIdentifier();
             case LithiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES -> readNormalizedNodeWithPredicates();
             case LithiumPathArgument.NODE_IDENTIFIER_WITH_VALUE -> new NodeWithValue<>(readQName(), readObject());
-            default ->
-                // FIXME: throw hard error
-                null;
+            default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument type " + type);
         };
     }
 }
