@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +26,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 public class BitsSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 100, 226, 1_536, 456_764, 654_045 });
+        return Arrays.asList(
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 100, 226, 1_536, 456_764, 654_045 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 100, 226, 1_536, 456_764, 654_045 });
     }
 
     @Parameter(1)
