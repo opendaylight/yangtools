@@ -53,13 +53,13 @@ public final class CodeHelpers {
     }
 
     /**
-     * Return value and check whether specified value is null and if so throws exception. This method supports
+     * Return value and check whether specified value is {@code null} and if so throws exception. This method supports
      * require default getter methods.
      *
      * @param value Value itself
      * @param name Name of the value
      * @return Non-null value
-     * @throws NoSuchElementException if value is null
+     * @throws NoSuchElementException if value is {@code null}
      */
     public static <T> @NonNull T require(final @Nullable T value, final @NonNull String name) {
         if (value == null) {
@@ -74,7 +74,7 @@ public final class CodeHelpers {
      * @param value Value itself
      * @param name Name of the value
      * @return Non-null value
-     * @throws NullPointerException if value is null
+     * @throws NullPointerException if value is {@code null}
      */
     public static <T> @NonNull T requireKeyProp(final @Nullable T value, final @NonNull String name) {
         if (value == null) {
@@ -87,7 +87,7 @@ public final class CodeHelpers {
      * A shortcut for {@code Objects.requireNonNull(value, "Supplied value may not be null")}.
      *
      * @param value Value itself
-     * @throws NullPointerException if value is null
+     * @throws NullPointerException if value is {@code null}
      */
     public static void requireValue(final @Nullable Object value) {
         requireNonNull(value, "Supplied value may not be null");
@@ -108,12 +108,12 @@ public final class CodeHelpers {
     }
 
     /**
-     * Append a named value to a ToStringHelper. If the value is null, this method does nothing.
+     * Append a named value to a ToStringHelper. If the value is {@code null}, this method does nothing.
      *
      * @param helper Helper to append to
      * @param name Name of the value
      * @param value Value to append
-     * @throws NullPointerException if the name or helper is null
+     * @throws NullPointerException if the name or helper is {@code null}
      */
     public static void appendValue(final ToStringHelper helper, final @NonNull String name,
             final @Nullable Object value) {
@@ -123,12 +123,12 @@ public final class CodeHelpers {
     }
 
     /**
-     * Append a named value to a ToStringHelper. If the value is null, this method does nothing.
+     * Append a named value to a ToStringHelper. If the value is {@code null}, this method does nothing.
      *
      * @param helper Helper to append to
      * @param name Name of the value
      * @param value Value to append
-     * @throws NullPointerException if the name or helper is null
+     * @throws NullPointerException if the name or helper is {@code null}
      */
     public static void appendValue(final ToStringHelper helper, final String name, final byte[] value) {
         if (value != null) {
@@ -137,13 +137,13 @@ public final class CodeHelpers {
     }
 
     /**
-     * Append augmentation map of an Augmentable to a ToStringHelper. If augmentations are null or empt, this method
-     * does nothing.
+     * Append augmentation map of an Augmentable to a ToStringHelper. If augmentations are {@code null} or empty, this
+     * method does nothing.
      *
      * @param helper Helper to append to
      * @param name Name of the augmentation value
      * @param augmentable Augmentable object to
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {@code null}
      */
     public static void appendAugmentations(final ToStringHelper helper, final String name,
             final Augmentable<?> augmentable) {
@@ -159,7 +159,7 @@ public final class CodeHelpers {
      *
      * @param patterns Patterns to compile
      * @return Compiled patterns in an array
-     * @throws NullPointerException if the list or any of its elements is null
+     * @throws NullPointerException if the list or any of its elements is {@code null}
      * @throws VerifyException if the list has fewer than two elements
      */
     public static Pattern @NonNull[] compilePatterns(final @NonNull List<String> patterns) {
@@ -180,7 +180,7 @@ public final class CodeHelpers {
      * @param pattern Enforcement pattern
      * @param regex Source regular expression, as defined in YANG model
      * @throws IllegalArgumentException if the value does not match the pattern
-     * @throws NullPointerException if any of the arguments are null
+     * @throws NullPointerException if any of the arguments is {@code null}
      */
     public static void checkPattern(final String value, final Pattern pattern, final String regex) {
         if (!pattern.matcher(value).matches()) {
@@ -199,7 +199,7 @@ public final class CodeHelpers {
      * @param patterns Enforcement patterns
      * @param regexes Source regular expression, as defined in YANG model. Size and order must match patterns.
      * @throws IllegalArgumentException if the value does not match the pattern
-     * @throws NullPointerException if any of the arguments are null
+     * @throws NullPointerException if any of the arguments is {@code null}
      * @throws VerifyException if the size of patterns and regexes does not match
      */
     public static void checkPattern(final String value, final Pattern[] patterns, final String[] regexes) {
@@ -290,11 +290,11 @@ public final class CodeHelpers {
     }
 
     /**
-     * Check whether specified List is null and if so return an immutable list instead. This method supports
+     * Check whether specified List is {@code null} and if so return an immutable list instead. This method supports
      * non-null default getter methods.
      *
      * @param <T> list element type
-     * @param input input list, may be null
+     * @param input input list, may be {@code null}
      * @return Input list or an empty list.
      */
     public static <T> @NonNull List<T> nonnull(final @Nullable List<T> input) {
@@ -302,12 +302,12 @@ public final class CodeHelpers {
     }
 
     /**
-     * Check whether specified Map is null and if so return an immutable map instead. This method supports
+     * Check whether specified Map is {@code null} and if so return an immutable map instead. This method supports
      * non-null default getter methods.
      *
      * @param <K> key type
      * @param <V> value type
-     * @param input input map, may be null
+     * @param input input map, may be {@code null}
      * @return Input map or an empty map.
      */
     public static <K, V> @NonNull Map<K, V> nonnull(final @Nullable Map<K, V> input) {
@@ -315,34 +315,34 @@ public final class CodeHelpers {
     }
 
     /**
-     * Check whether specified List is empty and if so return null, otherwise return input list. This method supports
-     * Builder/implementation list handover.
+     * Check whether specified List is empty and if so return {@code null}, otherwise return input list. This method
+     * supports Builder/implementation list handover.
      *
      * @param <T> list element type
-     * @param input input list, may be null
-     * @return Input list or null.
+     * @param input input list, may be {@code null}
+     * @return Input list or {@code null}.
      */
     public static <T> @Nullable List<T> emptyToNull(final @Nullable List<T> input) {
         return input != null && input.isEmpty() ? null : input;
     }
 
     /**
-     * Check whether specified Map is empty and if so return null, otherwise return input map. This method supports
-     * Builder/implementation list handover.
+     * Check whether specified Map is empty and if so return {@code null}, otherwise return input map. This method
+     * supports Builder/implementation list handover.
      *
      * @param <K> key type
      * @param <V> value type
-     * @param input input map, may be null
-     * @return Input map or null.
+     * @param input input map, may be {@code null}
+     * @return Input map or {@code null}.
      */
     public static <K, V> @Nullable Map<K, V> emptyToNull(final @Nullable Map<K, V> input) {
         return input != null && input.isEmpty() ? null : input;
     }
 
     /**
-     * Return hash code of a single-property wrapper class. Since the wrapper is not null, we really want to discern
-     * this object being present, hence {@link Objects#hashCode()} is not really useful we would end up with {@code 0}
-     * for both non-present and present-with-null objects.
+     * Return hash code of a single-property wrapper class. Since the wrapper is not {@code null}, we really want to
+     * discern this object being present, hence {@link Objects#hashCode()} is not really useful we would end up with
+     * {@code 0} for both non-present and present-with-null objects.
      *
      * @param obj Internal object to hash
      * @return Wrapper object hash code
@@ -352,9 +352,9 @@ public final class CodeHelpers {
     }
 
     /**
-     * Return hash code of a single-property wrapper class. Since the wrapper is not null, we really want to discern
-     * this object being present, hence {@link Arrays#hashCode()} is not really useful we would end up with {@code 0}
-     * for both non-present and present-with-null objects.
+     * Return hash code of a single-property wrapper class. Since the wrapper is not {@code null}, we really want to
+     * discern this object being present, hence {@link Arrays#hashCode()} is not really useful we would end up with
+     * {@code 0} for both non-present and present-with-null objects.
      *
      * @param obj Internal object to hash
      * @return Wrapper object hash code
@@ -373,7 +373,7 @@ public final class CodeHelpers {
      *     return result;
      *   </code>
      * </pre>
-     * when hashCode is returned as 0, such as due to obj being null or its hashCode being 0.
+     * when hashCode is returned as 0, such as due to obj being {@code null} or its hashCode being 0.
      *
      * @param hash Wrapped object hash
      * @return Wrapper object hash
@@ -386,10 +386,10 @@ public final class CodeHelpers {
      * Check that the specified {@link EnumTypeObject} object is not {@code null}. This method is meant to be used with
      * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
      *
-     * @param obj enumeration object, possibly null
+     * @param obj enumeration object, possibly {@code null}
      * @param name User-supplied enumeration name
      * @return Enumeration object
-     * @throws IllegalArgumentException if {@code obj} is null
+     * @throws IllegalArgumentException if {@code obj} is {@code null}
      */
     public static <T extends EnumTypeObject> @NonNull T checkEnum(final @Nullable T obj, final String name) {
         if (obj == null) {
@@ -402,10 +402,10 @@ public final class CodeHelpers {
      * Check that the specified {@link EnumTypeObject} object is not {@code null}. This method is meant to be used with
      * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
      *
-     * @param obj enumeration object, possibly null
+     * @param obj enumeration object, possibly {@code null}
      * @param value User-supplied enumeration value
      * @return Enumeration object
-     * @throws IllegalArgumentException if {@code obj} is null
+     * @throws IllegalArgumentException if {@code obj} is {@code null}
      */
     public static <T extends EnumTypeObject> @NonNull T checkEnum(final @Nullable T obj, final int value) {
         if (obj == null) {
@@ -418,9 +418,9 @@ public final class CodeHelpers {
      * Utility method for checking whether a target object is a compatible {@link BindingContract}.
      *
      * @param requiredClass Required BindingContract class
-     * @param obj Object to check, may be null
-     * @return Object cast to required class, if its implemented class matches requirement, null otherwise
-     * @throws NullPointerException if {@code requiredClass} is null
+     * @param obj Object to check, may be {@code null}
+     * @return Object cast to required class, if its implemented class matches requirement, {@code null} otherwise
+     * @throws NullPointerException if {@code requiredClass} is {@code null}
      */
     public static <T extends BindingContract<?>> @Nullable T checkCast(final @NonNull Class<T> requiredClass,
             final @Nullable Object obj) {
@@ -433,10 +433,10 @@ public final class CodeHelpers {
      *
      * @param requiredClass Required class
      * @param fieldName name of the field being filled
-     * @param obj Object to check, may be null
-     * @return Object cast to required class, if its class matches requirement, or null
+     * @param obj Object to check, may be {@code null}
+     * @return Object cast to required class, if its class matches requirement, or {@code null}
      * @throws IllegalArgumentException if {@code obj} is not an instance of {@code requiredClass}
-     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is {@code null}
      */
     public static <T> @Nullable T checkFieldCast(final @NonNull Class<T> requiredClass, final @NonNull String fieldName,
             final @Nullable Object obj) {
@@ -455,7 +455,7 @@ public final class CodeHelpers {
      * @param list List, which items should be checked
      * @return Type-checked List
      * @throws IllegalArgumentException if a list item is not instance of {@code requiredClass}
-     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is {@code null}
      */
     @SuppressWarnings("unchecked")
     public static <T> @Nullable List<T> checkListFieldCast(final @NonNull Class<?> requiredClass,
@@ -472,7 +472,7 @@ public final class CodeHelpers {
      * @param set Set, which items should be checked
      * @return Type-checked Set
      * @throws IllegalArgumentException if a set item is not instance of {@code requiredItemClass}
-     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is null
+     * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is {@code null}
      */
     @SuppressWarnings("unchecked")
     public static <T> @Nullable Set<T> checkSetFieldCast(final @NonNull Class<?> requiredClass,

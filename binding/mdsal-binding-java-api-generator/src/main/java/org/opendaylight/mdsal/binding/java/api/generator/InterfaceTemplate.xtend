@@ -296,7 +296,7 @@ class InterfaceTemplate extends BaseTemplate {
              *
              * @param obj Object for which to generate hashCode() result.
              * @return Hash code value of data modeled by this interface.
-             * @throws «NPE.importedName» if {@code obj} is null
+             * @throws «NPE.importedName» if {@code obj} is {@code null}
              */
             static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedNonNull» obj) {
                 final int prime = 31;
@@ -325,7 +325,7 @@ class InterfaceTemplate extends BaseTemplate {
              * @param thisObj Object acting as the receiver of equals invocation
              * @param obj Object acting as argument to equals invocation
              * @return True if thisObj and obj are considered equal
-             * @throws «NPE.importedName» if {@code thisObj} is null
+             * @throws «NPE.importedName» if {@code thisObj} is {@code null}
              */
             static boolean «BINDING_EQUALS_NAME»(final «type.fullyQualifiedNonNull» thisObj, final «Types.objectType().importedName» obj) {
                 if (thisObj == obj) {
@@ -354,7 +354,7 @@ class InterfaceTemplate extends BaseTemplate {
          *
          * @param obj Object for which to generate toString() result.
          * @return {@link «STRING.importedName»} value of data modeled by this interface.
-         * @throws «NPE.importedName» if {@code obj} is null
+         * @throws «NPE.importedName» if {@code obj} is {@code null}
          */
         static «STRING.importedName» «BINDING_TO_STRING_NAME»(final «type.fullyQualifiedNonNull» obj) {
             final var helper = «MOREOBJECTS.importedName».toStringHelper("«type.name»");
