@@ -6,7 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 module org.opendaylight.mdsal.binding.spec.util {
-    exports org.opendaylight.mdsal.binding.spec.naming;
     exports org.opendaylight.mdsal.binding.spec.reflect;
     exports org.opendaylight.mdsal.binding.spec.util;
 

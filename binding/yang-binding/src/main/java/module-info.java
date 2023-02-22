@@ -8,6 +8,7 @@
 module org.opendaylight.yangtools.yang.binding {
     exports org.opendaylight.yangtools.yang.binding;
     exports org.opendaylight.yangtools.yang.binding.annotations;
+    exports org.opendaylight.yangtools.yang.binding.contract;
     exports org.opendaylight.yangtools.yang.binding.util;
 
     requires transitive org.opendaylight.yangtools.yang.common;
@@ -16,4 +17,5 @@ module org.opendaylight.yangtools.yang.binding {
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
+    requires static org.checkerframework.checker.qual;
 }

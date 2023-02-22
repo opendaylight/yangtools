@@ -29,8 +29,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.BitsTypeObject;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
@@ -69,8 +69,8 @@ final class BitsCodec extends SchemaUnawareCodec {
             final Set<String> ctorArgs = new TreeSet<>();
 
             for (Bit bit : rootType.getBits()) {
-                final Method valueGetter = returnType.getMethod(BindingMapping.GETTER_PREFIX
-                    + BindingMapping.getClassName(bit.getName()));
+                final Method valueGetter = returnType.getMethod(Naming.GETTER_PREFIX
+                    + Naming.getClassName(bit.getName()));
                 ctorArgs.add(bit.getName());
                 getters.put(bit.getName(), valueGetter);
             }

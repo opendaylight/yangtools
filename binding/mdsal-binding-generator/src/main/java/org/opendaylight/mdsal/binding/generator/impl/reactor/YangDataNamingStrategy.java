@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 
 /**
  * Naming strategy for {@code ietf-restconf:yang-data} template which has a generic string not matching YANG identifier.
@@ -20,7 +20,7 @@ final class YangDataNamingStrategy extends ClassNamingStrategy {
     private final String javaIdentifier;
 
     YangDataNamingStrategy(final String templateName) {
-        javaIdentifier = BindingMapping.mapYangDataName(templateName);
+        javaIdentifier = Naming.mapYangDataName(templateName);
     }
 
     @Override

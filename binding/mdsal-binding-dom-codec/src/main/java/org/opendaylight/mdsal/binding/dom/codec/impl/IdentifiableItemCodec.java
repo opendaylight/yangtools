@@ -20,12 +20,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
@@ -94,7 +94,7 @@ abstract class IdentifiableItemCodec {
              */
             final var tmp = new ArrayList<>(keyDef);
             // This is not terribly efficient but gets the job done
-            tmp.sort(Comparator.comparing(leaf -> BindingMapping.getPropertyName(leaf.getLocalName())));
+            tmp.sort(Comparator.comparing(leaf -> Naming.getPropertyName(leaf.getLocalName())));
             keysInBindingOrder = ImmutableList.copyOf(tmp.equals(List.copyOf(keyDef)) ? keyDef : tmp);
         }
 

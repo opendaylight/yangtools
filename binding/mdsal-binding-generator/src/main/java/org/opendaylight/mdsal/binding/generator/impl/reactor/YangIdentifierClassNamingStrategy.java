@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 /**
@@ -28,7 +28,7 @@ abstract class YangIdentifierClassNamingStrategy extends ClassNamingStrategy {
 
     @Override
     final String simpleClassName() {
-        return BindingMapping.getClassName(rootName());
+        return Naming.getClassName(rootName());
     }
 
     @Override

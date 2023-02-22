@@ -50,9 +50,9 @@ import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -172,13 +172,13 @@ class JavaFileTemplate {
         .addIgnoredStatement(YangStmtMapping.REFERENCE)
         .addIgnoredStatement(YangStmtMapping.ORGANIZATION)
         .build();
-    private static final int GETTER_PREFIX_LENGTH = BindingMapping.GETTER_PREFIX.length();
+    private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
     private static final Type AUGMENTATION_RET_TYPE;
 
     static {
         final Method m;
         try {
-            m = Augmentable.class.getDeclaredMethod(BindingMapping.AUGMENTABLE_AUGMENTATION_NAME, Class.class);
+            m = Augmentable.class.getDeclaredMethod(Naming.AUGMENTABLE_AUGMENTATION_NAME, Class.class);
         } catch (NoSuchMethodException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -374,7 +374,7 @@ class JavaFileTemplate {
                 methods.add(implMethod);
             } else {
                 final String implMethodName = implMethod.getName();
-                if (BindingMapping.isGetterMethodName(implMethodName)
+                if (Naming.isGetterMethodName(implMethodName)
                         && getterByName(methods, implMethodName).isEmpty()) {
 
                     methods.add(implMethod);
@@ -387,7 +387,7 @@ class JavaFileTemplate {
             final String implMethodName) {
         for (MethodSignature method : methods) {
             final String methodName = method.getName();
-            if (BindingMapping.isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
+            if (Naming.isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
                 return Optional.of(method);
             }
         }
@@ -400,12 +400,12 @@ class JavaFileTemplate {
 
     protected static String propertyNameFromGetter(final String getterName) {
         final String prefix;
-        if (BindingMapping.isGetterMethodName(getterName)) {
-            prefix = BindingMapping.GETTER_PREFIX;
-        } else if (BindingMapping.isNonnullMethodName(getterName)) {
-            prefix = BindingMapping.NONNULL_PREFIX;
-        } else if (BindingMapping.isRequireMethodName(getterName)) {
-            prefix = BindingMapping.REQUIRE_PREFIX;
+        if (Naming.isGetterMethodName(getterName)) {
+            prefix = Naming.GETTER_PREFIX;
+        } else if (Naming.isNonnullMethodName(getterName)) {
+            prefix = Naming.NONNULL_PREFIX;
+        } else if (Naming.isRequireMethodName(getterName)) {
+            prefix = Naming.REQUIRE_PREFIX;
         } else {
             throw new IllegalArgumentException(getterName + " is not a getter");
         }
@@ -447,7 +447,7 @@ class JavaFileTemplate {
 //                    sb.append("</i>\n");
 
                     if (hasBuilderClass(schema)) {
-                        final String builderName = genType.getName() + BindingMapping.BUILDER_SUFFIX;
+                        final String builderName = genType.getName() + Naming.BUILDER_SUFFIX;
 
                         sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
                         .append("}.\n")
@@ -455,7 +455,7 @@ class JavaFileTemplate {
                         if (node instanceof ListSchemaNode) {
                             final var keyDef = ((ListSchemaNode) node).getKeyDefinition();
                             if (!keyDef.isEmpty()) {
-                                sb.append("@see ").append(genType.getName()).append(BindingMapping.KEY_SUFFIX);
+                                sb.append("@see ").append(genType.getName()).append(Naming.KEY_SUFFIX);
                             }
                             sb.append('\n');
                         }
@@ -578,7 +578,7 @@ class JavaFileTemplate {
         if (method.isDefault()) {
             return null;
         }
-        if (!BindingMapping.isGetterMethodName(method.getName())) {
+        if (!Naming.isGetterMethodName(method.getName())) {
             return null;
         }
 

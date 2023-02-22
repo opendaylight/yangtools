@@ -14,8 +14,8 @@ import org.opendaylight.mdsal.binding.model.api.Constant;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.YangFeature;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class FeatureTemplate extends ClassTemplate {
@@ -50,7 +50,7 @@ final class FeatureTemplate extends ClassTemplate {
     @SuppressWarnings("checkstyle:ParameterName")
     @Override
     protected CharSequence emitConstant(final Constant c) {
-        if (!BindingMapping.VALUE_STATIC_FIELD_NAME.equals(c.getName()) || !YangFeature.class.equals(c.getValue())) {
+        if (!Naming.VALUE_STATIC_FIELD_NAME.equals(c.getName()) || !YangFeature.class.equals(c.getValue())) {
             return super.emitConstant(c);
         }
 
@@ -59,7 +59,7 @@ final class FeatureTemplate extends ClassTemplate {
         return "/**\n"
             + " * {@link " + typeName + "} singleton instance.\n"
             + " */\n"
-            + "public static final " + importedName(type) + ' ' + BindingMapping.VALUE_STATIC_FIELD_NAME + " = new "
+            + "public static final " + importedName(type) + ' ' + Naming.VALUE_STATIC_FIELD_NAME + " = new "
             + type.getName() + "();";
     }
 
@@ -71,14 +71,13 @@ final class FeatureTemplate extends ClassTemplate {
         final var rootName = importedName(dataRoot);
 
         return '@' + override + '\n'
-            + "public " + clazz + '<' + typeName + "> " + BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-            + "() {\n"
+            + "public " + clazz + '<' + typeName + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {\n"
             + "    return " + typeName + ".class;\n"
             + "}\n"
             + '\n'
             + '@' + override + '\n'
             + "public " + importedName(QNAME) + " qname() {\n"
-            + "    return " + BindingMapping.QNAME_STATIC_FIELD_NAME + ";\n"
+            + "    return " + Naming.QNAME_STATIC_FIELD_NAME + ";\n"
             + "}\n"
             + '\n'
             + '@' + override + '\n'

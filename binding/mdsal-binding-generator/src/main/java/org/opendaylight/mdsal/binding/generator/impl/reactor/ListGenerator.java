@@ -23,7 +23,7 @@ import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -71,7 +71,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
             // Add yang.binding.Identifiable and its key() method
             final GeneratedType keyType = keyGen.getGeneratedType(builderFactory);
             builder.addImplementsType(identifiable(keyType));
-            builder.addMethod(BindingMapping.IDENTIFIABLE_KEY_NAME)
+            builder.addMethod(Naming.IDENTIFIABLE_KEY_NAME)
                 .setReturnType(keyType)
                 .addAnnotation(OVERRIDE_ANNOTATION);
         }
@@ -108,7 +108,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
             .setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
         final MethodSignatureBuilder nonnull = builder
-            .addMethod(BindingMapping.getNonnullMethodName(localName().getLocalName()))
+            .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
             .setReturnType(returnType)
             .setDefault(true);
         annotateDeprecatedIfNecessary(nonnull);

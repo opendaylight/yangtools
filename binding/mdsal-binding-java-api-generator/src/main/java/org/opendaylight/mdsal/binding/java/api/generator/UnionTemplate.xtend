@@ -13,8 +13,8 @@ import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.EMPTY_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.STRING_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING
 import static org.opendaylight.mdsal.binding.model.ri.Types.getOuterClassName
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BUILDER_SUFFIX
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BUILDER_SUFFIX
 import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isBitsType
 import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isIdentityType
 

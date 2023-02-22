@@ -16,10 +16,10 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.YangData;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 
 /**
  * Transformator of the data from the virtual form to JAVA programming language. The result source code represent java
@@ -64,13 +64,13 @@ public final class BuilderGenerator implements CodeGenerator {
 
     @Override
     public String getUnitName(final Type type) {
-        return type.getName() + BindingMapping.BUILDER_SUFFIX;
+        return type.getName() + Naming.BUILDER_SUFFIX;
     }
 
     @VisibleForTesting
     static BuilderTemplate templateForType(final GeneratedType type) {
         final JavaTypeName origName = type.getIdentifier();
-        final JavaTypeName builderName = origName.createSibling(origName.simpleName() + BindingMapping.BUILDER_SUFFIX);
+        final JavaTypeName builderName = origName.createSibling(origName.simpleName() + Naming.BUILDER_SUFFIX);
 
         return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
             .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(
@@ -82,7 +82,7 @@ public final class BuilderGenerator implements CodeGenerator {
 
     private static Type getKey(final GeneratedType type) {
         for (MethodSignature m : type.getMethodDefinitions()) {
-            if (BindingMapping.IDENTIFIABLE_KEY_NAME.equals(m.getName())) {
+            if (Naming.IDENTIFIABLE_KEY_NAME.equals(m.getName())) {
                 return m.getReturnType();
             }
         }

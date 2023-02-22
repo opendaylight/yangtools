@@ -46,8 +46,8 @@ import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.NodeCo
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -316,7 +316,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         return new Implementation.Simple(
             // return Foo.bindingHashCode(this);
             loadThis(),
-            invokeMethod(bindingInterface, BindingMapping.BINDING_HASHCODE_NAME, bindingInterface),
+            invokeMethod(bindingInterface, Naming.BINDING_HASHCODE_NAME, bindingInterface),
             MethodReturn.INTEGER);
     }
 
@@ -325,7 +325,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             // return Foo.bindingEquals(this, obj);
             loadThis(),
             FIRST_ARG_REF,
-            invokeMethod(bindingInterface, BindingMapping.BINDING_EQUALS_NAME, bindingInterface, Object.class),
+            invokeMethod(bindingInterface, Naming.BINDING_EQUALS_NAME, bindingInterface, Object.class),
             MethodReturn.INTEGER);
     }
 
@@ -333,7 +333,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         return new Implementation.Simple(
             // return Foo.bindingToString(this);
             loadThis(),
-            invokeMethod(bindingInterface, BindingMapping.BINDING_TO_STRING_NAME, bindingInterface),
+            invokeMethod(bindingInterface, Naming.BINDING_TO_STRING_NAME, bindingInterface),
             MethodReturn.REFERENCE);
     }
 

@@ -36,8 +36,8 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuil
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -203,7 +203,7 @@ public abstract class Generator implements Iterable<Generator> {
     @NonNull String createJavaPackage() {
         final String parentPackage = getPackageParent().javaPackage();
         final String myPackage = getMember().currentPackage();
-        return BindingMapping.normalizePackageName(parentPackage + '.' + myPackage);
+        return Naming.normalizePackageName(parentPackage + '.' + myPackage);
     }
 
     final @NonNull JavaTypeName typeName() {
@@ -262,15 +262,15 @@ public abstract class Generator implements Iterable<Generator> {
     static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder builder) {
         defaultImplementedInterace(builder);
 
-        builder.addMethod(BindingMapping.BINDING_HASHCODE_NAME)
+        builder.addMethod(Naming.BINDING_HASHCODE_NAME)
             .setAccessModifier(AccessModifier.PUBLIC)
             .setStatic(true)
             .setReturnType(primitiveIntType());
-        builder.addMethod(BindingMapping.BINDING_EQUALS_NAME)
+        builder.addMethod(Naming.BINDING_EQUALS_NAME)
             .setAccessModifier(AccessModifier.PUBLIC)
             .setStatic(true)
             .setReturnType(primitiveBooleanType());
-        builder.addMethod(BindingMapping.BINDING_TO_STRING_NAME)
+        builder.addMethod(Naming.BINDING_TO_STRING_NAME)
             .setAccessModifier(AccessModifier.PUBLIC)
             .setStatic(true)
             .setReturnType(STRING);
@@ -359,7 +359,7 @@ public abstract class Generator implements Iterable<Generator> {
     private static MethodSignatureBuilder defineImplementedInterfaceMethod(final GeneratedTypeBuilder typeBuilder,
             final Type classType) {
         final MethodSignatureBuilder ret = typeBuilder
-                .addMethod(BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
+                .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
                 .setAccessModifier(AccessModifier.PUBLIC)
                 .setReturnType(classType(classType));
         ret.addAnnotation(OVERRIDE_ANNOTATION);

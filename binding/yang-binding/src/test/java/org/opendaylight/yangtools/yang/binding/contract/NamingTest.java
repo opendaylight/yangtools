@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.spec.naming;
+package org.opendaylight.yangtools.yang.binding.contract;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,50 +18,50 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
-public class BindingMappingTest {
+public class NamingTest {
+
     @Test
     public void testGetModelRootPackageName() {
         assertEquals("org.opendaylight.yang.gen.v1.test.rev990939",
-            BindingMapping.getModelRootPackageName("org.opendaylight.yang.gen.v1.test.rev990939"));
+            Naming.getModelRootPackageName("org.opendaylight.yang.gen.v1.test.rev990939"));
     }
 
     @Test
     public void testGetMethodName() {
-        assertEquals("testLocalName", BindingMapping.getMethodName(QName.create("testNS", "testLocalName")));
-        assertEquals("testYangIdentifier", BindingMapping.getMethodName("TestYangIdentifier"));
+        assertEquals("testLocalName", Naming.getMethodName(QName.create("testNS", "testLocalName")));
+        assertEquals("testYangIdentifier", Naming.getMethodName("TestYangIdentifier"));
     }
 
     @Test
     public void testGetClassName() {
-        assertEquals("TestClass", BindingMapping.getClassName(QName.create("testNS", "testClass")));
-        assertEquals("TestClass", BindingMapping.getClassName("testClass"));
-        assertEquals("", BindingMapping.getClassName(""));
-        assertEquals("SomeTestingClassName", BindingMapping.getClassName("  some-testing_class name   "));
-        assertEquals("_0SomeTestingClassName", BindingMapping.getClassName("  0 some-testing_class name   "));
+        assertEquals("TestClass", Naming.getClassName(QName.create("testNS", "testClass")));
+        assertEquals("TestClass", Naming.getClassName("testClass"));
+        assertEquals("", Naming.getClassName(""));
+        assertEquals("SomeTestingClassName", Naming.getClassName("  some-testing_class name   "));
+        assertEquals("_0SomeTestingClassName", Naming.getClassName("  0 some-testing_class name   "));
     }
 
     @Test
     public void testGetPropertyName() {
-        assertEquals("test", BindingMapping.getPropertyName("Test"));
-        assertEquals("test", BindingMapping.getPropertyName("test"));
-        assertEquals("xmlClass", BindingMapping.getPropertyName("Class"));
-        assertEquals("_5", BindingMapping.getPropertyName("5"));
-        assertEquals("", BindingMapping.getPropertyName(""));
-        assertEquals("someTestingParameterName", BindingMapping.getPropertyName("  some-testing_parameter   name   "));
-        assertEquals("_0someTestingParameterName",
-            BindingMapping.getPropertyName("  0some-testing_parameter   name   "));
+        assertEquals("test", Naming.getPropertyName("Test"));
+        assertEquals("test", Naming.getPropertyName("test"));
+        assertEquals("xmlClass", Naming.getPropertyName("Class"));
+        assertEquals("_5", Naming.getPropertyName("5"));
+        assertEquals("", Naming.getPropertyName(""));
+        assertEquals("someTestingParameterName", Naming.getPropertyName("  some-testing_parameter   name   "));
+        assertEquals("_0someTestingParameterName", Naming.getPropertyName("  0some-testing_parameter   name   "));
     }
 
     @Test
     public void basicTest() {
         assertEquals("org.opendaylight.yang.gen.v1.test.uri.rev171026",
-            BindingMapping.getRootPackageName(QName.create("test:URI", "2017-10-26", "test")));
+            Naming.getRootPackageName(QName.create("test:URI", "2017-10-26", "test")));
         assertEquals("org.opendaylight.yang.gen.v1.urn.m.o.d.u.l.e.n.a.m.e.t.e.s.t._case._1digit.rev130910",
-            BindingMapping.getRootPackageName(QNameModule.create(
+            Naming.getRootPackageName(QNameModule.create(
                 XMLNamespace.of("urn:m*o+d,u;l=e.n/a-m@e.t$e#s't.case.1digit"), Revision.of("2013-09-10"))));
-        assertEquals("_1testpublic", BindingMapping.normalizePackageName("1testpublic"));
-        assertEquals("Test", BindingMapping.getGetterSuffix(QName.create("test", "test")));
-        assertEquals("XmlClass", BindingMapping.getGetterSuffix(QName.create("test", "class")));
+        assertEquals("_1testpublic", Naming.normalizePackageName("1testpublic"));
+        assertEquals("Test", Naming.getGetterSuffix(QName.create("test", "test")));
+        assertEquals("XmlClass", Naming.getGetterSuffix(QName.create("test", "class")));
     }
 
     @Test
@@ -112,18 +112,18 @@ public class BindingMappingTest {
             expected.put(yang.get(i), mapped.get(i));
         }
 
-        assertEquals(expected, BindingMapping.mapEnumAssignedNames(yang));
+        assertEquals(expected, Naming.mapEnumAssignedNames(yang));
     }
 
     @Test
     public void yangDataMapping() {
         // single ascii compliant non-conflicting word - remain as is
-        assertEquals("single", BindingMapping.mapYangDataName("single"));
+        assertEquals("single", Naming.mapYangDataName("single"));
         // ascii compliant - non-compliany chars only encoded
-        assertEquals("$abc$20$cde", BindingMapping.mapYangDataName("abc cde"));
+        assertEquals("$abc$20$cde", Naming.mapYangDataName("abc cde"));
         // latin1 compliant -> latin chars normalized, non-compliant chars are encoded
-        assertEquals("$ľaľaho$20$papľuhu", BindingMapping.mapYangDataName("ľaľaho papľuhu"));
+        assertEquals("$ľaľaho$20$papľuhu", Naming.mapYangDataName("ľaľaho papľuhu"));
         // latin1 non-compliant - all non-compliant characters encoded
-        assertEquals("$привет$20$papľuhu", BindingMapping.mapYangDataName("привет papľuhu"));
+        assertEquals("$привет$20$papľuhu", Naming.mapYangDataName("привет papľuhu"));
     }
 }

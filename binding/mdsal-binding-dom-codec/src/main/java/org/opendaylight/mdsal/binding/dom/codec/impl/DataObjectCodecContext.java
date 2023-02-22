@@ -37,7 +37,6 @@ import org.opendaylight.mdsal.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -46,6 +45,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -491,12 +491,12 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
      */
     // FIXME: MDSAL-780: replace use of this method
     private static Map<Class<? extends DataContainer>, Method> getChildrenClassToMethod(final Class<?> type) {
-        return getChildClassToMethod(type, BindingMapping.GETTER_PREFIX);
+        return getChildClassToMethod(type, Naming.GETTER_PREFIX);
     }
 
     // FIXME: MDSAL-780: replace use of this method
     private static Map<Class<? extends DataContainer>, Method> getChildrenClassToNonnullMethod(final Class<?> type) {
-        return getChildClassToMethod(type, BindingMapping.NONNULL_PREFIX);
+        return getChildClassToMethod(type, Naming.NONNULL_PREFIX);
     }
 
     // FIXME: MDSAL-780: replace use of this method

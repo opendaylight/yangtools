@@ -7,19 +7,19 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getGetterMethodForNonnull
-import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getGetterMethodForRequire
-import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
-import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
-import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isRequireMethodName
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getGetterMethodForNonnull
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getGetterMethodForRequire
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.isGetterMethodName
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.isNonnullMethodName
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.isRequireMethodName
 import static org.opendaylight.mdsal.binding.model.ri.Types.BOOLEAN
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.REQUIRE_PREFIX
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.REQUIRE_PREFIX
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.AUGMENTATION_FIELD
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_EQUALS_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_HASHCODE_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_TO_STRING_NAME
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List

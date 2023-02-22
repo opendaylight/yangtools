@@ -15,8 +15,8 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.FeatureRuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.YangFeature;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -59,7 +59,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
         module.addQNameConstant(builder, localName());
 
         // Constant implementation
-        builder.addConstant(Type.of(builder), BindingMapping.VALUE_STATIC_FIELD_NAME, YangFeature.class);
+        builder.addConstant(Type.of(builder), Naming.VALUE_STATIC_FIELD_NAME, YangFeature.class);
 
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());

@@ -24,7 +24,7 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.AnnotableTypeBuilde
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
@@ -315,7 +315,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
-        return constructGetter(builder, returnType, BindingMapping.getGetterMethodName(localName().getLocalName()));
+        return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
     final MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder,
@@ -335,7 +335,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     final void constructRequireImpl(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
-        constructGetter(builder, returnType, BindingMapping.getRequireMethodName(localName().getLocalName()))
+        constructGetter(builder, returnType, Naming.getRequireMethodName(localName().getLocalName()))
             .setDefault(true)
             .setMechanics(ValueMechanics.NONNULL);
     }

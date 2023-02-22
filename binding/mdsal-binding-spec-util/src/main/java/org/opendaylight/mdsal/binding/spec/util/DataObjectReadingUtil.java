@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -32,6 +31,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 
 @Deprecated(since = "11.0.3", forRemoval = true)
 public final class DataObjectReadingUtil {
@@ -173,7 +173,7 @@ public final class DataObjectReadingUtil {
         public abstract DataContainer read(DataContainer parent, Class<?> child);
 
         private static Method resolveGetterMethod(final Class<? extends DataContainer> parent, final Class<?> child) {
-            String methodName = BindingMapping.GETTER_PREFIX + child.getSimpleName();
+            String methodName = Naming.GETTER_PREFIX + child.getSimpleName();
             try {
                 return parent.getMethod(methodName);
             } catch (NoSuchMethodException e) {

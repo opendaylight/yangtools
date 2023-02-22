@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -236,12 +236,12 @@ final class CollisionDomain {
     }
 
     @NonNull Member addSecondary(final InputGenerator memberGen, final Member primary) {
-        return addMember(new SuffixSecondary(memberGen, primary, BindingMapping.RPC_INPUT_SUFFIX,
+        return addMember(new SuffixSecondary(memberGen, primary, Naming.RPC_INPUT_SUFFIX,
             memberGen.statement().argument()));
     }
 
     @NonNull Member addSecondary(final OutputGenerator memberGen, final Member primary) {
-        return addMember(new SuffixSecondary(memberGen, primary, BindingMapping.RPC_OUTPUT_SUFFIX,
+        return addMember(new SuffixSecondary(memberGen, primary, Naming.RPC_OUTPUT_SUFFIX,
             memberGen.statement().argument()));
     }
 

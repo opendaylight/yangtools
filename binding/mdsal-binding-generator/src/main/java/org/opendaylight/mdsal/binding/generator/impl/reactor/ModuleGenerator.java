@@ -23,7 +23,7 @@ import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -39,15 +39,15 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     /**
      * Note that for sake of simplicity of lookup and child mapping, this instance serves as the root for all child
      * generators, but mapping to {@link CollisionDomain}s and their {@link Member}s is rather weird. This generator
-     * actually produces one of <em>secondary</em> members, more precisely the {@link BindingMapping#DATA_ROOT_SUFFIX}
-     * one. Counter-intuitively the other secondary members live as children of this generator. To support this we have
-     * also have this field, which is actually the <em>primary</em> derived from the module's name.
+     * actually produces one of <em>secondary</em> members, more precisely the {@link Naming#DATA_ROOT_SUFFIX} one.
+     * Counter-intuitively the other secondary members live as children of this generator. To support this we also have
+     * this field, which is actually the <em>primary</em> derived from the module's name.
      */
     private final Member prefixMember;
 
     ModuleGenerator(final ModuleEffectiveStatement statement) {
         super(statement);
-        yangModuleInfo = JavaTypeName.create(javaPackage(), BindingMapping.MODULE_INFO_CLASS_NAME);
+        yangModuleInfo = JavaTypeName.create(javaPackage(), Naming.MODULE_INFO_CLASS_NAME);
         prefixMember = domain().addPrefix(this, new ModuleNamingStrategy(statement.argument()));
     }
 
@@ -68,7 +68,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     @Override
     String createJavaPackage() {
-        return BindingMapping.getRootPackageName(statement().localQNameModule());
+        return Naming.getRootPackageName(statement().localQNameModule());
     }
 
     @Override
@@ -83,7 +83,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     @Override
     Member createMember(final CollisionDomain domain) {
-        return domain.addSecondary(this, prefixMember, BindingMapping.DATA_ROOT_SUFFIX);
+        return domain.addSecondary(this, prefixMember, Naming.DATA_ROOT_SUFFIX);
     }
 
     @Override
@@ -110,13 +110,13 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     }
 
     void addQNameConstant(final GeneratedTypeBuilderBase<?> builder, final AbstractQName localName) {
-        builder.addConstant(BindingTypes.QNAME, BindingMapping.QNAME_STATIC_FIELD_NAME,
+        builder.addConstant(BindingTypes.QNAME, Naming.QNAME_STATIC_FIELD_NAME,
             Map.entry(yangModuleInfo, localName.getLocalName()));
     }
 
     // FIXME: use YangDataName
     void addNameConstant(final GeneratedTypeBuilderBase<?> builder, final String templateName) {
-        builder.addConstant(BindingTypes.YANG_DATA_NAME, BindingMapping.NAME_STATIC_FIELD_NAME,
+        builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME,
             Map.entry(yangModuleInfo, templateName));
     }
 

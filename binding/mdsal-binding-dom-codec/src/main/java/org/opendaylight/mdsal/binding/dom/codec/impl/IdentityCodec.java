@@ -19,9 +19,9 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class IdentityCodec extends AbstractValueCodec<QName, BaseIdentity> implements BindingIdentityCodec {
@@ -32,10 +32,10 @@ final class IdentityCodec extends AbstractValueCodec<QName, BaseIdentity> implem
                 final var clazz = context.getIdentityClass(key);
                 final Field field;
                 try {
-                    field = clazz.getField(BindingMapping.VALUE_STATIC_FIELD_NAME);
+                    field = clazz.getField(Naming.VALUE_STATIC_FIELD_NAME);
                 } catch (NoSuchFieldException e) {
-                    throw new LinkageError(clazz + " does not define required field "
-                        + BindingMapping.VALUE_STATIC_FIELD_NAME, e);
+                    throw new LinkageError(clazz + " does not define required field " + Naming.VALUE_STATIC_FIELD_NAME,
+                        e);
                 }
                 if (!Modifier.isStatic(field.getModifiers())) {
                     throw new LinkageError(field + " is not static");

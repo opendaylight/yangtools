@@ -9,11 +9,13 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.opendaylight.mdsal.binding.java.api.generator.GeneratorUtil.isNonPresenceContainer;
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BUILDER_SUFFIX
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.AUGMENTATION_FIELD
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_EQUALS_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_HASHCODE_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_TO_STRING_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BUILDER_SUFFIX
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.IDENTIFIABLE_KEY_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.NONNULL_PREFIX
 
 import java.util.Collection
 import java.util.List
@@ -25,7 +27,6 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.Types
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.AbstractAugmentable
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
@@ -69,7 +70,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     def private generateGetters() '''
         «IF keyType !== null»
             @«OVERRIDE.importedName»
-            public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
+            public «keyType.importedName» «IDENTIFIABLE_KEY_NAME»() {
                 return key;
             }
 
@@ -130,7 +131,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     '''
 
     def private nonnullMethodName(GeneratedProperty field) {
-        return '''«BindingMapping.NONNULL_PREFIX»«field.name.toFirstUpper»'''
+        return '''«NONNULL_PREFIX»«field.name.toFirstUpper»'''
     }
 
     package def findGetter(String getterName) {
@@ -202,8 +203,8 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
-        if (base.«BindingMapping.IDENTIFIABLE_KEY_NAME»() != null) {
-            this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
+        if (base.«IDENTIFIABLE_KEY_NAME»() != null) {
+            this.key = base.«IDENTIFIABLE_KEY_NAME»();
         } else {
             this.key = new «keyType.importedName»(«FOR keyProp : keyProps SEPARATOR ", "»base.«keyProp.getterMethodName»()«ENDFOR»);
         }

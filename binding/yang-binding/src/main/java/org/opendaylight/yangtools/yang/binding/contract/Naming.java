@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.spec.naming;
+package org.opendaylight.yangtools.yang.binding.contract;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 @Beta
-public final class BindingMapping {
+public final class Naming {
 
     public static final @NonNull String VERSION = "0.6";
 
@@ -159,10 +159,10 @@ public final class BindingMapping {
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
     @Regex
     private static final String ROOT_PACKAGE_PATTERN_STRING =
-            "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
+            "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
 
-    private BindingMapping() {
+    private Naming() {
         // Hidden on purpose
     }
 
@@ -171,7 +171,7 @@ public final class BindingMapping {
     }
 
     public static @NonNull String getRootPackageName(final QNameModule module) {
-        final StringBuilder packageNameBuilder = new StringBuilder().append(BindingMapping.PACKAGE_PREFIX).append('.');
+        final StringBuilder packageNameBuilder = new StringBuilder().append(PACKAGE_PREFIX).append('.');
 
         String namespace = module.getNamespace().toString();
         namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
@@ -217,7 +217,7 @@ public final class BindingMapping {
                 builder.append('.');
             }
 
-            if (Character.isDigit(p.charAt(0)) || BindingMapping.JAVA_RESERVED_WORDS.contains(p)) {
+            if (Character.isDigit(p.charAt(0)) || JAVA_RESERVED_WORDS.contains(p)) {
                 builder.append('_');
             }
             builder.append(p);
@@ -383,7 +383,7 @@ public final class BindingMapping {
             PACKAGE_PREFIX, packageName);
         final var match = ROOT_PACKAGE_PATTERN.matcher(packageName);
         checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", packageName,
-                ROOT_PACKAGE_PATTERN_STRING);
+            ROOT_PACKAGE_PATTERN_STRING);
         return match.group(0);
     }
 

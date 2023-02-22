@@ -22,7 +22,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Mdsal320Test {
@@ -59,11 +59,11 @@ public class Mdsal320Test {
         assertTrue(it.hasNext());
 
         final MethodSignature bindingHashCode = it.next();
-        assertEquals(BindingMapping.BINDING_HASHCODE_NAME, bindingHashCode.getName());
+        assertEquals(Naming.BINDING_HASHCODE_NAME, bindingHashCode.getName());
         final MethodSignature bindingEquals = it.next();
-        assertEquals(BindingMapping.BINDING_EQUALS_NAME, bindingEquals.getName());
+        assertEquals(Naming.BINDING_EQUALS_NAME, bindingEquals.getName());
         final MethodSignature bindingToString = it.next();
-        assertEquals(BindingMapping.BINDING_TO_STRING_NAME, bindingToString.getName());
+        assertEquals(Naming.BINDING_TO_STRING_NAME, bindingToString.getName());
         final MethodSignature getBar = it.next();
         final Type getBarType = getBar.getReturnType();
         assertTrue(getBarType instanceof GeneratedTransferObject);
@@ -71,7 +71,7 @@ public class Mdsal320Test {
         assertTrue(getBarTO.isUnionType());
         assertEquals(bar, getBarTO);
         final MethodSignature requireBar = it.next();
-        assertThat(requireBar.getName(), startsWith(BindingMapping.REQUIRE_PREFIX));
+        assertThat(requireBar.getName(), startsWith(Naming.REQUIRE_PREFIX));
         assertFalse(it.hasNext());
 
         final GeneratedProperty bar1Prop = bar.getProperties().stream().filter(prop -> "bar$1".equals(prop.getName()))

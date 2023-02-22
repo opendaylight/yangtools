@@ -10,10 +10,10 @@ package org.opendaylight.mdsal.binding.java.api.generator
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 import static extension org.opendaylight.mdsal.binding.java.api.generator.GeneratorUtil.isNonPresenceContainer;
 import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.DATA_OBJECT
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.IDENTIFIABLE_KEY_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.AUGMENTATION_FIELD
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.IDENTIFIABLE_KEY_NAME
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
@@ -34,7 +34,7 @@ import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 import org.opendaylight.mdsal.binding.model.ri.Types
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
+import org.opendaylight.yangtools.yang.binding.contract.Naming
 
 /**
  * Template for generating JAVA builder classes.
@@ -167,7 +167,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
             «val ifc = implementedIfc as GeneratedType»
             «FOR getter : ifc.nonDefaultMethods»
-                «IF BindingMapping.isGetterMethodName(getter.name)»
+                «IF Naming.isGetterMethodName(getter.name)»
                     «val propertyName = getter.propertyNameFromGetter»
                     «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
                 «ENDIF»
@@ -182,7 +182,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
             «val ifc = implementedIfc as GeneratedType»
             «FOR getter : ifc.nonDefaultMethods»
-                «IF BindingMapping.isGetterMethodName(getter.name) && getterByName(alreadySetProperties, getter.name).isEmpty»
+                «IF Naming.isGetterMethodName(getter.name) && getterByName(alreadySetProperties, getter.name).isEmpty»
                     «val propertyName = getter.propertyNameFromGetter»
                     «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
                 «ENDIF»
@@ -287,7 +287,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
         «val ifc = implementedIfc as GeneratedType»
         «FOR getter : ifc.nonDefaultMethods»
-            «IF BindingMapping.isGetterMethodName(getter.name) && !hasOverrideAnnotation(getter)»
+            «IF Naming.isGetterMethodName(getter.name) && !hasOverrideAnnotation(getter)»
                 «printPropertySetter(getter, '''castArg.«getter.name»()''', getter.propertyNameFromGetter)»;
             «ENDIF»
         «ENDFOR»
@@ -589,7 +589,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
-        this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
+        this.key = base.«IDENTIFIABLE_KEY_NAME»();
         «FOR field : keyProps»
             this.«field.fieldName» = base.«field.getterMethodName»();
         «ENDFOR»

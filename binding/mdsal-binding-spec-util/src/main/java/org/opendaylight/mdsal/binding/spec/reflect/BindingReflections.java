@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -127,7 +127,7 @@ public final class BindingReflections {
      * Returns root package name for supplied package.
      *
      * @param pkg Package for which find model root package.
-     * @deprecated Use {@link BindingMapping#getModelRootPackageName(String)} instead.
+     * @deprecated Use {@link Naming#getModelRootPackageName(String)} instead.
      */
     @Deprecated(since = "11.0.3", forRemoval = true)
     public static String getModelRootPackageName(final Package pkg) {
@@ -139,12 +139,12 @@ public final class BindingReflections {
      *
      * @param name Package for which find model root package.
      * @return Package of model root.
-     * @deprecated Use {@link BindingMapping#getModelRootPackageName(String)} instead.
+     * @deprecated Use {@link Naming#getModelRootPackageName(String)} instead.
      */
     @Deprecated(since = "11.0.3", forRemoval = true)
     public static String getModelRootPackageName(final String name) {
         checkArgument(name != null, "Package name should not be null.");
-        return BindingMapping.getModelRootPackageName(name);
+        return Naming.getModelRootPackageName(name);
     }
 
     public static QNameModule getQNameModule(final Class<?> clz) {
@@ -163,7 +163,7 @@ public final class BindingReflections {
      * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
      */
     public static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) {
-        final String packageName = BindingMapping.getModelRootPackageName(cls.getPackage().getName());
+        final String packageName = Naming.getModelRootPackageName(cls.getPackage().getName());
         final String potentialClassName = getModuleInfoClassName(packageName);
         final Class<?> moduleInfoClass;
         try {
@@ -184,7 +184,7 @@ public final class BindingReflections {
     }
 
     public static @NonNull String getModuleInfoClassName(final String packageName) {
-        return packageName + "." + BindingMapping.MODULE_INFO_CLASS_NAME;
+        return packageName + "." + Naming.MODULE_INFO_CLASS_NAME;
     }
 
     /**
@@ -198,7 +198,7 @@ public final class BindingReflections {
         if (DataContainer.class.isAssignableFrom(cls) || Augmentation.class.isAssignableFrom(cls)) {
             return true;
         }
-        return cls.getName().startsWith(BindingMapping.PACKAGE_PREFIX);
+        return cls.getName().startsWith(Naming.PACKAGE_PREFIX);
     }
 
     /**
@@ -323,17 +323,17 @@ public final class BindingReflections {
 
         /**
          * Tries to resolve QName for supplied class. Looks up for static field with name from constant
-         * {@link BindingMapping#QNAME_STATIC_FIELD_NAME} and returns value if present. If field is not present uses
+         * {@link Naming#QNAME_STATIC_FIELD_NAME} and returns value if present. If field is not present uses
          * {@link #computeQName(Class)} to compute QName for missing types.
          */
         private static Optional<QName> resolveQNameNoCache(final Class<?> key) {
             try {
                 final Field field;
                 try {
-                    field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
+                    field = key.getField(Naming.QNAME_STATIC_FIELD_NAME);
                 } catch (NoSuchFieldException e) {
                     LOG.debug("{} does not have a {} field, falling back to computation", key,
-                        BindingMapping.QNAME_STATIC_FIELD_NAME, e);
+                        Naming.QNAME_STATIC_FIELD_NAME, e);
                     return Optional.of(computeQName(key));
                 }
 
@@ -380,7 +380,7 @@ public final class BindingReflections {
                 return module;
             } else if (isRpcType(key)) {
                 final String className = key.getSimpleName();
-                if (className.endsWith(BindingMapping.RPC_OUTPUT_SUFFIX)) {
+                if (className.endsWith(Naming.RPC_OUTPUT_SUFFIX)) {
                     return YangConstants.operationOutputQName(module.getModule()).intern();
                 }
 

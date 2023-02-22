@@ -19,8 +19,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 
 /**
  * Derived YANG types are just immutable value holders for simple value
@@ -45,7 +45,7 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
             @Override
             public EncapsulatedValueCodec load(final Class<? extends ScalarTypeObject> key)
                     throws ReflectiveOperationException {
-                final var method = key.getMethod(BindingMapping.SCALAR_TYPE_OBJECT_GET_VALUE_NAME);
+                final var method = key.getMethod(Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME);
                 final var lookup = MethodHandles.publicLookup();
                 final var retType = method.getReturnType();
                 return new EncapsulatedValueCodec(lookup.findConstructor(key,

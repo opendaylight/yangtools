@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 
 public class UnionWithMultipleIdentityrefsTest extends BaseCompilationTest {
     @Test
@@ -35,8 +35,8 @@ public class UnionWithMultipleIdentityrefsTest extends BaseCompilationTest {
         Class<?> unionTypeClass = Class.forName(CompilationTestUtils.BASE_PKG
                 + ".urn.opendaylight.yang.union.test.rev220428.UnionType", true, loader);
 
-        Object identOneValue = identOneClass.getDeclaredField(BindingMapping.VALUE_STATIC_FIELD_NAME).get(null);
-        Object identTwoValue = identTwoClass.getDeclaredField(BindingMapping.VALUE_STATIC_FIELD_NAME).get(null);
+        Object identOneValue = identOneClass.getDeclaredField(Naming.VALUE_STATIC_FIELD_NAME).get(null);
+        Object identTwoValue = identTwoClass.getDeclaredField(Naming.VALUE_STATIC_FIELD_NAME).get(null);
 
         Constructor<?> unionTypeIdentOneConstructor = CompilationTestUtils.assertContainsConstructor(unionTypeClass,
                 identOneClass);

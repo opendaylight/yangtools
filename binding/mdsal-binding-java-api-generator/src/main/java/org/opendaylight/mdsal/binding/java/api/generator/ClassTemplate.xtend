@@ -50,7 +50,7 @@ import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 import org.opendaylight.mdsal.binding.model.ri.Types
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
+import org.opendaylight.yangtools.yang.binding.contract.Naming
 import org.opendaylight.yangtools.yang.common.Empty
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 
@@ -239,7 +239,7 @@ class ClassTemplate extends BaseTemplate {
 
     def private scalarTypeObjectValue(GeneratedProperty field) '''
         @«OVERRIDE.importedName»
-        public «field.returnType.importedName» «BindingMapping.SCALAR_TYPE_OBJECT_GET_VALUE_NAME»() {
+        public «field.returnType.importedName» «Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME»() {
             return «field.fieldName»«field.cloneCall»;
         }
     '''
@@ -264,7 +264,7 @@ class ClassTemplate extends BaseTemplate {
         public boolean[] values() {
             return new boolean[] {
                     «FOR bit : typedef.bits SEPARATOR ','»
-                        «BindingMapping.getPropertyName(bit.name).getterMethodName»()
+                        «Naming.getPropertyName(bit.name).getterMethodName»()
                     «ENDFOR»
                 };
         }

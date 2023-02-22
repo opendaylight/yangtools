@@ -36,10 +36,10 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -326,8 +326,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
         List<Class<? extends DataObject>> ret = new LinkedList<>();
         for (Method method : type.getMethods()) {
-            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method,
-                BindingMapping.GETTER_PREFIX);
+            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method, Naming.GETTER_PREFIX);
             if (entity.isPresent()) {
                 ret.add((Class<? extends DataObject>) entity.get());
             }

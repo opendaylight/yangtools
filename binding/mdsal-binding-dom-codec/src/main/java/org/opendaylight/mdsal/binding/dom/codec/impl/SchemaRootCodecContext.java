@@ -35,7 +35,6 @@ import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.DataRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -47,6 +46,7 @@ import org.opendaylight.yangtools.yang.binding.KeyedListAction;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -121,7 +121,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 final QNameModule qnameModule = qname.getModule();
                 final Module module = context.getEffectiveModelContext().findModule(qnameModule)
                     .orElseThrow(() -> new IllegalArgumentException("Failed to find module for " + qnameModule));
-                final String className = BindingMapping.getClassName(qname);
+                final String className = Naming.getClassName(qname);
 
                 for (final RpcDefinition potential : module.getRpcs()) {
                     final QName potentialQName = potential.getQName();
@@ -132,7 +132,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                      *
                      * FIXME: Rework this to have more precise logic regarding Binding Specification.
                      */
-                    if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
+                    if (key.getSimpleName().equals(Naming.getClassName(potentialQName) + className)) {
                         final ContainerLike schema = getRpcDataSchema(potential, qname);
                         checkArgument(schema != null, "Schema for %s does not define input / output.", potentialQName);
 

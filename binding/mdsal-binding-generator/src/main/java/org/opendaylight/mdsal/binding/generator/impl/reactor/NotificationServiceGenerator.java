@@ -17,7 +17,7 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilde
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -42,7 +42,7 @@ final class NotificationServiceGenerator extends AbstractImplicitGenerator {
 
     @Override
     String classSuffix() {
-        return BindingMapping.NOTIFICATION_LISTENER_SUFFIX;
+        return Naming.NOTIFICATION_LISTENER_SUFFIX;
     }
 
     @Override

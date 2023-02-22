@@ -7,12 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getClassName
-import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getRootPackageName
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODEL_BINDING_PROVIDER_CLASS_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODULE_INFO_CLASS_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODULE_INFO_QNAMEOF_METHOD_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getClassName
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getRootPackageName
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODEL_BINDING_PROVIDER_CLASS_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_CLASS_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet

@@ -17,7 +17,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class GeneratedTypesTest {
@@ -230,7 +230,7 @@ public class GeneratedTypesTest {
                     final List<MethodSignature> methods = genType.getMethodDefinitions();
                     for (final MethodSignature method : methods) {
                         switch (method.getName()) {
-                            case BindingMapping.IDENTIFIABLE_KEY_NAME:
+                            case Naming.IDENTIFIABLE_KEY_NAME:
                                 getSimpleListKeyMethodCount++;
                                 getSimpleListKeyMethodReturnTypeName = method.getReturnType().getName();
                                 break;

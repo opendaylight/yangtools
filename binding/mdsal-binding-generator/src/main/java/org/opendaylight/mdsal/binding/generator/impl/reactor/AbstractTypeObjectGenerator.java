@@ -44,10 +44,10 @@ import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.RegexPatterns;
 import org.opendaylight.yangtools.yang.binding.TypeObject;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -617,7 +617,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         for (Bit bit : typedef.getBits()) {
             final String name = bit.getName();
-            GeneratedPropertyBuilder genPropertyBuilder = builder.addProperty(BindingMapping.getPropertyName(name));
+            GeneratedPropertyBuilder genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
             genPropertyBuilder.setReadOnly(true);
             genPropertyBuilder.setReturnType(Types.primitiveBooleanType());
 
@@ -727,13 +727,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                     generatedType = subUnion;
                 } else if (TypeDefinitions.ENUMERATION.equals(subName)) {
                     final Enumeration subEnumeration = createEnumeration(builderFactory, definingStatement,
-                        typeName.createEnclosed(BindingMapping.getClassName(localName), "$"), module,
+                        typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
                         (EnumTypeDefinition) subType.getTypeDefinition());
                     builder.addEnumeration(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (TypeDefinitions.BITS.equals(subName)) {
                     final GeneratedTransferObject subBits = createBits(builderFactory, definingStatement,
-                        typeName.createEnclosed(BindingMapping.getClassName(localName), "$"), module,
+                        typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
                         (BitsTypeDefinition) subType.getTypeDefinition(), isTypedef);
                     builder.addEnclosingTransferObject(subBits);
                     generatedType = subBits;
@@ -774,8 +774,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                             }
 
                             // ... otherwise generate this weird property name
-                            propSource = BindingMapping.getUnionLeafrefMemberName(builder.getName(),
-                                baseType.getName());
+                            propSource = Naming.getUnionLeafrefMemberName(builder.getName(), baseType.getName());
                         }
                     }
 
@@ -785,7 +784,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                         BindingGeneratorUtil.getRestrictions(type.getTypeDefinition()), builderFactory);
                 }
 
-                final String propName = BindingMapping.getPropertyName(propSource);
+                final String propName = Naming.getPropertyName(propSource);
                 typeProperties.add(propName);
 
                 if (builder.containsProperty(propName)) {

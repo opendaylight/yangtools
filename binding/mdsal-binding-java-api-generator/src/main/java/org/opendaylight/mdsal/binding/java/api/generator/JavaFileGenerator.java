@@ -24,7 +24,6 @@ import org.opendaylight.mdsal.binding.generator.BindingGenerator;
 import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
@@ -33,6 +32,7 @@ import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -44,8 +44,8 @@ final class JavaFileGenerator implements FileGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaFileGenerator.class);
     private static final CharMatcher DOT_MATCHER = CharMatcher.is('.');
-    private static final String MODULE_INFO = BindingMapping.MODULE_INFO_CLASS_NAME + ".java";
-    private static final String MODEL_BINDING_PROVIDER = BindingMapping.MODEL_BINDING_PROVIDER_CLASS_NAME + ".java";
+    private static final String MODULE_INFO = Naming.MODULE_INFO_CLASS_NAME + ".java";
+    private static final String MODEL_BINDING_PROVIDER = Naming.MODEL_BINDING_PROVIDER_CLASS_NAME + ".java";
     private static final GeneratedFilePath MODEL_BINDING_PROVIDER_SERVICE =
         GeneratedFilePath.ofPath("META-INF/services/" + YangModelBindingProvider.class.getName());
     private static final List<CodeGenerator> GENERATORS = List.of(

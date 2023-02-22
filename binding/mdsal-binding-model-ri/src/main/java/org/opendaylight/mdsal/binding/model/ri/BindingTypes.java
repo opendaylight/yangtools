@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.model.ri;
 
 import static org.opendaylight.mdsal.binding.model.ri.Types.parameterizedTypeFor;
 import static org.opendaylight.mdsal.binding.model.ri.Types.typeForClass;
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.VALUE_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;

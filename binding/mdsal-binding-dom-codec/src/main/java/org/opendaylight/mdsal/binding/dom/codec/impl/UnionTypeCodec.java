@@ -19,7 +19,7 @@ import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeGeneratedUnion;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
@@ -44,7 +44,7 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
         final List<UnionValueOptionContext> values = new ArrayList<>(unionTypes.size());
         final Iterator<String> it = unionProperties.iterator();
         for (final TypeDefinition<?> subtype : unionTypes) {
-            final String getterName = BindingMapping.GETTER_PREFIX + BindingMapping.toFirstUpper(it.next());
+            final String getterName = Naming.GETTER_PREFIX + Naming.toFirstUpper(it.next());
             final Method valueGetter = unionCls.getMethod(getterName);
             final Class<?> valueType = valueGetter.getReturnType();
             final ValueCodec<Object, Object> codec = codecContext.getCodec(valueType, subtype);

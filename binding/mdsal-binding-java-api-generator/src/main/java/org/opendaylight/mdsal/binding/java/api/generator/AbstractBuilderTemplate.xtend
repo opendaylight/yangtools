@@ -18,7 +18,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
+import org.opendaylight.yangtools.yang.binding.contract.Naming
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     static val Comparator<GeneratedProperty> KEY_PROPS_COMPARATOR = [ p1, p2 | return p1.name.compareTo(p2.name) ]
@@ -87,12 +87,12 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             @«OVERRIDE.importedName»
             «ELSE»
             /**
-             * Return current value associated with the property corresponding to {@link «targetType.importedName»#«BindingMapping.IDENTIFIABLE_KEY_NAME»()}.
+             * Return current value associated with the property corresponding to {@link «targetType.importedName»#«Naming.IDENTIFIABLE_KEY_NAME»()}.
              *
              * @return current value
              */
             «ENDIF»
-            public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
+            public «keyType.importedName» «Naming.IDENTIFIABLE_KEY_NAME»() {
                 return key;
             }
 

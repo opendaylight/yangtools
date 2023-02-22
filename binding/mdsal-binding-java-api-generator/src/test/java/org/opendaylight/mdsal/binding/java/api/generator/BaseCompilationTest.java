@@ -23,9 +23,9 @@ import java.util.Optional;
 import org.junit.BeforeClass;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -69,8 +69,8 @@ public abstract class BaseCompilationTest {
                 mod -> Optional.of("fake/" + mod.getName()));
 
             final File file = new File(new File(sourcesOutputDir,
-                BindingMapping.getRootPackageName(module.getQNameModule()).replace('.', File.separatorChar)),
-                BindingMapping.MODULE_INFO_CLASS_NAME + ".java");
+                Naming.getRootPackageName(module.getQNameModule()).replace('.', File.separatorChar)),
+                Naming.MODULE_INFO_CLASS_NAME + ".java");
             Files.createParentDirs(file);
             Files.asCharSink(file, StandardCharsets.UTF_8).write(template.generate());
         }

@@ -19,7 +19,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class AugmentRelativeXPathTest {
@@ -60,7 +60,7 @@ public class AugmentRelativeXPathTest {
 
                 MethodSignature getIfcKeyMethod = null;
                 for (final MethodSignature method : gtInterfaceMethods) {
-                    if (BindingMapping.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
+                    if (Naming.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
                         getIfcKeyMethod = method;
                         break;
                     }
@@ -80,7 +80,7 @@ public class AugmentRelativeXPathTest {
 
                 MethodSignature getTunnelKeyMethod = null;
                 for (MethodSignature method : tunnelMethods) {
-                    if (BindingMapping.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
+                    if (Naming.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
                         getTunnelKeyMethod = method;
                         break;
                     }

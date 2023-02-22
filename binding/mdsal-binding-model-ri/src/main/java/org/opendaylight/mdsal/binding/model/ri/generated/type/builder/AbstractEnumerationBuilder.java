@@ -27,8 +27,8 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.EnumBuilder;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.util.LazyCollections;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -76,7 +76,7 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
     @Override
     public final void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef) {
         final List<EnumPair> enums = enumTypeDef.getValues();
-        final Map<String, String> valueIds = BindingMapping.mapEnumAssignedNames(enums.stream().map(EnumPair::getName)
+        final Map<String, String> valueIds = Naming.mapEnumAssignedNames(enums.stream().map(EnumPair::getName)
             .collect(Collectors.toList()));
 
         for (EnumPair enumPair : enums) {

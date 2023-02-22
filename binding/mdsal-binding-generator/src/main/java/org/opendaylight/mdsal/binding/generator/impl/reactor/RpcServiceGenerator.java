@@ -17,7 +17,7 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilde
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
@@ -48,7 +48,7 @@ final class RpcServiceGenerator extends AbstractImplicitGenerator {
 
     @Override
     String classSuffix() {
-        return BindingMapping.RPC_SERVICE_SUFFIX;
+        return Naming.RPC_SERVICE_SUFFIX;
     }
 
     @Override
@@ -61,7 +61,7 @@ final class RpcServiceGenerator extends AbstractImplicitGenerator {
             final QName qname = rpc.argument();
 
             // FIXME: this may still conflict in theory
-            final MethodSignatureBuilder method = builder.addMethod(BindingMapping.getRpcMethodName(qname));
+            final MethodSignatureBuilder method = builder.addMethod(Naming.getRpcMethodName(qname));
 
             method.addParameter(getChild(rpcGen, InputEffectiveStatement.class).getGeneratedType(builderFactory),
                 "input");
