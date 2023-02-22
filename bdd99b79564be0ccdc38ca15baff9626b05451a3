@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2dfb8079_206652ca",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-22T11:00:47Z",
+      "side": 1,
+      "message": "in opposite to root node artifacts used by XML parser the CompositeNodeDataWithSchema artifact does not write itself, but children only. \nThis artifact is used for object instantiation nowhere but here.\n\nconstructor update replaced with property setter for more clear code",
+      "parentUuid": "ba2f3ce1_00a38150",
+      "range": {
+        "startLine": 192,
+        "startChar": 19,
+        "endLine": 192,
+        "endChar": 72
+      },
+      "revId": "bdd99b79564be0ccdc38ca15baff9626b05451a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c25fd8eb_80867483",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-02-21T15:35:11Z",
       "side": 1,
       "message": "please use https://openjdk.org/jeps/378 to inline these into the actual tests",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 1
+      },
+      "revId": "bdd99b79564be0ccdc38ca15baff9626b05451a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25653c03_188b00c8",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1468/data-aug.json",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-22T11:00:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c25fd8eb_80867483",
       "range": {
         "startLine": 1,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd1c83bc_6512b2b5",
+        "filename": "codec/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-22T11:00:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d162d145_3c71fe77",
+      "range": {
+        "startLine": 180,
+        "startChar": 16,
+        "endLine": 180,
+        "endChar": 44
+      },
+      "revId": "bdd99b79564be0ccdc38ca15baff9626b05451a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fbb0d59c_80f8a7bb",
@@ -93,6 +165,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3756da1f_055a3c6e",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-22T11:00:47Z",
+      "side": 1,
+      "message": "the problem is JSON parser does not control output: it cannot check if there is single augmented child as result because this artifact provides no interface to children data. it means common artifact(s) require update anyway\n\ni tried an alternative - omitting augmentation node being written by NormalizedNodeStreamWriter which knows at which level the augmentation node appears, but it requires startAugmentation() interface update (void -\u003e boolean) \nand it\u0027s significantly bigger change for such a minuscule issue - up to 10 artifacts in multiple modules\n\nno pretty solution here, just workarounds.",
+      "parentUuid": "fbb0d59c_80f8a7bb",
+      "range": {
+        "startLine": 117,
+        "startChar": 26,
+        "endLine": 117,
+        "endChar": 42
+      },
+      "revId": "bdd99b79564be0ccdc38ca15baff9626b05451a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8e099a24_9769e93a",
@@ -106,6 +202,30 @@
       "writtenOn": "2023-02-21T15:35:11Z",
       "side": 1,
       "message": "So this particular piece of code is predicated on \u0027children\u0027 being empty, i.e. the augmented nodes to do not have siblings, right?\n\nPlease expand the test suite to assert the layout of both having both an augmented and non-augmented child at the same time.",
+      "range": {
+        "startLine": 271,
+        "startChar": 12,
+        "endLine": 271,
+        "endChar": 28
+      },
+      "revId": "bdd99b79564be0ccdc38ca15baff9626b05451a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "10a6630e_ebb67bc5",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-02-22T11:00:47Z",
+      "side": 1,
+      "message": "total number of children (incl augmented) plays no role here \nbecause the output is controlled by NormalizedNodeResult artifact,\nit allows only single top level node and throws exception when \nonly 2nd one is detected. no reason to test the case",
+      "parentUuid": "8e099a24_9769e93a",
       "range": {
         "startLine": 271,
         "startChar": 12,
