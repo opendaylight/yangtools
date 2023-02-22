@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,8 +26,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 public class NipSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 95, 107, 156, 3_409, 982_867, 1_443_164 });
+        return Arrays.asList(
+            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 95, 107, 156, 3_409, 982_867, 1_443_164 },
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 95, 107, 156, 3_409, 982_867, 1_443_164 });
     }
 
     @Parameter(1)
