@@ -7,23 +7,18 @@
  */
 package org.mockito.configuration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.io.Closeable;
-import java.io.IOException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultAnswerTest {
+class DefaultAnswerTest {
     @Test
-    public void testAnswering() throws IOException {
-        Closeable mock = mock(Closeable.class);
-        try {
-            mock.close();
-            fail();
-        } catch (UnstubbedMethodException e) {
-            assertEquals("closeable.close(); was not stubbed", e.getMessage());
-        }
+    void testAnswering() {
+        final var mock = mock(Closeable.class);
+        final var e = assertThrows(UnstubbedMethodException.class, mock::close);
+        assertEquals("closeable.close(); was not stubbed", e.getMessage());
     }
 }

@@ -7,30 +7,30 @@
  */
 package org.mockito.configuration;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class ArgumentsExtractorVerifierTest {
+@ExtendWith(MockitoExtension.class)
+class ArgumentsExtractorVerifierTest {
     @Mock
     List<String> mockedList;
 
     @Test
-    public void test() {
-        doReturn(Boolean.TRUE).when(this.mockedList).add(any(String.class));
+    void test() {
+        doReturn(Boolean.TRUE).when(mockedList).add(any(String.class));
         final String argument = "something";
-        this.mockedList.add(argument);
+        mockedList.add(argument);
         // retrieve argument
         final ArgumentsExtractorVerifier argumentsExtractorVerifier = new ArgumentsExtractorVerifier();
-        verify(this.mockedList, argumentsExtractorVerifier).add(any(String.class));
-        assertArrayEquals(new Object[] { argument }, argumentsExtractorVerifier.getArguments());
+        verify(mockedList, argumentsExtractorVerifier).add(any(String.class));
+        assertArrayEquals(new Object[]{argument}, argumentsExtractorVerifier.getArguments());
     }
 }
