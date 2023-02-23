@@ -5,27 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.testutils.mockito.tests;
+package org.opendaylight.yangtools.testutils.mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.testutils.mockito.MoreAnswers.realOrException;
 
 import java.io.File;
-import org.junit.Test;
-import org.opendaylight.yangtools.testutils.mockito.UnstubbedMethodException;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test to illustrate the use of the REAL_OR_EXCEPTION.
- *
- * <p>Also useful as example to contrast this approach illustrated in the MockitoExampleTutorialTest.
+ * Test to illustrate the use of the REAL_OR_EXCEPTION. Also useful as example to contrast this approach illustrated in
+ * the MockitoExampleTutorialTest.
  *
  * @see MockitoExampleTutorialTest
- *
  * @author Michael Vorburger
  */
-public class MikitoTest {
+class MikitoTest {
 
     interface SomeService {
 
@@ -38,17 +35,17 @@ public class MikitoTest {
     }
 
     @Test
-    public void usingMikitoToCallStubbedMethod() {
+    void usingMikitoToCallStubbedMethod() {
         SomeService service = mock(MockSomeService.class, realOrException());
         assertEquals(123, service.foobar(new File("hello.txt")));
         assertEquals(0, service.foobar(new File("belo.txt")));
     }
 
     @Test
-    public void usingMikitoToCallUnstubbedMethodAndExpectException() {
-        MockSomeService service = mock(MockSomeService.class, realOrException());
-        String message = assertThrows(UnstubbedMethodException.class, service::foo).getMessage();
-        assertEquals("foo() is not implemented in mockSomeService", message);
+    void usingMikitoToCallUnstubbedMethodAndExpectException() {
+        var service = mock(MockSomeService.class, realOrException());
+        var ex = assertThrows(UnstubbedMethodException.class, service::foo);
+        assertEquals("foo() is not implemented in mockSomeService", ex.getMessage());
     }
 
     abstract static class MockSomeService implements SomeService {

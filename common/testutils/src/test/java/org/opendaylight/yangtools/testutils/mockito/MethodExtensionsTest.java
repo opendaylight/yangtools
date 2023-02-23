@@ -5,21 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.testutils.mockito.tests;
+package org.opendaylight.yangtools.testutils.mockito;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Method;
-import org.junit.Test;
-import org.opendaylight.yangtools.testutils.mockito.MethodExtensions;
+import org.junit.jupiter.api.Test;
 
 public class MethodExtensionsTest {
-    public <T> void fooBar(int index, T element) {
+    public <T> void fooBar(final int index, final T element) {
         // No-op
     }
 
     @Test
-    public void betterToString() throws Exception {
+    void betterToString() throws Exception {
         Method method = MethodExtensionsTest.class.getMethod("fooBar", Integer.TYPE, Object.class);
         assertEquals("fooBar(int index, T element)", MethodExtensions.toString(method));
     }

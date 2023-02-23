@@ -5,11 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.testutils.mockito.tests;
+package org.opendaylight.yangtools.testutils.mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
@@ -18,20 +18,16 @@ import static org.mockito.Mockito.when;
 import static org.opendaylight.yangtools.testutils.mockito.MoreAnswers.exception;
 
 import java.io.File;
-import org.junit.Test;
-import org.opendaylight.yangtools.testutils.mockito.UnstubbedMethodException;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test to illustrate the basic use of Mockito VS the EXCEPTION_ANSWER.
- *
- * <p>Also useful as example to contrast this approach with the REAL_OR_EXCEPTION
- * approach illustrated in the MikitoTest.
+ * Test to illustrate the basic use of Mockito VS the EXCEPTION_ANSWER. Also useful as example to contrast this approach
+ * with the REAL_OR_EXCEPTION approach illustrated in the MikitoTest.
  *
  * @see MikitoTest
- *
  * @author Michael Vorburger
  */
-public class MockitoExampleTutorialTest {
+class MockitoExampleTutorialTest {
 
     interface SomeService {
 
@@ -44,20 +40,20 @@ public class MockitoExampleTutorialTest {
     }
 
     @Test
-    public void usingMockitoWithoutStubbing() {
+    void usingMockitoWithoutStubbing() {
         SomeService service = mock(SomeService.class);
         assertNull(service.bar("hulo"));
     }
 
     @Test
-    public void usingMockitoToStubSimpleCase() {
+    void usingMockitoToStubSimpleCase() {
         SomeService service = mock(SomeService.class);
         when(service.foobar(any())).thenReturn(123);
         assertEquals(123, service.foobar(new File("hello.txt")));
     }
 
     @Test
-    public void usingMockitoToStubComplexCase() {
+    void usingMockitoToStubComplexCase() {
         SomeService service = mock(SomeService.class);
         when(service.foobar(any())).thenAnswer(invocation -> {
             File file = invocation.getArgument(0);
@@ -66,14 +62,16 @@ public class MockitoExampleTutorialTest {
         assertEquals(0, service.foobar(new File("belo.txt")));
     }
 
-    @Test(expected = UnstubbedMethodException.class)
-    public void usingMockitoExceptionException() {
-        SomeService service = mock(SomeService.class, exception());
-        service.foo();
+    @Test
+    void usingMockitoExceptionException() {
+        assertThrows(UnstubbedMethodException.class, () -> {
+            SomeService service = mock(SomeService.class, exception());
+            service.foo();
+        });
     }
 
     @Test
-    public void usingMockitoNoExceptionIfStubbed() {
+    void usingMockitoNoExceptionIfStubbed() {
         SomeService service = mock(SomeService.class, exception());
         // NOT when(s.foobar(any())).thenReturn(123) BUT must be like this:
         doReturn(123).when(service).foobar(any());
@@ -82,7 +80,7 @@ public class MockitoExampleTutorialTest {
     }
 
     @Test
-    public void usingMockitoToStubComplexCaseAndExceptionIfNotStubbed() {
+    void usingMockitoToStubComplexCaseAndExceptionIfNotStubbed() {
         SomeService service = mock(SomeService.class, exception());
         doAnswer(invocation -> {
             File file = invocation.getArgument(0);
