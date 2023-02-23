@@ -231,14 +231,6 @@ public class InstanceIdentifierTest {
         builder4.child(Node.class, new NodeKey(20));
         assertFalse(builder3.equals(builder4));
         assertFalse(builder4.equals(builder3));
-
-        InstanceIdentifierBuilder<Nodes> iib1 = new InstanceIdentifierBuilderImpl<>(null, null, 31, true);
-        InstanceIdentifierBuilder<Nodes> iib2 = new InstanceIdentifierBuilderImpl<>(null, null, 31, false);
-        InstanceIdentifierBuilder<Nodes> iib3 = new InstanceIdentifierBuilderImpl<>(null, null, 31, true);
-        assertFalse(iib1.equals(iib2));
-        assertFalse(iib2.equals(iib1));
-        assertTrue(iib1.equals(iib3));
-        assertTrue(iib3.equals(iib1));
     }
 
     @Test
