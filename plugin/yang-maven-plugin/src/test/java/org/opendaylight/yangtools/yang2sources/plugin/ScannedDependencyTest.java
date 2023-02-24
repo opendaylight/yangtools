@@ -53,10 +53,10 @@ public class ScannedDependencyTest {
         final Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
         final File testFile2 = new File(ScannedDependencyTest.class.getResource("/").getPath(), "test.jar");
-        final JarOutputStream target = new JarOutputStream(new FileOutputStream(testFile2), manifest);
-        addSourceFileToTargetJar(new File(ScannedDependencyTest.class.getResource("/tests/META-INF").getPath()),
-            target);
-        target.close();
+        try (var target = new JarOutputStream(new FileOutputStream(testFile2), manifest)) {
+            addSourceFileToTargetJar(new File(ScannedDependencyTest.class.getResource("/tests/META-INF").getPath()),
+                target);
+        }
 
         final Artifact artifact = mock(Artifact.class);
         doReturn(new File(ScannedDependencyTest.class.getResource("/tests").toURI())).when(artifact).getFile();
