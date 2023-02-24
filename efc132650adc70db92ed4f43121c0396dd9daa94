@@ -16,6 +16,259 @@
       "message": "refactored, please review",
       "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0db0decb_a249763c",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/FileGeneratorArg.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 58,
+        "startChar": 23,
+        "endLine": 58,
+        "endChar": 39
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6bb2eee1_3f51c53d",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/FileGeneratorArg.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 61,
+        "startChar": 13,
+        "endLine": 61,
+        "endChar": 23
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8889ae8a_fb3ca47b",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 68,
+        "startChar": 13,
+        "endLine": 68,
+        "endChar": 22
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c456a67_1bdd79cd",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 77,
+        "startChar": 8,
+        "endLine": 77,
+        "endChar": 32
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa6fff11_9958083c",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 82,
+        "startChar": 8,
+        "endLine": 82,
+        "endChar": 32
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "075f357f_16ae4ae1",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 123,
+        "startChar": 19,
+        "endLine": 123,
+        "endChar": 32
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3028b42c_8af1f9ad",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final parameters",
+      "range": {
+        "startLine": 129,
+        "startChar": 19,
+        "endLine": 129,
+        "endChar": 54
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "946263aa_f564a9d2",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesState.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 72,
+        "startChar": 12,
+        "endLine": 72,
+        "endChar": 21
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78596b04_17e0cbcc",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/AbstractCodeGeneratorTest.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "is this meant to be here? It is not used anywhere",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 38
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85dc08e6_87eeffbc",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "can be final",
+      "range": {
+        "startLine": 120,
+        "startChar": 13,
+        "endLine": 120,
+        "endChar": 22
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1929204f_2ddae7d6",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextTest.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-02-24T12:16:59Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 131,
+        "startChar": 11,
+        "endLine": 131,
+        "endChar": 28
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
