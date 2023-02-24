@@ -67,30 +67,28 @@ public class ScannedDependencyTest {
     }
 
     private static void addSourceFileToTargetJar(final File source, final JarOutputStream target) throws IOException {
-        BufferedInputStream in = null;
-        try {
-            if (source.isDirectory()) {
-                String name = source.getPath().replace("\\", "/");
-                if (!name.isEmpty()) {
-                    if (!name.endsWith("/")) {
-                        name += "/";
-                    }
-                    final JarEntry entry = new JarEntry(name);
-                    entry.setTime(source.lastModified());
-                    target.putNextEntry(entry);
-                    target.closeEntry();
+        if (source.isDirectory()) {
+            String name = source.getPath().replace("\\", "/");
+            if (!name.isEmpty()) {
+                if (!name.endsWith("/")) {
+                    name += "/";
                 }
-                for (final File nestedFile : source.listFiles()) {
-                    addSourceFileToTargetJar(nestedFile, target);
-                }
-                return;
+                final JarEntry entry = new JarEntry(name);
+                entry.setTime(source.lastModified());
+                target.putNextEntry(entry);
+                target.closeEntry();
             }
+            for (final File nestedFile : source.listFiles()) {
+                addSourceFileToTargetJar(nestedFile, target);
+            }
+            return;
+        }
 
-            final JarEntry entry = new JarEntry(source.getPath().replace("\\", "/"));
-            entry.setTime(source.lastModified());
-            target.putNextEntry(entry);
-            in = new BufferedInputStream(new FileInputStream(source));
+        final JarEntry entry = new JarEntry(source.getPath().replace("\\", "/"));
+        entry.setTime(source.lastModified());
+        target.putNextEntry(entry);
 
+        try (var in = new BufferedInputStream(new FileInputStream(source))) {
             final byte[] buffer = new byte[1024];
             while (true) {
                 final int count = in.read(buffer);
@@ -100,10 +98,6 @@ public class ScannedDependencyTest {
                 target.write(buffer, 0, count);
             }
             target.closeEntry();
-        } finally {
-            if (in != null) {
-                in.close();
-            }
         }
     }
 }
