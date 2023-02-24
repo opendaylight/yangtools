@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34045623_3a7b1133",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-02-24T12:23:35Z",
+      "side": 1,
+      "message": "Patch seems incomplete (at least to me), and jenkins cant build it",
+      "revId": "9bb5339de8d2aacae72e0751f3ba6eb04416d03b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "295bddeb_851a273c",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamPushTask.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-02-24T12:23:35Z",
+      "side": 1,
+      "message": "unused parameter",
+      "revId": "9bb5339de8d2aacae72e0751f3ba6eb04416d03b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
