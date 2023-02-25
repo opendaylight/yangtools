@@ -21,7 +21,6 @@ import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.YangDataRuntimeType;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -65,7 +64,7 @@ abstract sealed class YangDataGenerator
         // yang-data's argument is not guaranteed to comply with YANG 'identifier', but it usually does. If it does, we
         // use the usual mechanics, but if it does not, we have to deal with any old string, similar to what we do for
         // bit names. Here we decide which path to take.
-        final String templateName = statement.argument();
+        final String templateName = statement.argument().name();
         final var identifier = UnresolvedQName.tryLocalName(templateName);
         return identifier != null ? new WithIdentifier(statement, parent, identifier)
             : new WithString(statement, parent);
@@ -73,8 +72,7 @@ abstract sealed class YangDataGenerator
 
     @Override
     final void pushToInference(final SchemaInferenceStack dataTree) {
-        final QNameModule moduleQName = currentModule().getQName().getModule();
-        dataTree.enterYangData(moduleQName, statement().argument());
+        dataTree.enterYangData(statement().argument());
     }
 
     @Override

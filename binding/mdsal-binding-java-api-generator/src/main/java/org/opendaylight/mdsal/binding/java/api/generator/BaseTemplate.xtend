@@ -33,6 +33,7 @@ import org.opendaylight.mdsal.binding.model.api.TypeMemberComment
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.yang.binding.BaseIdentity
 import org.opendaylight.yangtools.yang.binding.contract.Naming
+import org.opendaylight.yangtools.yang.common.YangDataName
 
 abstract class BaseTemplate extends JavaFileTemplate {
     static final char NEW_LINE = '\n'
@@ -302,11 +303,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
              */
             public static final «c.type.importedNonNull» «c.name» = «entry.key.importedName».«Naming.MODULE_INFO_QNAMEOF_METHOD_NAME»("«entry.value»");
         «ELSEIF Naming.NAME_STATIC_FIELD_NAME.equals(c.name)»
-            «val entry = c.value as Entry<JavaTypeName, String>»
+            «val entry = c.value as Entry<JavaTypeName, YangDataName>»
             /**
              * Yang Data template name of the statement represented by this class.
              */
-            public static final «c.type.importedNonNull» «c.name» = «entry.key.importedName».«Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME»("«entry.value»");
+            public static final «c.type.importedNonNull» «c.name» = «entry.key.importedName».«Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME»("«entry.value.name»");
         «ELSEIF Naming.VALUE_STATIC_FIELD_NAME.equals(c.name) && BaseIdentity.equals(c.value)»
             «val typeName = c.type.importedName»
             «val override = OVERRIDE.importedName»

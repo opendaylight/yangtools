@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
@@ -31,8 +30,7 @@ import org.opendaylight.yangtools.yang.binding.YangFeature;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.repo.api.FeatureSet;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
@@ -123,14 +121,13 @@ public final class ModuleInfoSnapshotBuilder {
         }
 
         if (!moduleFeatures.isEmpty()) {
-            final var featuresByModule =
-                ImmutableMap.<QNameModule, ImmutableSet<String>>builderWithExpectedSize(moduleFeatures.size());
+            final var featuresByModule = FeatureSet.builder();
             for (var entry : Multimaps.asMap(moduleFeatures).entrySet()) {
-                featuresByModule.put(BindingReflections.getQNameModule(entry.getKey()),
+                featuresByModule.addModuleFeatures(BindingReflections.getQNameModule(entry.getKey()),
                     entry.getValue().stream().map(YangFeature::qname).map(QName::getLocalName).sorted()
                         .collect(ImmutableSet.toImmutableSet()));
             }
-            parser.setSupportedFeatures(new FeatureSet(featuresByModule.build()));
+            parser.setSupportedFeatures(featuresByModule.build());
         }
 
         return new DefaultModuleInfoSnapshot(parser.buildEffectiveModel(), mappedInfos, classLoaders);

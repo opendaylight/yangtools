@@ -49,9 +49,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -262,15 +261,15 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
     }
 
     final @NonNull NormalizedNode serializeImpl(final @NonNull D data) {
-        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final var result = new NormalizationResultHolder();
         // We create DOM stream writer which produces normalized nodes
-        final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         try {
             eventStreamSerializer().serialize(data, new BindingToNormalizedStreamWriter(this, domWriter));
         } catch (final IOException e) {
             throw new IllegalStateException("Failed to serialize Binding DTO",e);
         }
-        return result.getResult();
+        return result.getResult().data();
     }
 
     static final <T extends NormalizedNode> @NonNull T checkDataArgument(final @NonNull Class<T> expectedType,

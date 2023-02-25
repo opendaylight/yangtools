@@ -19,7 +19,6 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.yangtools.concepts.PrettyTree;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
@@ -54,9 +53,16 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     }
 
     @Override
+    public final @NonNull NodeIdentifier name() {
+        return identifier;
+    }
+
+    @Override
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public final @NonNull NodeIdentifier getIdentifier() {
         return identifier;
     }
+
 
     @Override
     public final ContainerNode getDelegate() {
@@ -69,7 +75,7 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     }
 
     @Override
-    public DataContainerChild childByArg(final PathArgument child) {
+    public DataContainerChild childByArg(final NodeIdentifier child) {
         return delegate().childByArg(child);
     }
 
@@ -94,10 +100,9 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof ContainerNode)) {
+        if (!(obj instanceof ContainerNode other)) {
             return false;
         }
-        final ContainerNode other = (ContainerNode) obj;
         return delegate().equals(other);
     }
 

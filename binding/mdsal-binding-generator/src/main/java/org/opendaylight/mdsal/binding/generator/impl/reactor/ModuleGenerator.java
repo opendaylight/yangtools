@@ -26,6 +26,7 @@ import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -114,8 +115,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
             Map.entry(yangModuleInfo, localName.getLocalName()));
     }
 
-    // FIXME: use YangDataName
-    void addNameConstant(final GeneratedTypeBuilderBase<?> builder, final String templateName) {
+    void addNameConstant(final GeneratedTypeBuilderBase<?> builder, final YangDataName templateName) {
         builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME,
             Map.entry(yangModuleInfo, templateName));
     }

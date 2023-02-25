@@ -82,7 +82,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -554,7 +554,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         final var yangPath = YangInstanceIdentifier.create(yangArgs);
 
         // We create DOM stream writer which produces normalized nodes
-        final var result = new NormalizedNodeResult();
+        final var result = new NormalizationResultHolder();
         final var domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var bindingWriter = new BindingToNormalizedStreamWriter(codecContext, domWriter);
         final var augment = codecContext instanceof BindingAugmentationCodecTreeNode<?> augmentNode ? augmentNode
@@ -581,9 +581,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         // Terminate the fake container and extract it to the result
         if (augment != null) {
             return new AugmentationResult(yangPath, augment.childPathArguments(),
-                ImmutableList.copyOf(((ContainerNode) result.getResult()).body()));
+                ImmutableList.copyOf(((ContainerNode) result.getResult().data()).body()));
         }
-        return new NodeResult(yangPath, result.getResult());
+        return new NodeResult(yangPath, result.getResult().data());
     }
 
     @Override
@@ -678,9 +678,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     private <T extends DataContainer> @NonNull ContainerNode serializeDataObject(final DataObject data,
             final WriterFactoryMethod<T> newWriter) {
-        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final var result = new NormalizationResultHolder();
         // We create DOM stream writer which produces normalized nodes
-        final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final Class<? extends DataObject> type = data.implementedInterface();
         @SuppressWarnings("unchecked")
         final BindingStreamEventWriter writer = newWriter.createWriter(this, (Class<T>) type, domWriter);
@@ -690,16 +690,16 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             LOG.error("Unexpected failure while serializing data {}", data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
         }
-        return (ContainerNode) result.getResult();
+        return (ContainerNode) result.getResult().data();
     }
 
 
     private static boolean notBindingRepresentable(final NormalizedNode data) {
         // ValueNode covers LeafNode and LeafSetEntryNode
         return data instanceof ValueNode
-                || data instanceof MapNode || data instanceof UnkeyedListNode
-                || data instanceof ChoiceNode
-                || data instanceof LeafSetNode;
+            || data instanceof MapNode || data instanceof UnkeyedListNode
+            || data instanceof ChoiceNode
+            || data instanceof LeafSetNode;
     }
 
     @SuppressWarnings("rawtypes")

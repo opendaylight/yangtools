@@ -14,7 +14,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.TypeObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
         implements BindingSerializer<Object, DataObject> {
     private static final Logger LOG = LoggerFactory.getLogger(CachingNormalizedNodeSerializer.class);
 
-    private final NormalizedNodeResult domResult = new NormalizedNodeResult();
+    private final NormalizationResultHolder domResult = new NormalizationResultHolder();
     private final NormalizedNodeWriterWithAddChild domWriter = new NormalizedNodeWriterWithAddChild(domResult);
     private final AbstractBindingNormalizedNodeCacheHolder cacheHolder;
     private final BindingToNormalizedStreamWriter delegate;
@@ -60,7 +60,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
         } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
-        return writer.domResult.getResult();
+        return writer.domResult.getResult().data();
     }
 
     @Override

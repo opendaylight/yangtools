@@ -11,6 +11,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**
  * Naming strategy for {@code ietf-restconf:yang-data} template which has a generic string not matching YANG identifier.
@@ -19,7 +20,7 @@ import org.opendaylight.yangtools.yang.binding.contract.Naming;
 final class YangDataNamingStrategy extends ClassNamingStrategy {
     private final String javaIdentifier;
 
-    YangDataNamingStrategy(final String templateName) {
+    YangDataNamingStrategy(final YangDataName templateName) {
         javaIdentifier = Naming.mapYangDataName(templateName);
     }
 

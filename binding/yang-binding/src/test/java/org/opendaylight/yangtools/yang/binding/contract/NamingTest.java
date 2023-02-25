@@ -11,12 +11,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 
 public class NamingTest {
 
@@ -107,7 +107,7 @@ public class NamingTest {
 
     private static void assertEqualMapping(final List<String> mapped, final List<String> yang) {
         assertEquals(mapped.size(), yang.size());
-        final Map<String, String> expected = new HashMap<>();
+        final var expected = new HashMap<String, String>();
         for (int i = 0; i < mapped.size(); ++i) {
             expected.put(yang.get(i), mapped.get(i));
         }
@@ -117,13 +117,15 @@ public class NamingTest {
 
     @Test
     public void yangDataMapping() {
+        final var ns = QNameModule.create(XMLNamespace.of("unused"));
+
         // single ascii compliant non-conflicting word - remain as is
-        assertEquals("single", Naming.mapYangDataName("single"));
+        assertEquals("single", Naming.mapYangDataName(new YangDataName(ns, "single")));
         // ascii compliant - non-compliany chars only encoded
-        assertEquals("$abc$20$cde", Naming.mapYangDataName("abc cde"));
+        assertEquals("$abc$20$cde", Naming.mapYangDataName(new YangDataName(ns, "abc cde")));
         // latin1 compliant -> latin chars normalized, non-compliant chars are encoded
-        assertEquals("$ľaľaho$20$papľuhu", Naming.mapYangDataName("ľaľaho papľuhu"));
+        assertEquals("$ľaľaho$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "ľaľaho papľuhu")));
         // latin1 non-compliant - all non-compliant characters encoded
-        assertEquals("$привет$20$papľuhu", Naming.mapYangDataName("привет papľuhu"));
+        assertEquals("$привет$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "привет papľuhu")));
     }
 }

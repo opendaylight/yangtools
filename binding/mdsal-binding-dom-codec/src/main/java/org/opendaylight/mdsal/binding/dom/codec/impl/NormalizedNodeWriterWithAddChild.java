@@ -9,15 +9,14 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 
 final class NormalizedNodeWriterWithAddChild extends ImmutableNormalizedNodeStreamWriter {
-
-    NormalizedNodeWriterWithAddChild(final NormalizedNodeResult result) {
+    NormalizedNodeWriterWithAddChild(final NormalizationResultHolder result) {
         super(result);
     }
 
     void addChild(final NormalizedNode child) {
-        this.writeChild(child);
+        writeChild(child);
     }
 }

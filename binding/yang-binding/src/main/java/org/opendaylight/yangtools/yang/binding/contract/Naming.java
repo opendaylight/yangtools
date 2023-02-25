@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 
 @Beta
 public final class Naming {
@@ -440,8 +441,8 @@ public final class Naming {
      * @throws IllegalArgumentException if (@code templateName} is empty
      */
     // TODO: take YangDataName once we have it readily available
-    public static String mapYangDataName(final String templateName) {
-        return mapEnumAssignedName(templateName);
+    public static String mapYangDataName(final YangDataName templateName) {
+        return mapEnumAssignedName(templateName.name());
     }
 
     // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-3.html#jls-3.8
