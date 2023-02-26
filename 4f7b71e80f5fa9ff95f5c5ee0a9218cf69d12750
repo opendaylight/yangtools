@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2296b81f_9f13f52d",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/CapturingInputStream.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T19:43:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fe604a2f_d220471f",
+      "range": {
+        "startLine": 31,
+        "startChar": 15,
+        "endLine": 31,
+        "endChar": 25
+      },
+      "revId": "4f7b71e80f5fa9ff95f5c5ee0a9218cf69d12750",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "129c6668_27d8ad66",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-02-26T19:40:09Z",
       "side": 1,
       "message": "this is incorrect: number of bytes read is returned by super.read()",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 20
+      },
+      "revId": "4f7b71e80f5fa9ff95f5c5ee0a9218cf69d12750",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69f693c1_f2ffd61a",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/CapturingInputStream.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T19:43:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "129c6668_27d8ad66",
       "range": {
         "startLine": 36,
         "startChar": 0,
