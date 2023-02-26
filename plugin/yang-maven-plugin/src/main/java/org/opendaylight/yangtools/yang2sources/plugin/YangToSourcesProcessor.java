@@ -120,11 +120,7 @@ class YangToSourcesProcessor {
             // FIXME: look for persisted state and restore it
         }
 
-        /*
-         * Collect all files which affect YANG context. This includes all
-         * files in current project and optionally any jars/files in the
-         * dependencies.
-         */
+        // Collect all files in the current project.
         final List<File> yangFilesInProject;
         try {
             yangFilesInProject = listFiles(yangFilesRootDir, excludedFiles);
@@ -151,6 +147,8 @@ class YangToSourcesProcessor {
 
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
 
+        // All files which affect YANG context. This minimally includes all files in the current project, but optionally
+        // may include any YANG files in the dependencies.
         final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
         final Collection<ScannedDependency> dependencies;
         if (inspectDependencies) {
