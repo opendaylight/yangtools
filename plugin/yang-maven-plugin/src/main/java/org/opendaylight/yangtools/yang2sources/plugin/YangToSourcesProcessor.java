@@ -74,7 +74,7 @@ class YangToSourcesProcessor {
     private final YangParserFactory parserFactory;
     private final File yangFilesRootDir;
     private final Set<File> excludedFiles;
-    private final Map<String, FileGeneratorArg> fileGeneratorArgs;
+    private final ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs;
     private final @NonNull MavenProject project;
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
@@ -245,7 +245,8 @@ class YangToSourcesProcessor {
         }
 
         // FIXME: store these files into state, so that we can verify/clean up
-        final var outputState = new YangToSourcesState(new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
+        final var outputState = new YangToSourcesState(fileGeneratorArgs,
+            new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
         buildContext.setValue(BUILD_CONTEXT_STATE_NAME, outputState);
         if (buildContext.getValue(BUILD_CONTEXT_STATE_NAME) == null) {
             LOG.debug("{} BuildContext did not retain state, persisting", LOG_PREFIX);
