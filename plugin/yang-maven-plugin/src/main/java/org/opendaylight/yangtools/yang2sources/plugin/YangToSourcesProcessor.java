@@ -245,7 +245,7 @@ class YangToSourcesProcessor {
         }
 
         // FIXME: store these files into state, so that we can verify/clean up
-        final var outputState = new YangToSourcesState(ImmutableMap.copyOf(uniqueOutputFiles));
+        final var outputState = new YangToSourcesState(new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
         buildContext.setValue(BUILD_CONTEXT_STATE_NAME, outputState);
         if (buildContext.getValue(BUILD_CONTEXT_STATE_NAME) == null) {
             LOG.debug("{} BuildContext did not retain state, persisting", LOG_PREFIX);
