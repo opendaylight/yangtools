@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d720afb2_49a1552e",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T14:35:39Z",
+      "side": 1,
+      "message": "there is no point in separating these from RebuildContext",
+      "range": {
+        "startLine": 34,
+        "startChar": 12,
+        "endLine": 34,
+        "endChar": 31
+      },
+      "revId": "d843fb514933f9d795906b13d97570102410756e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64d054aa_8747453f",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T14:35:39Z",
+      "side": 1,
+      "message": "when we look at the caller, oldState is guaranteed to be non-null, so this is just a very verbose way of saying oldState.equals(newState)",
+      "range": {
+        "startLine": 65,
+        "startChar": 19,
+        "endLine": 65,
+        "endChar": 25
+      },
+      "revId": "d843fb514933f9d795906b13d97570102410756e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0e346860_4651d1d7",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T14:35:39Z",
+      "side": 1,
+      "message": "needlessly nested (and it originally was not)",
+      "range": {
+        "startLine": 91,
+        "startChar": 25,
+        "endLine": 91,
+        "endChar": 46
+      },
+      "revId": "d843fb514933f9d795906b13d97570102410756e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
