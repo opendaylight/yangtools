@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61e55bcb_9ae8c147",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContext.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T15:24:57Z",
+      "side": 1,
+      "message": "This should be FileGeneratorArg",
+      "range": {
+        "startLine": 46,
+        "startChar": 33,
+        "endLine": 46,
+        "endChar": 42
+      },
+      "revId": "e24e4d8f2b5ef52a43a94c5fb5fc28a0bc08f77e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b971e42_a61b2441",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContext.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T15:24:57Z",
+      "side": 1,
+      "message": "this just hides IOException, which is not nice",
+      "range": {
+        "startLine": 141,
+        "startChar": 12,
+        "endLine": 141,
+        "endChar": 47
+      },
+      "revId": "e24e4d8f2b5ef52a43a94c5fb5fc28a0bc08f77e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "adde53f2_e7783c68",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesState.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T15:24:57Z",
+      "side": 1,
+      "message": "do not use trailing comments, they get picked up by Sonar",
+      "range": {
+        "startLine": 106,
+        "startChar": 25,
+        "endLine": 106,
+        "endChar": 41
+      },
+      "revId": "e24e4d8f2b5ef52a43a94c5fb5fc28a0bc08f77e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}

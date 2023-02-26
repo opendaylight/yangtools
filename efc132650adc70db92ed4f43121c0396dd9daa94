@@ -370,6 +370,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "198527e4_35f85b3e",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesState.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-26T15:24:57Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "946263aa_f564a9d2",
+      "range": {
+        "startLine": 72,
+        "startChar": 12,
+        "endLine": 72,
+        "endChar": 21
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "78596b04_17e0cbcc",
