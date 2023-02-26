@@ -13,34 +13,90 @@ import com.google.common.collect.ImmutableMap;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.WritableObject;
+import org.opendaylight.yangtools.concepts.WritableObjects;
 
 /**
  * A collection of {@link FileState} objects indexed by their {@link FileState#path()}.
  */
 record FileStateSet(@NonNull ImmutableMap<String, FileState> fileStates) implements WritableObject {
+    private static final @NonNull FileStateSet EMPTY = new FileStateSet(ImmutableMap.of());
+
     FileStateSet {
         requireNonNull(fileStates);
     }
 
+    static @NonNull FileStateSet empty() {
+        return EMPTY;
+    }
+
+    static @NonNull FileStateSet ofNullable(final @Nullable ImmutableMap<String, FileState> fileStates) {
+        return fileStates == null || fileStates.isEmpty() ? EMPTY : new FileStateSet(fileStates);
+    }
+
     static @NonNull FileStateSet readFrom(final DataInput in) throws IOException {
         final int size = in.readInt();
+        if (size == 0) {
+            return EMPTY;
+        }
+
+        final var prefix = in.readUTF();
         final var fileStates = ImmutableMap.<String, FileState>builderWithExpectedSize(size);
         for (int i = 0; i < size; ++i) {
-            final var fileState = FileState.read(in);
-            fileStates.put(fileState.path(), fileState);
+            final var path = prefix + in.readUTF();
+            fileStates.put(path, new FileState(path, WritableObjects.readLong(in), in.readInt()));
         }
         return new FileStateSet(fileStates.build());
     }
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
-        out.writeInt(fileStates.size());
-        for (var fileState : fileStates.values()) {
-            // TODO: discover common prefix and serialize it just once -- but that will complicate things a log, as
-            //       we really maintain a hierarchy, which means we want the Map sorted in a certain way.
-            fileState.writeTo(out);
+        if (fileStates.isEmpty()) {
+            out.writeInt(0);
+        } else {
+            writeTo(out, fileStates.values());
         }
+    }
+
+    private static void writeTo(final DataOutput out, final Collection<FileState> fileStates) throws IOException {
+        final var prefix = findPathPrefix(fileStates);
+        final int cutIndex = prefix.length();
+
+        out.writeInt(fileStates.size());
+        out.writeUTF(prefix);
+
+        for (var fileState : fileStates) {
+            final var path = fileState.path();
+            out.writeUTF(cutIndex == 0 ? path : path.substring(cutIndex));
+            WritableObjects.writeLong(out, fileState.size());
+            out.writeInt(fileState.crc32());
+        }
+    }
+
+    private static String findPathPrefix(final Collection<FileState> fileStates) {
+        String prefix = null;
+        for (var fileState : fileStates) {
+            prefix = findCommonPrefix(prefix, fileState.path());
+            if (prefix.isEmpty()) {
+                break;
+            }
+        }
+        return prefix != null ? prefix : "";
+    }
+
+    private static String findCommonPrefix(final String prefix, final String path) {
+        if (prefix == null) {
+            // first element
+            return path;
+        }
+        for (int i = 0; i < Math.min(path.length(), prefix.length()); i++) {
+            if (prefix.charAt(i) != path.charAt(i)) {
+                return prefix.substring(0, i);
+            }
+        }
+        return prefix;
     }
 }
