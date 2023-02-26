@@ -47,6 +47,10 @@ final class GeneratorTaskFactory extends ParserConfigAware implements Identifiab
         return parserConfig;
     }
 
+    FileGeneratorArg arg() {
+        return arg;
+    }
+
     FileGenerator generator() {
         return gen;
     }
