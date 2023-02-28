@@ -8,17 +8,18 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class UtilTest {
+public class ContextHolderTest {
     @Test
     public void contextHolderTest() {
         final var context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang", "/test2.yang");
         final var holder = new ContextHolder(context, Set.of(), Set.of());
-        assertEquals(context, holder.getContext());
+        assertSame(context, holder.getContext());
         assertEquals(Set.of(), holder.getYangModules());
     }
 }
