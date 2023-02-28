@@ -7,15 +7,23 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.LOG_PREFIX;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -112,7 +120,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             return;
         }
 
-        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
+        checkClasspath(project, repoSystem, localRepository, remoteRepos);
         // defaults to ${basedir}/src/main/yang
         File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
         Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
@@ -120,6 +128,80 @@ public final class YangToSourcesMojo extends AbstractMojo {
         new YangToSourcesProcessor(buildContext, yangFilesRootFile, excludedFiles, arrayToList(fileGenerators), project,
             inspectDependencies).execute();
     }
+
+    /**
+     * Read current project dependencies and check if it don't grab incorrect
+     * artifacts versions which could be in conflict with plugin dependencies.
+     *
+     * @param project current project
+     * @param repoSystem repository system
+     * @param localRepo local repository
+     * @param remoteRepos remote repositories
+     */
+    @VisibleForTesting
+    static void checkClasspath(final MavenProject project, final RepositorySystem repoSystem,
+            final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos) {
+        final var plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
+        if (plugin == null) {
+            LOG.warn("{} {} not found, dependencies version check skipped", LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME);
+            return;
+        }
+
+        final var projectDependencies = project.getDependencyArtifacts();
+        for (var entry : getPluginTransitiveDependencies(plugin, repoSystem, localRepo, remoteRepos).entrySet()) {
+            checkArtifact(entry.getKey(), projectDependencies);
+            for (var dependency : entry.getValue()) {
+                checkArtifact(dependency, projectDependencies);
+            }
+        }
+    }
+
+    /**
+     * Read transitive dependencies of given plugin and store them in map.
+     *
+     * @param plugin plugin to read
+     * @param repoSystem repository system
+     * @param localRepository local repository
+     * @param remoteRepos list of remote repositories
+     * @return a Map of transitive dependencies
+     */
+    private static Map<Artifact, Set<Artifact>> getPluginTransitiveDependencies(final Plugin plugin,
+            final RepositorySystem repoSystem, final ArtifactRepository localRepository,
+            final List<ArtifactRepository> remoteRepos) {
+        final var ret = new HashMap<Artifact, Set<Artifact>>();
+        for (var dep : plugin.getDependencies()) {
+            final var artifact = repoSystem.createDependencyArtifact(dep);
+
+            final var request = new ArtifactResolutionRequest();
+            request.setArtifact(artifact);
+            request.setResolveTransitively(true);
+            request.setLocalRepository(localRepository);
+            request.setRemoteRepositories(remoteRepos);
+
+            ret.put(artifact, repoSystem.resolve(request).getArtifacts());
+        }
+        return ret;
+    }
+
+    /**
+     * Check artifact against collection of dependencies. If collection contains artifact with same groupId and
+     * artifactId, but different version, logs a warning.
+     *
+     * @param artifact artifact to check
+     * @param dependencies collection of dependencies
+     */
+    private static void checkArtifact(final Artifact artifact, final Set<Artifact> dependencies) {
+        for (var dep : dependencies) {
+            if (artifact.getGroupId().equals(dep.getGroupId()) && artifact.getArtifactId().equals(dep.getArtifactId())
+                && !artifact.getVersion().equals(dep.getVersion())) {
+                LOG.warn("{} Dependency resolution conflict:", LOG_PREFIX);
+                LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]"
+                    + ". It is recommended to fix this problem because it may cause compilation errors.",
+                    LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME, artifact, dep);
+            }
+        }
+    }
+
 
     private static <T> List<T> arrayToList(final T[] array) {
         return array == null ? ImmutableList.of() : Arrays.asList(array);
