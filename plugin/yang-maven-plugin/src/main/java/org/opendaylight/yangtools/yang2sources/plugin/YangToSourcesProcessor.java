@@ -91,7 +91,9 @@ class YangToSourcesProcessor {
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
-        stateStorage = StateStorage.of(buildContext);
+        stateStorage = StateStorage.of(buildContext,
+            // ${project.build.directory}/maven-status/yang-maven-plugin/execution.state"
+            Path.of(project.getBuild().getDirectory(), "maven-status", "yang-maven-plugin", "execution.state"));
         parserFactory = DEFAULT_PARSER_FACTORY;
     }
 
