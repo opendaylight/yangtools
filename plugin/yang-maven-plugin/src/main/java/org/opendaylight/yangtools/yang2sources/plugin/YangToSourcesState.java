@@ -20,16 +20,18 @@ import org.opendaylight.yangtools.concepts.WritableObject;
 /**
  * State of the result of a {@link YangToSourcesMojo} execution run.
  */
-// FIXME: expand to capture:
-//        - input YANG files
 record YangToSourcesState(
         @NonNull ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs,
+        @NonNull FileStateSet projectYangs,
+        @NonNull FileStateSet dependencyYangs,
         @NonNull FileStateSet outputFiles) implements WritableObject {
     // 'ymp' followed by a byte value '1'
     private static final int MAGIC = 0x796D7001;
 
     YangToSourcesState {
         requireNonNull(fileGeneratorArgs);
+        requireNonNull(projectYangs);
+        requireNonNull(dependencyYangs);
         requireNonNull(outputFiles);
     }
 
@@ -38,13 +40,16 @@ record YangToSourcesState(
         if (magic != MAGIC) {
             throw new IOException("Unrecognized magic " + Integer.toHexString(magic));
         }
-        return new YangToSourcesState(readConfigurations(in), FileStateSet.readFrom(in));
+        return new YangToSourcesState(readConfigurations(in),
+            FileStateSet.readFrom(in), FileStateSet.readFrom(in), FileStateSet.readFrom(in));
     }
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
         out.writeInt(MAGIC);
         writeConfigurations(out, fileGeneratorArgs.values());
+        projectYangs.writeTo(out);
+        dependencyYangs.writeTo(out);
         outputFiles.writeTo(out);
     }
 
