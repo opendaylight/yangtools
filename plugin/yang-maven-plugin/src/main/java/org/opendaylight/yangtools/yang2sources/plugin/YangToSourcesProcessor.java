@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -150,17 +151,11 @@ class YangToSourcesProcessor {
 
         // All files which affect YANG context. This minimally includes all files in the current project, but optionally
         // may include any YANG files in the dependencies.
-        final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
-        final Collection<ScannedDependency> dependencies;
+        final List<ScannedDependency> dependencies;
         if (inspectDependencies) {
-            dependencies = new ArrayList<>();
             final Stopwatch watch = Stopwatch.createStarted();
-
             try {
-                ScannedDependency.scanDependencies(project).forEach(dep -> {
-                    allFiles.add(dep.file());
-                    dependencies.add(dep);
-                });
+                dependencies = ScannedDependency.scanDependencies(project);
             } catch (IOException e) {
                 LOG.error("{} Failed to scan dependencies", LOG_PREFIX, e);
                 throw new MojoExecutionException(LOG_PREFIX + " Failed to scan dependencies ", e);
@@ -174,8 +169,9 @@ class YangToSourcesProcessor {
          * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
          * end of execution.
          */
-        if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
-            LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
+        if (!Stream.concat(yangFilesInProject.stream(), dependencies.stream().map(ScannedDependency::file))
+                .anyMatch(buildContext::hasDelta)) {
+            LOG.info("{} None of {} input files changed", LOG_PREFIX, yangFilesInProject.size() + dependencies.size());
             return;
         }
 
