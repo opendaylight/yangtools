@@ -262,7 +262,7 @@ class YangToSourcesProcessor {
 
         // FIXME: iterate over fileGeneratorArg instances (configuration), not factories (environment)
         // Assign instantiate FileGenerators with appropriate configuration
-        final List<GeneratorTaskFactory> generators = new ArrayList<>(factories.size());
+        final var generators = new ArrayList<GeneratorTaskFactory>(factories.size());
         for (Entry<String, FileGeneratorFactory> entry : factories.entrySet()) {
             final String id = entry.getKey();
             FileGeneratorArg arg = fileGeneratorArgs.get(id);
