@@ -54,11 +54,8 @@ final class Util {
             return;
         }
 
-        final var pluginDependencies = new HashMap<Artifact, Set<Artifact>>();
-        getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo, remoteRepos);
-
         final var projectDependencies = project.getDependencyArtifacts();
-        for (var entry : pluginDependencies.entrySet()) {
+        for (var entry : getPluginTransitiveDependencies(plugin, repoSystem, localRepo, remoteRepos).entrySet()) {
             checkArtifact(entry.getKey(), projectDependencies);
             for (var dependency : entry.getValue()) {
                 checkArtifact(dependency, projectDependencies);
@@ -70,14 +67,15 @@ final class Util {
      * Read transitive dependencies of given plugin and store them in map.
      *
      * @param plugin plugin to read
-     * @param map map, where founded transitive dependencies will be stored
      * @param repoSystem repository system
      * @param localRepository local repository
      * @param remoteRepos list of remote repositories
+     * @return a Map of transitive dependencies
      */
-    private static void getPluginTransitiveDependencies(final Plugin plugin,
-            final Map<Artifact, Set<Artifact>> map, final RepositorySystem repoSystem,
-            final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepos) {
+    private static Map<Artifact, Set<Artifact>> getPluginTransitiveDependencies(final Plugin plugin,
+            final RepositorySystem repoSystem, final ArtifactRepository localRepository,
+            final List<ArtifactRepository> remoteRepos) {
+        final var ret = new HashMap<Artifact, Set<Artifact>>();
         for (var dep : plugin.getDependencies()) {
             final var artifact = repoSystem.createDependencyArtifact(dep);
 
@@ -87,19 +85,17 @@ final class Util {
             request.setLocalRepository(localRepository);
             request.setRemoteRepositories(remoteRepos);
 
-            map.put(artifact, repoSystem.resolve(request).getArtifacts());
+            ret.put(artifact, repoSystem.resolve(request).getArtifacts());
         }
+        return ret;
     }
 
     /**
-     * Check artifact against collection of dependencies. If collection contains
-     * artifact with same groupId and artifactId, but different version, logs a
-     * warning.
+     * Check artifact against collection of dependencies. If collection contains artifact with same groupId and
+     * artifactId, but different version, logs a warning.
      *
-     * @param artifact
-     *            artifact to check
-     * @param dependencies
-     *            collection of dependencies
+     * @param artifact artifact to check
+     * @param dependencies collection of dependencies
      */
     private static void checkArtifact(final Artifact artifact, final Set<Artifact> dependencies) {
         for (var dep : dependencies) {
