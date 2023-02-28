@@ -65,7 +65,6 @@ class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
     private static final String META_INF_STR = "META-INF";
     private static final String YANG_STR = "yang";
-    private static final String BUILD_CONTEXT_STATE_NAME = YangToSourcesProcessor.class.getName();
 
     static final String META_INF_YANG_STRING = META_INF_STR + File.separator + YANG_STR;
     static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
@@ -79,6 +78,7 @@ class YangToSourcesProcessor {
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
     private final YangProvider yangProvider;
+    private final StateStorage stateStorage;
 
     private YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
             final Collection<File> excludedFiles, final List<FileGeneratorArg> fileGeneratorsArgs,
@@ -91,6 +91,7 @@ class YangToSourcesProcessor {
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
+        stateStorage = StateStorage.of(buildContext);
         parserFactory = DEFAULT_PARSER_FACTORY;
     }
 
@@ -110,10 +111,14 @@ class YangToSourcesProcessor {
     }
 
     void execute() throws MojoExecutionException, MojoFailureException {
-        var prevState = buildContext.getValue(BUILD_CONTEXT_STATE_NAME);
+        YangToSourcesState prevState;
+        try {
+            prevState = stateStorage.loadState();
+        } catch (IOException e) {
+            throw new MojoFailureException("Failed to restore execution state", e);
+        }
         if (prevState == null) {
-            LOG.debug("{} BuildContext did not provide state", LOG_PREFIX);
-            // FIXME: look for persisted state and restore it
+            LOG.debug("{} no previous execution state present", LOG_PREFIX);
         }
 
         // Collect all files in the current project.
@@ -246,10 +251,11 @@ class YangToSourcesProcessor {
             codeGenerators.stream()
                 .collect(ImmutableMap.toImmutableMap(GeneratorTaskFactory::getIdentifier, GeneratorTaskFactory::arg)),
             new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
-        buildContext.setValue(BUILD_CONTEXT_STATE_NAME, outputState);
-        if (buildContext.getValue(BUILD_CONTEXT_STATE_NAME) == null) {
-            LOG.debug("{} BuildContext did not retain state, persisting", LOG_PREFIX);
-            // FIXME: persist in target/ directory (there is a maven best practice where)
+
+        try {
+            stateStorage.storeState(outputState);
+        } catch (IOException e) {
+            throw new MojoFailureException("Failed to store execution state", e);
         }
     }
 
