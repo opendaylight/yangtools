@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -56,7 +58,6 @@ public abstract class AbstractCodeGeneratorTest {
         }
     }
 
-    @SuppressWarnings("checkstyle:illegalCatch")
     static final void assertMojoExecution(final YangToSourcesProcessor processor, final Prepare prepare,
             final Verify verify) {
         try (MockedStatic<?> staticLoader = mockStatic(ServiceLoader.class)) {
@@ -80,7 +81,7 @@ public abstract class AbstractCodeGeneratorTest {
                 prepare.prepare(generator);
                 processor.execute();
                 verify.verify(generator);
-            } catch (Exception e) {
+            } catch (FileGeneratorException | MojoExecutionException | MojoFailureException e) {
                 throw new AssertionError(e);
             }
         }
@@ -88,11 +89,11 @@ public abstract class AbstractCodeGeneratorTest {
 
     @FunctionalInterface
     interface Prepare {
-        void prepare(FileGenerator mock) throws Exception;
+        void prepare(FileGenerator mock) throws FileGeneratorException;
     }
 
     @FunctionalInterface
     interface Verify {
-        void verify(FileGenerator mock) throws Exception;
+        void verify(FileGenerator mock) throws FileGeneratorException;
     }
 }
