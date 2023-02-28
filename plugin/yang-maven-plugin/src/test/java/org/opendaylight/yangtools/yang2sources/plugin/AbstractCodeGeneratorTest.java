@@ -56,10 +56,10 @@ public abstract class AbstractCodeGeneratorTest {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "checkstyle:illegalCatch" })
+    @SuppressWarnings("checkstyle:illegalCatch")
     static final void assertMojoExecution(final YangToSourcesProcessor processor, final Prepare prepare,
             final Verify verify) {
-        try (MockedStatic<ServiceLoader> staticLoader = mockStatic(ServiceLoader.class)) {
+        try (MockedStatic<?> staticLoader = mockStatic(ServiceLoader.class)) {
             final FileGenerator generator = mock(FileGenerator.class);
             doCallRealMethod().when(generator).importResolutionMode();
 
