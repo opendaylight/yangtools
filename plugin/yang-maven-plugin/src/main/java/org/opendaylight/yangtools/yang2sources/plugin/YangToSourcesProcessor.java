@@ -91,7 +91,7 @@ class YangToSourcesProcessor {
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
-        stateStorage = StateStorage.of(buildContext);
+        stateStorage = StateStorage.of(buildContext, stateFilePath(project.getBuild().getDirectory()));
         parserFactory = DEFAULT_PARSER_FACTORY;
     }
 
@@ -378,5 +378,11 @@ class YangToSourcesProcessor {
         }
 
         return generatorToFiles.build();
+    }
+
+    @VisibleForTesting
+    static @NonNull Path stateFilePath(final String projectBuildDirectory) {
+        // ${project.build.directory}/maven-status/yang-maven-plugin/execution.state
+        return Path.of(projectBuildDirectory, "maven-status", "yang-maven-plugin", "execution.state");
     }
 }

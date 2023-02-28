@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mockStatic;
 
 import com.google.common.collect.Iterators;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.ServiceLoader;
 import org.apache.maven.model.Build;
@@ -46,7 +47,8 @@ public abstract class AbstractCodeGeneratorTest {
     private Plugin plugin;
 
     @Before
-    public void before() {
+    public void before() throws IOException {
+        Files.deleteIfExists(YangToSourcesProcessor.stateFilePath("target/"));
         doReturn("target/").when(build).getDirectory();
         doReturn(build).when(project).getBuild();
 

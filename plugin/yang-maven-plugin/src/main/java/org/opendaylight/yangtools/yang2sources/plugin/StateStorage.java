@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
@@ -20,11 +21,20 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 @NonNullByDefault
 abstract class StateStorage {
     private static final Logger LOG = LoggerFactory.getLogger(StateStorage.class);
+    private static final String DUMMY_KEY = StateStorage.class.getName();
+    private static final Object DUMMY_VALUE = new Object();
 
-    static StateStorage of(final BuildContext buildContext) {
-        // FIXME: detect no-op BuildContext and fall back to a file
-        LOG.debug("{} Using BuildContext to store state", YangToSourcesProcessor.LOG_PREFIX);
-        return new BuildContextStateStorage(buildContext);
+    static StateStorage of(final BuildContext buildContext, final Path fallbackFile) {
+        // Check if BuildContext works. If it does, we use it, otherwise we use fallback to the specified directory
+        buildContext.setValue(DUMMY_KEY, DUMMY_VALUE);
+        if (DUMMY_VALUE.equals(buildContext.getValue(DUMMY_KEY))) {
+            buildContext.setValue(DUMMY_KEY, null);
+            LOG.debug("{} Using BuildContext to store state", YangToSourcesProcessor.LOG_PREFIX);
+            return new BuildContextStateStorage(buildContext);
+        }
+
+        LOG.debug("{} Using {} to store state", YangToSourcesProcessor.LOG_PREFIX, fallbackFile);
+        return new FileStateStorage(fallbackFile);
     }
 
     abstract @Nullable YangToSourcesState loadState() throws IOException;
