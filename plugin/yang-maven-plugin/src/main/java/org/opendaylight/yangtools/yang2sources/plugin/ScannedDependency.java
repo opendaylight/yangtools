@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.project.MavenProject;
@@ -34,40 +32,39 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 abstract class ScannedDependency {
     private static final class Single extends ScannedDependency {
-
         Single(final File file) {
             super(file);
         }
 
         @Override
-        Collection<YangTextSchemaSource> sources() {
+        ImmutableList<YangTextSchemaSource> sources() {
             return ImmutableList.of(YangTextSchemaSource.forPath(file().toPath()));
         }
     }
 
     private static final class Zip extends ScannedDependency {
-        private final Set<String> entryNames;
+        private final ImmutableSet<String> entryNames;
 
-        Zip(final File file, final Collection<String> entryNames) {
+        Zip(final File file, final ImmutableSet<String> entryNames) {
             super(file);
-            this.entryNames = ImmutableSet.copyOf(entryNames);
+            this.entryNames = requireNonNull(entryNames);
         }
 
         @Override
-        Collection<YangTextSchemaSource> sources() throws IOException {
-            final Collection<YangTextSchemaSource> result = new ArrayList<>(entryNames.size());
+        ImmutableList<YangTextSchemaSource> sources() throws IOException {
+            final var builder = ImmutableList.<YangTextSchemaSource>builderWithExpectedSize(entryNames.size());
 
             try (ZipFile zip = new ZipFile(file())) {
                 for (String entryName : entryNames) {
                     final ZipEntry entry = requireNonNull(zip.getEntry(entryName));
 
-                    result.add(YangTextSchemaSource.delegateForByteSource(
+                    builder.add(YangTextSchemaSource.delegateForByteSource(
                         entryName.substring(entryName.lastIndexOf('/') + 1),
                         ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry)))));
                 }
             }
 
-            return result;
+            return builder.build();
         }
     }
 
@@ -79,13 +76,13 @@ abstract class ScannedDependency {
         this.file = requireNonNull(file);
     }
 
-    static Collection<ScannedDependency> scanDependencies(final MavenProject project) throws IOException {
-        final Collection<File> filesOnCp = Util.getClassPath(project);
+    static List<ScannedDependency> scanDependencies(final MavenProject project) throws IOException {
+        final List<File> filesOnCp = Util.getClassPath(project);
         LOG.debug("{} Searching for YANG files in dependencies: {}", YangToSourcesProcessor.LOG_PREFIX, filesOnCp);
         LOG.debug("{} Searching for YANG files in {} dependencies", YangToSourcesProcessor.LOG_PREFIX,
             filesOnCp.size());
 
-        final List<ScannedDependency> result = new ArrayList<>();
+        final var result = new ArrayList<ScannedDependency>();
         for (File file : filesOnCp) {
             // is it jar file or directory?
             if (file.isDirectory()) {
@@ -100,20 +97,24 @@ abstract class ScannedDependency {
         return result;
     }
 
-    private static Collection<ScannedDependency> scanDirectory(final File yangDir) {
+    private static ImmutableList<ScannedDependency> scanDirectory(final File yangDir) {
         return Arrays.stream(yangDir.listFiles(
             (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile()))
-                .map(Single::new).collect(ImmutableList.toImmutableList());
+                .map(Single::new)
+                .collect(ImmutableList.toImmutableList());
     }
 
-    private static Collection<ScannedDependency> scanZipFile(final File zipFile) throws IOException {
-        final Collection<String> entryNames;
+    private static ImmutableList<ScannedDependency> scanZipFile(final File zipFile) throws IOException {
+        final ImmutableSet<String> entryNames;
         try (ZipFile zip = new ZipFile(zipFile)) {
-            entryNames = zip.stream().filter(entry -> {
-                final String entryName = entry.getName();
-                return entryName.startsWith(META_INF_YANG_STRING_JAR) && !entry.isDirectory()
+            entryNames = zip.stream()
+                .filter(entry -> {
+                    final String entryName = entry.getName();
+                    return entryName.startsWith(META_INF_YANG_STRING_JAR) && !entry.isDirectory()
                         && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION);
-            }).map(ZipEntry::getName).collect(ImmutableList.toImmutableList());
+                })
+                .map(ZipEntry::getName)
+                .collect(ImmutableSet.toImmutableSet());
         }
 
         return entryNames.isEmpty() ? ImmutableList.of() : ImmutableList.of(new Zip(zipFile, entryNames));
@@ -124,5 +125,5 @@ abstract class ScannedDependency {
         return file;
     }
 
-    abstract Collection<YangTextSchemaSource> sources() throws IOException;
+    abstract ImmutableList<YangTextSchemaSource> sources() throws IOException;
 }
