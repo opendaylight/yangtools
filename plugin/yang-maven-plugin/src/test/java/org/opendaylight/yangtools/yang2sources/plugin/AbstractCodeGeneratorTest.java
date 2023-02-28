@@ -23,6 +23,7 @@ import java.util.ServiceLoader;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -42,13 +43,10 @@ public abstract class AbstractCodeGeneratorTest {
     @Mock
     private Plugin plugin;
 
-    final YangToSourcesMojo setupMojo(final YangToSourcesProcessor processor) {
+    @Before
+    public void before() {
         doReturn("target/").when(build).getDirectory();
-//        doReturn(new File("")).when(project).getBasedir();
         doReturn(build).when(project).getBuild();
-
-        doReturn(List.of()).when(plugin).getDependencies();
-        doReturn(plugin).when(project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
 
         try {
             lenient().when(yangProvider.addYangsToMetaInf(any(MavenProject.class), anyCollection()))
@@ -56,14 +54,11 @@ public abstract class AbstractCodeGeneratorTest {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-
-        final YangToSourcesMojo mojo = new YangToSourcesMojo(processor);
-        mojo.setProject(project);
-        return mojo;
     }
 
     @SuppressWarnings({ "rawtypes", "checkstyle:illegalCatch" })
-    final void assertMojoExecution(final YangToSourcesProcessor processor, final Prepare prepare, final Verify verify) {
+    static final void assertMojoExecution(final YangToSourcesProcessor processor, final Prepare prepare,
+            final Verify verify) {
         try (MockedStatic<ServiceLoader> staticLoader = mockStatic(ServiceLoader.class)) {
             final FileGenerator generator = mock(FileGenerator.class);
             doCallRealMethod().when(generator).importResolutionMode();
@@ -81,10 +76,9 @@ public abstract class AbstractCodeGeneratorTest {
             doReturn(Iterators.singletonIterator(factory)).when(loader).iterator();
             staticLoader.when(() -> ServiceLoader.load(FileGeneratorFactory.class)).thenReturn(loader);
 
-            final YangToSourcesMojo mojo = setupMojo(processor);
             try {
                 prepare.prepare(generator);
-                mojo.execute();
+                processor.execute();
                 verify.verify(generator);
             } catch (Exception e) {
                 throw new AssertionError(e);

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -81,10 +80,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     private boolean inspectDependencies;
 
     @Component
-    @VisibleForTesting
-    BuildContext buildContext;
-
-    private YangToSourcesProcessor yangToSourcesProcessor;
+    private BuildContext buildContext;
 
     @Component
     private RepositorySystem repoSystem;
@@ -107,15 +103,6 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     }
 
-    @VisibleForTesting
-    YangToSourcesMojo(final YangToSourcesProcessor processor) {
-        yangToSourcesProcessor = processor;
-    }
-
-    public void setProject(final MavenProject project) {
-        this.project = project;
-    }
-
     @Override
     @SuppressFBWarnings(value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", justification = "yangFilesRootDir")
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -126,15 +113,12 @@ public final class YangToSourcesMojo extends AbstractMojo {
         }
 
         Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
-        if (yangToSourcesProcessor == null) {
-            // defaults to ${basedir}/src/main/yang
-            File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
-            Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
+        // defaults to ${basedir}/src/main/yang
+        File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
+        Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
-            yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
-                excludedFiles, arrayToList(fileGenerators), project, inspectDependencies);
-        }
-        yangToSourcesProcessor.execute();
+        new YangToSourcesProcessor(buildContext, yangFilesRootFile, excludedFiles, arrayToList(fileGenerators), project,
+            inspectDependencies).execute();
     }
 
     private static <T> List<T> arrayToList(final T[] array) {
