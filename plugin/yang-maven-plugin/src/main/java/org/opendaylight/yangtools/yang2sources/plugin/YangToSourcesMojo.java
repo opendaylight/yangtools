@@ -31,6 +31,8 @@ import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
@@ -51,6 +53,8 @@ import org.sonatype.plexus.build.incremental.BuildContext;
     requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true)
 public final class YangToSourcesMojo extends AbstractMojo {
     public static final String PLUGIN_NAME = "org.opendaylight.yangtools:yang-maven-plugin";
+
+    private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesMojo.class);
 
     /**
      * {@link FileGenerator} instances resolved via ServiceLoader can hold additional configuration, which details
@@ -92,8 +96,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
     private List<ArtifactRepository> remoteRepos;
 
     // When set to "true", then the execution of the plugin is disabled
-    @Parameter(property = "yang.skip")
-    private String yangSkip;
+    @Parameter(property = "yang.skip", defaultValue = "false")
+    private boolean yangSkip;
 
     @Parameter(defaultValue = "DEFAULT_MODE")
     @Deprecated(forRemoval = true)
@@ -115,17 +119,22 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Override
     @SuppressFBWarnings(value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", justification = "yangFilesRootDir")
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
+        if (yangSkip) {
+            LOG.info("{} Skipping YANG code generation because property yang.skip is true",
+                YangToSourcesProcessor.LOG_PREFIX);
+            return;
+        }
 
+        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
         if (yangToSourcesProcessor == null) {
             // defaults to ${basedir}/src/main/yang
             File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
             Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
             yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
-                    excludedFiles, arrayToList(fileGenerators), project, inspectDependencies);
+                excludedFiles, arrayToList(fileGenerators), project, inspectDependencies);
         }
-        yangToSourcesProcessor.conditionalExecute("true".equals(yangSkip));
+        yangToSourcesProcessor.execute();
     }
 
     private static <T> List<T> arrayToList(final T[] array) {

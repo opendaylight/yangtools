@@ -109,11 +109,7 @@ class YangToSourcesProcessor {
             YangProvider.getInstance());
     }
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        conditionalExecute(false);
-    }
-
-    void conditionalExecute(final boolean skip) throws MojoExecutionException, MojoFailureException {
+    void execute() throws MojoExecutionException, MojoFailureException {
         var prevState = buildContext.getValue(BUILD_CONTEXT_STATE_NAME);
         if (prevState == null) {
             LOG.debug("{} BuildContext did not provide state", LOG_PREFIX);
@@ -201,37 +197,32 @@ class YangToSourcesProcessor {
             if (optReactor.isPresent()) {
                 final ProcessorModuleReactor reactor = optReactor.orElseThrow();
 
-                if (!skip) {
-                    final Stopwatch sw = Stopwatch.createStarted();
-                    final ContextHolder holder;
+                final Stopwatch sw = Stopwatch.createStarted();
+                final ContextHolder holder;
 
+                try {
+                    holder = reactor.toContext();
+                } catch (YangParserException e) {
+                    throw new MojoFailureException("Failed to process reactor " + reactor, e);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Failed to read reactor " + reactor, e);
+                }
+
+                LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(), sw);
+                outputFiles.addAll(generateSources(holder, codeGenerators, parserConfig));
+
+                if (!sourcesPersisted) {
+                    // add META_INF/yang once
+                    final var models = reactor.getModelsInProject();
+                    final Collection<FileState> sourceFileStates;
                     try {
-                        holder = reactor.toContext();
-                    } catch (YangParserException e) {
-                        throw new MojoFailureException("Failed to process reactor " + reactor, e);
+                        sourceFileStates = yangProvider.addYangsToMetaInf(project, models);
                     } catch (IOException e) {
-                        throw new MojoExecutionException("Failed to read reactor " + reactor, e);
+                        throw new MojoExecutionException("Failed write model files for " + models, e);
                     }
 
-                    LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(),
-                        sw);
-                    outputFiles.addAll(generateSources(holder, codeGenerators, parserConfig));
-
-                    if (!sourcesPersisted) {
-                        // add META_INF/yang once
-                        final var models = reactor.getModelsInProject();
-                        final Collection<FileState> sourceFileStates;
-                        try {
-                            sourceFileStates = yangProvider.addYangsToMetaInf(project, models);
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Failed write model files for " + models, e);
-                        }
-
-                        sourcesPersisted = true;
-                        outputFiles.addAll(sourceFileStates);
-                    }
-                } else {
-                    LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
+                    sourcesPersisted = true;
+                    outputFiles.addAll(sourceFileStates);
                 }
             }
         }

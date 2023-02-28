@@ -41,6 +41,6 @@ public class YangToSourcesMojoTest {
         mojo = new YangToSourcesMojo(processor);
         mojo.setProject(project);
         mojo.execute();
-        verify(processor).conditionalExecute(false);
+        verify(processor).execute();
     }
 }
