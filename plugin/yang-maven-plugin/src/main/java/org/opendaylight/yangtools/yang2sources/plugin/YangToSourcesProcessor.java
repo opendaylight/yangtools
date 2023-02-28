@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -112,7 +113,7 @@ class YangToSourcesProcessor {
     }
 
     void execute() throws MojoExecutionException, MojoFailureException {
-        YangToSourcesState prevState;
+        final YangToSourcesState prevState;
         try {
             prevState = stateStorage.loadState();
         } catch (IOException e) {
@@ -169,6 +170,7 @@ class YangToSourcesProcessor {
          * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
          * end of execution.
          */
+        // FIXME: YANGTOOLS-745: remove this check FileStates instead
         if (!Stream.concat(yangFilesInProject.stream(), dependencies.stream().map(ScannedDependency::file))
                 .anyMatch(buildContext::hasDelta)) {
             LOG.info("{} None of {} input files changed", LOG_PREFIX, yangFilesInProject.size() + dependencies.size());
@@ -176,6 +178,17 @@ class YangToSourcesProcessor {
         }
 
         final Stopwatch watch = Stopwatch.createStarted();
+        // Determine hash/size of YANG input files in parallel
+        final var projectYangs = new FileStateSet(yangFilesInProject.parallelStream()
+            .map(file -> {
+                try {
+                    return FileState.ofFile(file);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Failed to read " + file, e);
+                }
+            })
+            .collect(ImmutableMap.toImmutableMap(FileState::path, Function.identity())));
+
         final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
             .map(file -> {
                 final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
@@ -188,6 +201,20 @@ class YangToSourcesProcessor {
             .collect(Collectors.toList());
         LOG.debug("Found project files: {}", yangFilesInProject);
         LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
+
+        // Determine hash/size of dependency files
+        // TODO: this produces false positives for Jar files -- there we want to capture the contents of the YANG files,
+        //       not the entire file
+        final var dependencyYangs = new FileStateSet(dependencies.parallelStream()
+            .map(ScannedDependency::file)
+            .map(file -> {
+                try {
+                    return FileState.ofFile(file);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Failed to read " + file, e);
+                }
+            })
+            .collect(ImmutableMap.toImmutableMap(FileState::path, Function.identity())));
 
         final var outputFiles = ImmutableList.<FileState>builder();
         boolean sourcesPersisted = false;
@@ -242,11 +269,10 @@ class YangToSourcesProcessor {
             }
         }
 
-        // FIXME: store these files into state, so that we can verify/clean up
         final var outputState = new YangToSourcesState(
             codeGenerators.stream()
                 .collect(ImmutableMap.toImmutableMap(GeneratorTaskFactory::getIdentifier, GeneratorTaskFactory::arg)),
-            new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
+            projectYangs, dependencyYangs, new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
 
         try {
             stateStorage.storeState(outputState);

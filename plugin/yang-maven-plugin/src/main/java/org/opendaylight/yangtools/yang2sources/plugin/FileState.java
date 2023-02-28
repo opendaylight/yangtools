@@ -38,6 +38,13 @@ record FileState(@NonNull String path, long size, int crc32) {
         requireNonNull(path);
     }
 
+    static @NonNull FileState ofFile(final File file) throws IOException {
+        try (var cis = new CapturingInputStream(Files.newInputStream(file.toPath()))) {
+            cis.readAllBytes();
+            return new FileState(file.getPath(), cis.size(), cis.crc32c());
+        }
+    }
+
     static @NonNull FileState ofWrittenFile(final File file, final FileContent content) throws IOException {
         try (var out = new CapturingOutputStream(Files.newOutputStream(file.toPath()))) {
             content.writeTo(out);
