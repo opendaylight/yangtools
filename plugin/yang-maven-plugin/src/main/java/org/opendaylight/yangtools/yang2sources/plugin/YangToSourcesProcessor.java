@@ -351,20 +351,25 @@ class YangToSourcesProcessor {
         }
     }
 
-    private static List<File> listFiles(final File root, final Collection<File> excludedFiles)
+    private static ImmutableList<File> listFiles(final File root, final Collection<File> excludedFiles)
             throws IOException {
         if (!root.isDirectory()) {
             LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, root);
             return ImmutableList.of();
         }
 
-        return Files.walk(root.toPath()).map(Path::toFile).filter(File::isFile).filter(f -> {
-            if (excludedFiles.contains(f)) {
-                LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
-                return false;
-            }
-            return true;
-        }).filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)).collect(Collectors.toList());
+        return Files.walk(root.toPath())
+            .map(Path::toFile)
+            .filter(File::isFile)
+            .filter(f -> {
+                if (excludedFiles.contains(f)) {
+                    LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
+                    return false;
+                }
+                return true;
+            })
+            .filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION))
+            .collect(ImmutableList.toImmutableList());
     }
 
     /**
