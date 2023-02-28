@@ -246,6 +246,10 @@ class YangToSourcesProcessor {
             }
         }
 
+        // TODO: there is a TOCTOE race here -- we should capture the input content as we access it
+
+
+
         // FIXME: store these files into state, so that we can verify/clean up
         final var outputState = new YangToSourcesState(
             codeGenerators.stream()
