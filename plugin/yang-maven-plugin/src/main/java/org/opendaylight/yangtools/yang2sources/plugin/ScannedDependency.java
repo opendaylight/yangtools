@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING;
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING_JAR;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -77,7 +79,7 @@ abstract class ScannedDependency {
     }
 
     static List<ScannedDependency> scanDependencies(final MavenProject project) throws IOException {
-        final List<File> filesOnCp = Util.getClassPath(project);
+        final List<File> filesOnCp = getClassPath(project);
         LOG.debug("{} Searching for YANG files in dependencies: {}", YangToSourcesProcessor.LOG_PREFIX, filesOnCp);
         LOG.debug("{} Searching for YANG files in {} dependencies", YangToSourcesProcessor.LOG_PREFIX,
             filesOnCp.size());
@@ -126,4 +128,12 @@ abstract class ScannedDependency {
     }
 
     abstract ImmutableList<YangTextSchemaSource> sources() throws IOException;
+
+    @VisibleForTesting
+    static List<File> getClassPath(final MavenProject project) {
+        return project.getArtifacts().stream()
+            .map(Artifact::getFile)
+            .filter(file -> file.isFile() && file.getName().endsWith(".jar") || file.isDirectory())
+            .toList();
+    }
 }

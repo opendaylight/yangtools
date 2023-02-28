@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -19,6 +20,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -28,6 +31,25 @@ import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 
 public class ScannedDependencyTest {
+    @Test
+    public void getClassPathTest() {
+        final MavenProject project = mock(MavenProject.class);
+        final File file = mock(File.class);
+        final File file2 = mock(File.class);
+        final Artifact artifact = mock(Artifact.class);
+        final Artifact artifact2 = mock(Artifact.class);
+
+        doReturn(Set.of(artifact, artifact2)).when(project).getArtifacts();
+        doReturn(file).when(artifact).getFile();
+        doReturn(true).when(file).isFile();
+        doReturn("iamjar.jar").when(file).getName();
+        doReturn(file2).when(artifact2).getFile();
+        doReturn(true).when(file2).isDirectory();
+
+        final List<File> files = ScannedDependency.getClassPath(project);
+        assertEquals(2, files.size());
+        assertTrue(files.contains(file) && files.contains(file2));
+    }
 
     @Test
     public void findYangFilesInDependenciesAsStream() throws Exception {

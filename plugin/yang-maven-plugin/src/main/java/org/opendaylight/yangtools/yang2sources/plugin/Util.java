@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.LOG_PREFIX;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +35,6 @@ final class Util {
 
     static @NonNull SourceIdentifier moduleToIdentifier(final ModuleLike module) {
         return new SourceIdentifier(Unqualified.of(module.getName()), module.getRevision().orElse(null));
-    }
-
-    static List<File> getClassPath(final MavenProject project) {
-        return project.getArtifacts().stream()
-            .map(Artifact::getFile)
-            .filter(file -> file.isFile() && file.getName().endsWith(".jar") || file.isDirectory())
-            .toList();
     }
 
     /**
