@@ -68,6 +68,30 @@
       },
       "revId": "d843fb514933f9d795906b13d97570102410756e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5c1fa55_18fd4fe5",
+        "filename": "plugin/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/RebuildContextUtils.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-28T16:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e346860_4651d1d7",
+      "range": {
+        "startLine": 91,
+        "startChar": 25,
+        "endLine": 91,
+        "endChar": 46
+      },
+      "revId": "d843fb514933f9d795906b13d97570102410756e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

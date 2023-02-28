@@ -417,6 +417,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "16781864_f0d6a932",
+        "filename": "plugin/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/AbstractCodeGeneratorTest.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-28T16:33:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78596b04_17e0cbcc",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 38
+      },
+      "revId": "efc132650adc70db92ed4f43121c0396dd9daa94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "85dc08e6_87eeffbc",
