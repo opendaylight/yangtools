@@ -21,13 +21,13 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class YangToSourcesMojoTest {
+@ExtendWith(MockitoExtension.class)
+class YangToSourcesMojoTest {
     @Mock
     private MavenProject project;
     @Mock
@@ -44,7 +44,7 @@ public class YangToSourcesMojoTest {
     private Dependency dep;
 
     @Test
-    public void checkClasspathTest() {
+    void checkClasspathTest() {
         final var artifacts = Set.of(artifact);
 
         doReturn(plugin).when(project).getPlugin(anyString());

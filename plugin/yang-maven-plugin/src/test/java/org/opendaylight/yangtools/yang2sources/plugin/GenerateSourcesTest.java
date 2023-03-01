@@ -15,13 +15,14 @@ import com.google.common.collect.ImmutableTable;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class GenerateSourcesTest extends AbstractCodeGeneratorTest {
+class GenerateSourcesTest extends AbstractCodeGeneratorTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         assertMojoExecution(new YangToSourcesProcessor(
-            new File(Resources.getResource(GenerateSourcesTest.class, "/yang").toURI()), List.of(),
+            new File(Resources.getResource(GenerateSourcesTest.class, "/yang").toURI()),
+            List.of(),
             List.of(new FileGeneratorArg("mockGenerator")), project, false, yangProvider),
             mock -> {
                 doReturn(ImmutableTable.of()).when(mock).generateFiles(any(), any(), any());

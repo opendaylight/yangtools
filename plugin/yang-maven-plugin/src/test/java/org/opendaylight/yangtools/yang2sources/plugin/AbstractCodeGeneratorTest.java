@@ -26,16 +26,18 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public abstract class AbstractCodeGeneratorTest {
     @Mock
     MavenProject project;
@@ -46,7 +48,7 @@ public abstract class AbstractCodeGeneratorTest {
     @Mock
     private Plugin plugin;
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         Files.deleteIfExists(YangToSourcesProcessor.stateFilePath("target/"));
         doReturn("target/").when(build).getDirectory();
@@ -62,11 +64,11 @@ public abstract class AbstractCodeGeneratorTest {
 
     static final void assertMojoExecution(final YangToSourcesProcessor processor, final Prepare prepare,
             final Verify verify) {
-        try (MockedStatic<?> staticLoader = mockStatic(ServiceLoader.class)) {
-            final FileGenerator generator = mock(FileGenerator.class);
+        try (var staticLoader = mockStatic(ServiceLoader.class)) {
+            final var generator = mock(FileGenerator.class);
             doCallRealMethod().when(generator).importResolutionMode();
 
-            final FileGeneratorFactory factory = mock(FileGeneratorFactory.class);
+            final var factory = mock(FileGeneratorFactory.class);
             doReturn("mockGenerator").when(factory).getIdentifier();
 
             try {
@@ -75,7 +77,7 @@ public abstract class AbstractCodeGeneratorTest {
                 throw new AssertionError(e);
             }
 
-            final ServiceLoader<?> loader = mock(ServiceLoader.class);
+            final var loader = mock(ServiceLoader.class);
             doReturn(Iterators.singletonIterator(factory)).when(loader).iterator();
             staticLoader.when(() -> ServiceLoader.load(FileGeneratorFactory.class)).thenReturn(loader);
 

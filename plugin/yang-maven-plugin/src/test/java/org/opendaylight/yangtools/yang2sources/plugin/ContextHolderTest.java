@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class ContextHolderTest {
+class ContextHolderTest {
     @Test
-    public void contextHolderTest() {
+    void contextHolderTest() {
         final var context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang", "/test2.yang");
         final var holder = new ContextHolder(context, Set.of(), Set.of());
         assertSame(context, holder.getContext());

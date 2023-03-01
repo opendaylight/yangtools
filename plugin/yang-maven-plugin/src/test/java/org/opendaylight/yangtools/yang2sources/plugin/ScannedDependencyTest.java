@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -19,8 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -28,16 +26,22 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class ScannedDependencyTest {
+@ExtendWith(MockitoExtension.class)
+class ScannedDependencyTest {
+    @Mock
+    private MavenProject project;
+
     @Test
-    public void getClassPathTest() {
-        final MavenProject project = mock(MavenProject.class);
-        final File file = mock(File.class);
-        final File file2 = mock(File.class);
-        final Artifact artifact = mock(Artifact.class);
-        final Artifact artifact2 = mock(Artifact.class);
+    void getClassPathTest() {
+        final var file = mock(File.class);
+        final var file2 = mock(File.class);
+        final var artifact = mock(Artifact.class);
+        final var artifact2 = mock(Artifact.class);
 
         doReturn(Set.of(artifact, artifact2)).when(project).getArtifacts();
         doReturn(file).when(artifact).getFile();
@@ -46,44 +50,42 @@ public class ScannedDependencyTest {
         doReturn(file2).when(artifact2).getFile();
         doReturn(true).when(file2).isDirectory();
 
-        final List<File> files = ScannedDependency.getClassPath(project);
+        final var files = ScannedDependency.getClassPath(project);
         assertEquals(2, files.size());
         assertTrue(files.contains(file) && files.contains(file2));
     }
 
     @Test
-    public void findYangFilesInDependenciesAsStream() throws Exception {
-        final MavenProject project = mock(MavenProject.class);
+    void findYangFilesInDependenciesAsStream() throws Exception {
         prepareProject(project);
 
-        final Collection<ScannedDependency> yangzip = ScannedDependency.scanDependencies(project);
+        final var yangzip = ScannedDependency.scanDependencies(project);
         assertNotNull(yangzip);
         assertEquals(2, yangzip.size());
     }
 
     @Test
-    public void findYangFilesInDependencies() throws Exception {
-        final MavenProject project = mock(MavenProject.class);
+    void findYangFilesInDependencies() throws Exception {
         prepareProject(project);
 
-        final Collection<ScannedDependency> files = ScannedDependency.scanDependencies(project);
+        final var files = ScannedDependency.scanDependencies(project);
         assertNotNull(files);
         assertEquals(2, files.size());
     }
 
     private static void prepareProject(final MavenProject project) throws Exception {
-        final Manifest manifest = new Manifest();
+        final var manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        final File testFile2 = new File(ScannedDependencyTest.class.getResource("/").getPath(), "test.jar");
+        final var testFile2 = new File(ScannedDependencyTest.class.getResource("/").getPath(), "test.jar");
         try (var target = new JarOutputStream(new FileOutputStream(testFile2), manifest)) {
             addSourceFileToTargetJar(new File(ScannedDependencyTest.class.getResource("/tests/META-INF").getPath()),
                 target);
         }
 
-        final Artifact artifact = mock(Artifact.class);
+        final var artifact = mock(Artifact.class);
         doReturn(new File(ScannedDependencyTest.class.getResource("/tests").toURI())).when(artifact).getFile();
 
-        final Artifact artifact2 = mock(Artifact.class);
+        final var artifact2 = mock(Artifact.class);
         doReturn(testFile2).when(artifact2).getFile();
         doReturn(ImmutableSet.of(artifact, artifact2)).when(project).getArtifacts();
     }
@@ -95,18 +97,18 @@ public class ScannedDependencyTest {
                 if (!name.endsWith("/")) {
                     name += "/";
                 }
-                final JarEntry entry = new JarEntry(name);
+                final var entry = new JarEntry(name);
                 entry.setTime(source.lastModified());
                 target.putNextEntry(entry);
                 target.closeEntry();
             }
-            for (final File nestedFile : source.listFiles()) {
+            for (var nestedFile : source.listFiles()) {
                 addSourceFileToTargetJar(nestedFile, target);
             }
             return;
         }
 
-        final JarEntry entry = new JarEntry(source.getPath().replace("\\", "/"));
+        final var entry = new JarEntry(source.getPath().replace("\\", "/"));
         entry.setTime(source.lastModified());
         target.putNextEntry(entry);
 
