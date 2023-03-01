@@ -7,41 +7,39 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1282Test {
+class YT1282Test {
     private static EffectiveModelContext context;
 
     private final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         context = YangParserTestUtils.parseYangResource("/yt1282.yang");
     }
 
     @Test
-    public void testResolveTypedef() {
+    void testResolveTypedef() {
         final TypeEffectiveStatement<?> type = stack.enterTypedef(QName.create("foo", "foo"))
-            .findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
+                .findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         assertFalse(stack.inInstantiatedContext());
         assertFalse(stack.inGrouping());
 
-        final EffectiveStatement<?, ?> bar = stack.resolvePathExpression(
-            type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow());
-        assertThat(bar, instanceOf(LeafEffectiveStatement.class));
+        final var bar = assertInstanceOf(LeafEffectiveStatement.class,
+            stack.resolvePathExpression(
+                type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow()));
         assertEquals(QName.create("foo", "bar"), bar.argument());
     }
 }

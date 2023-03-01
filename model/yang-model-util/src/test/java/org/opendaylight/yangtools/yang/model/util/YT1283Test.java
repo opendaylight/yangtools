@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1283Test {
+class YT1283Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
 
@@ -32,33 +31,33 @@ public class YT1283Test {
 
     private final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         context = YangParserTestUtils.parseYangResource("/yt1283.yang");
     }
 
     @Test
-    public void testResolveUnderCaseViaDataTree() {
-        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+    void testResolveUnderCaseViaDataTree() {
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterDataTree(FOO));
         assertResolve(stack.enterDataTree(FOO));
     }
 
     @Test
-    public void testResolveUnderCaseViaSchemaTree() {
-        assertThat(stack.enterSchemaTree(FOO), instanceOf(ContainerEffectiveStatement.class));
-        assertThat(stack.enterSchemaTree(FOO), instanceOf(ChoiceEffectiveStatement.class));
-        assertThat(stack.enterSchemaTree(FOO), instanceOf(CaseEffectiveStatement.class));
+    void testResolveUnderCaseViaSchemaTree() {
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterSchemaTree(FOO));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.enterSchemaTree(FOO));
+        assertInstanceOf(CaseEffectiveStatement.class, stack.enterSchemaTree(FOO));
         assertResolve(stack.enterSchemaTree(FOO));
     }
 
     private void assertResolve(final EffectiveStatement<?, ?> foo) {
-        assertThat(foo, instanceOf(LeafEffectiveStatement.class));
+        assertInstanceOf(LeafEffectiveStatement.class, foo);
 
         final TypeEffectiveStatement<?> type = foo.findFirstEffectiveSubstatement(TypeEffectiveStatement.class)
             .orElseThrow();
-        final EffectiveStatement<?, ?> bar = stack.resolvePathExpression(
-            type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow());
-        assertThat(bar, instanceOf(LeafEffectiveStatement.class));
+        final var bar = assertInstanceOf(LeafEffectiveStatement.class,
+            stack.resolvePathExpression(
+                type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow()));
         assertEquals(BAR, bar.argument());
     }
 }

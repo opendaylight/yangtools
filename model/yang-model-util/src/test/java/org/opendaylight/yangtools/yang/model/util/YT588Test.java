@@ -7,51 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT588Test {
+class YT588Test {
     private static final String NS = "foo";
     private static final String REV = "2016-03-01";
 
     @Test
-    public void test() {
-        EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt588.yang");
+    void test() {
+        final var context = YangParserTestUtils.parseYangResource("/yt588.yang");
+        final var root = QName.create(NS, REV, "root");
+        final var leafRef2 = QName.create(NS, REV, "leaf-ref-2");
+        final var conGrp = QName.create(NS, REV, "con-grp");
+        final var leafRef = QName.create(NS, REV, "leaf-ref");
 
-        QName root = QName.create(NS, REV, "root");
-        QName leafRef2 = QName.create(NS, REV, "leaf-ref-2");
-        QName conGrp = QName.create(NS, REV, "con-grp");
-        QName leafRef = QName.create(NS, REV, "leaf-ref");
+        assertResolvedTypeDefinition(BinaryTypeDefinition.class,
+            SchemaInferenceStack.ofDataTreePath(context, root, conGrp, leafRef),
+            assertInstanceOf(LeafrefTypeDefinition.class,
+                assertInstanceOf(LeafSchemaNode.class, context.findDataTreeChild(root, conGrp, leafRef).orElseThrow())
+                    .getType()).getPathStatement());
 
-        SchemaNode findDataSchemaNode = context.findDataTreeChild(root, conGrp, leafRef).get();
-        SchemaNode findDataSchemaNode2 = context.findDataTreeChild(root, leafRef2).get();
-        assertThat(findDataSchemaNode, isA(LeafSchemaNode.class));
-        assertThat(findDataSchemaNode2, isA(LeafSchemaNode.class));
+        assertResolvedTypeDefinition(Int16TypeDefinition.class,
+            SchemaInferenceStack.ofDataTreePath(context, root, leafRef2),
+            assertInstanceOf(LeafrefTypeDefinition.class,
+                assertInstanceOf(LeafSchemaNode.class, context.findDataTreeChild(root, leafRef2).orElseThrow())
+                    .getType()).getPathStatement());
+    }
 
-        LeafSchemaNode leafRefNode = (LeafSchemaNode) findDataSchemaNode;
-        LeafSchemaNode leafRefNode2 = (LeafSchemaNode) findDataSchemaNode2;
-
-        assertThat(leafRefNode.getType(), isA(LeafrefTypeDefinition.class));
-        assertThat(leafRefNode2.getType(), isA(LeafrefTypeDefinition.class));
-
-        EffectiveStatement<?, ?> found = SchemaInferenceStack.ofDataTreePath(context, root, conGrp, leafRef)
-                .resolvePathExpression(((LeafrefTypeDefinition) leafRefNode.getType()).getPathStatement());
-        assertThat(((TypedDataSchemaNode)found).getType(), isA(BinaryTypeDefinition.class));
-
-        found = SchemaInferenceStack.ofDataTreePath(context, root, leafRef2)
-            .resolvePathExpression(((LeafrefTypeDefinition) leafRefNode2.getType()).getPathStatement());
-        assertThat(((TypedDataSchemaNode)found).getType(), isA(Int16TypeDefinition.class));
+    private static void assertResolvedTypeDefinition(final Class<? extends TypeDefinition<?>> expectedType,
+            final SchemaInferenceStack stack, final PathExpression expression) {
+        final var typed = assertInstanceOf(TypedDataSchemaNode.class, stack.resolvePathExpression(expression));
+        assertInstanceOf(expectedType, typed.getType());
     }
 }

@@ -7,49 +7,44 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.common.collect.Iterables;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1291Test {
+class YT1291Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName INPUT = QName.create("foo", "input");
     private static final QName OUTPUT = QName.create("foo", "output");
 
     private static EffectiveModelContext context;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         context = YangParserTestUtils.parseYangResource("/yt1291.yang");
     }
 
     @Test
-    public void testRpcIndexing() {
-        final SchemaTreeEffectiveStatement<?> foo = Iterables.getOnlyElement(context.getModuleStatements().values())
-            .findSchemaTreeNode(FOO).orElseThrow();
-        assertThat(foo, instanceOf(RpcEffectiveStatement.class));
-        final RpcEffectiveStatement rpc = (RpcEffectiveStatement) foo;
-
-        assertThat(rpc.findDataTreeNode(INPUT).orElseThrow(), instanceOf(InputEffectiveStatement.class));
-        assertThat(rpc.findDataTreeNode(OUTPUT).orElseThrow(), instanceOf(OutputEffectiveStatement.class));
+    void testRpcIndexing() {
+        final var rpc = assertInstanceOf(RpcEffectiveStatement.class,
+            Iterables.getOnlyElement(context.getModuleStatements().values()).findSchemaTreeNode(FOO).orElseThrow());
+        assertInstanceOf(InputEffectiveStatement.class, rpc.findDataTreeNode(INPUT).orElseThrow());
+        assertInstanceOf(OutputEffectiveStatement.class, rpc.findDataTreeNode(OUTPUT).orElseThrow());
     }
 
     @Test
-    public void testEnterDataTree() {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context, Absolute.of(FOO));
-        assertThat(stack.enterDataTree(INPUT), instanceOf(InputEffectiveStatement.class));
+    void testEnterDataTree() {
+        final var stack = SchemaInferenceStack.of(context, Absolute.of(FOO));
+        assertInstanceOf(InputEffectiveStatement.class, stack.enterDataTree(INPUT));
         stack.exit();
-        assertThat(stack.enterDataTree(OUTPUT), instanceOf(OutputEffectiveStatement.class));
+        assertInstanceOf(OutputEffectiveStatement.class, stack.enterDataTree(OUTPUT));
     }
 }

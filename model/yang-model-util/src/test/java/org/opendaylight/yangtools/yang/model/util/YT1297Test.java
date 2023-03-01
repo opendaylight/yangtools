@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1297Test {
+class YT1297Test {
     private static final QNameModule RESTCONF =
         QNameModule.create(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-restconf"), Revision.of("2017-01-26"));
     private static final QNameModule BAD_MODULE =
@@ -31,19 +31,19 @@ public class YT1297Test {
 
     private final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         context = YangParserTestUtils.parseYangResource("/ietf-restconf.yang");
     }
 
     @Test
-    public void testEnterYangData() {
+    void testEnterYangData() {
         assertNotNull(stack.enterYangData(new YangDataName(RESTCONF, "yang-api")));
         assertNotNull(stack.enterDataTree(QName.create(RESTCONF, "restconf")));
     }
 
     @Test
-    public void testEnterYangDataNegative() {
+    void testEnterYangDataNegative() {
         Exception ex = assertThrows(IllegalArgumentException.class,
             () -> stack.enterYangData(new YangDataName(RESTCONF, "bad-name")));
         assertEquals("yang-data bad-name not present in " + RESTCONF, ex.getMessage());

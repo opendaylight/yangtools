@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1231Test {
+class YT1231Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
@@ -33,67 +32,67 @@ public class YT1231Test {
 
     private final SchemaInferenceStack stack = SchemaInferenceStack.of(CONTEXT);
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         CONTEXT = YangParserTestUtils.parseYangResource("/yt1231.yang");
     }
 
     @Test
-    public void testEnterDataTree() {
+    void testEnterDataTree() {
         // Trivial
-        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterDataTree(FOO));
         assertSame(CONTEXT.getModuleStatement(FOO.getModule()), stack.currentModule());
         assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
-        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterDataTree(FOO));
         assertEquals(Absolute.of(FOO, FOO), stack.toSchemaNodeIdentifier());
         stack.exit();
 
         // Has to cross four layers of choice/case
-        assertThat(stack.enterDataTree(XYZZY), instanceOf(ContainerEffectiveStatement.class));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterDataTree(XYZZY));
         assertEquals(Absolute.of(FOO, BAR, BAR, BAZ, BAZ, XYZZY), stack.toSchemaNodeIdentifier());
 
         stack.exit();
-        assertThat(stack.enterSchemaTree(BAR), instanceOf(ChoiceEffectiveStatement.class));
-        assertThat(stack.enterSchemaTree(BAR), instanceOf(CaseEffectiveStatement.class));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.enterSchemaTree(BAR));
+        assertInstanceOf(CaseEffectiveStatement.class, stack.enterSchemaTree(BAR));
         assertEquals(Absolute.of(FOO, BAR, BAR), stack.toSchemaNodeIdentifier());
     }
 
     @Test
-    public void testEnterChoice() {
+    void testEnterChoice() {
         // Simple
-        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterDataTree(FOO));
         assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
-        assertThat(stack.enterChoice(BAR), instanceOf(ChoiceEffectiveStatement.class));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.enterChoice(BAR));
         assertEquals(Absolute.of(FOO, BAR), stack.toSchemaNodeIdentifier());
 
         // Has to cross choice -> case -> choice
-        assertThat(stack.enterChoice(BAZ), instanceOf(ChoiceEffectiveStatement.class));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.enterChoice(BAZ));
         assertEquals(Absolute.of(FOO, BAR, BAR, BAZ), stack.toSchemaNodeIdentifier());
 
         // Now the same with just case -> choice
         stack.exit();
-        assertThat(stack.enterSchemaTree(BAR), instanceOf(CaseEffectiveStatement.class));
-        assertThat(stack.enterChoice(BAZ), instanceOf(ChoiceEffectiveStatement.class));
+        assertInstanceOf(CaseEffectiveStatement.class, stack.enterSchemaTree(BAR));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.enterChoice(BAZ));
         assertEquals(Absolute.of(FOO, BAR, BAR, BAZ), stack.toSchemaNodeIdentifier());
     }
 
     @Test
-    public void testEnterChoiceToRootContainer() {
+    void testEnterChoiceToRootContainer() {
         assertEquals("Choice (foo)foo not present", assertEnterChoiceThrows(FOO));
     }
 
     @Test
-    public void testEnterChoiceToNestedContainer() {
-        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+    void testEnterChoiceToNestedContainer() {
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterDataTree(FOO));
         assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
         assertEquals("Choice (foo)foo not present in schema parent (foo)foo", assertEnterChoiceThrows(FOO));
     }
 
     @Test
-    public void testEnterChoiceNonExistent() {
-        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+    void testEnterChoiceNonExistent() {
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.enterDataTree(FOO));
         assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
-        assertThat(stack.enterSchemaTree(BAR), instanceOf(ChoiceEffectiveStatement.class));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.enterSchemaTree(BAR));
 
         assertEquals("Choice (foo)foo not present in schema parent (foo)bar", assertEnterChoiceThrows(FOO));
         assertEquals("Choice (foo)bar not present in schema parent (foo)bar", assertEnterChoiceThrows(BAR));

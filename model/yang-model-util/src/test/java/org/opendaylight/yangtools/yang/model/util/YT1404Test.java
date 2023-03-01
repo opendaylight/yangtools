@@ -7,42 +7,38 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.google.common.collect.Iterables;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1404Test {
+class YT1404Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
 
     @Test
-    public void testDeviatedEffectiveAugmentationSchema() {
+    void testDeviatedEffectiveAugmentationSchema() {
         final var module = YangParserTestUtils.parseYangResourceDirectory("/yt1404").findModule("foo").orElseThrow();
         final var augment = Iterables.getOnlyElement(module.getAugmentations());
         assertEquals(2, augment.getChildNodes().size());
-        assertThat(augment.dataChildByName(BAR), instanceOf(LeafSchemaNode.class));
-        assertThat(augment.dataChildByName(BAZ), instanceOf(LeafSchemaNode.class));
+        assertInstanceOf(LeafSchemaNode.class, augment.dataChildByName(BAR));
+        assertInstanceOf(LeafSchemaNode.class, augment.dataChildByName(BAZ));
 
-        final var foo = module.getDataChildByName(FOO);
-        assertThat(foo, instanceOf(ContainerSchemaNode.class));
-        final var fooCont = (ContainerSchemaNode) foo;
-        assertEquals(1, fooCont.getChildNodes().size());
-        final var fooBar = fooCont.dataChildByName(BAR);
-        assertThat(fooBar, instanceOf(LeafSchemaNode.class));
+        final var foo = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(FOO));
+        assertEquals(1, foo.getChildNodes().size());
+        final var fooBar = assertInstanceOf(LeafSchemaNode.class, foo.dataChildByName(BAR));
 
-        final var fooAugment = Iterables.getOnlyElement(fooCont.getAvailableAugmentations());
+        final var fooAugment = Iterables.getOnlyElement(foo.getAvailableAugmentations());
         assertSame(augment, fooAugment);
 
-        final var effectiveAug = new EffectiveAugmentationSchema(augment, fooCont);
+        final var effectiveAug = new EffectiveAugmentationSchema(augment, foo);
         assertEquals(1, effectiveAug.getChildNodes().size());
         assertSame(fooBar, effectiveAug.getDataChildByName(BAR));
     }

@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -23,11 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class LeafrefStaticAnalysisTest {
+class LeafrefStaticAnalysisTest {
     private static final QName FOO = QName.create("leafrefs", "foo");
 
     private static EffectiveModelContext context;
@@ -36,43 +34,42 @@ public class LeafrefStaticAnalysisTest {
     private static ContainerSchemaNode bar;
     private static Module module;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         context = YangParserTestUtils.parseYangResource("/leafrefs.yang");
         module = context.getModules().iterator().next();
 
-        foo = (ListSchemaNode) module.findDataChildByName(FOO).get();
-        bar = (ContainerSchemaNode) foo.findDataChildByName(QName.create(FOO, "bar")).get();
+        foo = assertInstanceOf(ListSchemaNode.class, module.getDataChildByName(FOO));
+        bar = assertInstanceOf(ContainerSchemaNode.class, foo.getDataChildByName(QName.create(FOO, "bar")));
         grp = module.getGroupings().iterator().next();
     }
 
     @Test
-    public void testGrpOuterId() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) grp.findDataChildByName(QName.create(FOO, "outer-id")).get();
+    void testGrpOuterId() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class, grp.getDataChildByName(QName.create(FOO, "outer-id")));
         // Cannot be found as the reference goes outside of the grouping
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "outer-id"));
         assertThrowsInvalidPath(stack, leaf);
     }
 
     @Test
-    public void testFooOuterId() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) bar.findDataChildByName(QName.create(FOO, "outer-id")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
+    void testFooOuterId() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class, bar.getDataChildByName(QName.create(FOO, "outer-id")));
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "outer-id"));
-        final SchemaNode found = (SchemaNode) stack.resolvePathExpression(((LeafrefTypeDefinition) leaf.getType())
-                .getPathStatement());
-
-        assertThat(found, isA(LeafSchemaNode.class));
+        final var found = assertInstanceOf(LeafSchemaNode.class,
+            stack.resolvePathExpression(leafType.getPathStatement()));
         assertEquals(QName.create(FOO, "id"), found.getQName());
     }
 
     @Test
-    public void testGrpOuterIndirectProp() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) grp.findDataChildByName(
-            QName.create(FOO, "outer-indirect-prop")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+    void testGrpOuterIndirectProp() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            grp.getDataChildByName(QName.create(FOO, "outer-indirect-prop")));
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "outer-indirect-prop"));
         // Cannot resolve deref outer-id
@@ -80,95 +77,91 @@ public class LeafrefStaticAnalysisTest {
     }
 
     @Test
-    public void testFooOuterIndirectProp() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) bar.findDataChildByName(
-            QName.create(FOO, "outer-indirect-prop")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
+    void testFooOuterIndirectProp() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            bar.getDataChildByName(QName.create(FOO, "outer-indirect-prop")));
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "outer-indirect-prop"));
-        final SchemaNode found = (SchemaNode) stack.resolvePathExpression(((LeafrefTypeDefinition) leaf.getType())
-                .getPathStatement());
-
-        assertThat(found, isA(LeafSchemaNode.class));
+        final var found = assertInstanceOf(LeafSchemaNode.class,
+            stack.resolvePathExpression(leafType.getPathStatement()));
         assertEquals(QName.create(FOO, "prop"), found.getQName());
     }
 
     @Test
-    public void testGrpIndirect() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) grp.findDataChildByName(QName.create(FOO, "indirect")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+    void testGrpIndirect() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class, grp.getDataChildByName(QName.create(FOO, "indirect")));
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "indirect"));
-        final SchemaNode found = (SchemaNode) stack.resolvePathExpression(((LeafrefTypeDefinition) leaf.getType())
-                .getPathStatement());
-
-        assertThat(found, isA(LeafSchemaNode.class));
+        final var found = assertInstanceOf(LeafSchemaNode.class,
+            stack.resolvePathExpression(leafType.getPathStatement()));
         assertEquals(QName.create(FOO, "prop"), found.getQName());
     }
 
     @Test
-    public void testFooIndirect() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) bar.findDataChildByName(QName.create(FOO, "indirect")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
+    void testFooIndirect() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class, bar.getDataChildByName(QName.create(FOO, "indirect")));
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "indirect"));
-        final SchemaNode found = (SchemaNode) stack.resolvePathExpression(((LeafrefTypeDefinition) leaf.getType())
-                .getPathStatement());
-
-        assertThat(found, isA(LeafSchemaNode.class));
+        final var found = assertInstanceOf(LeafSchemaNode.class,
+            stack.resolvePathExpression(leafType.getPathStatement()));
         assertEquals(QName.create(FOO, "prop"), found.getQName());
     }
 
     @Test
-    public void testGrpDerefNonExistent() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) grp.findDataChildByName(
-            QName.create(FOO, "deref-non-existent")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+    void testGrpDerefNonExistent() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            grp.getDataChildByName(QName.create(FOO, "deref-non-existent")));
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "deref-non-existent"));
         assertThrowsMissingXyzzy(stack, leaf, "grouping (leafrefs)grp");
     }
 
     @Test
-    public void testFooDerefNonExistent() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) bar.findDataChildByName(
-            QName.create(FOO, "deref-non-existent")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
+    void testFooDerefNonExistent() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            bar.getDataChildByName(QName.create(FOO, "deref-non-existent")));
+        final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "deref-non-existent"));
         assertThrowsMissingXyzzy(stack, leaf, "schema parent (leafrefs)bar");
     }
 
     @Test
-    public void testGrpNonExistentDeref() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) grp.findDataChildByName(
-            QName.create(FOO, "non-existent-deref")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+    void testGrpNonExistentDeref() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            grp.getDataChildByName(QName.create(FOO, "non-existent-deref")));
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "non-existent-deref"));
         assertThrowsMissingXyzzy(stack, leaf, "schema parent (leafrefs)foo");
     }
 
     @Test
-    public void testFooNonExistentDeref() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) bar.findDataChildByName(
-            QName.create(FOO, "non-existent-deref")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
+    void testFooNonExistentDeref() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            bar.getDataChildByName(QName.create(FOO, "non-existent-deref")));
+        final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "non-existent-deref"));
         assertThrowsMissingXyzzy(stack, leaf, "schema parent (leafrefs)foo");
     }
 
     @Test
-    public void testNonExistentRelativeXpath() {
-        final LeafSchemaNode leaf = (LeafSchemaNode) bar.findDataChildByName(
-                QName.create(FOO, "indirect-with-current")).get();
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context,
+    void testNonExistentRelativeXpath() {
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            bar.getDataChildByName(QName.create(FOO, "indirect-with-current")));
+        final var stack = SchemaInferenceStack.ofDataTreePath(context,
             foo.getQName(), bar.getQName(), QName.create(FOO, "indirect-with-current"));
         assertThrowsMissingChild(stack, leaf, "(leafrefs)n", "module (leafrefs)leafrefs");
     }
 
     private static void assertThrowsInvalidPath(final SchemaInferenceStack stack, final LeafSchemaNode leaf) {
-        final IllegalArgumentException ex = assertThrowsIAE(stack, leaf);
+        final var ex = assertThrowsIAE(stack, leaf);
         assertThat(ex.getMessage(), startsWith("Illegal parent access in "));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(IllegalStateException.class));
+        final var cause = assertInstanceOf(IllegalStateException.class, ex.getCause());
         assertEquals("Unexpected current EmptyGroupingEffectiveStatement{argument=(leafrefs)grp}", cause.getMessage());
     }
 
@@ -185,7 +178,7 @@ public class LeafrefStaticAnalysisTest {
 
     private static IllegalArgumentException assertThrowsIAE(final SchemaInferenceStack stack,
             final LeafSchemaNode leaf) {
-        return assertThrows(IllegalArgumentException.class,
-            () -> stack.resolvePathExpression(((LeafrefTypeDefinition) leaf.getType()).getPathStatement()));
+        return assertThrows(IllegalArgumentException.class, () -> stack.resolvePathExpression(
+            assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType()).getPathStatement()));
     }
 }

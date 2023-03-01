@@ -7,47 +7,34 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1100Test {
+class YT1100Test {
     @Test
-    public void testChoiceCaseRelativeLeafref() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt1100.yang");
-        final Module module = context.findModule("yt1100").orElseThrow();
-        final QNameModule qnm = module.getQNameModule();
-        final QName foo = QName.create(qnm, "foo");
-        final QName schedulerNode = QName.create(qnm, "scheduler-node");
-        final QName childSchedulerNodes = QName.create(qnm, "child-scheduler-nodes");
-        final QName name = QName.create(qnm, "name");
-        final DataSchemaNode leaf = module.findDataTreeChild(foo, schedulerNode, childSchedulerNodes, name)
-                .orElseThrow();
-        assertThat(leaf, instanceOf(LeafSchemaNode.class));
+    void testChoiceCaseRelativeLeafref() {
+        final var context = YangParserTestUtils.parseYangResource("/yt1100.yang");
+        final var module = context.findModule("yt1100").orElseThrow();
+        final var qnm = module.getQNameModule();
+        final var foo = QName.create(qnm, "foo");
+        final var schedulerNode = QName.create(qnm, "scheduler-node");
+        final var childSchedulerNodes = QName.create(qnm, "child-scheduler-nodes");
+        final var name = QName.create(qnm, "name");
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            module.findDataTreeChild(foo, schedulerNode, childSchedulerNodes, name).orElseThrow());
+        final var leafref = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType()).getPathStatement();
 
-        final TypeDefinition<?> type = ((LeafSchemaNode) leaf).getType();
-        assertThat(type, instanceOf(LeafrefTypeDefinition.class));
-        final PathExpression leafref = ((LeafrefTypeDefinition) type).getPathStatement();
-
-        final EffectiveStatement<?, ?> resolvedLeafRef = SchemaInferenceStack.ofDataTreePath(
-            context, foo, schedulerNode,childSchedulerNodes, name).resolvePathExpression(leafref);
-        assertThat(resolvedLeafRef, instanceOf(LeafSchemaNode.class));
-        final LeafSchemaNode targetLeaf = (LeafSchemaNode) resolvedLeafRef;
-        assertEquals(QName.create(qnm, "name"), targetLeaf.getQName());
-        assertThat(targetLeaf.getType(), instanceOf(StringTypeDefinition.class));
+        final var resolvedLeafRef = assertInstanceOf(LeafSchemaNode.class,
+            SchemaInferenceStack.ofDataTreePath(context, foo, schedulerNode, childSchedulerNodes, name)
+                .resolvePathExpression(leafref));
+        assertEquals(QName.create(qnm, "name"), resolvedLeafRef.getQName());
+        assertInstanceOf(StringTypeDefinition.class, resolvedLeafRef.getType());
     }
 }

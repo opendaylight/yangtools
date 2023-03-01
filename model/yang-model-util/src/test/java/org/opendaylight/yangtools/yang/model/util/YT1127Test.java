@@ -7,68 +7,58 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.NoSuchElementException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1127Test {
+class YT1127Test {
     private static EffectiveModelContext context;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         context = YangParserTestUtils.parseYangResource("/yt1127.yang");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         context = null;
     }
 
     @Test
-    public void testGroupingLeafRef() {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+    void testGroupingLeafRef() {
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(QName.create("foo", "grp"));
-        final SchemaTreeEffectiveStatement<?> leaf1 = stack.enterSchemaTree(QName.create("foo", "leaf1"));
-        assertThat(leaf1, instanceOf(LeafSchemaNode.class));
-        final TypeDefinition<?> type = ((LeafSchemaNode) leaf1).getType();
-        assertThat(type, instanceOf(LeafrefTypeDefinition.class));
+        final var leaf1 = assertInstanceOf(LeafSchemaNode.class, stack.enterSchemaTree(QName.create("foo", "leaf1")));
+        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf1.getType());
 
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> stack.resolveLeafref((LeafrefTypeDefinition) type));
+        final var ex = assertThrows(IllegalArgumentException.class, () -> stack.resolveLeafref(type));
         assertThat(ex.getMessage(), startsWith("Illegal parent access in YangLocationPath"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(IllegalStateException.class));
+        final var cause = assertInstanceOf(IllegalStateException.class, ex.getCause());
         assertEquals("Unexpected current EmptyGroupingEffectiveStatement{argument=(foo)grp}", cause.getMessage());
     }
 
     @Test
-    public void testContainerLeafRef() {
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context,
+    void testContainerLeafRef() {
+        final var stack = SchemaInferenceStack.ofDataTreePath(context,
             QName.create("foo", "cont"), QName.create("foo", "leaf2"));
 
-        final EffectiveStatement<?, ?> leaf2 = stack.currentStatement();
-        assertThat(leaf2, instanceOf(LeafSchemaNode.class));
-        final TypeDefinition<?> type = ((LeafSchemaNode) leaf2).getType();
-        assertThat(type, instanceOf(LeafrefTypeDefinition.class));
+        final var leaf2 = assertInstanceOf(LeafSchemaNode.class, stack.currentStatement());
+        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf2.getType());
 
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> stack.resolveLeafref((LeafrefTypeDefinition) type));
+        final var ex = assertThrows(IllegalArgumentException.class, () -> stack.resolveLeafref(type));
         assertThat(ex.getMessage(), startsWith("Illegal parent access in YangLocationPath"));
-        assertThat(ex.getCause(), instanceOf(NoSuchElementException.class));
+        assertInstanceOf(NoSuchElementException.class, ex.getCause());
     }
 }
