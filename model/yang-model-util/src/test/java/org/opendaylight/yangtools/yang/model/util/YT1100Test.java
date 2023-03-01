@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1100Test {
+class YT1100Test {
     @Test
-    public void testChoiceCaseRelativeLeafref() {
+    void testChoiceCaseRelativeLeafref() {
         final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt1100.yang");
         final Module module = context.findModule("yt1100").orElseThrow();
         final QNameModule qnm = module.getQNameModule();
@@ -44,7 +44,7 @@ public class YT1100Test {
         final PathExpression leafref = ((LeafrefTypeDefinition) type).getPathStatement();
 
         final EffectiveStatement<?, ?> resolvedLeafRef = SchemaInferenceStack.ofDataTreePath(
-            context, foo, schedulerNode,childSchedulerNodes, name).resolvePathExpression(leafref);
+                context, foo, schedulerNode, childSchedulerNodes, name).resolvePathExpression(leafref);
         assertThat(resolvedLeafRef, instanceOf(LeafSchemaNode.class));
         final LeafSchemaNode targetLeaf = (LeafSchemaNode) resolvedLeafRef;
         assertEquals(QName.create(qnm, "name"), targetLeaf.getQName());

@@ -7,31 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
 
-public class SimpleSchemaContextTest {
+class SimpleSchemaContextTest {
     @Test
-    public void testGetModulesOrdering() {
-        final Module foo0 = mockModule("foo", Optional.empty());
-        final Module foo1 = mockModule("foo", Revision.ofNullable("2018-01-01"));
-        final Module foo2 = mockModule("foo", Revision.ofNullable("2018-01-16"));
+    void testGetModulesOrdering() {
+        final var foo0 = mockModule("foo", Optional.empty());
+        final var foo1 = mockModule("foo", Revision.ofNullable("2018-01-01"));
+        final var foo2 = mockModule("foo", Revision.ofNullable("2018-01-16"));
 
-        final List<Module> expected = ImmutableList.of(foo2, foo1, foo0);
+        final var expected = List.of(foo2, foo1, foo0);
         assertGetModules(expected, foo0, foo1, foo2);
         assertGetModules(expected, foo0, foo2, foo1);
         assertGetModules(expected, foo1, foo0, foo2);
@@ -56,34 +53,32 @@ public class SimpleSchemaContextTest {
     }
 
     private static void assertGetModules(final List<Module> expected, final Module... modules) {
-        final Set<Module> actual = SimpleSchemaContext.forModules(ImmutableList.copyOf(modules)).getModules();
+        final var actual = SimpleSchemaContext.forModules(List.of(modules)).getModules();
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
     private static void assertFindModules(final List<Module> expected, final String name, final Module... modules) {
-        final Collection<? extends Module> actual = SimpleSchemaContext.forModules(ImmutableList.copyOf(modules))
-                .findModules(name);
+        final var actual = SimpleSchemaContext.forModules(List.of(modules)).findModules(name);
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
     private static void assertFindModules(final List<Module> expected, final XMLNamespace uri,
             final Module... modules) {
-        final Collection<? extends Module> actual = SimpleSchemaContext.forModules(ImmutableSet.copyOf(modules))
-                .findModules(uri);
+        final var actual = SimpleSchemaContext.forModules(List.of(modules)).findModules(uri);
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
     private static Module mockModule(final String name, final Optional<Revision> revision) {
-        final QNameModule mod = QNameModule.create(XMLNamespace.of(name), revision);
-        final Module ret = mock(Module.class);
+        final var mod = QNameModule.create(XMLNamespace.of(name), revision);
+        final var ret = mock(Module.class);
         doReturn(name).when(ret).getName();
         doReturn(mod.getNamespace()).when(ret).getNamespace();
         doReturn(mod.getRevision()).when(ret).getRevision();
         doReturn(mod).when(ret).getQNameModule();
         doReturn(mod.toString()).when(ret).toString();
-        doReturn(ImmutableSet.of()).when(ret).getImports();
-        doReturn(ImmutableSet.of()).when(ret).getSubmodules();
-        doReturn(ImmutableList.of()).when(ret).getUnknownSchemaNodes();
+        doReturn(Set.of()).when(ret).getImports();
+        doReturn(Set.of()).when(ret).getSubmodules();
+        doReturn(List.of()).when(ret).getUnknownSchemaNodes();
         return ret;
     }
 }
