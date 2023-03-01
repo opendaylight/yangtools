@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.ErrorInfoRepresentation;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 /**
@@ -24,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 // FIXME: 8.0.0: Split this into two interfaces + scenery:
 //               - yang.common.ErrorInfoRepresentation
 //               - make NormalizedNodeContainer implement ErrorInfoRepresentation
-public final class YangErrorInfo {
+public final class YangErrorInfo implements ErrorInfoRepresentation {
     // FIXME: 8.0.0: implies it extends ErrorInfoRepresentation, but ... perhaps NormalizedErrorInfo
     private final DataContainerChild value;
 
