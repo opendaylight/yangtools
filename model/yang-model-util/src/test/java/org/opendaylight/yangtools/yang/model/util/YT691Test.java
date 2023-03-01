@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT691Test {
+class YT691Test {
     @Test
-    public void testGetAllModuleIdentifiers() {
+    void testGetAllModuleIdentifiers() {
         final SourceIdentifier foo = new SourceIdentifier("foo", "2016-01-01");
         final SourceIdentifier sub1Foo = new SourceIdentifier("sub1-foo", "2016-01-01");
         final SourceIdentifier sub2Foo = new SourceIdentifier("sub2-foo", "2016-01-01");
@@ -32,7 +32,7 @@ public class YT691Test {
         final Set<SourceIdentifier> allModuleIdentifiers = SchemaContextUtil.getConstituentModuleIdentifiers(context);
         assertEquals(6, allModuleIdentifiers.size());
         final Set<SourceIdentifier> allModuleIdentifiersResolved = SchemaContextUtil.getConstituentModuleIdentifiers(
-            SimpleSchemaContext.forModules(context.getModules()));
+                SimpleSchemaContext.forModules(context.getModules()));
         assertEquals(6, allModuleIdentifiersResolved.size());
         assertEquals(allModuleIdentifiersResolved, allModuleIdentifiers);
         assertEquals(allModuleIdentifiers, testSet);
