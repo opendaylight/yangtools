@@ -12,10 +12,10 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.rfc7952.data.util.ImmutableMetadataNormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.util.ImmutableMetadataNormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
