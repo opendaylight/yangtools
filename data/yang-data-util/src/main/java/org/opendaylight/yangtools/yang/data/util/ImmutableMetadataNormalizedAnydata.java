@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc7952.data.util;
+package org.opendaylight.yangtools.yang.data.util;
 
 import static java.util.Objects.requireNonNull;
 
@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MetadataNormalizedAnydata
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
 @Beta
