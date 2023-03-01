@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1050Test {
+class YT1050Test {
     private static final QName SECONDARY = QName.create("yt1050", "secondary");
     private static final QName TYPE = QName.create(SECONDARY, "type");
     private static final QName GRP_USES = QName.create(SECONDARY, "grp-uses");
@@ -34,8 +34,8 @@ public class YT1050Test {
     private LeafSchemaNode primaryType;
     private Module module;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         context = YangParserTestUtils.parseYangResource("/yt1050.yang");
         module = context.getModules().iterator().next();
 
@@ -48,7 +48,7 @@ public class YT1050Test {
     }
 
     @Test
-    public void testFindDataSchemaNodeForRelativeXPathWithDeref() {
+    void testFindDataSchemaNodeForRelativeXPathWithDeref() {
         final TypeDefinition<?> typeNodeType = secondaryType.getType();
         assertThat(typeNodeType, isA(LeafrefTypeDefinition.class));
 

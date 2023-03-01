@@ -9,23 +9,23 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.google.common.collect.Iterables;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1404Test {
+class YT1404Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
 
     @Test
-    public void testDeviatedEffectiveAugmentationSchema() {
+    void testDeviatedEffectiveAugmentationSchema() {
         final var module = YangParserTestUtils.parseYangResourceDirectory("/yt1404").findModule("foo").orElseThrow();
         final var augment = Iterables.getOnlyElement(module.getAugmentations());
         assertEquals(2, augment.getChildNodes().size());

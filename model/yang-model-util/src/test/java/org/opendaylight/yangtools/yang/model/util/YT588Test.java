@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -22,12 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT588Test {
+class YT588Test {
     private static final String NS = "foo";
     private static final String REV = "2016-03-01";
 
     @Test
-    public void test() {
+    void test() {
         EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt588.yang");
 
         QName root = QName.create(NS, REV, "root");
@@ -48,10 +48,10 @@ public class YT588Test {
 
         EffectiveStatement<?, ?> found = SchemaInferenceStack.ofDataTreePath(context, root, conGrp, leafRef)
                 .resolvePathExpression(((LeafrefTypeDefinition) leafRefNode.getType()).getPathStatement());
-        assertThat(((TypedDataSchemaNode)found).getType(), isA(BinaryTypeDefinition.class));
+        assertThat(((TypedDataSchemaNode) found).getType(), isA(BinaryTypeDefinition.class));
 
         found = SchemaInferenceStack.ofDataTreePath(context, root, leafRef2)
-            .resolvePathExpression(((LeafrefTypeDefinition) leafRefNode2.getType()).getPathStatement());
-        assertThat(((TypedDataSchemaNode)found).getType(), isA(Int16TypeDefinition.class));
+                .resolvePathExpression(((LeafrefTypeDefinition) leafRefNode2.getType()).getPathStatement());
+        assertThat(((TypedDataSchemaNode) found).getType(), isA(Int16TypeDefinition.class));
     }
 }

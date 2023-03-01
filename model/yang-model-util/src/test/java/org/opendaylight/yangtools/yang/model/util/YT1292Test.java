@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.Iterables;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1292Test {
+class YT1292Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
@@ -35,28 +35,28 @@ public class YT1292Test {
 
     private ContainerEffectiveStatement baz;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         module = Iterables.getOnlyElement(YangParserTestUtils.parseYangResource("/yt1292.yang").getModuleStatements()
-            .values());
+                .values());
     }
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         final DataTreeEffectiveStatement<?> tmp = module.findDataTreeNode(BAZ).orElseThrow();
         assertThat(tmp, instanceOf(ContainerEffectiveStatement.class));
         baz = (ContainerEffectiveStatement) tmp;
     }
 
     @Test
-    public void testRpc() {
+    void testRpc() {
         assertEquals(Optional.empty(), module.findDataTreeNode(FOO));
         final SchemaTreeEffectiveStatement<?> foo = module.findSchemaTreeNode(FOO).orElseThrow();
         assertThat(foo, instanceOf(RpcEffectiveStatement.class));
     }
 
     @Test
-    public void testNotification() {
+    void testNotification() {
         assertEquals(Optional.empty(), module.findDataTreeNode(BAR));
         SchemaTreeEffectiveStatement<?> bar = module.findSchemaTreeNode(BAR).orElseThrow();
         assertThat(bar, instanceOf(NotificationEffectiveStatement.class));
@@ -67,7 +67,7 @@ public class YT1292Test {
     }
 
     @Test
-    public void testAction() {
+    void testAction() {
         assertEquals(Optional.empty(), baz.findDataTreeNode(FOO));
         final SchemaTreeEffectiveStatement<?> foo = baz.findSchemaTreeNode(FOO).orElseThrow();
         assertThat(foo, instanceOf(ActionEffectiveStatement.class));
