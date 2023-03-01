@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1283Test {
+class YT1283Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
 
@@ -32,19 +32,19 @@ public class YT1283Test {
 
     private final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         context = YangParserTestUtils.parseYangResource("/yt1283.yang");
     }
 
     @Test
-    public void testResolveUnderCaseViaDataTree() {
+    void testResolveUnderCaseViaDataTree() {
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
         assertResolve(stack.enterDataTree(FOO));
     }
 
     @Test
-    public void testResolveUnderCaseViaSchemaTree() {
+    void testResolveUnderCaseViaSchemaTree() {
         assertThat(stack.enterSchemaTree(FOO), instanceOf(ContainerEffectiveStatement.class));
         assertThat(stack.enterSchemaTree(FOO), instanceOf(ChoiceEffectiveStatement.class));
         assertThat(stack.enterSchemaTree(FOO), instanceOf(CaseEffectiveStatement.class));

@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -32,15 +32,15 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 
-public class YT1060Test {
+class YT1060Test {
     private static final QName CONT = QName.create("parent", "cont");
     private static final QName LEAF1 = QName.create(CONT, "leaf1");
 
     private EffectiveModelContext context;
     private PathExpression path;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         context = YangParserTestUtils.parseYangResourceDirectory("/yt1060");
 
         final Module module = context.findModule(CONT.getModule()).get();
@@ -59,9 +59,9 @@ public class YT1060Test {
     }
 
     @Test
-    public void testFindDataSchemaNodeAbsolutePathImportedModule() {
+    void testFindDataSchemaNodeAbsolutePathImportedModule() {
         final EffectiveStatement<?, ?> foundStmt = SchemaInferenceStack.ofDataTreePath(context, CONT, LEAF1)
-            .resolvePathExpression(path);
+                .resolvePathExpression(path);
         assertThat(foundStmt, isA(LeafSchemaNode.class));
         assertEquals(QName.create(XMLNamespace.of("imported"), "leaf1"), ((LeafSchemaNode) foundStmt).getQName());
 
