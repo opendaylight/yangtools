@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
@@ -30,11 +31,13 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 @Beta
-final class YangDataEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<String, YangDataStatement>
-        implements YangDataEffectiveStatement, YangDataSchemaNode, DataNodeContainerMixin<String, YangDataStatement> {
+final class YangDataEffectiveStatementImpl
+        extends AbstractEffectiveUnknownSchmemaNode<YangDataName, YangDataStatement>
+        implements YangDataEffectiveStatement, YangDataSchemaNode,
+                   DataNodeContainerMixin<YangDataName, YangDataStatement> {
     private final @NonNull DataSchemaNode child;
 
-    YangDataEffectiveStatementImpl(final Current<String, YangDataStatement> stmt,
+    YangDataEffectiveStatementImpl(final Current<YangDataName, YangDataStatement> stmt,
              final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final DataSchemaNode child) {
         super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
         this.child = requireNonNull(child);
@@ -85,7 +88,7 @@ final class YangDataEffectiveStatementImpl extends AbstractEffectiveUnknownSchme
     }
 
     @Override
-    public Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(@NonNull QName qname) {
+    public Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final QName qname) {
         return qname.equals(child.getQName()) ? (Optional) Optional.of(child) : Optional.empty();
     }
 }

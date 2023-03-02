@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -37,19 +38,22 @@ public class YT1297Test {
 
     @Test
     public void testEnterYangData() {
-        assertNotNull(stack.enterYangData(RESTCONF, "yang-api"));
+        assertNotNull(stack.enterYangData(new YangDataName(RESTCONF, "yang-api")));
         assertNotNull(stack.enterDataTree(QName.create(RESTCONF, "restconf")));
     }
 
     @Test
     public void testEnterYangDataNegative() {
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> stack.enterYangData(RESTCONF, "bad-name"));
+        Exception ex = assertThrows(IllegalArgumentException.class,
+            () -> stack.enterYangData(new YangDataName(RESTCONF, "bad-name")));
         assertEquals("yang-data bad-name not present in " + RESTCONF, ex.getMessage());
-        ex = assertThrows(IllegalArgumentException.class, () -> stack.enterYangData(BAD_MODULE, "whatever"));
+        ex = assertThrows(IllegalArgumentException.class,
+            () -> stack.enterYangData(new YangDataName(BAD_MODULE, "whatever")));
         assertEquals("Module for " + BAD_MODULE + " not found", ex.getMessage());
 
         assertNotNull(stack.enterGrouping(QName.create(RESTCONF, "errors")));
-        ex = assertThrows(IllegalStateException.class, () -> stack.enterYangData(RESTCONF, "yang-api"));
+        ex = assertThrows(IllegalStateException.class,
+            () -> stack.enterYangData(new YangDataName(RESTCONF, "yang-api")));
         assertEquals("Cannot lookup yang-data in a non-empty stack", ex.getMessage());
     }
 }
