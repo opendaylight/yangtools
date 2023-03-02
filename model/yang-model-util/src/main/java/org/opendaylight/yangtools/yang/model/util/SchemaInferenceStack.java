@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
@@ -488,26 +489,26 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     /**
      * Lookup a {@code rc:yang-data} by the module namespace where it is defined and its template name.
      *
-     * @param namespace Module namespace in which to lookup the template
      * @param name Template name
      * @return Resolved yang-data
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if the corresponding yang-data cannot be found
      * @throws IllegalStateException if this stack is not empty
      */
-    public @NonNull YangDataEffectiveStatement enterYangData(final QNameModule namespace, final String name) {
+    public @NonNull YangDataEffectiveStatement enterYangData(final YangDataName name) {
         final EffectiveStatement<?, ?> parent = deque.peekLast();
         checkState(parent == null, "Cannot lookup yang-data in a non-empty stack");
 
-        final String templateName = requireNonNull(name);
-        final ModuleEffectiveStatement module = effectiveModel.getModuleStatements().get(requireNonNull(namespace));
+        final var checkedName = requireNonNull(name);
+        final var namespace = name.module();
+        final ModuleEffectiveStatement module = effectiveModel.getModuleStatements().get(namespace);
         checkArgument(module != null, "Module for %s not found", namespace);
 
         final YangDataEffectiveStatement ret = module.streamEffectiveSubstatements(YangDataEffectiveStatement.class)
-            .filter(stmt -> templateName.equals(stmt.argument()))
+            .filter(stmt -> checkedName.equals(stmt.argument()))
             .findFirst()
             .orElseThrow(
-                () -> new IllegalArgumentException("yang-data " + templateName + " not present in " + namespace));
+                () -> new IllegalArgumentException("yang-data " + checkedName.name() + " not present in " + namespace));
         deque.addLast(ret);
         currentModule = module;
         return ret;
