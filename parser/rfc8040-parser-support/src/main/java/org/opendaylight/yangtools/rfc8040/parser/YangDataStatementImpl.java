@@ -9,15 +9,17 @@ package org.opendaylight.yangtools.rfc8040.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 /**
  * Declared statement representation of 'yang-data' extension defined in
  * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
  */
-final class YangDataStatementImpl extends WithSubstatements implements YangDataStatement {
-    YangDataStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+final class YangDataStatementImpl extends WithSubstatements<YangDataName> implements YangDataStatement {
+    YangDataStatementImpl(final YangDataName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(argument.name(), argument, substatements);
     }
 }
