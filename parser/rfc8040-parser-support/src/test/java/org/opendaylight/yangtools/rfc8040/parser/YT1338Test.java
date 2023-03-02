@@ -31,7 +31,7 @@ public class YT1338Test extends AbstractYangDataTest {
             .findModuleStatement(YangDataConstants.RFC8040_MODULE)
             .orElseThrow()
             .streamEffectiveSubstatements(YangDataEffectiveStatement.class)
-            .filter(stmt -> "yang-api".equals(stmt.argument()))
+            .filter(stmt -> YangDataStatementSupport.YANG_API.equals(stmt.argument()))
             .findAny()
             .orElseThrow()
             .findDataTreeNode(QName.create(YangDataConstants.RFC8040_MODULE, "restconf"))

@@ -10,11 +10,14 @@ package org.opendaylight.yangtools.rfc8040.parser;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Collectors;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatements;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -25,18 +28,20 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class YangDataStatementSupport
-        extends AbstractStringStatementSupport<YangDataStatement, YangDataEffectiveStatement> {
+        extends AbstractStatementSupport<YangDataName, YangDataStatement, YangDataEffectiveStatement> {
     // As per RFC8040 page 81:
     //
     //    The substatements of this extension MUST follow the
@@ -66,12 +71,24 @@ public final class YangDataStatementSupport
         .addAny(YangStmtMapping.USES)
         .build();
 
+    @VisibleForTesting
+    static final YangDataName YANG_API = new YangDataName(YangDataConstants.RFC8040_MODULE, "yang-api");
+
     public YangDataStatementSupport(final YangParserConfiguration config) {
         super(YangDataStatements.YANG_DATA, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override
-    public void onStatementAdded(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
+    public YangDataName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        try {
+            return new YangDataName(StmtContextUtils.getModuleQName(ctx.getRoot()), value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx, e, "Invalid yang-data argument %s", value);
+        }
+    }
+
+    @Override
+    public void onStatementAdded(final Mutable<YangDataName, YangDataStatement, YangDataEffectiveStatement> ctx) {
         // as per https://tools.ietf.org/html/rfc8040#section-8,
         // yang-data is ignored unless it appears as a top-level statement
         if (ctx.coerceParentContext().getParentContext() != null) {
@@ -80,7 +97,8 @@ public final class YangDataStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
+    public void onFullDefinitionDeclared(
+            final Mutable<YangDataName, YangDataStatement, YangDataEffectiveStatement> ctx) {
         // If we are declared in an illegal place, this becomes a no-op
         if (!ctx.isSupportedToBuildEffective()) {
             return;
@@ -97,7 +115,7 @@ public final class YangDataStatementSupport
         //   }
         //
         // If we find it, we hook an inference action which performs the next step when the module is fully declared.
-        if ("yang-api".equals(ctx.argument())) {
+        if (YANG_API.equals(ctx.getArgument())) {
             final var stmts = ctx.declaredSubstatements();
             if (stmts.size() == 1) {
                 final var stmt = stmts.iterator().next();
@@ -121,9 +139,9 @@ public final class YangDataStatementSupport
     }
 
     @Override
-    protected YangDataStatement createDeclared(final BoundStmtCtx<String> ctx,
+    protected YangDataStatement createDeclared(final BoundStmtCtx<YangDataName> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        return new YangDataStatementImpl(ctx.getRawArgument(), substatements);
+        return new YangDataStatementImpl(ctx.getArgument(), substatements);
     }
 
     @Override
@@ -133,7 +151,7 @@ public final class YangDataStatementSupport
     }
 
     @Override
-    protected YangDataEffectiveStatement createEffective(final Current<String, YangDataStatement> stmt,
+    protected YangDataEffectiveStatement createEffective(final Current<YangDataName, YangDataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // RFC8040 page 80 requires that:
         //    It MUST contain data definition statements
