@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -264,6 +265,29 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
             }
         }
         groupings = List.copyOf(tmp);
+    }
+
+    // Iterate over a some generators recursively, linking them to the GroupingGenerators they use. GroupingGenerators
+    // are skipped and added to unprocessedGroupings for later processing.
+    final void linkUsedGroupings(final Set<GroupingGenerator> skippedChildren) {
+        // Link to used groupings IFF we have a corresponding generated Java class
+        switch (classPlacement()) {
+            case NONE:
+            case PHANTOM:
+                break;
+            default:
+                for (var grouping : groupings()) {
+                    grouping.addUser(this);
+                }
+        }
+
+        for (var child : childGenerators) {
+            if (child instanceof GroupingGenerator grouping) {
+                skippedChildren.add(grouping);
+            } else if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
+                composite.linkUsedGroupings(skippedChildren);
+            }
+        }
     }
 
     final void startUsesAugmentLinkage(final List<AugmentRequirement> requirements) {

@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -182,15 +183,20 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
          */
         linkDependencies(children);
 
-        // Step five: resolve all 'type leafref' and 'type identityref' statements, so they point to their
-        //            corresponding Java type representation.
+        // Step 5: resolve grouping usage, so that each GroupingGenerator has links to their instantiation sites and
+        //         any unused
+        resolveGroupingUsers();
+        freezeGroupingUsers(children);
+
+        // Step 6: resolve all 'type leafref' and 'type identityref' statements, so they point to their corresponding
+        //         Java type representation.
         bindTypeDefinition(children);
 
-        // Step six: walk all composite generators and link ChildOf/ChoiceIn relationships with parents. We have taken
-        //           care of this step during tree construction, hence this now a no-op.
+        // Step 7: walk all composite generators and link ChildOf/ChoiceIn relationships with parents. We have taken
+        //         care of this step during tree construction, hence this now a no-op.
 
         /*
-         * Step seven: assign java packages and JavaTypeNames
+         * Step 8: assign java packages and JavaTypeNames
          *
          * This is a really tricky part, as we have large number of factors to consider:
          * - we are mapping grouping, typedef, identity and schema tree namespaces into Fully Qualified Class Names,
@@ -222,11 +228,13 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
             }
         } while (haveUnresolved);
 
-        // Step eight: generate actual Types
-        //
-        // We have now properly cross-linked all generators and have assigned their naming roots, so from this point
-        // it looks as though we are performing a simple recursive execution. In reality, though, the actual path taken
-        // through generators is dictated by us as well as generator linkage.
+        /*
+         * Step 9: generate actual Types
+         *
+         * We have now properly cross-linked all generators and have assigned their naming roots, so from this point
+         * it looks as though we are performing a simple recursive execution. In reality, though, the actual path taken
+         * through generators is dictated by us as well as generator linkage.
+         */
         for (var module : children) {
             module.ensureType(builderFactory);
         }
@@ -416,6 +424,60 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
                 bindTypeDefinition(child);
             }
             stack.pop();
+        }
+    }
+
+    private void resolveGroupingUsers() {
+        // Primary pass on modules, collecting all groupings which were left unprocessed
+        // TODO: use a plain List
+        final var remaining = new HashSet<GroupingGenerator>();
+        for (var module : children) {
+            module.linkUsedGroupings(remaining);
+        }
+        LOG.debug("Grouping pass 1 found {} groupings", remaining.size());
+
+        // Secondary passes: if any unprocessed groupings have been marked as used, process their children, potentially
+        //                   adding more work
+        int passes = 2;
+        int processed;
+        do {
+            // Do not process groupings again unless we make some progress
+            processed = 0;
+
+            final var found = new HashSet<GroupingGenerator>();
+            final var it = remaining.iterator();
+            while (it.hasNext()) {
+                final var next = it.next();
+                if (next.hasUser()) {
+                    // Process this grouping and remember we need to iterate again, as groupings we have already visited
+                    // may become used as a side-effect.
+                    it.remove();
+                    next.linkUsedGroupings(found);
+                    processed++;
+                }
+            }
+
+            final var foundSize = found.size();
+            LOG.debug("Grouping pass {} processed {} and found {} grouping(s)", passes, processed, foundSize);
+            if (foundSize != 0) {
+                // we have some more groupings to process, shove them into the next iteration
+                remaining.addAll(found);
+            }
+
+            passes++;
+        } while (processed != 0);
+
+        LOG.debug("Grouping usage completed after {} pass(es) with unused {} grouping(s)", passes, remaining.size());
+    }
+
+    private static void freezeGroupingUsers(final Iterable<? extends Generator> parent) {
+        for (var child : parent) {
+            if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
+                if (composite instanceof GroupingGenerator grouping) {
+                    grouping.freezeUsers();
+                }
+                freezeGroupingUsers(composite);
+            }
         }
     }
 }

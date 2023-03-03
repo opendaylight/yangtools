@@ -1,0 +1,157 @@
+module mdsal669 {
+  namespace mdsal669;
+  prefix mdsal669;
+
+  grouping bar {
+    container bar {
+      leaf-list bar {
+        type leafref {
+          path ../../foo;
+        }
+      }
+    }
+  }
+
+  container foo {
+    leaf foo {
+      type instance-identifier;
+    }
+
+    uses bar;
+  }
+
+  grouping baz {
+    leaf baz {
+      type leafref {
+        path "../bar";
+      }
+    }
+  }
+
+  container one {
+    leaf bar {
+      type string;
+    }
+    uses baz;
+  }
+
+  container two {
+    leaf bar {
+      type uint16;
+    }
+    uses baz;
+  }
+
+  grouping unused {
+    leaf foo {
+      type leafref {
+        path "../bar";
+      }
+    }
+  }
+
+  // this grouping is used ...
+  grouping foo-as-string {
+    leaf foo {
+      type string;
+    }
+
+    uses bar;
+  }
+
+  // ... but this grouping is not ...
+  grouping unused-bar {
+    container qux {
+      // ... and hence this is not count as an instantiation
+      uses foo-as-string;
+    }
+  }
+
+  // Direct use via augment
+  container target;
+
+  augment /target {
+    leaf foo {
+      type uint32;
+    }
+
+    uses bar;
+  }
+
+  // Multiple use cases for uses/augment: this is the base grouping
+  grouping to-be-augmented {
+    container to-be-augmented;
+  }
+
+  // This grouping is not used
+  grouping unused-augmented {
+    uses to-be-augmented {
+      augment to-be-augmented {
+        leaf foo {
+          type boolean;
+        }
+
+        uses bar;
+      }
+    }
+  }
+
+  // This grouping is used only ...
+  grouping unused-intermediate-augmented {
+    uses to-be-augmented {
+      augment to-be-augmented {
+        leaf foo {
+          type uint64;
+        }
+
+        uses bar;
+      }
+    }
+  }
+
+  // ... by this grouping, which itself is not used
+  grouping unused-intermediate-augmented-user {
+    uses unused-intermediate-augmented;
+  }
+
+  // This grouping is used directly ...
+  grouping used-augmented {
+    uses to-be-augmented {
+      augment to-be-augmented {
+        leaf foo {
+          type uint8;
+        }
+
+        uses bar;
+      }
+    }
+  }
+
+  // ... by this container
+  container used-augmented-user {
+    uses used-augmented;
+  }
+
+  // ... this grouping is used ...
+  grouping used-augmented-indirect {
+    uses to-be-augmented {
+      augment to-be-augmented {
+        leaf foo {
+          type empty;
+        }
+
+        uses bar;
+      }
+    }
+  }
+
+  // ... by another grouping, which itself is used ...
+  grouping used-augmented-indirect-grp {
+    uses used-augmented-indirect;
+  }
+
+  // ... by this container
+  container used-augmented-indirect-user {
+    uses used-augmented-indirect-grp;
+  }
+}
