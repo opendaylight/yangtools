@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import java.io.DataInput;
 import java.io.IOException;
 import java.math.BigInteger;
+import org.opendaylight.yangtools.yang.data.spi.value.ValueInterner;
 
 final class SodiumSR1DataInput extends AbstractMagnesiumDataInput {
-    SodiumSR1DataInput(final DataInput input) {
-        super(input);
+    SodiumSR1DataInput(final DataInput input, final ValueInterner interner) {
+        super(input, interner);
     }
 
     @Override

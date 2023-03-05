@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.spi.value.ValueInterner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -68,8 +69,8 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
     private final List<QNameModule> codedModules = new ArrayList<>();
     private final List<String> codedStrings = new ArrayList<>();
 
-    AbstractMagnesiumDataInput(final DataInput input) {
-        super(input);
+    AbstractMagnesiumDataInput(final DataInput input, final ValueInterner interner) {
+        super(input, interner);
     }
 
     @Override
@@ -565,16 +566,16 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             case MagnesiumValue.STRING_EMPTY:
                 return "";
             case MagnesiumValue.STRING_2B:
-                str = readString2();
+                str = interner.internValue(readString2());
                 break;
             case MagnesiumValue.STRING_4B:
-                str = readString4();
+                str = interner.internValue(readString4());
                 break;
             case MagnesiumValue.STRING_CHARS:
-                str = readCharsString();
+                str = interner.internValue(readCharsString());
                 break;
             case MagnesiumValue.STRING_UTF:
-                str = input.readUTF();
+                str = interner.internValue(input.readUTF());
                 break;
             default:
                 throw new InvalidNormalizedNodeStreamException("Unexpected String type " + type);
@@ -624,7 +625,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             for (int i = 0; i < size; ++i) {
                 chars[i] = input.readChar();
             }
-            return String.valueOf(chars);
+            return interner.internValue(String.valueOf(chars));
         } else if (size == 0) {
             return "";
         } else {
@@ -676,17 +677,17 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             case MagnesiumValue.INT8_0:
                 return INT8_0;
             case MagnesiumValue.INT16:
-                return input.readShort();
+                return interner.internValue(input.readShort());
             case MagnesiumValue.INT16_0:
                 return INT16_0;
             case MagnesiumValue.INT32:
-                return input.readInt();
+                return interner.internValue(input.readInt());
             case MagnesiumValue.INT32_0:
                 return INT32_0;
             case MagnesiumValue.INT32_2B:
-                return input.readShort() & 0xFFFF;
+                return interner.internValue(input.readShort());
             case MagnesiumValue.INT64:
-                return input.readLong();
+                return interner.internValue(input.readLong());
             case MagnesiumValue.INT64_0:
                 return INT64_0;
             case MagnesiumValue.INT64_4B:
@@ -696,36 +697,36 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             case MagnesiumValue.UINT8_0:
                 return Uint8.ZERO;
             case MagnesiumValue.UINT16:
-                return Uint16.fromShortBits(input.readShort());
+                return interner.internValue(Uint16.fromShortBits(input.readShort()));
             case MagnesiumValue.UINT16_0:
                 return Uint16.ZERO;
             case MagnesiumValue.UINT32:
-                return Uint32.fromIntBits(input.readInt());
+                return interner.internValue(Uint32.fromIntBits(input.readInt()));
             case MagnesiumValue.UINT32_0:
                 return Uint32.ZERO;
             case MagnesiumValue.UINT32_2B:
-                return Uint32.fromIntBits(input.readShort() & 0xFFFF);
+                return interner.internValue(Uint32.fromIntBits(input.readShort() & 0xFFFF));
             case MagnesiumValue.UINT64:
-                return Uint64.fromLongBits(input.readLong());
+                return interner.internValue(Uint64.fromLongBits(input.readLong()));
             case MagnesiumValue.UINT64_0:
                 return Uint64.ZERO;
             case MagnesiumValue.UINT64_4B:
-                return Uint64.fromLongBits(input.readInt() & 0xFFFFFFFFL);
+                return interner.internValue(Uint64.fromLongBits(input.readInt() & 0xFFFFFFFFL));
             case MagnesiumValue.BIGDECIMAL:
                 // FIXME: use string -> BigDecimal cache
-                return Decimal64.valueOf(input.readUTF());
+                return interner.internValue(Decimal64.valueOf(input.readUTF()));
             case MagnesiumValue.BIGINTEGER:
                 return readBigInteger();
             case MagnesiumValue.STRING_EMPTY:
                 return "";
             case MagnesiumValue.STRING_UTF:
-                return input.readUTF();
+                return interner.internValue(input.readUTF());
             case MagnesiumValue.STRING_2B:
-                return readString2();
+                return interner.internValue(readString2());
             case MagnesiumValue.STRING_4B:
-                return readString4();
+                return interner.internValue(readString4());
             case MagnesiumValue.STRING_CHARS:
-                return readCharsString();
+                return interner.internValue(readCharsString());
             case MagnesiumValue.BINARY_0:
                 return BINARY_0;
             case MagnesiumValue.BINARY_1B:

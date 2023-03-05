@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.spi.value.ValueInterner;
 
 /**
  * Neon SR2 specialization of AbstractLithiumDataInput. Unlike its Lithium counterpart, this format uses coding for
@@ -28,8 +29,8 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     private final List<QNameModule> codedModules = new ArrayList<>();
     private final List<QName> codedQNames = new ArrayList<>();
 
-    NeonSR2NormalizedNodeInputStreamReader(final DataInput input) {
-        super(input);
+    NeonSR2NormalizedNodeInputStreamReader(final DataInput input, final ValueInterner interner) {
+        super(input, interner);
     }
 
     @Override

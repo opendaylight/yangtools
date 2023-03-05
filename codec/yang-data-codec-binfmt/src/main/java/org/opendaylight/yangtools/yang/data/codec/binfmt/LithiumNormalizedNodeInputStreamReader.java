@@ -13,13 +13,14 @@ import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.spi.value.ValueInterner;
 
 /**
  * Lithium (or Oxygen really) specialization of AbstractLithiumDataInput.
  */
 final class LithiumNormalizedNodeInputStreamReader extends AbstractLithiumDataInput {
-    LithiumNormalizedNodeInputStreamReader(final DataInput input) {
-        super(input);
+    LithiumNormalizedNodeInputStreamReader(final DataInput input, final ValueInterner interner) {
+        super(input, interner);
     }
 
     @Override
