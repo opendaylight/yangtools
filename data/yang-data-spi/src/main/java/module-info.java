@@ -7,6 +7,7 @@
  */
 module org.opendaylight.yangtools.yang.data.spi {
     exports org.opendaylight.yangtools.yang.data.spi.node;
+    exports org.opendaylight.yangtools.yang.data.spi.value;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.data.api;
