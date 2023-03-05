@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamReceiver;
 import org.opendaylight.yangtools.yang.data.impl.schema.ReusableImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.spi.value.ValueInterner;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
@@ -93,7 +94,22 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @throws NullPointerException if {@code input} is {@code null}
      */
     static @NonNull NormalizedNodeDataInput newDataInput(final @NonNull DataInput input) throws IOException {
-        return new VersionedNormalizedNodeDataInput(input).delegate();
+        return newDataInput(input, ValueInterner.noop());
+    }
+
+    /**
+     * Creates a new {@link NormalizedNodeDataInput} instance that reads from the given input. This method first reads
+     * and validates that the input contains a valid NormalizedNode stream.
+     *
+     * @param input the DataInput to read from
+     * @return a new {@link NormalizedNodeDataInput} instance
+     * @throws InvalidNormalizedNodeStreamException if the stream version is not supported
+     * @throws IOException if an error occurs reading from the input
+     * @throws NullPointerException if {@code input} is {@code null}
+     */
+    static @NonNull NormalizedNodeDataInput newDataInput(final @NonNull DataInput input,
+            final @NonNull ValueInterner interner) throws IOException {
+        return new VersionedNormalizedNodeDataInput(input, interner).delegate();
     }
 
     /**
@@ -106,6 +122,22 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      */
     @Deprecated(since = "5.0.0", forRemoval = true)
     static @NonNull NormalizedNodeDataInput newDataInputWithoutValidation(final @NonNull DataInput input) {
-        return new VersionedNormalizedNodeDataInput(input);
+        return newDataInputWithoutValidation(input, ValueInterner.noop());
     }
+
+    /**
+     * Creates a new {@link NormalizedNodeDataInput} instance that reads from the given input. This method does not
+     * perform any initial validation of the input stream.
+     *
+     * @param input the DataInput to read from
+     * @param interner ValueInterner to use for values
+     * @return a new {@link NormalizedNodeDataInput} instance
+     * @deprecated Use {@link #newDataInput(DataInput, ValueInterner)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    static @NonNull NormalizedNodeDataInput newDataInputWithoutValidation(final @NonNull DataInput input,
+            final @NonNull ValueInterner interner) {
+        return new VersionedNormalizedNodeDataInput(input, interner);
+    }
+
 }

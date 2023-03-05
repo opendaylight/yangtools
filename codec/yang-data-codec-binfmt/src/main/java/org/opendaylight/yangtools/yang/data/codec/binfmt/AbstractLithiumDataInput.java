@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.spi.value.ValueInterner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -56,8 +57,8 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
 
     private QName lastLeafSetQName;
 
-    AbstractLithiumDataInput(final DataInput input) {
-        super(input);
+    AbstractLithiumDataInput(final DataInput input, final ValueInterner interner) {
+        super(input, interner);
     }
 
     @Override
@@ -318,13 +319,13 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
             case LithiumValue.BITS_TYPE -> readObjSet();
             case LithiumValue.BOOL_TYPE -> input.readBoolean();
             case LithiumValue.BYTE_TYPE -> input.readByte();
-            case LithiumValue.INT_TYPE -> input.readInt();
-            case LithiumValue.LONG_TYPE -> input.readLong();
+            case LithiumValue.INT_TYPE -> interner.internValue(input.readInt());
+            case LithiumValue.LONG_TYPE -> interner.internValue(input.readLong());
             case LithiumValue.QNAME_TYPE -> readQName();
-            case LithiumValue.SHORT_TYPE -> input.readShort();
-            case LithiumValue.STRING_TYPE -> input.readUTF();
+            case LithiumValue.SHORT_TYPE -> interner.internValue(input.readShort());
+            case LithiumValue.STRING_TYPE -> interner.internValue(input.readUTF());
             case LithiumValue.STRING_BYTES_TYPE -> readStringBytes();
-            case LithiumValue.BIG_DECIMAL_TYPE -> Decimal64.valueOf(input.readUTF());
+            case LithiumValue.BIG_DECIMAL_TYPE -> interner.internValue(Decimal64.valueOf(input.readUTF()));
             case LithiumValue.BIG_INTEGER_TYPE -> new BigInteger(input.readUTF());
             case LithiumValue.BINARY_TYPE -> {
                 byte[] bytes = new byte[input.readInt()];
@@ -346,7 +347,7 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
     private String readStringBytes() throws IOException {
         byte[] bytes = new byte[input.readInt()];
         input.readFully(bytes);
-        return new String(bytes, StandardCharsets.UTF_8);
+        return interner.internValue(new String(bytes, StandardCharsets.UTF_8));
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.spi.value.ValueInterner;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -21,9 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 abstract class AbstractNormalizedNodeDataInput extends ForwardingDataInput implements NormalizedNodeDataInput {
     // Visible for subclasses
     final @NonNull DataInput input;
+    final @NonNull ValueInterner interner;
 
-    AbstractNormalizedNodeDataInput(final DataInput input) {
+    AbstractNormalizedNodeDataInput(final DataInput input, final ValueInterner interner) {
         this.input = requireNonNull(input);
+        this.interner = requireNonNull(interner);
     }
 
     @Override
