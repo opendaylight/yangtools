@@ -63,7 +63,7 @@ public abstract class AbstractQName implements Identifier, WritableObject {
      * @throws NullPointerException if namespace is null
      */
     public QName bindTo(final QNameModule namespace) {
-        return new QName(namespace, getLocalName());
+        return new QName(namespace, localName);
     }
 
     /**
