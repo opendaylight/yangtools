@@ -105,7 +105,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
          * @param effectiveModel EffectiveModelContext to which this stack is attached
          * @param qnames Data tree path qnames
          * @return A new stack
-         * @throws NullPointerException if any argument is null or path contains a null element
+         * @throws NullPointerException if any argument is {@code null} or path contains a {@code null} element
          * @throws IllegalArgumentException if a path element cannot be found
          */
         public static @NonNull Inference ofDataTreePath(final EffectiveModelContext effectiveModel,
@@ -185,7 +185,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param effectiveModel EffectiveModelContext to which this stack is attached
      * @return A new stack
-     * @throws NullPointerException if {@code effectiveModel} is null
+     * @throws NullPointerException if {@code effectiveModel} is {@code null}
      */
     public static @NonNull SchemaInferenceStack of(final EffectiveModelContext effectiveModel) {
         return new SchemaInferenceStack(effectiveModel);
@@ -197,7 +197,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param effectiveModel EffectiveModelContext to which this stack is attached
      * @return A new stack
-     * @throws NullPointerException if {@code effectiveModel} is null
+     * @throws NullPointerException if {@code effectiveModel} is {@code null}
      * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model
      */
     public static @NonNull SchemaInferenceStack of(final EffectiveModelContext effectiveModel, final Absolute path) {
@@ -211,7 +211,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param inference Inference to use for initialization
      * @return A new stack
-     * @throws NullPointerException if {@code inference} is null
+     * @throws NullPointerException if {@code inference} is {@code null}
      * @throws IllegalArgumentException if {@code inference} implementation is not supported
      */
     public static @NonNull SchemaInferenceStack ofInference(final EffectiveStatementInference inference) {
@@ -231,7 +231,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param inference SchemaTreeInference to use for initialization
      * @return A new stack
-     * @throws NullPointerException if {@code inference} is null
+     * @throws NullPointerException if {@code inference} is {@code null}
      * @throws IllegalArgumentException if {@code inference} cannot be resolved to a valid stack
      */
     public static @NonNull SchemaInferenceStack ofInference(final SchemaTreeInference inference) {
@@ -249,9 +249,9 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param inference DefaultSchemaTreeInference to use for initialization
      * @return A new stack
-     * @throws NullPointerException if {@code inference} is null
+     * @throws NullPointerException if {@code inference} is {@code null}
      * @throws IllegalArgumentException if {@code inference} refers to a missing module or when verification is enabled
-     *                                  and it does not match its context's scheam tree
+     *                                  and it does not match its context's schema tree
      */
     public static @NonNull SchemaInferenceStack ofInference(final DefaultSchemaTreeInference inference) {
         return VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE ? ofUntrusted(inference) : ofTrusted(inference);
@@ -280,7 +280,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param effectiveModel EffectiveModelContext to which this stack is attached
      * @return A new stack
-     * @throws NullPointerException if any argument is null or path contains a null element
+     * @throws NullPointerException if any argument is {@code null} or path contains a {@code null} element
      * @throws IllegalArgumentException if a path element cannot be found
      */
     public static @NonNull SchemaInferenceStack ofDataTreePath(final EffectiveModelContext effectiveModel,
@@ -309,7 +309,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     /**
      * Check if this stack is empty.
      *
-     * @return True if this stack has not entered any node.
+     * @return {@code true} if this stack has not entered any node
      */
     public boolean isEmpty() {
         return deque.isEmpty();
@@ -339,8 +339,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * Check if the stack is in instantiated context. This indicates the stack is non-empty and there are only schema
      * tree statements in the stack.
      *
-     * @return False if the stack is empty or contains a statement which is not a {@link SchemaTreeEffectiveStatement},
-     *         true otherwise.
+     * @return {@code false} if the stack is empty or contains a statement which is not a
+     *         {@link SchemaTreeEffectiveStatement}, {@code true} otherwise.
      */
     public boolean inInstantiatedContext() {
         return groupingDepth == 0 && !deque.isEmpty()
@@ -350,7 +350,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     /**
      * Check if the stack is in a {@code grouping} context.
      *
-     * @return False if the stack contains a grouping.
+     * @return {@code false} if the stack contains a grouping.
      */
     public boolean inGrouping() {
         return groupingDepth != 0;
@@ -373,7 +373,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param nodeIdentifier Node identifier of the choice to enter
      * @return Resolved choice
-     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws NullPointerException if {@code nodeIdentifier} is {@code null}
      * @throws IllegalArgumentException if the corresponding choice cannot be found
      */
     public @NonNull ChoiceEffectiveStatement enterChoice(final QName nodeIdentifier) {
@@ -420,7 +420,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param nodeIdentifier Node identifier of the grouping to enter
      * @return Resolved grouping
-     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws NullPointerException if {@code nodeIdentifier} is {@code null}
      * @throws IllegalArgumentException if the corresponding grouping cannot be found
      */
     public @NonNull GroupingEffectiveStatement enterGrouping(final QName nodeIdentifier) {
@@ -432,7 +432,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param nodeIdentifier Node identifier of the schema tree child to enter
      * @return Resolved schema tree child
-     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws NullPointerException if {@code nodeIdentifier} is {@code null}
      * @throws IllegalArgumentException if the corresponding child cannot be found
      */
     public @NonNull SchemaTreeEffectiveStatement<?> enterSchemaTree(final QName nodeIdentifier) {
@@ -444,7 +444,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param nodeIdentifier Schema node identifier of the schema tree node to enter
      * @return Resolved schema tree node
-     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws NullPointerException if {@code nodeIdentifier} is {@code null}
      * @throws IllegalArgumentException if the corresponding node cannot be found
      */
     public @NonNull SchemaTreeEffectiveStatement<?> enterSchemaTree(final SchemaNodeIdentifier nodeIdentifier) {
@@ -466,7 +466,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param nodeIdentifier Node identifier of the date tree child to enter
      * @return Resolved date tree child
-     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws NullPointerException if {@code nodeIdentifier} is {@code null}
      * @throws IllegalArgumentException if the corresponding child cannot be found
      */
     public @NonNull DataTreeEffectiveStatement<?> enterDataTree(final QName nodeIdentifier) {
@@ -478,7 +478,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param nodeIdentifier Node identifier of the typedef to enter
      * @return Resolved typedef
-     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws NullPointerException if {@code nodeIdentifier} is {@code null}
      * @throws IllegalArgumentException if the corresponding typedef cannot be found
      */
     public @NonNull TypedefEffectiveStatement enterTypedef(final QName nodeIdentifier) {
@@ -579,7 +579,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      *
      * @param path Requested path
      * @return Resolved schema tree child
-     * @throws NullPointerException if {@code path} is null
+     * @throws NullPointerException if {@code path} is {@code null}
      * @throws IllegalArgumentException if the target node cannot be found
      * @throws VerifyException if path expression is invalid
      */
