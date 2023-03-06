@@ -46,31 +46,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * </ul>
  */
 public final class QName extends AbstractQName implements Comparable<QName> {
-    /**
-     * A {@link DataInput} which has an understanding of {@link QName}'s semantics.
-     */
-    @Beta
-    public interface QNameAwareDataInput extends DataInput {
-        /**
-         * Read a {@link QName} from the stream.
-         *
-         * @return A QName
-         * @throws IOException if an I/O error occurs.
-         */
-        @NonNull QName readQName() throws IOException;
-    }
-
-    @Beta
-    public interface QNameAwareDataOutput extends DataOutput {
-        /**
-         * Write a {@link QName} into the stream.
-         *
-         * @param qname A QName
-         * @throws  IOException if an I/O error occurs.
-         */
-        void writeQName(@NonNull QName qname) throws IOException;
-    }
-
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
     @Serial

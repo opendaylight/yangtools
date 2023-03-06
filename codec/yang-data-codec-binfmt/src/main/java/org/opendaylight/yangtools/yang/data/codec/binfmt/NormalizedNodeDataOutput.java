@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName.QNameAwareDataOutput;
+import org.opendaylight.yangtools.yang.common.QNameAwareDataOutput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;

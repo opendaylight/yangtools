@@ -11,7 +11,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName.QNameAwareDataInput;
+import org.opendaylight.yangtools.yang.common.QNameAwareDataInput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
