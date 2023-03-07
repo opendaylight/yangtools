@@ -269,7 +269,7 @@ class YangToSourcesProcessor {
         }
 
         // add META_INF/services
-        File generatedServicesDir = new GeneratedDirectories(project).getYangServicesDir();
+        File generatedServicesDir = new File(new File(project.getBuild().getDirectory(), "generated-sources"), "spi");
         YangProvider.setResource(generatedServicesDir, project);
         LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
             META_INF_YANG_SERVICES_STRING_JAR);

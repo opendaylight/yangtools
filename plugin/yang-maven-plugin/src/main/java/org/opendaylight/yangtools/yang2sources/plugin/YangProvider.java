@@ -26,7 +26,10 @@ abstract class YangProvider {
         Collection<FileState> addYangsToMetaInf(final MavenProject project,
                 final Collection<YangTextSchemaSource> modelsInProject) throws IOException {
 
-            final File generatedYangDir = new GeneratedDirectories(project).getYangDir();
+            final File generatedYangDir =
+                // FIXME: why are we generating these in "generated-sources"? At the end of the day YANG files are more
+                //        resources (except we do not them to be subject to filtering)
+                new File(new File(project.getBuild().getDirectory(), "generated-sources"), "yang");
             LOG.debug("Generated dir {}", generatedYangDir);
 
             // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
