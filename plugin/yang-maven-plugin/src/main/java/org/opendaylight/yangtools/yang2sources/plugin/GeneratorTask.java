@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 final class GeneratorTask extends ParserConfigAware {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorTask.class);
@@ -61,7 +60,7 @@ final class GeneratorTask extends ParserConfigAware {
         return factory.parserConfig();
     }
 
-    List<FileState> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {
+    List<FileState> execute() throws FileGeneratorException, IOException {
         // Step one: determine what files are going to be generated
         final Stopwatch sw = Stopwatch.createStarted();
         final FileGenerator gen = factory.generator();
@@ -91,7 +90,7 @@ final class GeneratorTask extends ParserConfigAware {
                     throw new IllegalStateException("Unsupported file type in " + file);
             }
 
-            dirs.put(target.getParentFile(), new WriteTask(buildContext, target, cell.getValue()));
+            dirs.put(target.getParentFile(), new WriteTask(target, cell.getValue()));
         }
         LOG.info("Sorted {} files into {} directories in {}", dirs.size(), dirs.keySet().size(), sw);
 
@@ -178,12 +177,10 @@ final class GeneratorTask extends ParserConfigAware {
     }
 
     private static final class WriteTask {
-        private final BuildContext buildContext;
         private final GeneratedFile file;
         private final File target;
 
-        WriteTask(final BuildContext buildContext, final File target, final GeneratedFile file) {
-            this.buildContext = requireNonNull(buildContext);
+        WriteTask(final File target, final GeneratedFile file) {
             this.target = requireNonNull(target);
             this.file = requireNonNull(file);
         }
@@ -195,7 +192,6 @@ final class GeneratorTask extends ParserConfigAware {
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }
-            buildContext.refresh(target);
             return ret;
         }
     }
