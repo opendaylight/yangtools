@@ -78,10 +78,14 @@ final class ProjectFileAccess {
         }
         local = buildResourceDir;
         if (local != null) {
-            final var resource = new Resource();
-            resource.setDirectory(local.toString());
-            project.addResource(resource);
+            addResourceDir(project, local);
         }
+    }
+
+    static void addResourceDir(final MavenProject project, final File dir) {
+        var res = new Resource();
+        res.setDirectory(dir.getPath());
+        project.addResource(res);
     }
 
     private @NonNull File buildDirectoryFor(final String name) {

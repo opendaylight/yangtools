@@ -12,7 +12,6 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ abstract class YangProvider {
                 LOG.debug("Created file {} for {}", file, source.getIdentifier());
             }
 
-            setResource(generatedYangDir, project);
+            ProjectFileAccess.addResourceDir(project, generatedYangDir);
             LOG.debug("{} YANG files marked as resources: {}", YangToSourcesProcessor.LOG_PREFIX, generatedYangDir);
 
             return stateListBuilder.build();
@@ -60,10 +59,4 @@ abstract class YangProvider {
 
     abstract Collection<FileState> addYangsToMetaInf(MavenProject project,
             Collection<YangTextSchemaSource> modelsInProject) throws IOException;
-
-    static void setResource(final File targetYangDir, final MavenProject project) {
-        Resource res = new Resource();
-        res.setDirectory(targetYangDir.getPath());
-        project.addResource(res);
-    }
 }
