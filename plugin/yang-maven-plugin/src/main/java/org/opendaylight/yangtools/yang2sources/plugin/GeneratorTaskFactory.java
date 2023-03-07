@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import java.io.IOException;
+import java.util.List;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -64,9 +66,13 @@ final class GeneratorTaskFactory implements Identifiable<String> {
      *
      * @param project current Maven Project
      * @param context model generation context
+     * @return {@link FileState} for every generated file
+     * @throws FileGeneratorException if the underlying {@link #generator()} fails
+     * @throws IOException when a generated file cannot be written
      */
-    GeneratorTask createTask(final MavenProject project, final ContextHolder context) {
-        return new GeneratorTask(this, context, new ProjectFileAccess(project, getIdentifier()));
+    List<FileState> execute(final MavenProject project, final ContextHolder context)
+            throws FileGeneratorException, IOException {
+        return new GeneratorTask(this, context, new ProjectFileAccess(project, getIdentifier())).execute();
     }
 
     @Override
