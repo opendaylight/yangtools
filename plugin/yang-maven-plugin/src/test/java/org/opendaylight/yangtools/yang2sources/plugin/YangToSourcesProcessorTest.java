@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 @ExtendWith(MockitoExtension.class)
 class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
@@ -27,11 +28,11 @@ class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
     @Test
     void basicTest() {
         assertMojoExecution(
-            new YangToSourcesProcessor(file, List.of(), List.of(new FileGeneratorArg("mockGenerator")), project, true,
-                YangProvider.getInstance()),
+            new YangToSourcesProcessor(new DefaultBuildContext(), file, List.of(),
+                List.of(new FileGeneratorArg("mockGenerator")), project, true),
             mock -> {
                 doAnswer(invocation -> {
-                    final Set<Module> localModules = invocation.getArgument(1);
+                    final var localModules = invocation.<Set<Module>>getArgument(1);
                     assertEquals(2, localModules.size());
                     return ImmutableTable.of();
                 }).when(mock).generateFiles(any(), any(), any());
@@ -46,11 +47,11 @@ class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
         final var excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
 
         assertMojoExecution(
-            new YangToSourcesProcessor(file, List.of(excludedYang), List.of(new FileGeneratorArg("mockGenerator")),
-                project, true, YangProvider.getInstance()),
+            new YangToSourcesProcessor(new DefaultBuildContext(), file, List.of(excludedYang),
+                List.of(new FileGeneratorArg("mockGenerator")), project, true),
             mock -> {
                 doAnswer(invocation -> {
-                    final Set<Module> localModules = invocation.getArgument(1);
+                    final var localModules = invocation.<Set<Module>>getArgument(1);
                     assertEquals(1, localModules.size());
                     assertEquals("mock", localModules.iterator().next().getName());
                     return ImmutableTable.of();

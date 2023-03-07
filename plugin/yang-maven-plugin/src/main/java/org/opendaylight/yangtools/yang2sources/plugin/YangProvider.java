@@ -7,56 +7,16 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Files;
-import java.io.File;
+import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.util.Collection;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-abstract class YangProvider {
-    private static final class Default extends YangProvider {
-        private static final Logger LOG = LoggerFactory.getLogger(Default.class);
+@FunctionalInterface
+@VisibleForTesting
+interface YangProvider {
 
-        @Override
-        Collection<FileState> addYangsToMetaInf(final MavenProject project,
-                final Collection<YangTextSchemaSource> modelsInProject) throws IOException {
-
-            final File generatedYangDir =
-                // FIXME: why are we generating these in "generated-sources"? At the end of the day YANG files are more
-                //        resources (except we do not them to be subject to filtering)
-                new File(new File(project.getBuild().getDirectory(), "generated-sources"), "yang");
-            LOG.debug("Generated dir {}", generatedYangDir);
-
-            // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
-            // This honors setups like a Eclipse-profile derived one
-            final File withMetaInf = new File(generatedYangDir, YangToSourcesProcessor.META_INF_YANG_STRING);
-            final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
-
-            for (YangTextSchemaSource source : modelsInProject) {
-                final File file = new File(withMetaInf, source.getIdentifier().toYangFilename());
-                Files.createParentDirs(file);
-
-                stateListBuilder.add(FileState.ofWrittenFile(file, source::copyTo));
-                LOG.debug("Created file {} for {}", file, source.getIdentifier());
-            }
-
-            ProjectFileAccess.addResourceDir(project, generatedYangDir);
-            LOG.debug("{} YANG files marked as resources: {}", YangToSourcesProcessor.LOG_PREFIX, generatedYangDir);
-
-            return stateListBuilder.build();
-        }
-    }
-
-    private static final YangProvider DEFAULT = new Default();
-
-    static YangProvider getInstance() {
-        return DEFAULT;
-    }
-
-    abstract Collection<FileState> addYangsToMetaInf(MavenProject project,
+    Collection<FileState> addYangsToMetaInf(MavenProject project,
             Collection<YangTextSchemaSource> modelsInProject) throws IOException;
 }
