@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Stopwatch;
@@ -18,12 +17,8 @@ import com.google.common.collect.Table.Cell;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.maven.model.Resource;
-import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
@@ -37,22 +32,15 @@ import org.slf4j.LoggerFactory;
 final class GeneratorTask extends ParserConfigAware {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorTask.class);
 
-    private final Map<GeneratedFileType, File> persistentDirs = new HashMap<>(4);
-    private final Map<GeneratedFileType, File> transientDirs = new HashMap<>(4);
-    private final GeneratorTaskFactory factory;
-    private final ContextHolder contextHolder;
-    private final MavenProject project;
-    private final File buildDir;
-    private final String suffix;
+    private final @NonNull GeneratorTaskFactory factory;
+    private final @NonNull ContextHolder contextHolder;
+    private final @NonNull ProjectFileAccess access;
 
     GeneratorTask(final @NonNull GeneratorTaskFactory factory, final @NonNull ContextHolder contextHolder,
-            final MavenProject project) {
+            final ProjectFileAccess access) {
         this.factory = requireNonNull(factory);
         this.contextHolder = requireNonNull(contextHolder);
-        this.project = requireNonNull(project);
-
-        buildDir = new File(project.getBuild().getDirectory());
-        suffix = factory.getIdentifier();
+        this.access = requireNonNull(access);
     }
 
     @Override
@@ -66,7 +54,7 @@ final class GeneratorTask extends ParserConfigAware {
         final FileGenerator gen = factory.generator();
         final Table<GeneratedFileType, GeneratedFilePath, GeneratedFile> generatedFiles = gen.generateFiles(
             contextHolder.getContext(), contextHolder.getYangModules(), contextHolder);
-        LOG.info("{}: Defined {} files in {}", suffix, generatedFiles.size(), sw);
+        LOG.info("{}: Defined {} files in {}", factory.getIdentifier(), generatedFiles.size(), sw);
 
         // Step two: create generation tasks for each target file and group them by parent directory
         sw.reset().start();
@@ -77,14 +65,14 @@ final class GeneratorTask extends ParserConfigAware {
             final File target;
             switch (file.getLifecycle()) {
                 case PERSISTENT:
-                    target = new File(persistentPath(cell.getRowKey()), relativePath);
+                    target = new File(access.persistentPath(cell.getRowKey()), relativePath);
                     if (target.exists()) {
                         LOG.debug("Skipping existing persistent {}", target);
                         continue;
                     }
                     break;
                 case TRANSIENT:
-                    target = new File(transientPath(cell.getRowKey()), relativePath);
+                    target = new File(access.transientPath(cell.getRowKey()), relativePath);
                     break;
                 default:
                     throw new IllegalStateException("Unsupported file type in " + file);
@@ -112,68 +100,8 @@ final class GeneratorTask extends ParserConfigAware {
                 .collect(Collectors.toList());
         LOG.debug("Generated {} files in {}", result.size(), sw);
 
+        access.updateMavenProject();
         return result;
-    }
-
-    private File persistentPath(final GeneratedFileType fileType) throws FileGeneratorException {
-        final File existing = persistentDirs.get(fileType);
-        if (existing != null) {
-            return existing;
-        }
-        final File newDir = persistentDirectory(fileType);
-        verify(persistentDirs.put(fileType, newDir) == null);
-        return newDir;
-    }
-
-    private File transientPath(final GeneratedFileType fileType) throws FileGeneratorException {
-        final File existing = transientDirs.get(fileType);
-        if (existing != null) {
-            return existing;
-        }
-
-        final File newDir = transientDirectory(fileType);
-        verify(transientDirs.put(fileType, newDir) == null);
-        return newDir;
-    }
-
-    private File persistentDirectory(final GeneratedFileType fileType) throws FileGeneratorException {
-        final File ret;
-        if (GeneratedFileType.SOURCE.equals(fileType)) {
-            ret = new File(project.getBuild().getSourceDirectory());
-        } else if (GeneratedFileType.RESOURCE.equals(fileType)) {
-            ret = new File(new File(project.getBuild().getSourceDirectory()).getParentFile(), "resources");
-        } else {
-            throw new FileGeneratorException("Unknown generated file type " + fileType);
-        }
-        return ret;
-    }
-
-    private File transientDirectory(final GeneratedFileType fileType) throws FileGeneratorException {
-        final File ret;
-        if (GeneratedFileType.SOURCE.equals(fileType)) {
-            ret = transientDirectory("generated-sources");
-            project.addCompileSourceRoot(ret.toString());
-        } else if (GeneratedFileType.RESOURCE.equals(fileType)) {
-            ret = transientDirectory("generated-resources");
-            project.addResource(createResouce(ret));
-        } else {
-            throw new FileGeneratorException("Unknown generated file type " + fileType);
-        }
-        return ret;
-    }
-
-    private File transientDirectory(final String component) {
-        return new File(buildDir, subdirFileName(component));
-    }
-
-    private String subdirFileName(final String component) {
-        return component + File.separatorChar + suffix;
-    }
-
-    private static Resource createResouce(final File directory) {
-        final Resource ret = new Resource();
-        ret.setDirectory(directory.toString());
-        return ret;
     }
 
     private static final class WriteTask {
