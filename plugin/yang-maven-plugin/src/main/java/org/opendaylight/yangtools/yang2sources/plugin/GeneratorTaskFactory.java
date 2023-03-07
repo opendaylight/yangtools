@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 @NonNullByDefault
-final class GeneratorTaskFactory extends ParserConfigAware implements Identifiable<String> {
+final class GeneratorTaskFactory implements Identifiable<String> {
     private final YangParserConfiguration parserConfig;
     private final FileGeneratorArg arg;
     private final FileGenerator gen;
@@ -42,7 +42,6 @@ final class GeneratorTaskFactory extends ParserConfigAware implements Identifiab
         return arg.getIdentifier();
     }
 
-    @Override
     YangParserConfiguration parserConfig() {
         return parserConfig;
     }

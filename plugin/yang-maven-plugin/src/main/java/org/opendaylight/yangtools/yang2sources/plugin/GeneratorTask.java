@@ -25,11 +25,10 @@ import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;
-import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class GeneratorTask extends ParserConfigAware {
+final class GeneratorTask {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorTask.class);
 
     private final @NonNull GeneratorTaskFactory factory;
@@ -41,11 +40,6 @@ final class GeneratorTask extends ParserConfigAware {
         this.factory = requireNonNull(factory);
         this.contextHolder = requireNonNull(contextHolder);
         this.access = requireNonNull(access);
-    }
-
-    @Override
-    YangParserConfiguration parserConfig() {
-        return factory.parserConfig();
     }
 
     List<FileState> execute() throws FileGeneratorException, IOException {
