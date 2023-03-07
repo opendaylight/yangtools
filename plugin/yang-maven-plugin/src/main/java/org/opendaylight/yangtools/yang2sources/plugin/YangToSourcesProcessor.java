@@ -137,14 +137,14 @@ class YangToSourcesProcessor {
         }
 
         // We need to instantiate all code generators to determine required import resolution mode
-        final List<GeneratorTaskFactory> codeGenerators = instantiateGenerators();
+        final List<GeneratorTask> codeGenerators = instantiateGenerators();
         if (codeGenerators.isEmpty()) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
             return;
         }
 
         final Set<YangParserConfiguration> parserConfigs = codeGenerators.stream()
-            .map(GeneratorTaskFactory::parserConfig)
+            .map(GeneratorTask::parserConfig)
             .collect(Collectors.toUnmodifiableSet());
 
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
@@ -284,7 +284,7 @@ class YangToSourcesProcessor {
 
         final var outputState = new YangToSourcesState(
             codeGenerators.stream()
-                .collect(ImmutableMap.toImmutableMap(GeneratorTaskFactory::getIdentifier, GeneratorTaskFactory::arg)),
+                .collect(ImmutableMap.toImmutableMap(GeneratorTask::getIdentifier, GeneratorTask::arg)),
             projectYangs, dependencyYangs, new FileStateSet(ImmutableMap.copyOf(uniqueOutputFiles)));
 
         try {
@@ -294,14 +294,14 @@ class YangToSourcesProcessor {
         }
     }
 
-    private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException {
+    private List<GeneratorTask> instantiateGenerators() throws MojoExecutionException {
         // Search for available FileGenerator implementations
         final Map<String, FileGeneratorFactory> factories = Maps.uniqueIndex(
             ServiceLoader.load(FileGeneratorFactory.class), FileGeneratorFactory::getIdentifier);
 
         // FIXME: iterate over fileGeneratorArg instances (configuration), not factories (environment)
         // Assign instantiate FileGenerators with appropriate configuration
-        final var generators = new ArrayList<GeneratorTaskFactory>(factories.size());
+        final var generators = new ArrayList<GeneratorTask>(factories.size());
         for (Entry<String, FileGeneratorFactory> entry : factories.entrySet()) {
             final String id = entry.getKey();
             FileGeneratorArg arg = fileGeneratorArgs.get(id);
@@ -310,11 +310,13 @@ class YangToSourcesProcessor {
                 arg = new FileGeneratorArg(id);
             }
 
+            final GeneratorTask task;
             try {
-                generators.add(GeneratorTaskFactory.of(entry.getValue(), arg));
+                task = new GeneratorTask(entry.getValue(), arg);
             } catch (FileGeneratorException e) {
                 throw new MojoExecutionException("File generator " + id + " failed", e);
             }
+            generators.add(task);
             LOG.info("{} Code generator {} instantiated", LOG_PREFIX, id);
         }
 

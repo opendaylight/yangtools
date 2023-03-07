@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -23,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
 final class ContextHolder implements Immutable, ModuleResourceResolver {
-    private final EffectiveModelContext context;
-    private final Set<Module> modules;
-    private final Set<SourceIdentifier> sources;
+    private final @NonNull EffectiveModelContext context;
+    private final @NonNull ImmutableSet<Module> modules;
+    private final ImmutableSet<SourceIdentifier> sources;
 
     ContextHolder(final EffectiveModelContext context, final Set<Module> modules, final Set<SourceIdentifier> sources) {
         this.context = requireNonNull(context);
@@ -44,11 +45,11 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
                         : Optional.empty();
     }
 
-    EffectiveModelContext getContext() {
+    @NonNull EffectiveModelContext getContext() {
         return context;
     }
 
-    Set<Module> getYangModules() {
+    @NonNull ImmutableSet<Module> getYangModules() {
         return modules;
     }
 }

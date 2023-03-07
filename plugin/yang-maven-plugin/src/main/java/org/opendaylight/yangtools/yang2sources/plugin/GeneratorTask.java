@@ -9,51 +9,81 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
+import org.apache.maven.project.MavenProject;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
+import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
-import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
-import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class GeneratorTask {
+@NonNullByDefault
+final class GeneratorTask implements Identifiable<String> {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorTask.class);
 
-    private final @NonNull GeneratorTaskFactory factory;
-    private final @NonNull ContextHolder contextHolder;
-    private final @NonNull ProjectFileAccess access;
+    private final YangParserConfiguration parserConfig;
+    private final FileGeneratorArg arg;
+    private final FileGenerator gen;
 
-    GeneratorTask(final @NonNull GeneratorTaskFactory factory, final @NonNull ContextHolder contextHolder,
-            final ProjectFileAccess access) {
-        this.factory = requireNonNull(factory);
-        this.contextHolder = requireNonNull(contextHolder);
-        this.access = requireNonNull(access);
+    GeneratorTask(final FileGeneratorFactory factory, final FileGeneratorArg arg) throws FileGeneratorException {
+        this.arg = requireNonNull(arg);
+        gen = factory.newFileGenerator(arg.getConfiguration());
+        parserConfig = switch (gen.importResolutionMode()) {
+            case REVISION_EXACT_OR_LATEST -> YangParserConfiguration.DEFAULT;
+        };
     }
 
-    List<FileState> execute() throws FileGeneratorException, IOException {
+    @Override
+    public String getIdentifier() {
+        return arg.getIdentifier();
+    }
+
+    YangParserConfiguration parserConfig() {
+        return parserConfig;
+    }
+
+    FileGeneratorArg arg() {
+        return arg;
+    }
+
+    String generatorName() {
+        return gen.getClass().getName();
+    }
+
+    /**
+     * Create a new {@link GeneratorTask} which will work in scope of specified {@link MavenProject} with the effective
+     * model held in specified {@link ContextHolder}.
+     *
+     * @param project current Maven Project
+     * @param context model generation context
+     * @return {@link FileState} for every generated file
+     * @throws FileGeneratorException if the underlying generator fails
+     * @throws IOException when a generated file cannot be written
+     */
+    List<FileState> execute(final MavenProject project, final ContextHolder context)
+            throws FileGeneratorException, IOException {
+        final var access = new ProjectFileAccess(project, getIdentifier());
+
         // Step one: determine what files are going to be generated
-        final Stopwatch sw = Stopwatch.createStarted();
-        final FileGenerator gen = factory.generator();
-        final Table<GeneratedFileType, GeneratedFilePath, GeneratedFile> generatedFiles = gen.generateFiles(
-            contextHolder.getContext(), contextHolder.getYangModules(), contextHolder);
-        LOG.info("{}: Defined {} files in {}", factory.getIdentifier(), generatedFiles.size(), sw);
+        final var sw = Stopwatch.createStarted();
+        final var generatedFiles = gen.generateFiles(context.getContext(), context.getYangModules(), context);
+        LOG.info("{}: Defined {} files in {}", getIdentifier(), generatedFiles.size(), sw);
 
         // Step two: create generation tasks for each target file and group them by parent directory
         sw.reset().start();
-        final ListMultimap<File, WriteTask> dirs = MultimapBuilder.hashKeys().arrayListValues().build();
-        for (Cell<GeneratedFileType, GeneratedFilePath, GeneratedFile> cell : generatedFiles.cellSet()) {
+        final var dirs = MultimapBuilder.hashKeys().arrayListValues().<File, WriteTask>build();
+        for (var cell : generatedFiles.cellSet()) {
             final GeneratedFile file = cell.getValue();
             final String relativePath = cell.getColumnKey().getPath();
             final File target;
@@ -96,6 +126,11 @@ final class GeneratorTask {
 
         access.updateMavenProject();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("generator", generatorName()).add("argument", arg).toString();
     }
 
     private static final class WriteTask {
