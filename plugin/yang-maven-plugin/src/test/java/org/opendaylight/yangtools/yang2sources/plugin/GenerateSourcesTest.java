@@ -22,8 +22,7 @@ class GenerateSourcesTest extends AbstractCodeGeneratorTest {
     void test() throws Exception {
         assertMojoExecution(new YangToSourcesProcessor(
             new File(Resources.getResource(GenerateSourcesTest.class, "/yang").toURI()),
-            List.of(),
-            List.of(new FileGeneratorArg("mockGenerator")), project, false, yangProvider),
+            List.of(new FileGeneratorArg("mockGenerator")), project, yangProvider),
             mock -> {
                 doReturn(ImmutableTable.of()).when(mock).generateFiles(any(), any(), any());
             },

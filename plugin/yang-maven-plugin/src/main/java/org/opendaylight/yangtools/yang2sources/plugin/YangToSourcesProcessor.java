@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -23,11 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Function;
@@ -57,9 +56,11 @@ class YangToSourcesProcessor {
     private static final YangParserFactory DEFAULT_PARSER_FACTORY;
 
     static {
-        final Iterator<YangParserFactory> it = ServiceLoader.load(YangParserFactory.class).iterator();
-        checkState(it.hasNext(), "Failed to find a YangParserFactory implementation");
-        DEFAULT_PARSER_FACTORY = it.next();
+        try {
+            DEFAULT_PARSER_FACTORY = ServiceLoader.load(YangParserFactory.class).iterator().next();
+        } catch (NoSuchElementException e) {
+            throw new IllegalStateException("Failed to find a YangParserFactory implementation", e);
+        }
     }
 
     private static final String META_INF_STR = "META-INF";
@@ -123,11 +124,9 @@ class YangToSourcesProcessor {
     }
 
     @VisibleForTesting
-    YangToSourcesProcessor(final File yangFilesRootDir, final Collection<File> excludedFiles,
-            final List<FileGeneratorArg> fileGenerators, final MavenProject project, final boolean inspectDependencies,
-            final YangProvider yangProvider) {
-        this(new DefaultBuildContext(), yangFilesRootDir, excludedFiles, ImmutableList.of(),
-            project, inspectDependencies, yangProvider);
+    YangToSourcesProcessor(final File yangFilesRootDir, final List<FileGeneratorArg> fileGenerators,
+            final MavenProject project, final YangProvider yangProvider) {
+        this(new DefaultBuildContext(), yangFilesRootDir, List.of(), ImmutableList.of(), project, false, yangProvider);
     }
 
     YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,

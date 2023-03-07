@@ -17,18 +17,22 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.sonatype.plexus.build.incremental.DefaultBuildContext;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 @ExtendWith(MockitoExtension.class)
 class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
+    @Mock
+    private BuildContext buildContext;
+
     private final File file = new File(getClass().getResource("/yang").getFile());
 
     @Test
     void basicTest() {
         assertMojoExecution(
-            new YangToSourcesProcessor(new DefaultBuildContext(), file, List.of(),
+            new YangToSourcesProcessor(buildContext, file, List.of(),
                 List.of(new FileGeneratorArg("mockGenerator")), project, true),
             mock -> {
                 doAnswer(invocation -> {
@@ -47,7 +51,7 @@ class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
         final var excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
 
         assertMojoExecution(
-            new YangToSourcesProcessor(new DefaultBuildContext(), file, List.of(excludedYang),
+            new YangToSourcesProcessor(buildContext, file, List.of(excludedYang),
                 List.of(new FileGeneratorArg("mockGenerator")), project, true),
             mock -> {
                 doAnswer(invocation -> {
