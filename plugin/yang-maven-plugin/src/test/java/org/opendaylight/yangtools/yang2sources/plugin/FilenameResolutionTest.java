@@ -30,8 +30,7 @@ class FilenameResolutionTest extends AbstractCodeGeneratorTest {
     void testResolveSubmoduleResource() throws Exception {
         assertMojoExecution(new YangToSourcesProcessor(
             new File(Resources.getResource(FilenameResolutionTest.class, "/filename").toURI()),
-            List.of(),
-            List.of(new FileGeneratorArg("mockGenerator")), project, false, yangProvider),
+            List.of(new FileGeneratorArg("mockGenerator")), project, yangProvider),
             mock -> {
                 doAnswer(invocation -> {
                     final EffectiveModelContext context = invocation.getArgument(0);
