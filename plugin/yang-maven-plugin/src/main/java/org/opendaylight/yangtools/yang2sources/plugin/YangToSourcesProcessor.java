@@ -239,12 +239,9 @@ class YangToSourcesProcessor {
                 }
 
                 final var genSw = Stopwatch.createStarted();
-                final var generatorTask = factory.createTask(project, holder);
-                LOG.debug("{} Task {} initialized in {}", LOG_PREFIX, generatorTask, genSw);
-
                 final List<FileState> files;
                 try {
-                    files = generatorTask.execute();
+                    files = factory.execute(project, holder);
                 } catch (FileGeneratorException | IOException e) {
                     throw new MojoFailureException(LOG_PREFIX + " Generator " + factory + " failed", e);
                 }
