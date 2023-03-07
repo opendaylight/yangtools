@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -63,13 +62,40 @@ class YangToSourcesProcessor {
         DEFAULT_PARSER_FACTORY = it.next();
     }
 
-    static final String LOG_PREFIX = "yang-to-sources:";
     private static final String META_INF_STR = "META-INF";
     private static final String YANG_STR = "yang";
 
+    static final String LOG_PREFIX = "yang-to-sources:";
     static final String META_INF_YANG_STRING = META_INF_STR + File.separator + YANG_STR;
     static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
     static final String META_INF_YANG_SERVICES_STRING_JAR = META_INF_STR + "/" + "services";
+
+    private static final YangProvider YANG_PROVIDER = (project, modelsInProject) -> {
+        final var generatedYangDir =
+            // FIXME: why are we generating these in "generated-sources"? At the end of the day YANG files are more
+            //        resources (except we do not them to be subject to filtering)
+            new File(new File(project.getBuild().getDirectory(), "generated-sources"), "yang");
+        LOG.debug("Generated dir {}", generatedYangDir);
+
+        // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
+        // This honors setups like a Eclipse-profile derived one
+        final var withMetaInf = new File(generatedYangDir, YangToSourcesProcessor.META_INF_YANG_STRING);
+        final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
+
+        for (var source : modelsInProject) {
+            final File file = new File(withMetaInf, source.getIdentifier().toYangFilename());
+            // FIXME: ditch this use
+            com.google.common.io.Files.createParentDirs(file);
+
+            stateListBuilder.add(FileState.ofWrittenFile(file, source::copyTo));
+            LOG.debug("Created file {} for {}", file, source.getIdentifier());
+        }
+
+        ProjectFileAccess.addResourceDir(project, generatedYangDir);
+        LOG.debug("{} YANG files marked as resources: {}", YangToSourcesProcessor.LOG_PREFIX, generatedYangDir);
+
+        return stateListBuilder.build();
+    };
 
     private final YangParserFactory parserFactory;
     private final File yangFilesRootDir;
@@ -108,7 +134,7 @@ class YangToSourcesProcessor {
             final Collection<File> excludedFiles, final List<FileGeneratorArg> fileGenerators,
             final MavenProject project, final boolean inspectDependencies) {
         this(buildContext, yangFilesRootDir, excludedFiles, fileGenerators, project, inspectDependencies,
-            YangProvider.getInstance());
+            YANG_PROVIDER);
     }
 
     void execute() throws MojoExecutionException, MojoFailureException {
@@ -338,11 +364,11 @@ class YangToSourcesProcessor {
             final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
 
         try {
-            final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
-            final YangParser parser = parserFactory.createParser(parserConfig);
-            for (final Entry<YangTextSchemaSource, YangIRSchemaSource> entry : parsed) {
-                final YangTextSchemaSource textSource = entry.getKey();
-                final YangIRSchemaSource astSource = entry.getValue();
+            final var sourcesInProject = new ArrayList<YangTextSchemaSource>(yangFilesInProject.size());
+            final var parser = parserFactory.createParser(parserConfig);
+            for (var entry : parsed) {
+                final var textSource = entry.getKey();
+                final var astSource = entry.getValue();
                 parser.addSource(astSource);
 
                 if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
@@ -354,15 +380,14 @@ class YangToSourcesProcessor {
                 }
             }
 
-            final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
-            LOG.debug("Initialized reactor {} with {}", reactor, yangFilesInProject);
-            return reactor;
+            final var moduleReactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
+            LOG.debug("Initialized reactor {} with {}", moduleReactor, yangFilesInProject);
+            return moduleReactor;
         } catch (IOException | YangSyntaxErrorException | RuntimeException e) {
             // MojoExecutionException is thrown since execution cannot continue
             LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
-            Throwable rootCause = Throwables.getRootCause(e);
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
-                rootCause);
+                Throwables.getRootCause(e));
         }
     }
 
