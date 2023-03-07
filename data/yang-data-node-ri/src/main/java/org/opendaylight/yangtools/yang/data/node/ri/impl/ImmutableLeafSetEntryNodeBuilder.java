@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
+package org.opendaylight.yangtools.yang.data.node.ri.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 public class ImmutableLeafSetEntryNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> {
 
-    public static <T> @NonNull ImmutableLeafSetEntryNodeBuilder<T> create() {
+    public static <T> org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableLeafSetEntryNodeBuilder<T> create() {
         return new ImmutableLeafSetEntryNodeBuilder<>();
     }
 

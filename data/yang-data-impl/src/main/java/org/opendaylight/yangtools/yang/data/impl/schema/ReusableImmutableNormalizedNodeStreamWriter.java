@@ -13,8 +13,8 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamReceiver;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableLeafSetEntryNodeBuilder;
 
 /**
  * A reusable variant of {@link ImmutableNormalizedNodeStreamWriter}. It can be reset into its base state and used for

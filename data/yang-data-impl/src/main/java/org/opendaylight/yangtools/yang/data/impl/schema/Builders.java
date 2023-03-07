@@ -30,20 +30,20 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBui
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableAnyXmlNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableAnydataNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableAugmentationNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableChoiceNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableLeafSetEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableMapEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableUnkeyedListEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableUnkeyedListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableUserLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.node.ri.impl.ImmutableUserMapNodeBuilder;
 
 public final class Builders {
     private Builders() {
