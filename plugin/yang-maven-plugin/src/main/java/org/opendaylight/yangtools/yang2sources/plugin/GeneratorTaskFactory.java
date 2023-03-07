@@ -67,7 +67,7 @@ final class GeneratorTaskFactory extends ParserConfigAware implements Identifiab
      * @param context model generation context
      */
     GeneratorTask createTask(final MavenProject project, final ContextHolder context) {
-        return new GeneratorTask(this, context, project);
+        return new GeneratorTask(this, context, new ProjectFileAccess(project, getIdentifier()));
     }
 
     @Override
