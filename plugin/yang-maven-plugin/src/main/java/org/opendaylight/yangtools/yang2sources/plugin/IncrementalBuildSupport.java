@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -36,16 +35,15 @@ final class IncrementalBuildSupport {
     private static final Logger LOG = LoggerFactory.getLogger(IncrementalBuildSupport.class);
     private static final List<String> TRANSIENT_DIRECTORIES = List.of("generated-resources", "generated-sources");
 
+    private final @NonNull YangToSourcesState previousState;
     private final @NonNull ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs;
     private final @NonNull FileStateSet projectYangs;
     private final @NonNull FileStateSet dependencyYangs;
 
-    private final @Nullable YangToSourcesState previousState;
-
     IncrementalBuildSupport(final YangToSourcesState previousState,
             final ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs, final FileStateSet projectYangs,
             final FileStateSet dependencyYangs) {
-        this.previousState = previousState;
+        this.previousState = requireNonNull(previousState);
         this.fileGeneratorArgs = requireNonNull(fileGeneratorArgs);
         this.projectYangs = requireNonNull(projectYangs);
         this.dependencyYangs = requireNonNull(dependencyYangs);
@@ -57,22 +55,16 @@ final class IncrementalBuildSupport {
      * @return {@code true} if restored state is different from currently-observed state
      */
     boolean inputsChanged() {
-        // Local variable to aid null analysis
-        final var local = previousState;
-        if (local == null) {
-            LOG.debug("{}: no previous input state", YangToSourcesProcessor.LOG_PREFIX);
-            return true;
-        }
-        if (!fileGeneratorArgs.equals(local.fileGeneratorArgs())) {
+        if (!fileGeneratorArgs.equals(previousState.fileGeneratorArgs())) {
             LOG.debug("{}: file generator arguments changed from {} to {}", YangToSourcesProcessor.LOG_PREFIX,
-                fileGeneratorArgs, local.fileGeneratorArgs());
+                fileGeneratorArgs, previousState.fileGeneratorArgs());
             return true;
         }
-        if (!projectYangs.equals(local.projectYangs())) {
+        if (!projectYangs.equals(previousState.projectYangs())) {
             LOG.debug("{}: project YANG files changed", YangToSourcesProcessor.LOG_PREFIX);
             return true;
         }
-        if (!dependencyYangs.equals(local.dependencyYangs())) {
+        if (!dependencyYangs.equals(previousState.dependencyYangs())) {
             LOG.debug("{}: dependency YANG files changed", YangToSourcesProcessor.LOG_PREFIX);
             return true;
         }
@@ -88,15 +80,8 @@ final class IncrementalBuildSupport {
      * @return {@code true} if restored state and the build directory differ
      */
     boolean outputsChanged(final String projectBuildDirectory) throws IOException {
-        // Local variable to aid null analysis
-        final var local = previousState;
-        if (local == null) {
-            LOG.debug("{}: no previous output state", YangToSourcesProcessor.LOG_PREFIX);
-            return true;
-        }
-
         // Compare explicit mentions first
-        final var outputFiles = local.outputFiles().fileStates();
+        final var outputFiles = previousState.outputFiles().fileStates();
         if (outputsChanged(outputFiles.values())) {
             return true;
         }

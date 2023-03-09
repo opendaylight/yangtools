@@ -35,7 +35,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -139,7 +138,7 @@ class YangToSourcesProcessor {
     }
 
     void execute() throws MojoExecutionException, MojoFailureException {
-        final YangToSourcesState prevState;
+        YangToSourcesState prevState;
         try {
             prevState = stateStorage.loadState();
         } catch (IOException e) {
@@ -147,6 +146,8 @@ class YangToSourcesProcessor {
         }
         if (prevState == null) {
             LOG.debug("{} no previous execution state present", LOG_PREFIX);
+            prevState = new YangToSourcesState(ImmutableMap.of(),
+                    FileStateSet.empty(), FileStateSet.empty(), FileStateSet.empty());
         }
 
         // Collect all files in the current project.
@@ -331,17 +332,12 @@ class YangToSourcesProcessor {
         }
     }
 
-    private void wipeAllState(final @Nullable YangToSourcesState prevState) throws MojoExecutionException {
-        if (prevState != null) {
-            for (var file : prevState.outputFiles().fileStates().keySet()) {
-                try {
-                    Files.deleteIfExists(Path.of(file));
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Failed to remove file " + file, e);
-                }
-            }
+    private void wipeAllState(final YangToSourcesState prevState) throws MojoExecutionException {
+        try {
+            prevState.deleteOutputFiles();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to delete output files", e);
         }
-
         try {
             stateStorage.deleteState();
         } catch (IOException e) {

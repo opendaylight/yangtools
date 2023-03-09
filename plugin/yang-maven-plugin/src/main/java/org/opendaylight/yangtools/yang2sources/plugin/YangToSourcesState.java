@@ -13,6 +13,8 @@ import com.google.common.collect.ImmutableMap;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -45,11 +47,6 @@ record YangToSourcesState(
             FileStateSet.readFrom(in), FileStateSet.readFrom(in), FileStateSet.readFrom(in));
     }
 
-    static @NonNull YangToSourcesState empty() {
-        return new YangToSourcesState(ImmutableMap.of(),
-            FileStateSet.empty(), FileStateSet.empty(), FileStateSet.empty());
-    }
-
     @Override
     public void writeTo(final DataOutput out) throws IOException {
         out.writeInt(MAGIC);
@@ -57,6 +54,17 @@ record YangToSourcesState(
         projectYangs.writeTo(out);
         dependencyYangs.writeTo(out);
         outputFiles.writeTo(out);
+    }
+
+    /**
+     * Delete all output files mentioned in {@link #outputFiles}.
+     *
+     * @throws IOException if any error occurs
+     */
+    void deleteOutputFiles() throws IOException {
+        for (var file : outputFiles.fileStates().keySet()) {
+            Files.deleteIfExists(Path.of(file));
+        }
     }
 
     private static void writeConfigurations(final DataOutput out, final Collection<FileGeneratorArg> configurations)
