@@ -15,10 +15,12 @@ import com.google.common.collect.MultimapBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.maven.project.MavenProject;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
@@ -27,8 +29,8 @@ import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
-@NonNullByDefault
 final class GeneratorTask implements Identifiable<String> {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorTask.class);
 
@@ -49,15 +51,15 @@ final class GeneratorTask implements Identifiable<String> {
         return arg.getIdentifier();
     }
 
-    YangParserConfiguration parserConfig() {
+    @NonNull YangParserConfiguration parserConfig() {
         return parserConfig;
     }
 
-    FileGeneratorArg arg() {
+    @NonNull FileGeneratorArg arg() {
         return arg;
     }
 
-    String generatorName() {
+    @NonNull String generatorName() {
         return gen.getClass().getName();
     }
 
@@ -66,13 +68,14 @@ final class GeneratorTask implements Identifiable<String> {
      * model held in specified {@link ContextHolder}.
      *
      * @param project current Maven Project
+     * @param buildContext Incremental BuildContext
      * @param context model generation context
      * @return {@link FileState} for every generated file
      * @throws FileGeneratorException if the underlying generator fails
      * @throws IOException when a generated file cannot be written
      */
-    List<FileState> execute(final MavenProject project, final ContextHolder context)
-            throws FileGeneratorException, IOException {
+    @NonNull List<FileState> execute(final MavenProject project, final BuildContext buildContext,
+            final ContextHolder context) throws FileGeneratorException, IOException {
         final var access = new ProjectFileAccess(project, getIdentifier());
 
         // Step one: determine what files are going to be generated
@@ -119,18 +122,39 @@ final class GeneratorTask implements Identifiable<String> {
 
         // Step four: submit all code generation tasks (via parallelStream()) and wait for them to complete
         sw.reset().start();
-        final var result = dirs.values().parallelStream()
-                .map(WriteTask::generateFile)
-                .collect(Collectors.toList());
-        LOG.debug("Generated {} files in {}", result.size(), sw);
+        final var outputFiles = dirs.values().parallelStream()
+            .map(WriteTask::generateFile)
+            .collect(Collectors.toList());
+        LOG.debug("Generated {} files in {}", outputFiles.size(), sw);
 
+        // Step five: update maven project to include top-level directories
         access.updateMavenProject();
-        return result;
+
+        // Step six: extract FileState objects while notifying BuildContext of any files which have been changed
+        return outputFiles.stream()
+            .map(output -> {
+                final var state = output.state();
+                if (output.changed()) {
+                    buildContext.refresh(new File(state.path()));
+                }
+                return state;
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("generator", generatorName()).add("argument", arg).toString();
+    }
+
+    /**
+     * A single file produced by {@link GeneratorTask}. It contains a {@link FileState} and an indication whether the
+     * file has been changed.
+     */
+    private record OutputFile(@NonNull FileState state, boolean changed) {
+        OutputFile {
+            requireNonNull(state);
+        }
     }
 
     private static final class WriteTask {
@@ -142,14 +166,54 @@ final class GeneratorTask implements Identifiable<String> {
             this.file = requireNonNull(file);
         }
 
-        FileState generateFile() {
-            final FileState ret;
+        OutputFile generateFile() {
+            return target.isFile() ? reconcileFile() : writeFile();
+        }
+
+        private OutputFile reconcileFile() {
+            // Acquire existing file state
+            final FileState existingFile;
             try {
-                ret = FileState.ofWrittenFile(target, file::writeBody);
+                existingFile = FileState.ofFile(target);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to read existing file " + target, e);
+            }
+
+            // Write out the new output into a temporary file
+            final FileState tmpFile;
+            try {
+                tmpFile = FileState.ofWrittenFile(File.createTempFile("gen", null, target.getParentFile()),
+                    file::writeBody);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to generate temporary file for " + target, e);
+            }
+
+            // If file size and checksum matches just delete our output
+            final var tmpPath = Path.of(tmpFile.path());
+            if (existingFile.size() == tmpFile.size() && existingFile.crc32() == tmpFile.crc32()) {
+                try {
+                    Files.delete(tmpPath);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Failed to remove temporary file for " + target, e);
+                }
+                return new OutputFile(existingFile, false);
+            }
+
+            try {
+                Files.move(tmpPath, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to replace file " + target, e);
+            }
+
+            return new OutputFile(new FileState(existingFile.path(), tmpFile.size(), tmpFile.crc32()), true);
+        }
+
+        private OutputFile writeFile() {
+            try {
+                return new OutputFile(FileState.ofWrittenFile(target, file::writeBody), true);
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }
-            return ret;
         }
     }
 }
