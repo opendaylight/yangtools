@@ -81,13 +81,11 @@ class YangToSourcesProcessor {
         // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
         // This honors setups like a Eclipse-profile derived one
         final var withMetaInf = new File(generatedYangDir, YangToSourcesProcessor.META_INF_YANG_STRING);
-        final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
+        Files.createDirectories(withMetaInf.toPath());
 
+        final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
         for (var source : modelsInProject) {
             final File file = new File(withMetaInf, source.getIdentifier().toYangFilename());
-            // FIXME: ditch this use
-            com.google.common.io.Files.createParentDirs(file);
-
             stateListBuilder.add(FileState.ofWrittenFile(file, source::copyTo));
             LOG.debug("Created file {} for {}", file, source.getIdentifier());
         }
