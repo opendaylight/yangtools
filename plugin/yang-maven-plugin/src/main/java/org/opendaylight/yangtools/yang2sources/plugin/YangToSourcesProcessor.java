@@ -158,6 +158,7 @@ class YangToSourcesProcessor {
         if (yangFilesInProject.isEmpty()) {
             // No files to process, skip.
             LOG.info("{} No input files found", LOG_PREFIX);
+            wipeAllState(prevState);
             return;
         }
 
@@ -165,6 +166,7 @@ class YangToSourcesProcessor {
         final List<GeneratorTask> codeGenerators = instantiateGenerators();
         if (codeGenerators.isEmpty()) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
+            wipeAllState(prevState);
             return;
         }
 
@@ -311,6 +313,24 @@ class YangToSourcesProcessor {
             stateStorage.storeState(outputState);
         } catch (IOException e) {
             throw new MojoFailureException("Failed to store execution state", e);
+        }
+    }
+
+    private void wipeAllState(final YangToSourcesState prevState) throws MojoExecutionException{
+        if (prevState != null) {
+            for (var file : prevState.outputFiles().fileStates().keySet()) {
+                try {
+                    Files.deleteIfExists(Path.of(file));
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Failed to remove file " + file, e);
+                }
+            }
+        }
+
+        try {
+            stateStorage.deleteState();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to remove execution state", e);
         }
     }
 

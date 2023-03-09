@@ -40,4 +40,6 @@ abstract class StateStorage {
     abstract @Nullable YangToSourcesState loadState() throws IOException;
 
     abstract void storeState(YangToSourcesState state) throws IOException;
+
+    abstract void deleteState() throws IOException;
 }
