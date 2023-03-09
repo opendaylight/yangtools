@@ -26,13 +26,14 @@ final class CapturingOutputStream extends FilterOutputStream {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public void write(final int b) throws IOException {
-        super.write(b);
+        out().write(b);
         size++;
     }
 
     @Override
-    public void write(final byte[] bytes, final int off, final int len) throws IOException {
-        super.write(bytes, off, len);
+    @SuppressWarnings("checkstyle:parameterName")
+    public void write(final byte[] b, final int off, final int len) throws IOException {
+        out().write(b, off, len);
         size += len;
     }
 
@@ -41,6 +42,10 @@ final class CapturingOutputStream extends FilterOutputStream {
     }
 
     int crc32c() {
-        return ((HashingOutputStream) out).hash().asInt();
+        return out().hash().asInt();
+    }
+
+    private HashingOutputStream out() {
+        return (HashingOutputStream) out;
     }
 }
