@@ -53,10 +53,6 @@ final class GeneratorTask implements Identifiable<String> {
         return parserConfig;
     }
 
-    FileGeneratorArg arg() {
-        return arg;
-    }
-
     String generatorName() {
         return gen.getClass().getName();
     }
