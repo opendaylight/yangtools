@@ -10,75 +10,109 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static java.util.Objects.requireNonNull;
 
 import java.io.File;
+import java.util.HashSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An object mediating access to the project directory.
  */
 final class ProjectFileAccess {
-    private final MavenProject project;
-    private final String buildDirSuffix;
+    private record ProjectDirectory(@NonNull File dir, @NonNull HashSet<File> files) {
+        private ProjectDirectory {
+            requireNonNull(dir);
+            requireNonNull(files);
+        }
 
-    private @Nullable File sourceDir;
-    private @Nullable File resourceDir;
-    private @Nullable File buildSourceDir;
-    private @Nullable File buildResourceDir;
+        ProjectDirectory(final @NonNull File dir) {
+            this(dir, new HashSet<>());
+        }
+
+        @NonNull File add(final String relativePath) {
+            final var ret = new File(dir, relativePath);
+            files.add(ret);
+            return ret;
+        }
+    }
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectFileAccess.class);
+
+    private final @NonNull MavenProject project;
+    private final @NonNull String buildDirSuffix;
+
+    private ProjectDirectory sourceDir;
+    private ProjectDirectory resourceDir;
+    private ProjectDirectory buildSourceDir;
+    private ProjectDirectory buildResourceDir;
 
     ProjectFileAccess(final MavenProject project, final String buildDirSuffix) {
         this.project = requireNonNull(project);
         this.buildDirSuffix = requireNonNull(buildDirSuffix);
     }
 
-    @NonNull File persistentPath(final GeneratedFileType fileType) throws FileGeneratorException {
+    @Nullable File persistentFile(final GeneratedFileType fileType, final String relativePath)
+            throws FileGeneratorException {
+        final ProjectDirectory fileDirectory;
         if (GeneratedFileType.SOURCE.equals(fileType)) {
             var local = sourceDir;
             if (local == null) {
-                sourceDir = local = new File(project.getBuild().getSourceDirectory());
+                sourceDir = local = new ProjectDirectory(new File(project.getBuild().getSourceDirectory()));
             }
-            return local;
+            fileDirectory = local;
         } else if (GeneratedFileType.RESOURCE.equals(fileType)) {
             var local = resourceDir;
             if (local == null) {
-                resourceDir = local = new File(new File(project.getBuild().getSourceDirectory()).getParentFile(),
-                    "resources");
+                resourceDir = local =
+                    new ProjectDirectory(new File(new File(project.getBuild().getSourceDirectory()).getParentFile(),
+                        "resources"));
             }
-            return local;
+            fileDirectory = local;
         } else {
             throw new FileGeneratorException("Unknown generated file type " + fileType);
         }
+
+        final var ret = fileDirectory.add(relativePath);
+        if (ret.exists()) {
+            LOG.debug("{}: Skipping existing persistent {}", YangToSourcesProcessor.LOG_PREFIX, ret);
+            return null;
+        }
+        return ret;
     }
 
-    @NonNull File transientPath(final GeneratedFileType fileType) throws FileGeneratorException {
+    @NonNull File transientFile(final GeneratedFileType fileType, final String relativePath)
+            throws FileGeneratorException {
+        final ProjectDirectory fileDirectory;
         if (GeneratedFileType.SOURCE.equals(fileType)) {
             var local = buildSourceDir;
             if (local == null) {
                 buildSourceDir = local = buildDirectoryFor("generated-sources");
             }
-            return local;
+            fileDirectory = local;
         } else if (GeneratedFileType.RESOURCE.equals(fileType)) {
             var local = buildResourceDir;
             if (local == null) {
                 buildResourceDir = local = buildDirectoryFor("generated-resources");
             }
-            return local;
+            fileDirectory = local;
         } else {
             throw new FileGeneratorException("Unknown generated file type " + fileType);
         }
+
+        return fileDirectory.add(relativePath);
     }
 
     void updateMavenProject() {
-        var local = buildSourceDir;
-        if (local != null) {
-            project.addCompileSourceRoot(local.getPath());
+        if (buildSourceDir != null) {
+            project.addCompileSourceRoot(buildSourceDir.dir().getPath());
         }
-        local = buildResourceDir;
-        if (local != null) {
-            addResourceDir(project, local);
+        if (buildResourceDir != null) {
+            addResourceDir(project, buildResourceDir.dir());
         }
     }
 
@@ -88,8 +122,9 @@ final class ProjectFileAccess {
         project.addResource(res);
     }
 
-    private @NonNull File buildDirectoryFor(final String name) {
-        return IncrementalBuildSupport.pluginSubdirectory(project.getBuild().getDirectory(), buildDirSuffix, name)
-            .toFile();
+    private @NonNull ProjectDirectory buildDirectoryFor(final String name) {
+        return new ProjectDirectory(
+            IncrementalBuildSupport.pluginSubdirectory(project.getBuild().getDirectory(), buildDirSuffix, name)
+                .toFile());
     }
 }
