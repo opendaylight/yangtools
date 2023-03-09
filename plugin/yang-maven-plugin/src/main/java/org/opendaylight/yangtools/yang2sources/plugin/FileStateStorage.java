@@ -43,4 +43,9 @@ final class FileStateStorage extends StateStorage {
             state.writeTo(out);
         }
     }
+
+    @Override
+    void deleteState() throws IOException {
+        Files.deleteIfExists(stateFile);
+    }
 }
