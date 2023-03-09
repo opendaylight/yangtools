@@ -53,6 +53,17 @@ public final class FileGeneratorArg implements Identifiable<String>, WritableObj
     }
 
     @Override
+    public int hashCode() {
+        return getIdentifier().hashCode() + configuration.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj || obj instanceof FileGeneratorArg other && getIdentifier().equals(other.getIdentifier())
+            && configuration.equals(other.getConfiguration());
+    }
+
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("id", identifier).add("configuration", configuration).toString();
     }
