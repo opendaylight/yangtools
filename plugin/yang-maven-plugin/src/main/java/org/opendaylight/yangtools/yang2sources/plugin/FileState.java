@@ -35,6 +35,8 @@ record FileState(@NonNull String path, long size, int crc32) {
         void writeTo(@NonNull OutputStream out) throws IOException;
     }
 
+    private static final int READ_BUFFER_SIZE = 8192;
+
     FileState {
         requireNonNull(path);
     }
@@ -45,7 +47,11 @@ record FileState(@NonNull String path, long size, int crc32) {
 
     static @NonNull FileState ofFile(final Path file) throws IOException {
         try (var cis = new CapturingInputStream(Files.newInputStream(file))) {
-            cis.readAllBytes();
+            // Essentially cis.readAllBytes() except we do not need the actual bytes
+            final var bytes = new byte[READ_BUFFER_SIZE];
+            while (cis.readNBytes(bytes, 0, READ_BUFFER_SIZE) != 0) {
+                // Nothing else
+            }
             return new FileState(file.toString(), cis.size(), cis.crc32c());
         }
     }
