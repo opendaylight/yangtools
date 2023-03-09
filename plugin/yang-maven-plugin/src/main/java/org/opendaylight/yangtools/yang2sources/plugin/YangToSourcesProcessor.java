@@ -91,7 +91,7 @@ class YangToSourcesProcessor {
             LOG.debug("Created file {} for {}", file, source.getIdentifier());
         }
 
-        ProjectFileAccess.addResourceDir(project, generatedYangDir);
+        ProjectFileAccess.addResourceDir(project, generatedYangDir.getPath());
         LOG.debug("{} YANG files marked as resources: {}", YangToSourcesProcessor.LOG_PREFIX, generatedYangDir);
 
         return stateListBuilder.build();
@@ -147,7 +147,8 @@ class YangToSourcesProcessor {
         if (prevState == null) {
             LOG.debug("{} no previous execution state present", LOG_PREFIX);
             prevState = new YangToSourcesState(ImmutableMap.of(),
-                    FileStateSet.empty(), FileStateSet.empty(), FileStateSet.empty());
+                FileStateSet.empty(), FileStateSet.empty(), FileStateSet.empty(), FileStateSet.empty(),
+                ImmutableMap.of(), ImmutableMap.of());
         }
 
         // Collect all files in the current project.
@@ -234,8 +235,8 @@ class YangToSourcesProcessor {
             }
 
             if (!outputsChanged) {
-                // FIXME: YANGTOOLS-745: still need to add all resources/directories to maven project
                 LOG.info("{}: Everything is up to date, nothing to do", LOG_PREFIX);
+                prevState.updateProject(project);
                 return;
             }
         }
@@ -304,7 +305,7 @@ class YangToSourcesProcessor {
 
         // add META_INF/services
         File generatedServicesDir = new File(new File(projectBuildDirectory, "generated-sources"), "spi");
-        ProjectFileAccess.addResourceDir(project, generatedServicesDir);
+        ProjectFileAccess.addResourceDir(project, generatedServicesDir.getPath());
         LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
             META_INF_YANG_SERVICES_STRING_JAR);
 
@@ -323,6 +324,7 @@ class YangToSourcesProcessor {
         } catch (IOException e) {
             throw new MojoFailureException("Failed to reconcile output files", e);
         }
+        outputState.updateProject(project);
 
         // Store execution state
         try {
