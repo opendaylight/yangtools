@@ -241,7 +241,7 @@ class YangToSourcesProcessor {
             .collect(ImmutableMap.toImmutableMap(FileState::path, Function.identity())));
 
         final var outputFiles = ImmutableList.<FileState>builder();
-        boolean sourcesPersisted = false;
+        Collection<YangTextSchemaSource> modelsInProject = null;
 
         for (YangParserConfiguration parserConfig : parserConfigs) {
             final var moduleReactor = createReactor(yangFilesInProject, parserConfig, dependencies, parsed);
@@ -255,7 +255,6 @@ class YangToSourcesProcessor {
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to read reactor " + moduleReactor, e);
             }
-
             LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(), yangSw);
 
             for (var factory : codeGenerators) {
@@ -276,19 +275,17 @@ class YangToSourcesProcessor {
                     genSw);
             }
 
-            if (!sourcesPersisted) {
-                // add META_INF/yang once
-                final var models = moduleReactor.getModelsInProject();
-                final Collection<FileState> sourceFileStates;
-                try {
-                    sourceFileStates = yangProvider.addYangsToMetaInf(project, models);
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Failed write model files for " + models, e);
-                }
-
-                sourcesPersisted = true;
-                outputFiles.addAll(sourceFileStates);
+            if (modelsInProject == null) {
+                // FIXME: this is an invariant, we should prepare these separately
+                modelsInProject = moduleReactor.getModelsInProject();
             }
+        }
+
+        // add META_INF/yang once
+        try {
+            outputFiles.addAll(yangProvider.addYangsToMetaInf(project, modelsInProject));
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed write model files for " + modelsInProject, e);
         }
 
         // add META_INF/services

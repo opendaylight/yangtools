@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
@@ -17,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 @VisibleForTesting
 interface YangProvider {
 
-    Collection<FileState> addYangsToMetaInf(MavenProject project,
+    List<FileState> addYangsToMetaInf(MavenProject project,
             Collection<YangTextSchemaSource> modelsInProject) throws IOException;
 }
