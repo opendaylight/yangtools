@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
@@ -27,7 +28,10 @@ record YangToSourcesState(
         @NonNull ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs,
         @NonNull FileStateSet projectYangs,
         @NonNull FileStateSet dependencyYangs,
-        @NonNull FileStateSet outputFiles) implements WritableObject {
+        @NonNull FileStateSet persistentSources,
+        @NonNull FileStateSet persistentResources,
+        @NonNull ImmutableMap<String, FileStateSet> transientSources,
+        @NonNull ImmutableMap<String, FileStateSet> transientResources) implements WritableObject {
     // 'ymp' followed by a byte value '1'
     private static final int MAGIC = 0x796D7001;
 
@@ -35,7 +39,10 @@ record YangToSourcesState(
         requireNonNull(fileGeneratorArgs);
         requireNonNull(projectYangs);
         requireNonNull(dependencyYangs);
-        requireNonNull(outputFiles);
+        requireNonNull(persistentSources);
+        requireNonNull(persistentResources);
+        requireNonNull(transientSources);
+        requireNonNull(transientResources);
     }
 
     static @NonNull YangToSourcesState readFrom(final DataInput in) throws IOException {
@@ -53,6 +60,8 @@ record YangToSourcesState(
         writeConfigurations(out, fileGeneratorArgs.values());
         projectYangs.writeTo(out);
         dependencyYangs.writeTo(out);
+        persistentSources.writeTo(out);
+        persistentResources.writeTo(out);
         outputFiles.writeTo(out);
     }
 
@@ -62,9 +71,19 @@ record YangToSourcesState(
      * @throws IOException if any error occurs
      */
     void deleteOutputFiles() throws IOException {
-        for (var file : outputFiles.fileStates().keySet()) {
+        for (var file : transientSources.fileStates().keySet()) {
             Files.deleteIfExists(Path.of(file));
         }
+        for (var file : transientResources.fileStates().keySet()) {
+            Files.deleteIfExists(Path.of(file));
+        }
+    }
+
+    void updateProject(final MavenProject project) {
+        for (var sourceDir : transientSources.keySet()) {
+            ProjectFileAccess.addResourceDir(project, sourceDir);
+        }
+        transientResources.keySet().forEach(project::addCompileSourceRoot);
     }
 
     private static void writeConfigurations(final DataOutput out, final Collection<FileGeneratorArg> configurations)

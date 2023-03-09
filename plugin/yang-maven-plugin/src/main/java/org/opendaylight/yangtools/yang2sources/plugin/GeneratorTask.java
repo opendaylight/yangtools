@@ -70,11 +70,11 @@ final class GeneratorTask implements Identifiable<String> {
      * @param project current Maven Project
      * @param buildContext Incremental BuildContext
      * @param context model generation context
-     * @return {@link FileState} for every generated file
+     * @return A {@link GeneratorFileSet}
      * @throws FileGeneratorException if the underlying generator fails
      * @throws IOException when a generated file cannot be written
      */
-    @NonNull List<FileState> execute(final MavenProject project, final BuildContext buildContext,
+    @NonNull GeneratorFileSet execute(final MavenProject project, final BuildContext buildContext,
             final ContextHolder context) throws FileGeneratorException, IOException {
         final var access = new ProjectFileAccess(project, getIdentifier());
 
@@ -92,14 +92,14 @@ final class GeneratorTask implements Identifiable<String> {
             final File target;
             switch (file.getLifecycle()) {
                 case PERSISTENT:
-                    target = new File(access.persistentPath(cell.getRowKey()), relativePath);
-                    if (target.exists()) {
-                        LOG.debug("Skipping existing persistent {}", target);
+                    final var persistentFile = access.persistentFile(cell.getRowKey(), relativePath);
+                    if (persistentFile == null) {
                         continue;
                     }
+                    target = persistentFile;
                     break;
                 case TRANSIENT:
-                    target = new File(access.transientPath(cell.getRowKey()), relativePath);
+                    target = access.transientFile(cell.getRowKey(), relativePath);
                     break;
                 default:
                     throw new IllegalStateException("Unsupported file type in " + file);
