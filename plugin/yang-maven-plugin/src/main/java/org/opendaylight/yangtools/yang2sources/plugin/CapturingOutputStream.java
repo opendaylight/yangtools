@@ -24,13 +24,6 @@ final class CapturingOutputStream extends FilterOutputStream {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:parameterName")
-    public void write(final int b) throws IOException {
-        super.write(b);
-        size++;
-    }
-
-    @Override
     public void write(final byte[] bytes, final int off, final int len) throws IOException {
         super.write(bytes, off, len);
         size += len;
