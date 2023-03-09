@@ -43,4 +43,9 @@ final class BuildContextStateStorage extends StateStorage {
     void storeState(final YangToSourcesState state) {
         buildContext.setValue(STATE_KEY, requireNonNull(state));
     }
+
+    @Override
+    void deleteState() {
+        buildContext.setValue(STATE_KEY, null);
+    }
 }
