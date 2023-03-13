@@ -133,9 +133,10 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private static StatementContextBase<?, ?, ?> contextImpl(final Object value) {
-        checkArgument(value instanceof StatementContextBase, "Supplied context %s is not provided by this reactor.",
-            value);
-        return StatementContextBase.class.cast(value);
+        if (value instanceof StatementContextBase<?, ?, ?> impl) {
+            return impl;
+        }
+        throw new IllegalArgumentException("Supplied context " + value + " is not provided by this reactor.");
     }
 
     boolean tryApply() {
