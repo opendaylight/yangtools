@@ -22,8 +22,12 @@ public class ImmutableLeafNodeBuilder<T>
     }
 
     @Beta
-    @SuppressWarnings("unchecked")
     public static <T> @NonNull LeafNode<T> createNode(final NodeIdentifier identifier, final T value) {
+        return createNode(checkValue(value), identifier);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> @NonNull LeafNode<T> createNode(final T value, final NodeIdentifier identifier) {
         if (value instanceof byte[] bytes) {
             return (LeafNode<T>) new ImmutableBinaryLeafNode(identifier, bytes);
         }
@@ -32,7 +36,7 @@ public class ImmutableLeafNodeBuilder<T>
 
     @Override
     public LeafNode<T> build() {
-        return createNode(getNodeIdentifier(), getValue());
+        return createNode(getValue(), getNodeIdentifier());
     }
 
     private static class ImmutableLeafNode<T>
