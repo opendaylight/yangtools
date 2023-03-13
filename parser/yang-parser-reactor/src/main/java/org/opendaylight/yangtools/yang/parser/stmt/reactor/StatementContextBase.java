@@ -376,17 +376,10 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     abstract Iterator<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
 
-    // exposed for InferredStatementContext only
-    final ReactorStmtCtx<?, ?, ?> ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
-        final var ret = verifyStatement(stmt);
-        ensureCompletedExecution(ret);
-        return ret;
-    }
-
     // Make sure target statement has transitioned at least to our phase (if we have one). This method is just before we
     // take allow a statement to become our substatement. This is needed to ensure that every statement tree does not
     // contain any statements which did not complete the same phase as the root statement.
-    private void ensureCompletedExecution(final ReactorStmtCtx<?, ?, ?> stmt) {
+    final void ensureCompletedExecution(final ReactorStmtCtx<?, ?, ?> stmt) {
         if (executionOrder != ExecutionOrder.NULL) {
             ensureCompletedExecution(stmt, executionOrder);
         }
@@ -396,7 +389,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         verify(stmt.tryToCompletePhase(executionOrder), "Statement %s cannot complete phase %s", stmt, executionOrder);
     }
 
-    private static ReactorStmtCtx<?, ?, ?> verifyStatement(final Mutable<?, ?, ?> stmt) {
+    // exposed for InferredStatementContext only
+    static final ReactorStmtCtx<?, ?, ?> verifyStatement(final Mutable<?, ?, ?> stmt) {
         verify(stmt instanceof ReactorStmtCtx, "Unexpected statement %s", stmt);
         return (ReactorStmtCtx<?, ?, ?>) stmt;
     }
