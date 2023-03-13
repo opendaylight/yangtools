@@ -175,8 +175,8 @@ public interface ModelActionBuilder {
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
         @NonNull ParserNamespace<K, C> namespace, NamespaceKeyCriterion<K> criterion, ModelProcessingPhase phase);
 
-    <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtxPath(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, C> namespace, Iterable<K> keys, ModelProcessingPhase phase);
+    <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtxPath(StmtContext<?, ?, ?> context,
+        ParserNamespace<K, C> namespace, Iterable<K> keys);
 
     /**
      * Action mutates the effective model of specified statement. This is a shorthand for
