@@ -437,7 +437,7 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
                 final Object key, final Object value) {
-            ((StatementContextBase<?, ?, ?>) value).addPhaseCompletedListener(phase, this);
+            contextImpl(value).addPhaseCompletedListener(phase, this);
         }
 
         @SuppressWarnings("unchecked")
