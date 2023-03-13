@@ -334,26 +334,24 @@ final class ModifierImpl implements ModelActionBuilder {
                 final ParserNamespace<?, ?> namespace, final Object key, final Object value) {
             LOG.debug("Action for {} got key {}", keys, key);
 
-            final StatementContextBase<?, ?, ?> target = contextImpl(value);
-            if (!target.isSupportedByFeatures()) {
-                LOG.debug("Key {} in {} is not supported", key, keys);
-                resolvePrereq(null);
-                modifier.action.prerequisiteUnavailable(this);
-                return;
-            }
+            contextImpl(value).addPhaseCompletedListener(FULL_DECLARATION, (target, ignored) -> {
+                if (target.isSupportedByFeatures()) {
+                    nextStep(context, target);
 
-            nextStep(context, target);
-
-            if (!it.hasNext()) {
-                // Last step: we are done
-                if (resolvePrereq((C) value)) {
-                    modifier.tryApply();
+                    if (it.hasNext()) {
+                        // Make sure target's storage notifies us when the next step becomes available.
+                        hookOnto(target, namespace, it.next());
+                    } else if (resolvePrereq((C) target)) {
+                        modifier.tryApply();
+                    }
+                } else {
+                    LOG.debug("Key {} in {} is not supported", key, keys);
+                    resolvePrereq(null);
+                    modifier.action.prerequisiteUnavailable(this);
                 }
-                return;
-            }
 
-            // Make sure target's storage notifies us when the next step becomes available.
-            hookOnto(target, namespace, it.next());
+                return true;
+            });
         }
 
         abstract void nextStep(StatementContextBase<?, ?, ?> current, StatementContextBase<?, ?, ?> next);
