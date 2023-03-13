@@ -430,11 +430,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         LOG.debug("Materializing child {} from {}", qname, templateQName);
 
         final StmtContext<?, ?, ?> template;
-        if (prototype instanceof InferredStatementContext) {
+        if (prototype instanceof InferredStatementContext<?, ?, ?> inferredPrototype) {
             // Note: we need to access namespace here, as the target statement may have already been populated, in which
             //       case we want to obtain the statement in local namespace storage.
-            template = (StmtContext) ((InferredStatementContext<?, ?, ?>) prototype).getFromNamespace(
-                SchemaTreeNamespace.class, templateQName);
+            template = (StmtContext) inferredPrototype.getFromNamespace(SchemaTreeNamespace.class, templateQName);
         } else {
             template = prototype.allSubstatementsStream()
                 .filter(stmt -> stmt.producesEffective(SchemaTreeEffectiveStatement.class)
