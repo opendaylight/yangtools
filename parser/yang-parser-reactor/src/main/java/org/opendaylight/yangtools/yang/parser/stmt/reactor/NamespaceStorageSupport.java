@@ -75,7 +75,8 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     @SuppressWarnings("unchecked")
     final <K, V> Map<K, V> getLocalNamespace(final ParserNamespace<K, V> type) {
-        return (Map<K, V>) accessNamespaces().get(type);
+        final var local = verifyNotNull(namespaces, "Attempted to access swept namespaces of %s", this);
+        return (Map<K, V>) local.get(type);
     }
 
     final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final T key,
@@ -105,18 +106,15 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
-        final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
+        final var localNamespace = getLocalNamespace(type);
         return localNamespace == null ? null : localNamespace.get(key);
     }
 
     @Override
     public <K, V> Map<K, V> getAllFromLocalStorage(final ParserNamespace<K, V> type) {
-        @SuppressWarnings("unchecked")
-        final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
-        return localNamespace;
+        return getLocalNamespace(type);
     }
 
     @Override
@@ -156,13 +154,8 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         LOG.trace("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
     }
 
-    private Map<ParserNamespace<?, ?>, Map<?, ?>> accessNamespaces() {
-        return verifyNotNull(namespaces, "Attempted to access swept namespaces of %s", this);
-    }
-
     private <K, V> Map<K, V> ensureLocalNamespace(final ParserNamespace<K, V> type) {
-        @SuppressWarnings("unchecked")
-        Map<K, V> ret = (Map<K,V>) accessNamespaces().get(type);
+        var ret = getLocalNamespace(type);
         if (ret == null) {
             checkLocalNamespaceAllowed(type);
             ret = new HashMap<>(1);
