@@ -37,7 +37,7 @@ public class ImmutableAnydataNodeBuilder<V>
     private static final class ImmutableAnydataNode<V>
             extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, AnydataNode<?>, V>
             implements AnydataNode<V> {
-        private final Class<V> objectModel;
+        private final @NonNull Class<V> objectModel;
 
         protected ImmutableAnydataNode(final NodeIdentifier nodeIdentifier, final V value, final Class<V> objectModel) {
             super(nodeIdentifier, value);
