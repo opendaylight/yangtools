@@ -319,14 +319,11 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private abstract static class AbstractPathPrerequisite<C extends StmtContext<?, ?, ?>, K>
             extends AbstractPrerequisite<C> implements OnNamespaceItemAdded {
-        private final ModelProcessingPhase modPhase;
         private final Iterable<K> keys;
         private final Iterator<K> it;
 
-        AbstractPathPrerequisite(final ModifierImpl modifier, final ModelProcessingPhase phase,
-                final Iterable<K> keys) {
+        AbstractPathPrerequisite(final ModifierImpl modifier, final Iterable<K> keys) {
             super(modifier);
-            this.modPhase = requireNonNull(phase);
             this.keys = requireNonNull(keys);
             it = keys.iterator();
         }
@@ -344,7 +341,7 @@ final class ModifierImpl implements ModelActionBuilder {
                 return;
             }
 
-            nextStep(modPhase, context, target);
+            nextStep(context, target);
 
             if (!it.hasNext()) {
                 // Last step: we are done
@@ -358,12 +355,11 @@ final class ModifierImpl implements ModelActionBuilder {
             hookOnto(target, namespace, it.next());
         }
 
-        abstract void nextStep(ModelProcessingPhase phase, StatementContextBase<?, ?, ?> current,
-            StatementContextBase<?, ?, ?> next);
+        abstract void nextStep(StatementContextBase<?, ?, ?> current, StatementContextBase<?, ?, ?> next);
 
         @Override
         final ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return super.addToStringAttributes(toStringHelper).add("phase", modPhase).add("keys", keys);
+            return super.addToStringAttributes(toStringHelper).add("phase", EFFECTIVE_MODEL).add("keys", keys);
         }
 
         final void hookOnto(final StmtContext<?, ?, ?> context, final ParserNamespace<?, ?> namespace) {
@@ -446,12 +442,11 @@ final class ModifierImpl implements ModelActionBuilder {
     private static final class PhaseRequirementInNamespacePath<C extends StmtContext<?, ?, ?>, K>
             extends AbstractPathPrerequisite<C, K> {
         PhaseRequirementInNamespacePath(final ModifierImpl modifier, final Iterable<K> keys) {
-            super(modifier, EFFECTIVE_MODEL, keys);
+            super(modifier, keys);
         }
 
         @Override
-        void nextStep(final ModelProcessingPhase phase, final StatementContextBase<?, ?, ?> current,
-                final StatementContextBase<?, ?, ?> next) {
+        void nextStep(final StatementContextBase<?, ?, ?> current, final StatementContextBase<?, ?, ?> next) {
             // No-op
         }
     }
@@ -489,7 +484,7 @@ final class ModifierImpl implements ModelActionBuilder {
     private static final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K>
             extends AbstractPathPrerequisite<C, K> implements ContextMutation {
         PhaseModificationInNamespacePath(final ModifierImpl modifier, final Iterable<K> keys) {
-            super(modifier, EFFECTIVE_MODEL, keys);
+            super(modifier, keys);
         }
 
         @Override
@@ -498,13 +493,12 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         @Override
-        void nextStep(final ModelProcessingPhase phase, final StatementContextBase<?, ?, ?> current,
-                final StatementContextBase<?, ?, ?> next) {
+        void nextStep(final StatementContextBase<?, ?, ?> current, final StatementContextBase<?, ?, ?> next) {
             // Hook onto target: we either have a modification of the target itself or one of its children.
-            next.addMutation(phase, this);
+            next.addMutation(EFFECTIVE_MODEL, this);
             // We have completed the context -> target step, hence we are no longer directly blocking context from
             // making forward progress.
-            current.removeMutation(phase, this);
+            current.removeMutation(EFFECTIVE_MODEL, this);
         }
     }
 }
