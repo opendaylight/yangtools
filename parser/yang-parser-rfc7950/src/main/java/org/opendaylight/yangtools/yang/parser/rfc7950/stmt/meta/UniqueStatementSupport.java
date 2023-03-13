@@ -178,10 +178,9 @@ public final class UniqueStatementSupport
                 action.apply(new RequireLeafDescendants(unique,
                     // ... require that each schema node identifier resolves against the schema tree
                     Maps.uniqueIndex(unique.getArgument(),
-                        desc -> action.requiresCtxPath(list,
+                        desc -> action.requiresEffectiveCtxPath(list,
                             // FIXME: why do we need this cast?
-                            (ParserNamespace) ParserNamespaces.schemaTree(), desc.getNodeIdentifiers(),
-                            ModelProcessingPhase.EFFECTIVE_MODEL))));
+                            (ParserNamespace) ParserNamespaces.schemaTree(), desc.getNodeIdentifiers()))));
             }
         }
 
@@ -204,7 +203,6 @@ public final class UniqueStatementSupport
                 final Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs) {
             this.unique = requireNonNull(unique);
             this.prereqs = requireNonNull(prereqs);
-
         }
 
         @Override

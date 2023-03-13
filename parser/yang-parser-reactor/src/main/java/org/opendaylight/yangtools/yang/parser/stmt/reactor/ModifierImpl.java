@@ -178,11 +178,11 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
-    public <K, C extends StmtContext<?, ?, ?>> Prerequisite<C> requiresCtxPath(final StmtContext<?, ?, ?> context,
-            final ParserNamespace<K, C> namespace, final Iterable<K> keys, final ModelProcessingPhase phase) {
+    public <K, C extends StmtContext<?, ?, ?>> Prerequisite<C> requiresEffectiveCtxPath(
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, C> namespace, final Iterable<K> keys) {
         checkNotRegistered();
 
-        final var ret = new PhaseRequirementInNamespacePath<C, K>(this, EFFECTIVE_MODEL, keys);
+        final var ret = new PhaseRequirementInNamespacePath<C, K>(this, keys);
         addReq(ret);
         addBootstrap(() -> ret.hookOnto(context, namespace));
         return ret;
@@ -249,7 +249,7 @@ final class ModifierImpl implements ModelActionBuilder {
             final Iterable<K> keys) {
         checkNotRegistered();
 
-        final var ret = new PhaseModificationInNamespacePath<Mutable<?, ?, E>, K>(this, EFFECTIVE_MODEL, keys);
+        final var ret = new PhaseModificationInNamespacePath<Mutable<?, ?, E>, K>(this, keys);
         addReq(ret);
         addMutation(ret);
         addBootstrap(() -> ret.hookOnto(context, namespace));
@@ -445,9 +445,8 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private static final class PhaseRequirementInNamespacePath<C extends StmtContext<?, ?, ?>, K>
             extends AbstractPathPrerequisite<C, K> {
-        PhaseRequirementInNamespacePath(final ModifierImpl modifier, final ModelProcessingPhase phase,
-                final Iterable<K> keys) {
-            super(modifier, phase, keys);
+        PhaseRequirementInNamespacePath(final ModifierImpl modifier, final Iterable<K> keys) {
+            super(modifier, EFFECTIVE_MODEL, keys);
         }
 
         @Override
@@ -489,9 +488,8 @@ final class ModifierImpl implements ModelActionBuilder {
      */
     private static final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K>
             extends AbstractPathPrerequisite<C, K> implements ContextMutation {
-        PhaseModificationInNamespacePath(final ModifierImpl modifier, final ModelProcessingPhase phase,
-                final Iterable<K> keys) {
-            super(modifier, phase, keys);
+        PhaseModificationInNamespacePath(final ModifierImpl modifier, final Iterable<K> keys) {
+            super(modifier, EFFECTIVE_MODEL, keys);
         }
 
         @Override
