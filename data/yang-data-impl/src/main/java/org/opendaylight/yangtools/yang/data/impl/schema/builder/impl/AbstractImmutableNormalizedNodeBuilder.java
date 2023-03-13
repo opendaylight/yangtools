@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -21,13 +21,11 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     private @Nullable V value = null;
 
     protected final I getNodeIdentifier() {
-        checkState(nodeIdentifier != null, "Identifier has not been set");
-        return nodeIdentifier;
+        return checkSet(nodeIdentifier, "Identifier has not been set");
     }
 
     protected final V getValue() {
-        checkState(value != null, "Value has not been set");
-        return value;
+        return checkSet(value, "Value has not been set");
     }
 
     @Override
@@ -40,5 +38,12 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     public NormalizedNodeBuilder<I, V, R> withNodeIdentifier(final I withNodeIdentifier) {
         this.nodeIdentifier = requireNonNull(withNodeIdentifier);
         return this;
+    }
+
+    private static <T> @NonNull T checkSet(final @Nullable T obj, final String message) {
+        if (obj == null) {
+            throw new IllegalStateException(message);
+        }
+        return obj;
     }
 }
