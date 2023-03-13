@@ -21,21 +21,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 class YiidSerializationTest extends AbstractSerializationTest {
     @ParameterizedTest
     @MethodSource
-    void testEmptyIdentifier(final NormalizedNodeStreamVersion version, final int size) {
-        assertSame(version, YangInstanceIdentifier.of(), size);
-    }
-
-    static List<Arguments> testEmptyIdentifier() {
-        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 96));
-    }
-
-    @ParameterizedTest
-    @MethodSource
     void testOneIdentifier(final NormalizedNodeStreamVersion version, final int size) {
         assertEquals(version, YangInstanceIdentifier.of(TestModel.TEST_QNAME), size);
     }
 
-    static List<Arguments> testOneIdentifier() {
+    private static List<Arguments> testOneIdentifier() {
         return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 98));
     }
 
@@ -46,7 +36,7 @@ class YiidSerializationTest extends AbstractSerializationTest {
         assertEquals(version, fillUniqueIdentifier(31), uniqueSize);
     }
 
-    static List<Arguments> test31() {
+    private static List<Arguments> test31() {
         return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 158, 359));
     }
 
@@ -57,7 +47,7 @@ class YiidSerializationTest extends AbstractSerializationTest {
         assertEquals(version, fillUniqueIdentifier(32), uniqueSize);
     }
 
-    static List<Arguments> test32() {
+    private static List<Arguments> test32() {
         return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 164, 372));
     }
 
@@ -68,7 +58,7 @@ class YiidSerializationTest extends AbstractSerializationTest {
         assertEquals(version, fillUniqueIdentifier(256), uniqueSize);
     }
 
-    static List<Arguments> test256() {
+    private static List<Arguments> test256() {
         return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 612, 2_388));
     }
 
@@ -79,7 +69,7 @@ class YiidSerializationTest extends AbstractSerializationTest {
         assertEquals(version, fillUniqueIdentifier(65792), uniqueSize);
     }
 
-    static List<Arguments> test65792() {
+    private static List<Arguments> test65792() {
         return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 131_684, 719_700));
     }
 
@@ -108,7 +98,7 @@ class YiidSerializationTest extends AbstractSerializationTest {
         }
     }
 
-    static List<Arguments> testTwice65536() {
+    private static List<Arguments> testTwice65536() {
         return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 916_815));
     }
 

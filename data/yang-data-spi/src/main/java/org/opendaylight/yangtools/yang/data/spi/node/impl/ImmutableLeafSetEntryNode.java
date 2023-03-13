@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AbstractLeafSetEntryNode;
 
@@ -44,10 +45,13 @@ public abstract sealed class ImmutableLeafSetEntryNode<T> extends AbstractLeafSe
     }
 
     public static <T> @NonNull ImmutableLeafSetEntryNode<T> of(final NodeWithValue<T> name) {
-        if (name.getValue() instanceof byte[]) {
+        final var nameValue = name.getValue();
+        if (nameValue instanceof byte[]) {
             @SuppressWarnings("unchecked")
             final var ret = (ImmutableLeafSetEntryNode<T>) new Binary((NodeWithValue<byte[]>) name);
             return ret;
+        } else if (nameValue instanceof YangInstanceIdentifier yiid && yiid.isEmpty()) {
+            throw new IllegalArgumentException("Leafset entry node value cannot be an empty instance identifier");
         }
         return new Regular<>(name);
     }
@@ -60,6 +64,8 @@ public abstract sealed class ImmutableLeafSetEntryNode<T> extends AbstractLeafSe
                 final var ret = (ImmutableLeafSetEntryNode<T>) new Binary((NodeWithValue<byte[]>) name);
                 return ret;
             }
+        } else if (nameValue instanceof YangInstanceIdentifier yiid && yiid.isEmpty()) {
+            throw new IllegalArgumentException("Leafset entry node value cannot be an empty instance identifier");
         } else if (nameValue.equals(body)) {
             return new Regular<>(name);
         }

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.spi.node.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AbstractLeafNode;
 
@@ -49,6 +50,8 @@ public abstract sealed class ImmutableLeafNode<T> extends AbstractLeafNode<T> {
             @SuppressWarnings("unchecked")
             final var ret = (ImmutableLeafNode<T>) new Binary(identifier, bytes);
             return ret;
+        } else if (value instanceof YangInstanceIdentifier yiid && yiid.isEmpty()) {
+            throw new IllegalArgumentException("Leaf node value cannot be an empty instance identifier");
         }
         return new Regular<>(identifier, value);
     }
