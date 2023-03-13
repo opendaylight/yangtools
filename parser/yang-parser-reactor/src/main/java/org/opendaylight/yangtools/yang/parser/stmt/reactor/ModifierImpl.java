@@ -360,7 +360,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
         @Override
         final ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return super.addToStringAttributes(toStringHelper).add("phase", EFFECTIVE_MODEL).add("keys", keys);
+            return super.addToStringAttributes(toStringHelper).add("keys", keys);
         }
 
         final void hookOnto(final StmtContext<?, ?, ?> context, final ParserNamespace<?, ?> namespace) {
