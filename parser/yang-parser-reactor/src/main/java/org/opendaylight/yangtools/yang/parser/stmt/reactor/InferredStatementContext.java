@@ -456,7 +456,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         @SuppressWarnings("unchecked")
         final var ret = (Mutable<QName, Y, Z>) copySubstatement(template).orElseThrow(
             () -> new InferenceException(this, "Failed to materialize child %s template %s", qname, template));
-        addMaterialized(template, ensureCompletedPhase(ret));
+
+        // Careful here: first add the substatement and only complete it afterwards
+        final var toAdd = verifyStatement(ret);
+        addMaterialized(template, toAdd);
+        ensureCompletedExecution(toAdd);
 
         LOG.debug("Child {} materialized", qname);
         return ret;
@@ -608,8 +612,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final var materialized = findMaterialized(materializedSchemaTree, substatement);
         if (materialized == null) {
             copySubstatement(substatement).ifPresent(copy -> {
-                final var cast = ensureCompletedPhase(copy);
+                // Careful here: first add the substatement and only complete it afterwards
+                final var cast = verifyStatement(copy);
                 materializedSchemaTree.put(substatement, cast);
+                ensureCompletedExecution(cast);
                 buffer.add(cast);
             });
         } else {
