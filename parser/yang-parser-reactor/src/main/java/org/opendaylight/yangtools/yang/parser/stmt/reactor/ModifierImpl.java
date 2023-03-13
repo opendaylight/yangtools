@@ -66,9 +66,9 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private boolean removeSatisfied() {
-        final Iterator<AbstractPrerequisite<?>> it = unsatisfied.iterator();
+        final var it = unsatisfied.iterator();
         while (it.hasNext()) {
-            final AbstractPrerequisite<?> prereq = it.next();
+            final var prereq = it.next();
             if (prereq.isDone()) {
                 // We are removing current prerequisite from list.
                 LOG.trace("Modifier {} prerequisite {} satisfied", this, prereq);
@@ -482,7 +482,7 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
                 final Object key, final Object value) {
-            StatementContextBase<?, ?, ?> targetCtx = contextImpl(value);
+            final var targetCtx = contextImpl(value);
             targetCtx.addMutation(modPhase, this);
             resolvePrereq((C) targetCtx);
         }
