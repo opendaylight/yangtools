@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
@@ -30,7 +31,7 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
 
     @Override
     public NormalizedNodeBuilder<I, V, R> withValue(final V withValue) {
-        this.value = requireNonNull(withValue);
+        this.value = checkValue(withValue);
         return this;
     }
 
@@ -45,5 +46,13 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
             throw new IllegalStateException(message);
         }
         return obj;
+    }
+
+    protected static final <T> @NonNull T checkValue(final @Nullable T value) {
+        final var nonNull = requireNonNull(value);
+        if (nonNull instanceof YangInstanceIdentifier yiid && yiid.isEmpty()) {
+            throw new IllegalArgumentException("Node value cannot be an empty instance identifier");
+        }
+        return nonNull;
     }
 }
