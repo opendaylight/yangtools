@@ -8,25 +8,26 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Common interface for an operation, such as an {@link RpcDefinition} or an {@link ActionDefinition}.
  */
+@NonNullByDefault
 public interface OperationDefinition extends SchemaNode {
     /**
      * Returns the set of type definitions declared under this operation.
      *
      * @return Set of type definitions declared under this operation.
      */
-    Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions();
+    Collection<? extends TypeDefinition<?>> getTypeDefinitions();
 
     /**
      * Returns the set of grouping statements declared under this operation.
      *
      * @return Set of grouping statements declared under this operation.
      */
-    Collection<? extends @NonNull GroupingDefinition> getGroupings();
+    Collection<? extends GroupingDefinition> getGroupings();
 
     /**
      * Returns definition of input parameters for this operation.
@@ -34,7 +35,7 @@ public interface OperationDefinition extends SchemaNode {
      * @return Definition of input parameters for this operation.
      *         The substatements of input define nodes under the operation's input node.
      */
-    @NonNull InputSchemaNode getInput();
+    InputSchemaNode getInput();
 
     /**
      * Returns definition of output parameters for this operation.
@@ -42,5 +43,5 @@ public interface OperationDefinition extends SchemaNode {
      * @return Definition of output parameters for this operation. The
      *         substatements of output define nodes under the operation's output node.
      */
-    @NonNull OutputSchemaNode getOutput();
+    OutputSchemaNode getOutput();
 }
