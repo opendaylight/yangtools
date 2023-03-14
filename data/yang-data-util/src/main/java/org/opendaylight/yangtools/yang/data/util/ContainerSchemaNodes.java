@@ -53,10 +53,10 @@ public final class ContainerSchemaNodes {
     }
 
     private abstract static class AbstractContainerSchemaNode<T extends SchemaNode> implements ContainerLike {
-        final T schemaNode;
+        final @NonNull T schemaNode;
 
         AbstractContainerSchemaNode(final T schemaNode) {
-            this.schemaNode = schemaNode;
+            this.schemaNode = requireNonNull(schemaNode);
         }
 
         @Override
