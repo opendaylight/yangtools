@@ -64,8 +64,7 @@ public class YT1473Test {
         assertTrue(id instanceof LeafSchemaNode);
         final var type = ((LeafSchemaNode) id).getType();
         assertTrue(type instanceof InstanceIdentifierTypeDefinition);
-        CODEC = (XmlStringInstanceIdentifierCodec) XmlCodecFactory.create(modelContext)
-                .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+        CODEC = XmlCodecFactory.create(modelContext).instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
     }
 
     @AfterAll
