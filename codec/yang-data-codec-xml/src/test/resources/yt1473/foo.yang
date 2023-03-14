@@ -4,6 +4,14 @@ module foo {
 
   identity one;
 
+  typedef bitz {
+    type bits {
+      bit one;
+      bit two;
+      bit three;
+    }
+  }
+
   list foo {
     key str;
     leaf str {
@@ -24,6 +32,13 @@ module foo {
     key id;
     leaf id {
       type instance-identifier;
+    }
+  }
+
+  list bee {
+    key bts;
+    leaf bts {
+      type bitz;
     }
   }
 }
