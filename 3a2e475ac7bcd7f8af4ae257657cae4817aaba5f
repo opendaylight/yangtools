@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae719cb6_84de96c3",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/YT1473Test.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-03-14T10:23:00Z",
+      "side": 1,
+      "message": "this results in HTML escaping being active -- which we absolutely do not want it this test",
+      "range": {
+        "startLine": 72,
+        "startChar": 37,
+        "endLine": 72,
+        "endChar": 64
+      },
+      "revId": "3a2e475ac7bcd7f8af4ae257657cae4817aaba5f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
