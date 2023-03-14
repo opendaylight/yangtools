@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.verify;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class YT1473Test {
+class YT1473Test {
 
     private static final String FOO_NS = "foons"; // namespace for prefix 'foo'
     private static final QName FOO_FOO = QName.create(FOO_NS, "foo"); // list with key 'str'
@@ -56,16 +56,12 @@ public class YT1473Test {
     private ArgumentCaptor<String> captor;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         final var modelContext = YangParserTestUtils.parseYangResourceDirectory("/yt1473");
-        final var baz = modelContext.getDataChildByName(FOO_BAZ);
-        assertTrue(baz instanceof ListSchemaNode);
-        final var id = ((ListSchemaNode) baz).getDataChildByName(FOO_ID);
-        assertTrue(id instanceof LeafSchemaNode);
-        final var type = ((LeafSchemaNode) id).getType();
-        assertTrue(type instanceof InstanceIdentifierTypeDefinition);
-        CODEC = (XmlStringInstanceIdentifierCodec) XmlCodecFactory.create(modelContext)
-                .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+        final var baz = assertInstanceOf(ListSchemaNode.class, modelContext.getDataChildByName(FOO_BAZ));
+        final var id = assertInstanceOf(LeafSchemaNode.class, baz.getDataChildByName(FOO_ID));
+        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, id.getType());
+        CODEC = XmlCodecFactory.create(modelContext).instanceIdentifierCodec(type);
     }
 
     @AfterAll
