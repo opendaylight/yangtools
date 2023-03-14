@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.verify;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class YT1473Test {
+class YT1473Test {
 
     private static final String FOO_NS = "foons"; // namespace for prefix 'foo'
     private static final QName FOO_FOO = QName.create(FOO_NS, "foo"); // list with key 'str'
@@ -56,52 +56,49 @@ public class YT1473Test {
     private ArgumentCaptor<String> captor;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         final var modelContext = YangParserTestUtils.parseYangResourceDirectory("/yt1473");
-        final var baz = modelContext.getDataChildByName(FOO_BAZ);
-        assertTrue(baz instanceof ListSchemaNode);
-        final var id = ((ListSchemaNode) baz).getDataChildByName(FOO_ID);
-        assertTrue(id instanceof LeafSchemaNode);
-        final var type = ((LeafSchemaNode) id).getType();
-        assertTrue(type instanceof InstanceIdentifierTypeDefinition);
-        CODEC = XmlCodecFactory.create(modelContext).instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+        final var baz = assertInstanceOf(ListSchemaNode.class, modelContext.getDataChildByName(FOO_BAZ));
+        final var id = assertInstanceOf(LeafSchemaNode.class, baz.getDataChildByName(FOO_ID));
+        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, id.getType());
+        CODEC = XmlCodecFactory.create(modelContext).instanceIdentifierCodec(type);
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
         CODEC = null;
     }
 
     @Test
-    public void testSerializeSimple() throws Exception {
+    void testSerializeSimple() throws Exception {
         // No escaping needed, use single quotes
         assertEquals("/foo:foo[foo:str='str\"']", write(buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"")));
     }
 
     @Test
     @Disabled("YT-1473: string escaping needs to work")
-    public void testSerializeEscaped() throws Exception {
+    void testSerializeEscaped() throws Exception {
         // Escaping is needed, use double quotes and escape
         assertEquals("/foo:foo[foo:str=\"str'\\\"\"]", write(buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"")));
     }
 
     @Test
     @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefSame() throws Exception {
+    void testSerializeIdentityRefSame() throws Exception {
         // TODO: an improvement is to use just 'one' as the namespace is the same as the leaf (see RFC7951 section 6.8)
         assertEquals("/foo:bar[qname='one']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)));
     }
 
     @Test
     @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefOther() throws Exception {
+    void testSerializeIdentityRefOther() throws Exception {
         // No escaping is needed, use double quotes and escape
         assertEquals("/foo:bar[qname='bar:two']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
     }
 
     @Test
     @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
-    public void testSerializeInstanceIdentifierRef() throws Exception {
+    void testSerializeInstanceIdentifierRef() throws Exception {
         assertEquals("/foo:baz[id=\"/foo:bar[qname='bar:two']\"]", write(
                 buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)))
         );
@@ -109,13 +106,13 @@ public class YT1473Test {
 
     @Test
     @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityValue() throws Exception {
+    void testSerializeIdentityValue() throws Exception {
         assertEquals("/bar:foo[.='foo:one']", write(buildYangInstanceIdentifier(BAR_FOO, FOO_ONE)));
     }
 
     @Test
     @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
-    public void testSerializeInstanceIdentifierValue() throws Exception {
+    void testSerializeInstanceIdentifierValue() throws Exception {
         assertEquals("/bar:bar[.=\"/foo:bar/bar[qname='bar:two'\"]']",
                 write(buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO))));
     }
