@@ -23,10 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -130,18 +128,7 @@ public final class ContainerSchemaNodes {
 
         @Override
         public Collection<? extends DataSchemaNode> getChildNodes() {
-            // FIXME: input/output are always present, clean this up
-            final InputSchemaNode input = schemaNode.getInput();
-            final OutputSchemaNode output = schemaNode.getOutput();
-            if (input == null && output == null) {
-                return ImmutableList.of();
-            } else if (input != null && output != null) {
-                return ImmutableList.of(input, output);
-            } else if (input != null) {
-                return ImmutableList.of(input);
-            } else {
-                return ImmutableList.of(output);
-            }
+            return ImmutableList.of(schemaNode.getInput(), schemaNode.getOutput());
         }
 
         @Override
