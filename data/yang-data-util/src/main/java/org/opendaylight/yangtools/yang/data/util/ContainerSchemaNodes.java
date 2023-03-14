@@ -35,30 +35,29 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
- * yang-data-util
- * org.opendaylight.yangtools.yang.data.util
  * Utility class for taking notification or rpc as ContainerSchemaNode.
+ *
  * @author <a href="mailto:geng.xingyuan@zte.com.cn">Geng Xingyuan</a>
  */
 public final class ContainerSchemaNodes {
-
     private ContainerSchemaNodes() {
+        // Hidden on purpose
     }
 
     @Beta
-    public static ContainerLike forNotification(final NotificationDefinition notification) {
+    public static @NonNull ContainerLike forNotification(final NotificationDefinition notification) {
         return new NotificationContainerSchemaNode(notification);
     }
 
     @Beta
-    public static ContainerLike forRPC(final RpcDefinition rpc) {
+    public static @NonNull ContainerLike forRPC(final RpcDefinition rpc) {
         return new RpcContainerSchemaNode(rpc);
     }
 
-    private abstract static class AbstractContainerSchemaNode implements ContainerLike {
-        private final SchemaNode schemaNode;
+    private abstract static class AbstractContainerSchemaNode<T extends SchemaNode> implements ContainerLike {
+        final T schemaNode;
 
-        private AbstractContainerSchemaNode(final SchemaNode schemaNode) {
+        AbstractContainerSchemaNode(final T schemaNode) {
             this.schemaNode = schemaNode;
         }
 
@@ -109,23 +108,19 @@ public final class ContainerSchemaNodes {
         }
     }
 
-    private static final class RpcContainerSchemaNode extends AbstractContainerSchemaNode {
-
-        private final RpcDefinition rpcDefinition;
-
-        private RpcContainerSchemaNode(final RpcDefinition rpcDefinition) {
+    private static final class RpcContainerSchemaNode extends AbstractContainerSchemaNode<RpcDefinition> {
+        RpcContainerSchemaNode(final RpcDefinition rpcDefinition) {
             super(rpcDefinition);
-            this.rpcDefinition = rpcDefinition;
         }
 
         @Override
         public Collection<? extends GroupingDefinition> getGroupings() {
-            return rpcDefinition.getGroupings();
+            return schemaNode.getGroupings();
         }
 
         @Override
         public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
-            return rpcDefinition.getTypeDefinitions();
+            return schemaNode.getTypeDefinitions();
         }
 
         @Override
@@ -136,8 +131,8 @@ public final class ContainerSchemaNodes {
         @Override
         public Collection<? extends DataSchemaNode> getChildNodes() {
             // FIXME: input/output are always present, clean this up
-            final InputSchemaNode input = rpcDefinition.getInput();
-            final OutputSchemaNode output = rpcDefinition.getOutput();
+            final InputSchemaNode input = schemaNode.getInput();
+            final OutputSchemaNode output = schemaNode.getOutput();
             if (input == null && output == null) {
                 return ImmutableList.of();
             } else if (input != null && output != null) {
@@ -153,8 +148,8 @@ public final class ContainerSchemaNodes {
         public DataSchemaNode dataChildByName(final QName name) {
             // FIXME: also check namespace
             return switch (name.getLocalName()) {
-                case "input" -> rpcDefinition.getInput();
-                case "output" -> rpcDefinition.getOutput();
+                case "input" -> schemaNode.getInput();
+                case "output" -> schemaNode.getOutput();
                 default -> null;
             };
         }
@@ -176,40 +171,38 @@ public final class ContainerSchemaNodes {
         }
     }
 
-    private static final class NotificationContainerSchemaNode extends AbstractContainerSchemaNode {
-
-        private final NotificationDefinition notification;
+    private static final class NotificationContainerSchemaNode
+            extends AbstractContainerSchemaNode<NotificationDefinition> {
         private final ImmutableMap<QName, ? extends DataSchemaNode> mapNodes;
 
         private NotificationContainerSchemaNode(final NotificationDefinition notification) {
             super(notification);
-            this.notification = notification;
             mapNodes = Maps.uniqueIndex(notification.getChildNodes(), DataSchemaNode::getQName);
         }
 
         @Override
         public Collection<? extends NotificationDefinition> getNotifications() {
-            return ImmutableSet.of(notification);
+            return ImmutableSet.of(schemaNode);
         }
 
         @Override
         public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
-            return notification.getAvailableAugmentations();
+            return schemaNode.getAvailableAugmentations();
         }
 
         @Override
         public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
-            return notification.getTypeDefinitions();
+            return schemaNode.getTypeDefinitions();
         }
 
         @Override
         public Collection<? extends DataSchemaNode> getChildNodes() {
-            return notification.getChildNodes();
+            return schemaNode.getChildNodes();
         }
 
         @Override
         public Collection<? extends GroupingDefinition> getGroupings() {
-            return notification.getGroupings();
+            return schemaNode.getGroupings();
         }
 
         @Override
@@ -220,7 +213,7 @@ public final class ContainerSchemaNodes {
         @Override
         @Deprecated(forRemoval = true)
         public boolean isAddedByUses() {
-            //FIXME: reference to https://bugs.opendaylight.org/show_bug.cgi?id=6897
+            // FIXME: reference to https://jira.opendaylight.org/browse/YANGTOOLS-685
             return false;
         }
 
