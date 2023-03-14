@@ -8,13 +8,25 @@ module bar {
     base foo:one;
   }
 
-  leaf foo {
+  leaf-list str {
+    type string;
+  }
+
+  leaf-list foo {
     type identityref {
       base foo:one;
     }
   }
 
-  leaf bar {
+  leaf-list bar {
+    type instance-identifier;
+  }
+
+  leaf-list bee {
+    type foo:bitz;
+  }
+
+  leaf baz {
     type instance-identifier;
   }
 }
