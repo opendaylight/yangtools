@@ -12,7 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -27,8 +26,6 @@ public class BindingReflectionsTest {
     public void testBindingWithDummyObject() throws Exception {
         assertEquals("ModuleInfoClassName should be equal to string", "test.$YangModuleInfoImpl",
                 BindingReflections.getModuleInfoClassName("test"));
-        assertEquals("Module info should be empty Set", Collections.emptySet(),
-                BindingReflections.loadModuleInfos());
         assertFalse("Should not be RpcType", BindingReflections.isRpcType(DataObject.class));
         assertTrue("Should be BindingClass", BindingReflections.isBindingClass(DataObject.class));
         assertFalse("Should not be Notification", BindingReflections.isNotification(DataObject.class));

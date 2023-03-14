@@ -232,16 +232,6 @@ public final class BindingReflections {
     }
 
     /**
-     * Loads {@link YangModuleInfo} infos available on current classloader. This method is shorthand for
-     * {@link #loadModuleInfos(ClassLoader)} with {@link Thread#getContextClassLoader()} for current thread.
-     *
-     * @return Set of {@link YangModuleInfo} available for current classloader.
-     */
-    public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos() {
-        return loadModuleInfos(Thread.currentThread().getContextClassLoader());
-    }
-
-    /**
      * Loads {@link YangModuleInfo} infos available on supplied classloader.
      *
      * <p>

@@ -52,7 +52,7 @@ public final class ModuleInfoSnapshotBuilder {
     public @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject> clazz) {
         final YangModuleInfo moduleInfo;
         try {
-            moduleInfo = BindingReflections.getModuleInfo(clazz);
+            moduleInfo = BindingRuntimeHelpers.extractYangModuleInfo(clazz);
         } catch (Exception e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException("Failed to introspect " + clazz, e);
