@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Set;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1412Test {
+class YT1412Test {
     private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("foo"));
     private static final QName ONE = QName.create(MODULE, "one");
     private static final QName TWO = QName.create(MODULE, "two");
@@ -42,81 +41,69 @@ public class YT1412Test {
 
     private final SchemaInferenceStack stack = SchemaInferenceStack.of(CONTEXT.getEffectiveModelContext());
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYangResource("/yt1412.yang"));
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         CONTEXT = null;
     }
 
     @Test
-    public void testEnterThroughChoice() {
-        final var one = CONTEXT.getRoot().enterChild(stack, ONE);
-        assertThat(one, instanceOf(ContainerContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ContainerEffectiveStatement.class));
+    void testEnterThroughChoice() {
+        final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = one.enterChild(FOUR, stack);
-        assertThat(two, instanceOf(ChoiceNodeContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ChoiceEffectiveStatement.class));
+        final var two = assertInstanceOf(ChoiceNodeContextNode.class, one.enterChild(FOUR, stack));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = two.enterChild(FOUR, stack);
-        assertThat(three, instanceOf(ChoiceNodeContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ChoiceEffectiveStatement.class));
+        final var three = assertInstanceOf(ChoiceNodeContextNode.class, two.enterChild(FOUR, stack));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var four = three.enterChild(FOUR, stack);
-        assertThat(four, instanceOf(LeafContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(LeafEffectiveStatement.class));
+        assertInstanceOf(LeafContextNode.class, three.enterChild(FOUR, stack));
+        assertInstanceOf(LeafEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, FOUR, FOUR), stack.toSchemaNodeIdentifier());
     }
 
     @Test
-    public void testEnterThroughAugment() {
-        final var one = CONTEXT.getRoot().enterChild(stack, ONE);
-        assertThat(one, instanceOf(ContainerContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ContainerEffectiveStatement.class));
+    void testEnterThroughAugment() {
+        final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var augment = one.enterChild(FIVE, stack);
-        assertThat(augment, instanceOf(AugmentationContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ContainerEffectiveStatement.class));
+        final var augment = assertInstanceOf(AugmentationContextNode.class, one.enterChild(FIVE, stack));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var five = augment.enterChild(FIVE, stack);
-        assertThat(five, instanceOf(UnkeyedListMixinContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ListEffectiveStatement.class));
+        final var five = assertInstanceOf(UnkeyedListMixinContextNode.class, augment.enterChild(FIVE, stack));
+        assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
-        final var fiveItem = five.enterChild(FIVE, stack);
-        assertThat(fiveItem, instanceOf(UnkeyedListItemContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ListEffectiveStatement.class));
+        assertInstanceOf(UnkeyedListItemContextNode.class, five.enterChild(FIVE, stack));
+        assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, FIVE), stack.toSchemaNodeIdentifier());
     }
 
     @Test
-    public void testEnterThroughAugmentChoiceAugment() {
-        final var one = CONTEXT.getRoot().enterChild(stack, ONE);
-        assertThat(one, instanceOf(ContainerContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ContainerEffectiveStatement.class));
+    void testEnterThroughAugmentChoiceAugment() {
+        final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
+        assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = one.enterChild(SIX, stack);
-        assertThat(two, instanceOf(ChoiceNodeContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ChoiceEffectiveStatement.class));
+        final var two = assertInstanceOf(ChoiceNodeContextNode.class, one.enterChild(SIX, stack));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = two.enterChild(SIX, stack);
-        assertThat(three, instanceOf(ChoiceNodeContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(ChoiceEffectiveStatement.class));
+        final var three = assertInstanceOf(ChoiceNodeContextNode.class, two.enterChild(SIX, stack));
+        assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var six = three.enterChild(SIX, stack);
-        assertThat(six, instanceOf(LeafContextNode.class));
-        assertThat(stack.currentStatement(), instanceOf(LeafEffectiveStatement.class));
+        assertInstanceOf(LeafContextNode.class, three.enterChild(SIX, stack));
+        assertInstanceOf(LeafEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, SIX, SIX), stack.toSchemaNodeIdentifier());
     }
 
     @Test
-    public void testEnterChoicePath() {
+    void testEnterChoicePath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
             new NodeIdentifier(ONE),
             new NodeIdentifier(TWO),
@@ -124,12 +111,12 @@ public class YT1412Test {
             new NodeIdentifier(FOUR)))
             .orElseThrow();
 
-        assertThat(result.node(), instanceOf(LeafContextNode.class));
+        assertInstanceOf(LeafContextNode.class, result.node());
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, FOUR, FOUR), result.stack().toSchemaNodeIdentifier());
     }
 
     @Test
-    public void testEnterAugmentPath() {
+    void testEnterAugmentPath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
             new NodeIdentifier(ONE),
             new AugmentationIdentifier(Set.of(FIVE)),
@@ -137,12 +124,12 @@ public class YT1412Test {
             new NodeIdentifier(FIVE)))
             .orElseThrow();
 
-        assertThat(result.node(), instanceOf(UnkeyedListItemContextNode.class));
+        assertInstanceOf(UnkeyedListItemContextNode.class, result.node());
         assertEquals(Absolute.of(ONE, FIVE), result.stack().toSchemaNodeIdentifier());
     }
 
     @Test
-    public void testEnterAugmentChoicePath() {
+    void testEnterAugmentChoicePath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
             new NodeIdentifier(ONE),
             new NodeIdentifier(TWO),
@@ -150,7 +137,7 @@ public class YT1412Test {
             new NodeIdentifier(SIX)))
             .orElseThrow();
 
-        assertThat(result.node(), instanceOf(LeafContextNode.class));
+        assertInstanceOf(LeafContextNode.class, result.node());
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, SIX, SIX), result.stack().toSchemaNodeIdentifier());
     }
 }

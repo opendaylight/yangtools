@@ -8,69 +8,69 @@
 package org.opendaylight.yangtools.yang.data.util.codec;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class IdentityCodecUtilTest {
+class IdentityCodecUtilTest {
     private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("yangtools846"));
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/yangtools846.yang");
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         SCHEMA_CONTEXT = null;
     }
 
     @Test
-    public void testCorrectInput() {
+    void testCorrectInput() {
         assertNotNull(IdentityCodecUtil.parseIdentity("yt846:foo", SCHEMA_CONTEXT,
             IdentityCodecUtilTest::resolvePrefix));
     }
 
     @Test
-    public void testNonExistent() {
+    void testNonExistent() {
         assertThrows(IllegalArgumentException.class,
             () -> IdentityCodecUtil.parseIdentity("yt846:bar", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
     @Test
-    public void testEmptyLocalName() {
+    void testEmptyLocalName() {
         assertThrows(IllegalArgumentException.class,
             () -> IdentityCodecUtil.parseIdentity("yt846:", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
     @Test
-    public void testEmptyString() {
+    void testEmptyString() {
         assertThrows(IllegalStateException.class,
             () -> IdentityCodecUtil.parseIdentity("", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
     @Test
-    public void testNoPrefix() {
+    void testNoPrefix() {
         assertThrows(IllegalStateException.class,
             () -> IdentityCodecUtil.parseIdentity("foo", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
     @Test
-    public void testEmptyPrefix() {
+    void testEmptyPrefix() {
         assertThrows(IllegalStateException.class,
             () -> IdentityCodecUtil.parseIdentity(":foo", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
     @Test
-    public void testColon() {
+    void testColon() {
         assertThrows(IllegalStateException.class,
             () -> IdentityCodecUtil.parseIdentity(":", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }

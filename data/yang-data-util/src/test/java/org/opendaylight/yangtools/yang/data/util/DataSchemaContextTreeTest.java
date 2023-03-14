@@ -7,50 +7,50 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class DataSchemaContextTreeTest {
+class DataSchemaContextTreeTest {
     private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("dataschemacontext"));
     private static final QName FOO = QName.create(MODULE, "foo");
     private static final QName BAR = QName.create(MODULE, "bar");
     private static final QName BAZ = QName.create(MODULE, "baz");
     private static DataSchemaContextTree CONTEXT;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYangResource("/dataschemacontext.yang"));
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         CONTEXT = null;
     }
 
     @Test
-    public void testCorrectInput() {
+    void testCorrectInput() {
         assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO)).isPresent());
         assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO).node(BAR)).isPresent());
         assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO).node(BAR).node(BAZ)).isPresent());
     }
 
     @Test
-    public void testSimpleBad() {
+    void testSimpleBad() {
         assertEquals(Optional.empty(), CONTEXT.findChild(YangInstanceIdentifier.of(BAR)));
     }
 
     @Test
-    public void testNestedBad() {
+    void testNestedBad() {
         assertEquals(Optional.empty(), CONTEXT.findChild(YangInstanceIdentifier.of(BAR).node(BAZ)));
     }
 }
