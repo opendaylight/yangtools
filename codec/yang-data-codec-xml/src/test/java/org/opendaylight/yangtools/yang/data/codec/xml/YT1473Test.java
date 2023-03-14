@@ -8,19 +8,19 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import com.google.common.collect.ImmutableSet;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamWriter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -31,39 +31,34 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-@ExtendWith(MockitoExtension.class)
-public class YT1473Test {
+class YT1473Test {
     public static final String FOO_NS = "foons"; // namespace for prefix 'foo'
     public static final QName FOO_FOO = QName.create(FOO_NS, "foo"); // list with key 'str'
     public static final QName FOO_BAR = QName.create(FOO_NS, "bar"); // list with key 'qname'
     public static final QName FOO_BAZ = QName.create(FOO_NS, "baz"); // list with key 'id'
+    public static final QName FOO_BEE = QName.create(FOO_NS, "bee"); // list with key 'bts'
     public static final QName FOO_ONE = QName.create(FOO_NS, "one"); // identity
     public static final QName FOO_STR = QName.create(FOO_NS, "str"); // key of type 'string'
     public static final QName FOO_QNAME = QName.create(FOO_NS, "qname"); // key of type 'one' based
     public static final QName FOO_ID = QName.create(FOO_NS, "id"); // key of type 'instance-identifier'
+    public static final QName FOO_BTS = QName.create(FOO_NS, "bts"); // key of type 'bts' (bits)
 
     public static final String BAR_NS = "barns"; // namespace for prefix 'bar'
-    public static final QName BAR_FOO = QName.create(BAR_NS, "foo"); // leaf of type 'foo:one' based
-    public static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf of type 'instance-identifier'
     public static final QName BAR_TWO = QName.create(BAR_NS, "two"); // identity inheriting 'foo:one'
+    public static final QName BAR_STR = QName.create(BAR_NS, "str"); // leaf-list of type 'string'
+    public static final QName BAR_FOO = QName.create(BAR_NS, "foo"); // leaf-list of type 'foo:one' based
+    public static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf-list of type 'instance-identifier'
+    public static final QName BAR_BEE = QName.create(BAR_NS, "bee"); // leaf-list of type 'foo:bts' (bits)
 
     public static XmlCodec<YangInstanceIdentifier> CODEC;
-
-    @Mock
-    public XMLStreamWriter writer;
-    @Captor
-    public ArgumentCaptor<String> captor;
 
     @BeforeAll
     public static void beforeAll() {
         final var modelContext = YangParserTestUtils.parseYangResourceDirectory("/yt1473");
-        final var baz = modelContext.getDataChildByName(FOO_BAZ);
-        assertTrue(baz instanceof ListSchemaNode);
-        final var id = ((ListSchemaNode) baz).getDataChildByName(FOO_ID);
-        assertTrue(id instanceof LeafSchemaNode);
-        final var type = ((LeafSchemaNode) id).getType();
-        assertTrue(type instanceof InstanceIdentifierTypeDefinition);
-        CODEC = XmlCodecFactory.create(modelContext).instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+        final var baz = assertInstanceOf(ListSchemaNode.class, modelContext.getDataChildByName(FOO_BAZ));
+        final var id = assertInstanceOf(LeafSchemaNode.class, baz.getDataChildByName(FOO_ID));
+        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, id.getType());
+        CODEC = XmlCodecFactory.create(modelContext).instanceIdentifierCodec(type);
     }
 
     @AfterAll
@@ -74,49 +69,87 @@ public class YT1473Test {
     @Test
     public void testSerializeSimple() throws Exception {
         // No escaping needed, use single quotes
-        assertEquals("/foo:foo[foo:str='str\"']", write(buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"")));
+        assertSerdes("/bar:str[.='str\"']", buildYangInstanceIdentifier(BAR_STR, "str\""));
+        assertSerdes("/bar:str[.='str\\']", buildYangInstanceIdentifier(BAR_STR, "str\\"));
+        assertSerdes("/bar:str[.='str\r']", buildYangInstanceIdentifier(BAR_STR, "str\r"));
+        assertSerdes("/bar:str[.='str\n']", buildYangInstanceIdentifier(BAR_STR, "str\n"));
+        assertSerdes("/bar:str[.='str\t']", buildYangInstanceIdentifier(BAR_STR, "str\t"));
+
+        assertSerdes("/foo:foo[foo:str='str\"\\']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"\\"));
+        assertSerdes("/foo:foo[foo:str='str\r\n\t']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\r\n\t"));
     }
 
     @Test
     @Disabled("YT-1473: string escaping needs to work")
     public void testSerializeEscaped() throws Exception {
         // Escaping is needed, use double quotes and escape
-        assertEquals("/foo:foo[foo:str=\"str'\\\"\"]", write(buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"")));
+        assertSerdes("/bar:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR, "str'\""));
+        assertSerdes("/bar:str[.=\"str'\\n\"]", buildYangInstanceIdentifier(BAR_STR, "str'\n"));
+        assertSerdes("/bar:str[.=\"str'\\t\"]", buildYangInstanceIdentifier(BAR_STR, "str'\t"));
+        assertSerdes("/bar:str[.=\"str'\r\"]", buildYangInstanceIdentifier(BAR_STR, "str'\r"));
+
+        assertSerdes("/foo:foo[foo:str=\"str'\\\"\\n\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"\n"));
+        assertSerdes("/foo:foo[foo:str=\"str'\\t\r\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\t\r"));
     }
 
     @Test
     @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefSame() throws Exception {
-        // TODO: an improvement is to use just 'one' as the namespace is the same as the leaf (see RFC7951 section 6.8)
-        assertEquals("/foo:bar[qname='one']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)));
-    }
-
-    @Test
-    @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
-    public void testSerializeIdentityRefOther() throws Exception {
-        // No escaping is needed, use double quotes and escape
-        assertEquals("/foo:bar[qname='bar:two']", write(buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
+    public void testSerializeIdentity() throws Exception {
+        assertSerdes("/foo:bar[foo:qname='foo:one']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE));
+        assertSerdes("/foo:bar[foo:qname='bar:two']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO));
     }
 
     @Test
     @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
     public void testSerializeInstanceIdentifierRef() throws Exception {
-        assertEquals("/foo:baz[id=\"/foo:bar[qname='bar:two']\"]", write(
-                buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)))
-        );
+        assertSerdes("/foo:baz[foo:id=\"/foo:bar[foo:qname='bar:two']\"]",
+            buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
     }
 
     @Test
     @Disabled("YT-1473: QName values need to be recognized and properly encoded via identity codec")
     public void testSerializeIdentityValue() throws Exception {
-        assertEquals("/bar:foo[.='foo:one']", write(buildYangInstanceIdentifier(BAR_FOO, FOO_ONE)));
+        assertSerdes("/bar:foo[.='foo:one']", buildYangInstanceIdentifier(BAR_FOO, FOO_ONE));
+        assertSerdes("/bar:foo[.='bar:two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO));
     }
 
     @Test
     @Disabled("YT-1473: Instance-identifier values need to be recognized and properly encoded and escaped")
     public void testSerializeInstanceIdentifierValue() throws Exception {
-        assertEquals("/bar:bar[.=\"/foo:bar/bar[qname='bar:two'\"]']",
-                write(buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO))));
+        assertSerdes("/bar:bar[.=\"/foo:bar[foo:qname='foo:one']\"]",
+            buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)));
+        assertSerdes("/bar:bar[.=\"/foo:bar[foo:qname='bar:two']\"]",
+            buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
+    }
+
+    @Test
+    @Disabled("YT-1473: bits values need to be recognized and properly encoded and escaped")
+    public void testSerializeBits() throws Exception {
+        assertSerdes("/foo:bee[foo:bts='']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of()));
+        assertSerdes("/foo:bee[foo:bts='one']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("one")));
+        assertSerdes("/foo:bee[foo:bts='two three']",
+            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("two", "three")));
+    }
+
+    @Test
+    @Disabled("YT-1473: bits values need to be recognized and properly encoded and escaped")
+    public void testSerializeBitsValue() throws Exception {
+        assertSerdes("/bar:bee[.='']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of()));
+        assertSerdes("/bar:bee[.='one']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("one")));
+        assertSerdes("/bar:bee[.='two three']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("two", "three")));
+    }
+
+    private static void assertSerdes(final String expected, final YangInstanceIdentifier id) throws Exception {
+        final var writer = mock(XMLStreamWriter.class);
+        final var captor = ArgumentCaptor.forClass(String.class);
+        CODEC.writeValue(writer, id);
+        verify(writer).writeCharacters(captor.capture());
+        assertEquals(expected, captor.getValue());
+
+        final var context = mock(NamespaceContext.class);
+        doReturn("foons").when(context).getNamespaceURI("foo");
+        doReturn("barns").when(context).getNamespaceURI("bar");
+        assertEquals(id, CODEC.parseValue(context, expected));
     }
 
     private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final QName key,
@@ -126,12 +159,6 @@ public class YT1473Test {
     }
 
     private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final Object value) {
-        return YangInstanceIdentifier.create(new NodeWithValue<>(node, value));
-    }
-
-    private String write(final YangInstanceIdentifier yangInstanceIdentifier) throws Exception {
-        CODEC.writeValue(writer, yangInstanceIdentifier);
-        verify(writer).writeCharacters(captor.capture());
-        return captor.getValue();
+        return YangInstanceIdentifier.create(new NodeIdentifier(node), new NodeWithValue<>(node, value));
     }
 }
