@@ -541,11 +541,6 @@ public final class StmtContextUtils {
         return template.intern();
     }
 
-    @Deprecated(forRemoval = true, since = "10.0.5")
-    public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
-        return ctx == null ? null : getModuleQName(ctx);
-    }
-
     public static @NonNull QNameModule getModuleQName(final @NonNull StmtContext<?, ?, ?> ctx) {
         return getModuleQName(ctx.getRoot());
     }
