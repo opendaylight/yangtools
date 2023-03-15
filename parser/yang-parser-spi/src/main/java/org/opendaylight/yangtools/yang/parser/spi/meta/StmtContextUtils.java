@@ -275,21 +275,18 @@ public final class StmtContextUtils {
      *         according to RFC6020.
      */
     public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
-        if (!(stmtCtx.publicDefinition() instanceof YangStmtMapping)) {
-            return false;
+        if (stmtCtx.publicDefinition() instanceof YangStmtMapping mapping) {
+            return switch (mapping) {
+                case LEAF, CHOICE, ANYXML -> Boolean.TRUE.equals(
+                    firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
+                case LIST, LEAF_LIST -> {
+                    final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+                    yield minElements != null && minElements > 0;
+                }
+                default -> false;
+            };
         }
-        switch ((YangStmtMapping) stmtCtx.publicDefinition()) {
-            case LEAF:
-            case CHOICE:
-            case ANYXML:
-                return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
-            case LIST:
-            case LEAF_LIST:
-                final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
-                return minElements != null && minElements > 0;
-            default:
-                return false;
-        }
+        return false;
     }
 
     /**
