@@ -458,7 +458,7 @@ public final class StmtContextUtils {
         switch (namesParts.length) {
             case 1:
                 localName = namesParts[0];
-                qnameModule = getRootModuleQName(ctx);
+                qnameModule = getModuleQName(ctx);
                 break;
             default:
                 prefix = namesParts[0];
@@ -467,7 +467,7 @@ public final class StmtContextUtils {
                 // in case of unknown statement argument, we're not going to parse it
                 if (qnameModule == null && isUnknownStatement(ctx)) {
                     localName = value;
-                    qnameModule = getRootModuleQName(ctx);
+                    qnameModule = getModuleQName(ctx);
                 }
                 if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                     ctx = ctx.getOriginalCtx().orElse(null);
@@ -527,7 +527,7 @@ public final class StmtContextUtils {
     }
 
     private static @NonNull QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
-        return internedQName(ctx, getRootModuleQName(ctx), localName);
+        return internedQName(ctx, getModuleQName(ctx), localName);
     }
 
     private static @NonNull QName internedQName(final CommonStmtCtx ctx, final QNameModule module,
@@ -541,8 +541,13 @@ public final class StmtContextUtils {
         return template.intern();
     }
 
+    @Deprecated(forRemoval = true, since = "10.0.5")
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
-        return ctx == null ? null : getModuleQName(ctx.getRoot());
+        return ctx == null ? null : getModuleQName(ctx);
+    }
+
+    public static @NonNull QNameModule getModuleQName(final @NonNull StmtContext<?, ?, ?> ctx) {
+        return getModuleQName(ctx.getRoot());
     }
 
     public static @NonNull QNameModule getModuleQName(final @NonNull RootStmtContext<?, ?, ?> ctx) {
