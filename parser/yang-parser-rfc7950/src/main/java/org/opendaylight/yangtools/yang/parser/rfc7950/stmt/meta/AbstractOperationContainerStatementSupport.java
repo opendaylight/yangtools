@@ -52,7 +52,7 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
 
     @Override
     public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return createArgument.apply(StmtContextUtils.getRootModuleQName(ctx));
+        return createArgument.apply(StmtContextUtils.getModuleQName(ctx));
     }
 
     @Override
