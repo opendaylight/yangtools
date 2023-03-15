@@ -7,32 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mock.Strictness;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class DeclaredStatementTest {
+@ExtendWith(MockitoExtension.class)
+class DeclaredStatementTest {
+    @Mock(strictness = Strictness.LENIENT)
+    DeclaredStatement1 stmt;
     @Mock
-    public DeclaredStatement1 stmt;
+    DeclaredStatement1 stmt1;
     @Mock
-    public DeclaredStatement1 stmt1;
-    @Mock
-    public DeclaredStatement2 stmt2;
+    DeclaredStatement2 stmt2;
 
-    @Before
-    public void before() {
-        doReturn("one").when(stmt1).argument();
-        doReturn("two").when(stmt2).argument();
+    @BeforeEach
+    void before() {
         doReturn(ImmutableList.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
         doCallRealMethod().when(stmt).declaredSubstatements(any());
         doCallRealMethod().when(stmt).findFirstDeclaredSubstatement(any());
@@ -41,7 +40,7 @@ public class DeclaredStatementTest {
     }
 
     @Test
-    public void testDeclaredSubstatements() {
+    void testDeclaredSubstatements() {
         assertEquals(ImmutableList.of(stmt1), ImmutableList.copyOf(stmt.declaredSubstatements(
             DeclaredStatement1.class)));
         assertEquals(ImmutableList.of(stmt2), ImmutableList.copyOf(stmt.declaredSubstatements(
@@ -49,13 +48,15 @@ public class DeclaredStatementTest {
     }
 
     @Test
-    public void testFindFirstDeclaredSubstatement() {
+    void testFindFirstDeclaredSubstatement() {
         assertEquals(Optional.of(stmt1), stmt.findFirstDeclaredSubstatement(DeclaredStatement1.class));
         assertEquals(Optional.of(stmt2), stmt.findFirstDeclaredSubstatement(DeclaredStatement2.class));
     }
 
     @Test
-    public void testFindFirstDeclaredSubstatementArgument() {
+    void testFindFirstDeclaredSubstatementArgument() {
+        doReturn("one").when(stmt1).argument();
+        doReturn("two").when(stmt2).argument();
         assertEquals(Optional.of("one"), stmt.findFirstDeclaredSubstatementArgument(DeclaredStatement1.class));
         assertEquals(Optional.of("two"), stmt.findFirstDeclaredSubstatementArgument(DeclaredStatement2.class));
     }

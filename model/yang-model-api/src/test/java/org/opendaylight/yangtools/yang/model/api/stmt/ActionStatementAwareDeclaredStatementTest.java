@@ -7,37 +7,37 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement1;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class ActionStatementAwareDeclaredStatementTest {
+@ExtendWith(MockitoExtension.class)
+class ActionStatementAwareDeclaredStatementTest {
     @Mock
-    public ActionStatementAwareDeclaredStatement<?> stmt;
+    ActionStatementAwareDeclaredStatement<?> stmt;
     @Mock
-    public DeclaredStatement1 stmt1;
+    DeclaredStatement1 stmt1;
     @Mock
-    public ActionStatement stmt2;
+    ActionStatement stmt2;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         doReturn(ImmutableList.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
         doCallRealMethod().when(stmt).declaredSubstatements(any());
         doCallRealMethod().when(stmt).getActions();
     }
 
     @Test
-    public void testGetActions() {
+    void testGetActions() {
         assertEquals(ImmutableList.of(stmt2), ImmutableList.copyOf(stmt.getActions()));
     }
 }
