@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea5ca91b_c333bc73",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2023-03-15T09:16:29Z",
+      "side": 1,
+      "message": "it would be better to follow `var` convention in each variable declaration inside this method or do not use var",
+      "range": {
+        "startLine": 191,
+        "startChar": 18,
+        "endLine": 191,
+        "endChar": 21
+      },
+      "revId": "e8bfbcb18128a4b97e24080882c13e3547e178ba",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
