@@ -623,19 +623,14 @@ public class InstanceIdentifier<T extends DataObject>
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <N extends DataObject> @NonNull InstanceIdentifier<N> trustedCreate(final PathArgument arg,
-            final Iterable<PathArgument> pathArguments, final int hash, boolean wildcarded) {
-        if (Identifiable.class.isAssignableFrom(arg.getType()) && !wildcarded) {
-            Identifier<?> key = null;
-            if (arg instanceof IdentifiableItem) {
-                key = ((IdentifiableItem<?, ?>)arg).getKey();
-            } else {
-                wildcarded = true;
-            }
-
-            return new KeyedInstanceIdentifier(arg.getType(), pathArguments, wildcarded, hash, key);
+            final Iterable<PathArgument> pathArguments, final int hash, final boolean wildcarded) {
+        if (arg instanceof IdentifiableItem<?, ?> identifiable) {
+            return new KeyedInstanceIdentifier(arg.getType(), pathArguments, wildcarded, hash, identifiable.getKey());
         }
 
-        return new InstanceIdentifier(arg.getType(), pathArguments, wildcarded, hash);
+        final var type = arg.getType();
+        return new InstanceIdentifier(type, pathArguments, wildcarded || Identifiable.class.isAssignableFrom(type),
+            hash);
     }
 
     /**
