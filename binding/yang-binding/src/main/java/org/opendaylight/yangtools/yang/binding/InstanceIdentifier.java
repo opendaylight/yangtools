@@ -683,15 +683,8 @@ public class InstanceIdentifier<T extends DataObject>
 
         @Override
         public final boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof AbstractPathArgument)) {
-                return false;
-            }
-            final AbstractPathArgument<?> other = (AbstractPathArgument<?>) obj;
-            return type.equals(other.type) && Objects.equals(getKey(), other.getKey())
-                    && getCaseType().equals(other.getCaseType());
+            return this == obj || obj instanceof AbstractPathArgument<?> other && type.equals(other.type)
+                && Objects.equals(getKey(), other.getKey()) && getCaseType().equals(other.getCaseType());
         }
 
         @Override
