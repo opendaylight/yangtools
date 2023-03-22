@@ -439,7 +439,7 @@ public class InstanceIdentifier<T extends DataObject>
      */
     public static <T extends ChildOf<? extends DataRoot>> @NonNull InstanceIdentifierBuilder<T> builder(
             final Class<T> container) {
-        return new InstanceIdentifierBuilderImpl<T>().addWildNode(Item.of(container));
+        return new InstanceIdentifierBuilderImpl<>(Item.of(container));
     }
 
     /**
@@ -455,7 +455,7 @@ public class InstanceIdentifier<T extends DataObject>
      */
     public static <C extends ChoiceIn<? extends DataRoot> & DataObject, T extends ChildOf<? super C>>
             @NonNull InstanceIdentifierBuilder<T> builder(final Class<C> caze, final Class<T> container) {
-        return new InstanceIdentifierBuilderImpl<T>().addWildNode(Item.of(caze, container));
+        return new InstanceIdentifierBuilderImpl<>(Item.of(caze, container));
     }
 
     /**
@@ -472,7 +472,7 @@ public class InstanceIdentifier<T extends DataObject>
     public static <N extends Identifiable<K> & ChildOf<? extends DataRoot>,
             K extends Identifier<N>> @NonNull InstanceIdentifierBuilder<N> builder(final Class<N> listItem,
                     final K listKey) {
-        return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(listItem, listKey));
+        return new InstanceIdentifierBuilderImpl<>(IdentifiableItem.of(listItem, listKey));
     }
 
     /**
@@ -492,13 +492,13 @@ public class InstanceIdentifier<T extends DataObject>
             N extends Identifiable<K> & ChildOf<? super C>, K extends Identifier<N>>
             @NonNull InstanceIdentifierBuilder<N> builder(final Class<C> caze, final Class<N> listItem,
                     final K listKey) {
-        return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(caze, listItem, listKey));
+        return new InstanceIdentifierBuilderImpl<>(IdentifiableItem.of(caze, listItem, listKey));
     }
 
     public static <R extends DataRoot & DataObject, T extends ChildOf<? super R>>
             @NonNull InstanceIdentifierBuilder<T> builderOfInherited(final Class<R> root, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
-        return new InstanceIdentifierBuilderImpl<T>().addWildNode(Item.of(container));
+        return new InstanceIdentifierBuilderImpl<>(Item.of(container));
     }
 
     public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
@@ -506,7 +506,7 @@ public class InstanceIdentifier<T extends DataObject>
             @NonNull InstanceIdentifierBuilder<T> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
-        return new InstanceIdentifierBuilderImpl<T>().addWildNode(Item.of(caze, container));
+        return new InstanceIdentifierBuilderImpl<>(Item.of(caze, container));
     }
 
     public static <R extends DataRoot & DataObject, N extends Identifiable<K> & ChildOf<? super R>,
@@ -514,7 +514,7 @@ public class InstanceIdentifier<T extends DataObject>
             @NonNull InstanceIdentifierBuilder<N> builderOfInherited(final Class<R> root,
                 final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
-        return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(listItem, listKey));
+        return new InstanceIdentifierBuilderImpl<>(IdentifiableItem.of(listItem, listKey));
     }
 
     public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
@@ -522,7 +522,7 @@ public class InstanceIdentifier<T extends DataObject>
             @NonNull InstanceIdentifierBuilder<N> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
-        return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(caze, listItem, listKey));
+        return new InstanceIdentifierBuilderImpl<>(IdentifiableItem.of(caze, listItem, listKey));
     }
 
     /**

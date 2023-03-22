@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -22,20 +24,35 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     private final ImmutableList.Builder<PathArgument> pathBuilder = ImmutableList.builder();
     private final HashCodeBuilder<PathArgument> hashBuilder;
     private final Iterable<? extends PathArgument> basePath;
-    private boolean wildcard = false;
-    private PathArgument arg = null;
+    private boolean wildcard;
+    private PathArgument arg;
 
-    InstanceIdentifierBuilderImpl() {
-        this.hashBuilder = new HashCodeBuilder<>();
-        this.basePath = null;
+    private InstanceIdentifierBuilderImpl(final PathArgument item) {
+        hashBuilder = new HashCodeBuilder<>();
+        basePath = null;
+        arg = requireNonNull(item);
+        hashBuilder.addArgument(item);
+        pathBuilder.add(item);
+        wildcard = false;
+    }
+
+    InstanceIdentifierBuilderImpl(final IdentifiableItem<? super T, ?> item) {
+        this((PathArgument) item);
+    }
+
+    InstanceIdentifierBuilderImpl(final Item<T> item) {
+        this((PathArgument) item);
+        if (Identifiable.class.isAssignableFrom(item.getType())) {
+            wildcard = true;
+        }
     }
 
     InstanceIdentifierBuilderImpl(final PathArgument item, final Iterable<? extends PathArgument> pathArguments,
             final int hash, final boolean wildcard) {
-        this.hashBuilder = new HashCodeBuilder<>(hash);
-        this.basePath = pathArguments;
+        hashBuilder = new HashCodeBuilder<>(hash);
+        basePath = pathArguments;
         this.wildcard = wildcard;
-        this.arg = item;
+        arg = item;
     }
 
     @Override
@@ -110,7 +127,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
         return InstanceIdentifier.trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
     }
 
-    <N extends DataObject> @NonNull InstanceIdentifierBuilderImpl<N> addWildNode(final PathArgument newArg) {
+    private <N extends DataObject> @NonNull InstanceIdentifierBuilderImpl<N> addWildNode(final PathArgument newArg) {
         if (Identifiable.class.isAssignableFrom(newArg.getType())) {
             wildcard = true;
         }
@@ -118,7 +135,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @SuppressWarnings("unchecked")
-    <N extends DataObject> @NonNull InstanceIdentifierBuilderImpl<N> addNode(final PathArgument newArg) {
+    private <N extends DataObject> @NonNull InstanceIdentifierBuilderImpl<N> addNode(final PathArgument newArg) {
         arg = newArg;
         hashBuilder.addArgument(newArg);
         pathBuilder.add(newArg);
