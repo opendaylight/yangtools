@@ -62,17 +62,9 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof InstanceIdentifierBuilderImpl) {
-            @SuppressWarnings("unchecked")
-            final InstanceIdentifierBuilderImpl<T> otherBuilder = (InstanceIdentifierBuilderImpl<T>) obj;
-            return wildcard == otherBuilder.wildcard && Objects.equals(basePath, otherBuilder.basePath)
-                    && Objects.equals(arg, otherBuilder.arg)
-                    && Objects.equals(hashBuilder.build(), otherBuilder.hashBuilder.build());
-        }
-        return false;
+        return this == obj || obj instanceof InstanceIdentifierBuilderImpl<?> other
+            && wildcard == other.wildcard && Objects.equals(basePath, other.basePath) && Objects.equals(arg, other.arg)
+            && hashBuilder.build() == other.hashBuilder.build();
     }
 
     @Override
