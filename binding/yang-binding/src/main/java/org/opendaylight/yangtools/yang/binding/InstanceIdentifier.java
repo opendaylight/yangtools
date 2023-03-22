@@ -333,7 +333,7 @@ public class InstanceIdentifier<T extends DataObject>
 
     private <N extends DataObject> @NonNull InstanceIdentifier<N> childIdentifier(final AbstractPathArgument<N> arg) {
         return trustedCreate(arg, Iterables.concat(pathArguments, Collections.singleton(arg)),
-            HashCodeBuilder.nextHashCode(hash, arg), isWildcarded());
+            HashCodeBuilder.nextHashCode(hash, arg), wildcarded);
     }
 
     /**
@@ -426,7 +426,7 @@ public class InstanceIdentifier<T extends DataObject>
      */
     // FIXME: rename this method to 'toBuilder()'
     public @NonNull InstanceIdentifierBuilder<T> builder() {
-        return new InstanceIdentifierBuilderImpl<>(Item.of(targetType), pathArguments, hash, isWildcarded());
+        return new InstanceIdentifierBuilderImpl<>(Item.of(targetType), pathArguments, hash, wildcarded);
     }
 
     /**
