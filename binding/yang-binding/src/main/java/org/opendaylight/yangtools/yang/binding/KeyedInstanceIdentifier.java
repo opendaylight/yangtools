@@ -42,7 +42,7 @@ public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K e
 
     @Override
     public final KeyedBuilder<T, K> builder() {
-        return new AbstractInstanceIdentifierBuilder.Keyed<>(this);
+        return new KeyedBuilder<>(this);
     }
 
     @Override

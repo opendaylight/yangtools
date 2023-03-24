@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.InstanceIdentifierBuilder;
 import org.opendaylight.yangtools.yang.binding.test.mock.FooChild;
 import org.opendaylight.yangtools.yang.binding.test.mock.FooRoot;
 import org.opendaylight.yangtools.yang.binding.test.mock.InstantiatedFoo;
@@ -156,7 +155,7 @@ public class InstanceIdentifierTest {
         assertNotNull(instanceIdentifier1.hashCode());
         assertNotNull(instanceIdentifier1.toString());
 
-        final InstanceIdentifierBuilder instanceIdentifierBuilder = instanceIdentifier1.builder();
+        final InstanceIdentifier.Builder instanceIdentifierBuilder = instanceIdentifier1.builder();
         assertEquals(instanceIdentifier1.hashCode(), instanceIdentifierBuilder.hashCode());
         assertNotNull(instanceIdentifierBuilder.augmentation(InstantiatedFoo.class));
         assertNotNull(instanceIdentifierBuilder.build());
@@ -208,10 +207,10 @@ public class InstanceIdentifierTest {
 
     @Test
     public void equalsTest() {
-        final InstanceIdentifierBuilder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifierBuilder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifierBuilder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
-        final InstanceIdentifierBuilder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
+        final InstanceIdentifier.Builder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
+        final InstanceIdentifier.Builder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
+        final InstanceIdentifier.Builder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
+        final InstanceIdentifier.Builder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
         final Object obj = new Object();
 
         assertTrue(builder1.equals(builder2));
@@ -235,10 +234,10 @@ public class InstanceIdentifierTest {
 
     @Test
     public void hashCodeTest() {
-        final InstanceIdentifierBuilder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifierBuilder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifierBuilder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
-        final InstanceIdentifierBuilder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
+        final InstanceIdentifier.Builder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
+        final InstanceIdentifier.Builder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
+        final InstanceIdentifier.Builder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
+        final InstanceIdentifier.Builder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
         final Object obj = new Object();
 
         assertTrue(builder1.hashCode() == builder2.hashCode());
