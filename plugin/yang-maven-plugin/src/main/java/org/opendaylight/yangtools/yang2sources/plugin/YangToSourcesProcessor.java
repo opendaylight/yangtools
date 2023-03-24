@@ -280,7 +280,7 @@ class YangToSourcesProcessor {
                 final List<FileState> files;
                 try {
                     files = factory.execute(project, buildContext, holder);
-                } catch (FileGeneratorException | IOException e) {
+                } catch (FileGeneratorException e) {
                     throw new MojoFailureException(LOG_PREFIX + " Generator " + factory + " failed", e);
                 }
 

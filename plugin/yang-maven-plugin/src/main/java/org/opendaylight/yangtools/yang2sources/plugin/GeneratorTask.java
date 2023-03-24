@@ -72,10 +72,9 @@ final class GeneratorTask implements Identifiable<String> {
      * @param context model generation context
      * @return {@link FileState} for every generated file
      * @throws FileGeneratorException if the underlying generator fails
-     * @throws IOException when a generated file cannot be written
      */
     @NonNull List<FileState> execute(final MavenProject project, final BuildContext buildContext,
-            final ContextHolder context) throws FileGeneratorException, IOException {
+            final ContextHolder context) throws FileGeneratorException {
         final var access = new ProjectFileAccess(project, getIdentifier());
 
         // Step one: determine what files are going to be generated
@@ -102,7 +101,7 @@ final class GeneratorTask implements Identifiable<String> {
                     target = new File(access.transientPath(cell.getRowKey()), relativePath);
                     break;
                 default:
-                    throw new IllegalStateException("Unsupported file type in " + file);
+                    throw new FileGeneratorException("Unsupported file type in " + file);
             }
 
             dirs.put(target.getParentFile(), new WriteTask(target, cell.getValue()));
