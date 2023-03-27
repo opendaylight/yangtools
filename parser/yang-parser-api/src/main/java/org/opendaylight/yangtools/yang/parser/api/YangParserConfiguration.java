@@ -74,14 +74,8 @@ public final class YangParserConfiguration implements Immutable {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangParserConfiguration)) {
-            return false;
-        }
-        final YangParserConfiguration other = (YangParserConfiguration) obj;
-        return importResolutionMode == other.importResolutionMode
+        return this == obj || obj instanceof YangParserConfiguration other
+            && importResolutionMode == other.importResolutionMode
             && retainDeclarationReferences == other.retainDeclarationReferences;
     }
 
