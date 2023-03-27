@@ -39,12 +39,12 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
 
     private final @NonNull SchemaSourceFilter filter;
     private final @NonNull StatementParserMode statementParserMode;
-    private final @Nullable ImmutableSet<QName> supportedFeatures;
+    private final @Nullable Set<QName> supportedFeatures;
     private final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
 
     private SchemaContextFactoryConfiguration(final @NonNull SchemaSourceFilter filter,
             final @NonNull StatementParserMode statementParserMode,
-            final @Nullable ImmutableSet<QName> supportedFeatures,
+            final @Nullable Set<QName> supportedFeatures,
             final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         this.filter = requireNonNull(filter);
         this.statementParserMode = requireNonNull(statementParserMode);
@@ -85,8 +85,25 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
     public boolean equals(final Object obj) {
         return this == obj || obj instanceof SchemaContextFactoryConfiguration other && filter.equals(other.filter)
             && statementParserMode.equals(other.statementParserMode)
-            && Objects.equals(supportedFeatures, other.supportedFeatures)
+            && equals(supportedFeatures, other.supportedFeatures)
             && Objects.equals(modulesDeviatedByModules, other.modulesDeviatedByModules);
+    }
+
+    // This a bit of a dance to deal with FeatureSet not conforming to Set.equals()
+    private static boolean equals(final @Nullable Set<QName> thisFeatures, final @Nullable Set<QName> otherFeatures) {
+        if (thisFeatures == otherFeatures) {
+            return true;
+        }
+        if (thisFeatures == null || otherFeatures == null) {
+            return false;
+        }
+        if (thisFeatures instanceof FeatureSet) {
+            return thisFeatures.equals(otherFeatures);
+        }
+        if (otherFeatures instanceof FeatureSet) {
+            return otherFeatures.equals(thisFeatures);
+        }
+        return thisFeatures.equals(otherFeatures);
     }
 
     @Override
@@ -100,7 +117,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         private @NonNull SchemaSourceFilter filter = SchemaSourceFilter.ALWAYS_ACCEPT;
         private @NonNull StatementParserMode statementParserMode = StatementParserMode.DEFAULT_MODE;
         private ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
-        private ImmutableSet<QName> supportedFeatures;
+        private Set<QName> supportedFeatures;
 
         /**
          * Set schema source filter which will filter available schema sources using the provided filter.
@@ -133,7 +150,11 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
          * @return this builder
          */
         public @NonNull Builder setSupportedFeatures(final Set<QName> supportedFeatures) {
-            this.supportedFeatures = supportedFeatures != null ? ImmutableSet.copyOf(supportedFeatures) : null;
+            if (supportedFeatures == null || supportedFeatures instanceof FeatureSet) {
+                this.supportedFeatures = supportedFeatures;
+            } else {
+                this.supportedFeatures = ImmutableSet.copyOf(supportedFeatures);
+            }
             return this;
         }
 
