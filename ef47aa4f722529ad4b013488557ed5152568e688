@@ -49,6 +49,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "bdb1ca32_0455da24",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-03-27T19:51:00Z",
+      "side": 1,
+      "message": "this is too simplistic and will do the wrong thing if there are two overlapping registrations:\n\n  var mod \u003d QNameModule.create(...)\n  var foo \u003d QName.create(mod, \"foo\");\n  var bar \u003d QName.create(mod, \"bar\");\n  var baz \u003d QName.create(mod, \"baz\");\n  \n  var reg1 \u003d resolver.registerSupportedFeatures(mod, Set.of(foo, bar));\n  var reg2 \u003d resolver.registerSupportedFeatures(mod, Set.of(bar, baz));\n  \n  reg1.close();\n  \n  // Bad state: \u0027bar\u0027 is no longer registered, \u0027baz\u0027 still is, which does not correspond to what \u0027reg2\u0027 represents!",
+      "range": {
+        "startLine": 102,
+        "startChar": 31,
+        "endLine": 102,
+        "endChar": 53
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa4762de_9c6a5996",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-03-27T19:51:00Z",
+      "side": 1,
+      "message": "nope, this has to be an AbstractRegistration, simply because AutoCloseable.close() can be legally called multiple times and the effect must be performed only once (\"idempotent\"). Please read Javadocs of any and all classes you encounter.",
+      "range": {
+        "startLine": 104,
+        "startChar": 15,
+        "endLine": 104,
+        "endChar": 22
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "92f83289_a3eb472b",
         "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
         "patchSetId": 2
@@ -86,6 +132,30 @@
       "range": {
         "startLine": 340,
         "startChar": 8,
+        "endLine": 344,
+        "endChar": 50
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b013bb8b_ebc7520d",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-03-27T19:51:00Z",
+      "side": 1,
+      "message": "To be very explicit: the returned Set\u0027s contains() method must return true for any QName which is *NOT* present in registeredFeatures.",
+      "parentUuid": "92f83289_a3eb472b",
+      "range": {
+        "startLine": 341,
+        "startChar": 0,
         "endLine": 344,
         "endChar": 50
       },
