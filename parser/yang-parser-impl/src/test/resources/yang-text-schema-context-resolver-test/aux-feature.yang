@@ -1,0 +1,15 @@
+module aux-feature {
+    namespace aux-feature-namespace;
+    prefix aux-feature-prefix;
+
+    revision 2016-09-26;
+
+    feature aux-feature-ft {
+        description
+            "aux feature";
+    }
+
+    container aux-cond-cont {
+        if-feature "aux-feature-ft";
+    }
+}
