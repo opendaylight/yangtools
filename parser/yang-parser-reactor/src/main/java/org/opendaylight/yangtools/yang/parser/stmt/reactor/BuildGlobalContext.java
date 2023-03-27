@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.ResolverSupportedFeatures;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
@@ -113,7 +114,11 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     void setSupportedFeatures(final Set<QName> supportedFeatures) {
-        addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), ImmutableSet.copyOf(supportedFeatures));
+        if (supportedFeatures instanceof ResolverSupportedFeatures) {
+            addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), supportedFeatures);
+        } else {
+            addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), ImmutableSet.copyOf(supportedFeatures));
+        }
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
