@@ -13,20 +13,29 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
+import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.AbstractRegistration;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
@@ -35,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.model.repo.api.SupportedFeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.GuavaSchemaSourceCache;
@@ -55,18 +65,23 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
+    @GuardedBy("this")
+    private final Map<QNameModule, List<ImmutableSet<String>>> registeredFeatures = new HashMap<>();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
     private final GuavaSchemaSourceCache<YangIRSchemaSource> cache;
     private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
+
     private volatile Object version = new Object();
     private volatile Object contextVersion = version;
+    @GuardedBy("this")
+    private SupportedFeatureSet supportedFeatures = null;
 
     private YangTextSchemaContextResolver(final SchemaRepository repository, final SchemaSourceRegistry registry) {
-        this.repository = requireNonNull(repository);
-        this.registry = requireNonNull(registry);
+        repository = requireNonNull(repository);
+        registry = requireNonNull(registry);
 
         transReg = registry.registerSchemaSourceListener(TextToIRTransformer.create(repository, registry));
         cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSchemaSource.class, SOURCE_LIFETIME);
@@ -168,6 +183,51 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         return registerSource(YangTextSchemaSource.forURL(url, guessSourceIdentifier(fileName)));
     }
 
+    // FIXME: add documentation
+    public @NonNull Registration registerSupportedFeatures(final QNameModule module, final Set<String> features) {
+        final var checked = requireNonNull(module);
+        final var copy = ImmutableSet.copyOf(features);
+
+        synchronized (this) {
+            version = new Object();
+            supportedFeatures = null;
+            registeredFeatures.computeIfAbsent(module, ignored -> new ArrayList<>()).add(copy);
+        }
+        return new AbstractRegistration() {
+            @Override
+            protected void removeRegistration() {
+                removeFeatures(checked, copy);
+            }
+        };
+    }
+
+    private synchronized void removeFeatures(final QNameModule module, final ImmutableSet<String> features) {
+        final var moduleFeatures = registeredFeatures.get(module);
+        if (moduleFeatures != null && moduleFeatures.remove(features)) {
+            if (moduleFeatures.isEmpty()) {
+                registeredFeatures.remove(module);
+            }
+            supportedFeatures = null;
+            version = new Object();
+        }
+    }
+
+    private synchronized @NonNull SupportedFeatureSet getSupportedFeatures() {
+        var local = supportedFeatures;
+        if (local == null) {
+            final var builder = ImmutableMap.<QNameModule, ImmutableSet<String>>builder();
+            for (var entry : registeredFeatures.entrySet()) {
+                builder.put(entry.getKey(), entry.getValue().stream()
+                    .flatMap(Set::stream)
+                    .distinct()
+                    .sorted()
+                    .collect(ImmutableSet.toImmutableSet()));
+            }
+            supportedFeatures = local = new ImmutableSupportedFeatureSet(builder.build());
+        }
+        return local;
+    }
+
     private static SourceIdentifier guessSourceIdentifier(final @NonNull String fileName) {
         try {
             return YangTextSchemaSource.identifierFromFilename(fileName);
@@ -196,7 +256,6 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      */
     public Optional<? extends EffectiveModelContext> getEffectiveModelContext(
             final StatementParserMode statementParserMode) {
-        final var factory = repository.createEffectiveModelContextFactory(config(statementParserMode));
         Optional<EffectiveModelContext> sc;
         Object ver;
         do {
@@ -216,6 +275,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 ver = version;
                 sources = ImmutableSet.copyOf(requiredSources);
             } while (ver != version);
+
+            final var factory = repository.createEffectiveModelContextFactory(
+                config(statementParserMode, getSupportedFeatures()));
 
             while (true) {
                 final var f = factory.createEffectiveModelContext(sources);
@@ -282,7 +344,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     @SuppressWarnings("checkstyle:avoidHidingCauseException")
     public EffectiveModelContext trySchemaContext(final StatementParserMode statementParserMode)
             throws SchemaResolutionException {
-        final var future = repository.createEffectiveModelContextFactory(config(statementParserMode))
+        final var future = repository
+                .createEffectiveModelContextFactory(config(statementParserMode, getSupportedFeatures()))
                 .createEffectiveModelContext(ImmutableSet.copyOf(requiredSources));
 
         try {
@@ -303,7 +366,11 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         transReg.close();
     }
 
-    private static @NonNull SchemaContextFactoryConfiguration config(final StatementParserMode statementParserMode) {
-        return SchemaContextFactoryConfiguration.builder().setStatementParserMode(statementParserMode).build();
+    private static @NonNull SchemaContextFactoryConfiguration config(final StatementParserMode statementParserMode,
+            final SupportedFeatureSet supportedFeatures) {
+        return SchemaContextFactoryConfiguration.builder()
+            .setStatementParserMode(statementParserMode)
+            .setSupportedFeatures(supportedFeatures)
+            .build();
     }
 }

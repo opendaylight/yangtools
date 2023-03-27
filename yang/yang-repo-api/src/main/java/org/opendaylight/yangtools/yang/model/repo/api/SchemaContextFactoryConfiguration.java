@@ -39,12 +39,12 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
 
     private final @NonNull SchemaSourceFilter filter;
     private final @NonNull StatementParserMode statementParserMode;
-    private final @Nullable ImmutableSet<QName> supportedFeatures;
+    private final @Nullable Set<QName> supportedFeatures;
     private final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
 
     private SchemaContextFactoryConfiguration(final @NonNull SchemaSourceFilter filter,
             final @NonNull StatementParserMode statementParserMode,
-            final @Nullable ImmutableSet<QName> supportedFeatures,
+            final @Nullable Set<QName> supportedFeatures,
             final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         this.filter = requireNonNull(filter);
         this.statementParserMode = requireNonNull(statementParserMode);
@@ -100,7 +100,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         private @NonNull SchemaSourceFilter filter = SchemaSourceFilter.ALWAYS_ACCEPT;
         private @NonNull StatementParserMode statementParserMode = StatementParserMode.DEFAULT_MODE;
         private ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
-        private ImmutableSet<QName> supportedFeatures;
+        private Set<QName> supportedFeatures;
 
         /**
          * Set schema source filter which will filter available schema sources using the provided filter.
@@ -133,7 +133,11 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
          * @return this builder
          */
         public @NonNull Builder setSupportedFeatures(final Set<QName> supportedFeatures) {
-            this.supportedFeatures = supportedFeatures != null ? ImmutableSet.copyOf(supportedFeatures) : null;
+            if (supportedFeatures == null || supportedFeatures instanceof SupportedFeatureSet) {
+                this.supportedFeatures = supportedFeatures;
+            } else {
+                this.supportedFeatures = ImmutableSet.copyOf(supportedFeatures);
+            }
             return this;
         }
 
