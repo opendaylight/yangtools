@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92f83289_a3eb472b",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-03-27T12:36:28Z",
+      "side": 1,
+      "message": "err, no. this needs to be a custom implementation of java.util.Set",
+      "range": {
+        "startLine": 341,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 50
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
