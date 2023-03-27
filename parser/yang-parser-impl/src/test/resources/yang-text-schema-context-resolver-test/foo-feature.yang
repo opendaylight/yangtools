@@ -1,0 +1,26 @@
+module foo-feature {
+    namespace foo-feature-namespace;
+    prefix foo-feature-prefix;
+
+    revision 2016-09-26;
+
+    feature used-feature {
+        description
+            "used feature";
+    }
+
+    feature unused-feature {
+        description
+            "unused feature";
+    }
+
+    container bar-feature-container {
+        leaf conditional-leaf {
+            if-feature "used-feature";
+            type uint64;
+        }
+        leaf unconditional-leaf {
+            type uint64;
+        }
+    }
+}
