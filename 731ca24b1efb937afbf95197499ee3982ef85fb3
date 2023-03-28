@@ -121,6 +121,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b0f735a6_69ab1113",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-03-28T12:12:43Z",
+      "side": 1,
+      "message": "BitSet is mutable, Bits artifact is not\nBitSet is only used as input and internal storage, never exposed,\nserves as friendly api to find bits within a byte array\nno extra bytes in output, it\u0027s proved by tests",
+      "parentUuid": "2fb5dcf6_3b9c1820",
+      "range": {
+        "startLine": 30,
+        "startChar": 65,
+        "endLine": 30,
+        "endChar": 71
+      },
+      "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4f5f260a_07cebe42",
         "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
         "patchSetId": 15
