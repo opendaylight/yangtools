@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2fb5dcf6_3b9c1820",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-03-28T06:41:57Z",
+      "side": 1,
+      "message": "There are very good reasons not to use a BitSet:\n- it is not immutable\n- its overhead is rather large (at least 24+12 bytes)",
+      "parentUuid": "51352a5b_ebc30928",
+      "range": {
+        "startLine": 30,
+        "startChar": 65,
+        "endLine": 30,
+        "endChar": 71
+      },
+      "revId": "731ca24b1efb937afbf95197499ee3982ef85fb3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4f5f260a_07cebe42",
         "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsHexStringCodec.java",
         "patchSetId": 15
