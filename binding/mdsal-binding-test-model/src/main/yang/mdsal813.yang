@@ -1,0 +1,17 @@
+module mdsal813 {
+  namespace mdsal813;
+  prefix mdsal813;
+
+  container register-listener-test {
+    list item {
+      key "text number";
+      leaf text {
+
+        type string;
+      }
+      leaf number {
+        type uint32;
+      }
+    }
+  }
+}
