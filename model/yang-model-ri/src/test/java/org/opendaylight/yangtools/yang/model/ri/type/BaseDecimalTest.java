@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
-public class BaseDecimalTest {
+class BaseDecimalTest {
     @Test
-    public void testImplicitRanges() {
+    void testImplicitRanges() {
         assertEquals(
             Range.closed(Decimal64.valueOf("-922337203685477580.8"), Decimal64.valueOf("922337203685477580.7")),
             Iterables.getOnlyElement(BaseDecimalType.constraintsForDigits(1).getAllowedRanges().asRanges()));

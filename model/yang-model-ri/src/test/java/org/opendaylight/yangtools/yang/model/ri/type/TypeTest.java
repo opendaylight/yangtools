@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -22,7 +21,7 @@ import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
@@ -50,7 +49,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
-public class TypeTest {
+class TypeTest {
     private static final QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
     private static final Bit BIT_A = BitBuilder.create(Q_NAME.getLocalName(), Uint32.valueOf(55L))
         .setDescription("description")
@@ -58,7 +57,7 @@ public class TypeTest {
         .build();
 
     @Test
-    public void binaryTypeTest() {
+    void binaryTypeTest() {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
         final BaseBinaryType baseBinaryType2 = (BaseBinaryType)BaseTypes.binaryType();
         hashCodeEqualsToStringTest(baseBinaryType1, baseBinaryType2);
@@ -84,7 +83,7 @@ public class TypeTest {
     }
 
     @Test
-    public void booleanTypeTest() {
+    void booleanTypeTest() {
         final BaseBooleanType baseBooleanType1 = BaseBooleanType.INSTANCE;
         final BaseBooleanType baseBooleanType2 = (BaseBooleanType)BaseTypes.booleanType();
         hashCodeEqualsToStringTest(baseBooleanType1, baseBooleanType2);
@@ -101,7 +100,7 @@ public class TypeTest {
     }
 
     @Test
-    public void identityrefTypeTest() {
+    void identityrefTypeTest() {
         final IdentityrefTypeBuilder identityrefTypeBuilder1 = BaseTypes.identityrefTypeBuilder(Q_NAME);
         final IdentitySchemaNode identitySchemaNode = mock(IdentitySchemaNode.class);
         doReturn("identitySchemaNode").when(identitySchemaNode).toString();
@@ -124,7 +123,7 @@ public class TypeTest {
     }
 
     @Test
-    public void decimalTypeTest() {
+    void decimalTypeTest() {
         final BaseDecimalType baseDecimalType1 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
                 .buildType();
@@ -149,7 +148,7 @@ public class TypeTest {
     }
 
     @Test
-    public void emptyTypeTest() {
+    void emptyTypeTest() {
         final BaseEmptyType baseEmptyType1 = BaseEmptyType.INSTANCE;
         final BaseEmptyType baseEmptyType2 = (BaseEmptyType)BaseTypes.emptyType();
         hashCodeEqualsToStringTest(baseEmptyType1, baseEmptyType2);
@@ -166,7 +165,7 @@ public class TypeTest {
     }
 
     @Test
-    public void instanceIdentifierTypeTest() {
+    void instanceIdentifierTypeTest() {
         final BaseInstanceIdentifierType baseInstanceIdentifierType1 = BaseInstanceIdentifierType.INSTANCE;
         final BaseInstanceIdentifierType baseInstanceIdentifierType2 = (BaseInstanceIdentifierType)BaseTypes
                 .instanceIdentifierType();
@@ -194,7 +193,7 @@ public class TypeTest {
     }
 
     @Test
-    public void integerTypeTest() {
+    void integerTypeTest() {
         final Int8TypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
         final Int16TypeDefinition integerTypeDefinition16 = BaseTypes.int16Type();
         final Int32TypeDefinition integerTypeDefinition32 = BaseTypes.int32Type();
@@ -246,14 +245,14 @@ public class TypeTest {
         derivedTypeBuilder.setReference("test-reference");
         derivedTypeBuilder.setUnits("Int");
         derivedTypeBuilder.setStatus(Status.CURRENT);
-        assertEquals(derivedTypeBuilder.getStatus(), Status.CURRENT);
-        assertEquals(derivedTypeBuilder.getDescription(), "test-description");
-        assertEquals(derivedTypeBuilder.getReference(), "test-reference");
-        assertEquals(derivedTypeBuilder.getUnits(), "Int");
+        assertEquals(Status.CURRENT, derivedTypeBuilder.getStatus());
+        assertEquals("test-description", derivedTypeBuilder.getDescription());
+        assertEquals("test-reference", derivedTypeBuilder.getReference());
+        assertEquals("Int", derivedTypeBuilder.getUnits());
     }
 
     @Test
-    public void stringTypeTest() {
+    void stringTypeTest() {
         final BaseStringType baseStringType1 = BaseStringType.INSTANCE;
         final BaseStringType baseStringType2 = (BaseStringType)BaseTypes.stringType();
         hashCodeEqualsToStringTest(baseStringType1, baseStringType2);
@@ -280,7 +279,7 @@ public class TypeTest {
     }
 
     @Test
-    public void bitsTypeTest() {
+    void bitsTypeTest() {
         final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(Q_NAME);
         bitsTypeBuilder.addBit(BIT_A);
         final BitsTypeDefinition bitsTypeDefinition1 = bitsTypeBuilder.build();
@@ -300,7 +299,7 @@ public class TypeTest {
     }
 
     @Test
-    public void enumerationTypeTest() {
+    void enumerationTypeTest() {
         final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(Q_NAME)
             .build();
         final BaseEnumerationType baseEnumerationType2 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(Q_NAME)
@@ -320,7 +319,7 @@ public class TypeTest {
     }
 
     @Test
-    public void leafrefTypeTest() {
+    void leafrefTypeTest() {
         final PathExpression expr = mock(PathExpression.class);
 
         final LeafrefTypeBuilder leafrefTypeBuilder1 = BaseTypes.leafrefTypeBuilder(Q_NAME);
@@ -344,7 +343,7 @@ public class TypeTest {
     }
 
     @Test
-    public void unionTypeTest() throws IllegalAccessException, InstantiationException {
+    void unionTypeTest() throws IllegalAccessException, InstantiationException {
         final BaseDecimalType baseDecimalType1 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
                 .buildType();
@@ -372,14 +371,14 @@ public class TypeTest {
     }
 
     @Test
-    public void abstractTypeDefinitionQnameTest() {
+    void abstractTypeDefinitionQnameTest() {
         final AbstractTypeDefinition<?> abstractTypeDefinition = (AbstractTypeDefinition<?>)
             BaseTypes.decimalTypeBuilder(Q_NAME).setFractionDigits(1).buildType();
-        assertEquals(abstractTypeDefinition.getQName(), Q_NAME);
+        assertEquals(Q_NAME, abstractTypeDefinition.getQName());
     }
 
     @Test
-    public void abstractDerivedTypeTest() {
+    void abstractDerivedTypeTest() {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
         final AbstractDerivedType<?> abstractDerivedType = (AbstractDerivedType<?>)
             DerivedTypes.derivedTypeBuilder(baseBinaryType1, Q_NAME).build();
@@ -389,7 +388,7 @@ public class TypeTest {
     }
 
     @Test
-    public void concreteTypeBuilderBuildTest() {
+    void concreteTypeBuilderBuildTest() {
         final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)
             BaseTypes.enumerationTypeBuilder(Q_NAME).build();
         final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(
@@ -399,7 +398,7 @@ public class TypeTest {
     }
 
     @Test
-    public void constraintTypeBuilderTest() throws InvalidLengthConstraintException {
+    void constraintTypeBuilderTest() throws InvalidLengthConstraintException {
         final BaseBinaryType baseBinaryType = (BaseBinaryType)BaseTypes.binaryType();
         final LengthRestrictedTypeBuilder<?> lengthRestrictedTypeBuilder = RestrictedTypes
                 .newBinaryBuilder(baseBinaryType, Q_NAME);
@@ -419,7 +418,7 @@ public class TypeTest {
     }
 
     @Test
-    public void exceptionTest() {
+    void exceptionTest() {
         final UnresolvedNumber min = UnresolvedNumber.min();
         final UnresolvedNumber max = UnresolvedNumber.max();
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
@@ -432,7 +431,7 @@ public class TypeTest {
 
         final InvalidBitDefinitionException invalidBitDefinitionException = new InvalidBitDefinitionException(
                 BIT_A, "error msg", "other important messages");
-        assertEquals(invalidBitDefinitionException.getOffendingBit(), BIT_A);
+        assertEquals(BIT_A, invalidBitDefinitionException.getOffendingBit());
 
         final InvalidEnumDefinitionException invalidEnumDefinitionException = new InvalidEnumDefinitionException(
                 enumPair, "error msg", "other important messages");
@@ -440,13 +439,13 @@ public class TypeTest {
     }
 
     @Test
-    public void identityrefTypeBuilderException() {
+    void identityrefTypeBuilderException() {
         final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(Q_NAME);
         assertThrows(IllegalStateException.class, () -> builder.build());
     }
 
     @Test
-    public void invalidBitDefinitionExceptionTest() {
+    void invalidBitDefinitionExceptionTest() {
         final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(Q_NAME)
                 .addBit(BIT_A)
                 .addBit(BitBuilder.create("test-name-1", Uint32.valueOf(55)).build());
@@ -455,7 +454,7 @@ public class TypeTest {
     }
 
     @Test
-    public void invalidEnumDefinitionExceptionTest() {
+    void invalidEnumDefinitionExceptionTest() {
         final UnknownSchemaNode unknown = mock(UnknownSchemaNode.class);
         final EnumPair enumPair1 = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(unknown).build();
@@ -471,7 +470,7 @@ public class TypeTest {
     private static void hashCodeEqualsToStringTest(final TypeDefinition<?> type1, final TypeDefinition<?> type2) {
         assertEquals(type1.hashCode(), type2.hashCode());
         assertEquals(type1.toString(), type2.toString());
-        assertTrue(type1.equals(type2));
+        assertEquals(type1, type2);
     }
 
     private static <T> void testInstance(final T type1, final T type2) {

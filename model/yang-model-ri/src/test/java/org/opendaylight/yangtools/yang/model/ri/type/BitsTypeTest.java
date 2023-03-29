@@ -7,30 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Collections;
 import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class BitsTypeTest {
     @Mock
     public BitsTypeDefinition.Bit bit;
 
     @Test
-    public void canCreateBitsType() {
+    void canCreateBitsType() {
         doReturn("test").when(bit).getName();
         doReturn(Uint32.ZERO).when(bit).getPosition();
         doReturn("toString").when(bit).toString();
@@ -40,20 +40,19 @@ public class BitsTypeTest {
         BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(qname).addBit(bit).build();
 
         assertFalse(bitsType.getDescription().isPresent());
-        assertEquals("QName", qname, bitsType.getQName());
+        assertEquals(qname, bitsType.getQName(), "QName");
         assertEquals(Optional.empty(), bitsType.getUnits());
-        assertNotEquals("Description should not be null", null, bitsType.toString());
+        assertNotEquals(null, bitsType.toString(), "Description should not be null");
         assertFalse(bitsType.getReference().isPresent());
-        assertNull("BaseType should be null", bitsType.getBaseType());
+        assertNull(bitsType.getBaseType(), "BaseType should be null");
         assertEquals(Optional.empty(), bitsType.getDefaultValue());
-        assertEquals("Status should be CURRENT", Status.CURRENT, bitsType.getStatus());
-        assertEquals("Should be empty list", Collections.emptyList(), bitsType.getUnknownSchemaNodes());
-        assertEquals("Values should be [enumPair]", Collections.singletonList(bit), bitsType.getBits());
+        assertEquals(Status.CURRENT, bitsType.getStatus(), "Status should be CURRENT");
+        assertEquals(Collections.emptyList(), bitsType.getUnknownSchemaNodes(), "Should be empty list");
+        assertEquals(Collections.singletonList(bit), bitsType.getBits(), "Values should be [enumPair]");
 
-        assertEquals("Hash code of bitsType should be equal",
-                bitsType.hashCode(), bitsType.hashCode());
-        assertNotEquals("bitsType shouldn't equal to null", null, bitsType);
-        assertEquals("bitsType should equals to itself", bitsType, bitsType);
-        assertNotEquals("bitsType shouldn't equal to object of other type", "str", bitsType);
+        assertEquals(bitsType.hashCode(), bitsType.hashCode(), "Hash code of bitsType should be equal");
+        assertNotEquals(null, bitsType, "bitsType shouldn't equal to null");
+        assertEquals(bitsType, bitsType, "bitsType should equals to itself");
+        assertNotEquals("str", bitsType, "bitsType shouldn't equal to object of other type");
     }
 }
