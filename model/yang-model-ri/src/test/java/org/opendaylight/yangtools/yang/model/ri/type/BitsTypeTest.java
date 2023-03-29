@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doReturn;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,12 +21,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 @ExtendWith(MockitoExtension.class)
 public class BitsTypeTest {
     @Mock
-    public BitsTypeDefinition.Bit bit;
+    Bit bit;
 
     @Test
     void canCreateBitsType() {
@@ -37,18 +36,18 @@ public class BitsTypeTest {
 
         QName qname = QName.create("namespace", "localname");
 
-        BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(qname).addBit(bit).build();
+        final var bitsType = BaseTypes.bitsTypeBuilder(qname).addBit(bit).build();
 
-        assertFalse(bitsType.getDescription().isPresent());
+        assertEquals(Optional.empty(), bitsType.getDescription());
         assertEquals(qname, bitsType.getQName(), "QName");
         assertEquals(Optional.empty(), bitsType.getUnits());
         assertNotEquals(null, bitsType.toString(), "Description should not be null");
-        assertFalse(bitsType.getReference().isPresent());
+        assertEquals(Optional.empty(), bitsType.getReference());
         assertNull(bitsType.getBaseType(), "BaseType should be null");
         assertEquals(Optional.empty(), bitsType.getDefaultValue());
         assertEquals(Status.CURRENT, bitsType.getStatus(), "Status should be CURRENT");
-        assertEquals(Collections.emptyList(), bitsType.getUnknownSchemaNodes(), "Should be empty list");
-        assertEquals(Collections.singletonList(bit), bitsType.getBits(), "Values should be [enumPair]");
+        assertEquals(List.of(), bitsType.getUnknownSchemaNodes(), "Should be empty list");
+        assertEquals(List.of(bit), bitsType.getBits(), "Values should be [enumPair]");
 
         assertEquals(bitsType.hashCode(), bitsType.hashCode(), "Hash code of bitsType should be equal");
         assertNotEquals(null, bitsType, "bitsType shouldn't equal to null");

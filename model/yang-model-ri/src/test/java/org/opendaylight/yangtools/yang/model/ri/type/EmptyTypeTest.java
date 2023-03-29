@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -28,10 +28,10 @@ class EmptyTypeTest {
         assertNull(emptyType.getBaseType(), "BaseType");
         assertEquals(Optional.empty(), emptyType.getDefaultValue(), "DefaultValue");
         assertEquals(Status.CURRENT, emptyType.getStatus(), "Status");
-        assertFalse(emptyType.getReference().isPresent());
+        assertEquals(Optional.empty(), emptyType.getReference());
         assertEquals(Optional.empty(), emptyType.getUnits(), "Units");
-        assertFalse(emptyType.getDescription().isPresent());
-        assertEquals(Collections.emptyList(), emptyType.getUnknownSchemaNodes(), "UnknownSchemaNodes");
-        assertTrue(emptyType.toString().contains("empty"), "toString");
+        assertEquals(Optional.empty(), emptyType.getDescription());
+        assertEquals(List.of(), emptyType.getUnknownSchemaNodes(), "UnknownSchemaNodes");
+        assertThat(emptyType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)empty"));
     }
 }

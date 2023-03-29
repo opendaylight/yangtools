@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 
 class NumberUtilTest {
-
     @Test
     void testRangeCoveredForShort() {
         final short min = 100;
@@ -105,7 +103,7 @@ class NumberUtilTest {
     @Test
     void testConverterToShort() {
         final Short shortNum = 20;
-        final Function<Number, Short> numberFunction = NumberUtil.converterTo(Short.class);
+        final var numberFunction = NumberUtil.converterTo(Short.class);
         assertEquals(shortNum, numberFunction.apply(shortNum));
 
         final byte byteNum = 20;
@@ -119,14 +117,14 @@ class NumberUtilTest {
     void testConverterToInteger() {
         final Integer intNum = 20;
         final byte byteNum = 20;
-        final Function<Number, Integer> numberFunction = NumberUtil.converterTo(Integer.class);
+        final var numberFunction = NumberUtil.converterTo(Integer.class);
         assertEquals(intNum, numberFunction.apply(byteNum));
     }
 
     @Test
     void testConverterToLong() {
         final Long longNum = 20L;
-        final Function<Number, Long> numberFunction = NumberUtil.converterTo(Long.class);
+        final var numberFunction = NumberUtil.converterTo(Long.class);
         assertEquals(longNum, numberFunction.apply(longNum));
 
         final byte byteNum = 20;
@@ -139,7 +137,7 @@ class NumberUtilTest {
     @Test
     void testConverterToBigDecimal() {
         final Decimal64 bigDecNum = Decimal64.valueOf("20.0");
-        final Function<Number, Decimal64> numberFunction = NumberUtil.converterTo(Decimal64.class);
+        final var numberFunction = NumberUtil.converterTo(Decimal64.class);
         assertEquals(bigDecNum, numberFunction.apply(bigDecNum));
 
         int intNum = 20;
@@ -152,7 +150,7 @@ class NumberUtilTest {
     @Test
     void testConverterToUint64() {
         final Uint64 bigIntNum = Uint64.valueOf("20");
-        final Function<Number, Uint64> numberFunction = NumberUtil.converterTo(Uint64.class);
+        final var numberFunction = NumberUtil.converterTo(Uint64.class);
         assertEquals(bigIntNum, numberFunction.apply(bigIntNum));
 
         final int intNum = 20;

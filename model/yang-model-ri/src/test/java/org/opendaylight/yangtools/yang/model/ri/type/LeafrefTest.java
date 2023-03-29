@@ -20,27 +20,26 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 class LeafrefTest {
     @Test
     void testMethodsOfLeafrefTest() {
-        final QName qname = QName.create("test", "List1");
-        final PathExpression revision = mock(PathExpression.class);
-        final PathExpression revision2 = mock(PathExpression.class);
+        final var qname = QName.create("test", "List1");
+        final var revision = mock(PathExpression.class);
+        final var revision2 = mock(PathExpression.class);
 
-        final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
-        final LeafrefTypeDefinition leafref2 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision2).build();
-        final LeafrefTypeDefinition leafref3 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
-        final LeafrefTypeDefinition leafref4 = leafref;
+        final var leafref = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
+        final var leafref2 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision2).build();
+        final var leafref3 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
+        final var leafref4 = leafref;
 
         assertNotNull(leafref, "Object 'leafref' shouldn't be null.");
         assertNull(leafref.getBaseType(), "Base type of 'leafref' should be null.");
         assertEquals(Optional.empty(), leafref.getUnits());
         assertEquals(Optional.empty(), leafref.getDefaultValue());
         assertEquals(qname, leafref.getQName());
-        assertFalse(leafref.getDescription().isPresent());
-        assertFalse(leafref.getReference().isPresent());
+        assertEquals(Optional.empty(), leafref.getDescription());
+        assertEquals(Optional.empty(), leafref.getReference());
         assertEquals(Status.CURRENT, leafref.getStatus(), "Status of 'leafref' is current.");
         assertTrue(leafref.getUnknownSchemaNodes().isEmpty(),
                 "Object 'leafref' shouldn't have any unknown schema nodes.");
@@ -60,26 +59,24 @@ class LeafrefTest {
 
     @Test
     void testRequireInstanceSubstatement() {
-        final QName qname = QName.create("test", "my-leafref");
-        final PathExpression path = mock(PathExpression.class);
-        final LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(path);
+        final var qname = QName.create("test", "my-leafref");
+        final var path = mock(PathExpression.class);
+        final var leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(path);
 
         assertTrue(leafrefTypeBuilder.build().requireInstance());
 
         leafrefTypeBuilder.setRequireInstance(false);
-        final LeafrefTypeDefinition falseLeafref = leafrefTypeBuilder.build();
+        final var falseLeafref = leafrefTypeBuilder.build();
         assertFalse(falseLeafref.requireInstance());
 
         leafrefTypeBuilder.setRequireInstance(true);
-        final LeafrefTypeDefinition trueLeafref = leafrefTypeBuilder.build();
+        final var trueLeafref = leafrefTypeBuilder.build();
         assertTrue(trueLeafref.requireInstance());
 
-        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> falseBuilder =
-                RestrictedTypes.newLeafrefBuilder(falseLeafref, qname);
+        final var falseBuilder = RestrictedTypes.newLeafrefBuilder(falseLeafref, qname);
         assertFalse(falseBuilder.build().requireInstance());
 
-        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> trueBuilder =
-                RestrictedTypes.newLeafrefBuilder(trueLeafref, qname);
+        final var trueBuilder = RestrictedTypes.newLeafrefBuilder(trueLeafref, qname);
         assertTrue(trueBuilder.build().requireInstance());
     }
 }

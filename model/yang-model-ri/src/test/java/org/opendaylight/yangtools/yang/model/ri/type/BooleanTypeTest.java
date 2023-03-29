@@ -10,29 +10,27 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 class BooleanTypeTest {
     @Test
     void canCreateBooleanType() {
-        final BooleanTypeDefinition boolType = BaseTypes.booleanType();
+        final var boolType = BaseTypes.booleanType();
 
         assertEquals(TypeDefinitions.BOOLEAN, boolType.getQName(), "getQName gives BOOLEAN_QNAME");
-        assertFalse(boolType.getDescription().isPresent());
+        assertEquals(Optional.empty(), boolType.getDescription());
 
         assertThat(boolType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)boolean"));
         assertEquals(Optional.empty(), boolType.getUnits());
         assertNull(boolType.getBaseType(), "Base type is null");
         assertEquals(Optional.empty(), boolType.getDefaultValue());
         assertEquals(Status.CURRENT, boolType.getStatus(), "Status CURRENT");
-        assertEquals(Collections.emptyList(), boolType.getUnknownSchemaNodes(), "Should contain empty list");
+        assertEquals(List.of(), boolType.getUnknownSchemaNodes(), "Should contain empty list");
     }
 }

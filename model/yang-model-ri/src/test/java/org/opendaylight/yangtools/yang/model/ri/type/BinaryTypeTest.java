@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,16 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 class BinaryTypeTest {
     @Test
     void canCreateBinaryType() {
-        final BinaryTypeDefinition binType = BaseTypes.binaryType();
-        final BinaryTypeDefinition binType1 = BaseTypes.binaryType();
+        final var binType = BaseTypes.binaryType();
+        final var binType1 = BaseTypes.binaryType();
 
-        assertFalse(binType.getLengthConstraint().isPresent());
+        assertEquals(Optional.empty(), binType.getLengthConstraint());
         assertEquals(Optional.empty(), binType.getDefaultValue());
         assertEquals(Status.CURRENT, binType.getStatus(), "CURRENT");
         assertNull(binType.getBaseType(), "Base type is null");

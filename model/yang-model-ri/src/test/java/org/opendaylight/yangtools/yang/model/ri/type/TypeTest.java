@@ -9,18 +9,19 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -50,7 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
 class TypeTest {
-    private static final QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
+    private static final @NonNull QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
     private static final Bit BIT_A = BitBuilder.create(Q_NAME.getLocalName(), Uint32.valueOf(55L))
         .setDescription("description")
         .setReference("reference")
@@ -58,8 +59,8 @@ class TypeTest {
 
     @Test
     void binaryTypeTest() {
-        final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
-        final BaseBinaryType baseBinaryType2 = (BaseBinaryType)BaseTypes.binaryType();
+        final var baseBinaryType1 = BaseBinaryType.INSTANCE;
+        final var baseBinaryType2 = assertInstanceOf(BaseBinaryType.class, BaseTypes.binaryType());
         hashCodeEqualsToStringTest(baseBinaryType1, baseBinaryType2);
         assertEquals(baseBinaryType1.getLengthConstraint(), baseBinaryType2.getLengthConstraint());
 
@@ -280,8 +281,7 @@ class TypeTest {
 
     @Test
     void bitsTypeTest() {
-        final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(Q_NAME);
-        bitsTypeBuilder.addBit(BIT_A);
+        final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(Q_NAME).addBit(BIT_A);
         final BitsTypeDefinition bitsTypeDefinition1 = bitsTypeBuilder.build();
         final BitsTypeDefinition bitsTypeDefinition2 = bitsTypeBuilder.build();
         hashCodeEqualsToStringTest(bitsTypeDefinition1, bitsTypeDefinition2);
@@ -404,7 +404,7 @@ class TypeTest {
                 .newBinaryBuilder(baseBinaryType, Q_NAME);
         final Long min = (long) 0;
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final List<ValueRange> lengthArrayList = ImmutableList.of(ValueRange.of(min, max));
+        final List<ValueRange> lengthArrayList = List.of(ValueRange.of(min, max));
         lengthRestrictedTypeBuilder.setLengthConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
         final TypeDefinition<?> typeDefinition = lengthRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition);
@@ -419,8 +419,6 @@ class TypeTest {
 
     @Test
     void exceptionTest() {
-        final UnresolvedNumber min = UnresolvedNumber.min();
-        final UnresolvedNumber max = UnresolvedNumber.max();
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();
 

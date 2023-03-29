@@ -13,13 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 
 class Int8Test {
     @Test
     void testInt8() {
-        Int8TypeDefinition int8 = BaseTypes.int8Type();
-        Int8TypeDefinition int8Second = BaseTypes.int8Type();
+        var int8 = BaseTypes.int8Type();
+        var int8Second = BaseTypes.int8Type();
         assertSame(int8, int8Second, "The method 'getInstance()' has to return the same instance");
         assertNull(int8.getBaseType(), "The method 'getBaseType()' is returning incorrect value");
         assertEquals(Optional.empty(),
