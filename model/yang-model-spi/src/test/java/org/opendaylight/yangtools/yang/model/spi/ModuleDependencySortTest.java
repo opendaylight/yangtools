@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.spi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -26,31 +26,39 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ModuleDependencySortTest {
-    public static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"));
-    public static final QNameModule BAR_MODULE = QNameModule.create(XMLNamespace.of("bar"));
+@ExtendWith(MockitoExtension.class)
+class ModuleDependencySortTest {
+    static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"));
+    static final QNameModule BAR_MODULE = QNameModule.create(XMLNamespace.of("bar"));
 
     @Mock
-    public Module fooNoRev;
+    Module fooNoRev;
 
     @Mock
-    public ModuleImport fooNoRevImport;
+    ModuleImport fooNoRevImport;
 
     @Mock
-    public Module bar;
+    Module bar;
 
     @Mock
-    public Submodule barSubmodule;
+    Submodule barSubmodule;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         doReturn("foo").when(fooNoRev).getName();
         doReturn(FOO_MODULE.getNamespace()).when(fooNoRev).getNamespace();
         doReturn(FOO_MODULE.getRevision()).when(fooNoRev).getRevision();
         doReturn(Set.of()).when(fooNoRev).getImports();
         doReturn(Set.of()).when(fooNoRev).getSubmodules();
+    }
 
+    @Test
+    void testSimpleModules() {
+        assertSortedTo(List.of(fooNoRev), fooNoRev);
+    }
+
+    @Test
+    void testSubmodules() {
         doReturn(Unqualified.of("foo")).when(fooNoRevImport).getModuleName();
         doReturn(Optional.empty()).when(fooNoRevImport).getRevision();
 
@@ -62,15 +70,7 @@ public class ModuleDependencySortTest {
         doReturn(Set.of(barSubmodule)).when(bar).getSubmodules();
 
         doReturn(Set.of(fooNoRevImport)).when(barSubmodule).getImports();
-    }
 
-    @Test
-    public void testSimpleModules() {
-        assertSortedTo(List.of(fooNoRev), fooNoRev);
-    }
-
-    @Test
-    public void testSubmodules() {
         assertSortedTo(List.of(fooNoRev, bar), bar, fooNoRev);
         assertSortedTo(List.of(fooNoRev, bar), fooNoRev, bar);
     }
