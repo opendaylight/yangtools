@@ -7,23 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.function.Function;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 
-public class NumberUtilTest {
-
+class NumberUtilTest {
     @Test
-    public void testRangeCoveredForShort() {
+    void testRangeCoveredForShort() {
         final short min = 100;
         final short superMin = 50;
         final short max = 200;
@@ -33,7 +31,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForLong() {
+    void testRangeCoveredForLong() {
         final long min = 100L;
         final long superMin = 50L;
         final long max = 200L;
@@ -43,7 +41,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForDecimal64() {
+    void testRangeCoveredForDecimal64() {
         final Decimal64 min = Decimal64.valueOf("100.0");
         final Decimal64 superMin = Decimal64.valueOf("50.0");
         final Decimal64 max = Decimal64.valueOf("200.0");
@@ -53,7 +51,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForUint8() {
+    void testRangeCoveredForUint8() {
         final Uint64 min = Uint64.valueOf("100");
         final Uint64 superMin = Uint64.valueOf("50");
         final Uint64 max = Uint64.valueOf("200");
@@ -63,7 +61,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForUint16() {
+    void testRangeCoveredForUint16() {
         final Uint16 min = Uint16.valueOf("100");
         final Uint16 superMin = Uint16.valueOf("50");
         final Uint16 max = Uint16.valueOf("200");
@@ -73,7 +71,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForUint32() {
+    void testRangeCoveredForUint32() {
         final Uint32 min = Uint32.valueOf("100");
         final Uint32 superMin = Uint32.valueOf("50");
         final Uint32 max = Uint32.valueOf("200");
@@ -83,7 +81,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForUint64() {
+    void testRangeCoveredForUint64() {
         final Uint64 min = Uint64.valueOf("100");
         final Uint64 superMin = Uint64.valueOf("50");
         final Uint64 max = Uint64.valueOf("200");
@@ -93,7 +91,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForUnsupportedNumberType() {
+    void testRangeCoveredForUnsupportedNumberType() {
         final double min = 100.0;
         final double superMin = 50.0;
         final double max = 200.0;
@@ -103,9 +101,9 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testConverterToShort() {
+    void testConverterToShort() {
         final Short shortNum = 20;
-        final Function<Number, Short> numberFunction = NumberUtil.converterTo(Short.class);
+        final var numberFunction = NumberUtil.converterTo(Short.class);
         assertEquals(shortNum, numberFunction.apply(shortNum));
 
         final byte byteNum = 20;
@@ -116,17 +114,17 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testConverterToInteger() {
+    void testConverterToInteger() {
         final Integer intNum = 20;
         final byte byteNum = 20;
-        final Function<Number, Integer> numberFunction = NumberUtil.converterTo(Integer.class);
+        final var numberFunction = NumberUtil.converterTo(Integer.class);
         assertEquals(intNum, numberFunction.apply(byteNum));
     }
 
     @Test
-    public void testConverterToLong() {
+    void testConverterToLong() {
         final Long longNum = 20L;
-        final Function<Number, Long> numberFunction = NumberUtil.converterTo(Long.class);
+        final var numberFunction = NumberUtil.converterTo(Long.class);
         assertEquals(longNum, numberFunction.apply(longNum));
 
         final byte byteNum = 20;
@@ -137,9 +135,9 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testConverterToBigDecimal() {
+    void testConverterToBigDecimal() {
         final Decimal64 bigDecNum = Decimal64.valueOf("20.0");
-        final Function<Number, Decimal64> numberFunction = NumberUtil.converterTo(Decimal64.class);
+        final var numberFunction = NumberUtil.converterTo(Decimal64.class);
         assertEquals(bigDecNum, numberFunction.apply(bigDecNum));
 
         int intNum = 20;
@@ -150,9 +148,9 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testConverterToUint64() {
+    void testConverterToUint64() {
         final Uint64 bigIntNum = Uint64.valueOf("20");
-        final Function<Number, Uint64> numberFunction = NumberUtil.converterTo(Uint64.class);
+        final var numberFunction = NumberUtil.converterTo(Uint64.class);
         assertEquals(bigIntNum, numberFunction.apply(bigIntNum));
 
         final int intNum = 20;
