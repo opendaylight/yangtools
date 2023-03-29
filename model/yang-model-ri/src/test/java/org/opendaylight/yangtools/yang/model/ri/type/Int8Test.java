@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Optional;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
+import org.junit.jupiter.api.Test;
 
-public class Int8Test {
+class Int8Test {
     @Test
-    public void testInt8() {
-        Int8TypeDefinition int8 = BaseTypes.int8Type();
-        Int8TypeDefinition int8Second = BaseTypes.int8Type();
-        assertSame("The method 'getInstance()' has to return the same instance", int8, int8Second);
-        assertNull("The method 'getBaseType()' is returning incorrect value", int8.getBaseType());
-        assertEquals("The method 'getDefaultType()' is returning incorrect value", Optional.empty(),
-            int8.getDefaultValue());
+    void testInt8() {
+        var int8 = BaseTypes.int8Type();
+        var int8Second = BaseTypes.int8Type();
+        assertSame(int8, int8Second, "The method 'getInstance()' has to return the same instance");
+        assertNull(int8.getBaseType(), "The method 'getBaseType()' is returning incorrect value");
+        assertEquals(Optional.empty(),
+            int8.getDefaultValue(),
+            "The method 'getDefaultType()' is returning incorrect value");
     }
 }

@@ -5,34 +5,28 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-public class EnumPairImplTest {
-
+class EnumPairImplTest {
     @Test
-    public void testEnumPairImpl() {
-        final UnknownSchemaNode mockedUnknownSchemaNodeA = mock(UnknownSchemaNode.class);
-        final UnknownSchemaNode mockedUnknownSchemaNodeB = mock(UnknownSchemaNode.class);
+    void testEnumPairImpl() {
+        final var mockedUnknownSchemaNodeA = mock(UnknownSchemaNode.class);
+        final var mockedUnknownSchemaNodeB = mock(UnknownSchemaNode.class);
 
-        final Collection<UnknownSchemaNode> unknownSchemaNodes =
-                ImmutableList.of(mockedUnknownSchemaNodeA, mockedUnknownSchemaNodeB);
+        final var unknownSchemaNodes = List.of(mockedUnknownSchemaNodeA, mockedUnknownSchemaNodeB);
 
-        final EnumPair enumPair = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)
+        final var enumPair = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)
                 .setDescription("enum description").setReference("enum reference")
                 .setUnknownSchemaNodes(unknownSchemaNodes).build();
 
@@ -42,19 +36,19 @@ public class EnumPairImplTest {
         assertEquals(Optional.of("enum reference"), enumPair.getReference());
         assertEquals(Status.DEPRECATED, enumPair.getStatus());
 
-        final EnumPair enumPair2 = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)
+        final var enumPair2 = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)
                 .setDescription("enum description").setReference("enum reference")
                 .setUnknownSchemaNodes(unknownSchemaNodes).build();
 
         assertEquals(enumPair.hashCode(), enumPair2.hashCode());
-        assertTrue(enumPair.equals(enumPair2));
+        assertEquals(enumPair, enumPair2);
 
-        final EnumPair enumPair3 = EnumPairBuilder.create("enum-one", 1).setStatus(Status.DEPRECATED)
+        final var enumPair3 = EnumPairBuilder.create("enum-one", 1).setStatus(Status.DEPRECATED)
                 .setDescription("enum description").setReference("enum reference")
                 .setUnknownSchemaNodes(unknownSchemaNodes).build();
 
-        assertFalse(enumPair2.equals(enumPair3));
+        assertNotEquals(enumPair2, enumPair3);
 
-        assertFalse(enumPair.equals("unequal"));
+        assertNotEquals("unequal", enumPair);
     }
 }

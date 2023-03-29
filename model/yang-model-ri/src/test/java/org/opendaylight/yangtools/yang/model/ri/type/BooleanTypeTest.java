@@ -9,29 +9,28 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
-public class BooleanTypeTest {
+class BooleanTypeTest {
     @Test
-    public void canCreateBooleanType() {
-        final BooleanTypeDefinition boolType = BaseTypes.booleanType();
+    void canCreateBooleanType() {
+        final var boolType = BaseTypes.booleanType();
 
-        assertEquals("getQName gives BOOLEAN_QNAME", TypeDefinitions.BOOLEAN, boolType.getQName());
-        assertFalse(boolType.getDescription().isPresent());
+        assertEquals(TypeDefinitions.BOOLEAN, boolType.getQName(), "getQName gives BOOLEAN_QNAME");
+        assertEquals(Optional.empty(), boolType.getDescription());
 
         assertThat(boolType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)boolean"));
         assertEquals(Optional.empty(), boolType.getUnits());
-        assertEquals("Base type is null", null, boolType.getBaseType());
+        assertNull(boolType.getBaseType(), "Base type is null");
         assertEquals(Optional.empty(), boolType.getDefaultValue());
-        assertEquals("Status CURRENT", Status.CURRENT, boolType.getStatus());
-        assertEquals("Should contain empty list", Collections.emptyList(), boolType.getUnknownSchemaNodes());
+        assertEquals(Status.CURRENT, boolType.getStatus(), "Status CURRENT");
+        assertEquals(List.of(), boolType.getUnknownSchemaNodes(), "Should contain empty list");
     }
 }
