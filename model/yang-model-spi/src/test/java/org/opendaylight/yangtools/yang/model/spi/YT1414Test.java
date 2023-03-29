@@ -9,32 +9,32 @@ package org.opendaylight.yangtools.yang.model.spi;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class YT1414Test {
+@ExtendWith(MockitoExtension.class)
+class YT1414Test {
     @Mock
-    public EffectiveModelContext modelContext;
+    EffectiveModelContext modelContext;
     @Mock
-    public ContainerEffectiveStatement container;
+    ContainerEffectiveStatement container;
 
     @Test
-    public void testUnsafeOf() {
+    void testUnsafeOf() {
         final var path = ImmutableList.of(container);
         final var inference = DefaultSchemaTreeInference.unsafeOf(modelContext, path);
         assertSame(modelContext, inference.getEffectiveModelContext());
@@ -42,7 +42,7 @@ public class YT1414Test {
     }
 
     @Test
-    public void testVerifiedOf() {
+    void testVerifiedOf() {
         final var qname = QName.create("foo", "foo");
         doReturn(qname).when(container).argument();
 
@@ -58,7 +58,7 @@ public class YT1414Test {
     }
 
     @Test
-    public void testVerifiedOfNegative() {
+    void testVerifiedOfNegative() {
         final var qname = QName.create("foo", "foo");
         doReturn(qname).when(container).argument();
 
