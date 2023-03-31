@@ -71,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c6d2b3a_27dfa789",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-03-31T18:06:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c128c396_59029613",
+      "range": {
+        "startLine": 69,
+        "startChar": 4,
+        "endLine": 69,
+        "endChar": 100
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bdb1ca32_0455da24",
@@ -94,6 +118,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad8346c8_1b890d69",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-03-31T18:06:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bdb1ca32_0455da24",
+      "range": {
+        "startLine": 102,
+        "startChar": 31,
+        "endLine": 102,
+        "endChar": 53
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aa4762de_9c6a5996",
@@ -107,6 +155,30 @@
       "writtenOn": "2023-03-27T19:51:00Z",
       "side": 1,
       "message": "nope, this has to be an AbstractRegistration, simply because AutoCloseable.close() can be legally called multiple times and the effect must be performed only once (\"idempotent\"). Please read Javadocs of any and all classes you encounter.",
+      "range": {
+        "startLine": 104,
+        "startChar": 15,
+        "endLine": 104,
+        "endChar": 22
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a52d6c65_b64dbf82",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-03-31T18:06:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa4762de_9c6a5996",
       "range": {
         "startLine": 104,
         "startChar": 15,
@@ -187,6 +259,54 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9caf346a_b46ba1e8",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-03-31T18:06:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b013bb8b_ebc7520d",
+      "range": {
+        "startLine": 341,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 50
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4aa47882_11418cac",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-03-31T18:06:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9dde9a8f_acb8e1ff",
+      "range": {
+        "startLine": 340,
+        "startChar": 8,
+        "endLine": 344,
+        "endChar": 50
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5190a819_dd93356c",
@@ -210,6 +330,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "59011378_17e4e62c",
+        "filename": "parser/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolverTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-03-31T18:06:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5190a819_dd93356c",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 59
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c90922a5_92bbe5a6",
@@ -223,6 +367,30 @@
       "writtenOn": "2023-03-27T13:00:41Z",
       "side": 1,
       "message": "this looks like a repeated piece of code, 4 times \u003d 4 test cases \n\neither extract repeated part to into separate private static method \nor convert a test into parameterized one (require test update to junit5)",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 0
+      },
+      "revId": "ef47aa4f722529ad4b013488557ed5152568e688",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6c5dcdc_82aa358c",
+        "filename": "parser/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolverTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-03-31T18:06:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c90922a5_92bbe5a6",
       "range": {
         "startLine": 132,
         "startChar": 0,
