@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi;
 import com.google.common.collect.SetMultimap;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -37,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SupportedFeatureSet;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -193,7 +193,7 @@ public final class ParserNamespaces {
     public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, QNameModule> MODULECTX_TO_QNAME =
         new ParserNamespace<>("modulectx-to-qnamemodule");
 
-    public static final @NonNull ParserNamespace<Empty, Set<QName>> SUPPORTED_FEATURES =
+    public static final @NonNull ParserNamespace<Empty, SupportedFeatureSet> SUPPORTED_FEATURES =
         new ParserNamespace<>("supportedFeatures");
 
     /**

@@ -11,17 +11,14 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 /**
@@ -39,12 +36,12 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
 
     private final @NonNull SchemaSourceFilter filter;
     private final @NonNull StatementParserMode statementParserMode;
-    private final @Nullable Set<QName> supportedFeatures;
+    private final @Nullable SupportedFeatureSet supportedFeatures;
     private final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
 
     private SchemaContextFactoryConfiguration(final @NonNull SchemaSourceFilter filter,
             final @NonNull StatementParserMode statementParserMode,
-            final @Nullable Set<QName> supportedFeatures,
+            final @Nullable SupportedFeatureSet supportedFeatures,
             final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         this.filter = requireNonNull(filter);
         this.statementParserMode = requireNonNull(statementParserMode);
@@ -60,7 +57,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         return statementParserMode;
     }
 
-    public Optional<Set<QName>> getSupportedFeatures() {
+    public Optional<SupportedFeatureSet> getSupportedFeatures() {
         return Optional.ofNullable(supportedFeatures);
     }
 
@@ -100,7 +97,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         private @NonNull SchemaSourceFilter filter = SchemaSourceFilter.ALWAYS_ACCEPT;
         private @NonNull StatementParserMode statementParserMode = StatementParserMode.DEFAULT_MODE;
         private ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
-        private Set<QName> supportedFeatures;
+        private SupportedFeatureSet supportedFeatures;
 
         /**
          * Set schema source filter which will filter available schema sources using the provided filter.
@@ -132,12 +129,8 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
          *                          features encountered will be supported.
          * @return this builder
          */
-        public @NonNull Builder setSupportedFeatures(final Set<QName> supportedFeatures) {
-            if (supportedFeatures == null || supportedFeatures instanceof SupportedFeatureSet) {
-                this.supportedFeatures = supportedFeatures;
-            } else {
-                this.supportedFeatures = ImmutableSet.copyOf(supportedFeatures);
-            }
+        public @NonNull Builder setSupportedFeatures(final SupportedFeatureSet supportedFeatures) {
+            this.supportedFeatures = supportedFeatures;
             return this;
         }
 

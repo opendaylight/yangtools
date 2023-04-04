@@ -113,12 +113,8 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         libSources.add(new SourceSpecificContext(this, libSource));
     }
 
-    void setSupportedFeatures(final Set<QName> supportedFeatures) {
-        if (supportedFeatures instanceof SupportedFeatureSet) {
-            addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), supportedFeatures);
-        } else {
-            addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), ImmutableSet.copyOf(supportedFeatures));
-        }
+    void setSupportedFeatures(final SupportedFeatureSet supportedFeatures) {
+        addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), requireNonNull(supportedFeatures));
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
