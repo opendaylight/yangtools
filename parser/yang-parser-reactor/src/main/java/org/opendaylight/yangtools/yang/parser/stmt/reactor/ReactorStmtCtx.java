@@ -16,7 +16,6 @@ import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -466,7 +465,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final void setUnsupported() {
-        this.isSupportedToBuildEffective = false;
+        isSupportedToBuildEffective = false;
     }
 
     @Override
@@ -485,8 +484,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
          */
         if (isParentSupportedByFeatures()) {
             // If the set of supported features has not been provided, all features are supported by default.
-            final Set<QName> supportedFeatures = getFromNamespace(ParserNamespaces.SUPPORTED_FEATURES,
-                Empty.value());
+            final var supportedFeatures = getFromNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
             if (supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures)) {
                 flags |= SET_SUPPORTED_BY_FEATURES;
                 return true;

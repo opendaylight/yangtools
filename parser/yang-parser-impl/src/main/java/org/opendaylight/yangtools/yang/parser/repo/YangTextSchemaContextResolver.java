@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
@@ -37,7 +36,7 @@ import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.FeatureSet;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -224,15 +223,13 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private synchronized @NonNull FeatureSet getSupportedFeatures() {
         var local = supportedFeatures;
         if (local == null) {
-            final var builder = ImmutableMap.<QNameModule, ImmutableSet<String>>builder();
+            final var builder = FeatureSet.builder();
             for (var entry : registeredFeatures.entrySet()) {
-                builder.put(entry.getKey(), entry.getValue().stream()
-                    .flatMap(Set::stream)
-                    .distinct()
-                    .sorted()
-                    .collect(ImmutableSet.toImmutableSet()));
+                for (var features : entry.getValue()) {
+                    builder.addModuleFeatures(entry.getKey(), features);
+                }
             }
-            supportedFeatures = local = new FeatureSet(builder.build());
+            supportedFeatures = local = builder.build();
         }
         return local;
     }
