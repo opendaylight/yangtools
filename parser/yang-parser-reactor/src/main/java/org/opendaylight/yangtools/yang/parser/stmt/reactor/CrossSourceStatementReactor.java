@@ -16,11 +16,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -190,7 +189,7 @@ public final class CrossSourceStatementReactor {
          *            If the set is empty, no features encountered will be supported.
          * @return This build action, for fluent use.
          */
-        public @NonNull BuildAction setSupportedFeatures(final @NonNull Set<QName> supportedFeatures) {
+        public @NonNull BuildAction setSupportedFeatures(final @NonNull FeatureSet supportedFeatures) {
             checkState(!supportedFeaturesSet, "Supported features should be set only once.");
             context.setSupportedFeatures(requireNonNull(supportedFeatures));
             supportedFeaturesSet = true;

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -73,7 +74,7 @@ public final class TestUtils {
         final var action = RFC7950Reactors.defaultReactor().newBuild()
             .addSources(loadSources(cls, resourceDirectory));
         if (supportedFeatures != null) {
-            action.setSupportedFeatures(supportedFeatures);
+            action.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
         return action.buildEffective();
     }
@@ -90,7 +91,7 @@ public final class TestUtils {
                 TestUtils.class.getResource(resourcePath).toURI()))));
         }
         if (supportedFeatures != null) {
-            reactor.setSupportedFeatures(supportedFeatures);
+            reactor.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
         return reactor.buildEffective();
     }
