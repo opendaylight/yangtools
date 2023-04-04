@@ -216,11 +216,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     private static @NonNull AbstractResumedStatement<?, ?, ?> unmaskUndeclared(final ReactorStmtCtx<?, ?, ?> stmt) {
         var ret = stmt;
-        while (!(ret instanceof AbstractResumedStatement)) {
+        while (!(ret instanceof AbstractResumedStatement<?, ?, ?> resumed)) {
             verify(ret instanceof UndeclaredStmtCtx, "Unexpectred statement %s", ret);
             ret = ((UndeclaredStmtCtx<?, ?, ?>) ret).getResumedSubstatement();
         }
-        return (AbstractResumedStatement<?, ?, ?>) ret;
+        return resumed;
     }
 
     /**
