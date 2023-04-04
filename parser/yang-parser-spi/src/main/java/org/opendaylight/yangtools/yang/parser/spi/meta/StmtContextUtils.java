@@ -81,7 +81,6 @@ public final class StmtContextUtils {
     }
 
     @SafeVarargs
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
             int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
         if (startIndex >= types.length) {
@@ -89,7 +88,7 @@ public final class StmtContextUtils {
         }
 
         for (var subStmtContext : stmtContext.declaredSubstatements()) {
-            if (subStmtContext.producesDeclared((Class) types[startIndex])) {
+            if (subStmtContext.producesDeclared(types[startIndex])) {
                 return startIndex + 1 == types.length ? subStmtContext : findFirstDeclaredSubstatement(subStmtContext,
                         ++startIndex, types);
             }
