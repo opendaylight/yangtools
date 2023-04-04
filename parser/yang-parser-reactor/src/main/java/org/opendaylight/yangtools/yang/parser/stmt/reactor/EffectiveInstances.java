@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -52,16 +50,16 @@ final class EffectiveInstances<E extends EffectiveStatement<?, ?>> implements Mu
 
         // We need to make sure substatements are actually the same. If they are not, we'll just return the copy,
         // playing it safe.
-        final Collection<? extends EffectiveStatement<?, ?>> prevStmts = prev.effectiveSubstatements();
-        final Collection<? extends EffectiveStatement<?, ?>> copyStmts = copy.effectiveSubstatements();
+        final var prevStmts = prev.effectiveSubstatements();
+        final var copyStmts = copy.effectiveSubstatements();
         if (prevStmts != copyStmts) {
             if (prevStmts.size() != copyStmts.size()) {
                 LOG.trace("Key {} substatement count mismatch", key);
                 return copy;
             }
 
-            final Iterator<? extends EffectiveStatement<?, ?>> prevIt = prevStmts.iterator();
-            final Iterator<? extends EffectiveStatement<?, ?>> copyIt = copyStmts.iterator();
+            final var prevIt = prevStmts.iterator();
+            final var copyIt = copyStmts.iterator();
             while (prevIt.hasNext()) {
                 if (prevIt.next() != copyIt.next()) {
                     LOG.trace("Key {} substatement mismatch", key);
