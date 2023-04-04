@@ -835,15 +835,13 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         if (optImplicit.isEmpty()) {
             return original;
         }
-
-        checkArgument(original instanceof StatementContextBase, "Unsupported original %s", original);
-        final var origBase = (StatementContextBase<?, ?, ?>)original;
-
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        final UndeclaredStmtCtx<?, ?, ?> result = new UndeclaredStmtCtx(origBase, optImplicit.orElseThrow());
-        result.addEffectiveSubstatement(origBase.reparent(result));
-        result.setCompletedPhase(original.getCompletedPhase());
-        return result;
+        if (original instanceof StatementContextBase<?, ?, ?> origBase) {
+            final var result = new UndeclaredStmtCtx<>(origBase, optImplicit.orElseThrow());
+            result.addEffectiveSubstatement(origBase.reparent(result));
+            result.setCompletedPhase(original.getCompletedPhase());
+            return result;
+        }
+        throw new IllegalArgumentException("Unsupported original " + original);
     }
 
     abstract StatementContextBase<A, D, E> reparent(StatementContextBase<?, ?, ?> newParent);
