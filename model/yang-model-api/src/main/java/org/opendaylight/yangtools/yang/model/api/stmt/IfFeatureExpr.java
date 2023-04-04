@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -91,20 +92,20 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
 
         @Override
         public final Set<QName> getReferencedFeatures() {
-            final Set<QName> ret = new HashSet<>();
+            final var ret = new HashSet<QName>();
             addQNames(ret);
             return ret;
         }
 
         @Override
         final void addQNames(final Set<QName> set) {
-            for (IfFeatureExpr expr : array) {
+            for (var expr : array) {
                 expr.addQNames(set);
             }
         }
 
         final IfFeatureExpr[] negateExprs() {
-            final IfFeatureExpr[] ret = new IfFeatureExpr[array.length];
+            final var ret = new IfFeatureExpr[array.length];
             for (int i = 0; i < array.length; i++) {
                 ret[i] = verifyNotNull(array[i].negate());
             }
@@ -113,9 +114,8 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
 
         @Override
         public final String toString() {
-            final StringBuilder sb = new StringBuilder("(");
-            sb.append(array[0]);
-            final String sep = infix();
+            final var sb = new StringBuilder("(").append(array[0]);
+            final var sep = infix();
             for (int i = 1; i < array.length; ++i) {
                 sb.append(sep).append(array[i]);
             }
@@ -140,13 +140,13 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
 
         @Override
         public final String toString() {
-            final StringBuilder sb = new StringBuilder();
+            final var sb = new StringBuilder();
             if (negated()) {
                 sb.append("not ");
             }
 
             sb.append("(\"").append(array[0]).append('"');
-            final String sep = infix();
+            final var sep = infix();
             for (int i = 1; i < array.length; ++i) {
                 sb.append(sep).append('"').append(array[i]).append('"');
             }
@@ -210,7 +210,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
 
         @Override
         public boolean test(final Set<QName> supportedFeatures) {
-            for (IfFeatureExpr expr : array) {
+            for (var expr : array) {
                 if (!expr.test(supportedFeatures)) {
                     return false;
                 }
@@ -236,7 +236,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
 
         @Override
         public boolean test(final Set<QName> supportedFeatures) {
-            for (IfFeatureExpr expr : array) {
+            for (var expr : array) {
                 if (expr.test(supportedFeatures)) {
                     return true;
                 }
@@ -258,7 +258,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
         @Override
         public final boolean test(final Set<QName> supportedFeatures) {
             final boolean neg = negated();
-            for (QName qname : array) {
+            for (var qname : array) {
                 if (supportedFeatures.contains(qname) == neg) {
                     return false;
                 }
@@ -311,7 +311,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
 
         @Override
         public final boolean test(final Set<QName> supportedFeatures) {
-            for (QName qname : array) {
+            for (var qname : array) {
                 if (supportedFeatures.contains(qname)) {
                     return !negated();
                 }
@@ -362,7 +362,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
      *
      * @param qname Feature QName
      * @return An expression
-     * @throws NullPointerException if {@code qname} is null
+     * @throws NullPointerException if {@code qname} is {@code null}
      */
     public static final @NonNull IfFeatureExpr isPresent(final QName qname) {
         return new Present(qname);
@@ -373,7 +373,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
      *
      * @param exprs Constituent expressions
      * @return An expression
-     * @throws NullPointerException if {@code exprs} or any of its members is null
+     * @throws NullPointerException if {@code exprs} or any of its members is {@code null}
      * @throws IllegalArgumentException if {@code exprs} is empty
      */
     public static final @NonNull IfFeatureExpr and(final Set<IfFeatureExpr> exprs) {
@@ -385,7 +385,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
      *
      * @param exprs Constituent expressions
      * @return An expression
-     * @throws NullPointerException if {@code exprs} or any of its members is null
+     * @throws NullPointerException if {@code exprs} or any of its members is {@code null}
      * @throws IllegalArgumentException if {@code exprs} is empty
      */
     public static final @NonNull IfFeatureExpr or(final Set<IfFeatureExpr> exprs) {
@@ -418,7 +418,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
      * Add QNames referenced by this expression into a target set.
      *
      * @param set The set to fill
-     * @throws NullPointerException if {@code set} is null
+     * @throws NullPointerException if {@code set} is {@code null}
      */
     abstract void addQNames(@NonNull Set<QName> set);
 
@@ -426,40 +426,42 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
             final Function<QName[], @NonNull Compound> allPresent,
             final Function<QName[], @NonNull Compound> allAbsent,
             final Function<IfFeatureExpr[], @NonNull Complex> mixed) {
-        switch (exprs.size()) {
-            case 0:
-                throw new IllegalArgumentException("Expressions may not be empty");
-            case 1:
-                return requireNonNull(exprs.iterator().next());
-            default:
-                // Heavy lifting is needed
-        }
+        return switch (exprs.size()) {
+            case 0 -> throw new IllegalArgumentException("Expressions may not be empty");
+            case 1 -> requireNonNull(exprs.iterator().next());
+            default -> {
+                // Heavy lifting is needed: determine if whether this is all-positive or all-negative expressions
+                boolean negative = false;
+                boolean positive = false;
+                for (var expr : exprs) {
+                    if (expr instanceof Present) {
+                        positive = true;
+                    } else if (expr instanceof Absent) {
+                        negative = true;
+                    } else {
+                        requireNonNull(expr);
+                        negative = positive = true;
+                    }
+                }
 
-        boolean negative = false;
-        boolean positive = false;
-        for (IfFeatureExpr expr : exprs) {
-            if (expr instanceof Present) {
-                positive = true;
-            } else if (expr instanceof Absent) {
-                negative = true;
-            } else {
-                requireNonNull(expr);
-                negative = positive = true;
+                // Not nice: we have both negative and positive expressions
+                verify(negative || positive, "Unresolved expressions %s", exprs);
+                if (positive == negative) {
+                    yield mixed.apply(exprs.toArray(new IfFeatureExpr[0]));
+                }
+
+                // All expressions are either positive or negative, hence we can combine them efficiently
+                final var qnames = exprs.stream()
+                    .map(expr -> {
+                        if (expr instanceof Single single) {
+                            return single.qname;
+                        }
+                        throw new VerifyException("Unexpected expression " + expr);
+                    })
+                    .collect(ImmutableSet.toImmutableSet())
+                    .toArray(new QName[0]);
+                yield positive ? allPresent.apply(qnames) : allAbsent.apply(qnames);
             }
-        }
-
-        verify(negative || positive, "Unresolved expressions %s", exprs);
-        if (positive == negative) {
-            return mixed.apply(exprs.toArray(new IfFeatureExpr[0]));
-        }
-
-        final var qnames = exprs.stream()
-            .map(expr -> {
-                verify(expr instanceof Single, "Unexpected expression %s", expr);
-                return ((Single) expr).qname;
-            })
-            .collect(ImmutableSet.toImmutableSet())
-            .toArray(new QName[0]);
-        return positive ? allPresent.apply(qnames) : allAbsent.apply(qnames);
+        };
     }
 }
