@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1038e0cf_59acbbb7",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/SupportedFeatureSetBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-04T18:11:32Z",
+      "side": 1,
+      "message": "Right: this cannot be a Set, as it breaks down it we get two registrations for exactly the same Set\u003cQName\u003e -- only one will be retained",
+      "range": {
+        "startLine": 20,
+        "startChar": 35,
+        "endLine": 20,
+        "endChar": 38
+      },
+      "revId": "9716698137671da23738e64bdb9bfe04f3aa2e33",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45cd47c6_feb46518",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-04T18:11:32Z",
+      "side": 1,
+      "message": "missing synchronization for version update!",
+      "range": {
+        "startLine": 105,
+        "startChar": 16,
+        "endLine": 105,
+        "endChar": 39
+      },
+      "revId": "9716698137671da23738e64bdb9bfe04f3aa2e33",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
