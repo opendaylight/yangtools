@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -22,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
@@ -32,7 +31,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
     @Test
     public void testSharedSchemaRepositoryWithSomeFeaturesSupported() throws Exception {
-        final Set<QName> supportedFeatures = ImmutableSet.of(QName.create("foobar-namespace", "test-feature-1"));
+        final FeatureSet supportedFeatures = FeatureSet.of(QName.create("foobar-namespace", "test-feature-1"));
 
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
@@ -116,7 +115,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
         final ListenableFuture<EffectiveModelContext> testSchemaContextFuture =
                 sharedSchemaRepository.createEffectiveModelContextFactory(
-                    SchemaContextFactoryConfiguration.builder().setSupportedFeatures(ImmutableSet.of()).build())
+                    SchemaContextFactoryConfiguration.builder().setSupportedFeatures(FeatureSet.of()).build())
                 .createEffectiveModelContext(foobar.getId());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
