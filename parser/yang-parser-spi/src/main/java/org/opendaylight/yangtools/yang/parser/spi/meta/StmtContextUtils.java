@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SupportedFeatureSet;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -212,7 +213,7 @@ public final class StmtContextUtils {
     }
 
     public static boolean checkFeatureSupport(final StmtContext<?, ?, ?> stmtContext,
-            final Set<QName> supportedFeatures) {
+            final SupportedFeatureSet supportedFeatures) {
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (var stmt : stmtContext.declaredSubstatements()) {
