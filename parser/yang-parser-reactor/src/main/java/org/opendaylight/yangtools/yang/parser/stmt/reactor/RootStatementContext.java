@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
  * Root statement class for a YANG source. All statements defined in that YANG source are mapped underneath an instance
  * of this class, hence recursive lookups from them cross this class.
  */
-public final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends AbstractResumedStatement<A, D, E> implements RootStmtContext.Mutable<A, D, E> {
-    public static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
+    static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
 
     private static final Logger LOG = LoggerFactory.getLogger(RootStatementContext.class);
     // These namespaces are well-known and not needed after the root is cleaned up
