@@ -32,6 +32,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -97,7 +98,7 @@ final class SystemTestUtils {
                 .warnForUnkeyedLists(warnForUnkeyedLists).build();
         final YangParser parser = PARSER_FACTORY.createParser(configuration);
         if (supportedFeatures != null) {
-            parser.setSupportedFeatures(supportedFeatures);
+            parser.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
 
         for (File file : testFiles) {
