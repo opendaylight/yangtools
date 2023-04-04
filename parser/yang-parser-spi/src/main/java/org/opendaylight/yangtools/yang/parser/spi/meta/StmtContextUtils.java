@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -25,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
@@ -219,8 +219,7 @@ public final class StmtContextUtils {
         for (var stmt : stmtContext.declaredSubstatements()) {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.publicDefinition())) {
                 containsIfFeature = true;
-                @SuppressWarnings("unchecked")
-                final Predicate<Set<QName>> argument = (Predicate<Set<QName>>) stmt.getArgument();
+                final var argument = (IfFeatureExpr) stmt.getArgument();
                 if (argument.test(supportedFeatures)) {
                     isSupported = true;
                 } else {
