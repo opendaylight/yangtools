@@ -11,18 +11,16 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 
 /**
  * SchemaContextFactory configuration class. It currently supports the following options to be set:
@@ -39,12 +37,12 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
 
     private final @NonNull SchemaSourceFilter filter;
     private final @NonNull StatementParserMode statementParserMode;
-    private final @Nullable Set<QName> supportedFeatures;
+    private final @Nullable FeatureSet supportedFeatures;
     private final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
 
     private SchemaContextFactoryConfiguration(final @NonNull SchemaSourceFilter filter,
             final @NonNull StatementParserMode statementParserMode,
-            final @Nullable Set<QName> supportedFeatures,
+            final @Nullable FeatureSet supportedFeatures,
             final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         this.filter = requireNonNull(filter);
         this.statementParserMode = requireNonNull(statementParserMode);
@@ -60,7 +58,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         return statementParserMode;
     }
 
-    public Optional<Set<QName>> getSupportedFeatures() {
+    public Optional<FeatureSet> getSupportedFeatures() {
         return Optional.ofNullable(supportedFeatures);
     }
 
@@ -85,25 +83,8 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
     public boolean equals(final Object obj) {
         return this == obj || obj instanceof SchemaContextFactoryConfiguration other && filter.equals(other.filter)
             && statementParserMode.equals(other.statementParserMode)
-            && equals(supportedFeatures, other.supportedFeatures)
+            && Objects.equals(supportedFeatures, other.supportedFeatures)
             && Objects.equals(modulesDeviatedByModules, other.modulesDeviatedByModules);
-    }
-
-    // This a bit of a dance to deal with FeatureSet not conforming to Set.equals()
-    private static boolean equals(final @Nullable Set<QName> thisFeatures, final @Nullable Set<QName> otherFeatures) {
-        if (thisFeatures == otherFeatures) {
-            return true;
-        }
-        if (thisFeatures == null || otherFeatures == null) {
-            return false;
-        }
-        if (thisFeatures instanceof FeatureSet) {
-            return thisFeatures.equals(otherFeatures);
-        }
-        if (otherFeatures instanceof FeatureSet) {
-            return otherFeatures.equals(thisFeatures);
-        }
-        return thisFeatures.equals(otherFeatures);
     }
 
     @Override
@@ -117,7 +98,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         private @NonNull SchemaSourceFilter filter = SchemaSourceFilter.ALWAYS_ACCEPT;
         private @NonNull StatementParserMode statementParserMode = StatementParserMode.DEFAULT_MODE;
         private ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
-        private Set<QName> supportedFeatures;
+        private FeatureSet supportedFeatures;
 
         /**
          * Set schema source filter which will filter available schema sources using the provided filter.
@@ -149,12 +130,8 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
          *                          features encountered will be supported.
          * @return this builder
          */
-        public @NonNull Builder setSupportedFeatures(final Set<QName> supportedFeatures) {
-            if (supportedFeatures == null || supportedFeatures instanceof FeatureSet) {
-                this.supportedFeatures = supportedFeatures;
-            } else {
-                this.supportedFeatures = ImmutableSet.copyOf(supportedFeatures);
-            }
+        public @NonNull Builder setSupportedFeatures(final FeatureSet supportedFeatures) {
+            this.supportedFeatures = supportedFeatures;
             return this;
         }
 

@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.FeatureSet;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -106,12 +106,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         libSources.add(new SourceSpecificContext(this, libSource));
     }
 
-    void setSupportedFeatures(final Set<QName> supportedFeatures) {
-        if (supportedFeatures instanceof FeatureSet) {
-            addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), supportedFeatures);
-        } else {
-            addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), ImmutableSet.copyOf(supportedFeatures));
-        }
+    void setSupportedFeatures(final FeatureSet supportedFeatures) {
+        addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), requireNonNull(supportedFeatures));
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {

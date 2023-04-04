@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -212,7 +213,7 @@ public final class StmtContextUtils {
     }
 
     public static boolean checkFeatureSupport(final StmtContext<?, ?, ?> stmtContext,
-            final Set<QName> supportedFeatures) {
+            final FeatureSet supportedFeatures) {
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (var stmt : stmtContext.declaredSubstatements()) {

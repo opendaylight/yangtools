@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -109,7 +109,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
     @Test
     public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
         final var schemaContext = REACTOR.newBuild()
-            .setSupportedFeatures(ImmutableSet.of())
+            .setSupportedFeatures(FeatureSet.of())
             .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE)
             .buildEffective();
         assertNotNull(schemaContext);
