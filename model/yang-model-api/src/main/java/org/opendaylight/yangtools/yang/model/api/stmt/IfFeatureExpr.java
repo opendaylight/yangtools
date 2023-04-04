@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * <p>
  * The set of features referenced in this expression is available through {@link #getReferencedFeatures()}.
  */
-public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<QName>> {
+public abstract sealed class IfFeatureExpr implements Immutable, Predicate<FeatureSet> {
     private abstract static sealed class Single extends IfFeatureExpr {
         final @NonNull QName qname;
 
@@ -167,7 +167,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
         }
 
         @Override
-        public boolean test(final Set<QName> supportedFeatures) {
+        public boolean test(final FeatureSet supportedFeatures) {
             return !supportedFeatures.contains(qname);
         }
 
@@ -188,7 +188,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
         }
 
         @Override
-        public boolean test(final Set<QName> supportedFeatures) {
+        public boolean test(final FeatureSet supportedFeatures) {
             return supportedFeatures.contains(qname);
         }
 
@@ -209,7 +209,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
         }
 
         @Override
-        public boolean test(final Set<QName> supportedFeatures) {
+        public boolean test(final FeatureSet supportedFeatures) {
             for (var expr : array) {
                 if (!expr.test(supportedFeatures)) {
                     return false;
@@ -235,7 +235,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
         }
 
         @Override
-        public boolean test(final Set<QName> supportedFeatures) {
+        public boolean test(final FeatureSet supportedFeatures) {
             for (var expr : array) {
                 if (expr.test(supportedFeatures)) {
                     return true;
@@ -256,7 +256,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
         }
 
         @Override
-        public final boolean test(final Set<QName> supportedFeatures) {
+        public final boolean test(final FeatureSet supportedFeatures) {
             final boolean neg = negated();
             for (var qname : array) {
                 if (supportedFeatures.contains(qname) == neg) {
@@ -310,7 +310,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
         }
 
         @Override
-        public final boolean test(final Set<QName> supportedFeatures) {
+        public final boolean test(final FeatureSet supportedFeatures) {
             for (var qname : array) {
                 if (supportedFeatures.contains(qname)) {
                     return !negated();
@@ -403,7 +403,7 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Set<Q
     public abstract @NonNull IfFeatureExpr negate();
 
     @Override
-    public abstract boolean test(Set<QName> supportedFeatures);
+    public abstract boolean test(FeatureSet supportedFeatures);
 
     @Override
     public abstract int hashCode();
