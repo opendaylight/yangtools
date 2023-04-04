@@ -119,7 +119,6 @@ final class ModifierImpl implements ModelActionBuilder {
         return phaseFin;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private <K, C extends Mutable<?, ?, ?>> AbstractPrerequisite<C> mutatesCtxImpl(final StmtContext<?, ?, ?> context,
             final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace, final K key,
             final ModelProcessingPhase phase) {
@@ -128,7 +127,7 @@ final class ModifierImpl implements ModelActionBuilder {
         final var mod = new PhaseModificationInNamespace<C>(this, EFFECTIVE_MODEL);
         addReq(mod);
         addMutation(mod);
-        contextImpl(context).onNamespaceItemAddedAction((ParserNamespace) namespace, key, mod);
+        contextImpl(context).onNamespaceItemAddedAction(namespace, key, mod);
         return mod;
     }
 
