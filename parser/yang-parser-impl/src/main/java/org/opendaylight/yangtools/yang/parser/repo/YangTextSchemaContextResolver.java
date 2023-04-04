@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediate
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -234,9 +234,11 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                     throw new IllegalStateException("Interrupted while assembling schema context", e);
                 } catch (final ExecutionException e) {
                     LOG.info("Failed to fully assemble schema context for {}", sources, e);
-                    final Throwable cause = e.getCause();
-                    Verify.verify(cause instanceof SchemaResolutionException);
-                    sources = ((SchemaResolutionException) cause).getResolvedSources();
+                    final var cause = e.getCause();
+                    if (!(cause instanceof SchemaResolutionException resolutionException)) {
+                        throw new VerifyException("Unexpected error while assembling schema context", cause);
+                    }
+                    sources = resolutionException.getResolvedSources();
                 }
             }
 
@@ -299,9 +301,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         } catch (final InterruptedException e) {
             throw new IllegalStateException("Interrupted while waiting for SchemaContext assembly", e);
         } catch (final ExecutionException e) {
-            final Throwable cause = e.getCause();
-            if (cause instanceof SchemaResolutionException) {
-                throw (SchemaResolutionException) cause;
+            if (e.getCause() instanceof SchemaResolutionException resolutionException) {
+                throw resolutionException;
             }
 
             throw new SchemaResolutionException("Failed to assemble SchemaContext", e);
