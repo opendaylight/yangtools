@@ -14,14 +14,13 @@ import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import javax.xml.transform.TransformerException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.repo.api.SupportedFeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
@@ -69,7 +68,7 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public @NonNull YangParser setSupportedFeatures(final Set<QName> supportedFeatures) {
+    public @NonNull YangParser setSupportedFeatures(final SupportedFeatureSet supportedFeatures) {
         buildAction.setSupportedFeatures(supportedFeatures);
         return this;
     }
