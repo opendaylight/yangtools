@@ -17,6 +17,7 @@ import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
@@ -73,7 +74,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
         }
 
         try {
-            return act.setSupportedFeatures(features.build()).buildEffective();
+            return act.setSupportedFeatures(FeatureSet.of(features.build())).buildEffective();
         } catch (ReactorException e) {
             throw DefaultYangParser.decodeReactorException(e);
         }
