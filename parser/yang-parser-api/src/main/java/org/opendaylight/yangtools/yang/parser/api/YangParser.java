@@ -12,13 +12,12 @@ import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.repo.api.SupportedFeatureSet;
 
 /**
  * Configurable single-use YANG parser. Each instance can be configured to use a different set of models after
@@ -106,7 +105,7 @@ public interface YangParser {
      * @param supportedFeatures Set of supported features in the final SchemaContext. If the set is empty, no features
      *                          encountered will be supported.
      */
-    @NonNull YangParser setSupportedFeatures(@NonNull Set<QName> supportedFeatures);
+    @NonNull YangParser setSupportedFeatures(@NonNull SupportedFeatureSet supportedFeatures);
 
     /**
      * Set YANG modules which can be deviated by specified modules during the parsing process. Map key (QNameModule)

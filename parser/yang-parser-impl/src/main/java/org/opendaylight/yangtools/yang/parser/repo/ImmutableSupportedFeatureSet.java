@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.repo.api.SupportedFeatureSet;
 
-final class ImmutableSupportedFeatureSet extends SupportedFeatureSet {
+final class ImmutableSupportedFeatureSet implements SupportedFeatureSet {
     // Note: not a ImmutableSetMultimap because we need to distinguish non-presence vs. empty Set
     private final ImmutableMap<QNameModule, ImmutableSet<String>> featuresByModule;
 
