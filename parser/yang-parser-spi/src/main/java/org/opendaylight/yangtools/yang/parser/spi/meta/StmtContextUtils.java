@@ -14,7 +14,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -51,7 +50,7 @@ public final class StmtContextUtils {
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(
             final Iterable<? extends StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
-        for (final StmtContext<?, ?, ?> ctx : contexts) {
+        for (var ctx : contexts) {
             if (ctx.producesDeclared(declaredType)) {
                 return (A) ctx.argument();
             }
@@ -73,7 +72,7 @@ public final class StmtContextUtils {
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
+        for (var subStmtContext : stmtContext.declaredSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {
                 return (StmtContext<A, ?, ?>) subStmtContext;
             }
@@ -89,7 +88,7 @@ public final class StmtContextUtils {
             return null;
         }
 
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
+        for (var subStmtContext : stmtContext.declaredSubstatements()) {
             if (subStmtContext.producesDeclared((Class) types[startIndex])) {
                 return startIndex + 1 == types.length ? subStmtContext : findFirstDeclaredSubstatement(subStmtContext,
                         ++startIndex, types);
@@ -101,8 +100,8 @@ public final class StmtContextUtils {
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllDeclaredSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
-        final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
+        final var listBuilder = ImmutableList.<StmtContext<A, D, ?>>builder();
+        for (var subStmtContext : stmtContext.declaredSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {
                 listBuilder.add((StmtContext<A, D, ?>) subStmtContext);
             }
@@ -113,8 +112,8 @@ public final class StmtContextUtils {
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllEffectiveSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
-        final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
+        final var listBuilder = ImmutableList.<StmtContext<A, D, ?>>builder();
+        for (var subStmtContext : stmtContext.effectiveSubstatements()) {
             if (subStmtContext.producesDeclared(type)) {
                 listBuilder.add((StmtContext<A, D, ?>) subStmtContext);
             }
@@ -124,16 +123,16 @@ public final class StmtContextUtils {
 
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
-        final ImmutableList.Builder<StmtContext<A, D, ?>> listBuilder = ImmutableList.builder();
-        listBuilder.addAll(findAllDeclaredSubstatements(stmtContext, type));
-        listBuilder.addAll(findAllEffectiveSubstatements(stmtContext, type));
-        return listBuilder.build();
+        return ImmutableList.<StmtContext<A, D, ?>>builder()
+            .addAll(findAllDeclaredSubstatements(stmtContext, type))
+            .addAll(findAllEffectiveSubstatements(stmtContext, type))
+            .build();
     }
 
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstEffectiveSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
+        for (var subStmtContext : stmtContext.effectiveSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {
                 return (StmtContext<A, ?, ?>) subStmtContext;
             }
@@ -143,13 +142,12 @@ public final class StmtContextUtils {
 
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
             final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType, int sublevel) {
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
+        for (var subStmtContext : stmtContext.declaredSubstatements()) {
             if (sublevel == 1 && subStmtContext.producesDeclared(declaredType)) {
                 return subStmtContext;
             }
             if (sublevel > 1) {
-                final StmtContext<?, ?, ?> result = findFirstDeclaredSubstatementOnSublevel(subStmtContext,
-                        declaredType, --sublevel);
+                final var result = findFirstDeclaredSubstatementOnSublevel(subStmtContext, declaredType, --sublevel);
                 if (result != null) {
                     return result;
                 }
@@ -161,12 +159,12 @@ public final class StmtContextUtils {
 
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findDeepFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType) {
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
+        for (final var subStmtContext : stmtContext.declaredSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {
                 return subStmtContext;
             }
 
-            final StmtContext<?, ?, ?> result = findDeepFirstDeclaredSubstatement(subStmtContext, declaredType);
+            final var result = findDeepFirstDeclaredSubstatement(subStmtContext, declaredType);
             if (result != null) {
                 return result;
             }
@@ -185,10 +183,10 @@ public final class StmtContextUtils {
     //               we should operate normally -- the StatementSupport exposing such semantics is responsible for
     //               arranging the backend details.
     public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
-        StmtContext<?, ?, ?> current = stmtCtx;
+        var current = stmtCtx;
 
         while (true) {
-            final StmtContext<?, ?, ?> parent = current.coerceParentContext();
+            final var parent = current.coerceParentContext();
             if (parent.getParentContext() == null) {
                 return false;
             }
@@ -218,7 +216,7 @@ public final class StmtContextUtils {
             final Set<QName> supportedFeatures) {
         boolean isSupported = false;
         boolean containsIfFeature = false;
-        for (final StmtContext<?, ?, ?> stmt : stmtContext.declaredSubstatements()) {
+        for (var stmt : stmtContext.declaredSubstatements()) {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.publicDefinition())) {
                 containsIfFeature = true;
                 @SuppressWarnings("unchecked")
@@ -315,7 +313,7 @@ public final class StmtContextUtils {
     public static boolean hasAncestorOfType(final StmtContext<?, ?, ?> stmt,
             final Collection<StatementDefinition> ancestorTypes) {
         requireNonNull(ancestorTypes);
-        StmtContext<?, ?, ?> current = stmt.getParentContext();
+        var current = stmt.getParentContext();
         while (current != null) {
             if (ancestorTypes.contains(current.publicDefinition())) {
                 return true;
@@ -336,10 +334,10 @@ public final class StmtContextUtils {
         requireNonNull(stmt);
 
         // We do not expect this to by typically populated
-        final List<Mutable<?, ?, ?>> incomplete = new ArrayList<>(0);
+        final var incomplete = new ArrayList<Mutable<?, ?, ?>>(0);
 
-        Mutable<?, ?, ?> current = stmt.coerceParentContext();
-        Mutable<?, ?, ?> parent = current.getParentContext();
+        var current = stmt.coerceParentContext();
+        var parent = current.getParentContext();
         while (parent != null) {
             if (YangStmtMapping.LIST == current.publicDefinition()
                     && !current.hasSubstatement(KeyEffectiveStatement.class)) {
@@ -357,10 +355,10 @@ public final class StmtContextUtils {
         }
 
         // Deal with whatever incomplete ancestors we encountered
-        for (Mutable<?, ?, ?> ancestor : incomplete) {
+        for (var ancestor : incomplete) {
             // This check must complete during the ancestor's FULL_DECLARATION phase, i.e. the ancestor must not reach
             // EFFECTIVE_MODEL until it is done.
-            final ModelActionBuilder action = ancestor.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
+            final var action = ancestor.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
             action.apply(new InferenceAction() {
                 @Override
                 public void apply(final InferenceContext ctx) {
@@ -387,7 +385,7 @@ public final class StmtContextUtils {
      */
     public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
         requireNonNull(parentType);
-        final StmtContext<?, ?, ?> parentContext = ctx.getParentContext();
+        final var parentContext = ctx.getParentContext();
         return parentContext != null && parentType.equals(parentContext.publicDefinition());
     }
 
@@ -406,8 +404,8 @@ public final class StmtContextUtils {
             return;
         }
 
-        final StmtContext<?, ?, ?> listStmtCtx = ctx.coerceParentContext();
-        final StmtContext<Set<QName>, ?, ?> keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
+        final var listStmtCtx = ctx.coerceParentContext();
+        final var keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
 
         if (YangStmtMapping.LEAF.equals(ctx.publicDefinition())) {
             if (isListKey(ctx, keyStmtCtx)) {
@@ -434,7 +432,7 @@ public final class StmtContextUtils {
 
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
         leafStmtCtx.allSubstatements().forEach(leafSubstmtCtx -> {
-            final StatementDefinition statementDef = leafSubstmtCtx.publicDefinition();
+            final var statementDef = leafSubstmtCtx.publicDefinition();
             SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
                     || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx,
                     "%s statement is not allowed in %s leaf statement which is specified as a list key.",
@@ -447,18 +445,16 @@ public final class StmtContextUtils {
             return ctx.publicDefinition().getStatementName();
         }
 
-        String prefix;
-        QNameModule qnameModule = null;
-        String localName = null;
-
-        final String[] namesParts = value.split(":");
+        QNameModule qnameModule;
+        String localName;
+        final var namesParts = value.split(":");
         switch (namesParts.length) {
             case 1:
                 localName = namesParts[0];
                 qnameModule = getModuleQName(ctx);
                 break;
             default:
-                prefix = namesParts[0];
+                final var prefix = namesParts[0];
                 localName = namesParts[1];
                 qnameModule = getModuleQNameByPrefix(ctx, prefix);
                 // in case of unknown statement argument, we're not going to parse it
@@ -515,9 +511,9 @@ public final class StmtContextUtils {
             return internedQName(ctx, str);
         }
 
-        final String prefix = str.substring(0, colon);
+        final var prefix = str.substring(0, colon);
         SourceException.throwIf(prefix.isEmpty(), ctx, "String '%s' has an empty prefix", str);
-        final String localName = str.substring(colon + 1);
+        final var localName = str.substring(colon + 1);
         SourceException.throwIf(localName.isEmpty(), ctx, "String '%s' has an empty identifier", str);
 
         return parseNodeIdentifier(ctx, prefix, localName);
@@ -566,10 +562,9 @@ public final class StmtContextUtils {
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
-        final StmtContext<?, ?, ?> root = ctx.getRoot();
-        final StmtContext<?, ?, ?> importedModule = root.getFromNamespace(
-            ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
-        final QNameModule qnameModule = ctx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
+        final var root = ctx.getRoot();
+        final var importedModule = root.getFromNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
+        final var qnameModule = ctx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
         if (qnameModule != null) {
             return qnameModule;
         }
@@ -584,12 +579,12 @@ public final class StmtContextUtils {
 
     public static Optional<Revision> getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
         Revision revision = null;
-        for (final StmtContext<?, ?, ?> subStmt : subStmts) {
+        for (var subStmt : subStmts) {
             if (subStmt.producesDeclared(RevisionStatement.class)) {
                 if (revision == null && subStmt.argument() != null) {
                     revision = (Revision) subStmt.argument();
                 } else {
-                    final Revision subArg = (Revision) subStmt.argument();
+                    final var subArg = (Revision) subStmt.argument();
                     if (subArg != null && subArg.compareTo(revision) > 0) {
                         revision = subArg;
                     }
