@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
@@ -37,6 +36,7 @@ import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.repo.api.SupportedFeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.GuavaSchemaSourceCache;
@@ -77,7 +76,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private volatile Object version = new Object();
     private volatile Object contextVersion = version;
     @GuardedBy("this")
-    private SupportedFeatureSet supportedFeatures = null;
+    private FeatureSet supportedFeatures = null;
 
     private YangTextSchemaContextResolver(final SchemaRepository repository, final SchemaSourceRegistry registry) {
         this.repository = requireNonNull(repository);
@@ -212,18 +211,16 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         }
     }
 
-    private synchronized @NonNull SupportedFeatureSet getSupportedFeatures() {
+    private synchronized @NonNull FeatureSet getSupportedFeatures() {
         var local = supportedFeatures;
         if (local == null) {
-            final var builder = ImmutableMap.<QNameModule, ImmutableSet<String>>builder();
+            final var builder = FeatureSet.builder();
             for (var entry : registeredFeatures.entrySet()) {
-                builder.put(entry.getKey(), entry.getValue().stream()
-                    .flatMap(Set::stream)
-                    .distinct()
-                    .sorted()
-                    .collect(ImmutableSet.toImmutableSet()));
+                for (var features : entry.getValue()) {
+                    builder.addModuleFeatures(entry.getKey(), features);
+                }
             }
-            supportedFeatures = local = new ImmutableSupportedFeatureSet(builder.build());
+            supportedFeatures = local = builder.build();
         }
         return local;
     }
@@ -367,7 +364,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     private static @NonNull SchemaContextFactoryConfiguration config(final StatementParserMode statementParserMode,
-            final SupportedFeatureSet supportedFeatures) {
+            final FeatureSet supportedFeatures) {
         return SchemaContextFactoryConfiguration.builder()
             .setStatementParserMode(statementParserMode)
             .setSupportedFeatures(supportedFeatures)

@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
@@ -100,7 +101,7 @@ public final class StmtTestUtils {
             throws ReactorException {
         final BuildAction build = getReactor(config).newBuild().addSources(sources);
         if (supportedFeatures != null) {
-            build.setSupportedFeatures(supportedFeatures);
+            build.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
         return build.buildEffective();
     }

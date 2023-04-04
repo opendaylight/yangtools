@@ -27,6 +27,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
@@ -350,7 +351,7 @@ public final class YangParserTestUtils {
             final Set<QName> supportedFeatures, final Collection<? extends SchemaSourceRepresentation> sources) {
         final YangParser parser = PARSER_FACTORY.createParser(config);
         if (supportedFeatures != null) {
-            parser.setSupportedFeatures(supportedFeatures);
+            parser.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
 
         try {
