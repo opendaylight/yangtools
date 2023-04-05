@@ -62,14 +62,11 @@ public final class SubstatementValidator {
 
         // Equivalent to min .. Integer.MAX_VALUE
         public Builder addAtLeast(final StatementDefinition def, final int min) {
-            switch (min) {
-                case 0:
-                    return addAny(def);
-                case 1:
-                    return addMultiple(def);
-                default:
-                    return add(def, new Cardinality(min, Integer.MAX_VALUE));
-            }
+            return switch (min) {
+                case 0 -> addAny(def);
+                case 1 -> addMultiple(def);
+                default -> add(def, new Cardinality(min, Integer.MAX_VALUE));
+            };
         }
 
         // Equivalent to 0 .. max
