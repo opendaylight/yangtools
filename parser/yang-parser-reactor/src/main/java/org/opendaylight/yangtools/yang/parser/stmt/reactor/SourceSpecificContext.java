@@ -53,7 +53,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
+final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviourRegistry, Mutable {
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -93,7 +93,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     // TODO: consider keying by Byte equivalent of ExecutionOrder
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
-    private final SupportedStatements statementSupports = new SupportedStatements(qnameToStmtDefMap);
+    private final @NonNull SupportedStatements statementSupports = new SupportedStatements(qnameToStmtDefMap);
     private final HashMapPrefixResolver prefixToModuleMap = new HashMapPrefixResolver();
     private final @NonNull BuildGlobalContext globalContext;
 
@@ -301,10 +301,11 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
         if (StatementSupport.NAMESPACE.equals(type)) {
-            return (NamespaceBehaviour<K, V>) statementSupports;
+            @SuppressWarnings("unchecked")
+            final var ret = (NamespaceBehaviour<K, V>) statementSupports;
+            return ret;
         }
         return globalContext.getNamespaceBehaviour(type);
     }
