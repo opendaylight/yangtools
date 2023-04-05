@@ -69,6 +69,30 @@
       },
       "revId": "9716698137671da23738e64bdb9bfe04f3aa2e33",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a109898_cd265567",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-05T00:24:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45cd47c6_feb46518",
+      "range": {
+        "startLine": 105,
+        "startChar": 16,
+        "endLine": 105,
+        "endChar": 39
+      },
+      "revId": "9716698137671da23738e64bdb9bfe04f3aa2e33",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
