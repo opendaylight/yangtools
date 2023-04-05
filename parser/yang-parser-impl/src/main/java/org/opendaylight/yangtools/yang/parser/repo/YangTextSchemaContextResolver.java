@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
@@ -18,7 +16,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
@@ -29,9 +26,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -46,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -73,19 +68,17 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         this.repository = requireNonNull(repository);
         this.registry = requireNonNull(registry);
 
-        final TextToIRTransformer t = TextToIRTransformer.create(repository, registry);
-        transReg = registry.registerSchemaSourceListener(t);
-
+        transReg = registry.registerSchemaSourceListener(TextToIRTransformer.create(repository, registry));
         cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSchemaSource.class, SOURCE_LIFETIME);
     }
 
     public static @NonNull YangTextSchemaContextResolver create(final String name) {
-        final SharedSchemaRepository sharedRepo = new SharedSchemaRepository(name);
+        final var sharedRepo = new SharedSchemaRepository(name);
         return new YangTextSchemaContextResolver(sharedRepo, sharedRepo);
     }
 
     public static @NonNull YangTextSchemaContextResolver create(final String name, final YangParserFactory factory) {
-        final SharedSchemaRepository sharedRepo = new SharedSchemaRepository(name, factory);
+        final var sharedRepo = new SharedSchemaRepository(name, factory);
         return new YangTextSchemaContextResolver(sharedRepo, sharedRepo);
     }
 
@@ -102,20 +95,20 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(source != null);
 
-        final YangIRSchemaSource ast = TextToIRTransformer.transformText(source);
+        final var ast = TextToIRTransformer.transformText(source);
         LOG.trace("Resolved source {} to source {}", source, ast);
 
         // AST carries an accurate identifier, check if it matches the one supplied by the source. If it
         // does not, check how much it differs and emit a warning.
-        final SourceIdentifier providedId = source.getIdentifier();
-        final SourceIdentifier parsedId = ast.getIdentifier();
+        final var providedId = source.getIdentifier();
+        final var parsedId = ast.getIdentifier();
         final YangTextSchemaSource text;
         if (!parsedId.equals(providedId)) {
             if (!parsedId.name().equals(providedId.name())) {
                 LOG.info("Provided module name {} does not match actual text {}, corrected",
                     providedId.toYangFilename(), parsedId.toYangFilename());
             } else {
-                final Revision sourceRev = providedId.revision();
+                final var sourceRev = providedId.revision();
                 if (sourceRev != null) {
                     if (!sourceRev.equals(parsedId.revision())) {
                         LOG.info("Provided module revision {} does not match actual text {}, corrected",
@@ -135,7 +128,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             texts.put(parsedId, text);
             LOG.debug("Populated {} with text", parsedId);
 
-            final SchemaSourceRegistration<YangTextSchemaSource> reg = registry.registerSchemaSource(this,
+            final var reg = registry.registerSchemaSource(this,
                 PotentialSchemaSource.create(parsedId, YangTextSchemaSource.class, Costs.IMMEDIATE.getValue()));
             requiredSources.add(parsedId);
             cache.schemaSourceEncountered(ast);
@@ -178,7 +171,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private static SourceIdentifier guessSourceIdentifier(final @NonNull String fileName) {
         try {
             return YangTextSchemaSource.identifierFromFilename(fileName);
-        } catch (final IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             LOG.warn("Invalid file name format in '{}'", fileName, e);
             return new SourceIdentifier(fileName);
         }
@@ -203,8 +196,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      */
     public Optional<? extends EffectiveModelContext> getEffectiveModelContext(
             final StatementParserMode statementParserMode) {
-        final EffectiveModelContextFactory factory = repository.createEffectiveModelContextFactory(
-            config(statementParserMode));
+        final var factory = repository.createEffectiveModelContextFactory(config(statementParserMode));
         Optional<EffectiveModelContext> sc;
         Object ver;
         do {
@@ -226,15 +218,15 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (ver != version);
 
             while (true) {
-                final ListenableFuture<EffectiveModelContext> f = factory.createEffectiveModelContext(sources);
+                final var f = factory.createEffectiveModelContext(sources);
                 try {
                     sc = Optional.of(f.get());
                     break;
-                } catch (final InterruptedException e) {
+                } catch (InterruptedException e) {
                     throw new IllegalStateException("Interrupted while assembling schema context", e);
-                } catch (final ExecutionException e) {
+                } catch (ExecutionException e) {
                     LOG.info("Failed to fully assemble schema context for {}", sources, e);
-                    final Throwable cause = e.getCause();
+                    final var cause = e.getCause();
                     Verify.verify(cause instanceof SchemaResolutionException);
                     sources = ((SchemaResolutionException) cause).getResolvedSources();
                 }
@@ -256,15 +248,15 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     @Override
     public synchronized @NonNull FluentFuture<YangTextSchemaSource> getSource(
             final SourceIdentifier sourceIdentifier) {
-        final Collection<YangTextSchemaSource> ret = texts.get(sourceIdentifier);
+        final var ret = texts.get(sourceIdentifier);
 
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
         if (ret.isEmpty()) {
-            return immediateFailedFluentFuture(new MissingSchemaSourceException("URL for " + sourceIdentifier
-                + " not registered", sourceIdentifier));
+            return FluentFutures.immediateFailedFluentFuture(
+                new MissingSchemaSourceException("URL for " + sourceIdentifier + " not registered", sourceIdentifier));
         }
 
-        return immediateFluentFuture(ret.iterator().next());
+        return FluentFutures.immediateFluentFuture(ret.iterator().next());
     }
 
     /**
@@ -290,20 +282,18 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     @SuppressWarnings("checkstyle:avoidHidingCauseException")
     public EffectiveModelContext trySchemaContext(final StatementParserMode statementParserMode)
             throws SchemaResolutionException {
-        final ListenableFuture<EffectiveModelContext> future = repository
-                .createEffectiveModelContextFactory(config(statementParserMode))
+        final var future = repository.createEffectiveModelContextFactory(config(statementParserMode))
                 .createEffectiveModelContext(ImmutableSet.copyOf(requiredSources));
 
         try {
             return future.get();
-        } catch (final InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new IllegalStateException("Interrupted while waiting for SchemaContext assembly", e);
-        } catch (final ExecutionException e) {
-            final Throwable cause = e.getCause();
-            if (cause instanceof SchemaResolutionException) {
-                throw (SchemaResolutionException) cause;
+        } catch (ExecutionException e) {
+            final var cause = e.getCause();
+            if (cause instanceof SchemaResolutionException resolutionException) {
+                throw resolutionException;
             }
-
             throw new SchemaResolutionException("Failed to assemble SchemaContext", e);
         }
     }
@@ -313,7 +303,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         transReg.close();
     }
 
-    private static SchemaContextFactoryConfiguration config(final StatementParserMode statementParserMode) {
+    private static @NonNull SchemaContextFactoryConfiguration config(final StatementParserMode statementParserMode) {
         return SchemaContextFactoryConfiguration.builder().setStatementParserMode(statementParserMode).build();
     }
 }
