@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -112,13 +111,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             final StatementContextBase<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent);
-        this.targetModule = original.targetModule;
-        this.prototype = original.prototype;
-        this.originalCtx = original.originalCtx;
-        this.argument = original.argument;
-        this.modified = original.modified;
+        targetModule = original.targetModule;
+        prototype = original.prototype;
+        originalCtx = original.originalCtx;
+        argument = original.argument;
+        modified = original.modified;
         // Substatements are initialized here
-        this.substatements = ImmutableList.of();
+        substatements = ImmutableList.of();
     }
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
@@ -126,13 +125,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         super(prototype, myCopyType, childCopyType);
         this.parent = requireNonNull(parent);
         this.prototype = requireNonNull(prototype);
-        this.argument = targetModule == null ? prototype.argument()
+        argument = targetModule == null ? prototype.argument()
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.targetModule = targetModule;
 
         final var origCtx = prototype.getOriginalCtx().orElse(prototype);
         verify(origCtx instanceof ReactorStmtCtx, "Unexpected original %s", origCtx);
-        this.originalCtx = (ReactorStmtCtx<A, D, E>) origCtx;
+        originalCtx = (ReactorStmtCtx<A, D, E>) origCtx;
 
         // Mark prototype as blocking statement cleanup
         prototype.incRef();
@@ -691,11 +690,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     public StatementContextBase<?, ?, ?> getParentContext() {
         return parent;
-    }
-
-    @Override
-    public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.STATEMENT_LOCAL;
     }
 
     @Override

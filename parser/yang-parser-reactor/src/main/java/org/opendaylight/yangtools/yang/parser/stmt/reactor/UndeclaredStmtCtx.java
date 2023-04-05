@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -41,7 +40,7 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
     private UndeclaredStmtCtx(final UndeclaredStmtCtx<A, D, E> original, final StatementContextBase<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent);
-        this.argument = original.argument;
+        argument = original.argument;
     }
 
     UndeclaredStmtCtx(final StatementContextBase<?, ?, ?> parent, final StatementSupport<A, D, E> support,
@@ -55,8 +54,8 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
     UndeclaredStmtCtx(final StatementContextBase<?, ?, ?> original, final StatementSupport<A, D, E> support) {
         super(new StatementDefinitionContext<>(verifySupport(support)), original.sourceReference(),
             original.getLastOperation());
-        this.parent = original.getParentContext();
-        this.argument = castArgument(original);
+        parent = original.getParentContext();
+        argument = castArgument(original);
     }
 
     // Exposed for implicit substatement wrapping in StatementContextBase.childCopyOf()
@@ -64,7 +63,7 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
             final StatementContextBase<?, ?, ?> original, final CopyType type) {
         super(new StatementDefinitionContext<>(verifySupport(support)), original.sourceReference(), type);
         this.parent = requireNonNull(parent);
-        this.argument = castArgument(original);
+        argument = castArgument(original);
     }
 
     // Exposed for ImplicitStmtCtx
@@ -72,7 +71,7 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
             final String rawArgument) {
         super(new StatementDefinitionContext<>(support), ImplicitSubstatement.of(parent.sourceReference()));
         this.parent = requireNonNull(parent);
-        this.argument = definition().parseArgumentValue(this, rawArgument);
+        argument = definition().parseArgumentValue(this, rawArgument);
     }
 
     // FIXME: this assumes original's argument type matches this type... which is true for the only case we
@@ -144,11 +143,6 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
     @Override
     public StatementContextBase<?, ?, ?> getParentContext() {
         return parent;
-    }
-
-    @Override
-    public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.STATEMENT_LOCAL;
     }
 
     @Override

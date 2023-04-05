@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
@@ -23,14 +22,14 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             final StatementContextBase<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent);
-        this.argument = original.argument;
+        argument = original.argument;
     }
 
     SubstatementContext(final OriginalStmtCtx<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
             final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.parent = requireNonNull(parent);
-        this.argument = def.parseArgumentValue(this, rawArgument());
+        argument = def.parseArgumentValue(this, rawArgument());
     }
 
     @Override
@@ -52,11 +51,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public StatementContextBase<?, ?, ?> getParentContext() {
         return parent;
-    }
-
-    @Override
-    public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.STATEMENT_LOCAL;
     }
 
     @Override
