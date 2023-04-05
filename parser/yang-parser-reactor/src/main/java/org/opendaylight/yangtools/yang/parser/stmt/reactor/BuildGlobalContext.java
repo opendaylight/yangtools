@@ -145,7 +145,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     public <K, V> NamespaceBehaviourWithListeners<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
         NamespaceBehaviourWithListeners<?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
-            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).getNamespaceBehaviour(type);
+            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).namespaceBehaviourOf(type);
             if (potentialRaw != null) {
                 potential = createNamespaceContext(potentialRaw);
                 supportedNamespaces.put(type, potential);
