@@ -65,7 +65,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
                 StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class);
         for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
             final QName baseIdentity = baseStmt.getArgument();
-            final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(ParserNamespaces.IDENTITY, baseIdentity);
+            final StmtContext<?, ?, ?> stmtCtx = stmt.namespaceItem(ParserNamespaces.IDENTITY, baseIdentity);
             InferenceException.throwIfNull(stmtCtx, stmt,
                 "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
                 baseIdentity.getLocalName());
@@ -100,7 +100,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
             if (subStmt instanceof BaseEffectiveStatement) {
                 final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();
                 final IdentityEffectiveStatement baseIdentity =
-                    verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IDENTITY, identityQName)).buildEffective();
+                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, identityQName)).buildEffective();
                 verify(baseIdentity instanceof IdentitySchemaNode, "Statement %s is not an IdentitySchemaNode",
                     baseIdentity);
                 builder.addIdentity((IdentitySchemaNode) baseIdentity);

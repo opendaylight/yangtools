@@ -270,13 +270,13 @@ public final class ParserNamespaces {
         }
 
         QName nextPath = iterator.next();
-        var current = root.getFromNamespace(schemaTree(), nextPath);
+        var current = root.namespaceItem(schemaTree(), nextPath);
         if (current == null) {
             return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
-            final var nextNodeCtx = current.getFromNamespace(schemaTree(), nextPath);
+            final var nextNodeCtx = current.namespaceItem(schemaTree(), nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
             }

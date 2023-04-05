@@ -55,7 +55,7 @@ final class SubmoduleEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements, findSubmodulePrefix(stmt, substatements));
 
-        final QNameModule belongsToModuleQName = stmt.getFromNamespace(ParserNamespaces.MODULE_NAME_TO_QNAME,
+        final QNameModule belongsToModuleQName = stmt.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
             findBelongsTo(stmt, substatements).argument());
 
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();

@@ -54,8 +54,7 @@ final class OperationsValidateModuleAction implements InferenceAction {
         final Mutable<?, ?, ?> moduleCtx = prereq.resolve(ctx);
 
         // Check namespace and revision first
-        final QNameModule moduleQName =
-            moduleCtx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, moduleCtx);
+        final QNameModule moduleQName = moduleCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, moduleCtx);
         if (!YangDataConstants.RFC8040_MODULE.equals(moduleQName)) {
             return;
         }

@@ -140,7 +140,7 @@ public final class UsesStatementSupport
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final EffectiveStatement<?, ?> source =
-            verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.INSTANCE, Empty.value())).buildEffective();
+            verifyNotNull(stmt.namespaceItem(SourceGroupingNamespace.INSTANCE, Empty.value())).buildEffective();
         verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
         final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
 
@@ -254,7 +254,7 @@ public final class UsesStatementSupport
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
         if (targetCtx.getParentContext() == null) {
-            return targetCtx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
+            return targetCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
         }
         if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
             return StmtContextUtils.getModuleQName(targetCtx);
@@ -342,7 +342,7 @@ public final class UsesStatementSupport
     }
 
     private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {
-        final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.getFromNamespace(
+        final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.namespaceItem(
                 ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()

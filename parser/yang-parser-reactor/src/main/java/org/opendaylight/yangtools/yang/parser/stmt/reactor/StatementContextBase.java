@@ -595,7 +595,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type, final K key,
             final OnNamespaceItemAdded listener) {
-        final Object potential = getFromNamespace(type, key);
+        final Object potential = namespaceItem(type, key);
         if (potential != null) {
             LOG.trace("Listener on {} key {} satisfied immediately", type, key);
             listener.namespaceItemAdded(this, type, key, potential);

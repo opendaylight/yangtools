@@ -59,11 +59,10 @@ public final class DeviationStatementSupport
         if (root.producesDeclared(SubmoduleStatement.class)) {
             // root is submodule, we need to find the module we belong to. We can rely on there being exactly one
             // belongs-to statement, enforced SubmoduleStatementSupport's validator.
-            root = Iterables.getOnlyElement(
-                root.getAllFromNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX).values());
+            root = Iterables.getOnlyElement(root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX).values());
         }
 
-        final var currentModule = verifyNotNull(ctx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, root),
+        final var currentModule = verifyNotNull(ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root),
             "Failed to find QName for %s", root);
         final var targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
         if (currentModule.equals(targetModule)) {

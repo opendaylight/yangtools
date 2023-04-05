@@ -234,7 +234,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     private static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
-        final QNameModule qNameModule = root.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, root);
+        final QNameModule qNameModule = root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root);
         final Object arg = root.getArgument();
         verify(arg instanceof Unqualified, "Unexpected argument %s", arg);
 
