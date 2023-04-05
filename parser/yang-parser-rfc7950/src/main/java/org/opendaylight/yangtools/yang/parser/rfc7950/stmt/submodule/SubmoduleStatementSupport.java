@@ -123,7 +123,7 @@ public final class SubmoduleStatementSupport
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null));
 
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
-            possibleDuplicateSubmodule = stmt.getFromNamespace(ParserNamespaces.SUBMODULE, submoduleIdentifier);
+            possibleDuplicateSubmodule = stmt.namespaceItem(ParserNamespaces.SUBMODULE, submoduleIdentifier);
         if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
             throw new SourceException(stmt, "Submodule name collision: %s. At %s", stmt.rawArgument(),
                 possibleDuplicateSubmodule.sourceReference());

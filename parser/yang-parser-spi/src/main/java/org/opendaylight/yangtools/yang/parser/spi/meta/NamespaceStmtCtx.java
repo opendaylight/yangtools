@@ -54,33 +54,4 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @return Namespace portion stored in this node, if available
      */
     <K, V> @Nullable Map<K, V> localNamespacePortion(@NonNull ParserNamespace<K, V> nsType);
-
-    /**
-     * Return the selected namespace.
-     *
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param nsType namespace type class
-     * @return Namespace contents, if available
-     */
-    // TODO: migrate users away
-    default <K, V> Map<K, V> getAllFromNamespace(final @NonNull ParserNamespace<K, V> nsType) {
-        return namespace(nsType);
-    }
-
-    /**
-     * Return a value associated with specified key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param <T> key type
-     * @return Value, or null if there is no element
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
-    // TODO: migrate users away
-    default <K, V, T extends K> @Nullable V getFromNamespace(final @NonNull ParserNamespace<K, V> type, final T key) {
-        return namespaceItem(type, key);
-    }
 }

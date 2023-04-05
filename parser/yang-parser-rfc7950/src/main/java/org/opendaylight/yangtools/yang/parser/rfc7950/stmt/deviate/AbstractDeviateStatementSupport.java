@@ -224,13 +224,13 @@ abstract class AbstractDeviateStatementSupport
     private static boolean isDeviationSupported(
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
-        final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
+        final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.namespaceItem(
                 ParserNamespaces.MODULES_DEVIATED_BY, Empty.value());
         if (modulesDeviatedByModules == null) {
             return true;
         }
 
-        final QNameModule currentModule = deviateStmtCtx.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME,
+        final QNameModule currentModule = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME,
                 deviateStmtCtx.getRoot());
         final QNameModule targetModule = Iterables.getLast(deviationTarget.getNodeIdentifiers()).getModule();
 

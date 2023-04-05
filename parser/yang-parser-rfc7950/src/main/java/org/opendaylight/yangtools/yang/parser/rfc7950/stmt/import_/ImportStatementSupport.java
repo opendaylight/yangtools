@@ -96,7 +96,7 @@ public final class ImportStatementSupport
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
                 verify(moduleName.equals(importedModuleContext.getArgument()));
-                final XMLNamespace importedModuleNamespace = verifyNotNull(importedModuleContext.getFromNamespace(
+                final XMLNamespace importedModuleNamespace = verifyNotNull(importedModuleContext.namespaceItem(
                     ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName));
                 final String impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
@@ -145,6 +145,6 @@ public final class ImportStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");
         return EffectiveStatements.createImport(stmt.declared(), substatements,
-            verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.INSTANCE, Empty.value())));
+            verifyNotNull(stmt.namespaceItem(ImportedVersionNamespace.INSTANCE, Empty.value())));
     }
 }

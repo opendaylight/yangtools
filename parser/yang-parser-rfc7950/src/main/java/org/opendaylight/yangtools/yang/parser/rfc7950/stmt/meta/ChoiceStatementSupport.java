@@ -117,7 +117,7 @@ public final class ChoiceStatementSupport
         if (!caseShorthands.contains(stmtDef)) {
             return Optional.empty();
         }
-        return Optional.of(verifyNotNull(parent.getFromNamespace(StatementSupport.NAMESPACE,
+        return Optional.of(verifyNotNull(parent.namespaceItem(StatementSupport.NAMESPACE,
             YangStmtMapping.CASE.getStatementName())));
     }
 

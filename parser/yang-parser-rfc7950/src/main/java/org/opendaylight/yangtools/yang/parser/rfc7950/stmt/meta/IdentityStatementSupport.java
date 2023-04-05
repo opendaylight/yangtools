@@ -82,7 +82,7 @@ public final class IdentityStatementSupport
     public void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
         final QName qname = stmt.getArgument();
-        final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(ParserNamespaces.IDENTITY, qname);
+        final StmtContext<?, ?, ?> prev = stmt.namespaceItem(ParserNamespaces.IDENTITY, qname);
         SourceException.throwIf(prev != null, stmt, "Duplicate identity definition %s", qname);
         stmt.addToNs(ParserNamespaces.IDENTITY, qname, stmt);
     }
@@ -111,7 +111,7 @@ public final class IdentityStatementSupport
             if (substatement instanceof BaseEffectiveStatement) {
                 final QName qname = ((BaseEffectiveStatement) substatement).argument();
                 final IdentityEffectiveStatement identity =
-                        verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IDENTITY, qname),
+                        verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, qname),
                             "Failed to find identity %s", qname)
                         .buildEffective();
                 verify(identity instanceof IdentitySchemaNode, "%s is not a IdentitySchemaNode", identity);
