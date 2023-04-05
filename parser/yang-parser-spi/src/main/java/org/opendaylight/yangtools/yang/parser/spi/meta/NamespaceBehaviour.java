@@ -58,19 +58,6 @@ public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiabl
         ROOT_STATEMENT_LOCAL
     }
 
-    public interface Registry {
-        /**
-         * Get a namespace behavior.
-         *
-         * @param type Namespace type
-         * @param <K> key type
-         * @param <V> value type
-         * @return Namespace behaviour
-         * @throws NamespaceNotAvailableException when the namespace is not available
-         */
-        <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(ParserNamespace<K, V> type);
-    }
-
     public interface NamespaceStorageNode {
         /**
          * Return local namespace behaviour type.
