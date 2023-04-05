@@ -44,7 +44,8 @@ public final class StatementSupportBundle implements Immutable {
             final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions,
             final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions) {
         this.parent = parent;
-        this.supportedVersions = requireNonNull(supportedVersions);
+        // FIXME: should requireNonNull()
+        this.supportedVersions = supportedVersions;
         this.commonDefinitions = requireNonNull(commonDefinitions);
         this.namespaceDefinitions = requireNonNull(namespaceDefinitions);
         this.versionSpecificDefinitions = requireNonNull(versionSpecificDefinitions);
