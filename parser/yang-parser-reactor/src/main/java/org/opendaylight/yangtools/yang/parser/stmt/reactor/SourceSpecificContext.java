@@ -189,7 +189,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
      *
      * @return version of root statement context
      */
-    YangVersion getRootVersion() {
+    private YangVersion getRootVersion() {
         return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
     }
 
