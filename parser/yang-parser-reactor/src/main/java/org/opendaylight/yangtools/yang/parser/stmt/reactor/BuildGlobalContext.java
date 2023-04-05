@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -54,8 +53,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
@@ -213,16 +210,16 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private ReactorDeclaredModel transform() {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
-        for (final SourceSpecificContext source : sources) {
-            rootStatements.add(source.getRoot().declared());
+        final var rootStatements = new ArrayList<DeclaredStatement<?>>(sources.size());
+        for (var source : sources) {
+            rootStatements.add(source.declaredRoot());
         }
         return new ReactorDeclaredModel(rootStatements);
     }
 
     private SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,
             final RuntimeException cause) throws SomeModifiersUnresolvedException {
-        final SourceIdentifier sourceId = createSourceIdentifier(source.getRoot());
+        final SourceIdentifier sourceId = source.identifySource();
         if (!(cause instanceof SourceException)) {
             /*
              * This should not be happening as all our processing should provide SourceExceptions.
@@ -236,32 +233,16 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         throw new SomeModifiersUnresolvedException(currentPhase, sourceId, cause);
     }
 
-    private static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
-        final QNameModule qNameModule = root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root);
-        final Object arg = root.getArgument();
-        verify(arg instanceof Unqualified, "Unexpected argument %s", arg);
-
-        if (qNameModule != null) {
-            // creates SourceIdentifier for a module
-            return new SourceIdentifier((Unqualified) arg, qNameModule.getRevision().orElse(null));
-        }
-
-        // creates SourceIdentifier for a submodule
-        return new SourceIdentifier((Unqualified) arg,
-            StmtContextUtils.getLatestRevision(root.declaredSubstatements()).orElse(null));
-    }
-
     @SuppressWarnings("checkstyle:illegalCatch")
     private EffectiveSchemaContext transformEffective() throws ReactorException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
-        final List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
+        final var rootStatements = new ArrayList<DeclaredStatement<?>>(sources.size());
+        final var rootEffectiveStatements = new ArrayList<EffectiveStatement<?, ?>>(sources.size());
 
-        for (final SourceSpecificContext source : sources) {
-            final RootStatementContext<?, ?, ?> root = source.getRoot();
+        for (var source : sources) {
             try {
-                rootStatements.add(root.declared());
-                rootEffectiveStatements.add(root.buildEffective());
+                rootStatements.add(source.declaredRoot());
+                rootEffectiveStatements.add(source.effectiveRoot());
             } catch (final RuntimeException ex) {
                 throw propagateException(source, ex);
             }
@@ -335,7 +316,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
             if (!addedCause) {
                 addedCause = true;
-                final SourceIdentifier sourceId = createSourceIdentifier(failedSource.getRoot());
+                final SourceIdentifier sourceId = failedSource.identifySource();
                 buildFailure = new SomeModifiersUnresolvedException(currentPhase, sourceId, sourceEx);
             } else {
                 buildFailure.addSuppressed(sourceEx);
