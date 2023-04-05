@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.concepts;
 
 import java.util.EventListener;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Class representing a {@link Registration} of an {@link EventListener}. This interface provides the additional
@@ -27,4 +28,17 @@ public interface ListenerRegistration<T extends EventListener> extends ObjectReg
      */
     @Override
     void close();
+
+    /**
+     * Return a new {@link ObjectRegistration} which will run specified callback when it is {@link #close()}d.
+     *
+     * @param <T> Type of registered listener
+     * @param instance Listener instance
+     * @param callback Callback to invoke
+     * @return A new {@link ObjectRegistration}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    static <T extends EventListener> @NonNull ListenerRegistration<T> of(final T instance, final Runnable callback) {
+        return new CallbackListenerRegistration<>(instance, callback);
+    }
 }

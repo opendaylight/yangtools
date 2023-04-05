@@ -23,4 +23,17 @@ public interface ObjectRegistration<T> extends Registration {
      * @return Registered object.
      */
     @NonNull T getInstance();
+
+    /**
+     * Return a new {@link ObjectRegistration} which will run specified callback when it is {@link #close()}d.
+     *
+     * @param <T> Type of registered object
+     * @param instance Object instance
+     * @param callback Callback to invoke
+     * @return A new {@link ObjectRegistration}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    static <T> @NonNull ObjectRegistration<T> of(final T instance, final Runnable callback) {
+        return new CallbackObjectRegistration<>(instance, callback);
+    }
 }
