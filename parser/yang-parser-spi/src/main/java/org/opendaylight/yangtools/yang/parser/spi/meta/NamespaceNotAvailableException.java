@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
  * Thrown when identifier namespace is not available (supported) in a specific model processing phase.
  */
 public class NamespaceNotAvailableException extends RuntimeException {
-
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     public NamespaceNotAvailableException(final String message) {
