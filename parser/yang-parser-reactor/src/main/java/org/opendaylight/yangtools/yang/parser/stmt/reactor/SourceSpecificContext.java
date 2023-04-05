@@ -27,7 +27,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -40,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
@@ -180,8 +184,28 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         return root;
     }
 
-    RootStatementContext<?, ?, ?> getRoot() {
-        return root;
+    SourceIdentifier identifySource() {
+        final var arg = root.getArgument();
+        verify(arg instanceof Unqualified, "Unexpected argument %s", arg);
+        final var unqualified = (Unqualified) arg;
+
+        final var module = root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root);
+        if (module != null) {
+            // creates SourceIdentifier for a module
+            return new SourceIdentifier(unqualified, module.getRevision().orElse(null));
+        }
+
+        // creates SourceIdentifier for a submodule
+        return new SourceIdentifier(unqualified,
+            StmtContextUtils.getLatestRevision(root.declaredSubstatements()).orElse(null));
+    }
+
+    @NonNull DeclaredStatement<?> declaredRoot() {
+        return root.declared();
+    }
+
+    @NonNull EffectiveStatement<?, ?> effectiveRoot() {
+        return root.buildEffective();
     }
 
     /**
@@ -222,7 +246,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
-        final V ret = getRoot().putToLocalStorage(type, key, value);
+        final V ret = root.putToLocalStorage(type, key, value);
         // FIXME: what about duplicates?
         updateImportedNamespaces(type, value);
         return ret;
@@ -231,7 +255,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     @Override
     public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
-        final V ret = getRoot().putToLocalStorageIfAbsent(type, key, value);
+        final V ret = root.putToLocalStorageIfAbsent(type, key, value);
         if (ret == null) {
             updateImportedNamespaces(type, value);
         }
@@ -245,7 +269,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     @Override
     public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
-        final V potentialLocal = getRoot().getFromLocalStorage(type, key);
+        final V potentialLocal = root.getFromLocalStorage(type, key);
         if (potentialLocal != null) {
             return potentialLocal;
         }
@@ -261,7 +285,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     @Override
     public <K, V> Map<K, V> getAllFromLocalStorage(final ParserNamespace<K, V> type) {
-        final Map<K, V> potentialLocal = getRoot().getAllFromLocalStorage(type);
+        final Map<K, V> potentialLocal = root.getAllFromLocalStorage(type);
         if (potentialLocal != null) {
             return potentialLocal;
         }
