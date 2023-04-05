@@ -15,7 +15,6 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Support work with namespace content.
  */
-// FIXME: ditch <N> parameters
 @Beta
 public interface NamespaceStmtCtx extends CommonStmtCtx {
     /**
