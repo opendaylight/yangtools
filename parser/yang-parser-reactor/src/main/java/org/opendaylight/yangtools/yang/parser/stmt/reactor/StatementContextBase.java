@@ -645,6 +645,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
     }
 
+    private <K, V> Optional<Entry<K, V>> getFromNamespace(final ParserNamespace<K, V> type,
+            final NamespaceKeyCriterion<K> criterion) {
+        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
+    }
+
     final <K, V> void waitForPhase(final Object value, final ParserNamespace<K, V> type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
@@ -719,7 +724,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     @Override
     public final <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
             final ParserNamespace<K, ? super C> namespace, final KT key, final C stmt) {
-        addContextToNamespace(namespace, key, stmt);
+        getBehaviourRegistry().getNamespaceBehaviour(namespace).addTo(this, key, stmt);
     }
 
     @Override

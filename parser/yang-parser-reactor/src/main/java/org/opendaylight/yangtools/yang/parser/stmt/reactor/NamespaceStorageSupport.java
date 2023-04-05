@@ -13,15 +13,10 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +42,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      *
      * @return registry of source context
      */
-    public abstract @NonNull Registry getBehaviourRegistry();
+    abstract @NonNull Registry getBehaviourRegistry();
 
     // FIXME: 8.0.0: do we really need this method?
     final void checkLocalNamespaceAllowed(final ParserNamespace<?, ?> type) {
@@ -60,16 +55,11 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      *
      * @throws SourceException instance of SourceException
      */
-    protected <K, V> void onNamespaceElementAdded(final ParserNamespace<K, V> type, final K key, final V value) {
+    <K, V> void onNamespaceElementAdded(final ParserNamespace<K, V> type, final K key, final V value) {
         // NOOP
     }
 
-    public final <K, V> Optional<Entry<K, V>> getFromNamespace(final ParserNamespace<K, V> type,
-            final NamespaceKeyCriterion<K> criterion) {
-        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
-    }
-
-    public final <K, V> Map<K, V> getNamespace(final ParserNamespace<K, V> type) {
+    final <K, V> Map<K, V> getNamespace(final ParserNamespace<K, V> type) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
@@ -81,28 +71,6 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final T key,
             final U value) {
-        getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
-    }
-
-    final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final Map<T, U> map) {
-        final NamespaceBehaviour<K, V> behavior = getBehaviourRegistry().getNamespaceBehaviour(type);
-        for (final Entry<T, U> validationBundle : map.entrySet()) {
-            behavior.addTo(this, validationBundle.getKey(), validationBundle.getValue());
-        }
-    }
-
-    /**
-     * Associate a context with a key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param value Context value
-     * @param <K> namespace key type
-     * @param <C> context type
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
-    public final <K, C extends StmtContext<?, ?, ?>> void addContextToNamespace(
-            final ParserNamespace<K, ? super C> type, final K key, final C value) {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 
@@ -125,7 +93,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     }
 
     @Override
-    public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
+    public final <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
         final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
         if (ret == null) {
             onNamespaceElementAdded(type, key, value);
