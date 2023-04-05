@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      *
      * @return registry of source context
      */
-    abstract @NonNull Registry getBehaviourRegistry();
+    abstract @NonNull NamespaceBehaviourRegistry getBehaviourRegistry();
 
     // FIXME: 8.0.0: do we really need this method?
     final void checkLocalNamespaceAllowed(final ParserNamespace<?, ?> type) {

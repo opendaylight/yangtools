@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -62,7 +61,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
+final class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviourRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
@@ -137,7 +136,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     @Override
-    Registry getBehaviourRegistry() {
+    NamespaceBehaviourRegistry getBehaviourRegistry() {
         return this;
     }
 
@@ -155,7 +154,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
             }
         }
 
-        Verify.verify(type.equals(potential.getIdentifier()));
+        verify(type.equals(potential.getIdentifier()));
         /*
          * Safe cast, previous checkState checks equivalence of key from which
          * type argument are derived
