@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  * Class representing a registration. Such a registration is a proper resource and should be cleaned up when no longer
  * required.
@@ -19,4 +21,8 @@ public interface Registration extends AutoCloseable {
      */
     @Override
     void close();
+
+    static @NonNull Registration of(final Runnable callback) {
+        return new CallbackRegistration(callback);
+    }
 }
