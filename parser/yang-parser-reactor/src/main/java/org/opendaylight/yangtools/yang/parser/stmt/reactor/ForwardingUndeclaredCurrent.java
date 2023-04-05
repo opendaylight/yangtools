@@ -80,18 +80,18 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public <K, V> Map<K, V> namespace(final ParserNamespace<K, V> nsType) {
-        return delegate.namespace(nsType);
+    public <K, V> Map<K, V> namespace(final ParserNamespace<K, V> namespace) {
+        return delegate.namespace(namespace);
     }
 
     @Override
-    public <K, V, T extends K> V namespaceItem(final ParserNamespace<K, V> nsType, final T key) {
-        return delegate.namespaceItem(nsType, key);
+    public <K, V> V namespaceItem(final ParserNamespace<K, V> namespace, final K key) {
+        return delegate.namespaceItem(namespace, key);
     }
 
     @Override
-    public <K, V> Map<K, V> localNamespacePortion(final ParserNamespace<K, V> nsType) {
-        return delegate.localNamespacePortion(nsType);
+    public <K, V> Map<K, V> localNamespacePortion(final ParserNamespace<K, V> namespace) {
+        return delegate.localNamespacePortion(namespace);
     }
 
     @Override

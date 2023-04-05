@@ -22,23 +22,22 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      *
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param nsType namespace type class
+     * @param namespace namespace
      * @return Namespace contents, if available
      */
-    <K, V> @Nullable Map<K, V> namespace(@NonNull ParserNamespace<K, V> nsType);
+    <K, V> @Nullable Map<K, V> namespace(@NonNull ParserNamespace<K, V> namespace);
 
     /**
      * Return a value associated with specified key within a namespace.
      *
-     * @param nsType Namespace type
-     * @param key Key
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param <T> key type
-     * @return Value, or null if there is no element
+     * @param namespace Namespace
+     * @param key Key
+     * @return Value, or {@code null} if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    <K, V, T extends K> @Nullable V namespaceItem(@NonNull ParserNamespace<K, V> nsType, T key);
+    <K, V> @Nullable V namespaceItem(@NonNull ParserNamespace<K, V> namespace, K key);
 
     /**
      * Return the portion of specified namespace stored in this node. Depending on namespace behaviour this may or may
@@ -50,8 +49,8 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      *
      * @param <K> namespace key type
      * @param <V> namespace value type
-     * @param nsType namespace type class
+     * @param namespace namespace type class
      * @return Namespace portion stored in this node, if available
      */
-    <K, V> @Nullable Map<K, V> localNamespacePortion(@NonNull ParserNamespace<K, V> nsType);
+    <K, V> @Nullable Map<K, V> localNamespacePortion(@NonNull ParserNamespace<K, V> namespace);
 }
