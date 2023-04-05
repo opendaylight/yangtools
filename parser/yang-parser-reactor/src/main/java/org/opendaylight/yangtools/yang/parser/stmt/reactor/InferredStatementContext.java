@@ -452,7 +452,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         if (prototype instanceof InferredStatementContext<?, ?, ?> inferredPrototype) {
             // Note: we need to access namespace here, as the target statement may have already been populated, in which
             //       case we want to obtain the statement in local namespace storage.
-            template = inferredPrototype.getFromNamespace(ParserNamespaces.schemaTree(), templateQName);
+            template = inferredPrototype.namespaceItem(ParserNamespaces.schemaTree(), templateQName);
         } else {
             template = prototype.allSubstatementsStream()
                 .filter(stmt -> stmt.producesEffective(SchemaTreeEffectiveStatement.class)

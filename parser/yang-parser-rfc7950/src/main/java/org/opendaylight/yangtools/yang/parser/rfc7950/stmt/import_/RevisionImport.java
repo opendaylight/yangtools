@@ -59,12 +59,12 @@ final class RevisionImport {
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
-                final SourceIdentifier importedModuleIdentifier = stmt.getFromNamespace(
+                final SourceIdentifier importedModuleIdentifier = stmt.namespaceItem(
                     ParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
                 stmt.addToNs(ImportedVersionNamespace.INSTANCE, Empty.value(), importedModuleIdentifier);
 
                 final QNameModule mod = InferenceException.throwIfNull(
-                    stmt.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, importedModule), stmt,
+                    stmt.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule), stmt,
                     "Failed to find module of %s", importedModule);
 
                 linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,

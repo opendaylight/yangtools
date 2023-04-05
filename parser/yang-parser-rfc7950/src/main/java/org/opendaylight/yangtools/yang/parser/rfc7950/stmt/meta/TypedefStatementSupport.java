@@ -128,7 +128,7 @@ public final class TypedefStatementSupport extends
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
         final QName arg = stmt.getArgument();
-        final StmtContext<?, ?, ?> existing = parent.getFromNamespace(ParserNamespaces.TYPE, arg);
+        final StmtContext<?, ?, ?> existing = parent.namespaceItem(ParserNamespaces.TYPE, arg);
         // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
         SourceException.throwIf(existing != null, stmt, "Duplicate name for typedef %s", arg);
     }

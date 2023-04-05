@@ -30,7 +30,7 @@ public final class YangNamespaceContextNamespace {
 
     public static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
         final RootStmtContext<?, ?, ?> root = ctx.getRoot();
-        YangNamespaceContext ret = ctx.getFromNamespace(INSTANCE, root);
+        YangNamespaceContext ret = ctx.namespaceItem(INSTANCE, root);
         if (ret == null) {
             verify(ctx instanceof Mutable, "Cannot populate namespace context to %s", ctx);
             ret = new StmtNamespaceContext(root);

@@ -57,7 +57,7 @@ public final class FeatureStatementSupport
         stmt.addContext(ParserNamespaces.FEATURE, stmt.getArgument(), stmt);
 
         // Do not build effective statement if supported features does not include this feature
-        final var supportedFeatures = stmt.getFromNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
+        final var supportedFeatures = stmt.namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
         if (supportedFeatures != null && !supportedFeatures.contains(stmt.getArgument())) {
             stmt.setUnsupported();
         }

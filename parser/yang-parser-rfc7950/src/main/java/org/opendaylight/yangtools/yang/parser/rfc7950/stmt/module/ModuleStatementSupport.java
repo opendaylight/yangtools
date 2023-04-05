@@ -155,7 +155,7 @@ public final class ModuleStatementSupport
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
-                stmt.getFromNamespace(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
+                stmt.namespaceItem(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
             throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.getNamespace(),
                 possibleDuplicateModule.sourceReference());

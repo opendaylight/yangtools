@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.concepts.Identifier;
 /**
  * {@link ParserNamespace} serves as common superclass for namespaces used during parser operation. Each such namespace,
  * is a type-captured subclass. This type capture of namespace allows for handy type-safe reading methods such as
- * {@link NamespaceStmtCtx#getFromNamespace(ParserNamespace, Object)} and still allows introduction of new namespaces
+ * {@link NamespaceStmtCtx#namespaceItem(ParserNamespace, Object)} and still allows introduction of new namespaces
  * without need to change APIs.
  *
  * @param <K> Identifier type

@@ -67,7 +67,7 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final QName qname = stmt.getArgument();
         final StmtContext<?, ?, IdentityEffectiveStatement> identityCtx =
-            verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IDENTITY, qname), "Failed to find identity %s", qname);
+            verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, qname), "Failed to find identity %s", qname);
         return createEffective(stmt.declared(), identityCtx.buildEffective(), substatements);
     }
 

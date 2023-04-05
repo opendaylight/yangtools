@@ -155,7 +155,7 @@ public final class GroupingStatementSupport
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
         final QName arg = stmt.getArgument();
-        final StmtContext<?, ?, ?> existing = parent.getFromNamespace(ParserNamespaces.GROUPING, arg);
+        final StmtContext<?, ?, ?> existing = parent.namespaceItem(ParserNamespaces.GROUPING, arg);
         SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
     }
 }

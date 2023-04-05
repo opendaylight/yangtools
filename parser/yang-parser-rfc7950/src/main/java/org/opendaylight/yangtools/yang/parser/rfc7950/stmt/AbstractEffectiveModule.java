@@ -87,9 +87,9 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
             }
         }
 
-        this.groupings = ImmutableSet.copyOf(mutableGroupings);
-        this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
-        this.uses = ImmutableSet.copyOf(mutableUses);
+        groupings = ImmutableSet.copyOf(mutableGroupings);
+        typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
+        uses = ImmutableSet.copyOf(mutableUses);
     }
 
     @Override
@@ -205,7 +205,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
             .map(imp -> imp.prefix().argument())
             .forEach(pfx -> {
                 final var importedCtx =
-                    verifyNotNull(stmt.getFromNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
+                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
                         "Failed to resolve prefix %s", pfx);
                 builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
             });

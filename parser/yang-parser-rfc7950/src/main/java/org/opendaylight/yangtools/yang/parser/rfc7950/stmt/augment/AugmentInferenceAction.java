@@ -282,7 +282,7 @@ final class AugmentInferenceAction implements InferenceAction {
          * the same QName. We must find the Container and the Grouping must be
          * ignored as disallowed augment target.
          */
-        final Collection<?> allowedAugmentTargets = substatementCtx.getFromNamespace(
+        final Collection<?> allowedAugmentTargets = substatementCtx.namespaceItem(
             ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
 
         // if no allowed target is returned we consider all targets allowed

@@ -427,16 +427,16 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
     }
 
     private PrefixResolver prefixes() {
-        final var allImports = root.getAllFromNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        final var allImports = root.namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
         if (allImports != null) {
             allImports.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
         }
 
-        final var allBelongsTo = root.getAllFromNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+        final var allBelongsTo = root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
         if (allBelongsTo != null) {
             allBelongsTo.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.getFromNamespace(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
         }
 
         return prefixToModuleMap;

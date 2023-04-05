@@ -216,7 +216,7 @@ public final class ListStatementSupport
 
     private static void warnConfigList(final @NonNull Current<QName, ListStatement> stmt) {
         final StatementSourceReference ref = stmt.sourceReference();
-        final Boolean warned = stmt.getFromNamespace(ConfigListWarningNamespace.INSTANCE, ref);
+        final Boolean warned = stmt.namespaceItem(ConfigListWarningNamespace.INSTANCE, ref);
         // Hacky check if we have issued a warning for the original statement
         if (warned == null) {
             final StmtContext<?, ?, ?> ctx = stmt.caerbannog();
