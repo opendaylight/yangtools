@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import org.opendaylight.yangtools.concepts.Registration;
+
 final class RefcountedRegistration {
-    private final SchemaSourceRegistration<?> reg;
+    private final Registration reg;
     private int refcount = 1;
 
-    RefcountedRegistration(final SchemaSourceRegistration<?> reg) {
+    RefcountedRegistration(final Registration reg) {
         this.reg = requireNonNull(reg);
     }
 

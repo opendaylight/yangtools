@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
 
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
@@ -50,14 +51,12 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
      * when a persistent cache reads its cache index.
      *
      * @param sourceIdentifier Source identifier
-     * @return schema source registration, which the subclass needs to
-     *         {@link SchemaSourceRegistration#close()} once it expunges the source
-     *         from the cache.
+     * @return schema source registration, which the subclass needs to {@link Registration#close()} once it expunges
+     *         the source from the cache.
      */
-    protected final SchemaSourceRegistration<T> register(final SourceIdentifier sourceIdentifier) {
-        final PotentialSchemaSource<T> src = PotentialSchemaSource.create(sourceIdentifier, representation,
-                cost.getValue());
-        return consumer.registerSchemaSource(this, src);
+    protected final Registration register(final SourceIdentifier sourceIdentifier) {
+        return consumer.registerSchemaSource(this,
+            PotentialSchemaSource.create(sourceIdentifier, representation, cost.getValue()));
     }
 
     @Override

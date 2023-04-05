@@ -18,11 +18,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.yangtools.concepts.Registration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RefcountedRegistrationTest {
     @Mock
-    public SchemaSourceRegistration<?> reg;
+    public Registration reg;
 
     @Before
     public void before() {

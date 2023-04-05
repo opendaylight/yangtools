@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
-import java.util.EventListener;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 /**
  * Listener for schema source lifecycle events.
  */
 @Beta
-public interface SchemaSourceListener extends EventListener {
+public interface SchemaSourceListener {
     /**
      * Invoked when the registry sees a concrete source. This callback is typically
      * used by cache-type listeners, who intercept the source, store it locally and

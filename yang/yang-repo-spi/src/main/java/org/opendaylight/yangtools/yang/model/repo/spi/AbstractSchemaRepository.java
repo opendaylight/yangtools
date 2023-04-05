@@ -28,6 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.checkerframework.checker.lock.qual.GuardedBy;
+import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
+import org.opendaylight.yangtools.concepts.ObjectRegistration;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -55,7 +58,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
      * Schema source listeners.
      */
     @GuardedBy("this")
-    private final List<SchemaListenerRegistration> listeners = new ArrayList<>();
+    private final List<ObjectRegistration<SchemaSourceListener>> listeners = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(
@@ -104,7 +107,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         Futures.addCallback(fetchSourceFuture, new FutureCallback<T>() {
             @Override
             public void onSuccess(final T result) {
-                for (final SchemaListenerRegistration listener : listeners) {
+                for (var listener : listeners) {
                     listener.getInstance().schemaSourceEncountered(result);
                 }
             }
@@ -131,19 +134,19 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         map.put(source.getRepresentation(), reg);
 
         final Collection<PotentialSchemaSource<?>> reps = Collections.singleton(source);
-        for (SchemaListenerRegistration l : listeners) {
+        for (var l : listeners) {
             l.getInstance().schemaSourceRegistered(reps);
         }
     }
 
     private synchronized <T extends SchemaSourceRepresentation> void removeSource(final PotentialSchemaSource<?> source,
-            final SchemaSourceRegistration<?> reg) {
+            final AbstractSchemaSourceRegistration<?> reg) {
         final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m =
             sources.get(source.getSourceIdentifier());
         if (m != null) {
             m.remove(source.getRepresentation(), reg);
 
-            for (SchemaListenerRegistration l : listeners) {
+            for (var l : listeners) {
                 l.getInstance().schemaSourceUnregistered(source);
             }
 
@@ -154,7 +157,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(
+    public <T extends SchemaSourceRepresentation> Registration registerSchemaSource(
             final SchemaSourceProvider<? super T> provider, final PotentialSchemaSource<T> source) {
         final PotentialSchemaSource<T> src = source.cachedReference();
 
@@ -170,8 +173,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public SchemaListenerRegistration registerSchemaSourceListener(final SchemaSourceListener listener) {
-        final SchemaListenerRegistration ret = new AbstractSchemaListenerRegistration(listener) {
+    public Registration registerSchemaSourceListener(final SchemaSourceListener listener) {
+        final AbstractObjectRegistration<SchemaSourceListener> ret = new AbstractObjectRegistration<>(listener) {
             @Override
             protected void removeRegistration() {
                 listeners.remove(this);

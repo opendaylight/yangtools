@@ -81,11 +81,10 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
             return;
         }
 
-        final PotentialSchemaSource<D> newSrc = PotentialSchemaSource.create(src.getSourceIdentifier(), dstClass,
+        final var newSrc = PotentialSchemaSource.create(src.getSourceIdentifier(), dstClass,
                 src.getCost() + PotentialSchemaSource.Costs.COMPUTATION.getValue());
 
-        final SchemaSourceRegistration<D> r = consumer.registerSchemaSource(this, newSrc);
-        availableSources.put(src, new RefcountedRegistration(r));
+        availableSources.put(src, new RefcountedRegistration(consumer.registerSchemaSource(this, newSrc)));
     }
 
     private void unregisterSource(final PotentialSchemaSource<?> src) {

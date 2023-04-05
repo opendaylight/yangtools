@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 public abstract class AbstractSchemaSourceRegistration<T extends SchemaSourceRepresentation>
-        extends AbstractObjectRegistration<PotentialSchemaSource<T>> implements SchemaSourceRegistration<T> {
+        extends AbstractObjectRegistration<PotentialSchemaSource<T>> {
     private final SchemaSourceProvider<?> provider;
 
     protected AbstractSchemaSourceRegistration(final SchemaSourceProvider<?> provider,
