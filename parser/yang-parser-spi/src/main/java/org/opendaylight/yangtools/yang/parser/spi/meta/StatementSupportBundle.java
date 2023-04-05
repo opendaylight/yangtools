@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,8 +28,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class StatementSupportBundle implements Immutable, NamespaceBehaviour.Registry {
-
+public final class StatementSupportBundle implements Immutable {
     private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, null, ImmutableMap.of(),
             ImmutableMap.of(), ImmutableTable.of());
 
@@ -40,14 +40,14 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
 
     private StatementSupportBundle(final StatementSupportBundle parent,
             final ImmutableSet<YangVersion> supportedVersions,
-            final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonStatements,
-            final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaces,
-            final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements) {
+            final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions,
+            final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions,
+            final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions) {
         this.parent = parent;
-        this.supportedVersions = supportedVersions;
-        commonDefinitions = commonStatements;
-        namespaceDefinitions = namespaces;
-        versionSpecificDefinitions = versionSpecificStatements;
+        this.supportedVersions = requireNonNull(supportedVersions);
+        this.commonDefinitions = requireNonNull(commonDefinitions);
+        this.namespaceDefinitions = requireNonNull(namespaceDefinitions);
+        this.versionSpecificDefinitions = requireNonNull(versionSpecificDefinitions);
     }
 
     /**
@@ -99,20 +99,17 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         return supportedVersions;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> namespace) {
-        final NamespaceBehaviour<?, ?> potential = namespaceDefinitions.get(namespace);
-        if (potential != null) {
-            checkState(namespace.equals(potential.getIdentifier()));
+    public <K, V> @Nullable NamespaceBehaviour<K, V> namespaceBehaviourOf(final ParserNamespace<K, V> namespace) {
+        final var potential = namespaceDefinitions.get(namespace);
+        if (potential == null) {
+            return parent == null ? null : parent.namespaceBehaviourOf(namespace);
+        }
 
-            // Safe cast, previous checkState checks equivalence of key from which type argument are derived
-            return (NamespaceBehaviour<K, V>) potential;
-        }
-        if (parent != null) {
-            return parent.getNamespaceBehaviour(namespace);
-        }
-        return null;
+        checkState(namespace.equals(potential.getIdentifier()));
+        // Safe cast, previous checkState checks equivalence of key from which type argument are derived
+        @SuppressWarnings("unchecked")
+        final var ret = (NamespaceBehaviour<K, V>) potential;
+        return ret;
     }
 
     public boolean hasNamespaceBehaviour(final ParserNamespace<?, ?> namespace) {
