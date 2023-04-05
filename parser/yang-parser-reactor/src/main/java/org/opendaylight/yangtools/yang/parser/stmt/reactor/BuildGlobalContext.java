@@ -93,7 +93,10 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
-        addToNamespace(ValidationBundles.NAMESPACE, supportedValidation);
+        final var behavior = getNamespaceBehaviour(ValidationBundles.NAMESPACE);
+        for (var validationBundle : supportedValidation.entrySet()) {
+            behavior.addTo(this, validationBundle.getKey(), validationBundle.getValue());
+        }
 
         supportedVersions = ImmutableSet.copyOf(
             verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
@@ -137,7 +140,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     @Override
-    public NamespaceBehaviour.Registry getBehaviourRegistry() {
+    Registry getBehaviourRegistry() {
         return this;
     }
 
