@@ -188,7 +188,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     public abstract Collection<? extends @NonNull StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
 
     @Override
-    public final Registry getBehaviourRegistry() {
+    final Registry getBehaviourRegistry() {
         return getRoot().getBehaviourRegistryImpl();
     }
 
