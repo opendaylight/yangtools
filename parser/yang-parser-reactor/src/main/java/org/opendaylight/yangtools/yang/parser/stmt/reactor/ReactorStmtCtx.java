@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -312,6 +313,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // NamespaceStorageSupport/Mutable integration methods. Keep these together.
     //
     //
+
+    @Override
+    public StorageNodeType getStorageNodeType() {
+        // Common to all subclasses except RootStatementContext
+        return StorageNodeType.STATEMENT_LOCAL;
+    }
 
     @Override
     public final <K, V> V namespaceItem(final ParserNamespace<K, V> namespace, final K key) {
