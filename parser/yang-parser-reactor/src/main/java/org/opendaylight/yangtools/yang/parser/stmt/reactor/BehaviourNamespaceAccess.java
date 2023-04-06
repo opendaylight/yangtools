@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 abstract class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
     final @NonNull NamespaceBehaviour<K, V> behaviour;
 
-    BehaviourNamespaceAccess(final NamespaceBehaviour<K, V> behaviour) {
+    BehaviourNamespaceAccess(final NamespaceStorage globalStorage, final NamespaceBehaviour<K, V> behaviour) {
+        super(globalStorage);
         this.behaviour = requireNonNull(behaviour);
     }
 

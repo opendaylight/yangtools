@@ -16,8 +16,9 @@ final class VirtualNamespaceContext<K, V, D> extends BehaviourNamespaceAccess<K,
     private final Multimap<D, KeyedValueAddedListener<K>> listeners = HashMultimap.create();
     private final DerivedNamespaceBehaviour<K, V, D, ?> derivedDelegate;
 
-    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D, ?> behaviour) {
-        super(behaviour);
+    VirtualNamespaceContext(final NamespaceStorage globalStorage,
+            final DerivedNamespaceBehaviour<K, V, D, ?> behaviour) {
+        super(globalStorage, behaviour);
         derivedDelegate = behaviour;
     }
 
