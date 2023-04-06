@@ -27,17 +27,6 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
     private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = ImmutableMap.of();
 
     /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * This method override provides bimorphic invocation on this method invocation between
-     * {@link SourceSpecificContext} and the more general {@link AbstractNamespaceStorage}. We typically do not expect
-     * the two accesses to overlap.
-     */
-    @Override
-    public abstract NamespaceStorage getParentStorage();
-
-    /**
      * Get access to a {@link ParserNamespace}.
      *
      * @param <K> key type
