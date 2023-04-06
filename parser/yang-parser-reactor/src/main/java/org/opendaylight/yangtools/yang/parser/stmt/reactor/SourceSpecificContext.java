@@ -62,7 +62,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private static final class SupportedStatements extends NamespaceAccess<QName, StatementSupport<?, ?, ?>> {
         private final QNameToStatementDefinitionMap statementDefinitions;
 
-        SupportedStatements(final QNameToStatementDefinitionMap statementDefinitions) {
+        SupportedStatements(final NamespaceStorage globalStorage,
+                final QNameToStatementDefinitionMap statementDefinitions) {
+            super(globalStorage);
             this.statementDefinitions = requireNonNull(statementDefinitions);
         }
 
@@ -131,7 +133,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
         this.globalContext = requireNonNull(globalContext);
         this.source = requireNonNull(source);
-        statementSupports = new SupportedStatements(qnameToStmtDefMap);
+        statementSupports = new SupportedStatements(globalContext, qnameToStmtDefMap);
     }
 
     @NonNull BuildGlobalContext globalContext() {

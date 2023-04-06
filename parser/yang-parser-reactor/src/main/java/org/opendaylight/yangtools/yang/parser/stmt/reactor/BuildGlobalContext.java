@@ -152,11 +152,11 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private <K, V> NamespaceAccess<K, V> createNamespaceContext(final NamespaceBehaviour<K, V> behaviour) {
         if (behaviour instanceof DerivedNamespaceBehaviour derived) {
-            final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(derived);
+            final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(this, derived);
             accessNamespace(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);
             return derivedContext;
         }
-        return new SimpleNamespaceContext<>(behaviour);
+        return new SimpleNamespaceContext<>(this, behaviour);
     }
 
     StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
