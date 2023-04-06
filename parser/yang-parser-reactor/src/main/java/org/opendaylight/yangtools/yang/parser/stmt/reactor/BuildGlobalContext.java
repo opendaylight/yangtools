@@ -41,10 +41,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -72,7 +70,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
-    private final Map<ParserNamespace<?, ?>, NamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
+    private final Map<ParserNamespace<?, ?>, BehaviourNamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
     private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
@@ -133,30 +131,23 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
     }
 
     @Override
-    <K, V> NamespaceAccess<K, V> accessNamespace(final ParserNamespace<K, V> type) {
+    <K, V> BehaviourNamespaceAccess<K, V> accessNamespace(final ParserNamespace<K, V> namespace) {
         @SuppressWarnings("unchecked")
-        var potential = (NamespaceAccess<K, V>) supportedNamespaces.get(type);
-        if (potential == null) {
-            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).namespaceBehaviourOf(type);
-            if (potentialRaw != null) {
-                potential = createNamespaceContext(potentialRaw);
-                supportedNamespaces.put(type, potential);
-            } else {
-                throw new NamespaceNotAvailableException("Namespace " + type + " is not available in phase "
-                        + currentPhase);
-            }
+        final var access = (BehaviourNamespaceAccess<K, V>) supportedNamespaces.get(namespace);
+        if (access != null) {
+            return access;
         }
-        return potential;
-    }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private <K, V> @NonNull NamespaceAccess<K, V> createNamespaceContext(final NamespaceBehaviour<K, V> behaviour) {
-        if (behaviour instanceof DerivedNamespaceBehaviour derived) {
-            final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(this, derived);
-            accessNamespace(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);
-            return derivedContext;
+        final var behaviour = verifyNotNull(supports.get(currentPhase), "No support for phase %s", currentPhase)
+            .namespaceBehaviourOf(namespace);
+        if (behaviour == null) {
+            throw new NamespaceNotAvailableException(
+                "Namespace " + namespace + " is not available in phase " + currentPhase);
         }
-        return new SimpleNamespaceContext<>(this, behaviour);
+
+        final var ret = new BehaviourNamespaceAccess<>(this, behaviour);
+        supportedNamespaces.put(namespace, ret);
+        return ret;
     }
 
     StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
