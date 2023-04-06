@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -39,7 +38,7 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
     public abstract NamespaceStorage getParentStorage();
 
     /**
-     * Get a namespace behavior.
+     * Get access to a {@link ParserNamespace}.
      *
      * @param <K> key type
      * @param <V> value type
@@ -48,7 +47,7 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
      * @throws NamespaceNotAvailableException when the namespace is not available
      * @throws NullPointerException if {@code namespace} is {@code null}
      */
-    abstract <K, V> @NonNull NamespaceBehaviour<K, V> getNamespaceBehaviour(ParserNamespace<K, V> namespace);
+    abstract <K, V> @NonNull NamespaceAccess<K, V> accessNamespace(ParserNamespace<K, V> namespace);
 
     // FIXME: 8.0.0: do we really need this method?
     final void checkLocalNamespaceAllowed(final ParserNamespace<?, ?> type) {
@@ -66,7 +65,7 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
     }
 
     final <K, V> Map<K, V> getNamespace(final ParserNamespace<K, V> type) {
-        return getNamespaceBehaviour(type).getAllFrom(this);
+        return accessNamespace(type).allFrom(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -77,7 +76,7 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
 
     final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final T key,
             final U value) {
-        getNamespaceBehaviour(type).addTo(this, key, value);
+        accessNamespace(type).valueTo(this, key, value);
     }
 
     @Override

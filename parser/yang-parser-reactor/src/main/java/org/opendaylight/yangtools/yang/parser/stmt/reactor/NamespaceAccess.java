@@ -9,16 +9,17 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
-abstract class NamespaceBehaviourWithListeners<K, V> extends NamespaceBehaviour<K, V> {
+abstract class NamespaceAccess<K, V> {
     abstract static class ValueAddedListener<K> {
         private final NamespaceStorage ctxNode;
 
@@ -43,9 +44,9 @@ abstract class NamespaceBehaviourWithListeners<K, V> extends NamespaceBehaviour<
             return key;
         }
 
-        final <V> boolean isRequestedValue(final NamespaceBehaviour<K, ?> behavior, final NamespaceStorage storage,
+        final <V> boolean isRequestedValue(final NamespaceAccess<K, ?> access, final NamespaceStorage storage,
                 final V value) {
-            return value == behavior.getFrom(getCtxNode(), key);
+            return value == access.valueFrom(getCtxNode(), key);
         }
 
         abstract void onValueAdded(Object value);
@@ -59,21 +60,20 @@ abstract class NamespaceBehaviourWithListeners<K, V> extends NamespaceBehaviour<
         abstract boolean onValueAdded(@NonNull K key, @NonNull V value);
     }
 
-    protected final NamespaceBehaviour<K, V> delegate;
-
     private List<VirtualNamespaceContext<?, V, K>> derivedNamespaces;
 
-    protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V> delegate) {
-        super(delegate.namespace());
-        this.delegate = delegate;
-    }
+    abstract @Nullable V valueFrom(@NonNull NamespaceStorage storage, K key);
+
+    abstract void valueTo(@NonNull NamespaceStorage storage, K key, V value);
+
+    abstract @Nullable Map<K, V> allFrom(@NonNull NamespaceStorage storage);
+
+    abstract @Nullable Entry<K, V> entryFrom(@NonNull NamespaceStorage storage,
+        @NonNull NamespaceKeyCriterion<K> criterion);
 
     abstract void addListener(KeyedValueAddedListener<K> listener);
 
     abstract void addListener(PredicateValueAddedListener<K, V> listener);
-
-    @Override
-    public abstract void addTo(NamespaceStorage storage, K key, V value);
 
     protected void notifyListeners(final NamespaceStorage storage,
             final Iterator<? extends KeyedValueAddedListener<K>> keyListeners, final V value) {
@@ -103,20 +103,5 @@ abstract class NamespaceBehaviourWithListeners<K, V> extends NamespaceBehaviour<
             derivedNamespaces = new ArrayList<>();
         }
         derivedNamespaces.add(namespace);
-    }
-
-    @Override
-    public V getFrom(final NamespaceStorage storage, final K key) {
-        return delegate.getFrom(storage, key);
-    }
-
-    @Override
-    public Map<K, V> getAllFrom(final NamespaceStorage storage) {
-        return delegate.getAllFrom(storage);
-    }
-
-    @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper).add("delegate", delegate);
     }
 }

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -73,8 +72,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
-    private final Map<ParserNamespace<?, ?>, NamespaceBehaviourWithListeners<?, ?>> supportedNamespaces =
-        new HashMap<>();
+    private final Map<ParserNamespace<?, ?>, NamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
     private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
@@ -88,9 +86,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
-        final var behavior = getNamespaceBehaviour(ValidationBundles.NAMESPACE);
+        final var behavior = accessNamespace(ValidationBundles.NAMESPACE);
         for (var validationBundle : supportedValidation.entrySet()) {
-            behavior.addTo(this, validationBundle.getKey(), validationBundle.getValue());
+            behavior.valueTo(this, validationBundle.getKey(), validationBundle.getValue());
         }
 
         supportedVersions = ImmutableSet.copyOf(
@@ -135,8 +133,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
     }
 
     @Override
-    <K, V> NamespaceBehaviourWithListeners<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
-        NamespaceBehaviourWithListeners<?, ?> potential = supportedNamespaces.get(type);
+    <K, V> NamespaceAccess<K, V> accessNamespace(final ParserNamespace<K, V> type) {
+        @SuppressWarnings("unchecked")
+        var potential = (NamespaceAccess<K, V>) supportedNamespaces.get(type);
         if (potential == null) {
             final var potentialRaw = verifyNotNull(supports.get(currentPhase)).namespaceBehaviourOf(type);
             if (potentialRaw != null) {
@@ -147,24 +146,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
                         + currentPhase);
             }
         }
-
-        verify(type.equals(potential.namespace()));
-        /*
-         * Safe cast, previous checkState checks equivalence of key from which
-         * type argument are derived
-         */
-        return (NamespaceBehaviourWithListeners<K, V>) potential;
+        return potential;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private <K, V> NamespaceBehaviourWithListeners<K, V> createNamespaceContext(
-            final NamespaceBehaviour<K, V> potentialRaw) {
-        if (potentialRaw instanceof DerivedNamespaceBehaviour derived) {
+    private <K, V> @NonNull NamespaceAccess<K, V> createNamespaceContext(final NamespaceBehaviour<K, V> behaviour) {
+        if (behaviour instanceof DerivedNamespaceBehaviour derived) {
             final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(derived);
-            getNamespaceBehaviour(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);
+            accessNamespace(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);
             return derivedContext;
         }
-        return new SimpleNamespaceContext<>(potentialRaw);
+        return new SimpleNamespaceContext<>(behaviour);
     }
 
     StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
