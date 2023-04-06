@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
 final class VirtualNamespaceContext<K, V, D> extends NamespaceBehaviourWithListeners<K, V> {
     private final Multimap<D, KeyedValueAddedListener<K>> listeners = HashMultimap.create();
@@ -30,12 +31,12 @@ final class VirtualNamespaceContext<K, V, D> extends NamespaceBehaviourWithListe
         throw new UnsupportedOperationException("Virtual namespaces support only exact lookups");
     }
 
-    void addedToSourceNamespace(final NamespaceStorageNode storage, final D key, final V value) {
+    void addedToSourceNamespace(final NamespaceStorage storage, final D key, final V value) {
         notifyListeners(storage, listeners.get(key).iterator(), value);
     }
 
     @Override
-    public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
+    public void addTo(final NamespaceStorage storage, final K key, final V value) {
         delegate.addTo(storage, key, value);
         notifyListeners(storage, listeners.get(derivedDelegate.getSignificantKey(key)).iterator(), value);
         notifyDerivedNamespaces(storage, key, value);
