@@ -25,7 +25,6 @@ import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -41,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
@@ -50,8 +48,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPoli
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.PredicateValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceAccess.KeyedValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceAccess.PredicateValueAddedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,25 +162,25 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
-        this.bitsAight = original.bitsAight;
-        this.definition = original.definition;
-        this.executionOrder = original.executionOrder;
+        bitsAight = original.bitsAight;
+        definition = original.definition;
+        executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = COPY_ORIGINAL;
+        definition = requireNonNull(def);
+        bitsAight = COPY_ORIGINAL;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = (byte) copyFlags(copyType);
+        definition = requireNonNull(def);
+        bitsAight = (byte) copyFlags(copyType);
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
             final CopyType childCopyType) {
-        this.definition = prototype.definition;
-        this.bitsAight = (byte) (copyFlags(copyType)
+        definition = prototype.definition;
+        bitsAight = (byte) (copyFlags(copyType)
             | prototype.bitsAight & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
     }
 
@@ -259,7 +257,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // FIXME: this should be propagated through a correct constructor
     @Deprecated
     final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.executionOrder = completedPhase.executionOrder();
+        executionOrder = completedPhase.executionOrder();
     }
 
     @Override
@@ -602,7 +600,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             return;
         }
 
-        getBehaviour(type).addListener(new KeyedValueAddedListener<>(this, key) {
+        accessNamespace(type).addListener(new KeyedValueAddedListener<>(this, key) {
             @Override
             void onValueAdded(final Object value) {
                 listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
@@ -613,15 +611,15 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
-        final var entry = getFromNamespace(type, criterion);
+        final var namespaceAccess = accessNamespace(type);
+        final var entry = namespaceAccess.entryFrom(this, criterion);
         if (entry != null) {
             LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", type, criterion, entry);
             waitForPhase(entry.getValue(), type, phase, criterion, listener);
             return;
         }
 
-        final NamespaceBehaviourWithListeners<K, V> behaviour = getBehaviour(type);
-        behaviour.addListener(new PredicateValueAddedListener<K, V>(this) {
+        namespaceAccess.addListener(new PredicateValueAddedListener<K, V>(this) {
             @Override
             boolean onValueAdded(final K key, final V value) {
                 if (criterion.match(key)) {
@@ -637,17 +635,12 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     final <K, V> void selectMatch(final ParserNamespace<K, V> type, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
-        final var match = getFromNamespace(type, criterion);
+        final var match = accessNamespace(type).entryFrom(this, criterion);
         if (match == null) {
             throw new IllegalStateException(
                 "Failed to find a match for criterion %s in namespace %s node %s".formatted(criterion, type, this));
         }
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
-    }
-
-    private <K, V> @Nullable Entry<K, V> getFromNamespace(final ParserNamespace<K, V> type,
-            final NamespaceKeyCriterion<K> criterion) {
-        return getNamespaceBehaviour(type).getFrom(this, criterion);
     }
 
     final <K, V> void waitForPhase(final Object value, final ParserNamespace<K, V> type,
@@ -658,14 +651,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
                 selectMatch(type, criterion, listener);
                 return true;
             });
-    }
-
-    private <K, V> NamespaceBehaviourWithListeners<K, V> getBehaviour(final ParserNamespace<K, V> type) {
-        final NamespaceBehaviour<K, V> behaviour = getNamespaceBehaviour(type);
-        checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",
-            type);
-
-        return (NamespaceBehaviourWithListeners<K, V>) behaviour;
     }
 
     private static <T> Multimap<ModelProcessingPhase, T> newMultimap() {
@@ -724,7 +709,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     @Override
     public final <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
             final ParserNamespace<K, ? super C> namespace, final KT key, final C stmt) {
-        getNamespaceBehaviour(namespace).addTo(this, key, stmt);
+        accessNamespace(namespace).valueTo(this, key, stmt);
     }
 
     @Override

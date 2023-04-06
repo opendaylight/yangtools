@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -188,8 +187,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     public abstract Collection<? extends @NonNull StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
 
     @Override
-    final <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
-        return getRoot().getSourceContext().getNamespaceBehaviour(type);
+    final <K, V> NamespaceAccess<K, V> accessNamespace(final ParserNamespace<K, V> type) {
+        return getRoot().getSourceContext().accessNamespace(type);
     }
 
     @Override
@@ -321,7 +320,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final <K, V> V namespaceItem(final ParserNamespace<K, V> namespace, final K key) {
-        return getNamespaceBehaviour(namespace).getFrom(this, key);
+        return accessNamespace(namespace).valueFrom(this, key);
     }
 
     @Override
