@@ -103,7 +103,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         return this;
     }
 
-    SourceSpecificContext getSourceContext() {
+    @NonNull SourceSpecificContext getSourceContext() {
         return sourceContext;
     }
 
@@ -217,10 +217,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     void setRootIdentifierImpl(final SourceIdentifier identifier) {
         rootIdentifier = requireNonNull(identifier);
-    }
-
-    @NonNull NamespaceBehaviourRegistry getBehaviourRegistryImpl() {
-        return sourceContext;
     }
 
     @NonNull YangVersion getRootVersionImpl() {
