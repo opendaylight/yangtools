@@ -26,8 +26,8 @@ public abstract class DerivedNamespaceBehaviour<K, V, L, O extends ParserNamespa
 
     private final @NonNull O derivedFrom;
 
-    protected DerivedNamespaceBehaviour(final ParserNamespace<K, V> identifier, final O derivedFrom) {
-        super(identifier);
+    protected DerivedNamespaceBehaviour(final ParserNamespace<K, V> namespace, final O derivedFrom) {
+        super(namespace);
         this.derivedFrom = requireNonNull(derivedFrom);
     }
 

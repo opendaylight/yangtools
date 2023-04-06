@@ -41,7 +41,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
         // Get the backing storage node for the requested storage
         final NamespaceStorageNode storageNode = globalOrStatementSpecific(storage);
         // Check try to look up existing node
-        final StmtContext<QName, D, E> existing = storageNode.getFromLocalStorage(getIdentifier(), key);
+        final StmtContext<QName, D, E> existing = storageNode.getFromLocalStorage(namespace(), key);
 
         // An existing node takes precedence, if it does not exist try to request it
         return existing != null ? existing : requestFrom(storageNode, key);
@@ -55,9 +55,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
 
     @Override
     public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<QName, D, E> value) {
-        final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(getIdentifier(),
-            key, value);
-
+        final var prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(namespace(), key, value);
         if (prev != null) {
             throw new SourceException(value,
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
