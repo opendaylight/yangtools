@@ -24,18 +24,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 abstract class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
     final @NonNull NamespaceBehaviour<K, V> behaviour;
 
-    BehaviourNamespaceAccess(final NamespaceBehaviour<K, V> behaviour) {
+    BehaviourNamespaceAccess(final NamespaceStorage globalStorage, final NamespaceBehaviour<K, V> behaviour) {
+        super(globalStorage);
         this.behaviour = requireNonNull(behaviour);
     }
 
     @Override
     final V valueFrom(final NamespaceStorage storage, final K key) {
-        return behaviour.getFrom(storage, key);
+        return behaviour.getFrom(this, storage, key);
     }
 
     @Override
     final void valueTo(final NamespaceStorage storage, final K key, final V value) {
-        behaviour.addTo(storage, key, value);
+        behaviour.addTo(this, storage, key, value);
         onValueTo(storage, key, value);
     }
 
@@ -43,12 +44,12 @@ abstract class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
 
     @Override
     final Map<K, V> allFrom(final NamespaceStorage storage) {
-        return behaviour.getAllFrom(storage);
+        return behaviour.getAllFrom(this, storage);
     }
 
     @Override
     final Entry<K, V> entryFrom(final NamespaceStorage storage, final NamespaceKeyCriterion<K> criterion) {
-        return behaviour.getFrom(storage, criterion);
+        return behaviour.getFrom(this, storage, criterion);
     }
 
     @Override

@@ -36,15 +36,16 @@ public abstract class DerivedNamespaceBehaviour<K, V, L, O extends ParserNamespa
     }
 
     @Override
-    public Map<K, V> getAllFrom(final NamespaceStorage storage) {
+    public Map<K, V> getAllFrom(final GlobalStorageAccess globalAccess, final NamespaceStorage storage) {
         throw new UnsupportedOperationException("Virtual namespaces does not support provision of all items.");
     }
 
     @Override
-    public abstract V getFrom(NamespaceStorage storage, K key);
+    public abstract V getFrom(GlobalStorageAccess globalAccess, NamespaceStorage storage, K key);
 
     @Override
-    public void addTo(final NamespaceStorage storage, final K key, final V value) {
+    public void addTo(final GlobalStorageAccess globalAccess, final NamespaceStorage storage, final K key,
+            final V value) {
         // Intentional noop
     }
 

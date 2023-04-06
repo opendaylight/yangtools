@@ -16,10 +16,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalStorageAccess;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
-abstract class NamespaceAccess<K, V> {
+abstract class NamespaceAccess<K, V> implements GlobalStorageAccess {
     abstract static class ValueAddedListener<K> {
         private final NamespaceStorage ctxNode;
 
@@ -60,10 +61,18 @@ abstract class NamespaceAccess<K, V> {
         abstract boolean onValueAdded(@NonNull K key, @NonNull V value);
     }
 
+    private final @NonNull NamespaceStorage globalStorage;
+
     private List<VirtualNamespaceContext<?, V, K>> derivedNamespaces;
 
-    NamespaceAccess() {
 
+    NamespaceAccess(final NamespaceStorage globalStorage) {
+        this.globalStorage = requireNonNull(globalStorage);
+    }
+
+    @Override
+    public final NamespaceStorage getGlobalStorage() {
+        return globalStorage;
     }
 
     abstract @Nullable V valueFrom(@NonNull NamespaceStorage storage, K key);
