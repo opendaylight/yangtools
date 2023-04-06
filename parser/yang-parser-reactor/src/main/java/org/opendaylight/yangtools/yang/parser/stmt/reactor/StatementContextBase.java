@@ -613,9 +613,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
-        final Optional<Entry<K, V>> existing = getFromNamespace(type, criterion);
-        if (existing.isPresent()) {
-            final Entry<K, V> entry = existing.get();
+        final var entry = getFromNamespace(type, criterion);
+        if (entry != null) {
             LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", type, criterion, entry);
             waitForPhase(entry.getValue(), type, phase, criterion, listener);
             return;
@@ -638,14 +637,15 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     final <K, V> void selectMatch(final ParserNamespace<K, V> type, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
-        final Optional<Entry<K, V>> optMatch = getFromNamespace(type, criterion);
-        checkState(optMatch.isPresent(), "Failed to find a match for criterion %s in namespace %s node %s", criterion,
-            type, this);
-        final Entry<K, V> match = optMatch.get();
+        final var match = getFromNamespace(type, criterion);
+        if (match == null) {
+            throw new IllegalStateException(
+                "Failed to find a match for criterion %s in namespace %s node %s".formatted(criterion, type, this));
+        }
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
     }
 
-    private <K, V> Optional<Entry<K, V>> getFromNamespace(final ParserNamespace<K, V> type,
+    private <K, V> @Nullable Entry<K, V> getFromNamespace(final ParserNamespace<K, V> type,
             final NamespaceKeyCriterion<K> criterion) {
         return getNamespaceBehaviour(type).getFrom(this, criterion);
     }
