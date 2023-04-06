@@ -324,7 +324,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     @Override
-    public BuildGlobalContext getParentStorage() {
+    public GlobalStorage getParentStorage() {
         return globalContext;
     }
 

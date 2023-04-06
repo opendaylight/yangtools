@@ -16,39 +16,34 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalStorageAccess;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalStorage;
 
 /**
  * A {@link NamespaceAccess} backed by a {@link NamespaceBehaviour}. Also holds reference to {@link BuildGlobalContext}.
  */
-final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> implements GlobalStorageAccess {
-    private final @NonNull AbstractNamespaceStorage globalContext;
+final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
     private final @NonNull NamespaceBehaviour<K, V> behaviour;
+    private final @NonNull GlobalStorage globalStorage;
 
     // FIXME: Change this to Multimap, once issue with modules is resolved.
     private List<KeyedValueAddedListener<K>> listeners;
     private List<PredicateValueAddedListener<K, V>> predicateListeners;
 
-    BehaviourNamespaceAccess(final AbstractNamespaceStorage globalContext, final NamespaceBehaviour<K, V> behaviour) {
-        this.globalContext = requireNonNull(globalContext);
+    BehaviourNamespaceAccess(final GlobalStorage globalStorage, final NamespaceBehaviour<K, V> behaviour) {
+        this.globalStorage = requireNonNull(globalStorage);
         this.behaviour = requireNonNull(behaviour);
     }
 
     @Override
-    public AbstractNamespaceStorage getGlobalStorage() {
-        return globalContext;
-    }
-
-    @Override
     V valueFrom(final NamespaceStorage storage, final K key) {
-        return behaviour.getFrom(this, storage, key);
+        return behaviour.getFrom(globalStorage, storage, key);
     }
 
     @Override
     void valueTo(final NamespaceStorage storage, final K key, final V value) {
-        behaviour.addTo(this, storage, key, value);
+        behaviour.addTo(globalStorage, storage, key, value);
 
         if (listeners != null) {
             final var toNotify = new ArrayList<KeyedValueAddedListener<K>>();
@@ -84,12 +79,12 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> impleme
 
     @Override
     Map<K, V> allFrom(final NamespaceStorage storage) {
-        return behaviour.getAllFrom(this, storage);
+        return behaviour.getAllFrom(globalStorage, storage);
     }
 
     @Override
     Entry<K, V> entryFrom(final NamespaceStorage storage, final NamespaceKeyCriterion<K> criterion) {
-        return behaviour.getFrom(this, storage, criterion);
+        return behaviour.getFrom(globalStorage, storage, criterion);
     }
 
     @Override
