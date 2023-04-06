@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +29,8 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> impleme
     private final @NonNull AbstractNamespaceStorage globalContext;
     private final @NonNull NamespaceBehaviour<K, V> behaviour;
 
-    // FIXME: Change this to Multimap, once issue with modules is resolved.
-    private List<KeyedValueAddedListener<K>> listeners;
-    private List<PredicateValueAddedListener<K, V>> predicateListeners;
+    private ListMultimap<K, KeyedListener<K, V>> listeners;
+    private List<PredicatedListener<K, V>> predicateListeners;
 
     BehaviourNamespaceAccess(final AbstractNamespaceStorage globalContext, final NamespaceBehaviour<K, V> behaviour) {
         this.globalContext = requireNonNull(globalContext);
@@ -51,17 +52,17 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> impleme
         behaviour.addTo(this, storage, key, value);
 
         if (listeners != null) {
-            final var toNotify = new ArrayList<KeyedValueAddedListener<K>>();
-            final var it = listeners.iterator();
+            final var toNotify = new ArrayList<KeyedListener<K, V>>();
+            final var it = listeners.get(key).iterator();
             while (it.hasNext()) {
                 final var listener = it.next();
-                if (listener.isRequestedValue(this, storage, value)) {
+                if (listener.isRequestedValue(this, storage, key, value)) {
                     it.remove();
                     toNotify.add(listener);
                 }
             }
             for (var listener : toNotify) {
-                listener.onValueAdded(value);
+                listener.onValueAdded(key, value);
             }
 
             if (listeners != null && listeners.isEmpty()) {
@@ -93,15 +94,15 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> impleme
     }
 
     @Override
-    void addListener(final KeyedValueAddedListener<K> listener) {
+    void addListener(final K key, final KeyedListener<K, V> listener) {
         if (listeners == null) {
-            listeners = new ArrayList<>();
+            listeners = ArrayListMultimap.create();
         }
-        listeners.add(listener);
+        listeners.put(requireNonNull(key), requireNonNull(listener));
     }
 
     @Override
-    void addListener(final PredicateValueAddedListener<K, V> listener) {
+    void addListener(final PredicatedListener<K, V> listener) {
         if (predicateListeners == null) {
             predicateListeners = new ArrayList<>();
         }

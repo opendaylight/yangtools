@@ -88,12 +88,12 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         @Override
-        void addListener(final KeyedValueAddedListener<QName> listener) {
+        void addListener(final QName key, final KeyedListener<QName, StatementSupport<?, ?, ?>> listener) {
             throw uoe();
         }
 
         @Override
-        void addListener(final PredicateValueAddedListener<QName, StatementSupport<?, ?, ?>> listener) {
+        void addListener(final PredicatedListener<QName, StatementSupport<?, ?, ?>> listener) {
             throw uoe();
         }
 

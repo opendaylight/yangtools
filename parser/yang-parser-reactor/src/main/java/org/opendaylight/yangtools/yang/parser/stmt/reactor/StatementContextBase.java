@@ -48,7 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPoli
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceAccess.KeyedValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceAccess.KeyedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,25 +161,25 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
-        this.bitsAight = original.bitsAight;
-        this.definition = original.definition;
-        this.executionOrder = original.executionOrder;
+        bitsAight = original.bitsAight;
+        definition = original.definition;
+        executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = COPY_ORIGINAL;
+        definition = requireNonNull(def);
+        bitsAight = COPY_ORIGINAL;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = (byte) copyFlags(copyType);
+        definition = requireNonNull(def);
+        bitsAight = (byte) copyFlags(copyType);
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
             final CopyType childCopyType) {
-        this.definition = prototype.definition;
-        this.bitsAight = (byte) (copyFlags(copyType)
+        definition = prototype.definition;
+        bitsAight = (byte) (copyFlags(copyType)
             | prototype.bitsAight & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
     }
 
@@ -256,7 +256,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // FIXME: this should be propagated through a correct constructor
     @Deprecated
     final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.executionOrder = completedPhase.executionOrder();
+        executionOrder = completedPhase.executionOrder();
     }
 
     @Override
@@ -599,9 +599,9 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             return;
         }
 
-        accessNamespace(type).addListener(new KeyedValueAddedListener<>(this, key) {
+        accessNamespace(type).addListener(key, new KeyedListener<>(this) {
             @Override
-            void onValueAdded(final Object value) {
+            void onValueAdded(final K key, final V value) {
                 listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
             }
         });

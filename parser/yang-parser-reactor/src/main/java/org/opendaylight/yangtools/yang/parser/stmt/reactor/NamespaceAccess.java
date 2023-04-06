@@ -17,25 +17,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
 abstract class NamespaceAccess<K, V> {
-    abstract static class KeyedValueAddedListener<K> {
+    abstract static class KeyedListener<K, V> {
         private final @NonNull NamespaceStorage contextNode;
-        private final @NonNull K key;
 
-        KeyedValueAddedListener(final NamespaceStorage contextNode, final K key) {
+        KeyedListener(final NamespaceStorage contextNode) {
             this.contextNode = requireNonNull(contextNode);
-            this.key = requireNonNull(key);
         }
 
-        final <V> boolean isRequestedValue(final NamespaceAccess<K, ?> access, final NamespaceStorage storage,
+        final boolean isRequestedValue(final NamespaceAccess<K, V> access, final NamespaceStorage storage, final K key,
                 final V value) {
             return value == access.valueFrom(contextNode, key);
         }
 
-        abstract void onValueAdded(Object value);
+        abstract void onValueAdded(@NonNull K key, @NonNull V value);
     }
 
     @FunctionalInterface
-    interface PredicateValueAddedListener<K, V> {
+    interface PredicatedListener<K, V> {
 
         boolean onValueAdded(@NonNull K key, @NonNull V value);
     }
@@ -49,7 +47,7 @@ abstract class NamespaceAccess<K, V> {
     abstract @Nullable Entry<K, V> entryFrom(@NonNull NamespaceStorage storage,
         @NonNull NamespaceKeyCriterion<K> criterion);
 
-    abstract void addListener(KeyedValueAddedListener<K> listener);
+    abstract void addListener(K key, KeyedListener<K, V> listener);
 
-    abstract void addListener(PredicateValueAddedListener<K, V> listener);
+    abstract void addListener(PredicatedListener<K, V> listener);
 }
