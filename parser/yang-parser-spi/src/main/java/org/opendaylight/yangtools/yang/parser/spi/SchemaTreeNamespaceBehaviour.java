@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
-import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
-
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -75,14 +72,18 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     }
 
     private static NamespaceStorage globalOrStatementSpecific(final NamespaceStorage storage) {
-        NamespaceStorage current = requireNonNull(storage);
-        while (!isLocalOrGlobal(current.getStorageType())) {
-            current = verifyNotNull(current.getParentStorage());
-        }
-        return current;
-    }
+        var current = storage;
+        while (true) {
+            if (current.getStorageType() == StorageType.STATEMENT_LOCAL) {
+                return current;
+            }
 
-    private static boolean isLocalOrGlobal(final StorageType type) {
-        return type == StorageType.STATEMENT_LOCAL || type == StorageType.GLOBAL;
+            final var parent = current.getParentStorage();
+            if (parent == null) {
+                // Implies StorageType.GLOBAL
+                return current;
+            }
+            current = parent;
+        }
     }
 }
