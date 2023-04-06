@@ -21,8 +21,8 @@ abstract class NamespaceBehaviourWithListeners<K, V> extends NamespaceBehaviour<
     abstract static class ValueAddedListener<K> {
         private final NamespaceStorageNode ctxNode;
 
-        ValueAddedListener(final NamespaceStorageNode contextNode) {
-            this.ctxNode = requireNonNull(contextNode);
+        ValueAddedListener(final NamespaceStorageNode ctxNode) {
+            this.ctxNode = requireNonNull(ctxNode);
         }
 
         final NamespaceStorageNode getCtxNode() {
@@ -63,7 +63,7 @@ abstract class NamespaceBehaviourWithListeners<K, V> extends NamespaceBehaviour<
     private List<VirtualNamespaceContext<?, V, K>> derivedNamespaces;
 
     protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V> delegate) {
-        super(delegate.getIdentifier());
+        super(delegate.namespace());
         this.delegate = delegate;
     }
 

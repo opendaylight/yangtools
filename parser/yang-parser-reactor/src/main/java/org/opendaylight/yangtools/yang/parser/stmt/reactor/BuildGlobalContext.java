@@ -149,7 +149,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport {
             }
         }
 
-        verify(type.equals(potential.getIdentifier()));
+        verify(type.equals(potential.namespace()));
         /*
          * Safe cast, previous checkState checks equivalence of key from which
          * type argument are derived

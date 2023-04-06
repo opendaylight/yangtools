@@ -106,7 +106,7 @@ public final class StatementSupportBundle implements Immutable {
             return parent == null ? null : parent.namespaceBehaviourOf(namespace);
         }
 
-        checkState(namespace.equals(potential.getIdentifier()));
+        checkState(namespace.equals(potential.namespace()));
         // Safe cast, previous checkState checks equivalence of key from which type argument are derived
         @SuppressWarnings("unchecked")
         final var ret = (NamespaceBehaviour<K, V>) potential;
@@ -183,10 +183,10 @@ public final class StatementSupportBundle implements Immutable {
         }
 
         public @NonNull Builder addSupport(final NamespaceBehaviour<?, ?> namespaceSupport) {
-            final var identifier = namespaceSupport.getIdentifier();
-            checkState(!namespaces.containsKey(identifier));
-            checkState(!parent.hasNamespaceBehaviour(identifier));
-            namespaces.put(identifier, namespaceSupport);
+            final var namespace = namespaceSupport.namespace();
+            checkState(!namespaces.containsKey(namespace));
+            checkState(!parent.hasNamespaceBehaviour(namespace));
+            namespaces.put(namespace, namespaceSupport);
             return this;
         }
 
