@@ -20,8 +20,8 @@ final class SimpleNamespaceContext<K, V> extends NamespaceBehaviourWithListeners
 
     private Collection<PredicateValueAddedListener<K, V>> predicateListeners;
 
-    SimpleNamespaceContext(final NamespaceBehaviour<K, V> delegate) {
-        super(delegate);
+    SimpleNamespaceContext(final NamespaceStorage globalStorage, final NamespaceBehaviour<K, V> delegate) {
+        super(globalStorage, delegate);
     }
 
     @Override
@@ -41,7 +41,7 @@ final class SimpleNamespaceContext<K, V> extends NamespaceBehaviourWithListeners
     }
 
     @Override
-    public void addTo(final NamespaceStorage storage, final K key, final V value) {
+    void valueTo(final NamespaceStorage storage, final K key, final V value) {
         delegate.addTo(storage, key, value);
 
         if (listeners != null) {
