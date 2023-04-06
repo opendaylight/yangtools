@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
@@ -25,17 +24,6 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractNamespaceStorage.class);
 
     private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = ImmutableMap.of();
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * This method override provides bimorphic invocation on this method invocation between
-     * {@link SourceSpecificContext} and the more general {@link AbstractNamespaceStorage}. We typically do not expect
-     * the two accesses to overlap.
-     */
-    @Override
-    public abstract NamespaceStorage getParentStorage();
 
     /**
      * Get access to a {@link ParserNamespace}.
@@ -140,8 +128,8 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
                     break;
                 case 1:
                     // Alright, time to grow to a full HashMap
-                    final Map<ParserNamespace<?, ?>, Map<?,?>> newNamespaces = new HashMap<>(4);
-                    final Entry<ParserNamespace<?, ?>, Map<?, ?>> entry = namespaces.entrySet().iterator().next();
+                    final var newNamespaces = new HashMap<ParserNamespace<?, ?>, Map<?, ?>>(4);
+                    final var entry = namespaces.entrySet().iterator().next();
                     newNamespaces.put(entry.getKey(), entry.getValue());
                     namespaces = newNamespaces;
                     // fall through

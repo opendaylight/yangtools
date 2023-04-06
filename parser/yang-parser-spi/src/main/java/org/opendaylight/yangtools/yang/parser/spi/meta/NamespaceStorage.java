@@ -41,6 +41,22 @@ public interface NamespaceStorage {
     }
 
     /**
+     * {@link NamespaceStorage} for {@link StorageType#GLOBAL}. This is sufficiently special to warrant a dedicated
+     * interface, as there is only one instance of this storage in every parser build.
+     */
+    interface GlobalStorage extends NamespaceStorage {
+        @Override
+        default StorageType getStorageType() {
+            return StorageType.GLOBAL;
+        }
+
+        @Override
+        default NamespaceStorage getParentStorage() {
+            return null;
+        }
+    }
+
+    /**
      * Return the type of this storage.
      *
      * @return The type of this storage
