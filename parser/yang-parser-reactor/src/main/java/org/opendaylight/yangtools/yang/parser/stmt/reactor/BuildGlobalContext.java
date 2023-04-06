@@ -46,9 +46,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -126,12 +125,12 @@ final class BuildGlobalContext extends NamespaceStorageSupport {
     }
 
     @Override
-    public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.GLOBAL;
+    public StorageType getStorageType() {
+        return StorageType.GLOBAL;
     }
 
     @Override
-    public NamespaceStorageNode getParentNamespaceStorage() {
+    public NamespaceStorage getParentNamespaceStorage() {
         return null;
     }
 
