@@ -227,6 +227,17 @@ public abstract class NamespaceBehaviour<K, V> {
         }
     }
 
+    static final class Global<K, V> extends AbstractSpecific<K, V> {
+        Global(final ParserNamespace<K, V> namespace) {
+            super(namespace);
+        }
+
+        @Override
+        NamespaceStorage findStorage(final NamespaceStorage current) {
+            return current.getGlobalNamespaceStorage();
+        }
+    }
+
     private static final class StorageSpecific<K, V> extends AbstractSpecific<K, V> {
         private final StorageType type;
 
