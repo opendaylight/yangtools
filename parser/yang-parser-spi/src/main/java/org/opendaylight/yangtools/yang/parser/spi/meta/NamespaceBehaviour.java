@@ -30,6 +30,18 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageT
  * @param <V> Value type
  */
 public abstract class NamespaceBehaviour<K, V> {
+    /**
+     * Interface allowing quick access to {@link StorageType#GLOBAL} {@link NamespaceStorage}.
+     */
+    public interface GlobalStorageAccess {
+        /**
+         * Return the {@link StorageType#GLOBAL} {@link NamespaceStorage}.
+         *
+         * @return Global namespace storage
+         */
+        @NonNull NamespaceStorage getGlobalStorage();
+    }
+
     private final @NonNull ParserNamespace<K, V> namespace;
 
     protected NamespaceBehaviour(final ParserNamespace<K, V> namespace) {
@@ -50,7 +62,7 @@ public abstract class NamespaceBehaviour<K, V> {
      * @return global namespace behaviour for supplied namespace type.
      */
     public static <K, V> @NonNull NamespaceBehaviour<K, V> global(final ParserNamespace<K, V> namespace) {
-        return new StorageSpecific<>(namespace, StorageType.GLOBAL);
+        return new Global<>(namespace);
     }
 
     /**
@@ -101,22 +113,24 @@ public abstract class NamespaceBehaviour<K, V> {
     /**
      * Returns a value from model namespace storage according to key param class.
      *
+     * @param globalAccess A {@link GlobalStorageAccess}
      * @param storage namespace storage
      * @param key type parameter
      * @return value from model namespace storage according to key param class
      */
-    public abstract V getFrom(NamespaceStorage storage, K key);
+    public abstract V getFrom(GlobalStorageAccess globalAccess, NamespaceStorage storage, K key);
 
     /**
      * Returns the key/value mapping best matching specified criterion.
      *
+     * @param globalAccess A {@link GlobalStorageAccess}
      * @param storage namespace storage
      * @param criterion selection criterion
      * @return Selected mapping, if available.
      */
-    public final @Nullable Entry<K, V> getFrom(final NamespaceStorage storage,
+    public final @Nullable Entry<K, V> getFrom(final GlobalStorageAccess globalAccess, final NamespaceStorage storage,
             final NamespaceKeyCriterion<K> criterion) {
-        final var mappings = getAllFrom(storage);
+        final var mappings = getAllFrom(globalAccess, storage);
         if (mappings == null) {
             return null;
         }
@@ -145,19 +159,21 @@ public abstract class NamespaceBehaviour<K, V> {
     /**
      * Returns all values of a keys of param class from model namespace storage.
      *
+     * @param globalAccess A {@link GlobalStorageAccess}
      * @param storage namespace storage
      * @return all values of keys of param class from model namespace storage
      */
-    public abstract Map<K, V> getAllFrom(NamespaceStorage storage);
+    public abstract Map<K, V> getAllFrom(GlobalStorageAccess globalAccess, NamespaceStorage storage);
 
     /**
      * Adds a key/value to corresponding namespace storage according to param class.
      *
+     * @param globalAccess A {@link GlobalStorageAccess}
      * @param storage namespace storage
      * @param key type parameter
      * @param value type parameter
      */
-    public abstract void addTo(NamespaceStorage storage, K key, V value);
+    public abstract void addTo(GlobalStorageAccess globalAccess, NamespaceStorage storage, K key, V value);
 
     protected final V getFromLocalStorage(final NamespaceStorage storage, final K key) {
         return storage.getFromLocalStorage(namespace, key);
@@ -186,21 +202,22 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        public final V getFrom(final NamespaceStorage storage, final K key) {
-            return getFromLocalStorage(findStorage(storage), key);
+        public final V getFrom(final GlobalStorageAccess globalAccess, final NamespaceStorage storage, final K key) {
+            return getFromLocalStorage(findStorage(globalAccess, storage), key);
         }
 
         @Override
-        public final Map<K, V> getAllFrom(final NamespaceStorage storage) {
-            return getAllFromLocalStorage(findStorage(storage));
+        public final Map<K, V> getAllFrom(final GlobalStorageAccess globalAccess, final NamespaceStorage storage) {
+            return getAllFromLocalStorage(findStorage(globalAccess, storage));
         }
 
         @Override
-        public final void addTo(final NamespaceStorage storage, final K key, final V value) {
-            addToStorage(findStorage(storage), key, value);
+        public final void addTo(final GlobalStorageAccess globalAccess, final NamespaceStorage storage, final K key,
+                final V value) {
+            addToStorage(findStorage(globalAccess, storage), key, value);
         }
 
-        abstract NamespaceStorage findStorage(NamespaceStorage storage);
+        abstract NamespaceStorage findStorage(GlobalStorageAccess globalAccess, NamespaceStorage storage);
     }
 
     private static final class StatementLocal<K, V> extends AbstractSpecific<K, V> {
@@ -209,8 +226,19 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        NamespaceStorage findStorage(final NamespaceStorage storage) {
+        NamespaceStorage findStorage(final GlobalStorageAccess globalAccess, final NamespaceStorage storage) {
             return storage;
+        }
+    }
+
+    private static final class Global<K, V> extends AbstractSpecific<K, V> {
+        Global(final ParserNamespace<K, V> namespace) {
+            super(namespace);
+        }
+
+        @Override
+        NamespaceStorage findStorage(final GlobalStorageAccess globalAccess, final NamespaceStorage storage) {
+            return globalAccess.getGlobalStorage();
         }
     }
 
@@ -223,7 +251,7 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        NamespaceStorage findStorage(final NamespaceStorage storage) {
+        NamespaceStorage findStorage(final GlobalStorageAccess globalAccess, final NamespaceStorage storage) {
             var current = storage;
             while (current != null && current.getStorageType() != type) {
                 current = current.getParentStorage();
@@ -243,7 +271,7 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        public V getFrom(final NamespaceStorage storage, final K key) {
+        public V getFrom(final GlobalStorageAccess globalAccess, final NamespaceStorage storage, final K key) {
             NamespaceStorage current = storage;
             while (current != null) {
                 final V val = getFromLocalStorage(current, key);
@@ -256,7 +284,7 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        public Map<K, V> getAllFrom(final NamespaceStorage storage) {
+        public Map<K, V> getAllFrom(final GlobalStorageAccess globalAccess, final NamespaceStorage storage) {
             var current = storage;
             while (current != null) {
                 final Map<K, V> val = getAllFromLocalStorage(current);
@@ -269,7 +297,8 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        public void addTo(final NamespaceStorage storage, final K key, final V value) {
+        public void addTo(final GlobalStorageAccess globalAccess, final NamespaceStorage storage, final K key,
+                final V value) {
             addToStorage(storage, key, value);
         }
     }

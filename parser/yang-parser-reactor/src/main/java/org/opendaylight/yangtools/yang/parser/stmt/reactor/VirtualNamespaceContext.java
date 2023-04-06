@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
@@ -16,9 +18,10 @@ final class VirtualNamespaceContext<K, V, D> extends BehaviourNamespaceAccess<K,
     private final Multimap<D, KeyedValueAddedListener<K>> listeners = HashMultimap.create();
     private final DerivedNamespaceBehaviour<K, V, D, ?> derivedDelegate;
 
-    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D, ?> behaviour) {
-        super(behaviour);
-        derivedDelegate = behaviour;
+    VirtualNamespaceContext(final AbstractNamespaceStorage globalContext,
+            final DerivedNamespaceBehaviour<K, V, D, ?> behaviour) {
+        super(globalContext, behaviour);
+        derivedDelegate = requireNonNull(behaviour);
     }
 
     @Override

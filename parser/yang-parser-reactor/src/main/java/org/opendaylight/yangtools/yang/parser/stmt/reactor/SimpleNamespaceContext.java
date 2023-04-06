@@ -20,8 +20,8 @@ final class SimpleNamespaceContext<K, V> extends BehaviourNamespaceAccess<K, V> 
 
     private Collection<PredicateValueAddedListener<K, V>> predicateListeners;
 
-    SimpleNamespaceContext(final NamespaceBehaviour<K, V> behaviour) {
-        super(behaviour);
+    SimpleNamespaceContext(final AbstractNamespaceStorage globalContext, final NamespaceBehaviour<K, V> behaviour) {
+        super(globalContext, behaviour);
     }
 
     @Override
