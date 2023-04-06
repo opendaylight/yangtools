@@ -61,7 +61,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviourRegistry {
+final class BuildGlobalContext extends NamespaceStorageSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
@@ -136,12 +136,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Namesp
     }
 
     @Override
-    NamespaceBehaviourRegistry getBehaviourRegistry() {
-        return this;
-    }
-
-    @Override
-    public <K, V> NamespaceBehaviourWithListeners<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
+    <K, V> NamespaceBehaviourWithListeners<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
         NamespaceBehaviourWithListeners<?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             final var potentialRaw = verifyNotNull(supports.get(currentPhase)).namespaceBehaviourOf(type);

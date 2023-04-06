@@ -647,7 +647,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     private <K, V> Optional<Entry<K, V>> getFromNamespace(final ParserNamespace<K, V> type,
             final NamespaceKeyCriterion<K> criterion) {
-        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
+        return getNamespaceBehaviour(type).getFrom(this, criterion);
     }
 
     final <K, V> void waitForPhase(final Object value, final ParserNamespace<K, V> type,
@@ -661,7 +661,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     private <K, V> NamespaceBehaviourWithListeners<K, V> getBehaviour(final ParserNamespace<K, V> type) {
-        final NamespaceBehaviour<K, V> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
+        final NamespaceBehaviour<K, V> behaviour = getNamespaceBehaviour(type);
         checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",
             type);
 
@@ -724,7 +724,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     @Override
     public final <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
             final ParserNamespace<K, ? super C> namespace, final KT key, final C stmt) {
-        getBehaviourRegistry().getNamespaceBehaviour(namespace).addTo(this, key, stmt);
+        getNamespaceBehaviour(namespace).addTo(this, key, stmt);
     }
 
     @Override

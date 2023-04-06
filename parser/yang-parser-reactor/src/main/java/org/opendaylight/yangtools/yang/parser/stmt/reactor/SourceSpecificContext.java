@@ -53,7 +53,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviourRegistry, Mutable {
+final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -300,8 +300,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         return null;
     }
 
-    @Override
-    public <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
+    <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
         if (StatementSupport.NAMESPACE.equals(type)) {
             @SuppressWarnings("unchecked")
             final var ret = (NamespaceBehaviour<K, V>) statementSupports;
