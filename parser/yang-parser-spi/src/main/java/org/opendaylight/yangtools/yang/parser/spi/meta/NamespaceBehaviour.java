@@ -180,6 +180,19 @@ public abstract class NamespaceBehaviour<K, V> {
         return toStringHelper.add("namespace", namespace);
     }
 
+
+    /**
+     * Interface allowing quick access to {@link StorageType#GLOBAL} {@link NamespaceStorage}.
+     */
+    public interface GlobalStorageAccess {
+        /**
+         * Return the {@link StorageType#GLOBAL} {@link NamespaceStorage}.
+         *
+         * @return Global namespace storage
+         */
+        @NonNull NamespaceStorage getGlobalStorage();
+    }
+
     private abstract static class AbstractSpecific<K, V> extends NamespaceBehaviour<K, V> {
         AbstractSpecific(final ParserNamespace<K, V> namespace) {
             super(namespace);
