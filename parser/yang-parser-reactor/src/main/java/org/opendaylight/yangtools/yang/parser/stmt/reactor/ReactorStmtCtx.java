@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements Mutable<A, D, E>, Current<A, D> {
+        extends AbstractNamespaceStorage implements Mutable<A, D, E>, Current<A, D> {
     private static final Logger LOG = LoggerFactory.getLogger(ReactorStmtCtx.class);
 
     /**
@@ -309,7 +309,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     //
     //
-    // NamespaceStorageSupport/Mutable integration methods. Keep these together.
+    // AbstractNamespaceStorage/Mutable integration methods. Keep these together.
     //
     //
 

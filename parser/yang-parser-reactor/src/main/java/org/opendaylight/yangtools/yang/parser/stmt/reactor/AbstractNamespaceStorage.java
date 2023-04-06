@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class NamespaceStorageSupport implements NamespaceStorage {
-    private static final Logger LOG = LoggerFactory.getLogger(NamespaceStorageSupport.class);
+abstract class AbstractNamespaceStorage implements NamespaceStorage {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractNamespaceStorage.class);
 
     private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = ImmutableMap.of();
 
@@ -32,7 +32,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorage {
      *
      * <p>
      * This method override provides bimorphic invocation on this method invocation between
-     * {@link SourceSpecificContext} and the more general {@link NamespaceStorageSupport}. We typically do not expect
+     * {@link SourceSpecificContext} and the more general {@link AbstractNamespaceStorage}. We typically do not expect
      * the two accesses to overlap.
      */
     @Override
