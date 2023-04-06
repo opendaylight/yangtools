@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Verify;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageType;
 
 /**
@@ -114,11 +114,11 @@ public abstract class NamespaceBehaviour<K, V> {
      * @param criterion selection criterion
      * @return Selected mapping, if available.
      */
-    public final Optional<Entry<K, V>> getFrom(final NamespaceStorage storage,
+    public final @Nullable Entry<K, V> getFrom(final NamespaceStorage storage,
             final NamespaceKeyCriterion<K> criterion) {
         final var mappings = getAllFrom(storage);
         if (mappings == null) {
-            return Optional.empty();
+            return null;
         }
 
         Entry<K, V> match = null;
@@ -131,15 +131,15 @@ public abstract class NamespaceBehaviour<K, V> {
                         continue;
                     }
 
-                    Verify.verify(selected == key, "Criterion %s selected invalid key %s from candidates [%s %s]",
-                            selected, match.getKey(), key);
+                    verify(selected == key, "Criterion %s selected invalid key %s from candidates [%s %s]", selected,
+                        match.getKey(), key);
                 }
 
                 match = entry;
             }
         }
 
-        return Optional.ofNullable(match);
+        return match;
     }
 
     /**
