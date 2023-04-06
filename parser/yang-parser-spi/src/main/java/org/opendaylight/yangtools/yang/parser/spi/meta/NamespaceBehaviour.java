@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.util.Map;
@@ -17,7 +18,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
  * @param <K> Key type
  * @param <V> Value type
  */
-public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiable<ParserNamespace<K, V>> {
+public abstract class NamespaceBehaviour<K, V> {
 
     public enum StorageNodeType {
         /**
@@ -125,8 +125,14 @@ public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiabl
             @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
     }
 
-    protected NamespaceBehaviour(final ParserNamespace<K, V> identifier) {
-        super(identifier);
+    private final @NonNull ParserNamespace<K, V> namespace;
+
+    protected NamespaceBehaviour(final ParserNamespace<K, V> namespace) {
+        this.namespace = requireNonNull(namespace);
+    }
+
+    public @NonNull ParserNamespace<K, V> namespace() {
+        return namespace;
     }
 
     /**
@@ -250,20 +256,29 @@ public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiabl
     public abstract void addTo(NamespaceStorageNode storage, K key, V value);
 
     protected final V getFromLocalStorage(final NamespaceStorageNode storage, final K key) {
-        return storage.getFromLocalStorage(getIdentifier(), key);
+        return storage.getFromLocalStorage(namespace, key);
     }
 
     protected final Map<K, V> getAllFromLocalStorage(final NamespaceStorageNode storage) {
-        return storage.getAllFromLocalStorage(getIdentifier());
+        return storage.getAllFromLocalStorage(namespace);
     }
 
     protected final void addToStorage(final NamespaceStorageNode storage, final K key, final V value) {
-        storage.putToLocalStorage(getIdentifier(), key, value);
+        storage.putToLocalStorage(namespace, key, value);
     }
 
-    abstract static class AbstractSpecific<K, V> extends NamespaceBehaviour<K, V> {
-        AbstractSpecific(final ParserNamespace<K, V> identifier) {
-            super(identifier);
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("namespace", namespace);
+    }
+
+    private abstract static class AbstractSpecific<K, V> extends NamespaceBehaviour<K, V> {
+        AbstractSpecific(final ParserNamespace<K, V> namespace) {
+            super(namespace);
         }
 
         @Override
@@ -284,7 +299,7 @@ public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiabl
         abstract NamespaceStorageNode findStorageNode(NamespaceStorageNode storage);
     }
 
-    static final class StatementLocal<K, V> extends AbstractSpecific<K, V> {
+    private static final class StatementLocal<K, V> extends AbstractSpecific<K, V> {
         StatementLocal(final ParserNamespace<K, V> identifier) {
             super(identifier);
         }
@@ -295,28 +310,32 @@ public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiabl
         }
     }
 
-    static final class StorageSpecific<K, V> extends AbstractSpecific<K, V> {
-        private final StorageNodeType storageType;
+    private static final class StorageSpecific<K, V> extends AbstractSpecific<K, V> {
+        private final StorageNodeType type;
 
-        StorageSpecific(final ParserNamespace<K, V> identifier, final StorageNodeType type) {
-            super(identifier);
-            storageType = requireNonNull(type);
+        StorageSpecific(final ParserNamespace<K, V> namespace, final StorageNodeType type) {
+            super(namespace);
+            this.type = requireNonNull(type);
         }
 
         @Override
         NamespaceStorageNode findStorageNode(final NamespaceStorageNode storage) {
-            return findClosestTowardsRoot(storage, storageType);
+            var current = storage;
+            while (current != null && current.getStorageNodeType() != type) {
+                current = current.getParentNamespaceStorage();
+            }
+            return current;
         }
 
         @Override
         protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            return super.addToStringAttributes(helper.add("type", storageType));
+            return super.addToStringAttributes(helper.add("type", type));
         }
     }
 
-    static final class TreeScoped<K, V> extends NamespaceBehaviour<K, V> {
-        TreeScoped(final ParserNamespace<K, V> identifier) {
-            super(identifier);
+    private static final class TreeScoped<K, V> extends NamespaceBehaviour<K, V> {
+        TreeScoped(final ParserNamespace<K, V> namespace) {
+            super(namespace);
         }
 
         @Override
@@ -349,20 +368,5 @@ public abstract class NamespaceBehaviour<K, V> extends AbstractSimpleIdentifiabl
         public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
             addToStorage(storage, key, value);
         }
-
-    }
-
-    protected static NamespaceStorageNode findClosestTowardsRoot(final NamespaceStorageNode storage,
-            final StorageNodeType type) {
-        NamespaceStorageNode current = storage;
-        while (current != null && current.getStorageNodeType() != type) {
-            current = current.getParentNamespaceStorage();
-        }
-        return current;
-    }
-
-    @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("identifier", getIdentifier());
     }
 }
