@@ -21,7 +21,8 @@ public interface NamespaceStorage {
      */
     enum StorageType {
         /**
-         * Global storage, visible from all sources.
+         * Global storage, visible from all sources. There is exactly one such storage in any {@link NamespaceStorage}
+         * hierarchy and it logically sits on top of it.
          */
         GLOBAL,
         /**
@@ -46,6 +47,12 @@ public interface NamespaceStorage {
      */
     @NonNull StorageType getStorageType();
 
+    /**
+     * Return the parent {@link NamespaceStorage}. If this storage is {@link StorageType#GLOBAL}, this method will
+     * return {@code null}.
+     *
+     * @return Parent storage, if this is not the global storage
+     */
     @Nullable NamespaceStorage getParentStorage();
 
     <K, V> @Nullable V getFromLocalStorage(ParserNamespace<K, V> type, K key);
