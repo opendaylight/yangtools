@@ -146,7 +146,7 @@ class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveSt
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> getParentNamespaceStorage() {
+    public StatementContextBase<?, ?, ?> getParentStorage() {
         return parent;
     }
 

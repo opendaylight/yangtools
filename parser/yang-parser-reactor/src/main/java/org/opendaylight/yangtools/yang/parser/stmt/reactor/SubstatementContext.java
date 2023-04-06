@@ -54,7 +54,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> getParentNamespaceStorage() {
+    public StatementContextBase<?, ?, ?> getParentStorage() {
         return parent;
     }
 

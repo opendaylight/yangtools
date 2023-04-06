@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * effective substatements, which are either transformed from that prototype or added by inference.
  */
 final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
+        extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorage {
     // An effective copy view, with enough information to decide what to do next
     private static final class EffectiveCopy implements Immutable {
         // Original statement
@@ -693,7 +693,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> getParentNamespaceStorage() {
+    public StatementContextBase<?, ?, ?> getParentStorage() {
         return parent;
     }
 

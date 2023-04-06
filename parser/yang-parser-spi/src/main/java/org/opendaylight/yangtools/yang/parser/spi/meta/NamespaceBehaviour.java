@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
@@ -17,17 +16,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageType;
 
 /**
  * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
- * of a tree of {@link NamespaceStorageNode} which represents local context of one of types defined
- * n {@link StorageNodeType}.
+ * of a tree of {@link NamespaceStorage} which represents local context of one of types defined in {@link StorageType}.
  *
  * <p>
  * For common behaviour models please use static factories {@link #global(ParserNamespace)},
@@ -37,94 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
  * @param <V> Value type
  */
 public abstract class NamespaceBehaviour<K, V> {
-
-    public enum StorageNodeType {
-        /**
-         * Global storage, visible from all sources.
-         */
-        GLOBAL,
-        /**
-         * Storage of the root statement of a particular source and any sources it is importing.
-         */
-        // FIXME: 7.0.0: this is a misnomer and should be renamed
-        SOURCE_LOCAL_SPECIAL,
-        /**
-         * Storage of a single statement.
-         */
-        STATEMENT_LOCAL,
-        /**
-         * Storage of the root statement of a particular source.
-         */
-        ROOT_STATEMENT_LOCAL
-    }
-
-    public interface NamespaceStorageNode {
-        /**
-         * Return local namespace behaviour type.
-         *
-         * @return local namespace behaviour type {@link NamespaceBehaviour}
-         */
-        StorageNodeType getStorageNodeType();
-
-        @Nullable NamespaceStorageNode getParentNamespaceStorage();
-
-        <K, V> @Nullable V getFromLocalStorage(ParserNamespace<K, V> type, K key);
-
-        <K, V> @Nullable Map<K, V> getAllFromLocalStorage(ParserNamespace<K, V> type);
-
-        /**
-         * Populate specified namespace with a key/value pair, overwriting previous contents. Similar to
-         * {@link Map#put(Object, Object)}.
-         *
-         * @param type Namespace identifier
-         * @param key Key
-         * @param value Value
-         * @return Previously-stored value, or null if the key was not present
-         */
-        <K, V> @Nullable V putToLocalStorage(ParserNamespace<K, V> type, K key, V value);
-
-        /**
-         * Populate specified namespace with a key/value pair unless the key is already associated with a value. Similar
-         * to {@link Map#putIfAbsent(Object, Object)}.
-         *
-         * @param type Namespace identifier
-         * @param key Key
-         * @param value Value
-         * @return Preexisting value or null if there was no previous mapping
-         */
-        <K, V> @Nullable V putToLocalStorageIfAbsent(ParserNamespace<K, V> type, K key, V value);
-    }
-
-    /**
-     * Interface implemented by {@link NamespaceStorageNode}s which support dynamic addition of child elements as they
-     * are requested. This means that such a node can, defer creation of child namespace storage nodes, in effect lazily
-     * expanding this namespace on an if-needed basis.
-     */
-    @Beta
-    public interface OnDemandSchemaTreeStorageNode extends NamespaceStorageNode {
-        /**
-         * Request that a new member of this node's schema tree statement be added. Implementations are required to
-         * perform lookup in their internal structure and create a child if tractable. Resulting node is expected to
-         * have been registered with local storage, so that it is accessible through
-         * {@link #getFromLocalStorage(ParserNamespace, Object)}.
-         *
-         * <p>
-         * This method must not change its mind about a child's presence -- once it returns non-present, it has to be
-         * always returning non-present.
-         *
-         * <p>
-         * The results produced by this method are expected to be consistent with
-         * {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)} and
-         * {@link NamespaceBehaviours#SCHEMA_TREE}'s {@code getFrom(NamespaceStorageNode, QName)}.
-         *
-         * @param qname node identifier of the child being requested
-         * @return Requested child, if it is present.
-         * @throws NullPointerException in {@code qname} is null
-         */
-        <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-            @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
-    }
-
     private final @NonNull ParserNamespace<K, V> namespace;
 
     protected NamespaceBehaviour(final ParserNamespace<K, V> namespace) {
@@ -137,7 +42,7 @@ public abstract class NamespaceBehaviour<K, V> {
 
     /**
      * Creates a global namespace behaviour for supplied namespace type. Global behaviour stores and loads all values
-     * from root {@link NamespaceStorageNode} with type of {@link StorageNodeType#GLOBAL}.
+     * from root {@link NamespaceStorage} with type of {@link StorageType#GLOBAL}.
      *
      * @param <K> Namespace key type
      * @param <V> Namespace value type
@@ -145,13 +50,13 @@ public abstract class NamespaceBehaviour<K, V> {
      * @return global namespace behaviour for supplied namespace type.
      */
     public static <K, V> @NonNull NamespaceBehaviour<K, V> global(final ParserNamespace<K, V> namespace) {
-        return new StorageSpecific<>(namespace, StorageNodeType.GLOBAL);
+        return new StorageSpecific<>(namespace, StorageType.GLOBAL);
     }
 
     /**
      * Creates source-local namespace behaviour for supplied namespace type. Source-local namespace behaviour stores
-     * and loads all values from closest {@link NamespaceStorageNode} ancestor with type
-     * of {@link StorageNodeType#SOURCE_LOCAL_SPECIAL}.
+     * and loads all values from closest {@link NamespaceStorage} ancestor with type
+     * of {@link StorageType#SOURCE_LOCAL_SPECIAL}.
      *
      * @param <K> Namespace key type
      * @param <V> Namespace value type
@@ -159,7 +64,7 @@ public abstract class NamespaceBehaviour<K, V> {
      * @return source-local namespace behaviour for supplied namespace type.
      */
     public static <K, V> @NonNull NamespaceBehaviour<K, V> sourceLocal(final ParserNamespace<K, V> namespace) {
-        return new StorageSpecific<>(namespace, StorageNodeType.SOURCE_LOCAL_SPECIAL);
+        return new StorageSpecific<>(namespace, StorageType.SOURCE_LOCAL_SPECIAL);
     }
 
     public static <K, V> @NonNull NamespaceBehaviour<K, V> statementLocal(final ParserNamespace<K, V> namespace) {
@@ -168,8 +73,8 @@ public abstract class NamespaceBehaviour<K, V> {
 
     /**
      * Creates a root-statement-local namespace behaviour for supplied namespace type. Root-statement-local namespace
-     * behaviour stores and loads all values from closest {@link NamespaceStorageNode} ancestor with type
-     * of {@link StorageNodeType#ROOT_STATEMENT_LOCAL}.
+     * behaviour stores and loads all values from closest {@link NamespaceStorage} ancestor with type
+     * of {@link StorageType#ROOT_STATEMENT_LOCAL}.
      *
      * @param <K> Namespace key type
      * @param <V> Namespace value type
@@ -177,7 +82,7 @@ public abstract class NamespaceBehaviour<K, V> {
      * @return root-statement-local namespace behaviour for supplied namespace type.
      */
     public static <K, V> @NonNull NamespaceBehaviour<K, V> rootStatementLocal(final ParserNamespace<K, V> namespace) {
-        return new StorageSpecific<>(namespace, StorageNodeType.ROOT_STATEMENT_LOCAL);
+        return new StorageSpecific<>(namespace, StorageType.ROOT_STATEMENT_LOCAL);
     }
 
     /**
@@ -200,7 +105,7 @@ public abstract class NamespaceBehaviour<K, V> {
      * @param key type parameter
      * @return value from model namespace storage according to key param class
      */
-    public abstract V getFrom(NamespaceStorageNode storage, K key);
+    public abstract V getFrom(NamespaceStorage storage, K key);
 
     /**
      * Returns the key/value mapping best matching specified criterion.
@@ -209,15 +114,15 @@ public abstract class NamespaceBehaviour<K, V> {
      * @param criterion selection criterion
      * @return Selected mapping, if available.
      */
-    public final Optional<Entry<K, V>> getFrom(final NamespaceStorageNode storage,
+    public final Optional<Entry<K, V>> getFrom(final NamespaceStorage storage,
             final NamespaceKeyCriterion<K> criterion) {
-        final Map<K, V> mappings = getAllFrom(storage);
+        final var mappings = getAllFrom(storage);
         if (mappings == null) {
             return Optional.empty();
         }
 
         Entry<K, V> match = null;
-        for (Entry<K, V> entry : mappings.entrySet()) {
+        for (var entry : mappings.entrySet()) {
             final K key = entry.getKey();
             if (criterion.match(key)) {
                 if (match != null) {
@@ -243,7 +148,7 @@ public abstract class NamespaceBehaviour<K, V> {
      * @param storage namespace storage
      * @return all values of keys of param class from model namespace storage
      */
-    public abstract Map<K, V> getAllFrom(NamespaceStorageNode storage);
+    public abstract Map<K, V> getAllFrom(NamespaceStorage storage);
 
     /**
      * Adds a key/value to corresponding namespace storage according to param class.
@@ -252,17 +157,17 @@ public abstract class NamespaceBehaviour<K, V> {
      * @param key type parameter
      * @param value type parameter
      */
-    public abstract void addTo(NamespaceStorageNode storage, K key, V value);
+    public abstract void addTo(NamespaceStorage storage, K key, V value);
 
-    protected final V getFromLocalStorage(final NamespaceStorageNode storage, final K key) {
+    protected final V getFromLocalStorage(final NamespaceStorage storage, final K key) {
         return storage.getFromLocalStorage(namespace, key);
     }
 
-    protected final Map<K, V> getAllFromLocalStorage(final NamespaceStorageNode storage) {
+    protected final Map<K, V> getAllFromLocalStorage(final NamespaceStorage storage) {
         return storage.getAllFromLocalStorage(namespace);
     }
 
-    protected final void addToStorage(final NamespaceStorageNode storage, final K key, final V value) {
+    protected final void addToStorage(final NamespaceStorage storage, final K key, final V value) {
         storage.putToLocalStorage(namespace, key, value);
     }
 
@@ -281,21 +186,21 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        public final V getFrom(final NamespaceStorageNode storage, final K key) {
-            return getFromLocalStorage(findStorageNode(storage), key);
+        public final V getFrom(final NamespaceStorage storage, final K key) {
+            return getFromLocalStorage(findStorage(storage), key);
         }
 
         @Override
-        public final Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
-            return getAllFromLocalStorage(findStorageNode(storage));
+        public final Map<K, V> getAllFrom(final NamespaceStorage storage) {
+            return getAllFromLocalStorage(findStorage(storage));
         }
 
         @Override
-        public final void addTo(final NamespaceStorageNode storage, final K key, final V value) {
-            addToStorage(findStorageNode(storage), key, value);
+        public final void addTo(final NamespaceStorage storage, final K key, final V value) {
+            addToStorage(findStorage(storage), key, value);
         }
 
-        abstract NamespaceStorageNode findStorageNode(NamespaceStorageNode storage);
+        abstract NamespaceStorage findStorage(NamespaceStorage storage);
     }
 
     private static final class StatementLocal<K, V> extends AbstractSpecific<K, V> {
@@ -304,24 +209,24 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        NamespaceStorageNode findStorageNode(final NamespaceStorageNode storage) {
+        NamespaceStorage findStorage(final NamespaceStorage storage) {
             return storage;
         }
     }
 
     private static final class StorageSpecific<K, V> extends AbstractSpecific<K, V> {
-        private final StorageNodeType type;
+        private final StorageType type;
 
-        StorageSpecific(final ParserNamespace<K, V> namespace, final StorageNodeType type) {
+        StorageSpecific(final ParserNamespace<K, V> namespace, final StorageType type) {
             super(namespace);
             this.type = requireNonNull(type);
         }
 
         @Override
-        NamespaceStorageNode findStorageNode(final NamespaceStorageNode storage) {
+        NamespaceStorage findStorage(final NamespaceStorage storage) {
             var current = storage;
-            while (current != null && current.getStorageNodeType() != type) {
-                current = current.getParentNamespaceStorage();
+            while (current != null && current.getStorageType() != type) {
+                current = current.getParentStorage();
             }
             return current;
         }
@@ -338,33 +243,33 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        public V getFrom(final NamespaceStorageNode storage, final K key) {
-            NamespaceStorageNode current = storage;
+        public V getFrom(final NamespaceStorage storage, final K key) {
+            NamespaceStorage current = storage;
             while (current != null) {
                 final V val = getFromLocalStorage(current, key);
                 if (val != null) {
                     return val;
                 }
-                current = current.getParentNamespaceStorage();
+                current = current.getParentStorage();
             }
             return null;
         }
 
         @Override
-        public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
-            NamespaceStorageNode current = storage;
+        public Map<K, V> getAllFrom(final NamespaceStorage storage) {
+            var current = storage;
             while (current != null) {
                 final Map<K, V> val = getAllFromLocalStorage(current);
                 if (val != null) {
                     return val;
                 }
-                current = current.getParentNamespaceStorage();
+                current = current.getParentStorage();
             }
             return null;
         }
 
         @Override
-        public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
+        public void addTo(final NamespaceStorage storage, final K key, final V value) {
             addToStorage(storage, key, value);
         }
     }

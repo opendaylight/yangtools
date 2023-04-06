@@ -250,7 +250,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> getParentNamespaceStorage() {
+    public StatementContextBase<?, ?, ?> getParentStorage() {
         return parent;
     }
 

@@ -16,6 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -37,9 +40,9 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
      * This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
      */
     @Override
-    public StmtContext<QName, D, E> getFrom(final NamespaceStorageNode storage, final QName key) {
+    public StmtContext<QName, D, E> getFrom(final NamespaceStorage storage, final QName key) {
         // Get the backing storage node for the requested storage
-        final NamespaceStorageNode storageNode = globalOrStatementSpecific(storage);
+        final NamespaceStorage storageNode = globalOrStatementSpecific(storage);
         // Check try to look up existing node
         final StmtContext<QName, D, E> existing = storageNode.getFromLocalStorage(namespace(), key);
 
@@ -48,13 +51,13 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     }
 
     @Override
-    public Map<QName, StmtContext<QName, D, E>> getAllFrom(final NamespaceStorageNode storage) {
+    public Map<QName, StmtContext<QName, D, E>> getAllFrom(final NamespaceStorage storage) {
         // FIXME: 7.0.0: this method needs to be well-defined
         return null;
     }
 
     @Override
-    public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<QName, D, E> value) {
+    public void addTo(final NamespaceStorage storage, final QName key, final StmtContext<QName, D, E> value) {
         final var prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(namespace(), key, value);
         if (prev != null) {
             throw new SourceException(value,
@@ -64,20 +67,19 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     }
 
     private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-            StmtContext<QName, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
-        return storageNode instanceof OnDemandSchemaTreeStorageNode ondemand ? ondemand.requestSchemaTreeChild(key)
-            : null;
+            StmtContext<QName, D, E> requestFrom(final NamespaceStorage storage, final QName key) {
+        return storage instanceof OnDemandSchemaTreeStorage ondemand ? ondemand.requestSchemaTreeChild(key) : null;
     }
 
-    private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
-        NamespaceStorageNode current = requireNonNull(storage);
-        while (!isLocalOrGlobal(current.getStorageNodeType())) {
-            current = verifyNotNull(current.getParentNamespaceStorage());
+    private static NamespaceStorage globalOrStatementSpecific(final NamespaceStorage storage) {
+        NamespaceStorage current = requireNonNull(storage);
+        while (!isLocalOrGlobal(current.getStorageType())) {
+            current = verifyNotNull(current.getParentStorage());
         }
         return current;
     }
 
-    private static boolean isLocalOrGlobal(final StorageNodeType type) {
-        return type == StorageNodeType.STATEMENT_LOCAL || type == StorageNodeType.GLOBAL;
+    private static boolean isLocalOrGlobal(final StorageType type) {
+        return type == StorageType.STATEMENT_LOCAL || type == StorageType.GLOBAL;
     }
 }
