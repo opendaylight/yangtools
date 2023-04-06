@@ -14,11 +14,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
 final class VirtualNamespaceContext<K, V, D> extends NamespaceBehaviourWithListeners<K, V> {
     private final Multimap<D, KeyedValueAddedListener<K>> listeners = HashMultimap.create();
-    private final DerivedNamespaceBehaviour<K, V, D, ?> derivedDelegate;
+    private final DerivedNamespaceBehaviour<K, V, D> derivedDelegate;
 
-    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D, ?> delegate) {
+    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D> delegate) {
         super(delegate);
-        this.derivedDelegate = delegate;
+        derivedDelegate = delegate;
     }
 
     @Override

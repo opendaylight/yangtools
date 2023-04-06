@@ -19,19 +19,17 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <K> Key type
  * @param <V> Value type
  * @param <L> Original key type
- * @param <O> Original namespace type
  */
-public abstract class DerivedNamespaceBehaviour<K, V, L, O extends ParserNamespace<L, ?>>
-        extends NamespaceBehaviour<K, V> {
+public abstract class DerivedNamespaceBehaviour<K, V, L> extends NamespaceBehaviour<K, V> {
+    private final @NonNull ParserNamespace<L, ?> derivedFrom;
 
-    private final @NonNull O derivedFrom;
-
-    protected DerivedNamespaceBehaviour(final ParserNamespace<K, V> namespace, final O derivedFrom) {
+    protected DerivedNamespaceBehaviour(final ParserNamespace<K, V> namespace,
+            final ParserNamespace<L, ?> derivedFrom) {
         super(namespace);
         this.derivedFrom = requireNonNull(derivedFrom);
     }
 
-    public final @NonNull O getDerivedFrom() {
+    public final @NonNull ParserNamespace<L, ?> getDerivedFrom() {
         return derivedFrom;
     }
 
