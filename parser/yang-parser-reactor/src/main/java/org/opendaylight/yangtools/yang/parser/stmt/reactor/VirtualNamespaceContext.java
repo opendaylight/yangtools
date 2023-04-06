@@ -12,13 +12,13 @@ import com.google.common.collect.Multimap;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
-final class VirtualNamespaceContext<K, V, D> extends NamespaceBehaviourWithListeners<K, V> {
+final class VirtualNamespaceContext<K, V, D> extends BehaviourNamespaceAccess<K, V> {
     private final Multimap<D, KeyedValueAddedListener<K>> listeners = HashMultimap.create();
     private final DerivedNamespaceBehaviour<K, V, D, ?> derivedDelegate;
 
-    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D, ?> delegate) {
-        super(delegate);
-        this.derivedDelegate = delegate;
+    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D, ?> behaviour) {
+        super(behaviour);
+        derivedDelegate = behaviour;
     }
 
     @Override
@@ -36,8 +36,7 @@ final class VirtualNamespaceContext<K, V, D> extends NamespaceBehaviourWithListe
     }
 
     @Override
-    public void addTo(final NamespaceStorage storage, final K key, final V value) {
-        delegate.addTo(storage, key, value);
+    void onValueTo(final NamespaceStorage storage, final K key, final V value) {
         notifyListeners(storage, listeners.get(derivedDelegate.getSignificantKey(key)).iterator(), value);
         notifyDerivedNamespaces(storage, key, value);
     }

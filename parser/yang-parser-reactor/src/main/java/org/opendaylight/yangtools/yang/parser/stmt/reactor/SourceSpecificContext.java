@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
@@ -59,26 +59,41 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         FINISHED
     }
 
-    private static final class SupportedStatements extends NamespaceBehaviour<QName, StatementSupport<?, ?, ?>> {
+    private static final class SupportedStatements extends NamespaceAccess<QName, StatementSupport<?, ?, ?>> {
         private final QNameToStatementDefinitionMap statementDefinitions;
 
         SupportedStatements(final QNameToStatementDefinitionMap statementDefinitions) {
-            super(StatementSupport.NAMESPACE);
             this.statementDefinitions = requireNonNull(statementDefinitions);
         }
 
         @Override
-        public StatementSupport<?, ?, ?> getFrom(final NamespaceStorage storage, final QName key) {
+        StatementSupport<?, ?, ?> valueFrom(final NamespaceStorage storage, final QName key) {
             return statementDefinitions.getSupport(key);
         }
 
         @Override
-        public Map<QName, StatementSupport<?, ?, ?>> getAllFrom(final NamespaceStorage storage) {
+        void valueTo(final NamespaceStorage storage, final QName key, final StatementSupport<?, ?, ?> value) {
             throw uoe();
         }
 
         @Override
-        public void addTo(final NamespaceStorage storage, final QName key, final StatementSupport<?, ?, ?> value) {
+        Map<QName, StatementSupport<?, ?, ?>> allFrom(final NamespaceStorage storage) {
+            throw uoe();
+        }
+
+        @Override
+        Entry<QName, StatementSupport<?, ?, ?>> entryFrom(final NamespaceStorage storage,
+                final NamespaceKeyCriterion<QName> criterion) {
+            throw uoe();
+        }
+
+        @Override
+        void addListener(final KeyedValueAddedListener<QName> listener) {
+            throw uoe();
+        }
+
+        @Override
+        void addListener(final PredicateValueAddedListener<QName, StatementSupport<?, ?, ?>> listener) {
             throw uoe();
         }
 
@@ -92,8 +107,8 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     // TODO: consider keying by Byte equivalent of ExecutionOrder
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
-    private final @NonNull SupportedStatements statementSupports = new SupportedStatements(qnameToStmtDefMap);
     private final HashMapPrefixResolver prefixToModuleMap = new HashMapPrefixResolver();
+    private final @NonNull SupportedStatements statementSupports;
     private final @NonNull BuildGlobalContext globalContext;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
@@ -116,6 +131,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
         this.globalContext = requireNonNull(globalContext);
         this.source = requireNonNull(source);
+        statementSupports = new SupportedStatements(qnameToStmtDefMap);
     }
 
     @NonNull BuildGlobalContext globalContext() {
@@ -299,13 +315,13 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return null;
     }
 
-    <K, V> NamespaceBehaviour<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
+    <K, V> NamespaceAccess<K, V> accessNamespace(final ParserNamespace<K, V> type) {
         if (StatementSupport.NAMESPACE.equals(type)) {
             @SuppressWarnings("unchecked")
-            final var ret = (NamespaceBehaviour<K, V>) statementSupports;
+            final var ret = (NamespaceAccess<K, V>) statementSupports;
             return ret;
         }
-        return globalContext.getNamespaceBehaviour(type);
+        return globalContext.accessNamespace(type);
     }
 
     @Override

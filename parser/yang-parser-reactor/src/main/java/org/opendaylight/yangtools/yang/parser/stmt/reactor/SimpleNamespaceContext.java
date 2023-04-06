@@ -14,14 +14,14 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
-final class SimpleNamespaceContext<K, V> extends NamespaceBehaviourWithListeners<K, V> {
+final class SimpleNamespaceContext<K, V> extends BehaviourNamespaceAccess<K, V> {
     // FIXME: Change this to Multimap, once issue with modules is resolved.
     private List<KeyedValueAddedListener<K>> listeners;
 
     private Collection<PredicateValueAddedListener<K, V>> predicateListeners;
 
-    SimpleNamespaceContext(final NamespaceBehaviour<K, V> delegate) {
-        super(delegate);
+    SimpleNamespaceContext(final NamespaceBehaviour<K, V> behaviour) {
+        super(behaviour);
     }
 
     @Override
@@ -41,9 +41,7 @@ final class SimpleNamespaceContext<K, V> extends NamespaceBehaviourWithListeners
     }
 
     @Override
-    public void addTo(final NamespaceStorage storage, final K key, final V value) {
-        delegate.addTo(storage, key, value);
-
+    void onValueTo(final NamespaceStorage storage, final K key, final V value) {
         if (listeners != null) {
             notifyListeners(storage, listeners.iterator(), value);
             if (listeners != null && listeners.isEmpty()) {
