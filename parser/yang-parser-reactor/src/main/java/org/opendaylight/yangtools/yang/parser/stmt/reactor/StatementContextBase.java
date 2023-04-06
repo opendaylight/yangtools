@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
@@ -164,25 +163,25 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
-        this.bitsAight = original.bitsAight;
-        this.definition = original.definition;
-        this.executionOrder = original.executionOrder;
+        bitsAight = original.bitsAight;
+        definition = original.definition;
+        executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = COPY_ORIGINAL;
+        definition = requireNonNull(def);
+        bitsAight = COPY_ORIGINAL;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = (byte) copyFlags(copyType);
+        definition = requireNonNull(def);
+        bitsAight = (byte) copyFlags(copyType);
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
             final CopyType childCopyType) {
-        this.definition = prototype.definition;
-        this.bitsAight = (byte) (copyFlags(copyType)
+        definition = prototype.definition;
+        bitsAight = (byte) (copyFlags(copyType)
             | prototype.bitsAight & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
     }
 
@@ -259,7 +258,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // FIXME: this should be propagated through a correct constructor
     @Deprecated
     final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.executionOrder = completedPhase.executionOrder();
+        executionOrder = completedPhase.executionOrder();
     }
 
     @Override
@@ -647,7 +646,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     private <K, V> Optional<Entry<K, V>> getFromNamespace(final ParserNamespace<K, V> type,
             final NamespaceKeyCriterion<K> criterion) {
-        return getNamespaceBehaviour(type).getFrom(this, criterion);
+        return accessNamespace(type).entryFrom(this, criterion);
     }
 
     final <K, V> void waitForPhase(final Object value, final ParserNamespace<K, V> type,
@@ -661,7 +660,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     private <K, V> NamespaceBehaviourWithListeners<K, V> getBehaviour(final ParserNamespace<K, V> type) {
-        final NamespaceBehaviour<K, V> behaviour = getNamespaceBehaviour(type);
+        final var behaviour = accessNamespace(type);
         checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",
             type);
 
@@ -724,7 +723,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     @Override
     public final <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
             final ParserNamespace<K, ? super C> namespace, final KT key, final C stmt) {
-        getNamespaceBehaviour(namespace).addTo(this, key, stmt);
+        accessNamespace(namespace).valueTo(this, key, stmt);
     }
 
     @Override

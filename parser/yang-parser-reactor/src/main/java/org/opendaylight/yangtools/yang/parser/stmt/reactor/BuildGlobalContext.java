@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -88,9 +87,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
-        final var behavior = getNamespaceBehaviour(ValidationBundles.NAMESPACE);
+        final var behavior = accessNamespace(ValidationBundles.NAMESPACE);
         for (var validationBundle : supportedValidation.entrySet()) {
-            behavior.addTo(this, validationBundle.getKey(), validationBundle.getValue());
+            behavior.valueTo(this, validationBundle.getKey(), validationBundle.getValue());
         }
 
         supportedVersions = ImmutableSet.copyOf(
@@ -135,7 +134,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
     }
 
     @Override
-    <K, V> NamespaceBehaviourWithListeners<K, V> getNamespaceBehaviour(final ParserNamespace<K, V> type) {
+    <K, V> NamespaceBehaviourWithListeners<K, V> accessNamespace(final ParserNamespace<K, V> type) {
         NamespaceBehaviourWithListeners<?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             final var potentialRaw = verifyNotNull(supports.get(currentPhase)).namespaceBehaviourOf(type);
@@ -148,11 +147,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
             }
         }
 
-        verify(type.equals(potential.namespace()));
-        /*
-         * Safe cast, previous checkState checks equivalence of key from which
-         * type argument are derived
-         */
         return (NamespaceBehaviourWithListeners<K, V>) potential;
     }
 
@@ -160,11 +154,11 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
     private <K, V> NamespaceBehaviourWithListeners<K, V> createNamespaceContext(
             final NamespaceBehaviour<K, V> potentialRaw) {
         if (potentialRaw instanceof DerivedNamespaceBehaviour derived) {
-            final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(derived);
-            getNamespaceBehaviour(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);
+            final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(this, derived);
+            accessNamespace(derived.getDerivedFrom()).addDerivedNamespace(derivedContext);
             return derivedContext;
         }
-        return new SimpleNamespaceContext<>(potentialRaw);
+        return new SimpleNamespaceContext<>(this, potentialRaw);
     }
 
     StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
