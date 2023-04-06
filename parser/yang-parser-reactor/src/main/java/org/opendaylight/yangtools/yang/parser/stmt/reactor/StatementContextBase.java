@@ -49,7 +49,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceAccess.KeyedValueAddedListener;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceAccess.PredicateValueAddedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -619,17 +618,13 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             return;
         }
 
-        namespaceAccess.addListener(new PredicateValueAddedListener<K, V>(this) {
-            @Override
-            boolean onValueAdded(final K key, final V value) {
-                if (criterion.match(key)) {
-                    LOG.debug("Listener on {} criterion {} matched added key {}", type, criterion, key);
-                    waitForPhase(value, type, phase, criterion, listener);
-                    return true;
-                }
-
-                return false;
+        namespaceAccess.addListener((key, value) -> {
+            if (criterion.match(key)) {
+                LOG.debug("Listener on {} criterion {} matched added key {}", type, criterion, key);
+                waitForPhase(value, type, phase, criterion, listener);
+                return true;
             }
+            return false;
         });
     }
 
