@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -57,7 +57,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BuildGlobalContext extends AbstractNamespaceStorage {
+final class BuildGlobalContext extends AbstractNamespaceStorage implements GlobalStorage {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
@@ -118,16 +118,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage {
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         addToNamespace(ParserNamespaces.MODULES_DEVIATED_BY, Empty.value(),
             ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
-    }
-
-    @Override
-    public StorageType getStorageType() {
-        return StorageType.GLOBAL;
-    }
-
-    @Override
-    public NamespaceStorage getParentStorage() {
-        return null;
     }
 
     @Override
