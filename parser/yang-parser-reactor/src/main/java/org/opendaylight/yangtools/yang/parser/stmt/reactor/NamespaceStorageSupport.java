@@ -15,14 +15,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class NamespaceStorageSupport implements NamespaceStorageNode {
+abstract class NamespaceStorageSupport implements NamespaceStorage {
     private static final Logger LOG = LoggerFactory.getLogger(NamespaceStorageSupport.class);
 
     private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = ImmutableMap.of();
@@ -36,7 +36,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      * the two accesses to overlap.
      */
     @Override
-    public abstract NamespaceStorageNode getParentNamespaceStorage();
+    public abstract NamespaceStorage getParentNamespaceStorage();
 
     /**
      * Get a namespace behavior.
