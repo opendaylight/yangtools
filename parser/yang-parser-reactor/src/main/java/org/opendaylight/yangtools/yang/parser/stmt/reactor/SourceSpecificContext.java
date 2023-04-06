@@ -37,8 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -53,7 +52,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
+final class SourceSpecificContext implements NamespaceStorage, Mutable {
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -69,17 +68,17 @@ final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
         }
 
         @Override
-        public StatementSupport<?, ?, ?> getFrom(final NamespaceStorageNode storage, final QName key) {
+        public StatementSupport<?, ?, ?> getFrom(final NamespaceStorage storage, final QName key) {
             return statementDefinitions.getSupport(key);
         }
 
         @Override
-        public Map<QName, StatementSupport<?, ?, ?>> getAllFrom(final NamespaceStorageNode storage) {
+        public Map<QName, StatementSupport<?, ?, ?>> getAllFrom(final NamespaceStorage storage) {
             throw uoe();
         }
 
         @Override
-        public void addTo(final NamespaceStorageNode storage, final QName key, final StatementSupport<?, ?, ?> value) {
+        public void addTo(final NamespaceStorage storage, final QName key, final StatementSupport<?, ?, ?> value) {
             throw uoe();
         }
 
@@ -263,8 +262,8 @@ final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
     }
 
     @Override
-    public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.SOURCE_LOCAL_SPECIAL;
+    public StorageType getStorageType() {
+        return StorageType.SOURCE_LOCAL_SPECIAL;
     }
 
     @Override
@@ -274,7 +273,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
             return potentialLocal;
         }
 
-        for (final NamespaceStorageNode importedSource : importedNamespaces) {
+        for (final NamespaceStorage importedSource : importedNamespaces) {
             final V potential = importedSource.getFromLocalStorage(type, key);
             if (potential != null) {
                 return potential;
@@ -290,7 +289,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
             return potentialLocal;
         }
 
-        for (final NamespaceStorageNode importedSource : importedNamespaces) {
+        for (final NamespaceStorage importedSource : importedNamespaces) {
             final Map<K, V> potential = importedSource.getAllFromLocalStorage(type);
 
             if (potential != null) {

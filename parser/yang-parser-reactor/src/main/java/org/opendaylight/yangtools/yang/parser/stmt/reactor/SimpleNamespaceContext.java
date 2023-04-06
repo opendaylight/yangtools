@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 
 final class SimpleNamespaceContext<K, V> extends NamespaceBehaviourWithListeners<K, V> {
     // FIXME: Change this to Multimap, once issue with modules is resolved.
@@ -40,7 +41,7 @@ final class SimpleNamespaceContext<K, V> extends NamespaceBehaviourWithListeners
     }
 
     @Override
-    public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
+    public void addTo(final NamespaceStorage storage, final K key, final V value) {
         delegate.addTo(storage, key, value);
 
         if (listeners != null) {
