@@ -325,7 +325,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final <K, V> Map<K, V> namespace(final ParserNamespace<K, V> namespace) {
-        return getNamespace(namespace);
+        return accessNamespace(namespace).allFrom(this);
     }
 
     @Override

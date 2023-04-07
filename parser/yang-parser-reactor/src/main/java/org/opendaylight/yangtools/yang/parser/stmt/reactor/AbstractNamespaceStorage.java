@@ -52,19 +52,10 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
         // NOOP
     }
 
-    final <K, V> Map<K, V> getNamespace(final ParserNamespace<K, V> type) {
-        return accessNamespace(type).allFrom(this);
-    }
-
     @SuppressWarnings("unchecked")
     final <K, V> Map<K, V> getLocalNamespace(final ParserNamespace<K, V> type) {
         final var local = verifyNotNull(namespaces, "Attempted to access swept namespaces of %s", this);
         return (Map<K, V>) local.get(type);
-    }
-
-    final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final T key,
-            final U value) {
-        accessNamespace(type).valueTo(this, key, value);
     }
 
     @Override
