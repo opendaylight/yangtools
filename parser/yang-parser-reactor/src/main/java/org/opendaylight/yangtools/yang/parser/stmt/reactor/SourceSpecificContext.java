@@ -67,6 +67,11 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         @Override
+        ParserNamespace<QName, StatementSupport<?, ?, ?>> namespace() {
+            return StatementSupport.NAMESPACE;
+        }
+
+        @Override
         StatementSupport<?, ?, ?> valueFrom(final NamespaceStorage storage, final QName key) {
             return statementDefinitions.getSupport(key);
         }

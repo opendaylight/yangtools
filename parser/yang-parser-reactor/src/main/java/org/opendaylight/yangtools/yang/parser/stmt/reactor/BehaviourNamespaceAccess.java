@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalStorage;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * A {@link NamespaceAccess} backed by a {@link NamespaceBehaviour}. Also holds reference to {@link BuildGlobalContext}.
@@ -34,6 +35,11 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
     BehaviourNamespaceAccess(final GlobalStorage globalStorage, final NamespaceBehaviour<K, V> behaviour) {
         this.globalStorage = requireNonNull(globalStorage);
         this.behaviour = requireNonNull(behaviour);
+    }
+
+    @Override
+    ParserNamespace<K, V> namespace() {
+        return behaviour.namespace();
     }
 
     @Override

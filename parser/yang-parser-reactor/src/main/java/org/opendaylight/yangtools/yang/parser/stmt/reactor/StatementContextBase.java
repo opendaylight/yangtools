@@ -256,7 +256,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // FIXME: this should be propagated through a correct constructor
     @Deprecated
     final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.executionOrder = completedPhase.executionOrder();
+        executionOrder = completedPhase.executionOrder();
     }
 
     @Override
@@ -590,62 +590,57 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         return definition;
     }
 
-    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type, final K key,
+    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> namespace, final K key,
             final OnNamespaceItemAdded listener) {
-        final Object potential = namespaceItem(type, key);
+        final var access = accessNamespace(namespace);
+        final var potential = access.valueFrom(this, key);
         if (potential != null) {
-            LOG.trace("Listener on {} key {} satisfied immediately", type, key);
-            listener.namespaceItemAdded(this, type, key, potential);
+            LOG.trace("Listener on {} key {} satisfied immediately", namespace, key);
+            listener.namespaceItemAdded(this, namespace, key, potential);
             return;
         }
 
-        accessNamespace(type).addListener(new KeyedValueAddedListener<>(this, key) {
+        access.addListener(new KeyedValueAddedListener<>(this, key) {
             @Override
             void onValueAdded(final Object value) {
-                listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
+                listener.namespaceItemAdded(StatementContextBase.this, namespace, key, value);
             }
         });
     }
 
-    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> type,
+    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> namespace,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
-        final var namespaceAccess = accessNamespace(type);
-        final var entry = namespaceAccess.entryFrom(this, criterion);
+        final var access = accessNamespace(namespace);
+        final var entry = access.entryFrom(this, criterion);
         if (entry != null) {
-            LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", type, criterion, entry);
-            waitForPhase(entry.getValue(), type, phase, criterion, listener);
+            LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", namespace, criterion, entry);
+            waitForPhase(entry.getValue(), access, phase, criterion, listener);
             return;
         }
 
-        namespaceAccess.addListener((key, value) -> {
+        access.addListener((key, value) -> {
             if (criterion.match(key)) {
-                LOG.debug("Listener on {} criterion {} matched added key {}", type, criterion, key);
-                waitForPhase(value, type, phase, criterion, listener);
+                LOG.debug("Listener on {} criterion {} matched added key {}", namespace, criterion, key);
+                waitForPhase(value, access, phase, criterion, listener);
                 return true;
             }
             return false;
         });
     }
 
-    final <K, V> void selectMatch(final ParserNamespace<K, V> type, final NamespaceKeyCriterion<K> criterion,
-            final OnNamespaceItemAdded listener) {
-        final var match = accessNamespace(type).entryFrom(this, criterion);
-        if (match == null) {
-            throw new IllegalStateException(
-                "Failed to find a match for criterion %s in namespace %s node %s".formatted(criterion, type, this));
-        }
-        listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
-    }
-
-    final <K, V> void waitForPhase(final Object value, final ParserNamespace<K, V> type,
+    private <K, V> void waitForPhase(final Object value, final NamespaceAccess<K, V> access,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
-        ((StatementContextBase<?, ? ,?>) value).addPhaseCompletedListener(phase,
-            (context, phaseCompleted) -> {
-                selectMatch(type, criterion, listener);
-                return true;
-            });
+        ((StatementContextBase<?, ?, ?>) value).addPhaseCompletedListener(phase, (context, phaseCompleted) -> {
+            final var match = access.entryFrom(this, criterion);
+            if (match == null) {
+                throw new IllegalStateException("Failed to find a match for criterion %s in namespace %s node %s"
+                    .formatted(criterion, access.namespace(), this));
+            }
+            listener.namespaceItemAdded(this, access.namespace(), match.getKey(), match.getValue());
+            return true;
+        });
     }
 
     private static <T> Multimap<ModelProcessingPhase, T> newMultimap() {

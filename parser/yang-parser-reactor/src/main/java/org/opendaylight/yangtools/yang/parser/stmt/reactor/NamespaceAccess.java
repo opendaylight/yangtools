@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 abstract class NamespaceAccess<K, V> {
     abstract static class KeyedValueAddedListener<K> {
@@ -39,6 +40,8 @@ abstract class NamespaceAccess<K, V> {
 
         boolean onValueAdded(@NonNull K key, @NonNull V value);
     }
+
+    abstract @NonNull ParserNamespace<K, V> namespace();
 
     abstract @Nullable V valueFrom(@NonNull NamespaceStorage storage, K key);
 

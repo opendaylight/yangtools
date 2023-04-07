@@ -84,9 +84,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
-        final var behavior = accessNamespace(ValidationBundles.NAMESPACE);
+        final var access = accessNamespace(ValidationBundles.NAMESPACE);
         for (var validationBundle : supportedValidation.entrySet()) {
-            behavior.valueTo(this, validationBundle.getKey(), validationBundle.getValue());
+            access.valueTo(this, validationBundle.getKey(), validationBundle.getValue());
         }
 
         supportedVersions = ImmutableSet.copyOf(
