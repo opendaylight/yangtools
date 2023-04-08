@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 @Beta
 public interface TypeAwareDeclaredStatement extends DeclaredStatement<QName> {
     default @NonNull TypeStatement getType() {
-        return findFirstDeclaredSubstatement(TypeStatement.class).get();
+        return findFirstDeclaredSubstatement(TypeStatement.class).orElseThrow();
     }
 
     default @NonNull Optional<UnitsStatement> getUnits() {
