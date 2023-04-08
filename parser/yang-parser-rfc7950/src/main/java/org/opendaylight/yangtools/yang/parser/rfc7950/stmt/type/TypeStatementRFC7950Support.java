@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
@@ -52,12 +51,12 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     @Override
     Bit addRestrictedBit(final EffectiveStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
         // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
-        final Optional<Uint32> declaredPosition = bit.getDeclaredPosition();
+        final var declaredPosition = bit.getDeclaredPosition();
         final Uint32 effectivePos;
         if (declaredPosition.isEmpty()) {
             effectivePos = getBaseTypeBitPosition(bit.argument(), base, stmt);
         } else {
-            effectivePos = declaredPosition.get();
+            effectivePos = declaredPosition.orElseThrow();
         }
 
         return EffectiveTypeUtil.buildBit(bit, effectivePos);
@@ -67,8 +66,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     EnumPair addRestrictedEnum(final EffectiveStmtCtx stmt, final EnumTypeDefinition base,
             final EnumEffectiveStatement enumStmt) {
         final EnumEffectiveStatement enumSubStmt = enumStmt;
-        final Optional<Integer> declaredValue =
-                enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
+        final var declaredValue = enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
         final int effectiveValue;
         if (declaredValue.isEmpty()) {
             effectiveValue = getBaseTypeEnumValue(enumSubStmt.getDeclared().rawArgument(), base, stmt);

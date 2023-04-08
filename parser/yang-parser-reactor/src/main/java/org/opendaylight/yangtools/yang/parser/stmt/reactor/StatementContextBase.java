@@ -615,7 +615,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> existing = getFromNamespace(type, criterion);
         if (existing.isPresent()) {
-            final Entry<K, V> entry = existing.get();
+            final Entry<K, V> entry = existing.orElseThrow();
             LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", type, criterion, entry);
             waitForPhase(entry.getValue(), type, phase, criterion, listener);
             return;
@@ -641,7 +641,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         final Optional<Entry<K, V>> optMatch = getFromNamespace(type, criterion);
         checkState(optMatch.isPresent(), "Failed to find a match for criterion %s in namespace %s node %s", criterion,
             type, this);
-        final Entry<K, V> match = optMatch.get();
+        final Entry<K, V> match = optMatch.orElseThrow();
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
     }
 

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
 
 class StatementContextVisitor {
     private final QNameToStatementDefinition stmtDef;
@@ -37,7 +35,7 @@ class StatementContextVisitor {
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
-        this.utils = ArgumentContextUtils.forVersion(yangVersion);
+        utils = ArgumentContextUtils.forVersion(yangVersion);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
     }
@@ -88,9 +86,9 @@ class StatementContextVisitor {
 
     // Normal entry point, checks for potential resume
     private boolean processStatement(final int myOffset, final IRStatement stmt) {
-        final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(myOffset);
+        final var optResumed = writer.resumeStatement(myOffset);
         if (optResumed.isPresent()) {
-            final ResumedStatement resumed = optResumed.get();
+            final var resumed = optResumed.orElseThrow();
             return resumed.isFullyDefined() || doProcessStatement(stmt, resumed.getSourceReference());
         }
         return processNewStatement(myOffset, stmt);

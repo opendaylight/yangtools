@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -21,11 +20,11 @@ public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified
     }
 
     default @NonNull PrefixStatement getPrefix() {
-        return findFirstDeclaredSubstatement(PrefixStatement.class).get();
+        return findFirstDeclaredSubstatement(PrefixStatement.class).orElseThrow();
     }
 
     default @Nullable RevisionDateStatement getRevisionDate() {
-        final Optional<RevisionDateStatement> opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
