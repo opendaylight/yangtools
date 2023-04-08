@@ -40,10 +40,8 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public E createEffective(final Current<A, D> stmt,
-            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
-            final Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements) {
-        return delegate.createEffective(stmt, declaredSubstatements, inferredSubstatements);
+    public E createEffective(final Current<A, D> stmt, final Stream<StmtContext<?, ?, ?>> substatements) {
+        return delegate.createEffective(stmt, substatements);
     }
 
     @Override

@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
@@ -188,9 +187,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             final UndeclaredCurrent<QName, TypeStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements = buildEffectiveSubstatements(stmt,
-            statementsToBuild(stmt, effectiveSubstatements
-                .filter(StmtContext::isSupportedToBuildEffective)
-                .collect(Collectors.toUnmodifiableList())));
+            statementsToBuild(stmt, effectiveSubstatements.filter(StmtContext::isSupportedToBuildEffective)));
 
         // First look up the proper base type
         final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(stmt);

@@ -8,10 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.VerifyException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -45,10 +49,10 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     // Copy constructor
     AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
         super(original);
-        this.rawArgument = original.rawArgument;
-        this.substatements = original.substatements;
-        this.declaredInstance = original.declaredInstance;
-        this.fullyDefined = original.fullyDefined;
+        rawArgument = original.rawArgument;
+        substatements = original.substatements;
+        declaredInstance = original.declaredInstance;
+        fullyDefined = original.fullyDefined;
     }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
@@ -74,10 +78,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     private @NonNull D loadDeclared() {
-        final ModelProcessingPhase phase = getCompletedPhase();
-        checkState(phase == ModelProcessingPhase.FULL_DECLARATION || phase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Cannot build declared instance after phase %s", phase);
-        return declaredInstance = definition().getFactory().createDeclared(this, substatementsAsDeclared());
+        final var phase = getCompletedPhase();
+        return switch (phase) {
+            case FULL_DECLARATION, EFFECTIVE_MODEL ->
+                declaredInstance = definition().getFactory().createDeclared(this, substatementsAsDeclared());
+            default -> throw new IllegalStateException("Cannot build declared instance after phase " + phase);
+        };
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -128,7 +134,72 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         // the substatements may be gone by the time the factory attempts to acquire the declared statement.
         ctx.declared();
 
-        return factory.createEffective(ctx, declared, effective);
+        return factory.createEffective(ctx, orderSubstatements(declared, effective));
+    }
+
+    private static @NonNull Stream<StmtContext<?, ?, ?>> orderSubstatements(
+            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
+            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        /*
+         * This dance is required to ensure that effects of 'uses' nodes are applied in the same order as
+         * the statements were defined -- i.e. if we have something like this:
+         *
+         * container foo {
+         *   uses bar;
+         *   uses baz;
+         * }
+         *
+         * grouping baz {
+         *   leaf baz {
+         *     type string;
+         *   }
+         * }
+         *
+         * grouping bar {
+         *   leaf bar {
+         *     type string;
+         *   }
+         * }
+         *
+         * The reactor would first inline 'uses baz' as that definition is the first one completely resolved and then
+         * inline 'uses bar'. Here we are iterating in declaration order re-inline the statements.
+         *
+         * FIXME: 7.0.0: this really should be handled by UsesStatementSupport such that 'uses baz' would have a
+         *               prerequisite of a resolved 'uses bar'.
+         */
+        final var declaredInit = declaredSubstatements
+            .filter(StmtContext::isSupportedByFeatures)
+            .collect(Collectors.toList());
+
+        final var substatementsInit = new ArrayList<StmtContext<?, ?, ?>>();
+        Set<StmtContext<?, ?, ?>> filteredStatements = null;
+        for (var declaredSubstatement : declaredInit) {
+            substatementsInit.add(declaredSubstatement);
+
+            // FIXME: YANGTOOLS-1161: we need to integrate this functionality into the reactor, so that this
+            //                        transformation is something reactor's declared statements already take into
+            //                        account.
+            final Collection<? extends StmtContext<?, ?, ?>> effect = declaredSubstatement.getEffectOfStatement();
+            if (!effect.isEmpty()) {
+                if (filteredStatements == null) {
+                    filteredStatements = new HashSet<>();
+                }
+                filteredStatements.addAll(effect);
+                // Note: we need to filter here to exclude unsupported statements
+                effect.stream().filter(StmtContext::isSupportedToBuildEffective).forEach(substatementsInit::add);
+            }
+        }
+
+        final Stream<? extends StmtContext<?, ?, ?>> effective;
+        if (filteredStatements != null) {
+            final var filtered = filteredStatements;
+            effective = effectiveSubstatements.filter(stmt -> !filtered.contains(stmt));
+        } else {
+            effective = effectiveSubstatements;
+        }
+
+        substatementsInit.addAll(effective.collect(Collectors.toList()));
+        return substatementsInit.stream();
     }
 
     @Override
@@ -155,7 +226,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
             AbstractResumedStatement<X, Y, Z> createSubstatement(final int offset,
                     final StatementDefinitionContext<X, Y, Z> def, final StatementSourceReference ref,
                     final String argument) {
-        final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
+        final var inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", sourceReference());
 
@@ -217,8 +288,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     private static @NonNull AbstractResumedStatement<?, ?, ?> unmaskUndeclared(final ReactorStmtCtx<?, ?, ?> stmt) {
         var ret = stmt;
         while (!(ret instanceof AbstractResumedStatement<?, ?, ?> resumed)) {
-            verify(ret instanceof UndeclaredStmtCtx, "Unexpectred statement %s", ret);
-            ret = ((UndeclaredStmtCtx<?, ?, ?>) ret).getResumedSubstatement();
+            if (ret instanceof UndeclaredStmtCtx<?, ?, ?> undeclared) {
+                ret = undeclared.getResumedSubstatement();
+            } else {
+                throw new VerifyException("Unexpected statement " + ret);
+            }
         }
         return resumed;
     }
@@ -238,19 +312,21 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
         var ret = verifyParent(parent);
         // Unwind all undeclared statements
-        while (!(ret instanceof AbstractResumedStatement)) {
+        while (!(ret instanceof AbstractResumedStatement<?, ?, ?> resumed)) {
             ret.finishDeclaration(phase);
             ret = verifyParent(ret.getParentContext());
         }
-        return (AbstractResumedStatement<?, ?, ?>) ret;
+        return resumed;
     }
 
     // FIXME: AbstractResumedStatement should only ever have OriginalStmtCtx parents, which would remove the need for
     //        this method. In ordered to do that we need to untangle SubstatementContext's users and do not allow it
     //        being reparent()ed.
     private static OriginalStmtCtx<?, ?, ?> verifyParent(final StatementContextBase<?, ?, ?> parent) {
-        verify(parent instanceof OriginalStmtCtx, "Unexpected parent context %s", parent);
-        return (OriginalStmtCtx<?, ?, ?>) parent;
+        if (parent instanceof OriginalStmtCtx<?, ?, ?> original) {
+            return original;
+        }
+        throw new VerifyException("Unexpected parent context " + parent);
     }
 
     final void resizeSubstatements(final int expectedSize) {

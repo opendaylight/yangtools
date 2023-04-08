@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -118,14 +117,14 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    protected final List<? extends StmtContext<?, ?, ?>> statementsToBuild(
+    protected final Stream<? extends StmtContext<?, ?, ?>> statementsToBuild(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
+            final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
         // children through target's implicit wrapping.
         final var implicitDef = stmt.namespaceItem(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value());
         return implicitDef == null ? substatements
-            : Lists.transform(substatements, subCtx -> implicitDef.wrapWithImplicit(subCtx));
+            : substatements.map(subCtx -> implicitDef.wrapWithImplicit(subCtx));
     }
 
     @Override
