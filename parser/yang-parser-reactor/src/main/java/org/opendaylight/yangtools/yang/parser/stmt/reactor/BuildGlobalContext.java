@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -97,11 +96,11 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return supports.get(phase);
     }
 
-    void addSource(final @NonNull StatementStreamSource source) {
+    void addSource(final StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this, source));
     }
 
-    void addLibSource(final @NonNull StatementStreamSource libSource) {
+    void addLibSource(final StatementStreamSource libSource) {
         checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         libSources.add(new SourceSpecificContext(this, libSource));

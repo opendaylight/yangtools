@@ -210,7 +210,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     private final @NonNull StatementDefinition publicDefinition;
     private final @NonNull CopyPolicy copyPolicy;
 
-    @Beta
     protected StatementSupport(final StatementSupport<A, D, E> delegate) {
         checkArgument(delegate != this);
         publicDefinition = delegate.publicDefinition;
@@ -218,7 +217,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         copyPolicy = delegate.copyPolicy;
     }
 
-    @Beta
     protected StatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
         this.publicDefinition = requireNonNull(publicDefinition);
         this.policy = requireNonNull(policy);
@@ -301,7 +299,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * @return Parsed value
      * @throws SourceException when an inconsistency is detected.
      */
-    public abstract A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value);
+    public abstract A parseArgumentValue(@NonNull StmtContext<?, ?, ?> ctx, String value);
 
     /**
      * Adapts the argument value to match a new module. Default implementation returns original value stored in context,
@@ -367,7 +365,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * @param stmt Context of added statement. Argument and statement parent is accessible.
      * @throws SourceException when an inconsistency is detected.
      */
-    public void onStatementDefinitionDeclared(final Mutable<A, D, E> stmt) {
+    public void onStatementDefinitionDeclared(final @NonNull Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
@@ -382,7 +380,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * @param stmt Context of added statement. Argument and statement parent is accessible.
      * @throws SourceException when an inconsistency is detected.
      */
-    public void onFullDefinitionDeclared(final Mutable<A, D, E> stmt) {
+    public void onFullDefinitionDeclared(final @NonNull Mutable<A, D, E> stmt) {
         final SubstatementValidator validator = substatementValidator();
         if (validator != null) {
             validator.validate(stmt);

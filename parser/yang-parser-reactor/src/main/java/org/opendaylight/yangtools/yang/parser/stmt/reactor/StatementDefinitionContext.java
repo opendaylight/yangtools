@@ -37,18 +37,18 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
 
     StatementDefinitionContext(final StatementSupport<A, D, E> support) {
         this.support = requireNonNull(support);
-        this.argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
+        argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
     @NonNull StatementFactory<A, D, E> getFactory() {
         return support;
     }
 
-    A parseArgumentValue(final StmtContext<A, D, E> context, final String value) {
+    A parseArgumentValue(final @NonNull StmtContext<A, D, E> context, final String value) {
         return support.parseArgumentValue(context, value);
     }
 
-    A adaptArgumentValue(final StmtContext<A, D, E> context, final QNameModule targetModule) {
+    A adaptArgumentValue(final @NonNull StmtContext<A, D, E> context, final QNameModule targetModule) {
         return support.adaptArgumentValue(context, targetModule);
     }
 
@@ -62,11 +62,11 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
                 ? implicit.getImplicitParentFor(parent, stmtDef) : Optional.empty();
     }
 
-    void onStatementAdded(final Mutable<A, D, E> stmt) {
+    void onStatementAdded(final @NonNull Mutable<A, D, E> stmt) {
         support.onStatementAdded(stmt);
     }
 
-    void onDeclarationFinished(final Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
+    void onDeclarationFinished(final @NonNull Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
             case SOURCE_PRE_LINKAGE:
                 support.onPreLinkageDeclared(statement);
