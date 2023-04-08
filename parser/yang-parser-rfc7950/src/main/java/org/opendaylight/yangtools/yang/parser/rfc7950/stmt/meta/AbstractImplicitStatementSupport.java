@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,9 +43,7 @@ abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QNam
     public final E createUndeclaredEffective(final UndeclaredCurrent<QName, D> stmt,
             final @NonNull Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
         return createUndeclaredEffective(stmt, buildEffectiveSubstatements(stmt,
-            statementsToBuild(stmt, effectiveSubstatements
-                .filter(StmtContext::isSupportedToBuildEffective)
-                .collect(Collectors.toUnmodifiableList()))));
+            statementsToBuild(stmt, effectiveSubstatements.filter(StmtContext::isSupportedToBuildEffective))));
     }
 
     abstract @NonNull E createUndeclaredEffective(@NonNull UndeclaredCurrent<QName, D> stmt,

@@ -9,12 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -42,8 +37,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy,
             final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy);
-        this.retainDeclarationReference = config.retainDeclarationReferences();
-        this.substatementValidator = validator;
+        retainDeclarationReference = config.retainDeclarationReferences();
+        substatementValidator = validator;
     }
 
     @Override
@@ -61,7 +56,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
             @NonNull ImmutableList<DeclaredStatement<?>> substatements);
 
     private @NonNull D attachDeclarationReference(final @NonNull D stmt, final @NonNull BoundStmtCtx<A> ctx) {
-        final DeclarationReference ref = ctx.sourceReference().declarationReference();
+        final var ref = ctx.sourceReference().declarationReference();
         return ref == null ? stmt : attachDeclarationReference(stmt, ref);
     }
 
@@ -76,13 +71,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     protected abstract @NonNull D attachDeclarationReference(@NonNull D stmt, @NonNull DeclarationReference reference);
 
     @Override
-    public final E createEffective(final Current<A, D> stmt,
-            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
-            final Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements) {
-        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
-                buildEffectiveSubstatements(stmt, statementsToBuild(stmt,
-                    declaredSubstatements(declaredSubstatements, inferredSubstatements)));
-        return createEffective(stmt, substatements);
+    public final E createEffective(final Current<A, D> stmt, final Stream<StmtContext<?, ?, ?>> substatements) {
+        return createEffective(stmt, buildEffectiveSubstatements(stmt, statementsToBuild(stmt, substatements)));
     }
 
     protected abstract @NonNull E createEffective(@NonNull Current<A, D> stmt,
@@ -102,15 +92,15 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      * @param substatements Substatement contexts which have been determined to be built
      * @return Substatement context which are to be actually built
      */
-    protected List<? extends StmtContext<?, ?, ?>> statementsToBuild(final Current<A, D> ctx,
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
+    protected Stream<? extends StmtContext<?, ?, ?>> statementsToBuild(final Current<A, D> ctx,
+            final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         return substatements;
     }
 
     // FIXME: add documentation
     public static final <E extends EffectiveStatement<?, ?>> @Nullable E findFirstStatement(
             final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
-        for (EffectiveStatement<?, ?> stmt : statements) {
+        for (var stmt : statements) {
             if (type.isInstance(stmt)) {
                 return type.cast(stmt);
             }
@@ -135,72 +125,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      * @return Built effective substatements
      */
     protected @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final Current<A, D> stmt, final List<? extends StmtContext<?, ?, ?>> substatements) {
-        return substatements.stream().map(StmtContext::buildEffective).collect(ImmutableList.toImmutableList());
-    }
-
-    private static @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(
-            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
-            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
-        /*
-         * This dance is required to ensure that effects of 'uses' nodes are applied in the same order as
-         * the statements were defined -- i.e. if we have something like this:
-         *
-         * container foo {
-         *   uses bar;
-         *   uses baz;
-         * }
-         *
-         * grouping baz {
-         *   leaf baz {
-         *     type string;
-         *   }
-         * }
-         *
-         * grouping bar {
-         *   leaf bar {
-         *     type string;
-         *   }
-         * }
-         *
-         * The reactor would first inline 'uses baz' as that definition is the first one completely resolved and then
-         * inline 'uses bar'. Here we are iterating in declaration order re-inline the statements.
-         *
-         * FIXME: 7.0.0: this really should be handled by UsesStatementSupport such that 'uses baz' would have a
-         *               prerequisite of a resolved 'uses bar'.
-         */
-        final List<StmtContext<?, ?, ?>> declaredInit = declaredSubstatements
-            .filter(StmtContext::isSupportedByFeatures)
-            .collect(Collectors.toList());
-
-        final List<StmtContext<?, ?, ?>> substatementsInit = new ArrayList<>();
-        Set<StmtContext<?, ?, ?>> filteredStatements = null;
-        for (final StmtContext<?, ?, ?> declaredSubstatement : declaredInit) {
-            substatementsInit.add(declaredSubstatement);
-
-            // FIXME: YANGTOOLS-1161: we need to integrate this functionality into the reactor, so that this
-            //                        transformation is something reactor's declared statements already take into
-            //                        account.
-            final Collection<? extends StmtContext<?, ?, ?>> effect = declaredSubstatement.getEffectOfStatement();
-            if (!effect.isEmpty()) {
-                if (filteredStatements == null) {
-                    filteredStatements = new HashSet<>();
-                }
-                filteredStatements.addAll(effect);
-                // Note: we need to filter here to exclude unsupported statements
-                effect.stream().filter(StmtContext::isSupportedToBuildEffective).forEach(substatementsInit::add);
-            }
-        }
-
-        final Stream<? extends StmtContext<?, ?, ?>> effective;
-        if (filteredStatements != null) {
-            final Set<StmtContext<?, ?, ?>> filtered = filteredStatements;
-            effective = effectiveSubstatements.filter(stmt -> !filtered.contains(stmt));
-        } else {
-            effective = effectiveSubstatements;
-        }
-
-        substatementsInit.addAll(effective.collect(Collectors.toList()));
-        return substatementsInit;
+            final Current<A, D> stmt, final Stream<? extends StmtContext<?, ?, ?>> substatements) {
+        return substatements.map(StmtContext::buildEffective).collect(ImmutableList.toImmutableList());
     }
 }

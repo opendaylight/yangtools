@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -184,7 +185,7 @@ public final class ModuleStatementSupport
     @Override
     protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
             final Current<Unqualified, ModuleStatement> stmt,
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
+            final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> local =
                 super.buildEffectiveSubstatements(stmt, substatements);
         final Collection<StmtContext<?, ?, ?>> submodules = submoduleContexts(stmt);
