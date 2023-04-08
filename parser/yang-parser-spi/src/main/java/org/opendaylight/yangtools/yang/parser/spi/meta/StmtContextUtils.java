@@ -479,12 +479,12 @@ public final class StmtContextUtils {
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG identifier
      */
-    public static @NonNull QName parseIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+    public static @NonNull QName parseIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
         return internedQName(ctx, str);
     }
 
-    public static @NonNull QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String prefix,
+    public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
         return internedQName(ctx,
             InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
@@ -501,7 +501,7 @@ public final class StmtContextUtils {
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG node identifier
      */
-    public static @NonNull QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+    public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Node identifier may not be an empty string");
 
         final int colon = str.indexOf(':');
@@ -517,11 +517,11 @@ public final class StmtContextUtils {
         return parseNodeIdentifier(ctx, prefix, localName);
     }
 
-    private static @NonNull QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
+    private static @NonNull QName internedQName(final @NonNull StmtContext<?, ?, ?> ctx, final String localName) {
         return internedQName(ctx, getModuleQName(ctx), localName);
     }
 
-    private static @NonNull QName internedQName(final CommonStmtCtx ctx, final QNameModule module,
+    private static @NonNull QName internedQName(final @NonNull CommonStmtCtx ctx, final QNameModule module,
             final String localName) {
         final QName template;
         try {

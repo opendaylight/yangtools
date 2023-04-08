@@ -342,7 +342,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     // Split out to keep generics working without a warning
     private static <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> void finishDeclaration(
-            final UndeclaredStmtCtx<X, Y, Z> substatement) {
+            final @NonNull UndeclaredStmtCtx<X, Y, Z> substatement) {
         substatement.definition().onDeclarationFinished(substatement, ModelProcessingPhase.FULL_DECLARATION);
     }
 
@@ -445,7 +445,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      * @return Stream of supported effective statements.
      */
     // FIXME: this method is currently a misnomer, but unifying with streamDeclared() would make this accurate again
-    abstract Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamEffective();
+    abstract @NonNull Stream<? extends @NonNull ReactorStmtCtx<?, ?, ?>> streamEffective();
 
     @Override
     final boolean doTryToCompletePhase(final byte targetOrder) {
