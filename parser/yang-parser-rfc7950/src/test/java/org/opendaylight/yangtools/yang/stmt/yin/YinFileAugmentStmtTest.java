@@ -39,8 +39,8 @@ public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
                     + "configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
-        final DataSchemaNode caseNode = augment.findDataChildByName(
-            QName.create(testModule.getQNameModule(), "main-impl")).get();
+        final DataSchemaNode caseNode = augment.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "main-impl"));
         assertThat(caseNode, isA(CaseSchemaNode.class));
     }
 }

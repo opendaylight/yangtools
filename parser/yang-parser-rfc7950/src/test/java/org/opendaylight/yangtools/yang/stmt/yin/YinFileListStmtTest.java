@@ -33,8 +33,9 @@ public class YinFileListStmtTest extends AbstractYinModulesTest {
         final Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
-        final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(QName.create(
-                testModule.getQNameModule(), "modules"), QName.create(testModule.getQNameModule(), "module")).get();
+        final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(
+            QName.create(testModule.getQNameModule(), "modules"), QName.create(testModule.getQNameModule(), "module"))
+            .orElseThrow();
         final List<QName> keys = list.getKeyDefinition();
         assertEquals(1, keys.size());
         assertEquals("name", keys.get(0).getLocalName());

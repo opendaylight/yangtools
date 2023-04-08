@@ -221,7 +221,7 @@ public class SourceException extends RuntimeException {
     public static <T> @NonNull T unwrap(final Optional<T> opt, final @NonNull StatementSourceReference source,
             final @NonNull String format, final Object... args) {
         throwIf(opt.isEmpty(), source, format, args);
-        return opt.get();
+        return opt.orElseThrow();
     }
 
     /**
@@ -238,7 +238,7 @@ public class SourceException extends RuntimeException {
     public static <T> @NonNull T unwrap(final Optional<T> opt, final @NonNull CommonStmtCtx stmt,
             final @NonNull String format, final Object... args) {
         throwIf(opt.isEmpty(), stmt, format, args);
-        return opt.get();
+        return opt.orElseThrow();
     }
 
     private static String createMessage(final @NonNull String message, final @NonNull StatementSourceReference source) {

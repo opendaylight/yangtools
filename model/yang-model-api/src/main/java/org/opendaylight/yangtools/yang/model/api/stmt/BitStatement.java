@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -20,7 +19,7 @@ public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<Str
     }
 
     default @Nullable PositionStatement getPosition() {
-        final Optional<PositionStatement> opt = findFirstDeclaredSubstatement(PositionStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(PositionStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

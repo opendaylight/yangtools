@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -277,20 +276,21 @@ public final class UsesStatementSupport
 
     private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
         final Object refineArgument = subStmtCtx.argument();
-        InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier), subStmtCtx,
-            "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
+        if (!(refineArgument instanceof SchemaNodeIdentifier refineTarget)) {
+            throw new InferenceException(subStmtCtx,
+                "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
+        }
 
         // FIXME: this really should be handled via separate inference, i.e. we first instantiate the template and when
         //        it appears, this refine will trigger on it. This reinforces the FIXME below.
-        final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = SchemaTreeNamespace.findNode(
-            usesParentCtx, (SchemaNodeIdentifier) refineArgument);
+        final var optRefineTargetCtx = SchemaTreeNamespace.findNode(usesParentCtx, refineTarget);
         InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx, "Refine target node %s not found.",
             refineArgument);
 
         // FIXME: This communicates the looked-up target node to RefineStatementSupport.buildEffective(). We should do
         //        this trick through a shared namespace or similar reactor-agnostic meeting place. It really feels like
         //        an inference action RefineStatementSupport should be doing.
-        final StmtContext<?, ?, ?> refineTargetNodeCtx = optRefineTargetCtx.get();
+        final var refineTargetNodeCtx = optRefineTargetCtx.orElseThrow();
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", subStmtCtx.argument(),

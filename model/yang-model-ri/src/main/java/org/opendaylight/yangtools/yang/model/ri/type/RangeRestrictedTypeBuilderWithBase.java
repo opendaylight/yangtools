@@ -22,7 +22,7 @@ abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeD
 
     @Override
     final T buildType() {
-        return buildType(calculateRangeConstraint(getBaseType().getRangeConstraint().get()));
+        return buildType(calculateRangeConstraint(getBaseType().getRangeConstraint().orElseThrow()));
     }
 
     abstract @NonNull T buildType(RangeConstraint<N> rangeConstraints);

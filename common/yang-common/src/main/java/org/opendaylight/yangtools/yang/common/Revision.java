@@ -109,7 +109,7 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
      */
     public static int compare(final @NonNull Optional<Revision> first, final @NonNull Optional<Revision> second) {
         if (first.isPresent()) {
-            return second.isPresent() ? first.get().compareTo(second.get()) : 1;
+            return second.isPresent() ? first.orElseThrow().compareTo(second.orElseThrow()) : 1;
         }
         return second.isPresent() ? -1 : 0;
     }
