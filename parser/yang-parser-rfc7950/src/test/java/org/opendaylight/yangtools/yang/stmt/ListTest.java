@@ -9,74 +9,65 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 class ListTest extends AbstractYangTest {
-
     @Test
     void listAndLeavesTest() {
         final var result = assertEffectiveModel("/list-test/list-test.yang");
+        final var testModule = result.findModules("list-test").iterator().next();
 
-        final Module testModule = result.findModules("list-test").iterator().next();
-        assertNotNull(testModule);
-
-        final ListSchemaNode list = (ListSchemaNode) testModule.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "simple-list"));
-        assertNotNull(list);
+        final var list = assertInstanceOf(ListSchemaNode.class,
+            testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "simple-list")));
 
         assertTrue(list.isUserOrdered());
         assertEquals(Optional.of(Boolean.TRUE), list.effectiveConfig());
-        final List<QName> keys = list.getKeyDefinition();
+        final var keys = list.getKeyDefinition();
         assertEquals(2, keys.size());
 
         assertEquals("key1", keys.get(0).getLocalName());
         assertEquals("key2", keys.get(1).getLocalName());
 
-        ElementCountConstraint constraint = list.getElementCountConstraint().get();
+        var constraint = list.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 1, constraint.getMinElements());
         assertEquals((Object) 10, constraint.getMaxElements());
 
         assertEquals(5, list.getChildNodes().size());
 
-        LeafSchemaNode leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(),
-            "key1"));
-        assertNotNull(leaf);
+        var leaf = assertInstanceOf(LeafSchemaNode.class,
+            list.getDataChildByName(QName.create(testModule.getQNameModule(), "key1")));
         assertTrue(leaf.isMandatory());
         assertEquals("int32", leaf.getType().getQName().getLocalName());
 
-        leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "key2"));
-        assertNotNull(leaf);
+        leaf = assertInstanceOf(LeafSchemaNode.class,
+            list.getDataChildByName(QName.create(testModule.getQNameModule(), "key2")));
         assertTrue(leaf.isMandatory());
         assertEquals("int16", leaf.getType().getQName().getLocalName());
 
-        leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "old-leaf"));
-        assertNotNull(leaf);
+        leaf = assertInstanceOf(LeafSchemaNode.class,
+            list.getDataChildByName(QName.create(testModule.getQNameModule(), "old-leaf")));
         assertFalse(leaf.isMandatory());
         assertEquals("string", leaf.getType().getQName().getLocalName());
 
-        leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "young-leaf"));
-        assertNotNull(leaf);
+        leaf = assertInstanceOf(LeafSchemaNode.class,
+            list.getDataChildByName(QName.create(testModule.getQNameModule(), "young-leaf")));
         assertFalse(leaf.isMandatory());
         assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
         assertEquals(Optional.of("default-value"), leaf.getType().getDefaultValue());
 
-        final LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "list-of-leaves"));
-        assertNotNull(leafList);
+        final var leafList = assertInstanceOf(LeafListSchemaNode.class,
+            list.getDataChildByName(QName.create(testModule.getQNameModule(), "list-of-leaves")));
         assertTrue(leafList.isUserOrdered());
 
-        constraint = leafList.getElementCountConstraint().get();
+        constraint = leafList.getElementCountConstraint().orElseThrow();
         assertEquals(2, constraint.getMinElements().intValue());
         assertEquals(20, constraint.getMaxElements().intValue());
         assertEquals("string", leafList.getType().getQName().getLocalName());

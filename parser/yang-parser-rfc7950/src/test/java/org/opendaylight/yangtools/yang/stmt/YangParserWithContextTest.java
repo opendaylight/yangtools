@@ -12,14 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -28,27 +27,16 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
-import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class YangParserWithContextTest {
@@ -72,32 +60,32 @@ class YangParserWithContextTest {
         sourceForResource("/ietf/network-topology@2013-10-21.yang")};
 
     @Test
-    void testTypeFromContext() throws ReactorException {
-        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
+    void testTypeFromContext() throws Exception {
+        final var context = RFC7950Reactors.defaultReactor().newBuild()
             .addSources(IETF)
             .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
             .addSource(sourceForResource("/context-test/test1.yang"))
             .buildEffective();
 
-        final Module module = context.findModule("test1", Revision.of("2013-06-18")).get();
-        final LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName(QName.create(module.getQNameModule(),
-            "id"));
+        final var module = context.findModule("test1", Revision.of("2013-06-18")).orElseThrow();
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            module.getDataChildByName(QName.create(module.getQNameModule(), "id")));
 
-        final Uint16TypeDefinition leafType = assertInstanceOf(Uint16TypeDefinition.class, leaf.getType());
+        final var leafType = assertInstanceOf(Uint16TypeDefinition.class, leaf.getType());
         QName qname = leafType.getQName();
         assertEquals(XMLNamespace.of("urn:simple.demo.test1"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2013-06-18"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        final Uint16TypeDefinition leafBaseType = leafType.getBaseType();
+        final var leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2010-09-24"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        final Uint8TypeDefinition dscpExt = (Uint8TypeDefinition) TestUtils.findTypedef(module.getTypeDefinitions(),
-            "dscp-ext");
-        final Set<? extends Range<?>> ranges = dscpExt.getRangeConstraint().get().getAllowedRanges().asRanges();
+        final var dscpExt = assertInstanceOf(Uint8TypeDefinition.class,
+            TestUtils.findTypedef(module.getTypeDefinitions(), "dscp-ext"));
+        final var ranges = dscpExt.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();
         assertEquals(1, ranges.size());
         final Range<?> range = ranges.iterator().next();
         assertEquals(Uint8.valueOf(0), range.lowerEndpoint());
@@ -105,80 +93,73 @@ class YangParserWithContextTest {
     }
 
     @Test
-    void testUsesFromContext() throws ReactorException {
-        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
+    void testUsesFromContext() throws Exception {
+        final var context = RFC7950Reactors.defaultReactor().newBuild()
             .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
             .buildEffective();
 
-        final Module testModule = context.findModule("test2", Revision.of("2013-06-18")).get();
-        final Module contextModule = context.findModules(XMLNamespace.of("urn:opendaylight.baz")).iterator().next();
+        final var testModule = context.findModule("test2", Revision.of("2013-06-18")).orElseThrow();
+        final var contextModule = context.findModules(XMLNamespace.of("urn:opendaylight.baz")).iterator().next();
         assertNotNull(contextModule);
         final var groupings = contextModule.getGroupings();
         assertEquals(1, groupings.size());
-        final GroupingDefinition grouping = groupings.iterator().next();
+        final var grouping = groupings.iterator().next();
 
         // get node containing uses
-        final ContainerSchemaNode peer = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "peer"));
-        final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "destination"));
+        final var peer = assertInstanceOf(ContainerSchemaNode.class,
+            testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "peer")));
+        final var destination = assertInstanceOf(ContainerSchemaNode.class,
+            peer.getDataChildByName(QName.create(testModule.getQNameModule(), "destination")));
 
         // check uses
         final var uses = destination.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
-        final AnyxmlSchemaNode data_u = (AnyxmlSchemaNode) destination.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "data"));
-        assertNotNull(data_u);
+        final var data_u = assertInstanceOf(AnyxmlSchemaNode.class,
+            destination.getDataChildByName(QName.create(testModule.getQNameModule(), "data")));
         assertTrue(data_u.isAddedByUses());
 
-        final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(QName.create(
-            contextModule.getQNameModule(), "data"));
-        assertNotNull(data_g);
+        final var data_g = assertInstanceOf(AnyxmlSchemaNode.class,
+            grouping.getDataChildByName(QName.create(contextModule.getQNameModule(), "data")));
         assertFalse(data_g.isAddedByUses());
         assertNotEquals(data_u, data_g);
 
-        final ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "how"));
-        assertNotNull(how_u);
+        final var how_u = assertInstanceOf(ChoiceSchemaNode.class,
+            destination.getDataChildByName(QName.create(testModule.getQNameModule(), "how")));
         assertTrue(how_u.isAddedByUses());
 
-        final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(QName.create(
-            contextModule.getQNameModule(), "how"));
-        assertNotNull(how_g);
+        final var how_g = assertInstanceOf(ChoiceSchemaNode.class,
+            grouping.getDataChildByName(QName.create(contextModule.getQNameModule(), "how")));
         assertFalse(how_g.isAddedByUses());
         assertNotEquals(how_u, how_g);
 
-        final LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "address"));
-        assertNotNull(address_u);
+        final var address_u = assertInstanceOf(LeafSchemaNode.class,
+            destination.getDataChildByName(QName.create(testModule.getQNameModule(), "address")));
         assertTrue(address_u.isAddedByUses());
 
-        final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
-            contextModule.getQNameModule(), "address"));
-        assertNotNull(address_g);
+        final var address_g = assertInstanceOf(LeafSchemaNode.class,
+            grouping.getDataChildByName(QName.create(contextModule.getQNameModule(), "address")));
         assertFalse(address_g.isAddedByUses());
         assertNotEquals(address_u, address_g);
 
-        final ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "port"));
-        assertNotNull(port_u);
+        final var port_u = assertInstanceOf(ContainerSchemaNode.class,
+            destination.getDataChildByName(QName.create(testModule.getQNameModule(), "port")));
         assertTrue(port_u.isAddedByUses());
 
-        final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(QName.create(
-            contextModule.getQNameModule(), "port"));
+        final var port_g = assertInstanceOf(ContainerSchemaNode.class,
+            grouping.getDataChildByName(QName.create(contextModule.getQNameModule(), "port")));
         assertNotNull(port_g);
         assertFalse(port_g.isAddedByUses());
         assertNotEquals(port_u, port_g);
 
-        final ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "addresses"));
+        final ListSchemaNode addresses_u = assertInstanceOf(ListSchemaNode.class,
+            destination.getDataChildByName(QName.create(testModule.getQNameModule(), "addresses")));
         assertNotNull(addresses_u);
         assertTrue(addresses_u.isAddedByUses());
 
-        final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(QName.create(
-            contextModule.getQNameModule(), "addresses"));
+        final ListSchemaNode addresses_g = assertInstanceOf(ListSchemaNode.class,
+            grouping.getDataChildByName(QName.create(contextModule.getQNameModule(), "addresses")));
         assertNotNull(addresses_g);
         assertFalse(addresses_g.isAddedByUses());
         assertNotEquals(addresses_u, addresses_g);
@@ -190,21 +171,21 @@ class YangParserWithContextTest {
         // grouping defined in 'grouping' node
         final var groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
-        final GroupingDefinition grouping_g = groupings_g.iterator().next();
+        final var grouping_g = groupings_g.iterator().next();
         assertFalse(grouping_g.isAddedByUses());
     }
 
     @Test
-    void testUsesRefineFromContext() throws ReactorException {
-        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
+    void testUsesRefineFromContext() throws Exception {
+        final var context = RFC7950Reactors.defaultReactor().newBuild()
             .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
             .buildEffective();
 
-        final Module module = context.findModule("test2", Revision.of("2013-06-18")).get();
-        final ContainerSchemaNode peer = (ContainerSchemaNode) module.getDataChildByName(QName.create(
-            module.getQNameModule(), "peer"));
-        final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
-            module.getQNameModule(), "destination"));
+        final var module = context.findModule("test2", Revision.of("2013-06-18")).orElseThrow();
+        final var peer = assertInstanceOf(ContainerSchemaNode.class,
+            module.getDataChildByName(QName.create(module.getQNameModule(), "peer")));
+        final var destination = assertInstanceOf(ContainerSchemaNode.class,
+            peer.getDataChildByName(QName.create(module.getQNameModule(), "destination")));
         final var usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
@@ -214,20 +195,20 @@ class YangParserWithContextTest {
             usesNode.getSourceGrouping().getQName());
 
         // test refine
-        final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
+        final var refines = usesNode.getRefines();
         assertEquals(3, refines.size());
 
         LeafSchemaNode refineLeaf = null;
         ContainerSchemaNode refineContainer = null;
         ListSchemaNode refineList = null;
-        for (final Map.Entry<Descendant, SchemaNode> entry : refines.entrySet()) {
+        for (var entry : refines.entrySet()) {
             final SchemaNode value = entry.getValue();
-            if (value instanceof LeafSchemaNode) {
-                refineLeaf = (LeafSchemaNode) value;
-            } else if (value instanceof ContainerSchemaNode) {
-                refineContainer = (ContainerSchemaNode) value;
-            } else if (value instanceof ListSchemaNode) {
-                refineList = (ListSchemaNode) value;
+            if (value instanceof LeafSchemaNode leaf) {
+                refineLeaf = leaf;
+            } else if (value instanceof ContainerSchemaNode container) {
+                refineContainer = container;
+            } else if (value instanceof ListSchemaNode list) {
+                refineList = list;
             }
         }
 
@@ -240,7 +221,7 @@ class YangParserWithContextTest {
         assertTrue(refineLeaf.isMandatory());
         final var leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
-        final MustDefinition leafMust = leafMustConstraints.iterator().next();
+        final var leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
 
         // container port
@@ -257,30 +238,30 @@ class YangParserWithContextTest {
         assertEquals(Optional.of("description of addresses defined by refine"), refineList.getDescription());
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertEquals(Optional.of(Boolean.FALSE), refineList.effectiveConfig());
-        final ElementCountConstraint constraint = refineList.getElementCountConstraint().get();
+        final var constraint = refineList.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 2, constraint.getMinElements());
         assertEquals((Object) 12, constraint.getMaxElements());
     }
 
     @Test
-    void testIdentity() throws ReactorException {
-        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
+    void testIdentity() throws Exception {
+        final var context = RFC7950Reactors.defaultReactor().newBuild()
             .addSources(IETF)
             .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
             .addSource(sourceForResource("/context-test/test3.yang"))
             .buildEffective();
 
-        final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
+        final var module = context.findModule("test3", Revision.of("2013-06-18")).orElseThrow();
         final var identities = module.getIdentities();
         assertEquals(1, identities.size());
 
-        final IdentitySchemaNode identity = identities.iterator().next();
+        final var identity = identities.iterator().next();
         final QName idQName = identity.getQName();
         assertEquals(XMLNamespace.of("urn:simple.demo.test3"), idQName.getNamespace());
         assertEquals(Revision.ofNullable("2013-06-18"), idQName.getRevision());
         assertEquals("pt", idQName.getLocalName());
 
-        final IdentitySchemaNode baseIdentity = Iterables.getOnlyElement(identity.getBaseIdentities());
+        final var baseIdentity = Iterables.getOnlyElement(identity.getBaseIdentities());
         final QName idBaseQName = baseIdentity.getQName();
         assertEquals(XMLNamespace.of("urn:custom.types.demo"), idBaseQName.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), idBaseQName.getRevision());
@@ -288,20 +269,21 @@ class YangParserWithContextTest {
     }
 
     @Test
-    void testUnknownNodes() throws ReactorException {
-        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
+    void testUnknownNodes() throws Exception {
+        final var context = RFC7950Reactors.defaultReactor().newBuild()
             .addSources(IETF)
             .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
             .addSource(sourceForResource("/context-test/test3.yang"))
             .buildEffective();
 
-        final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
-        final ContainerStatement network = ((ContainerSchemaNode) module.getDataChildByName(
-            QName.create(module.getQNameModule(), "network"))).asEffectiveStatement().getDeclared();
+        final var module = context.findModule("test3", Revision.of("2013-06-18")).orElseThrow();
+        final var network = assertInstanceOf(ContainerSchemaNode.class,
+            module.getDataChildByName(QName.create(module.getQNameModule(), "network")))
+            .asEffectiveStatement().getDeclared();
         final var unknownNodes = network.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
 
-        final UnrecognizedStatement un = unknownNodes.iterator().next();
+        final var un = unknownNodes.iterator().next();
         final QName unType = un.statementDefinition().getStatementName();
         assertEquals(XMLNamespace.of("urn:custom.types.demo"), unType.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), unType.getRevision());
@@ -311,48 +293,43 @@ class YangParserWithContextTest {
 
     @Test
     void testAugment() throws Exception {
-        final Module t4 = TestUtils.parseYangSource(
+        final var t4 = TestUtils.parseYangSource(
             "/context-augment-test/test1.yang", "/context-augment-test/test2.yang",
             "/context-augment-test/test3.yang", "/context-augment-test/test4.yang")
             .findModules("test4").iterator().next();
-        final ContainerSchemaNode interfaces = (ContainerSchemaNode) t4.getDataChildByName(QName.create(
-            t4.getQNameModule(), "interfaces"));
-        final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(t4.getQNameModule(),
-            "ifEntry"));
+        final var interfaces = assertInstanceOf(ContainerSchemaNode.class,
+            t4.getDataChildByName(QName.create(t4.getQNameModule(), "interfaces")));
+        final var ifEntry = assertInstanceOf(ListSchemaNode.class,
+            interfaces.getDataChildByName(QName.create(t4.getQNameModule(), "ifEntry")));
 
         // test augmentation process
-        final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(T3_NS,
-            REV, "augment-holder"));
-        assertNotNull(augmentHolder);
-        final DataSchemaNode ds0 = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "ds0ChannelNumber"));
-        assertNotNull(ds0);
-        final DataSchemaNode interfaceId = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "interface-id"));
+        final var augmentHolder = assertInstanceOf(ContainerSchemaNode.class,
+            ifEntry.getDataChildByName(QName.create(T3_NS, REV, "augment-holder")));
+        final var ds0 = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "ds0ChannelNumber"));
+        final var interfaceId = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "interface-id"));
         assertNotNull(interfaceId);
-        final DataSchemaNode higherLayerIf = augmentHolder.getDataChildByName(QName.create(T2_NS, REV,
-            "higher-layer-if"));
-        assertNotNull(higherLayerIf);
-        final ContainerSchemaNode schemas = (ContainerSchemaNode) augmentHolder.getDataChildByName(QName.create(T2_NS,
-            REV, "schemas"));
-        assertNotNull(schemas);
+        final var higherLayerIf = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "higher-layer-if"));
+        final var schemas = assertInstanceOf(ContainerSchemaNode.class,
+            augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "schemas")));
         assertNotNull(schemas.getDataChildByName(QName.create(T1_NS, REV, "id")));
 
         // test augment target after augmentation: check if it is same instance
-        final ListSchemaNode ifEntryAfterAugment = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
-            t4.getQNameModule(), "ifEntry"));
-        assertTrue(ifEntry == ifEntryAfterAugment);
+        final var ifEntryAfterAugment = assertInstanceOf(ListSchemaNode.class,
+            interfaces.getDataChildByName(QName.create(t4.getQNameModule(), "ifEntry")));
+        assertSame(ifEntry, ifEntryAfterAugment);
     }
 
     @Test
-    void testDeviation() throws ReactorException {
-        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
+    void testDeviation() throws Exception {
+        final var context = RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/model/bar.yang"))
             .addSource(sourceForResource("/context-test/deviation-test.yang"))
             .buildEffective();
 
-        final Module testModule = context.findModule("deviation-test", Revision.of("2013-02-27")).get();
+        final var testModule = context.findModule("deviation-test", Revision.of("2013-02-27")).orElseThrow();
         final var deviations = testModule.getDeviations();
         assertEquals(1, deviations.size());
-        final Deviation dev = deviations.iterator().next();
+        final var dev = deviations.iterator().next();
 
         assertEquals(Optional.of("system/user ref"), dev.getReference());
 

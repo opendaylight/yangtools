@@ -129,14 +129,14 @@ public class YangInstanceIdentifierTest {
         Optional<YangInstanceIdentifier> relative = id1.relativeTo(id2);
         assertTrue(relative.isPresent());
 
-        List<PathArgument> path = relative.get().getPathArguments();
+        List<PathArgument> path = relative.orElseThrow().getPathArguments();
         assertEquals(2, path.size());
         assertEquals(NODENAME3, path.get(0).getNodeType());
         assertEquals(NODENAME4, path.get(1).getNodeType());
 
         relative = id2.relativeTo(id3);
         assertTrue(relative.isPresent());
-        assertEquals(0, relative.get().getPathArguments().size());
+        assertEquals(0, relative.orElseThrow().getPathArguments().size());
 
         relative = id2.relativeTo(id1);
         assertFalse(relative.isPresent());

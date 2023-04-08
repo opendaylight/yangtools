@@ -160,17 +160,16 @@ class EffectiveModulesAndSubmodulesTest {
     }
 
     private static void getDataChildByNameSubTest(final EffectiveModelContext result, final Module root) {
-        final DataSchemaNode containerInRoot = result.getDataChildByName(QName
-            .create(root.getQNameModule(), "container-in-root-module"));
-        assertNotNull(containerInRoot);
+        final var containerInRoot = result.getDataChildByName(
+            QName.create(root.getQNameModule(), "container-in-root-module"));
         assertEquals(Optional.of("desc"), containerInRoot.getDescription());
     }
 
     private static void findModulesSubTest(final EffectiveModelContext result, final Module root,
             final Module imported) {
-        final var foundRoot = result.findModule("root-module").get();
+        final var foundRoot = result.findModule("root-module").orElseThrow();
         final var foundRoots = result.findModules(XMLNamespace.of("root-module"));
-        final var foundRoot3 = result.findModule(XMLNamespace.of("root-module")).get();
+        final var foundRoot3 = result.findModule(XMLNamespace.of("root-module")).orElseThrow();
 
         assertNotNull(foundRoot);
         assertNotNull(foundRoots);
@@ -184,9 +183,9 @@ class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot2);
         assertEquals(root, foundRoot3);
 
-        final var foundImported = result.findModule("imported-module").get();
+        final var foundImported = result.findModule("imported-module").orElseThrow();
         final var foundImporteds = result.findModules(XMLNamespace.of("imported-module"));
-        final var foundImported3 = result.findModule(XMLNamespace.of("imported-module")).get();
+        final var foundImported3 = result.findModule(XMLNamespace.of("imported-module")).orElseThrow();
 
         assertNotNull(foundImported);
         assertNotNull(foundImporteds);

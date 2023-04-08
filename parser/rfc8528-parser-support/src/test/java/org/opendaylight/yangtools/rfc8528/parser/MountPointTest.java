@@ -11,9 +11,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,16 +19,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public class MountPointTest {
@@ -58,8 +51,8 @@ public class MountPointTest {
     }
 
     @Test
-    public void testMountPointResolution() throws ReactorException, IOException, YangSyntaxErrorException {
-        final SchemaContext context = reactor.newBuild()
+    public void testMountPointResolution() throws Exception {
+        final var context = reactor.newBuild()
                 .addLibSources(
                     YangStatementStreamSource.create(YangTextSchemaSource.forResource(
                             "/ietf-inet-types@2013-07-15.yang")),
@@ -74,23 +67,22 @@ public class MountPointTest {
 
         assertEquals(5, context.getModules().size());
 
-        DataSchemaNode child = context.findDataTreeChild(EXAMPLE_CONT).get();
+        var child = context.findDataTreeChild(EXAMPLE_CONT).orElseThrow();
         assertThat(child, instanceOf(ContainerSchemaNode.class));
-        List<MountPointSchemaNode> mps = MountPointSchemaNode.streamAll((ContainerSchemaNode) child)
-                .collect(Collectors.toList());
+        var mps = MountPointSchemaNode.streamAll((ContainerSchemaNode) child).toList();
         assertEquals(2, mps.size());
         assertEquals(EXAMPLE_CONT, mps.get(0).getQName());
         assertEquals(EXAMPLE_CONT, mps.get(1).getQName());
 
-        child = context.findDataTreeChild(EXAMPLE_GRP_CONT).get();
+        child = context.findDataTreeChild(EXAMPLE_GRP_CONT).orElseThrow();
         assertThat(child, instanceOf(ContainerSchemaNode.class));
-        mps = MountPointSchemaNode.streamAll((ContainerSchemaNode) child).collect(Collectors.toList());
+        mps = MountPointSchemaNode.streamAll((ContainerSchemaNode) child).toList();
         assertEquals(1, mps.size());
         assertEquals(EXAMPLE_GRP, mps.get(0).getQName());
 
-        child = context.findDataTreeChild(EXAMPLE_LIST).get();
+        child = context.findDataTreeChild(EXAMPLE_LIST).orElseThrow();
         assertThat(child, instanceOf(ListSchemaNode.class));
-        mps = MountPointSchemaNode.streamAll((ListSchemaNode) child).collect(Collectors.toList());
+        mps = MountPointSchemaNode.streamAll((ListSchemaNode) child).toList();
         assertEquals(1, mps.size());
         assertEquals(EXAMPLE_LIST, mps.get(0).getQName());
     }

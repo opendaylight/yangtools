@@ -13,34 +13,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
-import java.util.Iterator;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 class YinFileAugmentStmtTest extends AbstractYinModulesTest {
     @Test
     void testAugment() {
-        final Module testModule = context.findModules("main-impl").iterator().next();
+        final var testModule = context.findModules("main-impl").iterator().next();
         assertNotNull(testModule);
 
-        final Collection<? extends AugmentationSchemaNode> augmentations = testModule.getAugmentations();
+        final var augmentations = testModule.getAugmentations();
         assertEquals(1, augmentations.size());
 
-        final Iterator<? extends AugmentationSchemaNode> augmentIterator = augmentations.iterator();
-        final AugmentationSchemaNode augment = augmentIterator.next();
-        assertNotNull(augment);
+        final var augment = augmentations.iterator().next();
         assertThat(augment.getTargetPath().toString(), containsString(
             "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)modules, module, "
                 + "configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
-        final DataSchemaNode caseNode = augment.findDataChildByName(
-            QName.create(testModule.getQNameModule(), "main-impl")).get();
-        assertInstanceOf(CaseSchemaNode.class, caseNode);
+        assertInstanceOf(CaseSchemaNode.class, augment.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "main-impl")));
     }
 }

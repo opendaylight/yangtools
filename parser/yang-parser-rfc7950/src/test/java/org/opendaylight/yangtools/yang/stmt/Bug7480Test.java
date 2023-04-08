@@ -41,7 +41,8 @@ class Bug7480Test {
         final var subFoos = foo.iterator().next().getSubmodules();
         assertEquals(1, subFoos.size());
 
-        final var parentMod = context.findModule(XMLNamespace.of("parent-mod-ns"), Revision.of("2017-09-07")).get();
+        final var parentMod = context.findModule(XMLNamespace.of("parent-mod-ns"), Revision.of("2017-09-07"))
+            .orElseThrow();
         assertEquals(1, parentMod.getSubmodules().size());
     }
 
@@ -49,8 +50,8 @@ class Bug7480Test {
     void missingRelevantImportTest() throws Exception {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
-        final String message = ex.getSuppressed().length > 0
-            ? ex.getSuppressed()[0].getMessage() : ex.getCause().getMessage();
+        final var message = ex.getSuppressed().length > 0 ? ex.getSuppressed()[0].getMessage()
+            : ex.getCause().getMessage();
         assertThat(message, startsWith("Imported module [missing-lib] was not found."));
     }
 
@@ -87,7 +88,7 @@ class Bug7480Test {
     }
 
     private static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
-        final String yangLibsDirectoryPath) throws Exception {
+            final String yangLibsDirectoryPath) throws Exception {
         return RFC7950Reactors.defaultReactor().newBuild()
             .addSources(TestUtils.loadSources(yangFilesDirectoryPath))
             .addLibSources(TestUtils.loadSources(yangLibsDirectoryPath))

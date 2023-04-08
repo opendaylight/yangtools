@@ -10,41 +10,30 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 class Bug5200Test extends AbstractYangTest {
-    private static final String NS = "foo";
-    private static final String REV = "2016-05-05";
-
     @Test
     void test() {
         final var context = assertEffectiveModelDir("/bugs/bug5200");
+        final var root = QName.create("foo", "2016-05-05", "root");
 
-        QName root = QName.create(NS, REV, "root");
-        QName myLeaf = QName.create(NS, REV, "my-leaf");
-        QName myLeaf2 = QName.create(NS, REV, "my-leaf-2");
-
-        SchemaNode myLeafNode = context.findDataTreeChild(root, myLeaf).orElseThrow();
-        SchemaNode myLeaf2Node = context.findDataTreeChild(root, myLeaf2).orElseThrow();
+        var myLeafNode = context.findDataTreeChild(root, QName.create(root, "my-leaf")).orElseThrow();
+        var myLeaf2Node = context.findDataTreeChild(root, QName.create(root, "my-leaf-2")).orElseThrow();
 
         final var myLeafType = assertInstanceOf(StringTypeDefinition.class,
             assertInstanceOf(LeafSchemaNode.class, myLeafNode).getType());
         final var myLeaf2Type = assertInstanceOf(Int32TypeDefinition.class,
             assertInstanceOf(LeafSchemaNode.class, myLeaf2Node).getType());
 
-        final LengthConstraint lengthConstraint = myLeafType.getLengthConstraint().orElseThrow();
-        final List<PatternConstraint> patternConstraints = myLeafType.getPatternConstraints();
+        final var lengthConstraint = myLeafType.getLengthConstraint().orElseThrow();
+        final var patternConstraints = myLeafType.getPatternConstraints();
 
         assertEquals(1, lengthConstraint.getAllowedRanges().asRanges().size());
         assertEquals(1, patternConstraints.size());
@@ -52,11 +41,11 @@ class Bug5200Test extends AbstractYangTest {
         assertEquals(Optional.of("lenght constraint error-app-tag"), lengthConstraint.getErrorAppTag());
         assertEquals(Optional.of("lenght constraint error-app-message"), lengthConstraint.getErrorMessage());
 
-        PatternConstraint patternConstraint = patternConstraints.iterator().next();
+        final var patternConstraint = patternConstraints.iterator().next();
         assertEquals(Optional.of("pattern constraint error-app-tag"), patternConstraint.getErrorAppTag());
         assertEquals(Optional.of("pattern constraint error-app-message"), patternConstraint.getErrorMessage());
 
-        RangeConstraint<?> rangeConstraint = myLeaf2Type.getRangeConstraint().orElseThrow();
+        var rangeConstraint = myLeaf2Type.getRangeConstraint().orElseThrow();
         assertEquals(1, rangeConstraint.getAllowedRanges().asRanges().size());
 
         assertEquals(Optional.of("range constraint error-app-tag"), rangeConstraint.getErrorAppTag());

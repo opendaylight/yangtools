@@ -54,7 +54,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderTest {
@@ -86,11 +85,11 @@ public class BuilderTest {
     public void setup() throws URISyntaxException {
         final File leafRefTestYang = new File(getClass().getResource("/builder-test/immutable-ordered-map-node.yang")
                 .toURI());
-        final SchemaContext schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
+        final var schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
         final Module module = schema.getModules().iterator().next();
-        final DataSchemaNode root = module.findDataChildByName(ROOT_CONTAINER).get();
-        list = (ListSchemaNode)((ContainerSchemaNode) root).findDataChildByName(LIST_MAIN).get();
-        leafList = (LeafListSchemaNode)((ContainerSchemaNode) root).findDataChildByName(LEAF_LIST_MAIN).get();
+        final DataSchemaNode root = module.getDataChildByName(ROOT_CONTAINER);
+        list = (ListSchemaNode)((ContainerSchemaNode) root).getDataChildByName(LIST_MAIN);
+        leafList = (LeafListSchemaNode)((ContainerSchemaNode) root).getDataChildByName(LEAF_LIST_MAIN);
     }
 
     @Test

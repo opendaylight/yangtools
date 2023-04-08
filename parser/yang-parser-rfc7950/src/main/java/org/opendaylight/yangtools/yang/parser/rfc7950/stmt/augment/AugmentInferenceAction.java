@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -98,10 +97,10 @@ final class AugmentInferenceAction implements InferenceAction {
                 return;
             }
 
-            final SchemaNodeIdentifier augmentArg = augmentNode.getArgument();
-            final Optional<StmtContext<?, ?, ?>> targetNode = ParserNamespaces.findSchemaTreeStatement(
+            final var augmentArg = augmentNode.getArgument();
+            final var targetNode = ParserNamespaces.findSchemaTreeStatement(
                 AbstractAugmentStatementSupport.getSearchRoot(augmentNode), augmentArg);
-            if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
+            if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.orElseThrow())) {
                 augmentNode.setUnsupported();
                 LOG.warn("Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
                     augmentArg, augmentNode.sourceReference());
@@ -244,10 +243,10 @@ final class AugmentInferenceAction implements InferenceAction {
             // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
             // conditional -- in which case we do not run further checks
             if (targetCtx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                final Optional<? extends StmtContext<?, ?, ?>> optPrevCopy = targetCtx.getPreviousCopyCtx();
+                final var optPrevCopy = targetCtx.getPreviousCopyCtx();
                 if (optPrevCopy.isPresent()) {
-                    final StmtContext<?, ?, ?> original = optPrevCopy.get();
-                    final Object origArg = original.getArgument();
+                    final var original = optPrevCopy.orElseThrow();
+                    final var origArg = original.getArgument();
                     verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
 
                     if (sourceStmtQName.getModule().equals(((QName) origArg).getModule())

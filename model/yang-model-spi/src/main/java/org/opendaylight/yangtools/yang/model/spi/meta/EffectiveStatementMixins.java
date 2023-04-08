@@ -542,7 +542,7 @@ public final class EffectiveStatementMixins {
 
     static <T extends ContainerLike> T findAsContainer(final EffectiveStatement<?, ?> stmt,
             final Class<? extends EffectiveStatement<QName, ?>> type, final Class<T> target) {
-        return target.cast(stmt.findFirstEffectiveSubstatement(type).get());
+        return target.cast(stmt.findFirstEffectiveSubstatement(type).orElseThrow());
     }
 
     static Collection<? extends @NonNull TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
