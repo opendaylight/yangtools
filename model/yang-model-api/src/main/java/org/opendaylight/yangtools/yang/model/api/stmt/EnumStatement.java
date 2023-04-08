@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -20,7 +19,7 @@ public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<St
     }
 
     default @Nullable ValueStatement getValue() {
-        final Optional<ValueStatement> opt = findFirstDeclaredSubstatement(ValueStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(ValueStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

@@ -53,8 +53,8 @@ abstract sealed class AbstractIndexedEffectiveStatement<A, D extends DeclaredSta
 
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        final Optional<? extends Map<K, V>> ret = getNamespaceContents(requireNonNull(namespace));
-        return ret.isPresent() ? ret.get() : ImmutableMap.of();
+        final var ret = getNamespaceContents(requireNonNull(namespace));
+        return ret.isPresent() ? ret.orElseThrow() : ImmutableMap.of();
     }
 
     @Override

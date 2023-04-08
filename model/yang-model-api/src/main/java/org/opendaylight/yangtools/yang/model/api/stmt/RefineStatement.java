@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -29,17 +28,17 @@ public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<D
     }
 
     default @Nullable PresenceStatement getPresence() {
-        final Optional<PresenceStatement> opt = findFirstDeclaredSubstatement(PresenceStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(PresenceStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
     default @Nullable MinElementsStatement getMinElements() {
-        final Optional<MinElementsStatement> opt = findFirstDeclaredSubstatement(MinElementsStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(MinElementsStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
     default @Nullable MaxElementsStatement getMaxElements() {
-        final Optional<MaxElementsStatement> opt = findFirstDeclaredSubstatement(MaxElementsStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(MaxElementsStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
