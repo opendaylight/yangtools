@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 
 class Bug6972Test extends AbstractYangTest {
@@ -48,12 +47,9 @@ class Bug6972Test extends AbstractYangTest {
 
     private static UnitsEffectiveStatement getEffectiveUnits(final Module module, final QName containerQName,
             final QName leafQName) {
-        final var cont = (ContainerSchemaNode) module.getDataChildByName(containerQName);
-        assertNotNull(cont);
-        final var leaf = (LeafSchemaNode) cont.getDataChildByName(leafQName);
-        assertNotNull(leaf);
-
-        return ((LeafEffectiveStatement) leaf).streamEffectiveSubstatements(UnitsEffectiveStatement.class)
+        final var cont = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(containerQName));
+        return assertInstanceOf(LeafSchemaNode.class, cont.getDataChildByName(leafQName)).asEffectiveStatement()
+            .streamEffectiveSubstatements(UnitsEffectiveStatement.class)
             .findFirst()
             .orElse(null);
     }

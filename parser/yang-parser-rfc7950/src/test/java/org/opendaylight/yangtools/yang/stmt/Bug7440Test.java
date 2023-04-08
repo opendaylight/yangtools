@@ -19,8 +19,8 @@ class Bug7440Test extends AbstractYangTest {
         final var schemaContext = assertEffectiveModelDir("/bugs/bug7440");
 
         final var revision = Revision.of("2016-12-23");
-        final var foo = schemaContext.findModule("foo", revision).get();
-        final var bar = schemaContext.findModule("bar", revision).get();
+        final var foo = schemaContext.findModule("foo", revision).orElseThrow();
+        final var bar = schemaContext.findModule("bar", revision).orElseThrow();
 
         final var deviations = foo.getDeviations();
         assertEquals(1, deviations.size());

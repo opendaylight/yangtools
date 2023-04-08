@@ -614,7 +614,7 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
             encodeString(module.getNamespace().toString());
             final Optional<Revision> rev = module.getRevision();
             if (rev.isPresent()) {
-                encodeString(rev.get().toString());
+                encodeString(rev.orElseThrow().toString());
             } else {
                 output.writeByte(MagnesiumValue.STRING_EMPTY);
             }

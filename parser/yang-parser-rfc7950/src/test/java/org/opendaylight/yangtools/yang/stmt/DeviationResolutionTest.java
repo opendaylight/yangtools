@@ -28,38 +28,27 @@ import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
 class DeviationResolutionTest extends AbstractYangTest {
     @Test
     void testDeviateNotSupported() {
         final var schemaContext = assertEffectiveModelDir("/deviation-resolution-test/deviation-not-supported");
-        assertNotNull(schemaContext);
 
-        final Module importedModule = schemaContext.findModule("imported", Revision.of("2017-01-20")).get();
-        final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.getDataChildByName(
-            QName.create(importedModule.getQNameModule(), "my-cont-a"));
-        assertNotNull(myContA);
+        final var importedModule = schemaContext.findModule("imported", Revision.of("2017-01-20")).orElseThrow();
+        final var myContA = assertInstanceOf(ContainerSchemaNode.class,
+            importedModule.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-cont-a")));
 
         assertEquals(1, myContA.getChildNodes().size());
         assertNotNull(myContA.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-a3")));
 
-        final ContainerSchemaNode myContB = (ContainerSchemaNode) importedModule.dataChildByName(
-            QName.create(importedModule.getQNameModule(), "my-cont-b"));
-        assertNull(myContB);
+        assertNull(importedModule.dataChildByName(QName.create(importedModule.getQNameModule(), "my-cont-b")));
 
-        final ContainerSchemaNode myContC = (ContainerSchemaNode) importedModule.getDataChildByName(
-            QName.create(importedModule.getQNameModule(), "my-cont-c"));
-        assertNotNull(myContC);
+        final var myContC = assertInstanceOf(ContainerSchemaNode.class,
+            importedModule.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-cont-c")));
 
         assertEquals(2, myContC.getChildNodes().size());
         assertNotNull(myContC.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-c1")));
@@ -72,46 +61,41 @@ class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-add/foo.yang",
             "/deviation-resolution-test/deviation-add/bar.yang");
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-leaf-list"));
-        assertNotNull(myLeafList);
+        final var barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).orElseThrow();
+        final var myLeafList = assertInstanceOf(LeafListSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf-list")));
 
         assertEquals(Optional.of(Boolean.FALSE), myLeafList.effectiveConfig());
         assertEquals(3, myLeafList.getDefaults().size());
 
-        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
+        final var constraint = myLeafList.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 10, constraint.getMaxElements());
         assertEquals((Object) 5, constraint.getMinElements());
         assertNotNull(myLeafList.getType().getUnits());
 
-        final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-list"));
-        assertNotNull(myList);
+        final var myList = assertInstanceOf(ListSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-list")));
         assertEquals(2, myList.getUniqueConstraints().size());
 
-        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-choice"));
-        assertNotNull(myChoice);
-        assertEquals("c2", myChoice.getDefaultCase().get().getQName().getLocalName());
+        final var myChoice = assertInstanceOf(ChoiceSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-choice")));
+        assertEquals("c2", myChoice.getDefaultCase().orElseThrow().getQName().getLocalName());
 
-        final RpcDefinition myRpc = barModule.getRpcs().iterator().next();
-        final InputSchemaNode input = myRpc.getInput();
+        final var myRpc = barModule.getRpcs().iterator().next();
+        final var input = myRpc.getInput();
         assertEquals(2, input.getMustConstraints().size());
-        final OutputSchemaNode output = myRpc.getOutput();
+        final var output = myRpc.getOutput();
         assertEquals(2, output.getMustConstraints().size());
 
-        final NotificationDefinition myNotification = barModule.getNotifications().iterator().next();
+        final var myNotification = barModule.getNotifications().iterator().next();
         assertEquals(2, myNotification.getMustConstraints().size());
 
-        final AnyxmlSchemaNode myAnyxml = (AnyxmlSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-anyxml"));
-        assertNotNull(myAnyxml);
+        final var myAnyxml = assertInstanceOf(AnyxmlSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-anyxml")));
         assertTrue(myAnyxml.isMandatory());
 
-        final AnydataSchemaNode myAnyData = (AnydataSchemaNode) barModule.findDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-anydata")).orElse(null);
-        assertNotNull(myAnyData);
+        final var myAnyData = assertInstanceOf(AnydataSchemaNode.class,
+            barModule.findDataChildByName(QName.create(barModule.getQNameModule(), "my-anydata")).orElseThrow());
         assertTrue(myAnyData.isMandatory());
     }
 
@@ -121,40 +105,32 @@ class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-replace/foo.yang",
             "/deviation-resolution-test/deviation-replace/bar.yang");
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
-        assertNotNull(barModule);
-
-        final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-leaf"));
-        assertNotNull(myLeaf);
+        final var barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).orElseThrow();
+        final var myLeaf = assertInstanceOf(LeafSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf")));
 
         assertInstanceOf(Uint32TypeDefinition.class, myLeaf.getType());
         assertEquals(Optional.of("bytes"), myLeaf.getType().getUnits());
         assertEquals(Optional.of("10"), myLeaf.getType().getDefaultValue());
 
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-leaf-list-test"));
-        assertNotNull(myLeafList);
-
-        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
+        final var myLeafList = assertInstanceOf(LeafListSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf-list-test")));
+        final var constraint = myLeafList.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 6, constraint.getMaxElements());
         assertEquals((Object) 3, constraint.getMinElements());
         assertEquals(Optional.of(Boolean.TRUE), myLeafList.effectiveConfig());
 
-        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-choice"));
-        assertNotNull(myChoice);
-
+        final var myChoice = assertInstanceOf(ChoiceSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-choice")));
         assertFalse(myChoice.isMandatory());
         // FIXME: we need a supported extension to properly test this
         assertEquals(0, myChoice.getUnknownSchemaNodes().size());
 
-        final ContainerSchemaNode myCont = (ContainerSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-cont"));
-        assertNotNull(myCont);
+        final var myCont = assertInstanceOf(ContainerSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-cont")));
 
-        final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-aug-leaf"));
+        final var myAugLeaf = assertInstanceOf(LeafSchemaNode.class,
+            myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-aug-leaf")));
         assertNotNull(myAugLeaf);
         assertInstanceOf(Uint32TypeDefinition.class, myAugLeaf.getType());
         assertEquals(Optional.of("seconds"), myAugLeaf.getType().getUnits());
@@ -162,9 +138,8 @@ class DeviationResolutionTest extends AbstractYangTest {
         // FIXME: we need a supported extension to properly test this
         assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
-        final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-used-leaf"));
-        assertNotNull(myUsedLeaf);
+        final var myUsedLeaf = assertInstanceOf(LeafSchemaNode.class,
+            myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-used-leaf")));
         assertInstanceOf(Uint32TypeDefinition.class, myUsedLeaf.getType());
         assertEquals(Optional.of("weeks"), myUsedLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myUsedLeaf.getType().getDefaultValue());
@@ -178,43 +153,35 @@ class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-delete/foo.yang",
             "/deviation-resolution-test/deviation-delete/bar.yang");
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
-        final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-leaf"));
-        assertNotNull(myLeaf);
+        final var barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).orElseThrow();
+        final var myLeaf = assertInstanceOf(LeafSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf")));
 
         assertEquals(Optional.empty(), myLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myLeaf.getType().getUnits());
         assertEquals(0, myLeaf.getUnknownSchemaNodes().size());
 
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-leaf-list"));
-        assertNotNull(myLeafList);
-
+        final var myLeafList = assertInstanceOf(LeafListSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf-list")));
         assertEquals(0, myLeafList.getDefaults().size());
         assertEquals(0, myLeafList.getMustConstraints().size());
 
-        final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-list"));
-        assertNotNull(myList);
-
+        final var myList = assertInstanceOf(ListSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-list")));
         assertEquals(0, myList.getUniqueConstraints().size());
         assertEquals(0, myList.getUnknownSchemaNodes().size());
 
-        final ContainerSchemaNode myCont = (ContainerSchemaNode) barModule.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-cont"));
-        assertNotNull(myCont);
-
-        final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-aug-leaf"));
-        assertNotNull(myAugLeaf);
+        final var myCont = assertInstanceOf(ContainerSchemaNode.class,
+            barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-cont")));
+        final var myAugLeaf = assertInstanceOf(LeafSchemaNode.class,
+            myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-aug-leaf")));
         assertEquals(Optional.empty(), myAugLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myAugLeaf.getType().getUnits());
         assertEquals(0, myAugLeaf.getMustConstraints().size());
         assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
-        final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-            QName.create(barModule.getQNameModule(), "my-used-leaf"));
+        final var myUsedLeaf = assertInstanceOf(LeafSchemaNode.class,
+            myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-used-leaf")));
         assertNotNull(myUsedLeaf);
         assertEquals(Optional.empty(), myUsedLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myUsedLeaf.getType().getUnits());
@@ -254,36 +221,36 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviateAdd() {
-        assertInferenceException(startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-            + ":yin:1)config to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
-            + " target and can appear only once."),
+        assertInferenceException(startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)config to target node \
+            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""),
             "/deviation-resolution-test/deviation-add/foo-invalid.yang",
             "/deviation-resolution-test/deviation-add/bar-invalid.yang");
     }
 
     @Test
     void shouldFailOnInvalidDeviateAdd2() {
-        assertInferenceException(startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-            + ":yin:1)default to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
-            + " target and can appear only once."),
+        assertInferenceException(startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
+            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""),
             "/deviation-resolution-test/deviation-add/foo-invalid-2.yang",
             "/deviation-resolution-test/deviation-add/bar-invalid-2.yang");
     }
 
     @Test
     void shouldFailOnInvalidDeviateAdd3() {
-        assertInferenceException(startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-            + ":yin:1)default to target node (bar?revision=2017-02-01)my-used-leaf because it is already "
-            + "defined in target and can appear only once."),
+        assertInferenceException(startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
+            (bar?revision=2017-02-01)my-used-leaf because it is already defined in target and can appear only once."""),
             "/deviation-resolution-test/deviation-add/foo-invalid-4.yang",
             "/deviation-resolution-test/deviation-add/bar-invalid-4.yang");
     }
 
     @Test
     void shouldFailOnInvalidDeviateReplace() {
-        assertInferenceException(startsWith("Deviation cannot replace substatement "
-            + "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (bar?revision=2017-01-20)my-leaf "
-            + "because it does not exist in target node."),
+        assertInferenceException(startsWith("""
+            Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)units in target node \
+            (bar?revision=2017-01-20)my-leaf because it does not exist in target node."""),
             "/deviation-resolution-test/deviation-replace/foo-invalid.yang",
             "/deviation-resolution-test/deviation-replace/bar-invalid.yang");
     }
@@ -291,9 +258,8 @@ class DeviationResolutionTest extends AbstractYangTest {
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
     void shouldLogInvalidDeviateReplaceAttempt() throws Exception {
-        final PrintStream stdout = System.out;
-        final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final String testLog;
+        final var stdout = System.out;
+        final var output = new ByteArrayOutputStream();
 
         System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
 
@@ -301,12 +267,11 @@ class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-replace/foo-invalid-2.yang",
             "/deviation-resolution-test/deviation-replace/bar-invalid-2.yang");
 
-        testLog = output.toString();
+        final var testLog = output.toString();
         System.setOut(stdout);
-        assertThat(testLog, containsString(
-            "Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default in target leaf-list "
-                + "(bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple "
-                + "default statements."));
+        assertThat(testLog, containsString("""
+            Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default in target leaf-list \
+            (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple default statements."""));
     }
 
     @Test

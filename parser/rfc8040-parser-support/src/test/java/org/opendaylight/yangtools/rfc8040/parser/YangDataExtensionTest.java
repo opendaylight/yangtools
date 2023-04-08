@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class YangDataExtensionTest extends AbstractYangDataTest {
-
     private static final StatementStreamSource FOO_MODULE = sourceForResource(
             "/yang-data-extension-test/foo.yang");
     private static final StatementStreamSource FOO_INVALID_1_MODULE = sourceForResource(
@@ -65,7 +64,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         for (var unknownSchemaNode : unknownSchemaNodes) {
             assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
             final var yangDataSchemaNode = (YangDataSchemaNode) unknownSchemaNode;
-            if ("my-yang-data-a".equals(unknownSchemaNode.getNodeParameter())) {
+            if ("my-yang-data-a".equals(yangDataSchemaNode.getNodeParameter())) {
                 myYangDataANode = yangDataSchemaNode;
             } else if ("my-yang-data-b".equals(yangDataSchemaNode.getNodeParameter())) {
                 myYangDataBNode = yangDataSchemaNode;
@@ -81,7 +80,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         final var schemaContext = REACTOR.newBuild().addSources(BAZ_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
-        final var baz = schemaContext.findModule("baz", REVISION).get();
+        final var baz = schemaContext.findModule("baz", REVISION).orElseThrow();
         final var unknownSchemaNodes = baz.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
@@ -115,7 +114,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
             .buildEffective();
         assertNotNull(schemaContext);
 
-        final var foobar = schemaContext.findModule("foobar", REVISION).get();
+        final var foobar = schemaContext.findModule("foobar", REVISION).orElseThrow();
         final var unknownSchemaNodes = foobar.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
@@ -145,9 +144,8 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         final var schemaContext = REACTOR.newBuild().addSources(BAR_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
-        final var bar = schemaContext.findModule("bar", REVISION).get();
-        final var cont = (ContainerSchemaNode) bar.getDataChildByName(
-                QName.create(bar.getQNameModule(), "cont"));
+        final var bar = schemaContext.findModule("bar", REVISION).orElseThrow();
+        final var cont = (ContainerSchemaNode) bar.getDataChildByName(QName.create(bar.getQNameModule(), "cont"));
         assertNotNull(cont);
 
         final var extensions = schemaContext.getExtensions();

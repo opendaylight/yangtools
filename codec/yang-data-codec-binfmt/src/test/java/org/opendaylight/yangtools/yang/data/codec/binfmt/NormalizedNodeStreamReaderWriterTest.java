@@ -225,11 +225,11 @@ public class NormalizedNodeStreamReaderWriterTest {
         StreamResult xmlOutput = new StreamResult(new StringWriter());
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.transform(((DOMSourceAnyxmlNode)child.get()).body(), xmlOutput);
+        transformer.transform(((DOMSourceAnyxmlNode)child.orElseThrow()).body(), xmlOutput);
 
         assertEquals("XML", xml, xmlOutput.getWriter().toString());
         assertEquals("http://www.w3.org/TR/html4/",
-            ((DOMSourceAnyxmlNode)child.get()).body().getNode().getNamespaceURI());
+            ((DOMSourceAnyxmlNode)child.orElseThrow()).body().getNode().getNamespaceURI());
     }
 
     @Test

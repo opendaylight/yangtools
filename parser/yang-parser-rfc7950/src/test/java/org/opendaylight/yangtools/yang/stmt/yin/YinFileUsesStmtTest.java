@@ -8,34 +8,30 @@
 package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
-import java.util.Iterator;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 class YinFileUsesStmtTest extends AbstractYinModulesTest {
     @Test
     void testUses() {
-        final Module testModule = context.findModules("main-impl").iterator().next();
+        final var testModule = context.findModules("main-impl").iterator().next();
 
-        final Collection<? extends AugmentationSchemaNode> augmentations = testModule.getAugmentations();
+        final var augmentations = testModule.getAugmentations();
         assertEquals(1, augmentations.size());
 
-        final Iterator<? extends AugmentationSchemaNode> augmentIterator = augmentations.iterator();
-        final AugmentationSchemaNode augment = augmentIterator.next();
+        final var augmentIterator = augmentations.iterator();
+        final var augment = augmentIterator.next();
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) augment.findDataChildByName(
+        final var container = assertInstanceOf(ContainerSchemaNode.class, augment.findDataChildByName(
             QName.create(testModule.getQNameModule(), "main-impl"),
-            QName.create(testModule.getQNameModule(), "notification-service")).get();
+            QName.create(testModule.getQNameModule(), "notification-service")).orElseThrow());
 
         assertEquals(1, container.getUses().size());
-        final UsesNode usesNode = container.getUses().iterator().next();
+        final var usesNode = container.getUses().iterator().next();
         assertNotNull(usesNode);
         assertEquals("(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)service-ref",
             usesNode.getSourceGrouping().getQName().toString());

@@ -398,11 +398,10 @@ public final class XmlParserStream implements Closeable, Flushable {
             // Cross-relate attribute namespace to the module
             final Optional<QNameModule> optModule = resolveXmlNamespace(attributeNS);
             if (optModule.isPresent()) {
-                final QName qname = QName.create(optModule.get(), localName);
-                final Optional<AnnotationSchemaNode> optAnnotation = AnnotationSchemaNode.find(
-                    codecs.getEffectiveModelContext(), qname);
+                final QName qname = QName.create(optModule.orElseThrow(), localName);
+                final var optAnnotation = AnnotationSchemaNode.find(codecs.getEffectiveModelContext(), qname);
                 if (optAnnotation.isPresent()) {
-                    final AnnotationSchemaNode schema = optAnnotation.get();
+                    final AnnotationSchemaNode schema = optAnnotation.orElseThrow();
                     final Object value = codecs.codecFor(schema, stack)
                         .parseValue(in.getNamespaceContext(), attrValue);
                     attributes.put(schema.getQName(), value);
@@ -580,7 +579,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                         }
 
                         if (optMount.isPresent()) {
-                            final MountPointIdentifier mountId = MountPointIdentifier.of(optMount.get().getQName());
+                            final var mountId = MountPointIdentifier.of(optMount.orElseThrow().getQName());
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
                                 nsUri, mountId);
 
@@ -588,7 +587,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                                     .findMountPoint(mountId);
                             if (optFactory.isPresent()) {
                                 final MountPointData mountData =
-                                    mountParent.getMountPointData(mountId, optFactory.get());
+                                    mountParent.getMountPointData(mountId, optFactory.orElseThrow());
                                 addMountPointChild(mountData, nsUri, xmlElementName,
                                     new DOMSource(readAnyXmlValue(in).getDocumentElement()));
                                 continue;
@@ -635,9 +634,9 @@ public final class XmlParserStream implements Closeable, Flushable {
             final String localName, final DOMSource source) {
         final DOMSourceMountPointChild child = new DOMSourceMountPointChild(source);
         if (YangLibraryConstants.MODULE_NAMESPACE.equals(namespace)) {
-            final Optional<ContainerName> optName = ContainerName.forLocalName(localName);
+            final var optName = ContainerName.forLocalName(localName);
             if (optName.isPresent()) {
-                mount.setContainer(optName.get(), child);
+                mount.setContainer(optName.orElseThrow(), child);
                 return;
             }
 

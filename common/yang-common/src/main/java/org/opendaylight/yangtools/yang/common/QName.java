@@ -292,7 +292,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
         final StringBuilder sb = new StringBuilder().append('(').append(getNamespace());
         final Optional<Revision> rev = getRevision();
         if (rev.isPresent()) {
-            sb.append("?revision=").append(rev.get());
+            sb.append("?revision=").append(rev.orElseThrow());
         }
         return sb.append(')').append(getLocalName()).toString();
     }

@@ -23,7 +23,7 @@ public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified
     }
 
     default @NonNull PrefixStatement getPrefix() {
-        return findFirstDeclaredSubstatement(PrefixStatement.class).get();
+        return findFirstDeclaredSubstatement(PrefixStatement.class).orElseThrow();
     }
 
     default @Nullable RevisionDateStatement getRevisionDate() {

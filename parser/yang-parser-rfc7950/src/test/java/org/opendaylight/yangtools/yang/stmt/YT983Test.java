@@ -14,11 +14,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 class YT983Test extends AbstractYangTest {
-    private static final QName FOO = QName.create("foo", "2019-04-30", "foo");
-
     @Test
     void testAugmentationConfig() {
         final var context = assertEffectiveModel("/bugs/YT983/foo.yang");
-        assertInstanceOf(LeafSchemaNode.class, context.getDataChildByName(FOO));
+        assertInstanceOf(LeafSchemaNode.class, context.getDataChildByName(QName.create("foo", "2019-04-30", "foo")));
     }
 }

@@ -55,7 +55,7 @@ class Bug6868Test extends AbstractYangTest {
 
         for (var expectedContainer : expectedContainers) {
             assertThat(String.format("Expected container %s not found.", expectedContainer),
-                schemaContext.findDataTreeChild(QName.create(FOO_NS, expectedContainer)).get(),
+                schemaContext.findDataTreeChild(QName.create(FOO_NS, expectedContainer)).orElseThrow(),
                 instanceOf(ContainerSchemaNode.class));
         }
 
@@ -67,7 +67,7 @@ class Bug6868Test extends AbstractYangTest {
     }
 
     private static Set<QName> createFeaturesSet(final Set<String> featureNames) {
-        final Set<QName> supportedFeatures = new HashSet<>();
+        final var supportedFeatures = new HashSet<QName>();
         for (var featureName : featureNames) {
             if (featureName.indexOf(':') == -1) {
                 supportedFeatures.add(QName.create(FOO_NS, featureName));

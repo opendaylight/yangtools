@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Iterables;
@@ -19,9 +19,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
@@ -54,10 +52,8 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
     }
 
     private static void checkOriginalContainer(final GroupingEffectiveStatement grp, final QName... qnames) {
-        SchemaNode containerInContainerNode = (SchemaNode) grp.findSchemaTreeNode(qnames).orElse(null);
-        assertNotNull(containerInContainerNode);
-
-        ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
+        var containerSchemaNode = assertInstanceOf(ContainerSchemaNode.class,
+            grp.findSchemaTreeNode(qnames).orElseThrow());
         assertFalse(containerSchemaNode.getReference().isPresent());
         assertFalse(containerSchemaNode.getDescription().isPresent());
         assertEquals(Optional.empty(), containerSchemaNode.effectiveConfig());
@@ -67,33 +63,25 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
     }
 
     private static void checkOriginalChoice(final GroupingEffectiveStatement grp, final QName... qnames) {
-        SchemaNode choiceInContainerNode = (SchemaNode) grp.findSchemaTreeNode(qnames).orElse(null);
-        assertNotNull(choiceInContainerNode);
-
-        ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
+        var choiceSchemaNode = assertInstanceOf(ChoiceSchemaNode.class, grp.findSchemaTreeNode(qnames).orElseThrow());
         assertFalse(choiceSchemaNode.isMandatory());
     }
 
     private static void checkOriginalList(final GroupingEffectiveStatement grp, final QName... qnames) {
-        SchemaNode listInContainerNode = (SchemaNode) grp.findSchemaTreeNode(qnames).orElse(null);
-        assertNotNull(listInContainerNode);
-
-        ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
+        final var listSchemaNode = assertInstanceOf(ListSchemaNode.class, grp.findSchemaTreeNode(qnames).orElseThrow());
         assertEquals(Optional.of("original reference"), listSchemaNode.getReference());
         assertEquals(Optional.of("original description"), listSchemaNode.getDescription());
         assertEquals(Optional.of(Boolean.FALSE), listSchemaNode.effectiveConfig());
 
-        ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
+        var listConstraints = listSchemaNode.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 10, listConstraints.getMinElements());
         assertEquals((Object) 20, listConstraints.getMaxElements());
         assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
     private static void checkRefinedContainer(final ModuleEffectiveStatement module, final QName... qnames) {
-        final SchemaNode containerInContainerNode = (SchemaNode) module.findSchemaTreeNode(qnames).orElse(null);
-        assertNotNull(containerInContainerNode);
-
-        ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
+        final var containerSchemaNode = assertInstanceOf(ContainerSchemaNode.class,
+            module.findSchemaTreeNode(qnames).orElseThrow());
         assertEquals(Optional.of("new reference"), containerSchemaNode.getReference());
         assertEquals(Optional.of("new description"), containerSchemaNode.getDescription());
         assertEquals(Optional.of(Boolean.TRUE), containerSchemaNode.effectiveConfig());
@@ -102,23 +90,19 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
     }
 
     private static void checkRefinedChoice(final ModuleEffectiveStatement module, final QName... qnames) {
-        final SchemaNode choiceInContainerNode = (SchemaNode) module.findSchemaTreeNode(qnames).orElse(null);
-        assertNotNull(choiceInContainerNode);
-
-        ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
+        final var choiceSchemaNode = assertInstanceOf(ChoiceSchemaNode.class,
+            module.findSchemaTreeNode(qnames).orElseThrow());
         assertTrue(choiceSchemaNode.isMandatory());
     }
 
     private static void checkRefinedList(final ModuleEffectiveStatement module, final QName... qnames) {
-        final SchemaNode listInContainerNode = (SchemaNode) module.findSchemaTreeNode(qnames).orElse(null);
-        assertNotNull(listInContainerNode);
-
-        final ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
+        final var listSchemaNode = assertInstanceOf(ListSchemaNode.class,
+            module.findSchemaTreeNode(qnames).orElseThrow());
         assertEquals(Optional.of("new reference"), listSchemaNode.getReference());
         assertEquals(Optional.of("new description"), listSchemaNode.getDescription());
         assertEquals(Optional.of(Boolean.TRUE), listSchemaNode.effectiveConfig());
 
-        final ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
+        final var listConstraints = listSchemaNode.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 5, listConstraints.getMinElements());
         assertEquals((Object) 7, listConstraints.getMaxElements());
         assertEquals(2, listSchemaNode.getMustConstraints().size());
