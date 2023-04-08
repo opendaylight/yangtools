@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
@@ -36,7 +36,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         private static final class Instantiated<D extends DeclaredStatement<QName>> extends SchemaTreeEquality<D> {
             @Override
             public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
-                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                    final List<? extends EffectiveStatement<?, ?>> substatements) {
                 return copy.effectiveConfig() == current.effectiveConfig()
                     && super.canReuseCurrent(copy, current, substatements);
             }
@@ -44,7 +44,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
 
         @Override
         public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
-                final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                final List<? extends EffectiveStatement<?, ?>> substatements) {
             return equalHistory(copy.history(), current.history())
                 && copy.getArgument().equals(current.getArgument());
         }
