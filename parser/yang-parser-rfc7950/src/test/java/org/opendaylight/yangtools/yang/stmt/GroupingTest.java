@@ -108,7 +108,7 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertEquals(Optional.of(Boolean.FALSE), refineList.effectiveConfig());
 
-        final ElementCountConstraint constraint = refineList.getElementCountConstraint().get();
+        final ElementCountConstraint constraint = refineList.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 2, constraint.getMinElements());
         assertNull(constraint.getMaxElements());
 

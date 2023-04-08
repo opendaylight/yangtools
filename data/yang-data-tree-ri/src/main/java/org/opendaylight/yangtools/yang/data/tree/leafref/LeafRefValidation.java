@@ -61,15 +61,16 @@ public final class LeafRefValidation {
 
     public static void validate(final DataTreeCandidate tree, final LeafRefContext rootLeafRefCtx)
             throws LeafRefDataValidationFailedException {
-        final Optional<NormalizedNode> root = tree.getRootNode().getDataAfter();
+        final var root = tree.getRootNode().getDataAfter();
         if (root.isPresent()) {
-            new LeafRefValidation(root.get()).validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
+            new LeafRefValidation(root.orElseThrow())
+                .validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
         }
     }
 
     private void validateChildren(final LeafRefContext rootLeafRefCtx, final Collection<DataTreeCandidateNode> children)
             throws LeafRefDataValidationFailedException {
-        for (final DataTreeCandidateNode dataTreeCandidateNode : children) {
+        for (var dataTreeCandidateNode : children) {
             if (dataTreeCandidateNode.getModificationType() != ModificationType.UNMODIFIED) {
                 final PathArgument identifier = dataTreeCandidateNode.getIdentifier();
                 final QName childQName = identifier.getNodeType();
@@ -86,7 +87,7 @@ public final class LeafRefValidation {
         if (!errorsMessages.isEmpty()) {
             final StringBuilder message = new StringBuilder();
             int errCount = 0;
-            for (final String errorMessage : errorsMessages) {
+            for (var errorMessage : errorsMessages) {
                 message.append(errorMessage);
                 errCount++;
             }
@@ -98,17 +99,18 @@ public final class LeafRefValidation {
         final LeafRefContext referencingCtx, final YangInstanceIdentifier current) {
 
         if (node.getModificationType() == ModificationType.WRITE && node.getDataAfter().isPresent()) {
-            validateNodeData(node.getDataAfter().get(), referencedByCtx, referencingCtx, node.getModificationType(),
-                current);
+            validateNodeData(node.getDataAfter().orElseThrow(), referencedByCtx, referencingCtx,
+                node.getModificationType(), current);
             return;
         }
 
         if (node.getModificationType() == ModificationType.DELETE && referencedByCtx != null) {
-            validateNodeData(node.getDataBefore().get(), referencedByCtx, null, node.getModificationType(), current);
+            validateNodeData(node.getDataBefore().orElseThrow(), referencedByCtx, null, node.getModificationType(),
+                current);
             return;
         }
 
-        for (final DataTreeCandidateNode childNode : node.getChildNodes()) {
+        for (var childNode : node.getChildNodes()) {
             if (childNode.getModificationType() != ModificationType.UNMODIFIED) {
                 final LeafRefContext childReferencedByCtx = getReferencedByCtxChild(referencedByCtx, childNode);
                 final LeafRefContext childReferencingCtx = getReferencingCtxChild(referencingCtx, childNode);
@@ -130,7 +132,7 @@ public final class LeafRefValidation {
         final QName childQName = childNode.getIdentifier().getNodeType();
         LeafRefContext childReferencingCtx = referencingCtx.getReferencingChildByName(childQName);
         if (childReferencingCtx == null) {
-            final NormalizedNode data = childNode.getDataAfter().get();
+            final NormalizedNode data = childNode.getDataAfter().orElseThrow();
             if (data instanceof MapEntryNode || data instanceof UnkeyedListEntryNode) {
                 childReferencingCtx = referencingCtx;
             }
@@ -148,7 +150,7 @@ public final class LeafRefValidation {
         final QName childQName = childNode.getIdentifier().getNodeType();
         LeafRefContext childReferencedByCtx = referencedByCtx.getReferencedChildByName(childQName);
         if (childReferencedByCtx == null) {
-            final NormalizedNode data = childNode.getDataAfter().get();
+            final NormalizedNode data = childNode.getDataAfter().orElseThrow();
             if (data instanceof MapEntryNode || data instanceof UnkeyedListEntryNode) {
                 childReferencedByCtx = referencedByCtx;
             }
@@ -449,7 +451,7 @@ public final class LeafRefValidation {
         while (pathIterator.hasNext()) {
             final PathArgument childPathArgument = pathIterator.next();
             if (pathIterator.hasNext() && currentNode.isPresent()) {
-                currentNode = NormalizedNodes.getDirectChild(currentNode.get(), childPathArgument);
+                currentNode = NormalizedNodes.getDirectChild(currentNode.orElseThrow(), childPathArgument);
             } else {
                 return currentNode;
             }

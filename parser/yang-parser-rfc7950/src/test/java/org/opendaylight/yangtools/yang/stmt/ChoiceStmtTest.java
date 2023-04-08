@@ -8,21 +8,21 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 class ChoiceStmtTest extends AbstractModelTest {
     @Test
     void choiceAndCaseTest() {
-        final ContainerSchemaNode container = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("transfer"));
-        final ChoiceSchemaNode choice = (ChoiceSchemaNode) container.getDataChildByName(fooQName("how"));
+        final var container = assertInstanceOf(ContainerSchemaNode.class, FOO.getDataChildByName(fooQName("transfer")));
+        final var choice = assertInstanceOf(ChoiceSchemaNode.class, container.getDataChildByName(fooQName("how")));
         assertEquals(5, choice.getCases().size());
 
-        CaseSchemaNode caseNode = choice.findCaseNodes("input").iterator().next();
+        var caseNode = choice.findCaseNodes("input").iterator().next();
         assertNotNull(caseNode);
         caseNode = choice.findCaseNodes("output").iterator().next();
         assertNotNull(caseNode);
@@ -32,6 +32,6 @@ class ChoiceStmtTest extends AbstractModelTest {
         assertNotNull(caseNode);
         caseNode = choice.findCaseNodes("manual").iterator().next();
         assertNotNull(caseNode);
-        assertEquals("interval", choice.getDefaultCase().get().getQName().getLocalName());
+        assertEquals("interval", choice.getDefaultCase().orElseThrow().getQName().getLocalName());
     }
 }

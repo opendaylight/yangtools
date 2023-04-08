@@ -159,7 +159,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final Optional<DataSchemaContextNode<?>> rootContextNode = contextTree.findChild(rootPath);
         checkArgument(rootContextNode.isPresent(), "Failed to find root %s in schema context", rootPath);
 
-        final DataSchemaNode rootSchemaNode = rootContextNode.get().getDataSchemaNode();
+        final DataSchemaNode rootSchemaNode = rootContextNode.orElseThrow().getDataSchemaNode();
         checkArgument(rootSchemaNode instanceof DataNodeContainer, "Root %s resolves to non-container type %s",
             rootPath, rootSchemaNode);
         return rootSchemaNode;

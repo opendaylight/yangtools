@@ -13,10 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,17 +20,12 @@ import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSc
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfConstants;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public class NetconfTest {
@@ -56,18 +47,18 @@ public class NetconfTest {
     }
 
     @Test
-    public void testResolution() throws ReactorException, IOException, YangSyntaxErrorException {
-        final SchemaContext context = reactor.newBuild()
+    public void testResolution() throws Exception {
+        final var context = reactor.newBuild()
                 .addLibSources(YangStatementStreamSource.create(
                     YangTextSchemaSource.forResource("/ietf-inet-types@2013-07-15.yang")))
                 .addSource(YangStatementStreamSource.create(
                     YangTextSchemaSource.forResource("/ietf-netconf@2011-06-01.yang")))
                 .buildEffective();
 
-        final Module module = context.findModule(NetconfConstants.RFC6241_MODULE).get();
-        final Collection<? extends RpcDefinition> rpcs = module.getRpcs();
+        final var module = context.findModule(NetconfConstants.RFC6241_MODULE).orElseThrow();
+        final var rpcs = module.getRpcs();
         assertEquals(13, rpcs.size());
-        final Iterator<? extends RpcDefinition> it = module.getRpcs().iterator();
+        final var it = module.getRpcs().iterator();
         // get-config
         assertExtension(true, it.next());
         assertExtension(false, it.next());
@@ -81,7 +72,7 @@ public class NetconfTest {
     }
 
     private static void assertExtension(final boolean expected, final RpcDefinition def) {
-        final Optional<DataSchemaNode> optFilter = def.getInput().findDataTreeChild(FILTER);
+        final var optFilter = def.getInput().findDataTreeChild(FILTER);
         assertEquals(expected, optFilter.isPresent());
         optFilter.ifPresent(filter -> {
             assertThat(filter, is(instanceOf(AnyxmlSchemaNode.class)));

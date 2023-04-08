@@ -93,7 +93,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     AbstractNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support,
             final DataTreeConfiguration treeConfig) {
         this.support = requireNonNull(support);
-        this.verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
+        verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
     }
 
     @Override
@@ -218,7 +218,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
             final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
-                final TreeNode tn = result.get();
+                final TreeNode tn = result.orElseThrow();
                 meta.putChild(tn);
                 data.addChild(tn.getData());
             } else {
@@ -292,7 +292,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                     final Optional<? extends TreeNode> current = apply(modification, modification.getOriginal(),
                         Version.initial());
                     if (current.isPresent()) {
-                        modification.updateValue(LogicalOperation.WRITE, current.get().getData());
+                        modification.updateValue(LogicalOperation.WRITE, current.orElseThrow().getData());
                         mergeChildrenIntoModification(modification, children, version);
                         return;
                     }
@@ -368,7 +368,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                     "Node was deleted by other transaction.");
             }
         } else {
-            currentNode = current.get();
+            currentNode = current.orElseThrow();
         }
 
         checkChildPreconditions(path, modification, currentNode, version);
@@ -393,7 +393,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     protected final void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         if (current.isPresent()) {
-            checkChildPreconditions(path, modification, current.get(), version);
+            checkChildPreconditions(path, modification, current.orElseThrow(), version);
         }
     }
 

@@ -74,7 +74,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         final Set<UsesNode> mutableUses = new LinkedHashSet<>();
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+        for (var effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UsesNode usesNode && !mutableUses.add(usesNode)) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
             }

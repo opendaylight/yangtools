@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
@@ -42,8 +41,8 @@ public class Bug6183Test extends AbstractYangTest {
         assertInstanceOf(ContainerSchemaNode.class, context.getDataChildByName(foo("before")));
         assertInstanceOf(ContainerSchemaNode.class, context.getDataChildByName(foo("after")));
 
-        final DataSchemaNode dataChildByName = context.getDataChildByName(foo("my-choice"));
-        final ChoiceSchemaNode myChoice = assertInstanceOf(ChoiceSchemaNode.class, dataChildByName);
+        final var dataChildByName = context.getDataChildByName(foo("my-choice"));
+        final var myChoice = assertInstanceOf(ChoiceSchemaNode.class, dataChildByName);
 
         assertEquals(4, myChoice.getCases().size());
 
@@ -59,12 +58,12 @@ public class Bug6183Test extends AbstractYangTest {
 
         assertEquals(2, implCase.getChildNodes().size());
         assertTrue(getLeafSchemaNode(implCase, "leaf-after-container").isAugmenting());
-        final ContainerSchemaNode implCaseContainer = getContainerSchemaNode(implCase, "implicit-case-container");
+        final var implCaseContainer = getContainerSchemaNode(implCase, "implicit-case-container");
 
         assertEquals(3, implCaseContainer.getChildNodes().size());
         assertTrue(getLeafSchemaNode(implCaseContainer, "leaf-inside-container").isAugmenting());
         assertFalse(getLeafSchemaNode(implCaseContainer, "declared-leaf-in-case-container").isAugmenting());
-        final ContainerSchemaNode declContInCaseCont = getContainerSchemaNode(implCaseContainer,
+        final var declContInCaseCont = getContainerSchemaNode(implCaseContainer,
                 "declared-container-in-case-container");
 
         assertEquals(1, declContInCaseCont.getChildNodes().size());
@@ -72,8 +71,7 @@ public class Bug6183Test extends AbstractYangTest {
 
         assertEquals(2, secondImplCase.getChildNodes().size());
         assertTrue(getLeafSchemaNode(secondImplCase, "leaf-after-second-container").isAugmenting());
-        final ContainerSchemaNode secondImplCaseContainer = getContainerSchemaNode(secondImplCase,
-                "second-implicit-case-container");
+        final var secondImplCaseContainer = getContainerSchemaNode(secondImplCase, "second-implicit-case-container");
 
         assertEquals(2, secondImplCaseContainer.getChildNodes().size());
         assertTrue(getLeafSchemaNode(secondImplCaseContainer, "leaf-inside-second-container").isAugmenting());
@@ -83,13 +81,11 @@ public class Bug6183Test extends AbstractYangTest {
 
     private static ContainerSchemaNode getContainerSchemaNode(final DataNodeContainer parent,
             final String containerName) {
-        final DataSchemaNode dataChildByName = parent.getDataChildByName(foo(containerName));
-        return assertInstanceOf(ContainerSchemaNode.class, dataChildByName);
+        return assertInstanceOf(ContainerSchemaNode.class, parent.getDataChildByName(foo(containerName)));
     }
 
     private static LeafSchemaNode getLeafSchemaNode(final DataNodeContainer parent, final String leafName) {
-        final DataSchemaNode dataChildByName = parent.getDataChildByName(foo(leafName));
-        return assertInstanceOf(LeafSchemaNode.class, dataChildByName);
+        return assertInstanceOf(LeafSchemaNode.class, parent.getDataChildByName(foo(leafName)));
     }
 
     private static QName foo(final String localName) {

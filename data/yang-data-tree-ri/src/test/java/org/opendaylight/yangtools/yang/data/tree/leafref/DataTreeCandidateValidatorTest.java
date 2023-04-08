@@ -424,7 +424,7 @@ public class DataTreeCandidateValidatorTest {
     private static ContainerNode createContributorContainer(final ContainerSchemaNode contributorCont) {
         return Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(odlContributor))
-            .addChild(createContributorList((ListSchemaNode) contributorCont.findDataChildByName(contributor).get()))
+            .addChild(createContributorList((ListSchemaNode) contributorCont.getDataChildByName(contributor)))
             .build();
 
     }
