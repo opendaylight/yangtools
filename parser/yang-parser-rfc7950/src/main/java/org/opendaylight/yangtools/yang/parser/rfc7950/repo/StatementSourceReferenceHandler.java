@@ -42,8 +42,8 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
 
     static StatementSourceReference extractRef(final Element element) {
         final Object value = element.getUserData(USER_DATA_KEY);
-        if (value instanceof StatementSourceReference) {
-            return (StatementSourceReference) value;
+        if (value instanceof StatementSourceReference sourceRef) {
+            return sourceRef;
         }
         if (value != null) {
             LOG.debug("Ignoring {} attached to key {}", value, USER_DATA_KEY);
