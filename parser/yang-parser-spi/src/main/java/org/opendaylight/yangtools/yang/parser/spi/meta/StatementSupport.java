@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         implements StatementFactory<A, D, E> {
     /**
-     * A baseline class for implementing the {@link StatementFactory#canReuseCurrent(Current, Current, Collection)}
+     * A baseline class for implementing the {@link StatementFactory#canReuseCurrent(Current, Current, List)}
      * contract in a manner which is consistent with a statement's {@link CopyPolicy}.
      *
      * @param <A> Argument type
@@ -129,7 +129,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         }
 
         abstract boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
-            @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
+            @NonNull List<? extends EffectiveStatement<?, ?>> substatements);
 
         private static final class AlwaysFail<A, D extends DeclaredStatement<A>> extends StatementPolicy<A, D> {
             static final @NonNull AlwaysFail<?, ?> IGNORE = new AlwaysFail<>(CopyPolicy.IGNORE);
@@ -141,7 +141,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
             @Override
             boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
-                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                    final List<? extends EffectiveStatement<?, ?>> substatements) {
                 throw new VerifyException("This implementation should never be invoked");
             }
         }
@@ -167,7 +167,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
             @Override
             boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
-                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                    final List<? extends EffectiveStatement<?, ?>> substatements) {
                 return equality.canReuseCurrent(copy, current, substatements);
             }
         }
@@ -184,7 +184,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     public interface StatementEquality<A, D extends DeclaredStatement<A>> {
         /**
          * Determine whether {@code current} statement has the same semantics as the provided copy. See the contract
-         * specification of {@link StatementFactory#canReuseCurrent(Current, Current, Collection)}.
+         * specification of {@link StatementFactory#canReuseCurrent(Current, Current, List)}.
          *
          * @param copy Copy of current effective context
          * @param current Current effective context
@@ -192,7 +192,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * @return True if {@code current} can be reused in place of {@code copy}, false if the copy needs to be used.
          */
         boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
-            @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
+            @NonNull List<? extends EffectiveStatement<?, ?>> substatements);
     }
 
     /**
@@ -213,16 +213,16 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     @Beta
     protected StatementSupport(final StatementSupport<A, D, E> delegate) {
         checkArgument(delegate != this);
-        this.publicDefinition = delegate.publicDefinition;
-        this.policy = delegate.policy;
-        this.copyPolicy = delegate.copyPolicy;
+        publicDefinition = delegate.publicDefinition;
+        policy = delegate.policy;
+        copyPolicy = delegate.copyPolicy;
     }
 
     @Beta
     protected StatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
         this.publicDefinition = requireNonNull(publicDefinition);
         this.policy = requireNonNull(policy);
-        this.copyPolicy = policy.copyPolicy;
+        copyPolicy = policy.copyPolicy;
     }
 
     /**
@@ -283,7 +283,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
     @Override
     public final boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+            final List<? extends EffectiveStatement<?, ?>> substatements) {
         return policy.canReuseCurrent(copy, current, substatements);
     }
 

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -69,7 +69,7 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * @throws NullPointerException if any argument is null
      */
     boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
-        @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
+        @NonNull List<? extends EffectiveStatement<?, ?>> substatements);
 
     /**
      * Return the {@link EffectiveStatementState} for a particular statement. This acts as a summary for comparison with
