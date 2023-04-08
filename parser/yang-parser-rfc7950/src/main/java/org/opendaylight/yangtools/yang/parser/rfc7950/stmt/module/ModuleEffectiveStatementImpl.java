@@ -119,7 +119,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     }
 
     @Override
-    public Optional<ExtensionEffectiveStatement> findExtension(QName qname) {
+    public Optional<ExtensionEffectiveStatement> findExtension(final QName qname) {
         return findValue(qnameToExtension, qname);
     }
 
@@ -154,7 +154,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     }
 
     @Override
-    public Optional<String> findNamespacePrefix(QNameModule namespace) {
+    public Optional<String> findNamespacePrefix(final QNameModule namespace) {
         return findValue(namespaceToPrefix, namespace);
     }
 
@@ -169,7 +169,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     }
 
     @Override
-    public Optional<SubmoduleEffectiveStatement> findSubmodule(Unqualified submoduleName) {
+    public Optional<SubmoduleEffectiveStatement> findSubmodule(final Unqualified submoduleName) {
         return findValue(nameToSubmodule, submoduleName);
     }
 }

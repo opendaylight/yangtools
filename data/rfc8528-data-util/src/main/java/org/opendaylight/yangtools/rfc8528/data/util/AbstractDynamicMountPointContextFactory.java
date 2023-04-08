@@ -54,7 +54,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractSi
 
             final NormalizedNode libData;
             try {
-                libData = entry.getValue().normalizeTo(optLibContext.get());
+                libData = entry.getValue().normalizeTo(optLibContext.orElseThrow());
             } catch (IOException e) {
                 throw new YangParserException("Failed to interpret yang-library data", e);
             }

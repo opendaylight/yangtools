@@ -9,24 +9,21 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 class YinFileLeafListStmtTest extends AbstractYinModulesTest {
     @Test
     void testLeafList() {
-        final Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
-
-        final LeafListSchemaNode leafList = (LeafListSchemaNode) testModule.findDataChildByName(
+        final var testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
+        final var leafList = assertInstanceOf(LeafListSchemaNode.class, testModule.findDataChildByName(
             QName.create(testModule.getQNameModule(), "netconf-state"),
             QName.create(testModule.getQNameModule(), "capabilities"),
-            QName.create(testModule.getQNameModule(), "capability")).get();
-        assertNotNull(leafList);
+            QName.create(testModule.getQNameModule(), "capability")).orElseThrow());
         assertEquals("uri", leafList.getType().getQName().getLocalName());
         assertEquals(Optional.of("List of NETCONF capabilities supported by the server."), leafList.getDescription());
         assertFalse(leafList.isUserOrdered());

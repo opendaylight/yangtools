@@ -7,17 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Range;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,18 +27,13 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
@@ -58,16 +52,18 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testIPVersion() {
-        Module tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        var tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
         assertEquals(14, typedefs.size());
 
-        TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
-        assertTrue(type.getDescription().get().contains("This value represents the version of the IP protocol."));
-        assertTrue(type.getReference().get().contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
+        var type = TestUtils.findTypedef(typedefs, "ip-version");
+        assertThat(type.getDescription().orElseThrow(),
+            containsString("This value represents the version of the IP protocol."));
+        assertThat(type.getReference().orElseThrow(),
+            containsString("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
 
-        EnumTypeDefinition enumType = (EnumTypeDefinition) type.getBaseType();
-        List<EnumPair> values = enumType.getValues();
+        var enumType = assertInstanceOf(EnumTypeDefinition.class, type.getBaseType());
+        var values = enumType.getValues();
         assertEquals(3, values.size());
 
         EnumPair value0 = values.get(0);
@@ -89,31 +85,31 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testEnumeration() {
-        Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        var tested = CONTEXT.findModules("custom-types-test").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
 
-        TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
-        EnumTypeDefinition enumType = (EnumTypeDefinition) type.getBaseType();
-        List<EnumPair> values = enumType.getValues();
+        var type = TestUtils.findTypedef(typedefs, "ip-version");
+        var enumType = assertInstanceOf(EnumTypeDefinition.class, type.getBaseType());
+        var values = enumType.getValues();
         assertEquals(4, values.size());
 
-        EnumPair value0 = values.get(0);
+        var value0 = values.get(0);
         assertEquals("unknown", value0.getName());
         assertEquals(0, value0.getValue());
         assertEquals(Optional.of("An unknown or unspecified version of the Internet protocol."),
             value0.getDescription());
 
-        EnumPair value1 = values.get(1);
+        var value1 = values.get(1);
         assertEquals("ipv4", value1.getName());
         assertEquals(19, value1.getValue());
         assertEquals(Optional.of("The IPv4 protocol as defined in RFC 791."), value1.getDescription());
 
-        EnumPair value2 = values.get(2);
+        var value2 = values.get(2);
         assertEquals("ipv6", value2.getName());
         assertEquals(7, value2.getValue());
         assertEquals(Optional.of("The IPv6 protocol as defined in RFC 2460."), value2.getDescription());
 
-        EnumPair value3 = values.get(3);
+        var value3 = values.get(3);
         assertEquals("default", value3.getName());
         assertEquals(20, value3.getValue());
         assertEquals(Optional.of("default ip"), value3.getDescription());
@@ -121,56 +117,60 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testIpAddress() {
-        Module tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-address");
-        UnionTypeDefinition baseType = (UnionTypeDefinition) type.getBaseType();
-        List<TypeDefinition<?>> unionTypes = baseType.getTypes();
+        var tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
+        var type = TestUtils.findTypedef(typedefs, "ip-address");
+        var baseType = assertInstanceOf(UnionTypeDefinition.class, type.getBaseType());
+        var unionTypes = baseType.getTypes();
 
-        StringTypeDefinition ipv4 = (StringTypeDefinition) unionTypes.get(0);
+        var ipv4 = assertInstanceOf(StringTypeDefinition.class, unionTypes.get(0));
         assertNotNull(ipv4.getBaseType());
-        String expectedPattern = "^(?:(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
-            + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?)$";
-        assertEquals(expectedPattern, ipv4.getPatternConstraints().get(0).getJavaPatternString());
+        assertEquals("""
+            ^(?:(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}\
+            ([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\
+            (%[\\p{N}\\p{L}]+)?)$""", ipv4.getPatternConstraints().get(0).getJavaPatternString());
 
-        StringTypeDefinition ipv6 = (StringTypeDefinition) unionTypes.get(1);
+        var ipv6 = assertInstanceOf(StringTypeDefinition.class, unionTypes.get(1));
         assertNotNull(ipv6.getBaseType());
-        List<PatternConstraint> ipv6Patterns = ipv6.getPatternConstraints();
-        expectedPattern = "^(?:((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}"
-            + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
-            + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?)$";
-        assertEquals(expectedPattern, ipv6Patterns.get(0).getJavaPatternString());
-
-        expectedPattern = "^(?:(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|" + "((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)"
-            + "(%.+)?)$";
-        assertEquals(expectedPattern, ipv6Patterns.get(1).getJavaPatternString());
+        var ipv6Patterns = ipv6.getPatternConstraints();
+        assertEquals("""
+            ^(?:((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}\
+            ((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|\
+            (((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}\
+            (25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))\
+            (%[\\p{N}\\p{L}]+)?)$""", ipv6Patterns.get(0).getJavaPatternString());
+        assertEquals("""
+            ^(?:(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|\
+            ((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)\
+            (%.+)?)$""", ipv6Patterns.get(1).getJavaPatternString());
     }
 
     @Test
     void testDomainName() {
-        Module tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        StringTypeDefinition type = (StringTypeDefinition) TestUtils.findTypedef(typedefs, "domain-name");
+        var tested = CONTEXT.findModules("ietf-inet-types").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
+        var type = assertInstanceOf(StringTypeDefinition.class, TestUtils.findTypedef(typedefs, "domain-name"));
         assertNotNull(type.getBaseType());
-        List<PatternConstraint> patterns = type.getPatternConstraints();
+        var patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
-        String expectedPattern = "^(?:((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*"
-            + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.)$";
-        assertEquals(expectedPattern, patterns.get(0).getJavaPatternString());
+        assertEquals("""
+            ^(?:((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*\
+            ([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)\
+            |\\.)$""", patterns.get(0).getJavaPatternString());
 
-        LengthConstraint lengths = type.getLengthConstraint().get();
+        var lengths = type.getLengthConstraint().orElseThrow();
         assertEquals(1, lengths.getAllowedRanges().asRanges().size());
-        Range<Integer> length = lengths.getAllowedRanges().span();
+        var length = lengths.getAllowedRanges().span();
         assertEquals(Integer.valueOf(1), length.lowerEndpoint());
         assertEquals(Integer.valueOf(253), length.upperEndpoint());
     }
 
     @Test
     void testInstanceIdentifier1() {
-        Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
-        LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
-            QName.create(tested.getQNameModule(), "inst-id-leaf1"));
-        InstanceIdentifierTypeDefinition leafType = (InstanceIdentifierTypeDefinition) leaf.getType();
+        var tested = CONTEXT.findModules("custom-types-test").iterator().next();
+        var leaf = assertInstanceOf(LeafSchemaNode.class,
+            tested.getDataChildByName(QName.create(tested.getQNameModule(), "inst-id-leaf1")));
+        var leafType = assertInstanceOf(InstanceIdentifierTypeDefinition.class, leaf.getType());
         assertFalse(leafType.requireInstance());
         assertEquals(1,
             leaf.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
@@ -178,22 +178,22 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testInstanceIdentifier2() {
-        Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
-        LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
-            QName.create(tested.getQNameModule(), "inst-id-leaf2"));
-        InstanceIdentifierTypeDefinition leafType = (InstanceIdentifierTypeDefinition) leaf.getType();
+        var tested = CONTEXT.findModules("custom-types-test").iterator().next();
+        var leaf = assertInstanceOf(LeafSchemaNode.class,
+            tested.getDataChildByName(QName.create(tested.getQNameModule(), "inst-id-leaf2")));
+        var leafType = assertInstanceOf(InstanceIdentifierTypeDefinition.class, leaf.getType());
         assertFalse(leafType.requireInstance());
     }
 
     @Test
     void testIdentity() {
-        Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
-        Collection<? extends IdentitySchemaNode> identities = tested.getIdentities();
+        var tested = CONTEXT.findModules("custom-types-test").iterator().next();
+        var identities = tested.getIdentities();
         assertEquals(5, identities.size());
         IdentitySchemaNode cryptoAlg = null;
         IdentitySchemaNode cryptoBase = null;
         IdentitySchemaNode cryptoId = null;
-        for (IdentitySchemaNode id : identities) {
+        for (var id : identities) {
             if (id.getQName().getLocalName().equals("crypto-alg")) {
                 cryptoAlg = id;
             } else if ("crypto-base".equals(id.getQName().getLocalName())) {
@@ -203,7 +203,7 @@ class TypesResolutionTest extends AbstractYangTest {
             }
         }
         assertNotNull(cryptoAlg);
-        IdentitySchemaNode baseIdentity = Iterables.getOnlyElement(cryptoAlg.getBaseIdentities());
+        var baseIdentity = Iterables.getOnlyElement(cryptoAlg.getBaseIdentities());
         assertEquals("crypto-base", baseIdentity.getQName().getLocalName());
         assertEquals(0, CONTEXT.getDerivedIdentities(cryptoAlg).size());
         assertEquals(0, baseIdentity.getBaseIdentities().size());
@@ -219,21 +219,21 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testBitsType1() {
-        Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
-        LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
-            QName.create(tested.getQNameModule(), "mybits"));
-        BitsTypeDefinition leafType = (BitsTypeDefinition) leaf.getType();
-        Iterator<? extends Bit> bits = leafType.getBits().iterator();
+        var tested = CONTEXT.findModules("custom-types-test").iterator().next();
+        var leaf = assertInstanceOf(LeafSchemaNode.class,
+            tested.getDataChildByName(QName.create(tested.getQNameModule(), "mybits")));
+        var leafType = assertInstanceOf(BitsTypeDefinition.class, leaf.getType());
+        var bits = leafType.getBits().iterator();
 
-        Bit bit1 = bits.next();
+        var bit1 = bits.next();
         assertEquals("disable-nagle", bit1.getName());
         assertEquals(Uint32.ZERO, bit1.getPosition());
 
-        Bit bit2 = bits.next();
+        var bit2 = bits.next();
         assertEquals("auto-sense-speed", bit2.getName());
         assertEquals(Uint32.ONE, bit2.getPosition());
 
-        Bit bit3 = bits.next();
+        var bit3 = bits.next();
         assertEquals("only-10-Mb", bit3.getName());
         assertEquals(Uint32.TWO, bit3.getPosition());
 
@@ -242,30 +242,30 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testBitsType2() {
-        Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "access-operations-type");
+        var tested = CONTEXT.findModules("custom-types-test").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
+        var testedType = TestUtils.findTypedef(typedefs, "access-operations-type");
 
-        BitsTypeDefinition bitsType = (BitsTypeDefinition) testedType.getBaseType();
-        Iterator<? extends Bit> bits = bitsType.getBits().iterator();
+        var bitsType = assertInstanceOf(BitsTypeDefinition.class, testedType.getBaseType());
+        var bits = bitsType.getBits().iterator();
 
-        Bit bit0 = bits.next();
+        var bit0 = bits.next();
         assertEquals("create", bit0.getName());
         assertEquals(Uint32.ZERO, bit0.getPosition());
 
-        Bit bit1 = bits.next();
+        var bit1 = bits.next();
         assertEquals("delete", bit1.getName());
         assertEquals(Uint32.valueOf(365), bit1.getPosition());
 
-        Bit bit2 = bits.next();
+        var bit2 = bits.next();
         assertEquals("read", bit2.getName());
         assertEquals(Uint32.valueOf(500), bit2.getPosition());
 
-        Bit bit3 = bits.next();
+        var bit3 = bits.next();
         assertEquals("update", bit3.getName());
         assertEquals(Uint32.valueOf(501), bit3.getPosition());
 
-        Bit bit4 = bits.next();
+        var bit4 = bits.next();
         assertEquals("exec", bit4.getName());
         assertEquals(Uint32.valueOf(502), bit4.getPosition());
 
@@ -274,12 +274,12 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testIanaTimezones() {
-        Module tested = CONTEXT.findModules("iana-timezones").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
+        var tested = CONTEXT.findModules("iana-timezones").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
+        var testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
-        String expectedDesc = "A timezone location as defined by the IANA timezone";
-        assertTrue(testedType.getDescription().get().contains(expectedDesc));
+        assertThat(testedType.getDescription().orElseThrow(),
+            containsString("A timezone location as defined by the IANA timezone"));
         assertFalse(testedType.getReference().isPresent());
         assertEquals(Status.CURRENT, testedType.getStatus());
 
@@ -288,17 +288,17 @@ class TypesResolutionTest extends AbstractYangTest {
         assertEquals(Revision.ofNullable("2012-07-09"), testedTypeQName.getRevision());
         assertEquals("iana-timezone", testedTypeQName.getLocalName());
 
-        EnumTypeDefinition enumType = (EnumTypeDefinition) testedType.getBaseType();
-        List<EnumPair> values = enumType.getValues();
+        var enumType = assertInstanceOf(EnumTypeDefinition.class, testedType.getBaseType());
+        var values = enumType.getValues();
         // 0-414
         assertEquals(415, values.size());
 
-        EnumPair enum168 = values.get(168);
+        var enum168 = values.get(168);
         assertEquals("America/Danmarkshavn", enum168.getName());
         assertEquals(168, enum168.getValue());
         assertEquals(Optional.of("east coast, north of Scoresbysund"), enum168.getDescription());
 
-        EnumPair enum374 = values.get(374);
+        var enum374 = values.get(374);
         assertEquals("America/Indiana/Winamac", enum374.getName());
         assertEquals(374, enum374.getValue());
         assertEquals(Optional.of("Eastern Time - Indiana - Pulaski County"), enum374.getDescription());
@@ -306,14 +306,14 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testObjectId128() {
-        Module tested = CONTEXT.findModules("ietf-yang-types").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        StringTypeDefinition testedType = (StringTypeDefinition) TestUtils.findTypedef(typedefs,
-            "object-identifier-128");
+        var tested = CONTEXT.findModules("ietf-yang-types").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
+        var testedType = assertInstanceOf(StringTypeDefinition.class,
+            TestUtils.findTypedef(typedefs, "object-identifier-128"));
 
-        List<PatternConstraint> patterns = testedType.getPatternConstraints();
+        var patterns = testedType.getPatternConstraints();
         assertEquals(1, patterns.size());
-        PatternConstraint pattern = patterns.get(0);
+        var pattern = patterns.get(0);
         assertEquals("^(?:\\d*(\\.\\d*){1,127})$", pattern.getJavaPatternString());
 
         QName testedTypeQName = testedType.getQName();
@@ -321,7 +321,7 @@ class TypesResolutionTest extends AbstractYangTest {
         assertEquals(Revision.ofNullable("2010-09-24"), testedTypeQName.getRevision());
         assertEquals("object-identifier-128", testedTypeQName.getLocalName());
 
-        StringTypeDefinition testedTypeBase = testedType.getBaseType();
+        var testedTypeBase = testedType.getBaseType();
         patterns = testedTypeBase.getPatternConstraints();
         assertEquals(1, patterns.size());
 
@@ -338,10 +338,10 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testIdentityref() {
-        Module tested = CONTEXT.findModules("custom-types-test").iterator().next();
-        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
-        IdentityrefTypeDefinition baseType = (IdentityrefTypeDefinition) testedType.getBaseType();
+        var tested = CONTEXT.findModules("custom-types-test").iterator().next();
+        var typedefs = tested.getTypeDefinitions();
+        var testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
+        var baseType = assertInstanceOf(IdentityrefTypeDefinition.class, testedType.getBaseType());
         QName identity = baseType.getIdentities().iterator().next().getQName();
         assertEquals(XMLNamespace.of("urn:custom.types.demo"), identity.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), identity.getRevision());

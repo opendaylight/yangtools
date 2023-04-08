@@ -175,8 +175,8 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
              * it should not cause transaction to fail, since result of this merge
              * leads to same data.
              */
-            final TreeNode orig = original.get();
-            final TreeNode cur = current.get();
+            final TreeNode orig = original.orElseThrow();
+            final TreeNode cur = current.orElseThrow();
             if (!orig.getData().equals(cur.getData())) {
                 checkNotConflicting(path, orig, cur);
             }
@@ -197,7 +197,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<? extends TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
-            checkNotConflicting(path, original.get(), current.get());
+            checkNotConflicting(path, original.orElseThrow(), current.orElseThrow());
         } else {
             checkConflicting(path, !original.isPresent(), "Node was deleted by other transaction.");
             checkConflicting(path, !current.isPresent(), "Node was created by other transaction.");
@@ -238,7 +238,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
                     result = applyWrite(modification, modification.getWrittenValue(), currentMeta, version);
                     fullVerifyStructure(result.getData());
                 } else {
-                    result = applyMerge(modification, currentMeta.get(), version);
+                    result = applyMerge(modification, currentMeta.orElseThrow(), version);
                 }
 
                 yield modification.setSnapshot(Optional.of(result));

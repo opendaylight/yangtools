@@ -17,24 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 class Bug5884Test extends AbstractYangTest {
-    private static final String NS = "urn:yang.foo";
-    private static final String REV = "2016-01-01";
-
     @Test
     void testBug5884() {
         final var context = assertEffectiveModelDir("/bugs/bug5884");
-
-        final QName root = QName.create(NS, REV, "main-container");
-        final QName choice = QName.create(NS, REV, "test-choice");
-        final QName testContainerQname = QName.create(NS, REV, "test");
-        final Module foo = context.findModule("foo", Revision.of("2016-01-01")).get();
-        final ContainerSchemaNode rootContainer = (ContainerSchemaNode) context.getDataChildByName(root);
-        final ContainerSchemaNode testContainer = (ContainerSchemaNode) rootContainer.getDataChildByName(
-            testContainerQname);
-        final ChoiceSchemaNode dataChildByName = (ChoiceSchemaNode) testContainer.getDataChildByName(choice);
+        final var root = QName.create("urn:yang.foo", "2016-01-01", "main-container");
+        final var foo = context.findModule("foo", Revision.of("2016-01-01")).orElseThrow();
+        final var rootContainer = assertInstanceOf(ContainerSchemaNode.class, context.getDataChildByName(root));
+        final var testContainer = assertInstanceOf(ContainerSchemaNode.class,
+            rootContainer.getDataChildByName(QName.create(root, "test")));
+        final var dataChildByName = assertInstanceOf(ChoiceSchemaNode.class,
+            testContainer.getDataChildByName(QName.create(root, "test-choice")));
 
         testIterator(foo.getAugmentations().iterator());
         testIterator(dataChildByName.getAvailableAugmentations().iterator());

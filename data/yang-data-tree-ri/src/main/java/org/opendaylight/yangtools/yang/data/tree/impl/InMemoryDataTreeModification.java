@@ -57,8 +57,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,
             final RootApplyStrategy resolver) {
         this.snapshot = requireNonNull(snapshot);
-        this.strategyTree = requireNonNull(resolver).snapshot();
-        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy());
+        strategyTree = requireNonNull(resolver).snapshot();
+        rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy());
 
         /*
          * We could allocate version beforehand, since Version contract
@@ -69,7 +69,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * node in modification and in data tree (if successfully
          * committed) will be same and will not change.
          */
-        this.version = snapshot.getRootNode().getSubtreeVersion().next();
+        version = snapshot.getRootNode().getSubtreeVersion().next();
     }
 
     ModifiedNode getRootModification() {
@@ -124,7 +124,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         final Optional<? extends TreeNode> result = resolveSnapshot(key, mod);
         if (result.isPresent()) {
-            final NormalizedNode data = result.get().getData();
+            final NormalizedNode data = result.orElseThrow().getData();
             return NormalizedNodes.findNode(key, data, path);
         }
 
@@ -219,7 +219,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
 
         final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(),
-            tempRoot.get(), strategyTree);
+            tempRoot.orElseThrow(), strategyTree);
         return tempTree.newModification();
     }
 

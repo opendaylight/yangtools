@@ -83,7 +83,7 @@ public class Either<T, U> implements Immutable {
     }
 
     public final T getFirst() {
-        return tryFirst().get();
+        return tryFirst().orElseThrow();
     }
 
     public final Optional<T> tryFirst() {
@@ -95,7 +95,7 @@ public class Either<T, U> implements Immutable {
     }
 
     public final U getSecond() {
-        return trySecond().get();
+        return trySecond().orElseThrow();
     }
 
     public final Optional<U> trySecond() {

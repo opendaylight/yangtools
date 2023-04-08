@@ -309,7 +309,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
                 continue;
             }
 
-            final SourceException sourceEx = optSourceEx.get();
+            final SourceException sourceEx = optSourceEx.orElseThrow();
             // Workaround for broken logging implementations which ignore
             // suppressed exceptions
             final Throwable cause = sourceEx.getCause() != null ? sourceEx.getCause() : sourceEx;

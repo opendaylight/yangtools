@@ -9,29 +9,28 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 class YinFileChoiceStmtTest extends AbstractYinModulesTest {
     @Test
     void testChoiceAndCases() {
-        final Module testModule = context.findModules("config").iterator().next();
+        final var testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
-        final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(
+        final var list = assertInstanceOf(ListSchemaNode.class, testModule.findDataChildByName(
             QName.create(testModule.getQNameModule(), "modules"),
-            QName.create(testModule.getQNameModule(), "module")).get();
+            QName.create(testModule.getQNameModule(), "module")).orElseThrow());
 
-        ChoiceSchemaNode choice = (ChoiceSchemaNode) list.findDataChildByName(QName.create(testModule.getQNameModule(),
-            "configuration")).get();
+        var choice = assertInstanceOf(ChoiceSchemaNode.class,
+            list.getDataChildByName(QName.create(testModule.getQNameModule(), "configuration")));
 
         assertEquals("configuration", choice.getQName().getLocalName());
         assertTrue(choice.isMandatory());
@@ -40,13 +39,14 @@ class YinFileChoiceStmtTest extends AbstractYinModulesTest {
 
         // this choice is augmented (see main-impl.yang.xml)
         final var casesIterator = choice.getCases().iterator();
-        final CaseSchemaNode caseNode = casesIterator.next();
+        final var caseNode = casesIterator.next();
         assertEquals("main-impl", caseNode.getQName().getLocalName());
         assertEquals(13, caseNode.getChildNodes().size());
 
         assertTrue(caseNode.getWhenCondition().isPresent());
 
-        choice = (ChoiceSchemaNode) list.findDataChildByName(QName.create(testModule.getQNameModule(), "state")).get();
+        choice = assertInstanceOf(ChoiceSchemaNode.class,
+            list.getDataChildByName(QName.create(testModule.getQNameModule(), "state")));
 
         assertEquals("state", choice.getQName().getLocalName());
         assertFalse(choice.isMandatory());

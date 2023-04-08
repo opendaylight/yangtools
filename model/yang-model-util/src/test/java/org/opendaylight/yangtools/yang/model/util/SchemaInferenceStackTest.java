@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
@@ -39,21 +38,21 @@ public class SchemaInferenceStackTest {
     @BeforeClass
     public static void beforeClass() {
         context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-        myModule = context.findModule(XMLNamespace.of("uri:my-module"), Revision.of("2014-10-07")).get();
+        myModule = context.findModule(XMLNamespace.of("uri:my-module"), Revision.of("2014-10-07")).orElseThrow();
     }
 
     @Test
     public void findDataSchemaNodeTest() {
-        final Module importedModule = context.findModule(XMLNamespace.of("uri:imported-module"),
-            Revision.of("2014-10-07")).get();
+        final var importedModule = context.findModule(XMLNamespace.of("uri:imported-module"),
+            Revision.of("2014-10-07")).orElseThrow();
 
         final QName myImportedContainer = QName.create(importedModule.getQNameModule(), "my-imported-container");
         final QName myImportedLeaf = QName.create(importedModule.getQNameModule(), "my-imported-leaf");
 
-        final SchemaNode testNode = ((ContainerSchemaNode) importedModule.getDataChildByName(myImportedContainer))
+        final var testNode = ((ContainerSchemaNode) importedModule.getDataChildByName(myImportedContainer))
             .getDataChildByName(myImportedLeaf);
 
-        final PathExpression expr = mock(PathExpression.class);
+        final var expr = mock(PathExpression.class);
         doReturn(true).when(expr).isAbsolute();
         doReturn(new LocationPathSteps(YangLocationPath.absolute(
             YangXPathAxis.CHILD.asStep(myImportedContainer), YangXPathAxis.CHILD.asStep(myImportedLeaf))))
@@ -65,20 +64,20 @@ public class SchemaInferenceStackTest {
     @Test
     public void findDataSchemaNodeTest2() {
         final QName myLeafInGrouping2 = QName.create(myModule.getQNameModule(), "my-leaf-in-gouping2");
-        final PathExpression expr = mock(PathExpression.class);
+        final var expr = mock(PathExpression.class);
         doReturn(true).when(expr).isAbsolute();
         doReturn(new LocationPathSteps(YangLocationPath.relative(YangXPathAxis.CHILD.asStep(myLeafInGrouping2))))
             .when(expr).getSteps();
 
-        final GroupingDefinition grouping = getGroupingByName(myModule, "my-grouping");
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+        final var grouping = getGroupingByName(myModule, "my-grouping");
+        final var stack = SchemaInferenceStack.of(context);
         assertSame(grouping, stack.enterGrouping(grouping.getQName()));
         assertEquals(grouping.getDataChildByName(myLeafInGrouping2), stack.resolvePathExpression(expr));
     }
 
     @Test
     public void enterGroupingNegativeTest() {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+        final var stack = SchemaInferenceStack.of(context);
         assertNotExistentGrouping(stack, "module (uri:my-module?revision=2014-10-07)my-module");
         stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-container"));
         assertNotExistentGrouping(stack, "schema parent (uri:my-module?revision=2014-10-07)my-container");
@@ -86,14 +85,14 @@ public class SchemaInferenceStackTest {
 
     @Test
     public void enterNestedTypedefTest() {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-container"));
         assertNotNull(stack.enterTypedef(QName.create(myModule.getQNameModule(), "my-typedef-in-container")));
     }
 
     @Test
     public void enterTypedefNegativeTest() {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+        final var stack = SchemaInferenceStack.of(context);
         assertNotExistentTypedef(stack, "module (uri:my-module?revision=2014-10-07)my-module");
         stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-container"));
         assertNotExistentTypedef(stack, "schema parent (uri:my-module?revision=2014-10-07)my-container");
@@ -112,7 +111,7 @@ public class SchemaInferenceStackTest {
     }
 
     private static GroupingDefinition getGroupingByName(final DataNodeContainer dataNodeContainer, final String name) {
-        for (final GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
+        for (var grouping : dataNodeContainer.getGroupings()) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
             }

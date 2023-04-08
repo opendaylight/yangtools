@@ -230,7 +230,7 @@ public class Bug4454Test {
         DataTreeSnapshot test2 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test2.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.get()).size());
+        assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
         DataTreeModification tempMod2 = test2.newModification();
         tempMod2.write(MIN_MAX_LIST_PATH, mapNodeBaz);
@@ -244,8 +244,8 @@ public class Bug4454Test {
         DataTreeSnapshot test3 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test3.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(1, ((NormalizedNodeContainer<?>) minMaxListRead.get()).size());
-        assertThat(minMaxListRead.get().body().toString(), containsString("test2"));
+        assertEquals(1, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
+        assertThat(minMaxListRead.orElseThrow().body().toString(), containsString("test2"));
 
         DataTreeModification tempMod3 = test3.newModification();
         tempMod3.merge(MIN_MAX_LIST_PATH, mapNodeBar);
@@ -301,10 +301,10 @@ public class Bug4454Test {
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
-        final Optional<NormalizedNodeContainer<?>> leafList = ((DistinctNodeContainer) masterContainer.get())
+        final Optional<NormalizedNodeContainer<?>> leafList = ((DistinctNodeContainer) masterContainer.orElseThrow())
                 .findChildByArg(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
-        assertEquals(3, leafList.get().size());
+        assertEquals(3, leafList.orElseThrow().size());
     }
 
     @Test
@@ -343,7 +343,7 @@ public class Bug4454Test {
 
         // Empty list should have disappeared, along with the container, as we are not enforcing root
         final NormalizedNode data = inMemoryDataTree.takeSnapshot()
-                .readNode(YangInstanceIdentifier.empty()).get();
+                .readNode(YangInstanceIdentifier.empty()).orElseThrow();
         assertTrue(data instanceof ContainerNode);
         assertEquals(0, ((ContainerNode) data).size());
     }
@@ -378,10 +378,10 @@ public class Bug4454Test {
             modificationTree.ready();
             fail("Should have failed with IAE");
         } catch (IllegalArgumentException e) {
-            assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
-                    + "revision=2015-02-02)presence is missing mandatory descendant "
-                    + "/(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
-                    + "revision=2015-02-02)min-max-list", e.getMessage());
+            assertEquals("""
+                Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?revision=2015-02-02)\
+                presence is missing mandatory descendant /(urn:opendaylight:params:xml:ns:yang:list-constraints-\
+                validation-test-model?revision=2015-02-02)min-max-list""", e.getMessage());
         }
     }
 
@@ -431,9 +431,9 @@ public class Bug4454Test {
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
         Optional<NormalizedNode> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
-        for (Object collectionChild : (Collection<?>) minMaxListRead.get().body()) {
+        for (Object collectionChild : (Collection<?>) minMaxListRead.orElseThrow().body()) {
             if (collectionChild.toString().contains(first)) {
                 assertTrue(collectionChild.toString().contains(first));
             } else {

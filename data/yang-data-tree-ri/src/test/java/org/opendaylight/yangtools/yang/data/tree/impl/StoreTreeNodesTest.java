@@ -138,7 +138,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         assertPresentAndType(expectedNode, TreeNode.class);
 
         final Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode, TWO_TWO_PATH);
-        assertTreeNodeEquals(expectedNode.get(), actualNode.getValue());
+        assertTreeNodeEquals(expectedNode.orElseThrow(), actualNode.getValue());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
 
         final Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode,
             twoTwoInvalidPath);
-        assertTreeNodeEquals(expectedNode.get(), actualNode.getValue());
+        assertTreeNodeEquals(expectedNode.orElseThrow(), actualNode.getValue());
     }
 
     private static ContainerNode createTestContainer() {
@@ -175,8 +175,8 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
             final Class<T> type) {
         assertNotNull(potential);
         assertTrue(potential.isPresent());
-        assertTrue(type.isInstance(potential.get()));
-        return type.cast(potential.get());
+        assertTrue(type.isInstance(potential.orElseThrow()));
+        return type.cast(potential.orElseThrow());
     }
 
     private static void assertTreeNodeEquals(final TreeNode expected, final TreeNode actual) {

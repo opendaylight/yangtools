@@ -74,7 +74,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         final Set<UsesNode> mutableUses = new LinkedHashSet<>();
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+        for (var effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UsesNode usesNode && !mutableUses.add(usesNode)) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
             }
@@ -87,9 +87,9 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
             }
         }
 
-        this.groupings = ImmutableSet.copyOf(mutableGroupings);
-        this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
-        this.uses = ImmutableSet.copyOf(mutableUses);
+        groupings = ImmutableSet.copyOf(mutableGroupings);
+        typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
+        uses = ImmutableSet.copyOf(mutableUses);
     }
 
     @Override

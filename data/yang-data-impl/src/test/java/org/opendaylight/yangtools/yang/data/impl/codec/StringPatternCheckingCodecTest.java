@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 
 import org.junit.Test;
@@ -19,42 +19,29 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class StringPatternCheckingCodecTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(StringPatternCheckingCodecTest.class);
-
     @Test
     public void testStringPatternCheckingCodec() {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
-            "/string-pattern-checking-codec-test.yang");
+        final var schemaContext = YangParserTestUtils.parseYangResource("/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
-        final QNameModule testModuleQName = QNameModule.create(XMLNamespace.of("string-pattern-checking-codec-test"));
+        final var testModuleQName = QNameModule.create(XMLNamespace.of("string-pattern-checking-codec-test"));
 
-        final Module testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
-        final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.findDataChildByName(
-                QName.create(testModuleQName, "test-container")).get();
+        final var testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
+        final var testContainer = (ContainerSchemaNode) testModule.getDataChildByName(
+                QName.create(testModuleQName, "test-container"));
 
-        final LeafSchemaNode testLeaf = (LeafSchemaNode) testContainer.findDataChildByName(
-                QName.create(testModuleQName, "string-leaf-with-valid-pattern")).get();
+        final var testLeaf = (LeafSchemaNode) testContainer.getDataChildByName(
+                QName.create(testModuleQName, "string-leaf-with-valid-pattern"));
 
-        final StringCodec<String> codec = getCodec(testLeaf.getType(), StringCodec.class);
+        final var codec = getCodec(testLeaf.getType(), StringCodec.class);
         assertNotNull(codec);
         assertEquals("ABCD", codec.serialize("ABCD"));
         assertEquals("ABCD", codec.deserialize("ABCD"));
 
-        try {
-            codec.deserialize("abcd");
-            fail("Exception should have been thrown.");
-        } catch (final IllegalArgumentException ex) {
-            LOG.debug("IllegalArgumentException was thrown as expected", ex);
-            assertEquals("Value 'abcd' does not match regular expression '[A-Z]+'", ex.getMessage());
-        }
+        final var ex = assertThrows(IllegalArgumentException.class, () -> codec.deserialize("abcd"));
+        assertEquals("Value 'abcd' does not match regular expression '[A-Z]+'", ex.getMessage());
     }
 }
