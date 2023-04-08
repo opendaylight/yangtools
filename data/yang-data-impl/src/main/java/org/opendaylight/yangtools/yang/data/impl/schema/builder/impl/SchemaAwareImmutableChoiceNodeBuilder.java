@@ -40,7 +40,7 @@ final class SchemaAwareImmutableChoiceNodeBuilder extends ImmutableChoiceNodeBui
         if (validator == null) {
             Optional<CaseSchemaNode> detectedCaseOpt = NormalizedNodeSchemaUtils.detectCase(schema, child);
             DataValidationException.checkLegalChild(detectedCaseOpt.isPresent(), child.getIdentifier(), schema);
-            validator = new DataNodeContainerValidator(detectedCaseOpt.get());
+            validator = new DataNodeContainerValidator(detectedCaseOpt.orElseThrow());
         }
 
         return super.withChild(validator.validateChild(child));

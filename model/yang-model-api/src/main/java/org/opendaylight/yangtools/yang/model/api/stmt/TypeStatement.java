@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,12 +33,12 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     @Rfc6020AbnfRule("decimal64-specification")
     interface Decimal64Specification extends TypeStatement {
         default @NonNull FractionDigitsStatement getFractionDigits() {
-            return findFirstDeclaredSubstatement(FractionDigitsStatement.class).get();
+            return findFirstDeclaredSubstatement(FractionDigitsStatement.class).orElseThrow();
         }
 
         default @Nullable RangeStatement getRange() {
-            final Optional<RangeStatement> opt = findFirstDeclaredSubstatement(RangeStatement.class);
-            return opt.isPresent() ? opt.get() : null;
+            final var opt = findFirstDeclaredSubstatement(RangeStatement.class);
+            return opt.isPresent() ? opt.orElseThrow() : null;
         }
     }
 
@@ -47,8 +46,8 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     // FIXME: 7.0.0: this interface does not have an implementation
     interface StringRestrictions extends TypeStatement {
         default @Nullable LengthStatement getLength() {
-            final Optional<LengthStatement> opt = findFirstDeclaredSubstatement(LengthStatement.class);
-            return opt.isPresent() ? opt.get() : null;
+            final var opt = findFirstDeclaredSubstatement(LengthStatement.class);
+            return opt.isPresent() ? opt.orElseThrow() : null;
         }
 
         default @NonNull Collection<? extends PatternStatement> getPatterns() {
@@ -67,7 +66,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     @Rfc6020AbnfRule("leafref-specification")
     interface LeafrefSpecification extends TypeStatement {
         default @NonNull PathStatement getPath() {
-            return findFirstDeclaredSubstatement(PathStatement.class).get();
+            return findFirstDeclaredSubstatement(PathStatement.class).orElseThrow();
         }
 
         /**
@@ -77,9 +76,8 @@ public interface TypeStatement extends DeclaredStatement<QName> {
          * @return require-instance statement, if present.
          */
         default @Nullable RequireInstanceStatement getRequireInstance() {
-            final Optional<RequireInstanceStatement> opt =
-                    findFirstDeclaredSubstatement(RequireInstanceStatement.class);
-            return opt.isPresent() ? opt.get() : null;
+            final var opt = findFirstDeclaredSubstatement(RequireInstanceStatement.class);
+            return opt.isPresent() ? opt.orElseThrow() : null;
         }
     }
 
@@ -92,9 +90,8 @@ public interface TypeStatement extends DeclaredStatement<QName> {
          * @return require-instance statement, if present.
          */
         default @Nullable RequireInstanceStatement getRequireInstance() {
-            final Optional<RequireInstanceStatement> opt =
-                    findFirstDeclaredSubstatement(RequireInstanceStatement.class);
-            return opt.isPresent() ? opt.get() : null;
+            final var opt = findFirstDeclaredSubstatement(RequireInstanceStatement.class);
+            return opt.isPresent() ? opt.orElseThrow() : null;
         }
     }
 

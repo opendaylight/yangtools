@@ -15,13 +15,11 @@ import static org.junit.Assert.assertNotNull;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
@@ -52,26 +50,26 @@ public class Bug6868Test extends AbstractYangTest {
 
     private static void assertSchemaContextFor(final Set<String> supportedFeatures,
             final Set<String> expectedContainers) throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6868/yang11",
+        final var schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6868/yang11",
             supportedFeatures != null ? createFeaturesSet(supportedFeatures) : null, YangParserConfiguration.DEFAULT);
         assertNotNull(schemaContext);
 
-        for (final String expectedContainer : expectedContainers) {
+        for (var expectedContainer : expectedContainers) {
             assertThat(String.format("Expected container %s not found.", expectedContainer),
-                    schemaContext.findDataTreeChild(QName.create(FOO_NS, expectedContainer)).get(),
+                    schemaContext.findDataTreeChild(QName.create(FOO_NS, expectedContainer)).orElseThrow(),
                     instanceOf(ContainerSchemaNode.class));
         }
 
-        final Set<String> unexpectedContainers = Sets.difference(ALL_CONTAINERS, expectedContainers);
-        for (final String unexpectedContainer : unexpectedContainers) {
+        final var unexpectedContainers = Sets.difference(ALL_CONTAINERS, expectedContainers);
+        for (var unexpectedContainer : unexpectedContainers) {
             assertEquals(String.format("Unexpected container %s.", unexpectedContainer), Optional.empty(),
                     schemaContext.findDataTreeChild(QName.create(FOO_NS, unexpectedContainer)));
         }
     }
 
     private static Set<QName> createFeaturesSet(final Set<String> featureNames) {
-        final Set<QName> supportedFeatures = new HashSet<>();
-        for (final String featureName : featureNames) {
+        final var supportedFeatures = ImmutableSet.<QName>builder();
+        for (var featureName : featureNames) {
             if (featureName.indexOf(':') == -1) {
                 supportedFeatures.add(QName.create(FOO_NS, featureName));
             } else {
@@ -80,7 +78,7 @@ public class Bug6868Test extends AbstractYangTest {
             }
         }
 
-        return ImmutableSet.copyOf(supportedFeatures);
+        return supportedFeatures.build();
     }
 
     @Test

@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
@@ -24,11 +23,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -36,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 public class YangDataExtensionTest extends AbstractYangDataTest {
-
     private static final StatementStreamSource FOO_MODULE = sourceForResource(
             "/yang-data-extension-test/foo.yang");
     private static final StatementStreamSource FOO_INVALID_1_MODULE = sourceForResource(
@@ -57,22 +50,21 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
 
     @Test
     public void testYangData() throws Exception {
-        final SchemaContext schemaContext = REACTOR.newBuild().addSources(FOO_MODULE, IETF_RESTCONF_MODULE)
-                .buildEffective();
+        final var schemaContext = REACTOR.newBuild().addSources(FOO_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
-        final Collection<? extends ExtensionDefinition> extensions = schemaContext.getExtensions();
+        final var extensions = schemaContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final Module foo = schemaContext.findModule(FOO_QNAMEMODULE).get();
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = foo.getUnknownSchemaNodes();
+        final var foo = schemaContext.findModule(FOO_QNAMEMODULE).orElseThrow();
+        final var unknownSchemaNodes = foo.getUnknownSchemaNodes();
         assertEquals(2, unknownSchemaNodes.size());
 
         YangDataSchemaNode myYangDataANode = null;
         YangDataSchemaNode myYangDataBNode = null;
-        for (final UnknownSchemaNode unknownSchemaNode : unknownSchemaNodes) {
+        for (var unknownSchemaNode : unknownSchemaNodes) {
             assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
-            final YangDataSchemaNode yangDataSchemaNode = (YangDataSchemaNode) unknownSchemaNode;
+            final var yangDataSchemaNode = (YangDataSchemaNode) unknownSchemaNode;
             if ("my-yang-data-a".equals(yangDataSchemaNode.getNodeParameter())) {
                 myYangDataANode = yangDataSchemaNode;
             } else if ("my-yang-data-b".equals(yangDataSchemaNode.getNodeParameter())) {
@@ -86,31 +78,30 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
 
     @Test
     public void testConfigStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = REACTOR.newBuild().addSources(BAZ_MODULE, IETF_RESTCONF_MODULE)
-                .buildEffective();
+        final var schemaContext = REACTOR.newBuild().addSources(BAZ_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
-        final Module baz = schemaContext.findModule("baz", REVISION).get();
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = baz.getUnknownSchemaNodes();
+        final var baz = schemaContext.findModule("baz", REVISION).orElseThrow();
+        final var unknownSchemaNodes = baz.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
+        final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
         assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
-        final YangDataSchemaNode myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
+        final var myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
-        final Collection<? extends DataSchemaNode> yangDataChildren = myYangDataNode.getChildNodes();
+        final var yangDataChildren = myYangDataNode.getChildNodes();
         assertEquals(1, yangDataChildren.size());
 
-        final DataSchemaNode childInYangData = yangDataChildren.iterator().next();
+        final var childInYangData = yangDataChildren.iterator().next();
         assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
-        final ContainerSchemaNode contInYangData = (ContainerSchemaNode) childInYangData;
+        final var contInYangData = (ContainerSchemaNode) childInYangData;
         assertEquals(Optional.empty(), contInYangData.effectiveConfig());
-        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+        final var innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
                 QName.create(baz.getQNameModule(), "inner-cont"));
         assertNotNull(innerCont);
         assertEquals(Optional.empty(), innerCont.effectiveConfig());
-        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+        final var grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
                 QName.create(baz.getQNameModule(), "grp-cont"));
         assertNotNull(grpCont);
         assertEquals(Optional.empty(), grpCont.effectiveConfig());
@@ -118,29 +109,31 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
 
     @Test
     public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = REACTOR.newBuild().setSupportedFeatures(ImmutableSet.of())
-                .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE).buildEffective();
+        final var schemaContext = REACTOR.newBuild()
+            .setSupportedFeatures(ImmutableSet.of())
+            .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE)
+            .buildEffective();
         assertNotNull(schemaContext);
 
-        final Module foobar = schemaContext.findModule("foobar", REVISION).get();
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = foobar.getUnknownSchemaNodes();
+        final var foobar = schemaContext.findModule("foobar", REVISION).orElseThrow();
+        final var unknownSchemaNodes = foobar.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
+        final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
         assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
-        final YangDataSchemaNode myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
+        final var myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
-        final Collection<? extends DataSchemaNode> yangDataChildren = myYangDataNode.getChildNodes();
+        final var yangDataChildren = myYangDataNode.getChildNodes();
         assertEquals(1, yangDataChildren.size());
 
-        final DataSchemaNode childInYangData = yangDataChildren.iterator().next();
+        final var childInYangData = yangDataChildren.iterator().next();
         assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
-        final ContainerSchemaNode contInYangData = (ContainerSchemaNode) childInYangData;
-        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+        final var contInYangData = (ContainerSchemaNode) childInYangData;
+        final var innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
                 QName.create(foobar.getQNameModule(), "inner-cont"));
         assertNotNull(innerCont);
-        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
+        final var grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
                 QName.create(foobar.getQNameModule(), "grp-cont"));
         assertNotNull(grpCont);
     }
@@ -149,19 +142,17 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
     public void testYangDataBeingIgnored() throws Exception {
         // yang-data statement is ignored if it does not appear as a top-level statement
         // i.e., it will not appear in the final SchemaContext
-        final SchemaContext schemaContext = REACTOR.newBuild().addSources(BAR_MODULE, IETF_RESTCONF_MODULE)
-                .buildEffective();
+        final var schemaContext = REACTOR.newBuild().addSources(BAR_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
-        final Module bar = schemaContext.findModule("bar", REVISION).get();
-        final ContainerSchemaNode cont = (ContainerSchemaNode) bar.getDataChildByName(
-                QName.create(bar.getQNameModule(), "cont"));
+        final var bar = schemaContext.findModule("bar", REVISION).orElseThrow();
+        final var cont = (ContainerSchemaNode) bar.getDataChildByName(QName.create(bar.getQNameModule(), "cont"));
         assertNotNull(cont);
 
-        final Collection<? extends ExtensionDefinition> extensions = schemaContext.getExtensions();
+        final var extensions = schemaContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = cont.getUnknownSchemaNodes();
+        final var unknownSchemaNodes = cont.getUnknownSchemaNodes();
         assertEquals(0, unknownSchemaNodes.size());
     }
 

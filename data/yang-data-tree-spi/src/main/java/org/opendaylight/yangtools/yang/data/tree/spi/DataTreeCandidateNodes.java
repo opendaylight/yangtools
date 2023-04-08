@@ -165,7 +165,7 @@ public final class DataTreeCandidateNodes {
                 // No-op
                 break;
             case WRITE:
-                cursor.write(node.getIdentifier(), node.getDataAfter().get());
+                cursor.write(node.getIdentifier(), node.getDataAfter().orElseThrow());
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
@@ -197,7 +197,7 @@ public final class DataTreeCandidateNodes {
                 // No-op
                 break;
             case WRITE:
-                cursor.write(rootPath.getLastPathArgument(), node.getDataAfter().get());
+                cursor.write(rootPath.getLastPathArgument(), node.getDataAfter().orElseThrow());
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
@@ -283,7 +283,7 @@ public final class DataTreeCandidateNodes {
                         // No-op
                         break;
                     case WRITE:
-                        cursor.write(node.getIdentifier(), node.getDataAfter().get());
+                        cursor.write(node.getIdentifier(), node.getDataAfter().orElseThrow());
                         break;
                     default:
                         throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());

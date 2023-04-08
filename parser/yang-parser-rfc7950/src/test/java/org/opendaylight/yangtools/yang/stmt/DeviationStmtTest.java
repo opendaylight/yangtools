@@ -14,41 +14,34 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
-import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class DeviationStmtTest {
-
-    private static final StatementStreamSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
-    private static final StatementStreamSource FOO_IMP_MODULE = sourceForResource("/deviation-stmt-test/foo-imp.yang");
-    private static final StatementStreamSource BAR_MODULE = sourceForResource("/deviation-stmt-test/bar.yang");
-    private static final StatementStreamSource BAR_IMP_MODULE = sourceForResource("/deviation-stmt-test/bar-imp.yang");
-
     @Test
-    public void testDeviationAndDeviate() throws ReactorException {
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE)
+    public void testDeviationAndDeviate() throws Exception {
+        final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
+                .addSources(
+                    sourceForResource("/deviation-stmt-test/foo.yang"),
+                    sourceForResource("/deviation-stmt-test/foo-imp.yang"),
+                    sourceForResource("/deviation-stmt-test/bar.yang"),
+                    sourceForResource("/deviation-stmt-test/bar-imp.yang"))
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModule("foo", Revision.of("2016-06-23")).get();
-        Collection<? extends Deviation> deviations = testModule.getDeviations();
+        var testModule = schemaContext.findModule("foo", Revision.of("2016-06-23")).orElseThrow();
+        var deviations = testModule.getDeviations();
         assertEquals(4, deviations.size());
 
-        for (Deviation deviation : deviations) {
-            final Collection<? extends DeviateDefinition> deviates = deviation.getDeviates();
+        for (var deviation : deviations) {
+            final var deviates = deviation.getDeviates();
 
             final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
                     .getLocalName();
@@ -82,7 +75,7 @@ public class DeviationStmtTest {
             }
         }
 
-        testModule = schemaContext.findModule("bar", Revision.of("2016-09-22")).get();
+        testModule = schemaContext.findModule("bar", Revision.of("2016-09-22")).orElseThrow();
         assertNotNull(testModule);
 
         deviations = testModule.getDeviations();
@@ -96,8 +89,8 @@ public class DeviationStmtTest {
         Deviation deviation6 = null;
         Deviation deviation7 = null;
 
-        for (Deviation deviation : deviations) {
-            final Collection<? extends DeviateDefinition> deviates = deviation.getDeviates();
+        for (var deviation : deviations) {
+            final var deviates = deviation.getDeviates();
             final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
                     .getLocalName();
 
@@ -139,7 +132,7 @@ public class DeviationStmtTest {
         assertFalse(deviation1.equals(null));
         assertFalse(deviation1.equals("str"));
 
-        DeviateDefinition deviate = deviation1.getDeviates().iterator().next();
+        var deviate = deviation1.getDeviates().iterator().next();
         assertTrue(deviate.equals(deviate));
         assertFalse(deviate.equals(null));
         assertFalse(deviate.equals("str"));

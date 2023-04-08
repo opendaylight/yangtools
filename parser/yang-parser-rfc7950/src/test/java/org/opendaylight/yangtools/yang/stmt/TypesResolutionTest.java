@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -69,8 +71,10 @@ public class TypesResolutionTest {
         assertEquals(14, typedefs.size());
 
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
-        assertTrue(type.getDescription().get().contains("This value represents the version of the IP protocol."));
-        assertTrue(type.getReference().get().contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
+        assertThat(type.getDescription().orElseThrow(),
+            containsString("This value represents the version of the IP protocol."));
+        assertThat(type.getReference().orElseThrow(),
+            containsString("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
 
         EnumTypeDefinition enumType = (EnumTypeDefinition) type.getBaseType();
         List<EnumPair> values = enumType.getValues();
@@ -135,20 +139,27 @@ public class TypesResolutionTest {
 
         StringTypeDefinition ipv4 = (StringTypeDefinition) unionTypes.get(0);
         assertNotNull(ipv4.getBaseType());
-        String expectedPattern = "^(?:(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
-                + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?)$";
+        String expectedPattern = """
+            ^(?:(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}\
+            ([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\
+            (%[\\p{N}\\p{L}]+)?)$""";
         assertEquals(expectedPattern, ipv4.getPatternConstraints().get(0).getJavaPatternString());
 
         StringTypeDefinition ipv6 = (StringTypeDefinition) unionTypes.get(1);
         assertNotNull(ipv6.getBaseType());
         List<PatternConstraint> ipv6Patterns = ipv6.getPatternConstraints();
-        expectedPattern = "^(?:((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}"
-                + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
-                + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?)$";
+        expectedPattern = """
+            ^(?:((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}\
+            ((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|\
+            (((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}\
+            (25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))\
+            (%[\\p{N}\\p{L}]+)?)$""";
         assertEquals(expectedPattern, ipv6Patterns.get(0).getJavaPatternString());
 
-        expectedPattern = "^(?:(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|" + "((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)"
-                + "(%.+)?)$";
+        expectedPattern = """
+            ^(?:(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|\
+            ((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)\
+            (%.+)?)$""";
         assertEquals(expectedPattern, ipv6Patterns.get(1).getJavaPatternString());
     }
 
@@ -160,11 +171,13 @@ public class TypesResolutionTest {
         assertNotNull(type.getBaseType());
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
-        String expectedPattern = "^(?:((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*"
-                + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.)$";
+        String expectedPattern = """
+            ^(?:((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*\
+            ([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)\
+            |\\.)$""";
         assertEquals(expectedPattern, patterns.get(0).getJavaPatternString());
 
-        LengthConstraint lengths = type.getLengthConstraint().get();
+        LengthConstraint lengths = type.getLengthConstraint().orElseThrow();
         assertEquals(1, lengths.getAllowedRanges().asRanges().size());
         Range<Integer> length = lengths.getAllowedRanges().span();
         assertEquals(Integer.valueOf(1), length.lowerEndpoint());
@@ -284,8 +297,8 @@ public class TypesResolutionTest {
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
-        String expectedDesc = "A timezone location as defined by the IANA timezone";
-        assertTrue(testedType.getDescription().get().contains(expectedDesc));
+        assertThat(testedType.getDescription().orElseThrow(),
+            containsString("A timezone location as defined by the IANA timezone"));
         assertFalse(testedType.getReference().isPresent());
         assertEquals(Status.CURRENT, testedType.getStatus());
 

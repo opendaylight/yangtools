@@ -81,7 +81,7 @@ public final class DataTreeCandidates {
                 // No-op
                 break;
             case WRITE:
-                modification.write(path, node.getDataAfter().get());
+                modification.write(path, node.getDataAfter().orElseThrow());
                 LOG.debug("Modification {} written path {}", modification, path);
                 break;
             default:
@@ -135,7 +135,7 @@ public final class DataTreeCandidates {
                 if (dataBefore.isEmpty()) {
                     return new TerminalDataTreeCandidateNode(null, ModificationType.UNMODIFIED, null, null);
                 }
-                return new TerminalDataTreeCandidateNode(null, nodeModification, dataBefore.get(), null);
+                return new TerminalDataTreeCandidateNode(null, nodeModification, dataBefore.orElseThrow(), null);
             case WRITE:
                 return new TerminalDataTreeCandidateNode(null, nodeModification, dataBefore.orElse(null),
                         dataAfter.orElseThrow());
@@ -414,7 +414,7 @@ public final class DataTreeCandidates {
                         // No-op
                         break;
                     case WRITE:
-                        modification.write(child, node.getDataAfter().get());
+                        modification.write(child, node.getDataAfter().orElseThrow());
                         LOG.debug("Modification {} written path {}", modification, child);
                         break;
                     default:

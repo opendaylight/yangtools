@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 public class Bug6669Test extends AbstractYangTest {
     private static final String REV = "2016-09-08";
@@ -48,22 +47,22 @@ public class Bug6669Test extends AbstractYangTest {
     @Test
     public void testValidAugment() {
         final var context = assertEffectiveModelDir("/bugs/bug6669/valid/test1");
-        final SchemaNode findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, M).get();
+        final var findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, M).orElseThrow();
         assertThat(findDataSchemaNode, instanceOf(LeafSchemaNode.class));
     }
 
     @Test
     public void testValidAugment2() {
         final var context = assertEffectiveModelDir("/bugs/bug6669/valid/test2");
-        final SchemaNode findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, BAR_2, M).get();
+        final var findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, BAR_2, M).orElseThrow();
         assertThat(findDataSchemaNode, instanceOf(LeafSchemaNode.class));
     }
 
     @Test
     public void testValidAugment3() throws Exception {
         final var context = assertEffectiveModelDir("/bugs/bug6669/valid/test3");
-        final SchemaNode findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, BAR_2,
-                QName.create(BAR_NS, REV, "l")).get();
+        final var findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, BAR_2,
+                QName.create(BAR_NS, REV, "l")).orElseThrow();
         assertThat(findDataSchemaNode, instanceOf(ListSchemaNode.class));
     }
 }

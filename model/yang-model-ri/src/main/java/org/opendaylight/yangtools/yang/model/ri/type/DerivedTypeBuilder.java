@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -64,8 +63,8 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
     public final void setUnits(final String units) {
         requireNonNull(units);
 
-        final Optional<String> baseUnits = getBaseType().getUnits();
-        if (baseUnits.isPresent() && !units.equals(baseUnits.get())) {
+        final var baseUnits = getBaseType().getUnits();
+        if (baseUnits.isPresent() && !units.equals(baseUnits.orElseThrow())) {
             LOG.warn("Type {} uverrides 'units' of type {} to \"{}\"", getQName(), getBaseType(), units);
         }
 

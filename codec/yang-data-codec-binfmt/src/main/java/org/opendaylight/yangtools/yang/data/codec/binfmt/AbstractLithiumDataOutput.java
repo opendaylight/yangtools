@@ -276,7 +276,7 @@ abstract class AbstractLithiumDataOutput extends AbstractNormalizedNodeDataOutpu
         writeString(module.getNamespace().toString());
         final Optional<Revision> revision = module.getRevision();
         if (revision.isPresent()) {
-            writeString(revision.get().toString());
+            writeString(revision.orElseThrow().toString());
         } else {
             writeByte(LithiumTokens.IS_NULL_VALUE);
         }

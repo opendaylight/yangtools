@@ -16,30 +16,28 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 public class Bug9244Test extends AbstractYangTest {
     @Test
     public void testDeviateReplaceOfImplicitSubstatements() {
         final var schemaContext = assertEffectiveModelDir("/bugs/bug9244/");
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-10-13")).get();
-        final ContainerSchemaNode barCont = (ContainerSchemaNode) barModule.getDataChildByName(
+        final var barModule = schemaContext.findModule("bar", Revision.of("2017-10-13")).orElseThrow();
+        final var barCont = (ContainerSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-cont"));
         assertNotNull(barCont);
         assertEquals(Optional.of(Boolean.FALSE), barCont.effectiveConfig());
 
-        final LeafListSchemaNode barLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
+        final var barLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf-list"));
         assertNotNull(barLeafList);
-        final ElementCountConstraint constraint = barLeafList.getElementCountConstraint().get();
+        final var constraint = barLeafList.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 5, constraint.getMinElements());
         assertEquals((Object) 10, constraint.getMaxElements());
 
-        final LeafSchemaNode barLeaf = (LeafSchemaNode) barModule.getDataChildByName(
+        final var barLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf"));
         assertNotNull(barLeaf);
         assertTrue(barLeaf.isMandatory());

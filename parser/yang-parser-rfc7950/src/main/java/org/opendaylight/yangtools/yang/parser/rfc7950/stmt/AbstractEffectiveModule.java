@@ -51,7 +51,6 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -91,9 +90,9 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
             }
         }
 
-        this.groupings = ImmutableSet.copyOf(mutableGroupings);
-        this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
-        this.uses = ImmutableSet.copyOf(mutableUses);
+        groupings = ImmutableSet.copyOf(mutableGroupings);
+        typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
+        uses = ImmutableSet.copyOf(mutableUses);
     }
 
     @Override
@@ -206,11 +205,10 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     protected final void appendPrefixes(final Current<?, ?> stmt,
             final Builder<String, ModuleEffectiveStatement> builder) {
         streamEffectiveSubstatements(ImportEffectiveStatement.class)
-            .map(imp -> imp.findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get())
+            .map(imp -> imp.findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).orElseThrow())
             .forEach(pfx -> {
-                final StmtContext<?, ?, ?> importedCtx =
-                        verifyNotNull(stmt.getFromNamespace(ImportPrefixToModuleCtx.class, pfx),
-                            "Failed to resolve prefix %s", pfx);
+                final var importedCtx = verifyNotNull(stmt.getFromNamespace(ImportPrefixToModuleCtx.class, pfx),
+                    "Failed to resolve prefix %s", pfx);
                 builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
             });
     }

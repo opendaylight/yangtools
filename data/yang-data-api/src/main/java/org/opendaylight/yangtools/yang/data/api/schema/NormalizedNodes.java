@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -50,17 +49,16 @@ public final class NormalizedNodes {
 
     public static Optional<NormalizedNode> findNode(final YangInstanceIdentifier rootPath,
             final NormalizedNode rootNode, final YangInstanceIdentifier childPath) {
-        final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
-        return relativePath.isPresent() ? findNode(rootNode, relativePath.get()) : Optional.empty();
+        final var relativePath = childPath.relativeTo(rootPath);
+        return relativePath.isPresent() ? findNode(rootNode, relativePath.orElseThrow()) : Optional.empty();
     }
 
     public static Optional<NormalizedNode> findNode(final Optional<NormalizedNode> parent,
             final Iterable<PathArgument> relativePath) {
-        final Iterator<PathArgument> pathIterator = requireNonNull(relativePath, "Relative path must not be null")
-                .iterator();
-        Optional<NormalizedNode> currentNode = requireNonNull(parent, "Parent must not be null");
+        final var pathIterator = requireNonNull(relativePath, "Relative path must not be null").iterator();
+        var currentNode = requireNonNull(parent, "Parent must not be null");
         while (currentNode.isPresent() && pathIterator.hasNext()) {
-            currentNode = getDirectChild(currentNode.get(), pathIterator.next());
+            currentNode = getDirectChild(currentNode.orElseThrow(), pathIterator.next());
         }
         return currentNode;
     }
@@ -104,12 +102,12 @@ public final class NormalizedNodes {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Optional<NormalizedNode> getDirectChild(final NormalizedNode node,
             final PathArgument pathArg) {
-        if (node instanceof DataContainerNode) {
-            return (Optional) ((DataContainerNode) node).findChildByArg(pathArg);
-        } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
-            return (Optional) ((MapNode) node).findChildByArg((NodeIdentifierWithPredicates) pathArg);
-        } else if (node instanceof LeafSetNode && pathArg instanceof NodeWithValue) {
-            return (Optional) ((LeafSetNode<?>) node).findChildByArg((NodeWithValue<?>) pathArg);
+        if (node instanceof DataContainerNode dataContainer) {
+            return (Optional) dataContainer.findChildByArg(pathArg);
+        } else if (node instanceof MapNode map && pathArg instanceof NodeIdentifierWithPredicates) {
+            return (Optional) map.findChildByArg((NodeIdentifierWithPredicates) pathArg);
+        } else if (node instanceof LeafSetNode<?> leafSet && pathArg instanceof NodeWithValue) {
+            return (Optional) leafSet.findChildByArg((NodeWithValue<?>) pathArg);
         }
         // Anything else, including ValueNode
         return Optional.empty();
@@ -130,9 +128,9 @@ public final class NormalizedNodes {
     private static void toStringTree(final StringBuilder sb, final NormalizedNode node, final int offset) {
         final String prefix = " ".repeat(offset);
         appendPathArgument(sb.append(prefix), node.getIdentifier());
-        if (node instanceof NormalizedNodeContainer) {
+        if (node instanceof NormalizedNodeContainer<?> container) {
             sb.append(" {\n");
-            for (NormalizedNode child : ((NormalizedNodeContainer<?>) node).body()) {
+            for (var child : container.body()) {
                 toStringTree(sb, child, offset + STRINGTREE_INDENT);
             }
             sb.append(prefix).append('}');
@@ -143,8 +141,8 @@ public final class NormalizedNodes {
     }
 
     private static void appendPathArgument(final StringBuilder sb, final PathArgument arg) {
-        if (arg instanceof NodeIdentifierWithPredicates) {
-            sb.append(arg.getNodeType().getLocalName()).append(((NodeIdentifierWithPredicates) arg).values());
+        if (arg instanceof NodeIdentifierWithPredicates nip) {
+            sb.append(arg.getNodeType().getLocalName()).append(nip.values());
         } else if (arg instanceof AugmentationIdentifier) {
             sb.append("augmentation");
         } else {

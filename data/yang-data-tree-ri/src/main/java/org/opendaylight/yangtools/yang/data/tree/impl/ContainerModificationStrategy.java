@@ -75,8 +75,8 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
 
     static ModificationApplyOperation of(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
         if (schema.isPresenceContainer()) {
-            final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
-            return enforcer.isPresent() ? new EnforcingMandatory(schema, treeConfig, enforcer.get())
+            final var enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
+            return enforcer.isPresent() ? new EnforcingMandatory(schema, treeConfig, enforcer.orElseThrow())
                     : new ContainerModificationStrategy(schema, treeConfig);
         }
 

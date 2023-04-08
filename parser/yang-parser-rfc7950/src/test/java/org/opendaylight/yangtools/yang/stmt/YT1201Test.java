@@ -28,7 +28,7 @@ public class YT1201Test extends AbstractYangTest {
     public void testWhenPrefixes() {
         final DataSchemaNode bar = assertEffectiveModelDir("/bugs/YT1201/").getDataChildByName(BAR);
         assertThat(bar, instanceOf(ContainerSchemaNode.class));
-        final YangExpr when = ((ContainerSchemaNode) bar).getWhenCondition().get().getRootExpr();
+        final YangExpr when = ((ContainerSchemaNode) bar).getWhenCondition().orElseThrow().getRootExpr();
         assertThat(when, instanceOf(Relative.class));
         assertEquals(List.of(YangXPathAxis.CHILD.asStep(FOO)), ((Relative) when).getSteps());
     }

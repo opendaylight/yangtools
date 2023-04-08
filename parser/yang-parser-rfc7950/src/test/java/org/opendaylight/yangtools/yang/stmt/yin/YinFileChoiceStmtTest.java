@@ -28,10 +28,10 @@ public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
 
         final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(
             QName.create(testModule.getQNameModule(), "modules"),
-            QName.create(testModule.getQNameModule(), "module")).get();
+            QName.create(testModule.getQNameModule(), "module")).orElseThrow();
 
-        ChoiceSchemaNode choice = (ChoiceSchemaNode) list.findDataChildByName(QName.create(testModule.getQNameModule(),
-                "configuration")).get();
+        ChoiceSchemaNode choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(),
+                "configuration"));
 
         assertEquals("configuration", choice.getQName().getLocalName());
         assertTrue(choice.isMandatory());
@@ -46,7 +46,7 @@ public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
 
         assertTrue(caseNode.getWhenCondition().isPresent());
 
-        choice = (ChoiceSchemaNode) list.findDataChildByName(QName.create(testModule.getQNameModule(), "state")).get();
+        choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "state"));
 
         assertEquals("state", choice.getQName().getLocalName());
         assertFalse(choice.isMandatory());

@@ -13,9 +13,7 @@ import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 public class ElementCountConstraintsTest extends AbstractYangTest {
@@ -23,28 +21,28 @@ public class ElementCountConstraintsTest extends AbstractYangTest {
     public void testElementCountConstraints() {
         final var context = assertEffectiveModel("/constraint-definitions-test/foo.yang");
 
-        final Module testModule = context.findModule("foo", Revision.of("2016-09-20")).get();
-        final LeafListSchemaNode constrainedLeafList1 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final var testModule = context.findModule("foo", Revision.of("2016-09-20")).orElseThrow();
+        final var constrainedLeafList1 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-1"));
-        ElementCountConstraint constraints1 = constrainedLeafList1.getElementCountConstraint().get();
+        var constraints1 = constrainedLeafList1.getElementCountConstraint().orElseThrow();
 
-        final LeafListSchemaNode constrainedLeafList2 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final var constrainedLeafList2 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-2"));
-        ElementCountConstraint constraints2 = constrainedLeafList2.getElementCountConstraint().get();
+        var constraints2 = constrainedLeafList2.getElementCountConstraint().orElseThrow();
 
         assertEquals(constraints1.hashCode(), constraints2.hashCode());
         assertEquals(constraints1, constraints2);
 
-        final LeafListSchemaNode constrainedLeafList3 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final var constrainedLeafList3 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-3"));
-        ElementCountConstraint constraints3 = constrainedLeafList3.getElementCountConstraint().get();
+        var constraints3 = constrainedLeafList3.getElementCountConstraint().orElseThrow();
 
         assertNotEquals(constraints2.hashCode(), constraints3.hashCode());
         assertNotEquals(constraints2, constraints3);
 
-        final LeafListSchemaNode constrainedLeafList4 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final var constrainedLeafList4 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-4"));
-        ElementCountConstraint constraints4 = constrainedLeafList4.getElementCountConstraint().get();
+        var constraints4 = constrainedLeafList4.getElementCountConstraint().orElseThrow();
 
         assertNotEquals(constraints3.hashCode(), constraints4.hashCode());
         assertNotEquals(constraints3, constraints4);

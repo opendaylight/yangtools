@@ -263,8 +263,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
             final Optional<SourceIdentifier> si = getSourceIdentifier(fileName);
             if (si.isPresent()) {
-                LOG.trace("Restoring cached file {} as {}", file, si.get());
-                cachedSchemas.add(si.get());
+                LOG.trace("Restoring cached file {} as {}", file, si.orElseThrow());
+                cachedSchemas.add(si.orElseThrow());
             } else {
                 LOG.debug("Skipping cached file {}, cannot restore source identifier from filename: {},"
                         + " does not match {}", file, fileName, CACHED_FILE_PATTERN);

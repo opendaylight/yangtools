@@ -10,23 +10,19 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 public class IdentityStatementTest extends AbstractYangTest {
-
     @Test
     public void testMultipleBaseIdentities() {
         final var context = assertEffectiveModel("/rfc7950/identity-stmt/foo.yang");
 
-        final Module foo = context.findModule("foo", Revision.of("2016-12-21")).get();
-        for (final IdentitySchemaNode identity : foo.getIdentities()) {
+        final var foo = context.findModule("foo", Revision.of("2016-12-21")).orElseThrow();
+        for (var identity : foo.getIdentities()) {
             if ("derived-id".equals(identity.getQName().getLocalName())) {
-                final Collection<? extends IdentitySchemaNode> baseIdentities = identity.getBaseIdentities();
+                final var baseIdentities = identity.getBaseIdentities();
                 assertEquals(3, baseIdentities.size());
             }
         }

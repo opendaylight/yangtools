@@ -35,7 +35,8 @@ public final class YinExportTestUtils {
 
     public static Document loadDocument(final String prefix, final Module module) throws IOException, SAXException {
         final Optional<Revision> rev = module.getRevision();
-        final String fileName = !rev.isPresent() ? module.getName() : module.getName() + '@' + rev.get().toString();
+        final String fileName = !rev.isPresent() ? module.getName()
+            : module.getName() + '@' + rev.orElseThrow().toString();
         return loadDocument(prefix + '/' + fileName + YangConstants.RFC6020_YIN_FILE_EXTENSION);
     }
 

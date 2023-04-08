@@ -17,13 +17,12 @@ import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMappi
 public class IetfYangSmiv2ExtensionsMappingTest {
     @Test
     public void testGetEffectiveRepresentationClass() {
-        IetfYangSmiv2ExtensionsMapping extensionMapping = IetfYangSmiv2ExtensionsMapping.ALIAS;
-        assertEquals(extensionMapping.getEffectiveRepresentationClass(), AliasEffectiveStatement.class);
+        assertEquals(IetfYangSmiv2ExtensionsMapping.ALIAS.getEffectiveRepresentationClass(),
+            AliasEffectiveStatement.class);
     }
 
     @Test
     public void testIsArgumentYinElement() {
-        IetfYangSmiv2ExtensionsMapping extensionMapping = IetfYangSmiv2ExtensionsMapping.ALIAS;
-        assertFalse(extensionMapping.getArgumentDefinition().get().isYinElement());
+        assertFalse(IetfYangSmiv2ExtensionsMapping.ALIAS.getArgumentDefinition().orElseThrow().isYinElement());
     }
 }

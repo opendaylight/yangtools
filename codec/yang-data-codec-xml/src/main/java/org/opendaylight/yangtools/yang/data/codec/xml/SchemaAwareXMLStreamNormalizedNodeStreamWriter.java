@@ -13,7 +13,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
@@ -47,7 +46,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             final NormalizedNodeStreamWriterStack tracker) {
         super(writer);
         this.tracker = requireNonNull(tracker);
-        this.streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
+        streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
     }
 
     @Override
@@ -60,10 +59,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
             throws XMLStreamException {
-        final Optional<AnnotationSchemaNode> optAnnotation =
-            AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
+        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
         if (optAnnotation.isPresent()) {
-            return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.get().getType()), value,
+            return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.orElseThrow().getType()), value,
                 qname.getModule());
         }
 

@@ -15,12 +15,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -39,25 +36,24 @@ public class YT1050Test {
         context = YangParserTestUtils.parseYangResource("/yt1050.yang");
         module = context.getModules().iterator().next();
 
-        final ListSchemaNode grpUses = (ListSchemaNode) module.findDataChildByName(GRP_USES).get();
-        primaryType = (LeafSchemaNode) grpUses.findDataChildByName(TYPE).get();
+        final var grpUses = (ListSchemaNode) module.getDataChildByName(GRP_USES);
+        primaryType = (LeafSchemaNode) grpUses.getDataChildByName(TYPE);
 
-        final GroupingDefinition grp = module.getGroupings().iterator().next();
-        secondaryType = (LeafSchemaNode) ((ListSchemaNode) grp.findDataChildByName(SECONDARY).get())
-                .findDataChildByName(TYPE).get();
+        final var grp = module.getGroupings().iterator().next();
+        secondaryType = (LeafSchemaNode) ((ListSchemaNode) grp.getDataChildByName(SECONDARY))
+                .getDataChildByName(TYPE);
     }
 
     @Test
     public void testFindDataSchemaNodeForRelativeXPathWithDeref() {
-        final TypeDefinition<?> typeNodeType = secondaryType.getType();
+        final var typeNodeType = secondaryType.getType();
         assertThat(typeNodeType, isA(LeafrefTypeDefinition.class));
 
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
+        final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(QName.create(module.getQNameModule(), "grp"));
         stack.enterSchemaTree(QName.create(module.getQNameModule(), "secondary"));
         stack.enterSchemaTree(secondaryType.getQName());
-        final EffectiveStatement<?, ?> found = stack.resolvePathExpression(((LeafrefTypeDefinition) typeNodeType)
-                .getPathStatement());
+        final var found = stack.resolvePathExpression(((LeafrefTypeDefinition) typeNodeType).getPathStatement());
         assertSame(primaryType, found);
     }
 }

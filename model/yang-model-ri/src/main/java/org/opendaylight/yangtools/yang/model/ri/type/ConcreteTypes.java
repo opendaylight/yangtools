@@ -50,44 +50,44 @@ public final class ConcreteTypes {
     }
 
     public static ConcreteTypeBuilder<?> concreteTypeBuilder(final TypeDefinition<?> baseType, final QName qname) {
-        if (baseType instanceof BinaryTypeDefinition) {
-            return concreteBinaryBuilder((BinaryTypeDefinition) baseType, qname);
-        } else if (baseType instanceof BitsTypeDefinition) {
-            return concreteBitsBuilder((BitsTypeDefinition) baseType, qname);
-        } else if (baseType instanceof BooleanTypeDefinition) {
-            return concreteBooleanBuilder((BooleanTypeDefinition) baseType, qname);
-        } else if (baseType instanceof DecimalTypeDefinition) {
-            return concreteDecimalBuilder((DecimalTypeDefinition) baseType, qname);
-        } else if (baseType instanceof EmptyTypeDefinition) {
-            return concreteEmptyBuilder((EmptyTypeDefinition) baseType, qname);
-        } else if (baseType instanceof EnumTypeDefinition) {
-            return concreteEnumerationBuilder((EnumTypeDefinition) baseType, qname);
-        } else if (baseType instanceof IdentityrefTypeDefinition) {
-            return concreteIdentityrefBuilder((IdentityrefTypeDefinition) baseType, qname);
-        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            return concreteInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int8TypeDefinition) {
-            return concreteInt8Builder((Int8TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int16TypeDefinition) {
-            return concreteInt16Builder((Int16TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int32TypeDefinition) {
-            return concreteInt32Builder((Int32TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int64TypeDefinition) {
-            return concreteInt64Builder((Int64TypeDefinition) baseType, qname);
-        } else if (baseType instanceof LeafrefTypeDefinition) {
-            return concreteLeafrefBuilder((LeafrefTypeDefinition) baseType, qname);
-        } else if (baseType instanceof StringTypeDefinition) {
-            return concreteStringBuilder((StringTypeDefinition) baseType, qname);
-        } else if (baseType instanceof UnionTypeDefinition) {
-            return concreteUnionBuilder((UnionTypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint8TypeDefinition) {
-            return concreteUint8Builder((Uint8TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint16TypeDefinition) {
-            return concreteUint16Builder((Uint16TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint32TypeDefinition) {
-            return concreteUint32Builder((Uint32TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint64TypeDefinition) {
-            return concreteUint64Builder((Uint64TypeDefinition) baseType, qname);
+        if (baseType instanceof BinaryTypeDefinition binary) {
+            return concreteBinaryBuilder(binary, qname);
+        } else if (baseType instanceof BitsTypeDefinition bits) {
+            return concreteBitsBuilder(bits, qname);
+        } else if (baseType instanceof BooleanTypeDefinition bool) {
+            return concreteBooleanBuilder(bool, qname);
+        } else if (baseType instanceof DecimalTypeDefinition decimal) {
+            return concreteDecimalBuilder(decimal, qname);
+        } else if (baseType instanceof EmptyTypeDefinition empty) {
+            return concreteEmptyBuilder(empty, qname);
+        } else if (baseType instanceof EnumTypeDefinition enumType) {
+            return concreteEnumerationBuilder(enumType, qname);
+        } else if (baseType instanceof IdentityrefTypeDefinition identityRef) {
+            return concreteIdentityrefBuilder(identityRef, qname);
+        } else if (baseType instanceof InstanceIdentifierTypeDefinition instanceIdentifier) {
+            return concreteInstanceIdentifierBuilder(instanceIdentifier, qname);
+        } else if (baseType instanceof Int8TypeDefinition int8) {
+            return concreteInt8Builder(int8, qname);
+        } else if (baseType instanceof Int16TypeDefinition int16) {
+            return concreteInt16Builder(int16, qname);
+        } else if (baseType instanceof Int32TypeDefinition int32) {
+            return concreteInt32Builder(int32, qname);
+        } else if (baseType instanceof Int64TypeDefinition int64) {
+            return concreteInt64Builder(int64, qname);
+        } else if (baseType instanceof LeafrefTypeDefinition leafRef) {
+            return concreteLeafrefBuilder(leafRef, qname);
+        } else if (baseType instanceof StringTypeDefinition string) {
+            return concreteStringBuilder(string, qname);
+        } else if (baseType instanceof UnionTypeDefinition union) {
+            return concreteUnionBuilder(union, qname);
+        } else if (baseType instanceof Uint8TypeDefinition uint8) {
+            return concreteUint8Builder(uint8, qname);
+        } else if (baseType instanceof Uint16TypeDefinition uint16) {
+            return concreteUint16Builder(uint16, qname);
+        } else if (baseType instanceof Uint32TypeDefinition uint32) {
+            return concreteUint32Builder(uint32, qname);
+        } else if (baseType instanceof Uint64TypeDefinition uint64) {
+            return concreteUint64Builder(uint64, qname);
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
@@ -97,34 +97,34 @@ public final class ConcreteTypes {
         final var typeStmt = leaf.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leaf.argument());
         for (var stmt : leaf.effectiveSubstatements()) {
-            if (stmt instanceof DefaultEffectiveStatement) {
-                builder.setDefaultValue(((DefaultEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof DescriptionEffectiveStatement) {
-                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement) {
-                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatement) {
-                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatement) {
-                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
+            if (stmt instanceof DefaultEffectiveStatement dflt) {
+                builder.setDefaultValue(dflt.argument());
+            } else if (stmt instanceof DescriptionEffectiveStatement description) {
+                builder.setDescription(description.argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement reference) {
+                builder.setReference(reference.argument());
+            } else if (stmt instanceof StatusEffectiveStatement status) {
+                builder.setStatus(status.argument());
+            } else if (stmt instanceof UnitsEffectiveStatement units) {
+                builder.setUnits(units.argument());
             }
         }
         return builder.build();
     }
 
     public static TypeDefinition<?> typeOf(final LeafListEffectiveStatement leafList) {
-        final var typeStmt = leafList.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
+        final var typeStmt = leafList.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leafList.argument());
         for (var stmt : leafList.effectiveSubstatements()) {
             // NOTE: 'default' is omitted here on purpose
-            if (stmt instanceof DescriptionEffectiveStatement) {
-                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement) {
-                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatement) {
-                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatement) {
-                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
+            if (stmt instanceof DescriptionEffectiveStatement description) {
+                builder.setDescription(description.argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement reference) {
+                builder.setReference(reference.argument());
+            } else if (stmt instanceof StatusEffectiveStatement status) {
+                builder.setStatus(status.argument());
+            } else if (stmt instanceof UnitsEffectiveStatement units) {
+                builder.setUnits(units.argument());
             }
         }
         return builder.build();

@@ -13,8 +13,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Range;
-import java.util.Collection;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,7 +29,7 @@ public class TypedefConstraintsTest extends AbstractYangTest {
 
         assertNotNull(context);
 
-        final Collection<? extends TypeDefinition<?>> typeDefinitions = context.getTypeDefinitions();
+        final var typeDefinitions = context.getTypeDefinitions();
         assertNotNull(typeDefinitions);
         assertEquals(1, typeDefinitions.size());
 
@@ -40,8 +38,8 @@ public class TypedefConstraintsTest extends AbstractYangTest {
         assertNotNull(myDecimal);
         assertTrue(myDecimal instanceof DecimalTypeDefinition);
 
-        final Set<? extends Range<?>> rangeConstraints = ((DecimalTypeDefinition) myDecimal).getRangeConstraint()
-                .get().getAllowedRanges().asRanges();
+        final var rangeConstraints = ((DecimalTypeDefinition) myDecimal).getRangeConstraint().orElseThrow()
+            .getAllowedRanges().asRanges();
 
         assertNotNull(rangeConstraints);
         assertEquals(1, rangeConstraints.size());
@@ -57,8 +55,7 @@ public class TypedefConstraintsTest extends AbstractYangTest {
         assertTrue(type instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition decType = (DecimalTypeDefinition) type;
 
-        final Set<? extends Range<?>> decRangeConstraints = decType.getRangeConstraint().get().getAllowedRanges()
-                .asRanges();
+        final var decRangeConstraints = decType.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();
 
         assertEquals(1, decRangeConstraints.size());
 

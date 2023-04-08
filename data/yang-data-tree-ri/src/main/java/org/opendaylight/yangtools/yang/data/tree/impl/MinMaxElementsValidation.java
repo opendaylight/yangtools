@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.RequiredElementCountException;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 
 final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountConstraintAware>
@@ -34,12 +32,12 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
     static <T extends DataSchemaNode & ElementCountConstraintAware> ModificationApplyOperation from(
             final SchemaAwareApplyOperation<T> delegate) {
-        final Optional<ElementCountConstraint> optConstraint = delegate.getSchema().getElementCountConstraint();
-        if (!optConstraint.isPresent()) {
+        final var optConstraint = delegate.getSchema().getElementCountConstraint();
+        if (optConstraint.isEmpty()) {
             return delegate;
         }
 
-        final ElementCountConstraint constraint = optConstraint.get();
+        final var constraint = optConstraint.orElseThrow();
         return new MinMaxElementsValidation<>(delegate, constraint.getMinElements(), constraint.getMaxElements());
     }
 

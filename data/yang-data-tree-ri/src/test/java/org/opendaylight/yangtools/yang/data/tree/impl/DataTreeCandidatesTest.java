@@ -102,7 +102,7 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         DataTreeCandidates.applyToModification(newModification,
                 newCandidate);
 
-        final LeafNode<?> readLeaf = (LeafNode<?>) newModification.readNode(TestModel.INNER_VALUE_PATH).get();
+        final LeafNode<?> readLeaf = (LeafNode<?>) newModification.readNode(TestModel.INNER_VALUE_PATH).orElseThrow();
         assertEquals(readLeaf, leaf);
     }
 

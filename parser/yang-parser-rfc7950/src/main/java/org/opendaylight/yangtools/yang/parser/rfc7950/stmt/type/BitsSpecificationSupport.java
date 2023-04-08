@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -61,10 +60,8 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
         final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(stmt.argumentAsTypeQName());
         Uint32 highestPosition = null;
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof BitEffectiveStatement) {
-                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) subStmt;
-
-                final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
+            if (subStmt instanceof BitEffectiveStatement bitSubStmt) {
+                final var declaredPosition = bitSubStmt.getDeclaredPosition();
                 final Uint32 effectivePos;
                 if (declaredPosition.isEmpty()) {
                     if (highestPosition != null) {
@@ -75,7 +72,7 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
                         effectivePos = Uint32.ZERO;
                     }
                 } else {
-                    effectivePos = declaredPosition.get();
+                    effectivePos = declaredPosition.orElseThrow();
                 }
 
                 final Bit bit = EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos);

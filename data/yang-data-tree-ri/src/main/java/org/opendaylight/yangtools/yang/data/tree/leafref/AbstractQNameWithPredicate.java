@@ -8,24 +8,16 @@
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
 import java.util.Objects;
-import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 
 abstract class AbstractQNameWithPredicate implements Immutable, QNameWithPredicate {
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof QNameWithPredicate)) {
-            return false;
-        }
-        final QNameWithPredicate other = (QNameWithPredicate) obj;
-        // FIXME: check also predicates ...
-        return Objects.equals(getLocalName(), other.getLocalName())
-                && Objects.equals(getModuleQname(), other.getModuleQname());
+        return this == obj || obj instanceof QNameWithPredicate other
+            // FIXME: check also predicates ...
+            && Objects.equals(getLocalName(), other.getLocalName())
+            && Objects.equals(getModuleQname(), other.getModuleQname());
     }
 
     @Override
@@ -40,9 +32,9 @@ abstract class AbstractQNameWithPredicate implements Immutable, QNameWithPredica
         final QNameModule moduleQname = getModuleQname();
         if (moduleQname != null) {
             sb.append('(').append(moduleQname.getNamespace());
-            final Optional<Revision> rev = moduleQname.getRevision();
+            final var rev = moduleQname.getRevision();
             if (rev.isPresent()) {
-                sb.append("?revision=").append(rev.get());
+                sb.append("?revision=").append(rev.orElseThrow());
             }
             sb.append(')');
         }

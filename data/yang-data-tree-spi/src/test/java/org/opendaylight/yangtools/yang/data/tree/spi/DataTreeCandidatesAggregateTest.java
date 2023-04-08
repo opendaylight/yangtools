@@ -49,8 +49,8 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value1", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
@@ -70,8 +70,8 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
@@ -138,8 +138,8 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
@@ -159,8 +159,8 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value3", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value3", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
@@ -198,7 +198,7 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
@@ -217,7 +217,7 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
@@ -237,8 +237,8 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().orElseThrow().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().orElseThrow().body());
     }
 
     @Test
