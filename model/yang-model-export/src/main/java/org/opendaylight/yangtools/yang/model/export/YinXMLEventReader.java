@@ -55,7 +55,7 @@ final class YinXMLEventReader implements XMLEventReader {
 
         final StatementDefinition def = root.statementDefinition();
         final QName name = def.getStatementName();
-        final ArgumentDefinition arg = def.getArgumentDefinition().get();
+        final ArgumentDefinition arg = def.getArgumentDefinition().orElseThrow();
 
         events.add(eventFactory.createStartElement(XMLConstants.DEFAULT_NS_PREFIX, name.getNamespace().toString(),
             name.getLocalName(), singletonIterator(attribute(arg.argumentName(), root.rawArgument())),

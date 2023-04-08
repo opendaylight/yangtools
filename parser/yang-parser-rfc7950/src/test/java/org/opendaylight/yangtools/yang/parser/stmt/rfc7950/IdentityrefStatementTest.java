@@ -11,12 +11,12 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
@@ -26,13 +26,13 @@ class IdentityrefStatementTest extends AbstractYangTest {
     void testIdentityrefWithMultipleBaseIdentities() {
         final var context = assertEffectiveModel("/rfc7950/identityref-stmt/foo.yang");
 
-        final Module foo = context.findModule("foo", Revision.of("2017-01-11")).get();
+        final var foo = context.findModule("foo", Revision.of("2017-01-11")).orElseThrow();
         final var identities = foo.getIdentities();
         assertEquals(3, identities.size());
 
-        final LeafSchemaNode idrefLeaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-            "idref-leaf"));
-        final IdentityrefTypeDefinition idrefType = (IdentityrefTypeDefinition) idrefLeaf.getType();
+        final var idrefLeaf = assertInstanceOf(LeafSchemaNode.class,
+            foo.getDataChildByName(QName.create(foo.getQNameModule(), "idref-leaf")));
+        final var idrefType = assertInstanceOf(IdentityrefTypeDefinition.class, idrefLeaf.getType());
         final var referencedIdentities = idrefType.getIdentities();
         assertEquals(3, referencedIdentities.size());
         assertThat(referencedIdentities, containsInAnyOrder(identities.toArray()));

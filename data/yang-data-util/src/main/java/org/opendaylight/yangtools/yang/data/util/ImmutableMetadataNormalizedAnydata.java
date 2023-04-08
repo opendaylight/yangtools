@@ -34,7 +34,7 @@ public final class ImmutableMetadataNormalizedAnydata extends ImmutableNormalize
     public static ImmutableNormalizedAnydata ofOptional(final EffectiveStatementInference inference,
             final NormalizedNode data, final Optional<NormalizedMetadata> metadata) {
         return metadata.isPresent()
-                ? new ImmutableMetadataNormalizedAnydata(inference, data, metadata.get())
+                ? new ImmutableMetadataNormalizedAnydata(inference, data, metadata.orElseThrow())
                         : new ImmutableNormalizedAnydata(inference, data);
     }
 

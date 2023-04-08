@@ -20,8 +20,8 @@ final class OperationWithModification {
     private final ModifiedNode modification;
 
     private OperationWithModification(final ModificationApplyOperation op, final ModifiedNode mod) {
-        this.applyOperation = requireNonNull(op);
-        this.modification = requireNonNull(mod);
+        applyOperation = requireNonNull(op);
+        modification = requireNonNull(mod);
     }
 
     void write(final NormalizedNode value) {
@@ -73,7 +73,7 @@ final class OperationWithModification {
         }
 
         if (snapshot.isPresent()) {
-            return snapshot.get().findChildByArg(child).map(TreeNode::getData);
+            return snapshot.orElseThrow().findChildByArg(child).map(TreeNode::getData);
         }
 
         return Optional.empty();

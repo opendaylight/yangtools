@@ -66,7 +66,7 @@ public class Bug2690Test extends AbstractTestModelTest {
         final DataTreeModification modificationAfterTx = snapshotAfterTx.newModification();
         final Optional<NormalizedNode> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(readNode.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?>)readNode.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?>)readNode.orElseThrow()).size());
     }
 
     @Test

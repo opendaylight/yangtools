@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
@@ -73,7 +72,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
 
     @Override
     public TypeDefinition<?> getTypeDefinition() {
-        final TypeDefinition<?> existing = (TypeDefinition<?>) TYPE_DEFINITION.getAcquire(this);
+        final var existing = (TypeDefinition<?>) TYPE_DEFINITION.getAcquire(this);
         return existing != null ? existing : loadTypeDefinition();
     }
 
@@ -84,36 +83,36 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
     }
 
     private @NonNull TypeDefinition<?> loadTypeDefinition() {
-        final TypeEffectiveStatement<?> type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
-        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), argument());
+        final var type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
+        final var builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), argument());
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof DefaultEffectiveStatement) {
-                builder.setDefaultValue(((DefaultEffectiveStatement) stmt).argument());
-            } else if (stmt instanceof DescriptionEffectiveStatement) {
-                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement) {
-                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatement) {
-                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatement) {
-                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof UnknownSchemaNode) {
+            if (stmt instanceof DefaultEffectiveStatement dflt) {
+                builder.setDefaultValue(dflt.argument());
+            } else if (stmt instanceof DescriptionEffectiveStatement description) {
+                builder.setDescription(description.argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement reference) {
+                builder.setReference(reference.argument());
+            } else if (stmt instanceof StatusEffectiveStatement status) {
+                builder.setStatus(status.argument());
+            } else if (stmt instanceof UnitsEffectiveStatement units) {
+                builder.setUnits(units.argument());
+            } else if (stmt instanceof UnknownSchemaNode unknown) {
                 // FIXME: should not directly implement, I think
-                builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
+                builder.addUnknownSchemaNode(unknown);
             } else if (!(stmt instanceof TypeEffectiveStatement)) {
                 LOG.debug("Ignoring statement {}", stmt);
             }
         }
 
-        final TypeDefinition<?> created = builder.build();
-        final Object witness = TYPE_DEFINITION.compareAndExchangeRelease(this, null, created);
+        final var created = builder.build();
+        final var witness = TYPE_DEFINITION.compareAndExchangeRelease(this, null, created);
         return witness == null ? created : (TypeDefinition<?>) witness;
     }
 
     private @NonNull ProxyTypeEffectiveStatement loadTypeStatement() {
-        final ProxyTypeEffectiveStatement created = new ProxyTypeEffectiveStatement();
-        final Object witness = TYPE_STATEMENT.compareAndExchangeRelease(this, null, created);
+        final var created = new ProxyTypeEffectiveStatement();
+        final var witness = TYPE_STATEMENT.compareAndExchangeRelease(this, null, created);
         return witness == null ? created : (ProxyTypeEffectiveStatement) witness;
     }
 

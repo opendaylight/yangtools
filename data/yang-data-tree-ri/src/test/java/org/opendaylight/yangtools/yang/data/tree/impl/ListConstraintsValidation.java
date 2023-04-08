@@ -123,7 +123,7 @@ public class ListConstraintsValidation {
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
     }
 
     @Test(expected = DataValidationFailedException.class)
@@ -154,7 +154,7 @@ public class ListConstraintsValidation {
         DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(gooPath, gooEntryNode);
@@ -167,7 +167,7 @@ public class ListConstraintsValidation {
         snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.get()).size());
+        assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -208,7 +208,7 @@ public class ListConstraintsValidation {
         final Optional<NormalizedNode> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
         final NormalizedNodeContainer<?> leafList =
-            (NormalizedNodeContainer<?>) ((DistinctNodeContainer) masterContainer.get())
+            (NormalizedNodeContainer<?>) ((DistinctNodeContainer) masterContainer.orElseThrow())
                 .childByArg(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertNotNull(leafList);
         assertEquals(2, leafList.size());
@@ -270,7 +270,7 @@ public class ListConstraintsValidation {
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode> unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
         assertTrue(unkeyedListRead.isPresent());
-        assertEquals(1, ((UnkeyedListNode) unkeyedListRead.get()).size());
+        assertEquals(1, ((UnkeyedListNode) unkeyedListRead.orElseThrow()).size());
     }
 
     @Test

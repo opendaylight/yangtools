@@ -61,6 +61,6 @@ public interface YangNamespaceContext extends Immutable, Serializable {
     default @NonNull QName createQName(final String prefix, final String localName) {
         final Optional<QNameModule> namespace = findNamespaceForPrefix(prefix);
         checkArgument(namespace.isPresent(), "Prefix %s is not bound", prefix);
-        return QName.create(namespace.get(), localName);
+        return QName.create(namespace.orElseThrow(), localName);
     }
 }

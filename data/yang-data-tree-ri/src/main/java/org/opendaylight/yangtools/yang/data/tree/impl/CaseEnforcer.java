@@ -77,7 +77,7 @@ class CaseEnforcer implements Immutable {
         }
         final ImmutableMap<AugmentationIdentifier, AugmentationSchemaNode> augmentations = augmentationsBuilder.build();
         final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
-        return enforcer.isPresent() ? new EnforcingMandatory(children, augmentations, enforcer.get())
+        return enforcer.isPresent() ? new EnforcingMandatory(children, augmentations, enforcer.orElseThrow())
                 : new CaseEnforcer(children, augmentations);
     }
 

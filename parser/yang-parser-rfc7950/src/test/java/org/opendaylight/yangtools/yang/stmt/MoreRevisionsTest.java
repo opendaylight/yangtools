@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,12 +19,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 class MoreRevisionsTest extends AbstractYangTest {
@@ -47,7 +43,7 @@ class MoreRevisionsTest extends AbstractYangTest {
     void readAndParseYangFileTest() {
         final var result = assertEffectiveModel("/semantic-statement-parser/revisions/more-revisions-test.yang");
         final var moduleByName = result.getModules().iterator().next();
-        assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().get().toString());
+        assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().orElseThrow().toString());
     }
 
     @Test
@@ -100,9 +96,9 @@ class MoreRevisionsTest extends AbstractYangTest {
         final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
         final QName dateTimeTypeDef20130715 = QName.create(yangTypes20130715, "date-and-time");
 
-        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).get();
-        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).get();
-        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).get();
+        var yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).orElseThrow();
+        var yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).orElseThrow();
+        var yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).orElseThrow();
         assertTrue(findTypeDef(yangTypesModule20100924, dateTimeTypeDef20100924));
         assertTrue(findTypeDef(yangTypesModule20130516, dateTimeTypeDef20130516));
         assertTrue(findTypeDef(yangTypesModule20130715, dateTimeTypeDef20130715));
@@ -113,24 +109,24 @@ class MoreRevisionsTest extends AbstractYangTest {
 
     private static void checkInterfacesModuleFullTest(final EffectiveModelContext context, final Revision rev20100924,
         final QName dateTimeTypeDef20100924) {
-        Revision rev20121115 = Revision.of("2012-11-15");
+        var rev20121115 = Revision.of("2012-11-15");
 
-        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
-        Collection<? extends ModuleImport> imports = interfacesModule20121115.getImports();
+        var interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).orElseThrow();
+        var imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
-        ModuleImport interfacesImport = imports.iterator().next();
+        var interfacesImport = imports.iterator().next();
         assertEquals(Unqualified.of("ietf-yang-types"), interfacesImport.getModuleName());
         assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
 
     private static void checkNetconfMonitoringModuleFullTest(final EffectiveModelContext context,
         final Revision rev20130715, final QName dateTimeTypeDef20130715) {
-        Revision rev20101004 = Revision.of("2010-10-04");
+        var rev20101004 = Revision.of("2010-10-04");
 
-        Module monitoringModule20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).get();
-        Collection<? extends ModuleImport> imports = monitoringModule20101004.getImports();
+        var monitoringModule20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).orElseThrow();
+        var imports = monitoringModule20101004.getImports();
         assertEquals(2, imports.size());
-        for (ModuleImport monitoringImport : imports) {
+        for (var monitoringImport : imports) {
             if (monitoringImport.getModuleName().equals("ietf-yang-types")) {
                 assertEquals(Optional.of(rev20130715), monitoringImport.getRevision());
             }
@@ -161,9 +157,9 @@ class MoreRevisionsTest extends AbstractYangTest {
         final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
         final QName dateTimeTypeDef20130715 = QName.create(yangTypes20130715, "date-and-time");
 
-        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).get();
-        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).get();
-        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).get();
+        var yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).orElseThrow();
+        var yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).orElseThrow();
+        var yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).orElseThrow();
         assertTrue(findTypeDef(yangTypesModule20100924, dateTimeTypeDef20100924));
         assertTrue(findTypeDef(yangTypesModule20130516, dateTimeTypeDef20130516));
         assertTrue(findTypeDef(yangTypesModule20130715, dateTimeTypeDef20130715));
@@ -179,14 +175,14 @@ class MoreRevisionsTest extends AbstractYangTest {
         final QNameModule interfacesNS20121115 = QNameModule.create(interfacesNS, rev20121115);
         QName lastChange = QName.create(interfacesNS20121115, "last-change");
 
-        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
-        DataSchemaNode leafLastChange = interfacesModule20121115.getDataChildByName(lastChange);
+        var interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).orElseThrow();
+        var leafLastChange = interfacesModule20121115.getDataChildByName(lastChange);
         QName lastChangeTypeQName = assertInstanceOf(LeafSchemaNode.class, leafLastChange).getType().getQName();
         assertEquals(dateTimeTypeDef20100924, lastChangeTypeQName);
 
-        Collection<? extends ModuleImport> imports = interfacesModule20121115.getImports();
+        var imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
-        ModuleImport interfacesImport = imports.iterator().next();
+        var interfacesImport = imports.iterator().next();
         assertEquals(Unqualified.of("ietf-yang-types"), interfacesImport.getModuleName());
         assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
@@ -197,20 +193,20 @@ class MoreRevisionsTest extends AbstractYangTest {
         final QNameModule monitoring19700101 = QNameModule.create(monitoringNS);
         QName lockedTime = QName.create(monitoring19700101, "locked-time");
 
-        Module monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").get();
-        DataSchemaNode leafLockedTime = monitoringModule19700101.getDataChildByName(lockedTime);
+        var monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").orElseThrow();
+        var leafLockedTime = monitoringModule19700101.getDataChildByName(lockedTime);
         QName lockedTimeTypeQName = assertInstanceOf(LeafSchemaNode.class, leafLockedTime).getType().getQName();
         assertEquals(dateTimeTypeDef20130715, lockedTimeTypeQName);
 
-        Collection<? extends ModuleImport> imports = monitoringModule19700101.getImports();
+        var imports = monitoringModule19700101.getImports();
         assertEquals(1, imports.size());
-        ModuleImport monitoringImport = imports.iterator().next();
+        var monitoringImport = imports.iterator().next();
         assertEquals(Unqualified.of("ietf-yang-types"), monitoringImport.getModuleName());
         assertEquals(Optional.of(rev20130715), monitoringImport.getRevision());
     }
 
     private static boolean findTypeDef(final Module module, final QName typedef) {
-        for (TypeDefinition<?> typeDefinition : module.getTypeDefinitions()) {
+        for (var typeDefinition : module.getTypeDefinitions()) {
             if (typeDefinition.getQName().equals(typedef)) {
                 return true;
             }
@@ -224,12 +220,10 @@ class MoreRevisionsTest extends AbstractYangTest {
 
         QName root = QName.create("foo", "2016-04-06", "foo-root");
         QName container20160404 = QName.create("foo", "2016-04-06", "con20160404");
-        DataSchemaNode findDataSchemaNode = context.findDataTreeChild(root, container20160404).orElse(null);
-        assertInstanceOf(ContainerSchemaNode.class, findDataSchemaNode);
+        assertInstanceOf(ContainerSchemaNode.class, context.findDataTreeChild(root, container20160404).orElse(null));
 
         QName container20160405 = QName.create("foo", "2016-04-06", "con20160405");
-        findDataSchemaNode = context.findDataTreeChild(root, container20160405).orElse(null);
-        assertInstanceOf(ContainerSchemaNode.class, findDataSchemaNode);
+        assertInstanceOf(ContainerSchemaNode.class, context.findDataTreeChild(root, container20160405).orElse(null));
 
         QName container20160406 = QName.create("foo", "2016-04-06", "con20160406");
         assertEquals(Optional.empty(), context.findDataTreeChild(root, container20160406));

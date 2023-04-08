@@ -158,9 +158,9 @@ public class Bug8083Test {
     }
 
     private static JSONCodec<YangInstanceIdentifier> getCodec(final JSONCodecFactorySupplier supplier) {
-        final DataSchemaNode top = FULL_SCHEMA_CONTEXT.findDataChildByName(TOP_QNAME).get();
+        final DataSchemaNode top = FULL_SCHEMA_CONTEXT.getDataChildByName(TOP_QNAME);
         assertTrue(top instanceof ContainerSchemaNode);
-        final DataSchemaNode foo = ((ContainerSchemaNode) top).findDataChildByName(FOO_QNAME).get();
+        final DataSchemaNode foo = ((ContainerSchemaNode) top).getDataChildByName(FOO_QNAME);
         assertTrue(foo instanceof LeafSchemaNode);
         final TypeDefinition<? extends TypeDefinition<?>> type = ((LeafSchemaNode) foo).getType();
         assertTrue(type instanceof InstanceIdentifierTypeDefinition);

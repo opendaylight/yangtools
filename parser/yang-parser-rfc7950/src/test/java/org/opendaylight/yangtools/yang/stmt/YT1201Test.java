@@ -14,8 +14,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
@@ -25,8 +23,8 @@ class YT1201Test extends AbstractYangTest {
 
     @Test
     void testWhenPrefixes() {
-        final DataSchemaNode bar = assertEffectiveModelDir("/bugs/YT1201/").getDataChildByName(BAR);
-        final YangExpr when = assertInstanceOf(ContainerSchemaNode.class, bar).getWhenCondition().orElseThrow()
+        final var bar = assertEffectiveModelDir("/bugs/YT1201/").getDataChildByName(BAR);
+        final var when = assertInstanceOf(ContainerSchemaNode.class, bar).getWhenCondition().orElseThrow()
             .getRootExpr();
         assertEquals(List.of(YangXPathAxis.CHILD.asStep(FOO)), assertInstanceOf(Relative.class, when).getSteps());
     }

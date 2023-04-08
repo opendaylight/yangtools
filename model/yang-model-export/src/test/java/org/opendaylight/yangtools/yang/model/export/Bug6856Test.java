@@ -29,7 +29,7 @@ public class Bug6856Test {
         final var fooModule = schemaContext.findModule("foo", Revision.of("2017-02-28")).orElseThrow();
         YinExportUtils.writeModuleAsYinText(fooModule.asEffectiveStatement(), bufferedOutputStream);
 
-        final String output = byteArrayOutputStream.toString();
+        final var output = byteArrayOutputStream.toString();
         assertNotNull(output);
         assertFalse(output.isEmpty());
 
@@ -45,10 +45,10 @@ public class Bug6856Test {
         final var byteArrayOutputStream = new ByteArrayOutputStream();
         final var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
-        final var barModule = schemaContext.findModule("bar", Revision.of("2017-02-28")).get();
+        final var barModule = schemaContext.findModule("bar", Revision.of("2017-02-28")).orElseThrow();
         YinExportUtils.writeModuleAsYinText(barModule.asEffectiveStatement(), bufferedOutputStream);
 
-        final String output = byteArrayOutputStream.toString();
+        final var output = byteArrayOutputStream.toString();
         assertNotNull(output);
         assertFalse(output.isEmpty());
 
