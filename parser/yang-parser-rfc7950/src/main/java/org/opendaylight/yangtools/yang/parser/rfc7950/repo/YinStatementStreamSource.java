@@ -15,7 +15,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.Optional;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -88,9 +86,9 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
 
     private static boolean processAttribute(final int childId, final Attr attr, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
-        final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(childId);
+        final var optResumed = writer.resumeStatement(childId);
         if (optResumed.isPresent()) {
-            final ResumedStatement resumed = optResumed.get();
+            final var resumed = optResumed.orElseThrow();
             checkState(resumed.isFullyDefined(), "Statement %s is not fully defined", resumed);
             return true;
         }
@@ -128,22 +126,22 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     private static boolean processElement(final int childId, final Element element, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef) {
 
-        final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(childId);
+        final var optResumed = writer.resumeStatement(childId);
         final StatementSourceReference ref;
         final QName argName;
         final boolean allAttrs;
         final boolean allElements;
         if (optResumed.isPresent()) {
-            final ResumedStatement resumed = optResumed.get();
+            final var resumed = optResumed.orElseThrow();
             if (resumed.isFullyDefined()) {
                 return true;
             }
 
             final StatementDefinition def = resumed.getDefinition();
             ref = resumed.getSourceReference();
-            final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
+            final var optArgDef = def.getArgumentDefinition();
             if (optArgDef.isPresent()) {
-                final ArgumentDefinition argDef = optArgDef.get();
+                final ArgumentDefinition argDef = optArgDef.orElseThrow();
                 argName = argDef.getArgumentName();
                 allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;
@@ -161,9 +159,9 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             }
 
             final String argValue;
-            final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
+            final var optArgDef = def.getArgumentDefinition();
             if (optArgDef.isPresent()) {
-                final ArgumentDefinition argDef = optArgDef.get();
+                final ArgumentDefinition argDef = optArgDef.orElseThrow();
                 argName = argDef.getArgumentName();
                 allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;

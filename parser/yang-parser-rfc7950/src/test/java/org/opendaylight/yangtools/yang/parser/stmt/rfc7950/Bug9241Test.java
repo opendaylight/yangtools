@@ -8,16 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
@@ -28,20 +23,18 @@ public class Bug9241Test extends AbstractYangTest {
     public void testImplicitInputAndOutputInAction() {
         final var context = assertEffectiveModel("/rfc7950/bug9241/foo.yang");
 
-        final Module fooModule = context.findModule("foo", Revision.of("2017-10-13")).get();
+        final var fooModule = context.findModule("foo", Revision.of("2017-10-13")).orElseThrow();
 
-        final ContainerSchemaNode actionCont = (ContainerSchemaNode) fooModule.getDataChildByName(QName.create(
+        final var actionCont = (ContainerSchemaNode) fooModule.getDataChildByName(QName.create(
                 fooModule.getQNameModule(), "action-cont"));
 
-        final ActionDefinition actionInCont = actionCont.getActions().iterator().next();
+        final var actionInCont = actionCont.getActions().iterator().next();
 
-        final InputSchemaNode input = actionInCont.getInput();
-        assertNotNull(input);
+        final var input = actionInCont.getInput();
         assertEquals(1, input.getChildNodes().size());
         assertEquals(StatementOrigin.CONTEXT, ((EffectiveStatement<?, ?>) input).statementOrigin());
 
-        final OutputSchemaNode output = actionInCont.getOutput();
-        assertNotNull(output);
+        final var output = actionInCont.getOutput();
         assertEquals(1, output.getChildNodes().size());
         assertEquals(StatementOrigin.CONTEXT, ((EffectiveStatement<?, ?>) output).statementOrigin());
     }

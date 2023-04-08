@@ -12,11 +12,8 @@ import static org.hamcrest.Matchers.isA;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -28,25 +25,25 @@ public class YT588Test {
 
     @Test
     public void test() {
-        EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt588.yang");
+        var context = YangParserTestUtils.parseYangResource("/yt588.yang");
 
         QName root = QName.create(NS, REV, "root");
         QName leafRef2 = QName.create(NS, REV, "leaf-ref-2");
         QName conGrp = QName.create(NS, REV, "con-grp");
         QName leafRef = QName.create(NS, REV, "leaf-ref");
 
-        SchemaNode findDataSchemaNode = context.findDataTreeChild(root, conGrp, leafRef).get();
-        SchemaNode findDataSchemaNode2 = context.findDataTreeChild(root, leafRef2).get();
+        var findDataSchemaNode = context.findDataTreeChild(root, conGrp, leafRef).orElseThrow();
+        var findDataSchemaNode2 = context.findDataTreeChild(root, leafRef2).orElseThrow();
         assertThat(findDataSchemaNode, isA(LeafSchemaNode.class));
         assertThat(findDataSchemaNode2, isA(LeafSchemaNode.class));
 
-        LeafSchemaNode leafRefNode = (LeafSchemaNode) findDataSchemaNode;
-        LeafSchemaNode leafRefNode2 = (LeafSchemaNode) findDataSchemaNode2;
+        var leafRefNode = (LeafSchemaNode) findDataSchemaNode;
+        var leafRefNode2 = (LeafSchemaNode) findDataSchemaNode2;
 
         assertThat(leafRefNode.getType(), isA(LeafrefTypeDefinition.class));
         assertThat(leafRefNode2.getType(), isA(LeafrefTypeDefinition.class));
 
-        EffectiveStatement<?, ?> found = SchemaInferenceStack.ofDataTreePath(context, root, conGrp, leafRef)
+        var found = SchemaInferenceStack.ofDataTreePath(context, root, conGrp, leafRef)
                 .resolvePathExpression(((LeafrefTypeDefinition) leafRefNode.getType()).getPathStatement());
         assertThat(((TypedDataSchemaNode)found).getType(), isA(BinaryTypeDefinition.class));
 

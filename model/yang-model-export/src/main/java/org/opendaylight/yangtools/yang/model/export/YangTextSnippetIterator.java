@@ -174,7 +174,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         // Add statement prefixed with namespace if needed
         final Optional<String> prefix = resolver.findPrefix(stmt);
         if (prefix.isPresent()) {
-            strings.add(prefix.get());
+            strings.add(prefix.orElseThrow());
             strings.add(":");
         }
         strings.add(def.getStatementName().getLocalName());

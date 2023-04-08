@@ -14,24 +14,20 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class Bug7480Test {
     @Test
     public void libSourcesTest() throws Exception {
-        final SchemaContext context = parseYangSources("/bugs/bug7480/files", "/bugs/bug7480/lib");
+        final var context = parseYangSources("/bugs/bug7480/files", "/bugs/bug7480/lib");
         assertNotNull(context);
 
-        final Collection<? extends Module> modules = context.getModules();
+        final var modules = context.getModules();
         assertEquals(8, modules.size());
 
         assertNotNull(context.findModule(XMLNamespace.of("foo-imp"), Revision.of("2017-01-23")));
@@ -40,12 +36,13 @@ public class Bug7480Test {
         assertEquals(1, context.findModules(XMLNamespace.of("bar")).size());
         assertEquals(1, context.findModules(XMLNamespace.of("baz")).size());
         assertTrue(context.findModule(XMLNamespace.of("baz-imp"), Revision.of("2002-01-01")).isPresent());
-        final Collection<? extends Module> foo = context.findModules(XMLNamespace.of("foo"));
+        final var foo = context.findModules(XMLNamespace.of("foo"));
         assertEquals(1, foo.size());
-        final Collection<? extends Submodule> subFoos = foo.iterator().next().getSubmodules();
+        final var subFoos = foo.iterator().next().getSubmodules();
         assertEquals(1, subFoos.size());
 
-        final Module parentMod = context.findModule(XMLNamespace.of("parent-mod-ns"), Revision.of("2017-09-07")).get();
+        final var parentMod = context.findModule(XMLNamespace.of("parent-mod-ns"), Revision.of("2017-09-07"))
+            .orElseThrow();
         assertEquals(1, parentMod.getSubmodules().size());
     }
 
@@ -53,7 +50,7 @@ public class Bug7480Test {
     public void missingRelevantImportTest() throws Exception {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
-        final String message = ex.getSuppressed().length > 0
+        final var message = ex.getSuppressed().length > 0
             ? ex.getSuppressed()[0].getMessage() : ex.getCause().getMessage();
         assertThat(message, startsWith("Imported module [missing-lib] was not found."));
     }
@@ -62,7 +59,7 @@ public class Bug7480Test {
     public void testHandlingOfMainSourceConflictingWithLibSource() throws Exception {
         // parent module as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid module namespace collision
-        final SchemaContext schemaContext =  RFC7950Reactors.defaultReactor().newBuild()
+        final var schemaContext =  RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
             .addLibSources(
@@ -78,7 +75,7 @@ public class Bug7480Test {
     public void testHandlingOfMainSourceConflictingWithLibSource2() throws Exception {
         // submodule as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid submodule name collision
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
+        final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
             .addLibSources(

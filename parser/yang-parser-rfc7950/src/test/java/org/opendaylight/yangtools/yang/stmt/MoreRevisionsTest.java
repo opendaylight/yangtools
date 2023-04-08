@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class MoreRevisionsTest extends AbstractYangTest {
@@ -64,19 +63,19 @@ public class MoreRevisionsTest extends AbstractYangTest {
             "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-10-21.yang");
 
     @Test
-    public void readAndParseYangFileTest() throws ReactorException {
+    public void readAndParseYangFileTest() throws Exception {
         EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(REVFILE).buildEffective();
         final Module moduleByName = result.getModules().iterator().next();
-        assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().get().toString());
+        assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().orElseThrow().toString());
     }
 
     @Test
-    public void twoRevisionsTest() throws ReactorException {
+    public void twoRevisionsTest() throws Exception {
         RFC7950Reactors.defaultReactor().newBuild().addSources(TED_20130712, TED_20131021, IETF_TYPES).buildEffective();
     }
 
     @Test
-    public void twoRevisionsTest2() throws ReactorException {
+    public void twoRevisionsTest2() throws Exception {
         final var context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021, IETF_TYPES)
                 .buildEffective();
@@ -86,7 +85,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
     }
 
     @Test
-    public void moreRevisionsListKeyTest() throws ReactorException {
+    public void moreRevisionsListKeyTest() throws Exception {
         RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(TED_20130712, TED_20131021, ISIS_20130712, ISIS_20131021, L3_20130712, L3_20131021)
                 .addSources(IETF_TYPES,NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021)
@@ -124,9 +123,9 @@ public class MoreRevisionsTest extends AbstractYangTest {
         final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
         final QName dateTimeTypeDef20130715 = QName.create(yangTypes20130715, "date-and-time");
 
-        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).get();
-        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).get();
-        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).get();
+        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).orElseThrow();
+        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).orElseThrow();
+        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).orElseThrow();
         assertTrue(findTypeDef(yangTypesModule20100924, dateTimeTypeDef20100924));
         assertTrue(findTypeDef(yangTypesModule20130516, dateTimeTypeDef20130516));
         assertTrue(findTypeDef(yangTypesModule20130715, dateTimeTypeDef20130715));
@@ -139,7 +138,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
             final QName dateTimeTypeDef20100924) {
         Revision rev20121115 = Revision.of("2012-11-15");
 
-        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
+        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).orElseThrow();
         Collection<? extends ModuleImport> imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
@@ -151,7 +150,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
             final Revision rev20130715, final QName dateTimeTypeDef20130715) {
         Revision rev20101004 = Revision.of("2010-10-04");
 
-        Module monitoringModule20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).get();
+        Module monitoringModule20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).orElseThrow();
         Collection<? extends ModuleImport> imports = monitoringModule20101004.getImports();
         assertEquals(2, imports.size());
         for (ModuleImport monitoringImport : imports) {
@@ -185,9 +184,9 @@ public class MoreRevisionsTest extends AbstractYangTest {
         final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
         final QName dateTimeTypeDef20130715 = QName.create(yangTypes20130715, "date-and-time");
 
-        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).get();
-        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).get();
-        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).get();
+        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).orElseThrow();
+        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).orElseThrow();
+        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).orElseThrow();
         assertTrue(findTypeDef(yangTypesModule20100924, dateTimeTypeDef20100924));
         assertTrue(findTypeDef(yangTypesModule20130516, dateTimeTypeDef20130516));
         assertTrue(findTypeDef(yangTypesModule20130715, dateTimeTypeDef20130715));
@@ -203,7 +202,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
         final QNameModule interfacesNS20121115 = QNameModule.create(interfacesNS, rev20121115);
         QName lastChange = QName.create(interfacesNS20121115, "last-change");
 
-        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
+        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).orElseThrow();
         DataSchemaNode leafLastChange = interfacesModule20121115.getDataChildByName(lastChange);
         assertThat(leafLastChange, instanceOf(LeafSchemaNode.class));
         QName lastChangeTypeQName = ((LeafSchemaNode) leafLastChange).getType().getQName();
@@ -222,7 +221,7 @@ public class MoreRevisionsTest extends AbstractYangTest {
         final QNameModule monitoring19700101 = QNameModule.create(monitoringNS);
         QName lockedTime = QName.create(monitoring19700101, "locked-time");
 
-        Module monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").get();
+        Module monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").orElseThrow();
         DataSchemaNode leafLockedTime = monitoringModule19700101.getDataChildByName(lockedTime);
         assertThat(leafLockedTime, instanceOf(LeafSchemaNode.class));
         QName lockedTimeTypeQName = ((LeafSchemaNode) leafLockedTime).getType().getQName();

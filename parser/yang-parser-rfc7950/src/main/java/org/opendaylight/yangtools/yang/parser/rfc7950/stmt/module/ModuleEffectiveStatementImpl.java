@@ -59,7 +59,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         this.qnameModule = requireNonNull(qnameModule);
         this.submodules = ImmutableList.copyOf(submodules);
 
-        final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get();
+        final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).orElseThrow();
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
         prefixToModuleBuilder.put(localPrefix, this);
         appendPrefixes(stmt, prefixToModuleBuilder);

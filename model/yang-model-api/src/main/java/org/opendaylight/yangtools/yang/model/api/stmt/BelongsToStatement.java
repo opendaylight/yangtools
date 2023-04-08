@@ -20,6 +20,6 @@ public interface BelongsToStatement extends DeclaredStatement<Unqualified> {
     }
 
     default @NonNull PrefixStatement getPrefix() {
-        return findFirstDeclaredSubstatement(PrefixStatement.class).get();
+        return findFirstDeclaredSubstatement(PrefixStatement.class).orElseThrow();
     }
 }

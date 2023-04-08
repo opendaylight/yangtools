@@ -11,45 +11,38 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 public class LeafrefStatementTest extends AbstractYangTest {
-
     @Test
     public void testRequireInstanceInLeafrefs() {
         final var context = assertEffectiveModel("/rfc7950/leafref-stmt/foo.yang");
 
-        final Module foo = context.findModule("foo", Revision.of("2016-12-20")).get();
-        final Collection<? extends TypeDefinition<?>> typeDefinitions = foo.getTypeDefinitions();
+        final var foo = context.findModule("foo", Revision.of("2016-12-20")).orElseThrow();
+        final var typeDefinitions = foo.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
 
-        final TypeDefinition<?> typeDefinition = typeDefinitions.iterator().next();
-        final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) typeDefinition;
+        final var typeDefinition = typeDefinitions.iterator().next();
+        final var leafrefTypeDefinition = (LeafrefTypeDefinition) typeDefinition;
         assertTrue(leafrefTypeDefinition.requireInstance());
 
-        final LeafSchemaNode leafrefA = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-                "leafref-a"));
+        final var leafrefA = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "leafref-a"));
         assertRequireInstanceInLeafref(leafrefA, true);
 
-        final LeafSchemaNode leafrefB = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-                "leafref-b"));
+        final var leafrefB = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "leafref-b"));
         assertRequireInstanceInLeafref(leafrefB, true);
 
-        final LeafSchemaNode leafrefC = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
-                "leafref-c"));
+        final var leafrefC = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "leafref-c"));
         assertRequireInstanceInLeafref(leafrefC, true);
     }
 
     private static void assertRequireInstanceInLeafref(final LeafSchemaNode leaf, final boolean requireInstance) {
-        final LeafrefTypeDefinition leafrefTypeDefnition = (LeafrefTypeDefinition) leaf.getType();
+        final var leafrefTypeDefnition = (LeafrefTypeDefinition) leaf.getType();
         assertEquals(requireInstance, leafrefTypeDefnition.requireInstance());
     }
 

@@ -10,13 +10,9 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug6491Test extends AbstractYangTest {
     private static final Revision DATE = Revision.of("2016-01-01");
@@ -31,9 +27,9 @@ public class Bug6491Test extends AbstractYangTest {
 
     private static void testRevision(final String path, final Revision moduleRevision,
             final Optional<Revision> importedRevision) {
-        final SchemaContext context = assertEffectiveModelDir("/bugs/bug6491/" + path);
-        final Module module = context.findModule("bar", moduleRevision).get();
-        final Collection<? extends ModuleImport> imports = module.getImports();
+        final var context = assertEffectiveModelDir("/bugs/bug6491/" + path);
+        final var module = context.findModule("bar", moduleRevision).orElseThrow();
+        final var imports = module.getImports();
         assertNotNull(imports);
         assertEquals(1, imports.size());
         assertEquals(importedRevision, imports.iterator().next().getRevision());

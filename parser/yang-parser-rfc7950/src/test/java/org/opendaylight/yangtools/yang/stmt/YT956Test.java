@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 public class YT956Test extends AbstractYangTest {
     private static final QName ANOTHER_CONTAINER = QName.create("http://www.example.com/anothermodule",
@@ -23,14 +22,13 @@ public class YT956Test extends AbstractYangTest {
 
     @Test
     public void testAugmentationConditional() {
-        final DataSchemaNode another = assertEffectiveModelDir("/bugs/YT956/")
-                .getDataChildByName(ANOTHER_CONTAINER);
+        final var another = assertEffectiveModelDir("/bugs/YT956/").getDataChildByName(ANOTHER_CONTAINER);
         assertThat(another, isA(ContainerSchemaNode.class));
-        final ContainerSchemaNode anotherContainer = (ContainerSchemaNode) another;
+        final var anotherContainer = (ContainerSchemaNode) another;
 
-        final DataSchemaNode first = anotherContainer.findDataChildByName(FIRST_AUGMENT).get();
+        final var first = anotherContainer.getDataChildByName(FIRST_AUGMENT);
         assertThat(first, isA(ContainerSchemaNode.class));
-        final ContainerSchemaNode firstAugment = (ContainerSchemaNode) first;
+        final var firstAugment = (ContainerSchemaNode) first;
 
         // Augmentation needs to be added
         assertEquals(3, firstAugment.getChildNodes().size());

@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 
@@ -28,9 +27,9 @@ public class Bug6972Test extends AbstractYangTest {
         assertEquals(3, schemaContext.getModules().size());
 
         final Revision revision = Revision.of("2016-10-20");
-        final Module foo = schemaContext.findModule("foo", revision).get();
-        final Module bar = schemaContext.findModule("bar", revision).get();
-        final Module baz = schemaContext.findModule("baz", revision).get();
+        final Module foo = schemaContext.findModule("foo", revision).orElseThrow();
+        final Module bar = schemaContext.findModule("bar", revision).orElseThrow();
+        final Module baz = schemaContext.findModule("baz", revision).orElseThrow();
 
         final QName barExportCont = QName.create("bar-ns", "bar-export", revision);
         final QName barFooCont = QName.create("bar-ns", "bar-foo", revision);
@@ -49,20 +48,17 @@ public class Bug6972Test extends AbstractYangTest {
 
     private static UnitsEffectiveStatement getEffectiveUnits(final Module module, final QName containerQName,
             final QName leafQName) {
-        UnitsEffectiveStatement units = null;
-
-        final ContainerSchemaNode cont = (ContainerSchemaNode) module.getDataChildByName(containerQName);
+        final var cont = (ContainerSchemaNode) module.getDataChildByName(containerQName);
         assertNotNull(cont);
-        final LeafSchemaNode leaf = (LeafSchemaNode) cont.getDataChildByName(leafQName);
+        final var leaf = (LeafSchemaNode) cont.getDataChildByName(leafQName);
         assertNotNull(leaf);
 
-        for (EffectiveStatement<?, ?> effStmt : ((LeafEffectiveStatement) leaf).effectiveSubstatements()) {
-            if (effStmt instanceof UnitsEffectiveStatement) {
-                units = (UnitsEffectiveStatement) effStmt;
-                break;
+        for (var effStmt : ((LeafEffectiveStatement) leaf).effectiveSubstatements()) {
+            if (effStmt instanceof UnitsEffectiveStatement units) {
+                return units;
             }
         }
 
-        return units;
+        return null;
     }
 }

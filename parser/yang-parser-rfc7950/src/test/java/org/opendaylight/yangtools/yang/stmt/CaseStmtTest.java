@@ -43,8 +43,8 @@ public class CaseStmtTest extends AbstractYangTest {
     public void setup() {
         schema = assertEffectiveModelDir("/case-test");
         Revision rev = Revision.of("2015-09-09");
-        rootFoo = schema.findModule("foo", rev).get();
-        rootBar = schema.findModule("bar", rev).get();
+        rootFoo = schema.findModule("foo", rev).orElseThrow();
+        rootBar = schema.findModule("bar", rev).orElseThrow();
         assertNotNull(rootFoo);
         assertNotNull(rootBar);
         qnameFoo = QNameModule.create(XMLNamespace.of("foo"), rev);

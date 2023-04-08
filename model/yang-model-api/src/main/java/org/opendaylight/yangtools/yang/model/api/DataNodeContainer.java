@@ -15,7 +15,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -112,19 +111,15 @@ public interface DataNodeContainer {
      * @throws NullPointerException if any argument is null
      */
     default Optional<DataSchemaNode> findDataChildByName(final QName first, final QName... others) {
-        Optional<DataSchemaNode> optCurrent = findDataChildByName(first);
+        var current = dataChildByName(first);
         for (QName qname : others) {
-            if (optCurrent.isPresent()) {
-                final DataSchemaNode current = optCurrent.get();
-                if (current instanceof DataNodeContainer) {
-                    optCurrent = ((DataNodeContainer) current).findDataChildByName(qname);
-                    continue;
-                }
+            if (current instanceof DataNodeContainer container) {
+                current = container.dataChildByName(qname);
+            } else {
+                return Optional.empty();
             }
-
-            return Optional.empty();
         }
-        return optCurrent;
+        return Optional.ofNullable(current);
     }
 
     /**
@@ -194,15 +189,15 @@ public interface DataNodeContainer {
      */
     @Beta
     default Optional<DataSchemaNode> findDataTreeChild(final Iterable<QName> path) {
-        final Iterator<QName> it = path.iterator();
+        final var it = path.iterator();
         DataNodeContainer parent = this;
         do {
-            final Optional<DataSchemaNode> optChild = parent.findDataTreeChild(requireNonNull(it.next()));
+            final var optChild = parent.findDataTreeChild(requireNonNull(it.next()));
             if (optChild.isEmpty() || !it.hasNext()) {
                 return optChild;
             }
 
-            final DataSchemaNode child = optChild.get();
+            final var child = optChild.orElseThrow();
             checkArgument(child instanceof DataNodeContainer, "Path %s extends beyond terminal child %s", path, child);
             parent = (DataNodeContainer) child;
         } while (true);

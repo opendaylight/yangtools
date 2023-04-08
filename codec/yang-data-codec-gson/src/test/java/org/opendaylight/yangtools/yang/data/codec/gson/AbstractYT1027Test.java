@@ -48,15 +48,18 @@ public abstract class AbstractYT1027Test {
     static final LeafNode<?> INT64_DATA = ImmutableNodes.leafNode(INT64, 2L);
     static final LeafNode<?> UINT64_DATA = ImmutableNodes.leafNode(UINT64, Uint64.ONE);
 
-    static final String UNQUOTED_DECIMAL = "{\n"
-            + "  \"yt1027:decimal\": 1.1\n"
-            + "}";
-    static final String UNQUOTED_INT64 = "{\n"
-            + "  \"yt1027:int64\": 2\n"
-            + "}";
-    static final String UNQUOTED_UINT64 = "{\n"
-            + "  \"yt1027:uint64\": 1\n"
-            + "}";
+    static final String UNQUOTED_DECIMAL = """
+        {
+          "yt1027:decimal": 1.1
+        }""";
+    static final String UNQUOTED_INT64 = """
+        {
+          "yt1027:int64": 2
+        }""";
+    static final String UNQUOTED_UINT64 = """
+        {
+          "yt1027:uint64": 1
+        }""";
 
     static EffectiveModelContext SCHEMA_CONTEXT;
     private static DecimalTypeDefinition DECIMAL_TYPE;
@@ -72,7 +75,7 @@ public abstract class AbstractYT1027Test {
     }
 
     private static TypeDefinition<?> getTypeDefinition(final QName name) {
-        DataSchemaNode child = SCHEMA_CONTEXT.findDataTreeChild(name).get();
+        DataSchemaNode child = SCHEMA_CONTEXT.findDataTreeChild(name).orElseThrow();
         verify(child instanceof LeafSchemaNode);
         return ((LeafSchemaNode) child).getType();
     }

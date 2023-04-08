@@ -140,7 +140,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper), rootOper);
         final Optional<NormalizedNode> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
-        assertSame(BAR_NODE, originalBarNode.get());
+        assertSame(BAR_NODE, originalBarNode.orElseThrow());
 
         // writes node to /outer-list/1/inner_list/two/value
         modificationTree.write(TWO_TWO_VALUE_PATH, ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "test"));
@@ -149,7 +149,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
         // and checks if node is already present
         final Optional<NormalizedNode> barTwoCModified = modificationTree.readNode(TWO_TWO_VALUE_PATH);
         assertTrue(barTwoCModified.isPresent());
-        assertEquals(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "test"), barTwoCModified.get());
+        assertEquals(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "test"), barTwoCModified.orElseThrow());
 
         // delete node to /outer-list/1/inner_list/two/value
         modificationTree.delete(TWO_TWO_VALUE_PATH);
@@ -220,7 +220,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
     private static <T> T assertPresentAndType(final Optional<?> potential, final Class<T> type) {
         assertNotNull(potential);
         assertTrue(potential.isPresent());
-        assertTrue(type.isInstance(potential.get()));
-        return type.cast(potential.get());
+        assertTrue(type.isInstance(potential.orElseThrow()));
+        return type.cast(potential.orElseThrow());
     }
 }

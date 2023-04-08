@@ -15,17 +15,16 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 public class YinFileLeafListStmtTest extends AbstractYinModulesTest {
     @Test
     public void testLeafList() {
-        final Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
+        final var testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
 
-        final LeafListSchemaNode leafList = (LeafListSchemaNode) testModule.findDataChildByName(
+        final var leafList = (LeafListSchemaNode) testModule.findDataChildByName(
             QName.create(testModule.getQNameModule(), "netconf-state"),
             QName.create(testModule.getQNameModule(), "capabilities"),
-            QName.create(testModule.getQNameModule(), "capability")).get();
+            QName.create(testModule.getQNameModule(), "capability")).orElseThrow();
         assertNotNull(leafList);
         assertEquals("uri", leafList.getType().getQName().getLocalName());
         assertEquals(Optional.of("List of NETCONF capabilities supported by the server."), leafList.getDescription());

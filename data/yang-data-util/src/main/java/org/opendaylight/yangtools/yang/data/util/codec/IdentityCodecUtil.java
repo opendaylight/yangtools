@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * Utility methods for implementing string-to-identity codecs.
@@ -44,10 +42,10 @@ public final class IdentityCodecUtil {
     public static IdentitySchemaNode parseIdentity(final String value, final EffectiveModelContext schemaContext,
             final Function<String, QNameModule> prefixToModule) {
         final QName qname = QNameCodecUtil.decodeQName(value, prefixToModule);
-        final Optional<Module> optModule = schemaContext.findModule(qname.getModule());
+        final var optModule = schemaContext.findModule(qname.getModule());
         checkState(optModule.isPresent(), "Parsed QName %s refers to a non-existent module", qname);
 
-        for (IdentitySchemaNode identity : optModule.get().getIdentities()) {
+        for (var identity : optModule.orElseThrow().getIdentities()) {
             if (qname.equals(identity.getQName())) {
                 return identity;
             }

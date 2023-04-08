@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -23,7 +22,7 @@ public interface ContainerStatement extends DataDefinitionStatement,
     }
 
     default @Nullable PresenceStatement getPresence() {
-        final Optional<PresenceStatement> opt = findFirstDeclaredSubstatement(PresenceStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(PresenceStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

@@ -115,7 +115,7 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
             return;
         }
 
-        final DataSchemaNode rootSchemaNode = rootContextNode.get().getDataSchemaNode();
+        final DataSchemaNode rootSchemaNode = rootContextNode.orElseThrow().getDataSchemaNode();
         if (!(rootSchemaNode instanceof DataNodeContainer)) {
             LOG.warn("Root {} resolves to non-container type {}, not upgrading", getRootPath(), rootSchemaNode);
             return;
@@ -141,11 +141,10 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
-        if (!(candidate instanceof InMemoryDataTreeCandidate)) {
+        if (!(candidate instanceof InMemoryDataTreeCandidate c)) {
             throw new IllegalArgumentException("Invalid candidate class " + candidate.getClass());
         }
 
-        final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Data Tree is {}", NormalizedNodes.toStringTree(c.getTipRoot().getData()));
         }

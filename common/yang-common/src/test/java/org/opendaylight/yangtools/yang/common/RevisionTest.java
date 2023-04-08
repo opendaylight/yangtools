@@ -77,7 +77,7 @@ public class RevisionTest {
 
         final Optional<Revision> opt = Revision.ofNullable("2017-12-25");
         assertTrue(opt.isPresent());
-        assertEquals("2017-12-25", opt.get().toString());
+        assertEquals("2017-12-25", opt.orElseThrow().toString());
     }
 
     @Test

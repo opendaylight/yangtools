@@ -201,10 +201,9 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     default Optional<NotificationDefinition> findNotification(final QName qname) {
-        final Optional<Collection<? extends @NonNull NotificationDefinition>> defs = findModule(qname.getModule())
-                .map(Module::getNotifications);
+        final var defs = findModule(qname.getModule()).map(Module::getNotifications);
         if (defs.isPresent()) {
-            for (NotificationDefinition def : defs.get()) {
+            for (var def : defs.orElseThrow()) {
                 if (qname.equals(def.getQName())) {
                     return Optional.of(def);
                 }

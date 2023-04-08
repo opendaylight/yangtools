@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableBiMap.Builder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
@@ -47,10 +45,10 @@ public final class ModuleNameNamespaceContext extends AbstractEffectiveModelCont
      * @return A BiMapYangNamespaceContext.
      */
     public BiMapYangNamespaceContext toBiMap() {
-        final Builder<String, QNameModule> builder = ImmutableBiMap.builder();
-        for (ModuleEffectiveStatement module : getEffectiveModelContext().getModuleStatements().values()) {
-            final String name = module.argument().getLocalName();
-            builder.put(name, findNamespaceForPrefix(name).get());
+        final var builder = ImmutableBiMap.<String, QNameModule>builder();
+        for (var module : getEffectiveModelContext().getModuleStatements().values()) {
+            final var name = module.argument().getLocalName();
+            builder.put(name, findNamespaceForPrefix(name).orElseThrow());
         }
         return new BiMapYangNamespaceContext(builder.build());
     }

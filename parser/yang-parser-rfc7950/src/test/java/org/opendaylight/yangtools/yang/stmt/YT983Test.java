@@ -11,16 +11,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 public class YT983Test extends AbstractYangTest {
-    private static final QName FOO = QName.create("foo", "2019-04-30", "foo");
-
     @Test
     public void testAugmentationConfig() {
         final var context = assertEffectiveModel("/bugs/YT983/foo.yang");
-        final DataSchemaNode foo = context.findDataChildByName(FOO).get();
+        final var foo = context.getDataChildByName(QName.create("foo", "2019-04-30", "foo"));
         assertTrue(foo instanceof LeafSchemaNode);
     }
 }

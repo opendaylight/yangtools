@@ -27,7 +27,7 @@ public class Bug8922Test extends AbstractYangTest {
     @Test
     public void testAllFeaturesSupported() {
         final var context = assertEffectiveModel("/bugs/bug8922/foo.yang");
-        final var findNode = context.findDataTreeChild(TARGET, MY_CON).get();
+        final var findNode = context.findDataTreeChild(TARGET, MY_CON).orElseThrow();
         assertThat(findNode, instanceOf(ContainerSchemaNode.class));
         assertEquals(Optional.of("New description"), findNode.getDescription());
 

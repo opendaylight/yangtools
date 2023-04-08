@@ -50,7 +50,7 @@ public class DeviationResolutionTest extends AbstractYangTest {
         final var schemaContext = assertEffectiveModelDir("/deviation-resolution-test/deviation-not-supported");
         assertNotNull(schemaContext);
 
-        final Module importedModule = schemaContext.findModule("imported", Revision.of("2017-01-20")).get();
+        final Module importedModule = schemaContext.findModule("imported", Revision.of("2017-01-20")).orElseThrow();
         final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.getDataChildByName(
                 QName.create(importedModule.getQNameModule(), "my-cont-a"));
         assertNotNull(myContA);
@@ -78,7 +78,7 @@ public class DeviationResolutionTest extends AbstractYangTest {
                 "/deviation-resolution-test/deviation-add/bar.yang");
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).orElseThrow();
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf-list"));
         assertNotNull(myLeafList);
@@ -86,7 +86,7 @@ public class DeviationResolutionTest extends AbstractYangTest {
         assertEquals(Optional.of(Boolean.FALSE), myLeafList.effectiveConfig());
         assertEquals(3, myLeafList.getDefaults().size());
 
-        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
+        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 10, constraint.getMaxElements());
         assertEquals((Object) 5, constraint.getMinElements());
         assertNotNull(myLeafList.getType().getUnits());
@@ -99,7 +99,7 @@ public class DeviationResolutionTest extends AbstractYangTest {
         final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-choice"));
         assertNotNull(myChoice);
-        assertEquals("c2", myChoice.getDefaultCase().get().getQName().getLocalName());
+        assertEquals("c2", myChoice.getDefaultCase().orElseThrow().getQName().getLocalName());
 
         final RpcDefinition myRpc = barModule.getRpcs().iterator().next();
         final InputSchemaNode input = myRpc.getInput();
@@ -128,7 +128,7 @@ public class DeviationResolutionTest extends AbstractYangTest {
                 "/deviation-resolution-test/deviation-replace/bar.yang");
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).orElseThrow();
         assertNotNull(barModule);
 
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
@@ -143,7 +143,7 @@ public class DeviationResolutionTest extends AbstractYangTest {
                 QName.create(barModule.getQNameModule(), "my-leaf-list-test"));
         assertNotNull(myLeafList);
 
-        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
+        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 6, constraint.getMaxElements());
         assertEquals((Object) 3, constraint.getMinElements());
         assertEquals(Optional.of(Boolean.TRUE), myLeafList.effectiveConfig());
@@ -186,7 +186,7 @@ public class DeviationResolutionTest extends AbstractYangTest {
                 "/deviation-resolution-test/deviation-delete/bar.yang");
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).orElseThrow();
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);
@@ -279,9 +279,9 @@ public class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-add/bar-invalid.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-                + ":yin:1)config to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
-                + " target and can appear only once."));
+        assertThat(cause.getMessage(), startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)config to target node \
+            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""));
     }
 
     @Test
@@ -291,9 +291,9 @@ public class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-add/bar-invalid-2.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-                + ":yin:1)default to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
-                + " target and can appear only once."));
+        assertThat(cause.getMessage(), startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
+            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""));
     }
 
     @Test
@@ -303,9 +303,10 @@ public class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-add/bar-invalid-4.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
-                + ":yin:1)default to target node (bar?revision=2017-02-01)my-used-leaf because it is already "
-                + "defined in target and can appear only once."));
+        assertThat(cause.getMessage(), startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
+            (bar?revision=2017-02-01)my-used-leaf because it is already defined in target and can appear only once.\
+            """));
     }
 
     @Test
@@ -315,9 +316,9 @@ public class DeviationResolutionTest extends AbstractYangTest {
             "/deviation-resolution-test/deviation-replace/bar-invalid.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(), startsWith("Deviation cannot replace substatement "
-                + "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (bar?revision=2017-01-20)my-leaf "
-                + "because it does not exist in target node."));
+        assertThat(cause.getMessage(), startsWith("""
+            Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)units in target node \
+            (bar?revision=2017-01-20)my-leaf because it does not exist in target node."""));
     }
 
     @Test
@@ -336,9 +337,10 @@ public class DeviationResolutionTest extends AbstractYangTest {
         testLog = output.toString();
         System.setOut(stdout);
         assertThat(testLog, containsString(
-            "Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default in target leaf-list "
-                    + "(bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple "
-                    + "default statements."));
+            """
+                Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default in target leaf-list\s\
+                (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple\s\
+                default statements."""));
     }
 
     @Test

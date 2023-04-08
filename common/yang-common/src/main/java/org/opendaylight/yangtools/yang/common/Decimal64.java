@@ -342,10 +342,10 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         final Either<Decimal64, CanonicalValueViolation> variant = SUPPORT.fromString(str);
         final Optional<Decimal64> value = variant.tryFirst();
         if (value.isPresent()) {
-            return value.get();
+            return value.orElseThrow();
         }
         final Optional<String> message = variant.getSecond().getMessage();
-        throw message.isPresent() ? new NumberFormatException(message.get()) : new NumberFormatException();
+        throw message.isPresent() ? new NumberFormatException(message.orElseThrow()) : new NumberFormatException();
     }
 
     /**

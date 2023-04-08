@@ -167,9 +167,9 @@ public class EffectiveModulesAndSubmodulesTest {
     }
 
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported) {
-        final Module foundRoot = result.findModule("root-module").get();
+        final Module foundRoot = result.findModule("root-module").orElseThrow();
         final Collection<? extends Module> foundRoots = result.findModules(XMLNamespace.of("root-module"));
-        final Module foundRoot3 = result.findModule(XMLNamespace.of("root-module")).get();
+        final Module foundRoot3 = result.findModule(XMLNamespace.of("root-module")).orElseThrow();
 
         assertNotNull(foundRoot);
         assertNotNull(foundRoots);
@@ -183,9 +183,9 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot2);
         assertEquals(root, foundRoot3);
 
-        final Module foundImported = result.findModule("imported-module").get();
+        final Module foundImported = result.findModule("imported-module").orElseThrow();
         final Collection<? extends Module> foundImporteds = result.findModules(XMLNamespace.of("imported-module"));
-        final Module foundImported3 = result.findModule(XMLNamespace.of("imported-module")).get();
+        final Module foundImported3 = result.findModule(XMLNamespace.of("imported-module")).orElseThrow();
 
         assertNotNull(foundImported);
         assertNotNull(foundImporteds);

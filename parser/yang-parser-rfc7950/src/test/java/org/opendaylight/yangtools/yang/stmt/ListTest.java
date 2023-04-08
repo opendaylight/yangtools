@@ -24,12 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class ListTest {
-
     @Test
-    public void listAndLeavesTest() throws ReactorException {
+    public void listAndLeavesTest() throws Exception {
         final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/list-test/list-test.yang"))
                 .buildEffective();
@@ -50,7 +48,7 @@ public class ListTest {
         assertEquals("key1", keys.get(0).getLocalName());
         assertEquals("key2", keys.get(1).getLocalName());
 
-        ElementCountConstraint constraint = list.getElementCountConstraint().get();
+        ElementCountConstraint constraint = list.getElementCountConstraint().orElseThrow();
         assertEquals((Object) 1, constraint.getMinElements());
         assertEquals((Object) 10, constraint.getMaxElements());
 
@@ -83,7 +81,7 @@ public class ListTest {
         assertNotNull(leafList);
         assertTrue(leafList.isUserOrdered());
 
-        constraint = leafList.getElementCountConstraint().get();
+        constraint = leafList.getElementCountConstraint().orElseThrow();
         assertEquals(2, constraint.getMinElements().intValue());
         assertEquals(20, constraint.getMaxElements().intValue());
         assertEquals("string", leafList.getType().getQName().getLocalName());

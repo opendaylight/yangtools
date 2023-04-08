@@ -61,7 +61,7 @@ final class AutomaticLifecycleMixin {
             ret = delegate.apply(modification, storeMeta, version);
         }
 
-        return ret.isPresent() ? disappearResult(modification, ret.get(), storeMeta) : ret;
+        return ret.isPresent() ? disappearResult(modification, ret.orElseThrow(), storeMeta) : ret;
     }
 
     private static Optional<? extends TreeNode> applyTouch(final Apply delegate, final NormalizedNode emptyNode,

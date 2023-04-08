@@ -70,8 +70,8 @@ class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy
 
     static @NonNull MapEntryModificationStrategy of(final ListSchemaNode schema,
             final DataTreeConfiguration treeConfig) {
-        final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
-        return enforcer.isPresent() ? new EnforcingMandatory(schema, treeConfig, enforcer.get())
+        final var enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
+        return enforcer.isPresent() ? new EnforcingMandatory(schema, treeConfig, enforcer.orElseThrow())
                 : new MapEntryModificationStrategy(schema, treeConfig);
     }
 }

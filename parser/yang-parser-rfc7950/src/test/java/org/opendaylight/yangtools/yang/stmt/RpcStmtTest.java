@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
@@ -33,17 +32,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 public class RpcStmtTest extends AbstractYangTest {
     @Test
     public void rpcTest() throws ReactorException {
-        final EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        final var result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/model/baz.yang"))
                 .addSource(sourceForResource("/model/bar.yang"))
                 .addSource(sourceForResource("/rpc-stmt-test/foo.yang"))
                 .buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModules("baz").iterator().next();
+        final var testModule = result.findModules("baz").iterator().next();
         assertEquals(1, testModule.getRpcs().size());
 
-        final RpcDefinition rpc = testModule.getRpcs().iterator().next();
+        final var rpc = testModule.getRpcs().iterator().next();
         assertEquals("get-config", rpc.getQName().getLocalName());
 
         final InputSchemaNode input = rpc.getInput();
@@ -64,7 +63,7 @@ public class RpcStmtTest extends AbstractYangTest {
         anyXml = (AnyxmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
 
-        final Module fooModule = result.findModule("foo", Revision.of("2016-09-23")).get();
+        final Module fooModule = result.findModule("foo", Revision.of("2016-09-23")).orElseThrow();
         final Collection<? extends RpcDefinition> rpcs = fooModule.getRpcs();
         assertEquals(2, rpcs.size());
 
@@ -101,7 +100,7 @@ public class RpcStmtTest extends AbstractYangTest {
     public void testImplicitInputAndOutput() {
         final var context = assertEffectiveModel("/rpc-stmt-test/bar.yang");
 
-        final Module barModule = context.findModule("bar", Revision.of("2016-11-25")).get();
+        final Module barModule = context.findModule("bar", Revision.of("2016-11-25")).orElseThrow();
         final Collection<? extends RpcDefinition> rpcs = barModule.getRpcs();
         assertEquals(1, rpcs.size());
 

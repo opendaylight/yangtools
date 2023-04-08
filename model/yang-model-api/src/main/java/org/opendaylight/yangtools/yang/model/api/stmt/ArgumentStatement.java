@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -22,8 +21,8 @@ public interface ArgumentStatement extends DeclaredStatement<QName> {
     }
 
     default @Nullable YinElementStatement getYinElement() {
-        final Optional<YinElementStatement> opt = findFirstDeclaredSubstatement(YinElementStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        final var opt = findFirstDeclaredSubstatement(YinElementStatement.class);
+        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
 

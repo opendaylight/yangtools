@@ -87,8 +87,8 @@ public class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     private static <T> T assertPresentAndType(final Optional<?> potential, final Class<T> type) {
         assertNotNull(potential);
         assertTrue(potential.isPresent());
-        assertTrue(type.isInstance(potential.get()));
-        return type.cast(potential.get());
+        assertTrue(type.isInstance(potential.orElseThrow()));
+        return type.cast(potential.orElseThrow());
     }
 
     @Test
