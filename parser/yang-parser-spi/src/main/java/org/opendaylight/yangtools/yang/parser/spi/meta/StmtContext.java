@@ -184,16 +184,14 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         /**
          * Associate a value with a key within a namespace.
          *
+         * @param <K> key type
+         * @param <V> value type
          * @param type Namespace type
          * @param key Key
          * @param value value
-         * @param <K> namespace key type
-         * @param <V> namespace value type
-         * @param <T> key type
-         * @param <U> value type
          * @throws NamespaceNotAvailableException when the namespace is not available.
          */
-        <K, V, T extends K, U extends V> void addToNs(@NonNull ParserNamespace<K, V> type, T key, U value);
+        <K, V> void addToNs(@NonNull ParserNamespace<K, V> type, K key, V value);
 
         @Override
         RootStmtContext.Mutable<?, ?, ?> getRoot();
@@ -253,19 +251,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @throws NullPointerException if the specified phase is null
          */
         @NonNull ModelActionBuilder newInferenceAction(@NonNull ModelProcessingPhase phase);
-
-        /**
-         * Adds s statement to namespace map with a key.
-         *
-         * @param namespace
-         *            {@link ParserNamespace} child that determines namespace to be added to
-         * @param key
-         *            of type according to namespace class specification
-         * @param stmt
-         *            to be added to namespace map
-         */
-        <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
-            @NonNull ParserNamespace<K, ? super C> namespace, KT key, C stmt);
 
         /**
          * Set version of root statement context.

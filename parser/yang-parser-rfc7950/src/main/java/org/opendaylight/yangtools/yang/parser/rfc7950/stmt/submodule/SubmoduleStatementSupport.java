@@ -129,7 +129,7 @@ public final class SubmoduleStatementSupport
                 possibleDuplicateSubmodule.sourceReference());
         }
 
-        stmt.addContext(ParserNamespaces.SUBMODULE, submoduleIdentifier, stmt);
+        stmt.addToNs(ParserNamespaces.SUBMODULE, submoduleIdentifier, stmt);
 
         final Unqualified belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(),
             BelongsToStatement.class);

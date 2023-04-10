@@ -62,8 +62,7 @@ abstract class AbstractNamespaceStorage implements NamespaceStorage {
         return (Map<K, V>) local.get(type);
     }
 
-    final <K, V, T extends K, U extends V> void addToNamespace(final ParserNamespace<K, V> type, final T key,
-            final U value) {
+    final <K, V> void addToNamespace(final ParserNamespace<K, V> type, final K key, final V value) {
         accessNamespace(type).valueTo(this, key, value);
     }
 

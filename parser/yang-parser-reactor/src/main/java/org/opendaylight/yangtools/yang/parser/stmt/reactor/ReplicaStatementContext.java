@@ -158,20 +158,13 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <K, V, T extends K, U extends V> void addToNs(final ParserNamespace<K, V> type, final T key, final U value) {
+    public <K, V> void addToNs(final ParserNamespace<K, V> type, final K key, final V value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @Deprecated
     public Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    @Deprecated
-    public <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
-            final ParserNamespace<K, ? super C> namespace, final KT key, final C stmt) {
         throw new UnsupportedOperationException();
     }
 
