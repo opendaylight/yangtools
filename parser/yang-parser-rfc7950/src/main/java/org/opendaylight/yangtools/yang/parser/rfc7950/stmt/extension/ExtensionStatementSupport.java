@@ -60,7 +60,7 @@ public final class ExtensionStatementSupport
             final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
         super.onStatementDefinitionDeclared(stmt);
 
-        stmt.addContext(ParserNamespaces.EXTENSION, stmt.getArgument(), stmt);
+        stmt.addToNs(ParserNamespaces.EXTENSION, stmt.getArgument(), stmt);
 
         final StmtContext<QName, ?, ?> argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
             ArgumentStatement.class);

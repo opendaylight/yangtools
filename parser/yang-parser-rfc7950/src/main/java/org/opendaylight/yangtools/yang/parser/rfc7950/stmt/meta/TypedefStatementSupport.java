@@ -73,7 +73,7 @@ public final class TypedefStatementSupport extends
             // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
             // declarations and parent declarations which have already been declared.
             checkConflict(parent, stmt);
-            parent.addContext(ParserNamespaces.TYPE, stmt.getArgument(), stmt);
+            parent.addToNs(ParserNamespaces.TYPE, stmt.getArgument(), stmt);
 
             final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
             if (grandParent != null) {

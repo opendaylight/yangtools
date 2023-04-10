@@ -138,7 +138,7 @@ public final class ModuleStatementSupport
             "Prefix of the module [%s] is missing", moduleName);
         stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
 
-        stmt.addContext(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
+        stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
 
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
@@ -165,9 +165,9 @@ public final class ModuleStatementSupport
         final Unqualified moduleName = stmt.getArgument();
         final SourceIdentifier moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
 
-        stmt.addContext(ParserNamespaces.MODULE, moduleIdentifier, stmt);
-        stmt.addContext(ParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
-        stmt.addContext(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
+        stmt.addToNs(ParserNamespaces.MODULE, moduleIdentifier, stmt);
+        stmt.addToNs(ParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
+        stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
 
         final String modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,

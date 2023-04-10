@@ -260,8 +260,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public final <K, V, T extends K, U extends V> void addToNs(final ParserNamespace<K, V> type, final T key,
-            final U value) {
+    public final <K, V> void addToNs(final ParserNamespace<K, V> type, final K key, final V value) {
         addToNamespace(type, key, value);
     }
 
@@ -694,12 +693,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             phaseMutation.remove(phase, mutation);
             cleanupPhaseMutation();
         }
-    }
-
-    @Override
-    public final <K, KT extends K, C extends StmtContext<?, ?, ?>> void addContext(
-            final ParserNamespace<K, ? super C> namespace, final KT key, final C stmt) {
-        accessNamespace(namespace).valueTo(this, key, stmt);
     }
 
     @Override
