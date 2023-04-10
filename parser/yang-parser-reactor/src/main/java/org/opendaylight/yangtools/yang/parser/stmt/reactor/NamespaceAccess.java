@@ -18,21 +18,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 abstract class NamespaceAccess<K, V> {
-    abstract static class KeyedValueAddedListener<K> {
+    abstract static class KeyedValueAddedListener<K, V> {
         private final @NonNull NamespaceStorage contextNode;
-        private final @NonNull K key;
 
-        KeyedValueAddedListener(final NamespaceStorage contextNode, final K key) {
+        KeyedValueAddedListener(final NamespaceStorage contextNode) {
             this.contextNode = requireNonNull(contextNode);
-            this.key = requireNonNull(key);
         }
 
-        final <V> boolean isRequestedValue(final NamespaceAccess<K, ?> access, final NamespaceStorage storage,
-                final V value) {
+        final boolean isRequestedValue(final NamespaceAccess<K, ?> access, final NamespaceStorage storage,
+                final K key, final V value) {
             return value == access.valueFrom(contextNode, key);
         }
 
-        abstract void onValueAdded(Object value);
+        abstract void onValueAdded(K key, V value);
     }
 
     @FunctionalInterface
@@ -52,7 +50,7 @@ abstract class NamespaceAccess<K, V> {
     abstract @Nullable Entry<K, V> entryFrom(@NonNull NamespaceStorage storage,
         @NonNull NamespaceKeyCriterion<K> criterion);
 
-    abstract void addListener(KeyedValueAddedListener<K> listener);
+    abstract void addListener(K key, KeyedValueAddedListener<K, V> listener);
 
     abstract void addListener(PredicateValueAddedListener<K, V> listener);
 }

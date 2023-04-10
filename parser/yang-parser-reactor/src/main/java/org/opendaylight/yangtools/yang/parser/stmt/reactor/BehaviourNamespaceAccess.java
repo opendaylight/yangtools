@@ -10,7 +10,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,8 +32,7 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
     private final @NonNull NamespaceBehaviour<K, V> behaviour;
     private final @NonNull GlobalStorage globalStorage;
 
-    // FIXME: Change this to Multimap, once issue with modules is resolved.
-    private List<KeyedValueAddedListener<K>> listeners;
+    private Multimap<K, KeyedValueAddedListener<K, V>> keyListeners;
     private List<PredicateValueAddedListener<K, V>> predicateListeners;
 
     BehaviourNamespaceAccess(final GlobalStorage globalStorage, final NamespaceBehaviour<K, V> behaviour) {
@@ -51,22 +54,25 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
     void valueTo(final NamespaceStorage storage, final K key, final V value) {
         behaviour.addTo(globalStorage, storage, key, value);
 
-        if (listeners != null) {
-            final var toNotify = new ArrayList<KeyedValueAddedListener<K>>();
-            final var it = listeners.iterator();
-            while (it.hasNext()) {
-                final var listener = it.next();
-                if (listener.isRequestedValue(this, storage, value)) {
-                    it.remove();
-                    toNotify.add(listener);
+        if (keyListeners != null) {
+            final var listeners = keyListeners.get(key);
+            if (!listeners.isEmpty()) {
+                final var toNotify = new ArrayList<KeyedValueAddedListener<K, V>>();
+                final var it = listeners.iterator();
+                while (it.hasNext()) {
+                    final var listener = it.next();
+                    if (listener.isRequestedValue(this, storage, key, value)) {
+                        it.remove();
+                        toNotify.add(listener);
+                    }
                 }
-            }
-            for (var listener : toNotify) {
-                listener.onValueAdded(value);
-            }
+                for (var listener : toNotify) {
+                    listener.onValueAdded(key, value);
+                }
 
-            if (listeners != null && listeners.isEmpty()) {
-                listeners = null;
+                if (keyListeners.isEmpty()) {
+                    keyListeners = null;
+                }
             }
         }
 
@@ -94,11 +100,13 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
     }
 
     @Override
-    void addListener(final KeyedValueAddedListener<K> listener) {
-        if (listeners == null) {
-            listeners = new ArrayList<>();
+    void addListener(final K key, final KeyedValueAddedListener<K, V> listener) {
+        final var k = requireNonNull(key);
+        final var l = requireNonNull(listener);
+        if (keyListeners == null) {
+            keyListeners = Multimaps.newMultimap(new HashMap<>(), ArrayDeque::new);
         }
-        listeners.add(listener);
+        keyListeners.put(k, l);
     }
 
     @Override

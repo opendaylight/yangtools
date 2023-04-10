@@ -599,9 +599,9 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             return;
         }
 
-        access.addListener(new KeyedValueAddedListener<>(this, key) {
+        access.addListener(key, new KeyedValueAddedListener<>(this) {
             @Override
-            void onValueAdded(final Object value) {
+            void onValueAdded(final K key, final V value) {
                 listener.namespaceItemAdded(StatementContextBase.this, namespace, key, value);
             }
         });
