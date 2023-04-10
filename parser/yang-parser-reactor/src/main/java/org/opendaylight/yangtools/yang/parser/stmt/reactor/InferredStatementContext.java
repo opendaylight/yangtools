@@ -365,10 +365,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     boolean hasEmptySubstatements() {
-        if (substatements == null) {
-            return prototype.hasEmptySubstatements();
-        }
-        return substatements instanceof HashMap ? false : ((List<?>) substatements).isEmpty();
+        return substatements == null ? prototype.hasEmptySubstatements()
+            // Note: partial instantiation, as indicated by HashMap is always non-empty
+            : substatements instanceof List<?> list && list.isEmpty();
     }
 
     @Override
