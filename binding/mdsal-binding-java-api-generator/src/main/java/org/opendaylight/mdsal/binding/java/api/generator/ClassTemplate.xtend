@@ -515,6 +515,7 @@ class ClassTemplate extends BaseTemplate {
 
     def protected suidDeclaration() '''
         «IF genTO.SUID !== null»
+            @java.io.Serial
             private static final long serialVersionUID = «genTO.SUID.value»L;
         «ENDIF»
     '''
