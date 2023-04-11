@@ -61,11 +61,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
     }
 
     public static LeafRefContext create(final EffectiveModelContext ctx) {
-        try {
-            return new LeafRefContextTreeBuilder(ctx).buildLeafRefContextTree();
-        } catch (LeafRefYangSyntaxErrorException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return new LeafRefContextTreeBuilder(ctx).buildLeafRefContextTree();
     }
 
     public boolean hasLeafRefContextChild() {
