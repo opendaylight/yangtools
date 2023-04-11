@@ -24,7 +24,7 @@ class YT956Test extends AbstractYangTest {
         final var another = assertEffectiveModelDir("/bugs/YT956/").getDataChildByName(ANOTHER_CONTAINER);
         final var anotherContainer = assertInstanceOf(ContainerSchemaNode.class, another);
 
-        final var first = anotherContainer.findDataChildByName(FIRST_AUGMENT).get();
+        final var first = anotherContainer.getDataChildByName(FIRST_AUGMENT);
         final var firstAugment = assertInstanceOf(ContainerSchemaNode.class, first);
 
         // Augmentation needs to be added

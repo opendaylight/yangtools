@@ -48,7 +48,7 @@ class TypedefConstraintsTest extends AbstractYangTest {
         final var decType = assertInstanceOf(DecimalTypeDefinition.class, type);
         assertEquals(4, decType.getFractionDigits());
 
-        final var decRangeConstraints = decType.getRangeConstraint().get().getAllowedRanges().asRanges();
+        final var decRangeConstraints = decType.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();
 
         assertEquals(1, decRangeConstraints.size());
 

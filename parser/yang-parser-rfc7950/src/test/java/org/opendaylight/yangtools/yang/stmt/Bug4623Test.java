@@ -102,7 +102,7 @@ class Bug4623Test extends AbstractYangTest {
         assertEquals(0, type.getUnknownSchemaNodes().size());
         assertExtension(leaf);
 
-        final var lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().get();
+        final var lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().orElseThrow();
         assertEquals(1, lengthConstraints.getAllowedRanges().asRanges().size());
 
         final var lengthConstraint = lengthConstraints.getAllowedRanges().span();
