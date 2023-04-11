@@ -317,8 +317,8 @@ public final class BindingTypes {
     /**
      * Type specializing {@link YangFeature} for a particular type.
      *
-     * @param concreteType The concrete type of this notification
-     * @param parent Type of parent defining the notification
+     * @param concreteType The concrete type of this feature
+     * @param parent Type of parent defining the feature
      * @return A parameterized type corresponding to {@code YangFeature<Type, DataRootType>}
      * @throws NullPointerException if any argument is is {@code null}
      */
