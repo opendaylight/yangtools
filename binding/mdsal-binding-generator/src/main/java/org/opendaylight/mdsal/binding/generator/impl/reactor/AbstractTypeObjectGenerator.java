@@ -882,7 +882,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             // The pattern can be inverted
             final Optional<ModifierKind> optModifier = patternConstraint.getModifier();
             if (optModifier.isPresent()) {
-                regEx = applyModifier(optModifier.get(), regEx);
+                regEx = applyModifier(optModifier.orElseThrow(), regEx);
             }
 
             regExps.put(regEx, patternConstraint.getRegularExpressionString());

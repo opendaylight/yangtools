@@ -44,7 +44,7 @@ public class Mdsal161Test {
                 .findFirst();
         assertTrue("Type for " + className + " not found", optType.isPresent());
 
-        final GeneratedType type = optType.get();
+        final GeneratedType type = optType.orElseThrow();
         assertThat(type, instanceOf(GeneratedTransferObject.class));
         final GeneratedTransferObject gto = (GeneratedTransferObject) type;
         assertEquals(2, gto.getEqualsIdentifiers().size());

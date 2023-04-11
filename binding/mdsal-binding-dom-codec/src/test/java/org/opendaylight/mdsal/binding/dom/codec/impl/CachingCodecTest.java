@@ -167,7 +167,7 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
     }
 
     private static MapNode getListItems(final NormalizedNode top) {
-        return (MapNode) ((DataContainerNode) top).findChildByArg(TOP_LEVEL_LIST_ARG).get();
+        return (MapNode) ((DataContainerNode) top).getChildByArg(TOP_LEVEL_LIST_ARG);
     }
 
     private static void verifyLeafItemSame(final NormalizedNode firstCont, final NormalizedNode secondCont) {

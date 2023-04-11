@@ -89,10 +89,8 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
         final NormalizedNode translatedNN = translated.getValue();
         assertNotNull(translatedNN);
         // verify the union leaf is present
-        Optional<NormalizedNode> leafNodeOpt = NormalizedNodes.findNode(translatedNN,
-            NodeIdentifier.create(UNION_LEAF_QNAME));
-        assertTrue(leafNodeOpt.isPresent());
         // verify the leaf is the correct identity
-        assertEquals(identityQname, leafNodeOpt.get().body());
+        assertEquals(Optional.of(identityQname),
+            NormalizedNodes.findNode(translatedNN, NodeIdentifier.create(UNION_LEAF_QNAME)).map(NormalizedNode::body));
     }
 }

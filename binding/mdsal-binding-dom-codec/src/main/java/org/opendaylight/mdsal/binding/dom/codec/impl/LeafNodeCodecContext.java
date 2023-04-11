@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingTypeObjectCodecTreeNode;
 import org.opendaylight.yangtools.yang.binding.TypeObject;
@@ -71,23 +70,25 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
 
     private static Object createDefaultObject(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec,
             final EffectiveModelContext schemaContext) {
-        Optional<? extends Object> defaultValue = schema.getType().getDefaultValue();
+        var optDefaultValue = schema.getType().getDefaultValue();
         TypeDefinition<?> type = schema.getType();
-        if (defaultValue.isPresent()) {
+        if (optDefaultValue.isPresent()) {
+            final var defaultValue = optDefaultValue.orElseThrow();
             if (type instanceof IdentityrefTypeDefinition) {
-                return qnameDomValueFromString(codec, schema, (String) defaultValue.get(), schemaContext);
+                return qnameDomValueFromString(codec, schema, (String) defaultValue, schemaContext);
             }
-            return domValueFromString(codec, type, defaultValue.get());
+            return domValueFromString(codec, type, defaultValue);
         }
 
-        while (type.getBaseType() != null && !type.getDefaultValue().isPresent()) {
+        while (type.getBaseType() != null && type.getDefaultValue().isEmpty()) {
             type = type.getBaseType();
         }
 
-        defaultValue = type.getDefaultValue();
-        if (defaultValue.isPresent()) {
+        optDefaultValue = type.getDefaultValue();
+        if (optDefaultValue.isPresent()) {
+            final var defaultValue = optDefaultValue.orElseThrow();
             if (type instanceof IdentityrefTypeDefinition) {
-                return qnameDomValueFromString(codec, schema, (String) defaultValue.get(), schemaContext);
+                return qnameDomValueFromString(codec, schema, (String) defaultValue, schemaContext);
             }
             return domValueFromString(codec, type, defaultValue);
         }
@@ -101,7 +102,7 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         if (prefixEndIndex != -1) {
             String defaultValuePrefix = defaultValue.substring(0, prefixEndIndex);
 
-            Module module = schemaContext.findModule(schema.getQName().getModule()).get();
+            Module module = schemaContext.findModule(schema.getQName().getModule()).orElseThrow();
             if (module.getPrefix().equals(defaultValuePrefix)) {
                 qname = QName.create(module.getQNameModule(), defaultValue.substring(prefixEndIndex + 1));
                 return codec.deserialize(qname);
@@ -110,7 +111,7 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
             for (ModuleImport moduleImport : module.getImports()) {
                 if (moduleImport.getPrefix().equals(defaultValuePrefix)) {
                     Module importedModule = schemaContext.findModule(moduleImport.getModuleName().getLocalName(),
-                        moduleImport.getRevision()).get();
+                        moduleImport.getRevision()).orElseThrow();
                     qname = QName.create(importedModule.getQNameModule(), defaultValue.substring(prefixEndIndex + 1));
                     return codec.deserialize(qname);
                 }

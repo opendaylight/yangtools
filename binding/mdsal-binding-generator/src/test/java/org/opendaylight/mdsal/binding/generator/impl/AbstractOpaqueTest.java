@@ -29,7 +29,7 @@ abstract class AbstractOpaqueTest {
         final Optional<GeneratedType> optType = types.stream().filter(t -> typeName.equals(t.getIdentifier()))
             .findFirst();
         assertTrue(optType.isPresent());
-        final GeneratedType genType = optType.get();
+        final GeneratedType genType = optType.orElseThrow();
         final Iterator<Type> it = genType.getImplements().iterator();
         final Type first = it.next();
         assertTrue(first instanceof ParameterizedType);

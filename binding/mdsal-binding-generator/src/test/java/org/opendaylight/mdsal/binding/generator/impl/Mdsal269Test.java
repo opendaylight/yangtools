@@ -26,7 +26,7 @@ public class Mdsal269Test {
         assertEquals(4, generateTypes.size());
 
         final GeneratedType mplsLabelType = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
-            .equals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabel")).findFirst().get();
+            .equals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabel")).findFirst().orElseThrow();
 
         assertTrue(mplsLabelType instanceof GeneratedTransferObject);
         final GeneratedTransferObject gto = (GeneratedTransferObject) mplsLabelType;

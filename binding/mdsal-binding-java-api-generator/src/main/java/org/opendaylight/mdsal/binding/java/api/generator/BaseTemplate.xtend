@@ -343,10 +343,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
     def protected generateCheckers(GeneratedProperty field, Restrictions restrictions, Type actualType) '''
        «IF restrictions.rangeConstraint.present»
            «AbstractRangeGenerator.forType(actualType).generateRangeChecker(field.name.toFirstUpper,
-               restrictions.rangeConstraint.get, this)»
+               restrictions.rangeConstraint.orElseThrow, this)»
        «ENDIF»
        «IF restrictions.lengthConstraint.present»
-           «LengthGenerator.generateLengthChecker(field.fieldName, actualType, restrictions.lengthConstraint.get, this)»
+           «LengthGenerator.generateLengthChecker(field.fieldName, actualType, restrictions.lengthConstraint.orElseThrow, this)»
        «ENDIF»
     '''
 

@@ -137,13 +137,13 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     package def findGetter(String getterName) {
         val ownGetter = getterByName(type.nonDefaultMethods, getterName);
         if (ownGetter.isPresent) {
-            return ownGetter.get;
+            return ownGetter.orElseThrow
         }
         for (ifc : type.implements) {
             if (ifc instanceof GeneratedType) {
                 val getter = findGetter(ifc, getterName)
                 if (getter.isPresent) {
-                    return (getter.get)
+                    return (getter.orElseThrow)
                 }
             }
         }

@@ -387,11 +387,11 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     checkState(optType.isPresent(), "Failed to find return type for %s", method);
 
                     final Class<?> valueType;
-                    final Type genericType = optType.get();
-                    if (genericType instanceof Class<?>) {
-                        valueType = (Class<?>) genericType;
-                    } else if (genericType instanceof ParameterizedType) {
-                        valueType = (Class<?>) ((ParameterizedType) genericType).getRawType();
+                    final Type genericType = optType.orElseThrow();
+                    if (genericType instanceof Class<?> clazz) {
+                        valueType = clazz;
+                    } else if (genericType instanceof ParameterizedType parameterized) {
+                        valueType = (Class<?>) parameterized.getRawType();
                     } else if (genericType instanceof WildcardType) {
                         // FIXME: MDSAL-670: this is not right as we need to find a concrete type
                         valueType = Object.class;
@@ -474,7 +474,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 Identifiable.class);
         checkState(optIdentifier.isPresent(), "Failed to find identifier for %s", listClz);
 
-        final Class<Identifier<?>> identifier = optIdentifier.get();
+        final Class<Identifier<?>> identifier = optIdentifier.orElseThrow();
         final Map<QName, ValueContext> valueCtx = new HashMap<>();
         for (final ValueNodeCodecContext leaf : getLeafNodes(identifier, type.statement()).values()) {
             final QName name = leaf.getDomPathArgument().getNodeType();

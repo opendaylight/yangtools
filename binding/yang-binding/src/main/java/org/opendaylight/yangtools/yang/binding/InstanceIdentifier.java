@@ -699,7 +699,7 @@ public class InstanceIdentifier<T extends DataObject>
                 return arg.getCaseType().isPresent() ? -1 : 1;
             }
             final Optional<? extends Class<?>> argCaseType = getCaseType();
-            return argCaseType.isPresent() ? compareClasses(caseType.get(), argCaseType.get()) : 1;
+            return argCaseType.isPresent() ? compareClasses(caseType.orElseThrow(), argCaseType.orElseThrow()) : 1;
         }
 
         private static int compareClasses(final Class<?> first, final Class<?> second) {

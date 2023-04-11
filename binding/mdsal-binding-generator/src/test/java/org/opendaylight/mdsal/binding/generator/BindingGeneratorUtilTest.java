@@ -52,7 +52,7 @@ public class BindingGeneratorUtilTest {
 
         assertNotNull(restrictions);
         assertEquals(Set.of(Range.closed(1, 2)),
-            restrictions.getLengthConstraint().get().getAllowedRanges().asRanges());
+            restrictions.getLengthConstraint().orElseThrow().getAllowedRanges().asRanges());
         assertFalse(restrictions.getRangeConstraint().isPresent());
         assertEquals(1, restrictions.getPatternConstraints().size());
 

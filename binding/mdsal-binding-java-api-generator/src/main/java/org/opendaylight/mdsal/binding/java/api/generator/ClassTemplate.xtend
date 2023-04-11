@@ -173,10 +173,10 @@ class ClassTemplate extends BaseTemplate {
             «IF restrictions !== null»
                 «IF restrictions.lengthConstraint.present»
                     «LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
-                        restrictions.lengthConstraint.get, this)»
+                        restrictions.lengthConstraint.orElseThrow, this)»
                 «ENDIF»
                 «IF restrictions.rangeConstraint.present»
-                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraint.get, this)»
+                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraint.orElseThrow, this)»
                 «ENDIF»
             «ENDIF»
 

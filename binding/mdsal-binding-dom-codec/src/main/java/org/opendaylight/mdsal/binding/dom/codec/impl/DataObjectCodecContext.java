@@ -269,7 +269,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
             final DataContainerCodecContext<?, ?> caze;
             if (caseType.isPresent()) {
                 // Non-ambiguous addressing this should not pose any problems
-                caze = choice.streamChild(caseType.get());
+                caze = choice.streamChild(caseType.orElseThrow());
             } else {
                 caze = choice.getCaseByChildClass(type);
             }

@@ -97,7 +97,7 @@ final class YangModuleInfoTemplate {
             @«JavaFileTemplate.GENERATED»("mdsal-binding-generator")
             public final class «MODULE_INFO_CLASS_NAME» extends ResourceYangModuleInfo {
                 «val rev = module.revision»
-                private static final @NonNull QName NAME = QName.create("«module.QNameModule.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();
+                private static final @NonNull QName NAME = QName.create("«module.QNameModule.namespace.toString»", «IF rev.present»"«rev.orElseThrow.toString»", «ENDIF»"«module.name»").intern();
                 private static final @NonNull YangModuleInfo INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
@@ -200,7 +200,7 @@ final class YangModuleInfoTemplate {
                 «FOR imp : m.imports»
                     «val name = imp.moduleName.localName»
                     «val rev = imp.revision»
-                    «IF !rev.present»
+                    «IF rev.empty»
                         «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap(REVISION_COMPARATOR)»
                         «FOR module : ctx.modules»
                             «IF name.equals(module.name)»
@@ -247,7 +247,7 @@ final class YangModuleInfoTemplate {
     private def sourcePath(ModuleLike module) {
         val opt = moduleFilePathResolver.apply(module)
         Preconditions.checkState(opt.isPresent, "Module %s does not have a file path", module)
-        return opt.get
+        return opt.orElseThrow
     }
 
     private def generateSubInfo(Set<Submodule> submodules) '''
@@ -257,7 +257,7 @@ final class YangModuleInfoTemplate {
             private static final class «className»Info extends ResourceYangModuleInfo {
                 «val rev = submodule.revision»
                 private final @NonNull QName NAME = QName.create("«submodule.QNameModule.namespace.toString»", «
-                IF rev.present»"«rev.get.toString»", «ENDIF»"«submodule.name»").intern();
+                IF rev.present»"«rev.orElseThrow.toString»", «ENDIF»"«submodule.name»").intern();
                 private static final @NonNull YangModuleInfo INSTANCE = new «className»Info();
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;

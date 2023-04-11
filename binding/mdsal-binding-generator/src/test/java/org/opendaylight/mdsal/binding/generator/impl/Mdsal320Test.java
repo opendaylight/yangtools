@@ -33,7 +33,7 @@ public class Mdsal320Test {
         assertEquals(2, generateTypes.size());
 
         final GeneratedType foo = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
-            .equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo")).findFirst().get();
+            .equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo")).findFirst().orElseThrow();
 
         final List<GeneratedType> fooTypes = foo.getEnclosedTypes();
         assertEquals(1, fooTypes.size());
@@ -75,7 +75,7 @@ public class Mdsal320Test {
         assertFalse(it.hasNext());
 
         final GeneratedProperty bar1Prop = bar.getProperties().stream().filter(prop -> "bar$1".equals(prop.getName()))
-                .findFirst().get();
+                .findFirst().orElseThrow();
         final Type bar1PropRet = bar1Prop.getReturnType();
         assertEquals(bar1, bar1PropRet);
     }

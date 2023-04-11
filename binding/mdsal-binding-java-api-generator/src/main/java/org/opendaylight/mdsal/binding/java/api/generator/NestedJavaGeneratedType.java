@@ -75,7 +75,7 @@ final class NestedJavaGeneratedType extends AbstractJavaGeneratedType {
         final Deque<String> queue = new ArrayDeque<>();
         queue.addFirst(type.simpleName());
         while (optEnclosing.isPresent()) {
-            final JavaTypeName enclosing = optEnclosing.get();
+            final JavaTypeName enclosing = optEnclosing.orElseThrow();
             if (enclosing.equals(getName())) {
                 return ImmutableList.copyOf(queue);
             }

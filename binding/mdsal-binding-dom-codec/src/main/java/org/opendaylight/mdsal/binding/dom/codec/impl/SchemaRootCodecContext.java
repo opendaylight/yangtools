@@ -289,7 +289,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         final Optional<ParameterizedType> optParamType = ClassLoaderUtils.findParameterizedType(action, actionType);
         checkState(optParamType.isPresent(), "%s does not specialize %s", action, actionType);
 
-        final ParameterizedType paramType = optParamType.get();
+        final ParameterizedType paramType = optParamType.orElseThrow();
         final Type[] args = paramType.getActualTypeArguments();
         checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments", args.length);
         final ActionRuntimeType schema = factory().getRuntimeContext().getActionDefinition(action);

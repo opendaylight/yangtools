@@ -195,7 +195,7 @@ public final class Naming {
         if (optRev.isPresent()) {
             // Revision is in format 2017-10-26, we want the output to be 171026, which is a matter of picking the
             // right characters.
-            final String rev = optRev.get().toString();
+            final String rev = optRev.orElseThrow().toString();
             checkArgument(rev.length() == 10, "Unsupported revision %s", rev);
             packageNameBuilder.append("rev").append(rev, 2, 4).append(rev, 5, 7).append(rev.substring(8));
         } else {

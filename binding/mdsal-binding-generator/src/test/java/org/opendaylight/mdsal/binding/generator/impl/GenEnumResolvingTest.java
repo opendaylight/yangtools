@@ -130,12 +130,12 @@ public class GenEnumResolvingTest {
         assertThat(linkUpDownTrapEnable, instanceOf(Enumeration.class));
         assertEquals(
             "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface",
-            linkUpDownTrapEnable.getIdentifier().immediatelyEnclosingClass().get().toString());
+            linkUpDownTrapEnable.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString());
 
         assertNotNull("Expected Referenced Enum OperStatus, but was NULL!", operStatus);
         assertThat(operStatus, instanceOf(Enumeration.class));
         assertEquals(
             "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface",
-            operStatus.getIdentifier().immediatelyEnclosingClass().get().toString());
+            operStatus.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString());
     }
 }
