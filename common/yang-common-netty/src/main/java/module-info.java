@@ -18,4 +18,5 @@ module org.opendaylight.yangtools.yang.common.netty {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }
