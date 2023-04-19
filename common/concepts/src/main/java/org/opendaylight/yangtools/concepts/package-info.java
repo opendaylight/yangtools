@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Concept used widely across OpenDaylight code base.
+ * Concepts used widely across OpenDaylight code base.
  */
 @Export
 package org.opendaylight.yangtools.concepts;
