@@ -11,12 +11,23 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
- * Base interface for all interfaces generated to capture a specific contract.
+ * Base interface for all interfaces generated to capture a specific contract. There are five basic contracts defined
+ * by YANG statements:
+ * <ul>
+ *   <li>{@code feature}, represented by {@link YangFeature}</li>
+ *   <li>{@code identity}, represented by {@link BaseIdentity}</li>
+ *   <li>{@code action}, represented by {@link Action}</li>
+ *   <li>{@code rpc}, presented by {@link Rpc}</li>
+ *   <li>data definition statements expressing data and metadata exchanged between two parties, represeented by
+ *       {@link DataContainer}</li>
+ * </ul>
+ *
+ * <p>
+ * As can be seen, this contract is more general than {@link BindingObject}.
  *
  * @param <T> Type of the captured contract
  */
 @Beta
-// FIXME: evaluate integrating with BindingObject
 public sealed interface BindingContract<T extends BindingContract<T>>
         permits Action, BaseIdentity, DataContainer, Rpc, YangFeature {
     /**
