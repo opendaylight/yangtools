@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
@@ -37,10 +36,11 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
         Delegator<NormalizedNodeStreamWriter> {
     private final Deque<NodeCodecContext> schema = new ArrayDeque<>();
     private final @NonNull NormalizedNodeStreamWriter delegate;
-    private final NodeCodecContext rootNodeSchema;
+    private final NodeCodecContext rootContext;
 
-    BindingToNormalizedStreamWriter(final NodeCodecContext rootNodeSchema, final NormalizedNodeStreamWriter delegate) {
-        this.rootNodeSchema = requireNonNull(rootNodeSchema);
+    BindingToNormalizedStreamWriter(final DataContainerCodecContext<?, ?> rootContext,
+            final NormalizedNodeStreamWriter delegate) {
+        this.rootContext = requireNonNull(rootContext);
         this.delegate = requireNonNull(delegate);
     }
 
@@ -53,39 +53,39 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     }
 
     private NodeIdentifier duplicateSchemaEnter() {
+        final var current = current();
         final NodeCodecContext next;
-        if (current() == null) {
+        if (current == null) {
             // Entry of first node
-            next = rootNodeSchema;
+            next = rootContext;
         } else {
-            next = current();
+            next = current;
         }
         schema.push(next);
-        return (NodeIdentifier) current().getDomPathArgument();
+        return (NodeIdentifier) next.getDomPathArgument();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final Class<?> name, final Class<T> identifier) {
+        final var current = current();
         final NodeCodecContext next;
-        if (current() == null) {
+        if (current == null) {
             // Entry of first node
-            next = rootNodeSchema;
+            next = rootContext;
+        } else if (current instanceof DataContainerCodecContext<?, ?> currentContainer) {
+            next = currentContainer.streamChild((Class) name);
         } else {
-            checkArgument(current() instanceof DataContainerCodecContext, "Could not start node %s", name);
-            next = ((DataContainerCodecContext<?,?>) current()).streamChild((Class) name);
+            throw new IllegalArgumentException("Could not start node " + name + " in non-container " + current);
         }
         schema.push(next);
-        T arg = (T) next.getDomPathArgument();
-        return arg;
+        return identifier.cast(next.getDomPathArgument());
     }
 
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final String localName, final Class<T> identifier) {
-        NodeCodecContext current = current();
-        NodeCodecContext next = ((DataObjectCodecContext<?, ?>) current).getLeafChild(localName);
+        final var current = current();
+        final var next = ((DataObjectCodecContext<?, ?>) current).getLeafChild(localName);
         schema.push(next);
-        @SuppressWarnings("unchecked")
-        T arg = (T) next.getDomPathArgument();
-        return arg;
+        return identifier.cast(next.getDomPathArgument());
     }
 
     @Override
@@ -104,11 +104,12 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     }
 
     private Map.Entry<NodeIdentifier, Object> serializeLeaf(final String localName, final Object value) {
-        checkArgument(current() instanceof DataObjectCodecContext);
+        final var current = current();
+        if (!(current instanceof DataObjectCodecContext<?, ?> currentCasted)) {
+            throw new IllegalArgumentException("Unexpected current context " + current);
+        }
 
-        DataObjectCodecContext<?,?> currentCasted = (DataObjectCodecContext<?,?>) current();
         ValueNodeCodecContext leafContext = currentCasted.getLeafChild(localName);
-
         NodeIdentifier domArg = leafContext.getDomPathArgument();
         Object domValue = leafContext.getValueCodec().serialize(value);
         emitSchema(leafContext.getSchema());
