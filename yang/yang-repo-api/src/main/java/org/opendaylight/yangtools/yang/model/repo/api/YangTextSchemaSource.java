@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
 /**
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
@@ -136,6 +137,28 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      */
     public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier) {
         return new ResourceYangTextSchemaSource(identifier, url);
+    }
+
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a String input.
+     *
+     * @param sourceString YANG file as a String
+     * @return A new instance.
+     * @throws NullPointerException if the argument is {@code null}
+     */
+    public static @NonNull YangTextSchemaSource forLiteral(final String sourceString) {
+//        First line of a YANG file looks as follows
+//        `module module-name {`,
+//        therefore in order to extract the name of the module from a plain string, we are interested in the second
+//        word of the first line
+        final String[] firstLine = sourceString.substring(0, sourceString.indexOf("{")).strip().split(" ");
+        final String moduleOrSubmoduleString = firstLine[0].strip();
+        final String localName = firstLine[1].strip();
+        checkArgument(moduleOrSubmoduleString.equals("module") || moduleOrSubmoduleString.equals("submodule"));
+        checkArgument(UnresolvedQName.tryLocalName(localName) != null);
+
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier(localName);
+        return new LiteralYangTextSchemaSource(sourceIdentifier, sourceString, localName);
     }
 
     @Override
