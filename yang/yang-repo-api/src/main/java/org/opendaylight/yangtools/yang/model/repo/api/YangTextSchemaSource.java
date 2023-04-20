@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_
 import static org.opendaylight.yangtools.yang.common.YangNames.parseFilename;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
@@ -23,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
 /**
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
@@ -136,6 +138,31 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      */
     public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier) {
         return new ResourceYangTextSchemaSource(identifier, url);
+    }
+
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a String input.
+     *
+     * @param sourceString YANG file as a String
+     * @return A new instance.
+     * @throws NullPointerException if {@code sourceString} is {@code null}
+     * @throws IllegalArgumentException if {@code sourceString} does not a valid YANG body, given a rather restrictive
+     *         view of what is valid.
+     */
+    @VisibleForTesting
+    public static @NonNull YangTextSchemaSource forLiteral(final String sourceString) {
+        // First line of a YANG file looks as follows:
+        //   `module module-name {`
+        // therefore in order to extract the name of the module from a plain string, we are interested in the second
+        // word of the first line
+        final String[] firstLine = sourceString.substring(0, sourceString.indexOf("{")).strip().split(" ");
+        final String moduleOrSubmoduleString = firstLine[0].strip();
+        checkArgument(moduleOrSubmoduleString.equals("module") || moduleOrSubmoduleString.equals("submodule"));
+
+        final String arg = firstLine[1].strip();
+        final var localName = UnresolvedQName.tryLocalName(arg);
+        checkArgument(localName != null);
+        return new LiteralYangTextSchemaSource(new SourceIdentifier(localName), sourceString, arg);
     }
 
     @Override
