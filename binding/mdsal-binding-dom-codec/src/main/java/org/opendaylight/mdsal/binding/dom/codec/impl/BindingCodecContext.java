@@ -204,37 +204,38 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
         final List<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
         final DataContainerCodecContext<?,?> codecContext = getCodecContextNode(path, yangArgs);
-        return Map.entry(YangInstanceIdentifier.create(yangArgs), codecContext.createWriter(domWriter));
+        return Map.entry(YangInstanceIdentifier.create(yangArgs),
+            new BindingToNormalizedStreamWriter(codecContext, domWriter));
     }
 
     @Override
     public BindingStreamEventWriter newWriter(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
-        return getCodecContextNode(path, null).createWriter(domWriter);
+        return new BindingToNormalizedStreamWriter(getCodecContextNode(path, null), domWriter);
     }
 
     @Override
     public BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
             final NormalizedNodeStreamWriter domWriter) {
-        return root.getRpc(rpcInputOrOutput).createWriter(domWriter);
+        return new BindingToNormalizedStreamWriter(root.getRpc(rpcInputOrOutput), domWriter);
     }
 
     @Override
     public BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification<?>> notification,
             final NormalizedNodeStreamWriter domWriter) {
-        return root.getNotification(notification).createWriter(domWriter);
+        return new BindingToNormalizedStreamWriter(root.getNotification(notification), domWriter);
     }
 
     @Override
     public BindingStreamEventWriter newActionInputWriter(final Class<? extends Action<?, ?, ?>> action,
             final NormalizedNodeStreamWriter domWriter) {
-        return getActionCodec(action).input().createWriter(domWriter);
+        return new BindingToNormalizedStreamWriter(getActionCodec(action).input(), domWriter);
     }
 
     @Override
     public BindingStreamEventWriter newActionOutputWriter(final Class<? extends Action<?, ?, ?>> action,
             final NormalizedNodeStreamWriter domWriter) {
-        return getActionCodec(action).output().createWriter(domWriter);
+        return new BindingToNormalizedStreamWriter(getActionCodec(action).output(), domWriter);
     }
 
     DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,

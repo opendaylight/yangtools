@@ -36,17 +36,12 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWriter,
         Delegator<NormalizedNodeStreamWriter> {
     private final Deque<NodeCodecContext> schema = new ArrayDeque<>();
-    private final NormalizedNodeStreamWriter delegate;
+    private final @NonNull NormalizedNodeStreamWriter delegate;
     private final NodeCodecContext rootNodeSchema;
 
     BindingToNormalizedStreamWriter(final NodeCodecContext rootNodeSchema, final NormalizedNodeStreamWriter delegate) {
         this.rootNodeSchema = requireNonNull(rootNodeSchema);
         this.delegate = requireNonNull(delegate);
-    }
-
-    static @NonNull BindingToNormalizedStreamWriter create(final NodeCodecContext schema,
-            final NormalizedNodeStreamWriter delegate) {
-        return new BindingToNormalizedStreamWriter(schema, delegate);
     }
 
     private void emitSchema(final Object schemaNode) {
@@ -65,7 +60,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
         } else {
             next = current();
         }
-        this.schema.push(next);
+        schema.push(next);
         return (NodeIdentifier) current().getDomPathArgument();
     }
 
@@ -79,7 +74,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
             checkArgument(current() instanceof DataContainerCodecContext, "Could not start node %s", name);
             next = ((DataContainerCodecContext<?,?>) current()).streamChild((Class) name);
         }
-        this.schema.push(next);
+        schema.push(next);
         T arg = (T) next.getDomPathArgument();
         return arg;
     }
@@ -87,7 +82,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final String localName, final Class<T> identifier) {
         NodeCodecContext current = current();
         NodeCodecContext next = ((DataObjectCodecContext<?, ?>) current).getLeafChild(localName);
-        this.schema.push(next);
+        schema.push(next);
         @SuppressWarnings("unchecked")
         T arg = (T) next.getDomPathArgument();
         return arg;
