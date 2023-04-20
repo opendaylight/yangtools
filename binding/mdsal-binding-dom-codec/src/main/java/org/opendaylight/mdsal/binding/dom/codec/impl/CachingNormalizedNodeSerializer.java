@@ -38,10 +38,29 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
     private final AbstractBindingNormalizedNodeCacheHolder cacheHolder;
     private final BindingToNormalizedStreamWriter delegate;
 
-    CachingNormalizedNodeSerializer(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
+    private CachingNormalizedNodeSerializer(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
             final DataContainerCodecContext<?, ?> subtreeRoot) {
         this.cacheHolder = requireNonNull(cacheHolder);
         delegate = new BindingToNormalizedStreamWriter(subtreeRoot, domWriter);
+    }
+
+    /**
+     * Serializes supplied data using stream writer with child cache enabled.
+     *
+     * @param cacheHolder Binding to Normalized Node Cache holder
+     * @param subtreeRoot Codec Node for provided data object
+     * @param data Data to be serialized
+     * @return Normalized Node representation of data.
+     */
+    static NormalizedNode serializeUsingStreamWriter(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
+            final DataContainerCodecContext<?, ?> subtreeRoot, final DataObject data) {
+        final var writer = new CachingNormalizedNodeSerializer(cacheHolder, subtreeRoot);
+        try {
+            subtreeRoot.eventStreamSerializer().serialize(data, writer);
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return writer.domResult.getResult();
     }
 
     @Override
@@ -108,24 +127,5 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             return cacheHolder.getCachingSerializer(currentCtx.streamChild(type));
         }
         return null;
-    }
-
-    /**
-     * Serializes supplied data using stream writer with child cache enabled.
-     *
-     * @param cacheHolder Binding to Normalized Node Cache holder
-     * @param subtreeRoot Codec Node for provided data object
-     * @param data Data to be serialized
-     * @return Normalized Node representation of data.
-     */
-    static NormalizedNode serializeUsingStreamWriter(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
-            final DataContainerCodecContext<?, ?> subtreeRoot, final DataObject data) {
-        final var writer = new CachingNormalizedNodeSerializer(cacheHolder, subtreeRoot);
-        try {
-            subtreeRoot.eventStreamSerializer().serialize(data, writer);
-        } catch (final IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return writer.domResult.getResult();
     }
 }
