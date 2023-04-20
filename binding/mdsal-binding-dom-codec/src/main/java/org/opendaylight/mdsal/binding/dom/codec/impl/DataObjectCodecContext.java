@@ -260,8 +260,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         }
         final DataContainerCodecContext<?, ?> context = childNonNull(ctxProto, argType,
             "Class %s is not valid child of %s", argType, getBindingClass()).get();
-        if (context instanceof ChoiceNodeCodecContext) {
-            final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) context;
+        if (context instanceof ChoiceNodeCodecContext<?> choice) {
             choice.addYangPathArgument(arg, builder);
 
             final Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
