@@ -369,6 +369,12 @@ public final class YangParserTestUtils {
         }
     }
 
+    public static EffectiveModelContext parseYang(final String... sources) {
+        final Collection<? extends SchemaSourceRepresentation> schemaSources =
+                Arrays.stream(sources).map(YangTextSchemaSource::forLiteral).toList();
+        return parseSources(YangParserConfiguration.DEFAULT, null, schemaSources);
+    }
+
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
     private static Collection<File> getYangFiles(final String resourcePath) {
         final URI directoryPath;

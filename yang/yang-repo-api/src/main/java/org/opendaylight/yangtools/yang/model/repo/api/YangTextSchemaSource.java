@@ -37,7 +37,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
 
     public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
         checkArgument(name.endsWith(RFC6020_YANG_FILE_EXTENSION), "Filename '%s' does not end with '%s'", name,
-            RFC6020_YANG_FILE_EXTENSION);
+                RFC6020_YANG_FILE_EXTENSION);
 
         final String baseName = name.substring(0, name.length() - RFC6020_YANG_FILE_EXTENSION.length());
         final var parsed = parseFilename(baseName);
@@ -53,7 +53,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return A new YangTextSchemaSource
      */
     public static @NonNull YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
-            final ByteSource delegate) {
+                                                                      final ByteSource delegate) {
         return new DelegatedYangTextSchemaSource(identifier, delegate);
     }
 
@@ -67,7 +67,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the file name has invalid format
      */
     public static @NonNull YangTextSchemaSource delegateForByteSource(final String fileName,
-            final ByteSource delegate) {
+                                                                      final ByteSource delegate) {
         return new DelegatedYangTextSchemaSource(identifierFromFilename(fileName), delegate);
     }
 
@@ -136,6 +136,30 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      */
     public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier) {
         return new ResourceYangTextSchemaSource(identifier, url);
+    }
+
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a String input.
+     *
+     * @param sourceString YANG file as a String
+     * @return A new instance.
+     * @throws NullPointerException if the argument is {@code null}
+     */
+    public static @NonNull YangTextSchemaSource forLiteral(final String sourceString) {
+        /*First line of a YANG file looks as follows
+         * `module module-name {`,
+         * therefore in order to extract the name of the module from a plain string, we are interested in the second
+         * word of the first line
+         */
+        final String[] firstLine = sourceString.substring(0, sourceString.indexOf("{")).strip().split(" ");
+        final String localName;
+        if (firstLine.length > 1) {
+            localName = firstLine[1].strip();
+        } else {
+            localName = "";
+        }
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier(localName);
+        return new LiteralYangTextSchemaSource(sourceIdentifier, sourceString, localName);
     }
 
     @Override
