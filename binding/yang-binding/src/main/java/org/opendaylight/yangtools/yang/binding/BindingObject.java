@@ -8,7 +8,17 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * BindingObject is a base interface for all bindings.
+ * Base interface for all interfaces and classes which can be encountered in the context of a particular data exchange.
+ * These map to YANG data definition constructs:
+ * <ul>
+ *   <li>{@code identity} as referenced via a {@code type identityref} statement, represented by
+ *       {@link BaseIdentity}</li>
+ *   <li>{@code anydata} and {@code anyxml}, represented by {@link OpaqueObject}</li>
+ *   <li>{@code typedef} and {@code type}, represented by {@link TypeObject}</li>
+ *   <li>{@code md:annotation}, represented by {@link Annotation}</li>
+ *   <li>{@code rc:yang-data}, represented by {@link YangData}</li>
+ *   <li>all others, represented by {@link DataObject} and its further specializations</li>
+ * </ul>
  *
  * @author Jie Han
  */
