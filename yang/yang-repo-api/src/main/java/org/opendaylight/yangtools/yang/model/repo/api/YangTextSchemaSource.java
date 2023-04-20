@@ -138,6 +138,18 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
         return new ResourceYangTextSchemaSource(identifier, url);
     }
 
+    public static @NonNull YangTextSchemaSource forLiteral(final String sourceString) {
+        final String[] firstLine = sourceString.substring(0, sourceString.indexOf("{")).strip().split(" ");
+        final String localName;
+        if (firstLine.length > 1) {
+            localName = firstLine[1].strip();
+        } else {
+            localName = "";
+        }
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier(localName);
+        return new LiteralYangTextSchemaSource(sourceIdentifier, sourceString, localName);
+    }
+
     @Override
     public final SourceIdentifier getIdentifier() {
         return identifier;
