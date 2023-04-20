@@ -369,6 +369,17 @@ public final class YangParserTestUtils {
         }
     }
 
+    /**
+     * Creates a new effective schema context containing the specified YANG sources.
+     *
+     * @param sources list of yang sources in plain string
+     * @return effective schema context
+     */
+    public static EffectiveModelContext parseYang(final String... sources) {
+        return parseSources(YangParserConfiguration.DEFAULT, null,
+            Arrays.stream(sources).map(LiteralYangTextSchemaSource::ofLiteral).toList());
+    }
+
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
     private static Collection<File> getYangFiles(final String resourcePath) {
         final URI directoryPath;
