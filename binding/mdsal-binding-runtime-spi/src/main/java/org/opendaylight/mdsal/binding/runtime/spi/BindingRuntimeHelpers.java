@@ -103,7 +103,7 @@ public final class BindingRuntimeHelpers {
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    static @NonNull YangModuleInfo extractYangModuleInfo(final Class<?> clazz) {
+    private static @NonNull YangModuleInfo extractYangModuleInfo(final Class<?> clazz) {
         try {
             return BindingReflections.getModuleInfo(clazz);
         } catch (Exception e) {
