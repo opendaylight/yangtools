@@ -14,7 +14,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingObjectCodecTreeNode;
-import org.opendaylight.mdsal.binding.dom.codec.impl.LeafNodeCodecContext.OfTypeObject;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 
 /**
@@ -23,20 +22,21 @@ import org.opendaylight.yangtools.yang.binding.BindingObject;
  */
 abstract class AbstractBindingNormalizedNodeCacheHolder {
     @SuppressWarnings("rawtypes")
-    private final LoadingCache<NodeCodecContext, AbstractBindingNormalizedNodeCache> caches = CacheBuilder
-            .newBuilder().build(new CacheLoader<NodeCodecContext, AbstractBindingNormalizedNodeCache>() {
-                @Override
-                public AbstractBindingNormalizedNodeCache load(final NodeCodecContext key) {
-                    if (key instanceof DataContainerCodecContext) {
-                        return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this,
-                            (DataContainerCodecContext<?, ?>) key);
-                    } else if (key instanceof OfTypeObject) {
-                        return new TypeObjectNormalizedNodeCache<>((OfTypeObject)key);
-                    } else {
-                        throw new IllegalStateException("Unhandled context " + key);
-                    }
+    private final LoadingCache<NodeCodecContext, AbstractBindingNormalizedNodeCache> caches =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public AbstractBindingNormalizedNodeCache load(final NodeCodecContext key) {
+                // FIXME: Use a switch expression once we have https://openjdk.org/jeps/441
+                if (key instanceof DataContainerCodecContext<?, ?> dataContainer) {
+                    return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this,
+                        dataContainer);
                 }
-            });
+                if (key instanceof LeafNodeCodecContext.OfTypeObject typeObject) {
+                    return new TypeObjectNormalizedNodeCache<>(typeObject);
+                }
+                throw new IllegalStateException("Unhandled context " + key);
+            }
+        });
 
     private final ImmutableSet<Class<? extends BindingObject>> cacheSpec;
 
