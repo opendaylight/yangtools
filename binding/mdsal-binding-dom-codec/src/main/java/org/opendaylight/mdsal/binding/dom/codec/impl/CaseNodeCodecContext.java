@@ -35,8 +35,7 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
     }
 
     @Override
-    protected void addYangPathArgument(final PathArgument arg,
-            final List<YangInstanceIdentifier.PathArgument> builder) {
+    void addYangPathArgument(final PathArgument arg, final List<YangInstanceIdentifier.PathArgument> builder) {
         // NOOP
     }
 

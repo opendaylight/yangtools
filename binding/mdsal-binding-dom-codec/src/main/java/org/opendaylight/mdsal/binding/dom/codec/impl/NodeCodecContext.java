@@ -9,14 +9,12 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -85,19 +83,6 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
         @NonNull DataObjectStreamer<?> getDataObjectSerializer(Class<?> type);
 
         DataObjectSerializer getEventStreamSerializer(Class<?> type);
-    }
-
-    /**
-     * Serializes supplied Binding Path Argument and adds all necessary YANG instance identifiers to supplied list.
-     *
-     * @param arg Binding Path Argument
-     * @param builder DOM Path argument.
-     */
-    protected void addYangPathArgument(final InstanceIdentifier.PathArgument arg,
-            final List<YangInstanceIdentifier.PathArgument> builder) {
-        if (builder != null) {
-            builder.add(getDomPathArgument());
-        }
     }
 
     /**

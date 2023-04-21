@@ -97,7 +97,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
     }
 
     @Override
-    protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
+    protected final YangInstanceIdentifier.PathArgument getDomPathArgument() {
         return prototype.getYangArg();
     }
 
@@ -122,11 +122,23 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
     @Override
     public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
-        final DataContainerCodecContext<?,?> child = streamChild(arg.getType());
+        final DataContainerCodecContext<?, ?> child = streamChild(arg.getType());
         if (builder != null) {
-            child.addYangPathArgument(arg,builder);
+            child.addYangPathArgument(arg, builder);
         }
         return child;
+    }
+
+    /**
+     * Serializes supplied Binding Path Argument and adds all necessary YANG instance identifiers to supplied list.
+     *
+     * @param arg Binding Path Argument
+     * @param builder DOM Path argument.
+     */
+    void addYangPathArgument(final PathArgument arg, final List<YangInstanceIdentifier.PathArgument> builder) {
+        if (builder != null) {
+            builder.add(getDomPathArgument());
+        }
     }
 
     /**

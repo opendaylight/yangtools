@@ -74,7 +74,7 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
     }
 
     @Override
-    protected void addYangPathArgument(final InstanceIdentifier.PathArgument arg,
+    void addYangPathArgument(final InstanceIdentifier.PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         /*
          * DOM Instance Identifier for list is always represent by two entries one for map and one for children. This
@@ -85,8 +85,8 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
         }
 
         super.addYangPathArgument(arg, builder);
-        if (arg instanceof IdentifiableItem) {
-            builder.add(codec.bindingToDom((IdentifiableItem<?, ?>) arg));
+        if (arg instanceof IdentifiableItem<?, ?> identifiable) {
+            builder.add(codec.bindingToDom(identifiable));
         } else {
             // Adding wildcarded
             super.addYangPathArgument(arg, builder);
