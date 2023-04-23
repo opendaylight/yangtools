@@ -49,7 +49,7 @@ public non-sealed interface DistinctNodeContainer<K extends PathArgument, V exte
      *
      * @param key Path argument identifying child node
      * @return Matching child node, or null if no matching child exists
-     * @throws NullPointerException if {@code key} is null
+     * @throws NullPointerException if {@code key} is {@code null}
      */
     @Nullable V childByArg(K key);
 
@@ -58,7 +58,7 @@ public non-sealed interface DistinctNodeContainer<K extends PathArgument, V exte
      *
      * @param key Path argument identifying child node
      * @return Optional with child node if child exists. {@link Optional#empty()} if child does not exist
-     * @throws NullPointerException if {@code key} is null
+     * @throws NullPointerException if {@code key} is {@code null}
      */
     default Optional<V> findChildByArg(final K key) {
         return Optional.ofNullable(childByArg(key));
@@ -69,10 +69,10 @@ public non-sealed interface DistinctNodeContainer<K extends PathArgument, V exte
      *
      * @param key Path argument identifying child node
      * @return Matching child node
-     * @throws NullPointerException if {@code key} is null
+     * @throws NullPointerException if {@code key} is {@code null}
      * @throws VerifyException if the child does not exist
      */
     default @NonNull V getChildByArg(final K key) {
-        return verifyNotNull(childByArg(key));
+        return verifyNotNull(childByArg(key), "No child matching %s", key);
     }
 }
