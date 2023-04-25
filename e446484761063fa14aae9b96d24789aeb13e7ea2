@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "00e7e5df_20b7eee9",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-25T09:09:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b9275c5d_df8ffc0b",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 6
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d801e8db_e67e3b96",
@@ -70,6 +94,54 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb08aebc_375fef19",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-25T09:09:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d801e8db_e67e3b96",
+      "range": {
+        "startLine": 33,
+        "startChar": 26,
+        "endLine": 33,
+        "endChar": 40
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "30ea9bbf_56772450",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-25T09:09:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6a43a828_869adac0",
+      "range": {
+        "startLine": 33,
+        "startChar": 41,
+        "endLine": 33,
+        "endChar": 62
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "80dab3cd_84f8b669",
@@ -93,6 +165,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9daac1f_5dd89652",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-25T09:09:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80dab3cd_84f8b669",
+      "range": {
+        "startLine": 141,
+        "startChar": 48,
+        "endLine": 141,
+        "endChar": 58
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "820a2a99_45df2f38",
@@ -106,6 +202,30 @@
       "writtenOn": "2023-04-25T08:12:46Z",
       "side": 1,
       "message": "this deserves a comment",
+      "range": {
+        "startLine": 142,
+        "startChar": 36,
+        "endLine": 142,
+        "endChar": 107
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "069bd68b_2f7b806c",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-25T09:09:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "820a2a99_45df2f38",
       "range": {
         "startLine": 142,
         "startChar": 36,
