@@ -23,4 +23,18 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
     <packaging>bundle</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Automatic-Module-Name>org.opendaylight.mdsal.model.yang.ext</Automatic-Module-Name>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
