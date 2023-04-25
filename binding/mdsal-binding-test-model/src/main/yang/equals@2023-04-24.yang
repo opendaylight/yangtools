@@ -1,0 +1,121 @@
+module equals {
+  yang-version 1.1;
+  namespace "urn:yang.equals";
+  prefix "eq";
+
+  revision "2023-04-24";
+
+  container root {
+    list root-list-by-user {
+      key "name";
+      description "List<>";
+      ordered-by user;
+      leaf name {
+        type string;
+      }
+      leaf type {
+        type string;
+        mandatory true;
+      }
+      leaf-list list-by-user-leaf-list-by-user {
+        description "List<List<>>";
+        type string;
+        ordered-by user;
+      }
+      leaf-list list-by-user-leaf-list-by-system {
+        description "List<Set<>>";
+        type string;
+      }
+      list nested-list-by-user {
+        description "List<List<>>";
+        key "name";
+        ordered-by user;
+        leaf name {
+          type string;
+        }
+        leaf type {
+          type string;
+          mandatory true;
+        }
+        list double-nested-list-no-key {
+          description "List<List<List<>>>";
+          leaf name {
+            type string;
+          }
+          leaf type {
+            type string;
+            mandatory true;
+          }
+        }
+      }
+      list nested-list-no-key {
+        description "List<List<>>";
+        leaf name {
+          type string;
+        }
+        leaf type {
+          type string;
+          mandatory true;
+        }
+        list double-nested-mixed-list {
+          description "List<List<Map<>>>";
+          key "name";
+          leaf name {
+            type string;
+          }
+          leaf type {
+            type string;
+            mandatory true;
+          }
+        }
+      }
+    }
+
+    list root-list-by-system {
+      description "Map<>";
+      key "name";
+      leaf name {
+        type string;
+      }
+      leaf type {
+        type string;
+        mandatory true;
+      }
+      container nested-list-container {
+        leaf-list list-by-system-leaf-list-by-user {
+          description "Map<List<>>";
+          type string;
+          ordered-by user;
+        }
+        leaf-list list-by-system-leaf-list-by-system {
+          description  "Map<Set<>>";
+          type string;
+        }
+        list nested-list-by-system {
+          description "Map<Map<>>";
+          key "name";
+          leaf name {
+            type string;
+          }
+          leaf type {
+            type string;
+            mandatory true;
+          }
+          container double-nested-list-container {
+            list double-nested-list-by-system {
+              description "Map<Map<Map<>>>";
+              key "name";
+              leaf name {
+                type string;
+              }
+              leaf type {
+                type string;
+                mandatory true;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
