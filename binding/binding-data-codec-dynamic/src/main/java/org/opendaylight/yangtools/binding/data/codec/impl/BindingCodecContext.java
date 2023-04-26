@@ -32,8 +32,11 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,6 +51,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
+import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -81,13 +85,16 @@ import org.opendaylight.yangtools.binding.reflect.BindingReflections;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.DataRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -665,10 +672,15 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
                 final ValueNodeCodecContext valueNode;
                 if (schema instanceof LeafSchemaNode leafSchema) {
-                    // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type, but this may return
-                    //                   Object.class
-                    final Class<?> valueType = method.getReturnType();
-                    final ValueCodec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
+                    final var valueType = method.getReturnType();
+                    final ValueCodec<Object, Object> codec;
+
+                    if (Object.class.equals(valueType)
+                        && leafSchema.getType() instanceof LeafrefTypeDefinition leafRef) {
+                        codec = getWildcardCodec(parentClass, leafRef);
+                    } else {
+                        codec = getCodec(valueType, leafSchema.getType());
+                    }
                     valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
                         context.modelContext());
                 } else if (schema instanceof LeafListSchemaNode leafListSchema) {
@@ -683,8 +695,14 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     } else if (genericType instanceof ParameterizedType parameterized) {
                         valueType = (Class<?>) parameterized.getRawType();
                     } else if (genericType instanceof WildcardType) {
-                        // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type
-                        valueType = Object.class;
+                        // This case can only happen when the leafref target cannot be resolved
+                        verify(leafListSchema.getType() instanceof LeafrefTypeDefinition,
+                            "Unexpected WildcardType " + genericType);
+                        final var leafRef = (LeafrefTypeDefinition) leafListSchema.getType();
+                        final var wildcardCodec = getWildcardCodec(parentClass, leafRef);
+                        valueNode = new LeafSetNodeCodecContext(leafListSchema, wildcardCodec, method.getName());
+                        leaves.put(method, valueNode);
+                        continue;
                     } else {
                         throw new IllegalStateException("Unexpected return type " + genericType);
                     }
@@ -709,6 +727,36 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return ImmutableMap.copyOf(leaves);
     }
 
+    /**
+     * Resolves instantiations of parent grouping.
+     *
+     * @param currentClass class representing current YANG schema fragment
+     * @param path leafref path to track current position in schema
+     * @return instantiations of parent grouping
+     */
+    private List<CompositeRuntimeType> resolveGrouping(final Class<?> currentClass, final Iterator<String> path) {
+        // retrieves parent container through the ChildOf interface
+        final var childOf = getParent(currentClass);
+        // we moved to parent so move in path
+        path.next();
+        final var javaTypeName = JavaTypeName.create((Class<?>) childOf.getActualTypeArguments()[0]);
+        final var paramType = context.getTypes().findSchema(javaTypeName)
+                .orElseThrow(() -> new IllegalStateException(javaTypeName + " not found"));
+        if (!(paramType instanceof GroupingRuntimeType grouping)) {
+            return resolveGrouping((Class<?>) childOf.getActualTypeArguments()[0], path);
+        }
+        return grouping.instantiations();
+    }
+
+    private ParameterizedType getParent(final Class<?> parentClass) {
+        for (var type : parentClass.getGenericInterfaces()) {
+            if (type instanceof ParameterizedType childOf && childOf.getRawType().equals(ChildOf.class)) {
+                return childOf;
+            }
+        }
+        throw new IllegalStateException("Couldn't resolve instantiations of parent grouping for " + parentClass);
+    }
+
     // FIXME: this is probably not right w.r.t. nulls
     ValueCodec<Object, Object> getCodec(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {
         if (BaseIdentity.class.isAssignableFrom(valueType)) {
@@ -726,13 +774,65 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             if (codec != null) {
                 return codec;
             }
+            throw new VerifyException("Unsupported type " + valueType.getName());
+        }
+    }
 
-            // FIXME: YANGTOOLS-1602: we must never return NOOP_CODEC for valueType=Object.class
-            if (Object.class.equals(valueType)) {
-                return NOOP_CODEC;
+    /**
+     * Resolves leafref that could not be resolved on its definition.
+     * This is achieved by examination of instantiations of parent grouping.
+     *
+     * @param parent parent class of the leafref
+     * @param ref TypeDefinition of unresolved leafref
+     * @return codec of resolved type
+     */
+    private ValueCodec<Object, Object> getWildcardCodec(final Class<?> parent, final LeafrefTypeDefinition ref) {
+        try {
+            // get path argument of the given leafref
+            final var path = Arrays.stream(ref.getPathStatement().getOriginalString().split("/")).iterator();
+            // path out of leaf
+            path.next();
+            // possible types of leaf ref
+            final var possibleTypes = new ArrayList<RuntimeType>(resolveGrouping(parent, path));
+
+            // populate possibleTypes by resolving the path fore each instantiation
+            var step = path.next();
+            while (path.hasNext()) {
+                for (int i = 0; i < possibleTypes.size(); i++) {
+                    if (step.equals("..")) {
+                        final var pare = getParent(context.loadClass(possibleTypes.get(i).javaType()));
+                        final var javaTypeName = JavaTypeName.create((Class<?>) pare.getActualTypeArguments()[0]);
+                        possibleTypes.set(i, context.getTypes().findSchema(javaTypeName)
+                                .orElseThrow(() -> new IllegalStateException(javaTypeName + " not found")));
+
+                    } else if (possibleTypes.get(i) instanceof CompositeRuntimeType runtimeType) {
+                        possibleTypes.set(i, runtimeType.schemaTreeChild(QName.create((QName) possibleTypes.get(i)
+                                .statement().argument(), step)));
+                    }
+                }
+                step = path.next();
             }
 
-            throw new VerifyException("Unsupported type " + valueType.getName());
+            // get codec for each instantiation
+            final var codec = new HashSet<ValueCodec<Object, Object>>();
+            for (var instantiation : possibleTypes) {
+                final var parentClass = context.loadClass(instantiation.javaType());
+                final var effectiveStatement = context.getTypeWithSchema(parentClass).statement();
+                for (var subStatement : effectiveStatement.effectiveSubstatements()) {
+                    if (subStatement instanceof DataSchemaNode node && node.getQName().getLocalName().equals(step)) {
+                        final var methodName = BindingSchemaMapping.getGetterMethodName(node);
+                        final var valueType = parentClass.getMethod(methodName).getReturnType();
+                        codec.add(getCodec(valueType, ((LeafSchemaNode) node).getType()));
+                    }
+                }
+            }
+            if (codec.size() == 1) {
+                return codec.iterator().next();
+            }
+            // FIXME: create some polymorphic codec, which is somehow specialized for each possible instantiation??
+            return NOOP_CODEC;
+        } catch (NoSuchMethodException | ClassNotFoundException e) {
+            throw new IllegalStateException("Couldn't resolve leaf ref " + ref + e);
         }
     }
 
