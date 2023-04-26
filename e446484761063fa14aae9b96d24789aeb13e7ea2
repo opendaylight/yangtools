@@ -3,6 +3,138 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "40d2025a_1b185706",
+        "filename": "parser/yang-test-util/src/main/java/org/opendaylight/yangtools/yang/test/util/YangParserTestUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:00:02Z",
+      "side": 1,
+      "message": "please add javadocs",
+      "range": {
+        "startLine": 372,
+        "startChar": 40,
+        "endLine": 372,
+        "endChar": 49
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e087560c_87f5ab30",
+        "filename": "parser/yang-test-util/src/main/java/org/opendaylight/yangtools/yang/test/util/YangParserTestUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:00:02Z",
+      "side": 1,
+      "message": "just pass this as argument to parseSources()",
+      "range": {
+        "startLine": 373,
+        "startChar": 14,
+        "endLine": 373,
+        "endChar": 76
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "187b45de_5f22ce7a",
+        "filename": "parser/yang-test-util/src/test/java/org/opendaylight/yangtools/yang/test/util/Yt1463Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:00:02Z",
+      "side": 1,
+      "message": "use JUnit 5 here and in assertions",
+      "range": {
+        "startLine": 12,
+        "startChar": 7,
+        "endLine": 12,
+        "endChar": 16
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ee073bc_4945f94d",
+        "filename": "parser/yang-test-util/src/test/java/org/opendaylight/yangtools/yang/test/util/Yt1463Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:00:02Z",
+      "side": 1,
+      "message": "YT",
+      "range": {
+        "startLine": 16,
+        "startChar": 13,
+        "endLine": 16,
+        "endChar": 15
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "400d56fd_e9fe0eda",
+        "filename": "parser/yang-test-util/src/test/java/org/opendaylight/yangtools/yang/test/util/Yt1463Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:00:02Z",
+      "side": 1,
+      "message": "\u0027var\u0027 here and below",
+      "range": {
+        "startLine": 19,
+        "startChar": 14,
+        "endLine": 19,
+        "endChar": 35
+      },
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c31bec88_6e98b8ad",
+        "filename": "parser/yang-test-util/src/test/java/org/opendaylight/yangtools/yang/test/util/Yt1463Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:00:02Z",
+      "side": 1,
+      "message": "superfluous empty line",
+      "revId": "e446484761063fa14aae9b96d24789aeb13e7ea2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b9275c5d_df8ffc0b",
         "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
         "patchSetId": 1
