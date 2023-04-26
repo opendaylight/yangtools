@@ -102,6 +102,98 @@
       },
       "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e060498e_f4d365be",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:11:38Z",
+      "side": 1,
+      "message": "superfluous reformat: indentation should be at 4 spaces -- fix your IDE",
+      "range": {
+        "startLine": 40,
+        "startChar": 12,
+        "endLine": 40,
+        "endChar": 16
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b924fca7_b262a6ed",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:11:38Z",
+      "side": 1,
+      "message": "useless reformat, please fix your IDE setup: we never want to do this as it wastes columns. What would you do if it were \u0027final SomeExtremelyLongButRequiredClassName andEquallyImportantLongParameterName delegate\u0027 ?!",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 75
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae3826cf_1fd2523b",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:11:38Z",
+      "side": 1,
+      "message": "prefer // for comments \u003c 4 lines. also observe space separation (//Foo vs // Foo)",
+      "range": {
+        "startLine": 149,
+        "startChar": 9,
+        "endLine": 149,
+        "endChar": 10
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1e7c9d7_8d616c0a",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-04-26T21:11:38Z",
+      "side": 1,
+      "message": "right, but how this work with, literally:\n\n  // I want to break you because RFC7950 allows this:\n  /* haha */ submodule /* having fun yet? */ foo {\n    ..\n  }\n\nadd an explicit test for rejecting above shenanigans",
+      "range": {
+        "startLine": 150,
+        "startChar": 12,
+        "endLine": 150,
+        "endChar": 30
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
