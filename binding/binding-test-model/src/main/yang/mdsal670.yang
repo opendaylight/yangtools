@@ -1,0 +1,84 @@
+module mdsal670 {
+  namespace mdsal670;
+  prefix mdsal670;
+
+  grouping bar {
+    container bar1 {
+      container bar {
+        leaf-list bar {
+          type leafref {
+            path ../../../../a2/l2;
+          }
+        }
+      }
+    }
+  }
+
+  container foo {
+    container a2 {
+      leaf l1 {
+        type string;
+      }
+      leaf l2 {
+        type instance-identifier;
+      }
+    }
+    leaf l2 {
+      type string;
+    }
+    leaf foo {
+      type string;
+    }
+    container a1 {
+
+      uses bar;
+    }
+  }
+
+  container cont1 {
+    container a2 {
+      leaf l1 {
+        type string;
+      }
+      leaf l2 {
+        type instance-identifier;
+      }
+    }
+    leaf l2 {
+      type string;
+    }
+    leaf foo {
+      type string;
+    }
+    container a1 {
+
+      uses bar;
+    }
+  }
+
+  grouping baz {
+    container baz {
+      leaf-list baz {
+        type leafref {
+          path ../../foo;
+        }
+      }
+    }
+  }
+
+  container one {
+    leaf foo {
+      type instance-identifier;
+    }
+
+    uses baz;
+  }
+
+  container two {
+    leaf foo {
+      type string;
+    }
+
+    uses baz;
+  }
+}

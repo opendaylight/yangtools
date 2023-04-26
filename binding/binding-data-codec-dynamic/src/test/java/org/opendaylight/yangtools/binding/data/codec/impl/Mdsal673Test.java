@@ -72,14 +72,13 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
      */
     @Test
     public void testNotEmptyContainer() {
-        // FIXME: YANGTOOLS-1602: these should get translated to YangInstanceIdentifier.of(FOO)
         final var data = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(FOO)
             .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(BAR)
                 .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                     .withNodeIdentifier(BAR)
-                    .withChild(ImmutableNodes.leafSetEntry(Bar.QNAME, FOO))
+                    .withChild(ImmutableNodes.leafSetEntry(Bar.QNAME, YangInstanceIdentifier.of(FOO)))
                     .build())
                 .build())
             .build();
