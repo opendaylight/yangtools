@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import javax.xml.stream.XMLStreamException;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.ElementSelectors;
 
 abstract class AbstractYinExportTest {
     final void exportYinModules(final String yangDir, final String yinDir) throws IOException, SAXException,
@@ -77,12 +77,13 @@ abstract class AbstractYinExportTest {
             throws SAXException, IOException {
         final String expected = YinExportTestUtils.toString(expectedXMLDoc.getDocumentElement());
 
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setNormalize(true);
-        XMLUnit.setNormalizeWhitespace(true);
+        final var diff = DiffBuilder.compare(output)
+            .withTest(expectedXMLDoc)
+            .ignoreWhitespace()
+            .normalizeWhitespace()
+            .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+            .build();
 
-        final Diff diff = new Diff(expected, output);
-        diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        XMLAssert.assertXMLEqual(fileName, diff, true);
+        assertFalse(diff.hasDifferences(), diff.toString());
     }
 }
