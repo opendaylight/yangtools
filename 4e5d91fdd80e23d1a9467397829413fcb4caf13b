@@ -18,6 +18,23 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2dbd04b6_fc3a6278",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "please address mainly the regex comment. ",
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cb3a1eae_646aeebb",
@@ -31,6 +48,24 @@
       "writtenOn": "2023-04-26T21:02:26Z",
       "side": 1,
       "message": "superfluous empty line",
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "731649e7_f3b42cd5",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb3a1eae_646aeebb",
       "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -60,6 +95,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a5215cd8_380969fb",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "no, it is not reporting anything",
+      "parentUuid": "c8965b6f_04e4cbb6",
+      "range": {
+        "startLine": 23,
+        "startChar": 18,
+        "endLine": 23,
+        "endChar": 24
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "163b6c9c_50f6b261",
         "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
         "patchSetId": 2
@@ -71,6 +130,30 @@
       "writtenOn": "2023-04-26T21:02:26Z",
       "side": 1,
       "message": "requireNonNull() on this?",
+      "range": {
+        "startLine": 29,
+        "startChar": 25,
+        "endLine": 29,
+        "endChar": 34
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b840a760_a67a3a6b",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "163b6c9c_50f6b261",
       "range": {
         "startLine": 29,
         "startChar": 25,
@@ -106,6 +189,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "26a493ed_c07db635",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "if I remove it, now my IDE is protesting:\n`Not annotated method overrides method annotated with @NonNull`",
+      "parentUuid": "f4e9a416_318ef68a",
+      "range": {
+        "startLine": 38,
+        "startChar": 12,
+        "endLine": 38,
+        "endChar": 19
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e060498e_f4d365be",
         "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
         "patchSetId": 2
@@ -117,6 +224,30 @@
       "writtenOn": "2023-04-26T21:11:38Z",
       "side": 1,
       "message": "superfluous reformat: indentation should be at 4 spaces -- fix your IDE",
+      "range": {
+        "startLine": 40,
+        "startChar": 12,
+        "endLine": 40,
+        "endChar": 16
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa8fd294_e64b0bb8",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e060498e_f4d365be",
       "range": {
         "startLine": 40,
         "startChar": 12,
@@ -150,6 +281,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "30ae7ad2_0b68f68f",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "definatelly not intended change. Fixed IDE to prevent this from happening",
+      "parentUuid": "b924fca7_b262a6ed",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 75
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ae3826cf_1fd2523b",
@@ -163,6 +318,30 @@
       "writtenOn": "2023-04-26T21:11:38Z",
       "side": 1,
       "message": "prefer // for comments \u003c 4 lines. also observe space separation (//Foo vs // Foo)",
+      "range": {
+        "startLine": 149,
+        "startChar": 9,
+        "endLine": 149,
+        "endChar": 10
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3ddda58_2aa2b859",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "irrelevant as this part of the code will be removed",
+      "parentUuid": "ae3826cf_1fd2523b",
       "range": {
         "startLine": 149,
         "startChar": 9,
@@ -210,6 +389,30 @@
       "side": 1,
       "message": "i.e. the statement needs to be module/submodule and the argument needs to pass Unqualified.tryLocalName().",
       "parentUuid": "f1e7c9d7_8d616c0a",
+      "range": {
+        "startLine": 150,
+        "startChar": 12,
+        "endLine": 150,
+        "endChar": 30
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4aa68963_c3502e4c",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-04-27T13:39:58Z",
+      "side": 1,
+      "message": "Trying to build a regex that would match the comment and group the localName, but struggling with nested * and / in comments",
+      "parentUuid": "6cabe87d_193cc619",
       "range": {
         "startLine": 150,
         "startChar": 12,
