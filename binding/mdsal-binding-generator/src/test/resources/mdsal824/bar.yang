@@ -1,0 +1,23 @@
+module bar {
+  yang-version 1.1;
+  namespace bar;
+  prefix bar;
+
+  import foo { prefix foo; }
+
+  grouping bar-grp {
+    list bar-list {
+      key key;
+      leaf key {
+        type string;
+      }
+
+      uses foo:uses-grp;
+    }
+  }
+
+  container bar-top {
+    uses bar-grp;
+  }
+}
+

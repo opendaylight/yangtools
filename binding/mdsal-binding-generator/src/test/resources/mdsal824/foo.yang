@@ -1,0 +1,24 @@
+module foo {
+  yang-version 1.1;
+  namespace foo;
+  prefix foo;
+
+  grouping act-grp {
+    action foo {
+      output {
+        choice type {
+          mandatory true;
+          case some-type {
+            leaf some-type {
+              type string;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  grouping uses-grp {
+    uses act-grp;
+  }
+}

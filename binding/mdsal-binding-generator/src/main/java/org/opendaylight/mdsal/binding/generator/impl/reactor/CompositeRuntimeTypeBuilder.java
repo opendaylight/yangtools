@@ -137,7 +137,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
             }
         }
 
-        // ... and groupings recursively last
+        // ... groupings recursively next ...
         for (var grouping : parent.groupings()) {
             final AbstractExplicitGenerator<S, ?> found = findChildGenerator(grouping, localName);
             if (found != null) {
@@ -145,6 +145,8 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
             }
         }
 
-        return null;
+        // ... and finally anything along instantiation axis ...
+        final var origParent = (AbstractCompositeGenerator<?, ?>) parent.previous();
+        return origParent == null ? null : findChildGenerator(origParent, localName);
     }
 }
