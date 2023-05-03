@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.yang.test.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.io.CharSource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.StringReader;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
@@ -57,8 +54,8 @@ final class LiteralYangTextSchemaSource extends YangTextSchemaSource {
     }
 
     @Override
-    public InputStream openStream() throws IOException {
-        return CharSource.wrap(sourceString).asByteSource(StandardCharsets.UTF_8).openStream();
+    public StringReader openStream() {
+        return new StringReader(sourceString);
     }
 
     @Override

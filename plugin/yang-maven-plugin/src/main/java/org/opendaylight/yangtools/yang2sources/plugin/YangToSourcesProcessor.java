@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -87,7 +88,8 @@ class YangToSourcesProcessor {
         final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
         for (var source : modelsInProject) {
             final File file = new File(withMetaInf, source.getIdentifier().toYangFilename());
-            stateListBuilder.add(FileState.ofWrittenFile(file, source::copyTo));
+            stateListBuilder.add(FileState.ofWrittenFile(file,
+                out -> source.asByteSource(StandardCharsets.UTF_8).copyTo(out)));
             LOG.debug("Created file {} for {}", file, source.getIdentifier());
         }
 
@@ -398,7 +400,7 @@ class YangToSourcesProcessor {
 
                 if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
                     // AST indicates a different source identifier, make sure we use that
-                    sourcesInProject.add(YangTextSchemaSource.delegateForByteSource(astSource.getIdentifier(),
+                    sourcesInProject.add(YangTextSchemaSource.delegateForCharSource(astSource.getIdentifier(),
                         textSource));
                 } else {
                     sourcesInProject.add(textSource);
