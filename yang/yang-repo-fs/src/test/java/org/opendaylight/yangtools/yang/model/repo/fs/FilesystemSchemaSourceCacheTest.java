@@ -24,11 +24,10 @@ import static org.mockito.Mockito.verify;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.Reader;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
@@ -241,8 +240,8 @@ public class FilesystemSchemaSourceCacheTest {
         }
 
         @Override
-        public InputStream openStream() throws IOException {
-            return new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+        public Reader openStream() throws IOException {
+            return new StringReader(content);
         }
 
         @Override

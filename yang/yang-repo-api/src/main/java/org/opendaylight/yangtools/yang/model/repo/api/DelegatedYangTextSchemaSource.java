@@ -10,28 +10,28 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
-final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
-    private final @NonNull ByteSource delegate;
+final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<CharSource> {
+    private final @NonNull CharSource delegate;
 
-    DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
+    DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final CharSource delegate) {
         super(identifier);
         this.delegate = requireNonNull(delegate);
     }
 
     @Override
-    public ByteSource getDelegate() {
+    public CharSource getDelegate() {
         return delegate;
     }
 
     @Override
-    public InputStream openStream() throws IOException {
+    public Reader openStream() throws IOException {
         return delegate.openStream();
     }
 
