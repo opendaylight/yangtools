@@ -66,7 +66,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("identifier", identifier)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
 
     /**
@@ -78,7 +78,9 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected abstract ToStringHelper addToStringAttributes(@NonNull ToStringHelper toStringHelper);
+    protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
+        return toStringHelper.add("identifier", identifier);
+    }
 
     /**
      * Create a new YinTextSchemaSource with a specific source identifier and backed

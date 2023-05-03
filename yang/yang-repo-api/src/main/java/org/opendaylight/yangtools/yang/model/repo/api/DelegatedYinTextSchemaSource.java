@@ -42,6 +42,6 @@ final class DelegatedYinTextSchemaSource extends YinTextSchemaSource implements 
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("delegate", delegate);
+        return super.addToStringAttributes(toStringHelper).add("delegate", delegate);
     }
 }
