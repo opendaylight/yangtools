@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
@@ -132,14 +132,14 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
 
     static StatementContext parseYangSource(final YangTextSchemaSource source)
             throws IOException, YangSyntaxErrorException {
-        try (InputStream stream = source.openStream()) {
-            return parseYangSource(source.getIdentifier(), stream);
+        try (var reader = source.openStream()) {
+            return parseYangSource(source.getIdentifier(), reader);
         }
     }
 
-    private static StatementContext parseYangSource(final SourceIdentifier source, final InputStream stream)
+    private static StatementContext parseYangSource(final SourceIdentifier source, final Reader stream)
             throws IOException, YangSyntaxErrorException {
-        final YangStatementLexer lexer = new CompactYangStatementLexer(CharStreams.fromStream(stream));
+        final YangStatementLexer lexer = new CompactYangStatementLexer(CharStreams.fromReader(stream));
         final YangStatementParser parser = new YangStatementParser(new CommonTokenStream(lexer));
         // disconnect from console error output
         lexer.removeErrorListeners();

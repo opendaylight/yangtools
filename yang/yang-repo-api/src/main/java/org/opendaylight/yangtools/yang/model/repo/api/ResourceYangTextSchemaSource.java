@@ -11,8 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -22,10 +24,12 @@ import org.opendaylight.yangtools.concepts.Delegator;
  */
 final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
     private final @NonNull URL url;
+    private final @NonNull Charset charset;
 
-    ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url) {
+    ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url, final Charset charset) {
         super(identifier);
         this.url = requireNonNull(url);
+        this.charset = requireNonNull(charset);
     }
 
     @Override
@@ -39,8 +43,8 @@ final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements
     }
 
     @Override
-    public InputStream openStream() throws IOException {
-        return url.openStream();
+    public Reader openStream() throws IOException {
+        return new InputStreamReader(url.openStream(), charset);
     }
 
     @Override
