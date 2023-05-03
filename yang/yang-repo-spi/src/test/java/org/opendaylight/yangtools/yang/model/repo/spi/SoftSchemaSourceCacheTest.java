@@ -15,9 +15,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -109,8 +108,8 @@ public class SoftSchemaSourceCacheTest {
         }
 
         @Override
-        public InputStream openStream() {
-            return new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+        public Reader openStream() {
+            return new StringReader(content);
         }
 
         @Override
