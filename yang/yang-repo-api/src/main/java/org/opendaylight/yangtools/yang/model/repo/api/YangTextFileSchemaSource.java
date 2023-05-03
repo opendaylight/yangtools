@@ -11,7 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -25,10 +27,12 @@ import org.opendaylight.yangtools.concepts.Delegator;
  */
 final class YangTextFileSchemaSource extends YangTextSchemaSource implements Delegator<Path> {
     private final @NonNull Path path;
+    private final @NonNull Charset charset;
 
-    YangTextFileSchemaSource(final SourceIdentifier identifier, final Path path) {
+    YangTextFileSchemaSource(final SourceIdentifier identifier, final Path path, final Charset charset) {
         super(identifier);
         this.path = requireNonNull(path);
+        this.charset = requireNonNull(charset);
     }
 
     @Override
@@ -37,8 +41,8 @@ final class YangTextFileSchemaSource extends YangTextSchemaSource implements Del
     }
 
     @Override
-    public InputStream openStream() throws IOException {
-        return Files.newInputStream(path);
+    public Reader openStream() throws IOException {
+        return new InputStreamReader(Files.newInputStream(path), charset);
     }
 
     @Override
