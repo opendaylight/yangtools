@@ -134,7 +134,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 }
             }
 
-            text = YangTextSchemaSource.delegateForByteSource(parsedId, source);
+            text = YangTextSchemaSource.delegateForCharSource(parsedId, source);
         } else {
             text = source;
         }

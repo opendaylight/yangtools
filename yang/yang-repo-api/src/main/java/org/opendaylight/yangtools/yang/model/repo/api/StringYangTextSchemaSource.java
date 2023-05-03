@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
-import java.io.ByteArrayInputStream;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -17,18 +19,18 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * A {@link YangTextSchemaSource} with content readily available.
  */
-public class ImmediateYangTextSchemaSource extends YangTextSchemaSource {
+public class StringYangTextSchemaSource extends YangTextSchemaSource {
     private final @Nullable String symbolicName;
-    private final byte @NonNull [] bytes;
+    private final @NonNull String content;
 
-    public ImmediateYangTextSchemaSource(final SourceIdentifier identifier, final byte[] bytes) {
-        this(identifier, bytes, null);
+    public StringYangTextSchemaSource(final SourceIdentifier identifier, final String content) {
+        this(identifier, content, null);
     }
 
-    public ImmediateYangTextSchemaSource(final SourceIdentifier identifier, final byte[] bytes,
+    public StringYangTextSchemaSource(final SourceIdentifier identifier, final String content,
             final @Nullable String symbolicName) {
         super(identifier);
-        this.bytes = bytes.clone();
+        this.content = requireNonNull(content);
         this.symbolicName = symbolicName;
     }
 
@@ -38,7 +40,7 @@ public class ImmediateYangTextSchemaSource extends YangTextSchemaSource {
     }
 
     @Override
-    public final InputStream openStream() throws IOException {
-        return new ByteArrayInputStream(bytes);
+    public final Reader openStream() throws IOException {
+        return new StringReader(content);
     }
 }

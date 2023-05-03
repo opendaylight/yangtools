@@ -16,10 +16,13 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
@@ -28,7 +31,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
  */
 @Beta
-public abstract class YangTextSchemaSource extends ByteSource implements YangSchemaSourceRepresentation {
+public abstract class YangTextSchemaSource extends CharSource implements YangSchemaSourceRepresentation {
     private final @NonNull SourceIdentifier identifier;
 
     protected YangTextSchemaSource(final SourceIdentifier identifier) {
@@ -50,10 +53,24 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      *
      * @param identifier SourceIdentifier of the resulting schema source
      * @param delegate Backing ByteSource instance
+     * @param charset Expected character set
      * @return A new YangTextSchemaSource
      */
     public static @NonNull YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
-            final ByteSource delegate) {
+            final ByteSource delegate, final Charset charset) {
+        return delegateForCharSource(identifier, delegate.asCharSource(charset));
+    }
+
+    /**
+     * Create a new YangTextSchemaSource with a specific source identifier and backed
+     * by ByteSource, which provides the actual InputStreams.
+     *
+     * @param identifier SourceIdentifier of the resulting schema source
+     * @param delegate Backing CharSource instance
+     * @return A new YangTextSchemaSource
+     */
+    public static @NonNull YangTextSchemaSource delegateForCharSource(final SourceIdentifier identifier,
+            final CharSource delegate) {
         return new DelegatedYangTextSchemaSource(identifier, delegate);
     }
 
@@ -67,7 +84,21 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the file name has invalid format
      */
     public static @NonNull YangTextSchemaSource delegateForByteSource(final String fileName,
-            final ByteSource delegate) {
+            final ByteSource delegate, final Charset charset) {
+        return delegateForCharSource(fileName, delegate.asCharSource(charset));
+    }
+
+    /**
+     * Create a new YangTextSchemaSource with {@link SourceIdentifier} derived from a supplied filename and backed
+     * by ByteSource, which provides the actual InputStreams.
+     *
+     * @param fileName File name
+     * @param delegate Backing CharSource instance
+     * @return A new YangTextSchemaSource
+     * @throws IllegalArgumentException if the file name has invalid format
+     */
+    public static @NonNull YangTextSchemaSource delegateForCharSource(final String fileName,
+            final CharSource delegate) {
         return new DelegatedYangTextSchemaSource(identifierFromFilename(fileName), delegate);
     }
 
@@ -94,8 +125,23 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the supplied path is not a regular file
      */
     public static @NonNull YangTextSchemaSource forPath(final Path path, final SourceIdentifier identifier) {
+        return forPath(path, identifier, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Create a new YangTextSchemaSource backed by a {@link File} and specified {@link SourceIdentifier}.
+     *
+     * @param path Backing path
+     * @param identifier Source identifier
+     * @param charset expected stream character set
+     * @return A new YangTextSchemaSource
+     * @throws NullPointerException if any argument is {@code null}
+     * @throws IllegalArgumentException if the supplied path is not a regular file
+     */
+    public static @NonNull YangTextSchemaSource forPath(final Path path, final SourceIdentifier identifier,
+            final Charset charset) {
         checkArgument(Files.isRegularFile(path), "Supplied path %s is not a regular file", path);
-        return new YangTextFileSchemaSource(identifier, path);
+        return new YangTextFileSchemaSource(identifier, path, charset);
     }
 
     /**
@@ -120,11 +166,27 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
     public static @NonNull YangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
+        return forResource(clazz, resourceName, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a resource by a resource available on the ClassLoader
+     * which loaded the specified class.
+     *
+     * @param clazz Class reference
+     * @param resourceName Resource name
+     * @param charset Expected character set
+     * @return A new instance.
+     * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
+     */
+    public static @NonNull YangTextSchemaSource forResource(final Class<?> clazz, final String resourceName,
+            final Charset charset) {
         final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
         final SourceIdentifier identifier = identifierFromFilename(fileName);
         final URL url = Resources.getResource(clazz, resourceName);
-        return new ResourceYangTextSchemaSource(identifier, url);
+        return new ResourceYangTextSchemaSource(identifier, url, charset);
     }
+
 
     /**
      * Create a new {@link YangTextSchemaSource} backed by a URL.
@@ -135,8 +197,23 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws NullPointerException if any argument is {@code null}
      */
     public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier) {
-        return new ResourceYangTextSchemaSource(identifier, url);
+        return forURL(url, identifier, StandardCharsets.UTF_8);
     }
+
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a URL.
+     *
+     * @param url Backing URL
+     * @param identifier Source identifier
+     * @param charset Expected character set
+     * @return A new instance.
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier,
+            final Charset charset) {
+        return new ResourceYangTextSchemaSource(identifier, url, charset);
+    }
+
 
     @Override
     public final SourceIdentifier getIdentifier() {
