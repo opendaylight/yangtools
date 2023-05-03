@@ -150,7 +150,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("identifier", identifier)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
 
     /**
@@ -162,5 +162,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("identifier", identifier);
+    }
 }
