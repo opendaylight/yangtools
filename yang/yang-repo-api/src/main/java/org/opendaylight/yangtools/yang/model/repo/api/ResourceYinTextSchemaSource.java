@@ -35,7 +35,7 @@ final class ResourceYinTextSchemaSource extends YinTextSchemaSource implements D
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("url", url);
+        return super.addToStringAttributes(toStringHelper).add("url", url);
     }
 
     @Override

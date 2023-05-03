@@ -43,7 +43,7 @@ final class YangTextFileSchemaSource extends YangTextSchemaSource implements Del
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("path", path);
+        return super.addToStringAttributes(toStringHelper).add("path", path);
     }
 
     @Override
