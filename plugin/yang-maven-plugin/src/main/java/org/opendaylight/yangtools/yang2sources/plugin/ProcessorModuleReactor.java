@@ -18,7 +18,6 @@ import com.google.common.io.CharStreams;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -98,7 +97,7 @@ final class ProcessorModuleReactor {
 
         for (ScannedDependency dependency : dependencies) {
             for (YangTextSchemaSource s : dependency.sources()) {
-                try (Reader reader = s.asCharSource(StandardCharsets.UTF_8).openStream()) {
+                try (Reader reader = s.openStream()) {
                     final String contents = CharStreams.toString(reader);
                     byContent.putIfAbsent(contents, s);
                 }

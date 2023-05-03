@@ -20,10 +20,10 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,8 +116,8 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
                 }
 
                 @Override
-                public InputStream openStream() throws IOException {
-                    return new ByteArrayInputStream("running".getBytes(StandardCharsets.UTF_8));
+                public Reader openStream() throws IOException {
+                    return new StringReader("running");
                 }
 
                 @Override

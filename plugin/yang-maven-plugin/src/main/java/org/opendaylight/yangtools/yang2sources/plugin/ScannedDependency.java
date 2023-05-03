@@ -19,6 +19,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +63,9 @@ abstract class ScannedDependency {
 
                     builder.add(YangTextSchemaSource.delegateForByteSource(
                         entryName.substring(entryName.lastIndexOf('/') + 1),
-                        ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry)))));
+                        // FIXME: can we reasonable make this a CharSource?
+                        ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry))),
+                        StandardCharsets.UTF_8));
                 }
             }
 
