@@ -259,6 +259,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a952272a_e34df452",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/LiteralYangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-04T09:40:38Z",
+      "side": 1,
+      "message": "resolving with colleagues",
+      "parentUuid": "f3282155_0e94227e",
+      "range": {
+        "startLine": 38,
+        "startChar": 12,
+        "endLine": 38,
+        "endChar": 19
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e060498e_f4d365be",
@@ -485,6 +509,30 @@
       "side": 1,
       "message": "well, just take the first line, then extract the would-be first items\ncheckArgument() first for module/submodule\ncheckArgument() the other one with AbstractQName.tryLocalName()\nwe want to be defensive, but this is testing code, so we can dictate the amount of weirdness we accept",
       "parentUuid": "4aa68963_c3502e4c",
+      "range": {
+        "startLine": 150,
+        "startChar": 12,
+        "endLine": 150,
+        "endChar": 30
+      },
+      "revId": "4e5d91fdd80e23d1a9467397829413fcb4caf13b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0accd64f_0ed72afb",
+        "filename": "yang/yang-repo-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-04T09:40:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "752334e4_d94c7f75",
       "range": {
         "startLine": 150,
         "startChar": 12,
