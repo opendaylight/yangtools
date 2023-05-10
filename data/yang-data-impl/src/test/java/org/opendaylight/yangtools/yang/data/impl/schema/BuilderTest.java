@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -83,9 +82,28 @@ public class BuilderTest {
 
     @Before
     public void setup() throws URISyntaxException {
-        final File leafRefTestYang = new File(getClass().getResource("/builder-test/immutable-ordered-map-node.yang")
-                .toURI());
-        final var schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
+        final var schema = YangParserTestUtils.parseYang("""
+            module immutable-ordered-map-node {
+                yang-version 1;
+                namespace "test.namespace.builder.test";
+                prefix "iomn";
+                revision "2016-01-01" {
+                    description "Initial revision.";
+                }
+                container root-container {
+                    list list-ordered-by-user-with-key {
+                        key "leaf-a";
+                        ordered-by "user";
+                        leaf leaf-a {
+                            type string;
+                        }
+                    }
+                    leaf-list leaf-list-ordered-by-user {
+                        ordered-by "user";
+                        type string;
+                    }
+                }
+            }""");
         final Module module = schema.getModules().iterator().next();
         final DataSchemaNode root = module.getDataChildByName(ROOT_CONTAINER);
         list = (ListSchemaNode)((ContainerSchemaNode) root).getDataChildByName(LIST_MAIN);

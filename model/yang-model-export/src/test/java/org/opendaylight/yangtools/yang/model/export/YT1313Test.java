@@ -15,9 +15,45 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1313Test {
+
     @Test
     public void testSubmoduleImportPrefixes() {
-        final var bar = YangParserTestUtils.parseYangResourceDirectory("/bugs/yt1313")
+        final var bar = YangParserTestUtils.parseYang("""
+            module bar {
+              namespace bar;
+              prefix bar;
+              include bar-one;
+              include bar-two;
+            }""", """
+            submodule bar-one {
+              belongs-to bar {
+                prefix bar;
+              }
+              import foo {
+                prefix foo1;
+              }
+              leaf one {
+                type foo1:foo;
+              }
+            }""", """
+            submodule bar-two {
+              belongs-to bar {
+                prefix bar;
+              }
+              import foo {
+                prefix foo2;
+              }
+              leaf two {
+                type foo2:foo;
+              }
+            }""", """
+            module foo {
+              namespace foo;
+              prefix foo;
+              typedef foo {
+                type string;
+              }
+            }""")
             .getModuleStatement(QNameModule.create(XMLNamespace.of("bar")));
 
         final StatementPrefixResolver resolver = StatementPrefixResolver.forModule(bar);

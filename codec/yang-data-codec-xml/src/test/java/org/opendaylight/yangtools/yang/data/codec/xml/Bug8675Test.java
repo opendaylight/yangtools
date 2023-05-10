@@ -34,7 +34,42 @@ public class Bug8675Test {
 
     @BeforeClass
     public static void setup() {
-        schemaContext = YangParserTestUtils.parseYangResource("/bug8675/foo.yang");
+        schemaContext = YangParserTestUtils.parseYang("""
+            module foo {
+                namespace foo;
+                prefix foo;
+                revision 2017-06-13;
+                list top-level-list {
+                    key key-leaf;
+                    leaf key-leaf {
+                        type string;
+                    }
+                    leaf ordinary-leaf {
+                        type string;
+                    }
+                    container cont-in-list {}
+                    list inner-list {
+                        key inner-key-leaf;
+                        leaf inner-key-leaf {
+                            type string;
+                        }
+                        leaf inner-ordinary-leaf {
+                            type string;
+                        }
+                    }
+                }
+                container top-level-container {
+                    container inner-container-1 {}
+                    container inner-container-2 {}
+                }
+                anyxml top-level-anyxml;
+                leaf top-level-leaf {
+                    type int32;
+                }
+                leaf-list top-level-leaf-list {
+                    type int32;
+                }
+            }""");
     }
 
     @AfterClass

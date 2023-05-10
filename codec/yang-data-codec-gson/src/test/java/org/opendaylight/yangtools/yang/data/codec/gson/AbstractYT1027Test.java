@@ -68,7 +68,22 @@ public abstract class AbstractYT1027Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/yt1027");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module yt1027 {
+              namespace "yt1027.test";
+              prefix tst;
+              leaf uint64 {
+                type uint64;
+              }
+              leaf int64 {
+                type int64;
+              }
+              leaf decimal {
+                type decimal64 {
+                  fraction-digits 1;
+                }
+              }
+            }""");
         DECIMAL_TYPE = (DecimalTypeDefinition) getTypeDefinition(DECIMAL);
         INT64_TYPE = (Int64TypeDefinition) getTypeDefinition(INT64);
         UINT64_TYPE = (Uint64TypeDefinition) getTypeDefinition(UINT64);
