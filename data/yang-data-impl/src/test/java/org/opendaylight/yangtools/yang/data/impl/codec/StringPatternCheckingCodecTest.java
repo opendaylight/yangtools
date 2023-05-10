@@ -22,9 +22,21 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class StringPatternCheckingCodecTest {
+
     @Test
     public void testStringPatternCheckingCodec() {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/string-pattern-checking-codec-test.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module string-pattern-checking-codec-test {
+                namespace "string-pattern-checking-codec-test";
+                prefix "spcct";
+                container test-container {
+                    leaf string-leaf-with-valid-pattern {
+                        type string {
+                            pattern "[A-Z]+";
+                        }
+                    }
+                }
+            }""");
         assertNotNull(schemaContext);
 
         final var testModuleQName = QNameModule.create(XMLNamespace.of("string-pattern-checking-codec-test"));

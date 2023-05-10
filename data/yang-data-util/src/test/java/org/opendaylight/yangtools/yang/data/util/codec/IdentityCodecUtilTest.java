@@ -25,7 +25,12 @@ class IdentityCodecUtilTest {
 
     @BeforeAll
     static void init() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/yangtools846.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module yangtools846 {
+                namespace "yangtools846";
+                prefix yt846;
+                identity foo;
+            }""");
     }
 
     @AfterAll

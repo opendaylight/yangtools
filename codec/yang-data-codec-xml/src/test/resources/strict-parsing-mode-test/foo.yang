@@ -1,8 +1,0 @@
-module foo {
-    namespace foo;
-    prefix foo;
-
-    container top-level-container {
-        container inner-container {}
-    }
-}

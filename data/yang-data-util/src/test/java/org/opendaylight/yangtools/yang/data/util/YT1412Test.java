@@ -43,7 +43,29 @@ class YT1412Test {
 
     @BeforeAll
     static void init() {
-        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYangResource("/yt1412.yang"));
+        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYang("""
+            module foo {
+              namespace foo;
+              prefix foo;
+              yang-version 1.1;
+              container one {
+                choice two {
+                  choice three {
+                    leaf four {
+                      type string;
+                    }
+                  }
+                }
+              }
+              augment /one {
+                list five;
+              }
+              augment /one/two/three/three {
+                leaf six {
+                  type string;
+                }
+              }
+            }"""));
     }
 
     @AfterAll

@@ -34,7 +34,40 @@ class YT1231Test {
 
     @BeforeAll
     static void beforeClass() {
-        CONTEXT = YangParserTestUtils.parseYangResource("/yt1231.yang");
+        CONTEXT = YangParserTestUtils.parseYang("""
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo {
+                container foo;
+                choice baz {
+                  description desc;
+                  case baz {
+                    description desc;
+                    choice bar {
+                      description desc;
+                      case bar {
+                        status deprecated;
+                        container bar;
+                      }
+                    }
+                  }
+                }
+                choice bar {
+                  reference ref;
+                  case bar {
+                    reference ref;
+                    choice baz {
+                      reference ref;
+                      case baz {
+                        reference ref;
+                        container xyzzy;
+                      }
+                    }
+                  }
+                }
+              }
+            }""");
     }
 
     @Test

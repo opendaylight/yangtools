@@ -109,7 +109,50 @@ public class Bug4454Test {
 
     @BeforeClass
     public static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYangResource("/bug-4454-test.yang");
+        schemaContext = YangParserTestUtils.parseYang("""
+            module Bug4454Test {
+                yang-version 1;
+                namespace "urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model";
+                prefix "list-constraints-validation";
+                revision "2015-02-02" {
+                    description "Initial revision.";
+                }
+                container master-container {
+                    list min-max-list {
+                        min-elements 1;
+                        max-elements 3;
+                        key "min-max-key-leaf";
+                        leaf min-max-key-leaf {
+                            type string;
+                        }
+                        leaf min-max-value-leaf {
+                            type string;
+                        }
+                    }
+                    list min-max-list-no-minmax {
+                        key "min-max-key-leaf";
+                        leaf min-max-key-leaf {
+                            type string;
+                        }
+                    }
+                    leaf-list min-max-leaf-list {
+                        min-elements 0;
+                        max-elements 10;
+                        type string;
+                    }
+                }
+                container presence {
+                    presence "anchor point";
+                    list min-max-list {
+                        min-elements 2;
+                        max-elements 3;
+                        key "min-max-key-leaf";
+                        leaf min-max-key-leaf {
+                            type string;
+                        }
+                    }
+                }
+            }""");
     }
 
     @AfterClass

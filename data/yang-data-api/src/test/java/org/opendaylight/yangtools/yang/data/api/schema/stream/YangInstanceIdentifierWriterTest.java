@@ -35,7 +35,47 @@ public class YangInstanceIdentifierWriterTest {
 
     @BeforeAll
     public static void beforeAll() {
-        CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/YT1392");
+        CONTEXT = YangParserTestUtils.parseYang("""
+            module augment {
+              namespace augment-namespace;
+              prefix aug;
+              import test {
+                prefix test;
+              }
+              augment /test:container-1 {
+                container augmented-container {
+                  container container-2;
+                }
+              }
+            }""", """
+            module test {
+              namespace test;
+              prefix test;
+              container container-1 {
+                container container-2 {
+                  container container-3 {
+                    container payload-container {
+                      leaf payload-leaf {
+                        type string;
+                      }
+                    }
+                  }
+                }
+              }
+              choice choice-node {
+                container container-in-case;
+              }
+              list list-1 {
+                key list-1-key;
+                leaf list-1-key {
+                  type string;
+                }
+                container container-1;
+              }
+              leaf-list list-list {
+                type string;
+              }
+            }""");
     }
 
     @Test

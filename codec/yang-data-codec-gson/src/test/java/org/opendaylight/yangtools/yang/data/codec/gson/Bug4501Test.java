@@ -37,7 +37,35 @@ public class Bug4501Test {
 
     @BeforeClass
     public static void initialization() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug-4501/yang");
+        schemaContext = YangParserTestUtils.parseYang("""
+            module foo {
+                namespace "foo";
+                prefix foo;
+                yang-version 1;
+                list hop {
+                    leaf address {
+                        type string;
+                    }
+                    leaf lrs-bits {
+                        type bits {
+                            bit lookup {
+                                description
+                                                    "Lookup bit.";
+                            }
+                            bit rloc-probe {
+                                description
+                                                    "RLOC-probe bit.";
+                            }
+                            bit strict {
+                                description
+                                                    "Strict bit.";
+                            }
+                        }
+                        description
+                                    "Flag bits per hop.";
+                    }
+                }
+            }""");
     }
 
     @AfterClass

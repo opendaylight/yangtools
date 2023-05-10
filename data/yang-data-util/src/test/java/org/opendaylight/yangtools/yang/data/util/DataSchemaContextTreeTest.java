@@ -29,7 +29,18 @@ class DataSchemaContextTreeTest {
 
     @BeforeAll
     static void init() {
-        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYangResource("/dataschemacontext.yang"));
+        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYang("""
+            module dataschemacontext {
+                namespace "dataschemacontext";
+                prefix dsc;
+                container foo {
+                    choice bar {
+                        leaf baz {
+                            type string;
+                        }
+                    }
+                }
+            }"""));
     }
 
     @AfterAll

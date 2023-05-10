@@ -32,7 +32,38 @@ public class Bug7246Test {
 
     @Test
     public void test() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/bug7246/yang/rpc-test.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module rpc-test {
+                namespace my-namespace;
+                prefix p;
+                feature my-name;
+                identity my-name;
+                extension my-name;
+                typedef my-name {
+                    type string;
+                }
+                grouping my-name {
+                    leaf my-name {
+                        type my-name;
+                    }
+                }
+                rpc my-name {
+                    input {
+                        container my-name {
+                            leaf my-name {
+                                type my-name;
+                            }
+                        }
+                    }
+                    output {
+                        container my-name {
+                            leaf my-name {
+                                type my-name;
+                            }
+                        }
+                    }
+                }
+            }""");
         final var inputStructure = Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
             .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value"))
