@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class CaseAugmentTest {
     private static final QName CHOICE1_QNAME = QName.create(TestModel.TEST_QNAME, "choice1");
@@ -37,12 +38,43 @@ public class CaseAugmentTest {
     private static final NodeIdentifier CHOICE_ID = new NodeIdentifier(CHOICE1_QNAME);
     private static final AugmentationIdentifier AUGMENT_ID = new AugmentationIdentifier(
         ImmutableSet.of(C1L2_QNAME, C1L3_QNAME));
+    private static final String CASE_AUGMENT_TEST_YANG = """
+        module case-augment-test {
+            yang-version 1;
+            namespace "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test";
+            prefix "store-test";
+            revision "2014-03-13" {
+                description "Initial revision.";
+            }
+            container test {
+                choice choice1 {
+                    case case1 {
+                        leaf case1-leaf1 {
+                            type string;
+                        }
+                    }
+                    case case2 {
+                        leaf case2-leaf1 {
+                            type string;
+                        }
+                    }
+                }
+            }
+            augment "/test/choice1/case1" {
+                leaf case1-leaf2 {
+                    type string;
+                }
+                leaf case1-leaf3 {
+                    type string;
+                }
+            }
+        }""";
 
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/case-augment-test.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(CASE_AUGMENT_TEST_YANG);
     }
 
     @AfterClass

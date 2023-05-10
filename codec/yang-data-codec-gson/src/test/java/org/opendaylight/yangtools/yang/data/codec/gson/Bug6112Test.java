@@ -32,11 +32,36 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug6112Test {
+    private static final String YANG = """
+        module union-with-identityref {
+            yang-version 1;
+            namespace "union:identityref:test";
+            prefix "unionidentityreftest";
+            description "test union with identityref";
+            revision "2016-07-12";
+            identity ident-base;
+            identity ident-one {
+                base ident-base;
+            }
+            typedef union-type {
+                type union {
+                    type uint8;
+                    type identityref {
+                        base ident-base;
+                    }
+                }
+            }
+            container root {
+                leaf leaf-value {
+                    type union-type;
+                }
+            }
+        }""";
     private static EffectiveModelContext schemaContext;
 
     @BeforeClass
     public static void initialization() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug-6112/yang");
+        schemaContext = YangParserTestUtils.parseYang(YANG);
     }
 
     @AfterClass

@@ -26,6 +26,25 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 class YT1283Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
+    private static final String YT1283_YANG = """
+        module foo {
+          namespace foo;
+          prefix foo;
+          container foo {
+            choice foo {
+              case foo {
+                leaf foo {
+                  type leafref {
+                    path ../../bar;
+                  }
+                }
+              }
+            }
+          }
+          leaf bar {
+            type string;
+          }
+        }""";
 
     private static EffectiveModelContext context;
 
@@ -33,7 +52,7 @@ class YT1283Test {
 
     @BeforeAll
     static void beforeClass() {
-        context = YangParserTestUtils.parseYangResource("/yt1283.yang");
+        context = YangParserTestUtils.parseYang(YT1283_YANG);
     }
 
     @Test

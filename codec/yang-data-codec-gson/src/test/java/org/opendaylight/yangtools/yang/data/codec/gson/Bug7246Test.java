@@ -28,11 +28,43 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug7246Test {
+    private static final String RPC_TEST_YANG = """
+        module rpc-test {
+            namespace my-namespace;
+            prefix p;
+            feature my-name;
+            identity my-name;
+            extension my-name;
+            typedef my-name {
+                type string;
+            }
+            grouping my-name {
+                leaf my-name {
+                    type my-name;
+                }
+            }
+            rpc my-name {
+                input {
+                    container my-name {
+                        leaf my-name {
+                            type my-name;
+                        }
+                    }
+                }
+                output {
+                    container my-name {
+                        leaf my-name {
+                            type my-name;
+                        }
+                    }
+                }
+            }
+        }""";
     private static final String NS = "my-namespace";
 
     @Test
     public void test() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/bug7246/yang/rpc-test.yang");
+        final var schemaContext = YangParserTestUtils.parseYang(RPC_TEST_YANG);
         final var inputStructure = Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
             .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value"))

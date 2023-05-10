@@ -30,10 +30,30 @@ public class YT1107Test {
     private static final QName ADMIN = QName.create(PARENT, "admin");
     private static final QName NAME = QName.create(PARENT, "name");
     private static final QName USER = QName.create(PARENT, "user");
+    private static final String YT1107_YANG = """
+        module yt1107 {
+            namespace "yt1107";
+            prefix "yt1107";
+            container parent {
+                config true;
+                list user {
+                    key name;
+                    leaf name {
+                        type string;
+                    }
+                }
+                list admin {
+                    key name;
+                    leaf name {
+                        type string;
+                    }
+                }
+            }
+        }""";
 
     @Test
     public void testInterleavingLists() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/yt1107/yt1107.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(YT1107_YANG);
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/yt1107/yt1107.xml");
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 

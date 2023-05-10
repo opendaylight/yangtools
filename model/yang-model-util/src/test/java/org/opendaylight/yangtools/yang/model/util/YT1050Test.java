@@ -24,6 +24,43 @@ class YT1050Test {
     private static final QName SECONDARY = QName.create("yt1050", "secondary");
     private static final QName TYPE = QName.create(SECONDARY, "type");
     private static final QName GRP_USES = QName.create(SECONDARY, "grp-uses");
+    private static final String YT1050_YANG = """
+        module yt1050 {
+          yang-version 1.1;
+          namespace "yt1050";
+          prefix "yt1050";
+          identity target-base;
+          typedef target-type {
+            type identityref {
+              base target-base;
+            }
+          }
+          grouping grp {
+            leaf id {
+              type string;
+            }
+            leaf type {
+              type target-type;
+            }
+            list secondary {
+              key "id type";
+              leaf id {
+                type leafref {
+                  path "/grp-uses/id";
+                }
+              }
+              leaf type {
+                type leafref {
+                  path "deref(../id)/../type";
+                }
+              }
+            }
+          }
+          list grp-uses {
+            uses grp;
+            key "id type";
+          }
+        }""";
 
     private EffectiveModelContext context;
     private LeafSchemaNode secondaryType;
@@ -32,7 +69,7 @@ class YT1050Test {
 
     @BeforeEach
     void before() {
-        context = YangParserTestUtils.parseYangResource("/yt1050.yang");
+        context = YangParserTestUtils.parseYang(YT1050_YANG);
         module = context.getModules().iterator().next();
 
         final var grpUses = assertInstanceOf(ListSchemaNode.class, module.getDataChildByName(GRP_USES));

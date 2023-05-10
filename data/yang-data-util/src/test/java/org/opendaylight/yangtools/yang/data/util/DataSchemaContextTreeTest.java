@@ -25,11 +25,23 @@ class DataSchemaContextTreeTest {
     private static final QName FOO = QName.create(MODULE, "foo");
     private static final QName BAR = QName.create(MODULE, "bar");
     private static final QName BAZ = QName.create(MODULE, "baz");
+    private static final String DATASCHEMACONTEXT_YANG = """
+        module dataschemacontext {
+            namespace "dataschemacontext";
+            prefix dsc;
+            container foo {
+                choice bar {
+                    leaf baz {
+                        type string;
+                    }
+                }
+            }
+        }""";
     private static DataSchemaContextTree CONTEXT;
 
     @BeforeAll
     static void init() {
-        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYangResource("/dataschemacontext.yang"));
+        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYang(DATASCHEMACONTEXT_YANG));
     }
 
     @AfterAll

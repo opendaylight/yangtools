@@ -35,6 +35,35 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractAnydataTest {
+    private static final String ANYDATA_YANG = """
+        module test-anydata {
+            yang-version 1.1;
+            namespace test-anydata;
+            prefix ta;
+            anydata foo;
+            container cont {
+                anydata cont-any;
+                leaf cont-leaf {
+                    type string;
+                }
+                leaf empty-leaf {
+                    type empty;
+                }
+                container bar {
+                    leaf cont-leaf {
+                        type string;
+                    }
+                }
+            }
+            list lst {
+                leaf cont-leaf {
+                    type string;
+                }
+                leaf-list my-leafs {
+                    type string;
+                }
+            }
+        }""";
     static final QName FOO_QNAME = QName.create("test-anydata", "foo");
     static final QName CONT_QNAME = QName.create(FOO_QNAME, "cont");
     static final QName CONT_ANY_QNAME = QName.create(FOO_QNAME, "cont-any");
@@ -51,7 +80,7 @@ public abstract class AbstractAnydataTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/test-anydata.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(ANYDATA_YANG);
     }
 
     @AfterClass

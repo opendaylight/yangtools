@@ -43,6 +43,22 @@ public abstract class AbstractYT1027Test {
     private static final QName DECIMAL = QName.create("yt1027.test", "decimal");
     private static final QName INT64 = QName.create(DECIMAL, "int64");
     private static final QName UINT64 = QName.create(DECIMAL, "uint64");
+    private static final String YT1027_YANG = """
+        module yt1027 {
+          namespace "yt1027.test";
+          prefix tst;
+          leaf uint64 {
+            type uint64;
+          }
+          leaf int64 {
+            type int64;
+          }
+          leaf decimal {
+            type decimal64 {
+              fraction-digits 1;
+            }
+          }
+        }""";
 
     static final LeafNode<?> DECIMAL_DATA = ImmutableNodes.leafNode(DECIMAL, Decimal64.valueOf("1.1"));
     static final LeafNode<?> INT64_DATA = ImmutableNodes.leafNode(INT64, 2L);
@@ -68,7 +84,7 @@ public abstract class AbstractYT1027Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/yt1027");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(YT1027_YANG);
         DECIMAL_TYPE = (DecimalTypeDefinition) getTypeDefinition(DECIMAL);
         INT64_TYPE = (Int64TypeDefinition) getTypeDefinition(INT64);
         UINT64_TYPE = (Uint64TypeDefinition) getTypeDefinition(UINT64);

@@ -29,12 +29,48 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8675Test {
     private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2017-06-13"));
+    private static final String FOO_YANG = """
+        module foo {
+            namespace foo;
+            prefix foo;
+            revision 2017-06-13;
+            list top-level-list {
+                key key-leaf;
+                leaf key-leaf {
+                    type string;
+                }
+                leaf ordinary-leaf {
+                    type string;
+                }
+                container cont-in-list {}
+                list inner-list {
+                    key inner-key-leaf;
+                    leaf inner-key-leaf {
+                        type string;
+                    }
+                    leaf inner-ordinary-leaf {
+                        type string;
+                    }
+                }
+            }
+            container top-level-container {
+                container inner-container-1 {}
+                container inner-container-2 {}
+            }
+            anyxml top-level-anyxml;
+            leaf top-level-leaf {
+                type int32;
+            }
+            leaf-list top-level-leaf-list {
+                type int32;
+            }
+        }""";
 
     private static EffectiveModelContext schemaContext;
 
     @BeforeClass
     public static void setup() {
-        schemaContext = YangParserTestUtils.parseYangResource("/bug8675/foo.yang");
+        schemaContext = YangParserTestUtils.parseYang(FOO_YANG);
     }
 
     @AfterClass
