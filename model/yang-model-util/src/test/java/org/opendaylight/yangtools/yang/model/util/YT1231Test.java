@@ -27,6 +27,40 @@ class YT1231Test {
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
     private static final QName XYZZY = QName.create("foo", "xyzzy");
+    private static final String YT1231_YANG = """
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo {
+                container foo;
+                choice baz {
+                  description desc;
+                  case baz {
+                    description desc;
+                    choice bar {
+                      description desc;
+                      case bar {
+                        status deprecated;
+                        container bar;
+                      }
+                    }
+                  }
+                }
+                choice bar {
+                  reference ref;
+                  case bar {
+                    reference ref;
+                    choice baz {
+                      reference ref;
+                      case baz {
+                        reference ref;
+                        container xyzzy;
+                      }
+                    }
+                  }
+                }
+              }
+            }""";
 
     private static EffectiveModelContext CONTEXT;
 
@@ -34,7 +68,7 @@ class YT1231Test {
 
     @BeforeAll
     static void beforeClass() {
-        CONTEXT = YangParserTestUtils.parseYangResource("/yt1231.yang");
+        CONTEXT = YangParserTestUtils.parseYang(YT1231_YANG);
     }
 
     @Test

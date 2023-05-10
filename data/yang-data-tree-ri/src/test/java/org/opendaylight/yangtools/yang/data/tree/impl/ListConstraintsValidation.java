@@ -72,6 +72,45 @@ public class ListConstraintsValidation {
             .builder(MASTER_CONTAINER_PATH).node(UNBOUNDED_LEAF_LIST_QNAME).build();
     private static final YangInstanceIdentifier UNKEYED_LIST_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH).node(UNKEYED_LIST_QNAME).build();
+    private static final String MODEL_YANG = """
+            module list-constraints-validation-test-model  {
+                yang-version 1;
+                namespace "urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model";
+                prefix "list-constraints-validation";
+                revision "2015-02-02" {
+                    description "Initial revision.";
+                }
+                container master-container {
+                    list min-max-list {
+                        min-elements 2;
+                        max-elements 3;
+                        key "min-max-key-leaf";
+                        leaf min-max-key-leaf {
+                            type string;
+                        }
+                    }
+                    list unbounded-list {
+                        key "unbounded-key-leaf";
+                        leaf unbounded-key-leaf {
+                            type int8;
+                        }
+                    }
+                    leaf-list min-max-leaf-list {
+                        min-elements 1;
+                        max-elements 3;
+                        type string;
+                    }
+                    leaf-list unbounded-leaf-list {
+                        type string;
+                    }
+                    list unkeyed-list {
+                        max-elements 1;
+                        leaf unkeyed-leaf {
+                            type string;
+                        }
+                    }
+                }
+            }""";
 
     private static EffectiveModelContext schemaContext;
 
@@ -79,7 +118,7 @@ public class ListConstraintsValidation {
 
     @BeforeClass
     public static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYangResource("/list-constraints-validation-test-model.yang");
+        schemaContext = YangParserTestUtils.parseYang(MODEL_YANG);
     }
 
     @AfterClass

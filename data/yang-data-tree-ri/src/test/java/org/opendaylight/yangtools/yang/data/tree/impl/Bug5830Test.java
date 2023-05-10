@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5830Test {
     private static final String NS = "foo";
@@ -47,6 +48,121 @@ public class Bug5830Test {
     private static final QName NON_PRESENCE_CONTAINER_2 = QName.create(NS, REV, "non-presence-container-2");
     private static final QName PRESENCE_CONTAINER_2 = QName.create(NS, REV, "presence-container-2");
     private static final QName MANDATORY_LEAF_2 = QName.create(NS, REV, "mandatory-leaf-2");
+    private static final String FOO_MULTIPLE_YANG = """
+            module foo-multiple {
+                yang-version 1;
+                namespace "foo";
+                prefix foo;
+                revision 2016-05-17 {
+                    description "test";
+                }
+                container task-container {
+                    list task {
+                        key "task-id";
+                        leaf task-id {
+                            type string;
+                        }
+                        leaf task-mandatory-leaf {
+                            type string;
+                            mandatory true;
+                        }
+                        container task-data {
+                            presence "Task data";
+                            leaf mandatory-data {
+                                type string;
+                                mandatory true;
+                            }
+                            leaf other-data {
+                                type string;
+                            }
+                            container non-presence-container {
+                                container presence-container {
+                                    presence "presence container";
+                                    leaf mandatory-leaf {
+                                        mandatory true;
+                                        type string;
+                                    }
+                                }
+                                container non-presence-container-2 {
+                                    leaf mandatory-leaf-2 {
+                                        mandatory true;
+                                        type string;
+                                    }
+                                }
+                                container presence-container-2 {
+                                    presence "presence container";
+                                    leaf mandatory-leaf-3 {
+                                        mandatory true;
+                                        type string;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            """;
+    private static final String FOO_NON_PRESENCE_YANG = """
+            module foo-non-presence {
+                yang-version 1;
+                namespace "foo";
+                prefix foo;
+                revision 2016-05-17 {
+                    description "test";
+                }
+                container task-container {
+                    list task {
+                        key "task-id";
+                        leaf task-id {
+                            type string;
+                        }
+                        leaf task-mandatory-leaf {
+                            type string;
+                            mandatory true;
+                        }
+                        container task-data {
+                            leaf mandatory-data {
+                                type string;
+                                mandatory true;
+                            }
+                            leaf other-data {
+                                type string;
+                            }
+                        }
+                    }
+                }
+            }""";
+    private static final String FOO_PRESENCE_YANG = """
+            module foo-presence {
+                yang-version 1;
+                namespace "foo";
+                prefix foo;
+                revision 2016-05-17 {
+                    description "test";
+                }
+                container task-container {
+                    list task {
+                        key "task-id";
+                        leaf task-id {
+                            type string;
+                        }
+                        leaf task-mandatory-leaf {
+                            type string;
+                            mandatory true;
+                        }
+                        container task-data {
+                            presence "Task data";
+                            leaf mandatory-data {
+                                type string;
+                                mandatory true;
+                            }
+                            leaf other-data {
+                                type string;
+                            }
+                        }
+                    }
+                }
+            }""";
 
     private static DataTree initDataTree(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
@@ -72,7 +188,7 @@ public class Bug5830Test {
     }
 
     private static void testPresenceContainer() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug-5830/foo-presence.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(FOO_PRESENCE_YANG);
         assertNotNull("Schema context must not be null.", schemaContext);
 
         testContainerIsNotPresent(schemaContext);
@@ -88,7 +204,7 @@ public class Bug5830Test {
     }
 
     private static void testNonPresenceContainer() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug-5830/foo-non-presence.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(FOO_NON_PRESENCE_YANG);
         assertNotNull("Schema context must not be null.", schemaContext);
 
         try {
@@ -112,7 +228,7 @@ public class Bug5830Test {
     }
 
     private static void testMultipleContainers() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug-5830/foo-multiple.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(FOO_MULTIPLE_YANG);
         assertNotNull("Schema context must not be null.", schemaContext);
 
         testContainerIsNotPresent(schemaContext);

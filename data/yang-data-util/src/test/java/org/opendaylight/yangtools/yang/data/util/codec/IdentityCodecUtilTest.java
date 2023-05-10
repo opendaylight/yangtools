@@ -21,11 +21,17 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class IdentityCodecUtilTest {
     private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("yangtools846"));
+    private static final String YANGTOOLS846_YANG = """
+            module yangtools846 {
+                namespace "yangtools846";
+                prefix yt846;
+                identity foo;
+            }""";
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeAll
     static void init() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/yangtools846.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(YANGTOOLS846_YANG);
     }
 
     @AfterAll

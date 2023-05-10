@@ -67,12 +67,109 @@ public class Bug8083Test {
             .node(BARCONTAINER_QNAME)
             .node(QName.create(BARMOD, "bar-leaf"))
             .build();
+    private static final String BAR_YANG = """
+            module example-barmod {
+                namespace "http://example.com/barmod";
+                prefix "barmod";
+                import example-foomod {
+                    prefix "foomod";
+                }
+                augment "/foomod:top/foomod:foo-list" {
+                    container bar-container {
+                        leaf bar-leaf {
+                            type string;
+                        }
+                    }
+                }
+            }""";
+    private static final String BAZ_YANG = """
+            module baz {
+                namespace baz-ns;
+                prefix baz-prefix;
+                container top-cont {
+                    list keyed-list {
+                        key empty-key-leaf;
+                        leaf empty-key-leaf {
+                            type empty;
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""";
+    private static final String FOO_YANG = """
+            module example-foomod {
+                namespace "http://example.com/foomod";
+                prefix "foomod";
+                container top {
+                    leaf foo {
+                        type instance-identifier;
+                    }
+                    list foo-list {
+                        key name;
+                        leaf name {
+                            type string;
+                        }
+                    }
+                }
+            }""";
+    private static final String FOOBAR_YANG = """
+            module foobar {
+                namespace foobar-ns;
+                prefix foobar-prefix;
+                container top-cont {
+                    list keyed-list {
+                        key iid-key-leaf;
+                        leaf iid-key-leaf {
+                            type instance-identifier;
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                    leaf leaf-b {
+                        type int32;
+                    }
+                }
+            }""";
+    private static final String ZAB_YANG = """
+            module zab {
+                namespace zab-ns;
+                prefix zab-prefix;
+                identity base-id;
+                identity derived-id {
+                    base base-id;
+                }
+                container top-cont {
+                    list keyed-list {
+                        key identityref-key-leaf;
+                        leaf identityref-key-leaf {
+                            type identityref {
+                                base base-id;
+                            }
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""";
 
     private static EffectiveModelContext FULL_SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void init() {
-        FULL_SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/bug8083/yang/");
+        FULL_SCHEMA_CONTEXT = YangParserTestUtils.parseYang(BAR_YANG, BAZ_YANG, FOO_YANG, FOOBAR_YANG, ZAB_YANG);
     }
 
     @AfterClass
@@ -114,7 +211,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws IOException, URISyntaxException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(BAZ_YANG);
         final String inputJson = loadTextFile("/bug8083/json/baz.json");
 
         // deserialization
@@ -129,7 +226,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws IOException, URISyntaxException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(ZAB_YANG);
         final String inputJson = loadTextFile("/bug8083/json/zab.json");
 
         // deserialization
@@ -144,7 +241,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws IOException, URISyntaxException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(FOOBAR_YANG);
         final String inputJson = loadTextFile("/bug8083/json/foobar.json");
 
         // deserialization

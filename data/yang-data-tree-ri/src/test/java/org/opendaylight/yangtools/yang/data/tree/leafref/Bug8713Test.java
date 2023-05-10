@@ -26,10 +26,35 @@ public class Bug8713Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
     private static final String REV = "2017-09-06";
+    private static final String BAR_YANG = """
+            module bar {
+                namespace bar;
+                prefix bar;
+                import foo { prefix foo; revision-date 2017-09-06; }
+                revision 2017-09-06;
+                augment "/foo:root" {
+                    leaf ref {
+                        type leafref {
+                            path "../target" ;
+                        }
+                    }
+                    leaf target {
+                        type string;
+                    }
+                }
+            }""";
+    private static final String FOO_YANG = """
+            module foo {
+                namespace foo;
+                prefix foo;
+                revision 2017-09-06;
+                container root {
+                }
+            }""";
 
     @Test
     public void dataTreeCanditateValidationTest() throws Exception {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/bug8713/");
+        final EffectiveModelContext context = YangParserTestUtils.parseYang(BAR_YANG, FOO_YANG);
         final LeafRefContext rootLeafRefContext = LeafRefContext.create(context);
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_OPERATIONAL, context);

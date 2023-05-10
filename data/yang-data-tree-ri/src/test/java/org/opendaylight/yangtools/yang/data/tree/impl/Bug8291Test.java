@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedExcepti
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8291Test {
     private static final String NS = "bug8291";
@@ -34,12 +35,35 @@ public class Bug8291Test {
     private static final QName OUTER_LIST = QName.create(NS, "outer-list");
     private static final QName OUTER_LIST_ID = QName.create(NS, "id");
     private static final QName INNER_LIST = QName.create(NS, "inner-list");
+    private static final String BUG_8291_YANG = """
+            module bug8291 {
+                yang-version 1;
+                namespace bug8291;
+                prefix bug8291;
+                container root {
+                    list outer-list {
+                        key "id";
+                        leaf id {
+                            type uint16;
+                        }
+                       list inner-list {
+                            key name;
+                            leaf name {
+                                type string;
+                            }
+                            leaf value {
+                                type string;
+                            }
+                        }
+                    }
+                }
+            }""";
 
     private EffectiveModelContext schemaContext;
 
     @Before
     public void init() {
-        schemaContext = TestModel.createTestContext("/bug8291.yang");
+        schemaContext = YangParserTestUtils.parseYang(BUG_8291_YANG);
         assertNotNull("Schema context must not be null.", schemaContext);
     }
 

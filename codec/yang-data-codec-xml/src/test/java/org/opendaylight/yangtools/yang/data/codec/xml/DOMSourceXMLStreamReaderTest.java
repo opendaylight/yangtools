@@ -47,6 +47,91 @@ import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class DOMSourceXMLStreamReaderTest {
+    private static final String BAR_YANG = """
+            module bar {
+                namespace bar-ns;
+                prefix bar;
+                import foo {
+                    prefix foo;
+                }
+                augment "/foo:top-cont/foo:keyed-list" {
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""";
+    private static final String BAZ_YANG = """
+            module baz {
+                namespace baz-ns;
+                prefix baz;
+                container top-cont {
+                    /*list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                    }*/
+                }
+            }""";
+    private static final String FOO_YANG = """
+            module foo {
+                namespace foo-ns;
+                prefix foo;
+                import rab {
+                    prefix rab;
+                }
+                container top-cont {
+                    list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                        leaf idref-leaf {
+                            type identityref {
+                                base rab:base-id;
+                            }
+                        }
+                        leaf ordinary-leaf {
+                            type int32;
+                        }
+                    }
+                }
+            }""";
+    private static final String RAB_YANG = """
+            module rab {
+                namespace rab-ns;
+                prefix rab;
+                import baz {
+                    prefix baz;
+                }
+                augment "/baz:top-cont" {
+                    list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                    }
+                }
+                identity base-id;
+                identity id-foo {
+                    base base-id;
+                }
+            }""";
+    private static final String ZAB_YANG = """
+            module zab {
+                namespace zab-ns;
+                prefix zab;
+                import foo {
+                    prefix foo;
+                }
+                augment "/foo:top-cont/foo:keyed-list/" {
+                    /*leaf ordinary-leaf {
+                        type int32;
+                    }*/
+                    anyxml aug-anyxml;
+                }
+            }""";
+
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return TestFactories.junitParameters();
@@ -62,7 +147,7 @@ public class DOMSourceXMLStreamReaderTest {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/dom-reader-test");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(BAR_YANG, BAZ_YANG, FOO_YANG, RAB_YANG, ZAB_YANG);
     }
 
     @AfterClass

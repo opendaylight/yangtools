@@ -51,6 +51,34 @@ import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class YT1108Test {
+    private static final String FOO_YANG = """
+            module foo {
+                namespace "foo-namespace";
+                prefix "f";
+                identity ident-base;
+                identity ident-one {
+                    base ident-base;
+                }
+                typedef union-type {
+                    type union {
+                        type uint8;
+                        type identityref {
+                            base ident-base;
+                        }
+                    }
+                }
+                container leaf-container {
+                    leaf union-identityref-leaf {
+                        type union-type;
+                    }
+                    leaf identityref-leaf {
+                        type identityref {
+                            base ident-base;
+                        }
+                    }
+                }
+            }""";
+
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return TestFactories.junitParameters();
@@ -72,7 +100,7 @@ public class YT1108Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/yt1108/yang/foo.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(FOO_YANG);
     }
 
     @AfterClass

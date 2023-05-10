@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5968Test {
     private static final String NS = "bug5968";
@@ -40,12 +41,36 @@ public class Bug5968Test {
     private static final QName LIST_ID = QName.create(NS, REV, "list-id");
     private static final QName MANDATORY_LEAF = QName.create(NS, REV, "mandatory-leaf");
     private static final QName COMMON_LEAF = QName.create(NS, REV, "common-leaf");
+    private static final String BUG_5968_YANG = """
+            module bug5968 {
+                yang-version 1;
+                namespace bug5968;
+                prefix bug5968;
+                revision 2016-07-28 {
+                    description "test";
+                }
+                container root {
+                    list my-list {
+                        key "list-id";
+                        leaf list-id {
+                            type string;
+                        }
+                        leaf mandatory-leaf {
+                            type string;
+                            mandatory true;
+                        }
+                        leaf common-leaf {
+                            type string;
+                        }
+                    }
+                }
+            }""";
 
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/bug5968.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(BUG_5968_YANG);
     }
 
     @AfterClass

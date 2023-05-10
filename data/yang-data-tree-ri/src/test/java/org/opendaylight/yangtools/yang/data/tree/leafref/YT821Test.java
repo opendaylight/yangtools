@@ -38,6 +38,44 @@ public class YT821Test {
     private static final QName CONTAINER_FROM_AUG = QName.create(ROOT, "container-from-aug");
     private static final QName REF_IN_CONTAINER = QName.create(ROOT, "ref-in-container");
     private static final YangInstanceIdentifier ROOT_ID = YangInstanceIdentifier.of(ROOT);
+    private static final String YT821_YANG = """
+            module yt821 {
+                namespace "urn:opendaylight:params:xml:ns:yang:foo";
+                prefix foo;
+                revision 2018-07-18;
+                container root {
+                    list foo {
+                        key name;
+                        leaf name {
+                            type string;
+                        }
+                    }
+                    list bar {
+                        key name;
+                        leaf name {
+                            type string;
+                        }
+                        container container-in-list {
+                        }
+                    }
+                }
+                augment /root/bar/container-in-list {
+                    leaf ref-from-aug {
+                        type leafref {
+                            path "/root/foo/name";
+                        }
+                    }
+                }
+                augment /root/bar/ {
+                    container container-from-aug {
+                        leaf ref-in-container {
+                            type leafref {
+                                path "/root/foo/name";
+                            }
+                        }
+                    }
+                }
+            }""";
 
     private static EffectiveModelContext schemaContext;
     private static LeafRefContext leafRefContext;
@@ -46,7 +84,7 @@ public class YT821Test {
 
     @BeforeClass
     public static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYangResource("/yt821.yang");
+        schemaContext = YangParserTestUtils.parseYang(YT821_YANG);
         leafRefContext = LeafRefContext.create(schemaContext);
     }
 

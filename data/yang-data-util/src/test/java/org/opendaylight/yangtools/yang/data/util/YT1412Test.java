@@ -36,6 +36,29 @@ class YT1412Test {
     private static final QName FOUR = QName.create(MODULE, "four");
     private static final QName FIVE = QName.create(MODULE, "five");
     private static final QName SIX = QName.create(MODULE, "six");
+    private static final String YT1412_YANG = """
+            module foo {
+              namespace foo;
+              prefix foo;
+              yang-version 1.1;
+              container one {
+                choice two {
+                  choice three {
+                    leaf four {
+                      type string;
+                    }
+                  }
+                }
+              }
+              augment /one {
+                list five;
+              }
+              augment /one/two/three/three {
+                leaf six {
+                  type string;
+                }
+              }
+            }""";
 
     private static DataSchemaContextTree CONTEXT;
 
@@ -43,7 +66,7 @@ class YT1412Test {
 
     @BeforeAll
     static void init() {
-        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYangResource("/yt1412.yang"));
+        CONTEXT = DataSchemaContextTree.from(YangParserTestUtils.parseYang(YT1412_YANG));
     }
 
     @AfterAll

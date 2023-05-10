@@ -24,11 +24,30 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1127Test {
+    private static final String YT1127_YANG = """
+            module foo {
+              namespace foo;
+              prefix foo;
+              grouping grp {
+                leaf leaf1 {
+                  type leafref {
+                    path "../../foo:foo_cont/foo:name";
+                  }
+                }
+              }
+              container cont {
+                leaf leaf2 {
+                   type leafref {
+                    path "../../../foo:foo_cont/foo:name";
+                  }
+                }
+              }
+            }""";
     private static EffectiveModelContext context;
 
     @BeforeAll
     static void beforeClass() {
-        context = YangParserTestUtils.parseYangResource("/yt1127.yang");
+        context = YangParserTestUtils.parseYang(YT1127_YANG);
     }
 
     @AfterAll

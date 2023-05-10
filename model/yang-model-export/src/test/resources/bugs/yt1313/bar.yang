@@ -1,8 +1,0 @@
-module bar {
-  namespace bar;
-  prefix bar;
-
-  include bar-one;
-  include bar-two;
-}
-  

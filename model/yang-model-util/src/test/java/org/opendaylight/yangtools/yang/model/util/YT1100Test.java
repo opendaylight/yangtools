@@ -18,9 +18,36 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1100Test {
+    private static final String YT1100_YANG = """
+            module yt1100 {
+              yang-version 1.1;
+              namespace "a";
+              prefix a;
+              container foo {
+                list scheduler-node {
+                  key "name";
+                  leaf name {
+                    type string;
+                  }
+                  choice children-type {
+                    case scheduler-node {
+                      list child-scheduler-nodes {
+                        key "name";
+                        leaf name {
+                          type leafref {
+                              path '../../../a:scheduler-node/a:name';
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }""";
+
     @Test
     void testChoiceCaseRelativeLeafref() {
-        final var context = YangParserTestUtils.parseYangResource("/yt1100.yang");
+        final var context = YangParserTestUtils.parseYang(YT1100_YANG);
         final var module = context.findModule("yt1100").orElseThrow();
         final var qnm = module.getQNameModule();
         final var foo = QName.create(qnm, "foo");

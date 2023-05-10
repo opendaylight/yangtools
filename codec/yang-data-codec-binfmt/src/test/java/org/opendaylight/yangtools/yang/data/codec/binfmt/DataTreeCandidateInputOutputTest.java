@@ -46,6 +46,22 @@ public class DataTreeCandidateInputOutputTest {
     private static final YangInstanceIdentifier FOO_BAR_PATH = YangInstanceIdentifier.create(FOO_NODEID, BAR_NODEID);
     private static final YangInstanceIdentifier BAR_PATH = YangInstanceIdentifier.create(BAR_NODEID);
     private static final YangInstanceIdentifier BAR_BAZ_PATH = BAR_PATH.node(BAZ_NODEID);
+    private static final String FOO_YANG = """
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo {
+                leaf bar {
+                  type string;
+                }
+              }
+              container bar {
+                presence "is explicit";
+                leaf baz {
+                  type string;
+                }
+              }
+            }""";
 
     private static EffectiveModelContext CONTEXT;
 
@@ -53,7 +69,7 @@ public class DataTreeCandidateInputOutputTest {
 
     @BeforeClass
     public static void beforeClass() {
-        CONTEXT = YangParserTestUtils.parseYangResource("/foo.yang");
+        CONTEXT = YangParserTestUtils.parseYang(FOO_YANG);
     }
 
     @Before

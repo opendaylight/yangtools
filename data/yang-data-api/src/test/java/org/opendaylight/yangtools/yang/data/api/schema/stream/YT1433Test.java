@@ -20,11 +20,37 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1433Test {
+    private static final String BAR_YANG = """
+            module bar {
+              namespace bar;
+              prefix bar;
+              choice foo;
+              augment /foo {
+                container bar;
+              }
+              augment /foo/bar/bar {
+                container baz;
+              }
+            }
+            """;
+    private static final String FOO_YANG = """
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo;
+              augment /foo {
+                container bar;
+              }
+              augment /foo/bar {
+                container baz;
+              }
+            }
+            """;
     private static EffectiveModelContext CONTEXT;
 
     @BeforeAll
     public static void beforeAll() {
-        CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/YT1433");
+        CONTEXT = YangParserTestUtils.parseYang(BAR_YANG, FOO_YANG);
     }
 
     @Test

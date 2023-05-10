@@ -28,10 +28,76 @@ public class Bug8083Test {
     private static final QNameModule FOOBAR = QNameModule.create(XMLNamespace.of("foobar-ns"));
     private static final QNameModule BAZ = QNameModule.create(XMLNamespace.of("baz-ns"));
     private static final QNameModule ZAB = QNameModule.create(XMLNamespace.of("zab-ns"));
+    private static final String BAZ_YANG = """
+            module baz {
+                namespace baz-ns;
+                prefix baz-prefix;
+                container top-cont {
+                    list keyed-list {
+                        key empty-key-leaf;
+                        leaf empty-key-leaf {
+                            type empty;
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""";
+    private static final String FOOBAR_YANG = """
+            module foobar {
+                namespace foobar-ns;
+                prefix foobar-prefix;
+                container top-cont {
+                    list keyed-list {
+                        key iid-key-leaf;
+                        leaf iid-key-leaf {
+                            type instance-identifier;
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                    leaf leaf-b {
+                        type int32;
+                    }
+                }
+            }""";
+    private static final String ZAB_YANG = """
+            module zab {
+                namespace zab-ns;
+                prefix zab-prefix;
+                identity base-id;
+                identity derived-id {
+                    base base-id;
+                }
+                container top-cont {
+                    list keyed-list {
+                        key identityref-key-leaf;
+                        leaf identityref-key-leaf {
+                            type identityref {
+                                base base-id;
+                            }
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""";
 
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(BAZ_YANG);
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/baz.xml");
 
@@ -49,7 +115,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(ZAB_YANG);
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/zab.xml");
 
@@ -67,7 +133,7 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(FOOBAR_YANG);
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/foobar.xml");
 

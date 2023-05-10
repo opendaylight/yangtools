@@ -29,11 +29,20 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class StrictParsingModeTest {
+    private static final String FOO_YANG = """
+            module foo {
+                namespace foo;
+                prefix foo;
+                container top-level-container {
+                    container inner-container {}
+                }
+            }""";
+
     private static EffectiveModelContext schemaContext;
 
     @BeforeClass
     public static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYangResource("/strict-parsing-mode-test/foo.yang");
+        schemaContext = YangParserTestUtils.parseYang(FOO_YANG);
     }
 
     @AfterClass

@@ -26,11 +26,25 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1442Test {
+    private static final String YT_1442_YANG = """
+            module yt1442 {
+              namespace yt1442;
+              prefix yt1442;
+              leaf foo {
+                type decimal64 {
+                  fraction-digits 2;
+                  range 10.0..100.0 {
+                    error-app-tag model-defined-app-tag;
+                    error-message model-defined-message;
+                  }
+                }
+              }
+            }""";
     private static DecimalStringCodec codec;
 
     @BeforeClass
     public static void beforeClass() {
-        final var foo = YangParserTestUtils.parseYangResource("/yt1442.yang")
+        final var foo = YangParserTestUtils.parseYang(YT_1442_YANG)
             .getDataChildByName(QName.create("yt1442", "foo"));
         assertThat(foo, instanceOf(LeafSchemaNode.class));
 

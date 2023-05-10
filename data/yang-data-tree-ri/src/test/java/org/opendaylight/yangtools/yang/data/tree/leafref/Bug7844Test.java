@@ -25,10 +25,83 @@ public class Bug7844Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
     private static final String BAZ_NS = "baz";
+    private static final String BAR_YANG = """
+            module bar {
+                namespace bar;
+                prefix bar-mod;
+                import baz { prefix baz-imp; }
+                typedef bar-leafref {
+                    type baz-imp:my-leafref;
+                    description "bar-leafref";
+                }
+                typedef bar-base-leafref {
+                    type leafref {
+                        path "/baz-imp:root/baz-imp:target";
+                    }
+                }
+                leaf my-leafref-in-bar {
+                    type bar-base-leafref;
+                }
+                leaf my-leafref-in-bar-2 {
+                    type bar-base-leafref;
+                    description "bar-base-leafref-2";
+                }
+                leaf bar-target {
+                    type string;
+                }
+            }""";
+    private static final String BAZ_YANG = """
+            module baz {
+                namespace baz;
+                prefix baz-mod;
+                typedef my-leafref {
+                    type leafref {
+                        path "/baz-mod:root/baz-mod:target";
+                    }
+                    description "baz-leafref";
+                }
+                container root {
+                    leaf target {
+                        type string;
+                    }
+                }
+            }""";
+    private static final String FOO_YANG = """
+            module foo {
+                namespace foo;
+                prefix foo-mod;
+                import bar { prefix bar-imp; }
+                leaf my-leaf {
+                    type foo-leafref;
+                }
+                typedef foo-leafref {
+                    type bar-imp:bar-leafref;
+                    description "foo-leafref";
+                }
+                leaf my-leaf-2 {
+                    type foo-leafref-2;
+                }
+                typedef foo-leafref-2 {
+                    type bar-imp:bar-base-leafref;
+                    description "foo-leaf-ref-2";
+                }
+                leaf bar-base-leafref {
+                    type bar-imp:bar-base-leafref;
+                }
+                leaf bar-base-leafref-2 {
+                    type bar-imp:bar-base-leafref;
+                    description "bar-base-leafref-2";
+                }
+                leaf direct-leafref {
+                    type leafref {
+                        path "/bar-imp:bar-target";
+                    }
+                }
+            }""";
 
     @Test
     public void test() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/bug7844");
+        final EffectiveModelContext context = YangParserTestUtils.parseYang(BAR_YANG, BAZ_YANG, FOO_YANG);
         assertNotNull(context);
 
         final LeafRefContext leafRefContext = LeafRefContext.create(context);

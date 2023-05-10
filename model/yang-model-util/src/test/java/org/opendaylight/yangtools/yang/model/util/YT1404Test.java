@@ -22,10 +22,35 @@ class YT1404Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
+    private static final String DEV_YANG = """
+            module dev {
+              namespace dev;
+              prefix dev;
+              import foo {
+                prefix foo;
+              }
+              deviation /foo:foo/foo:baz {
+                deviate not-supported;
+              }
+            }""";
+    private static final String FOO_YANG = """
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo;
+              augment /foo {
+                leaf bar {
+                  type string;
+                }
+                leaf baz {
+                  type string;
+                }
+              }
+            }""";
 
     @Test
     void testDeviatedEffectiveAugmentationSchema() {
-        final var module = YangParserTestUtils.parseYangResourceDirectory("/yt1404").findModule("foo").orElseThrow();
+        final var module = YangParserTestUtils.parseYang(DEV_YANG, FOO_YANG).findModule("foo").orElseThrow();
         final var augment = Iterables.getOnlyElement(module.getAugmentations());
         assertEquals(2, augment.getChildNodes().size());
         assertInstanceOf(LeafSchemaNode.class, augment.dataChildByName(BAR));
