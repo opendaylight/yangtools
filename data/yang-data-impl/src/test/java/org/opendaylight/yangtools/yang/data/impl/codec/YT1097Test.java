@@ -19,9 +19,21 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1097Test {
+    private static final String YT_1097_YANG = """
+        module yt1097 {
+          namespace yt1097;
+          prefix yt1097;
+          leaf foo {
+            type union {
+              type boolean;
+              type string;
+            }
+          }
+        }""";
+
     @Test
     public void testBooleanStringUnion() {
-        final Module module = YangParserTestUtils.parseYangResource("/yt1097.yang").findModule("yt1097").orElseThrow();
+        final Module module = YangParserTestUtils.parseYang(YT_1097_YANG).findModule("yt1097").orElseThrow();
         final DataSchemaNode foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo"))
                 .orElseThrow();
         assertThat(foo, instanceOf(LeafSchemaNode.class));

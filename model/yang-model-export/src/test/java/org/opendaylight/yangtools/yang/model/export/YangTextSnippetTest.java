@@ -17,6 +17,54 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YangTextSnippetTest {
+    private static final String MODULE1_YANG = """
+        module module1 {
+            yang-version "1.1";
+            namespace "urn:example:module1";
+            prefix "module1";
+            include module1submodule1;
+            revision "2019-05-17" {
+            }
+            container cont1 {
+                uses submodule-grouping;
+            }
+        }""";
+    private static final String MODULE1SUBMODULE1_YANG = """
+        submodule module1submodule1 {
+            yang-version "1.1";
+            belongs-to "module1" {
+                prefix "module1";
+            }
+            import module2 {
+                prefix "module2";
+            }
+            revision "2019-05-17" {
+            }
+            grouping submodule-grouping {
+                uses module2:grouping1;
+                leaf leaf2 {
+                    type string;
+                    module2:ext1 "param1";
+                }
+            }
+        }""";
+    private static final String MODULE2_YANG = """
+        module module2 {
+            yang-version "1.1";
+            namespace "urn:example:module2";
+            prefix "module2";
+            revision "2019-05-17" {
+            }
+            grouping grouping1 {
+                leaf leaf1 {
+                    type string;
+                }
+            }
+            extension ext1 {
+                argument "parameter";
+            }
+        }""";
+
     @Test
     public void testNotification() {
         assertFormat(YangParserTestUtils.parseYangResource("/bugs/bug2444/yang/notification.yang"));
@@ -24,7 +72,7 @@ public class YangTextSnippetTest {
 
     @Test
     public void testSubmoduleNamespaces() throws Exception {
-        assertFormat(YangParserTestUtils.parseYangResourceDirectory("/bugs/yt992"));
+        assertFormat(YangParserTestUtils.parseYang(MODULE1_YANG, MODULE1SUBMODULE1_YANG, MODULE2_YANG));
     }
 
     private static void assertFormat(final EffectiveModelContext context) {

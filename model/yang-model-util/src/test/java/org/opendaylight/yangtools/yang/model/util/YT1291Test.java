@@ -24,12 +24,18 @@ class YT1291Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName INPUT = QName.create("foo", "input");
     private static final QName OUTPUT = QName.create("foo", "output");
+    private static final String YT1291_YANG = """
+        module foo {
+          namespace foo;
+          prefix foo;
+          rpc foo;
+        }""";
 
     private static EffectiveModelContext context;
 
     @BeforeAll
     static void beforeClass() {
-        context = YangParserTestUtils.parseYangResource("/yt1291.yang");
+        context = YangParserTestUtils.parseYang(YT1291_YANG);
     }
 
     @Test

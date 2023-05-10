@@ -17,6 +17,67 @@ import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT691Test {
+    private static final String BAR_YANG = """
+        module bar {
+            namespace "bar";
+            prefix bar;
+            revision 2016-01-01;
+            include sub1-bar;
+            leaf bar-leaf {
+                type string;
+            }
+        }""";
+    private static final String BAR_SUB1_YANG = """
+        submodule sub1-bar {
+            belongs-to bar {
+                prefix bar;
+            }
+            revision 2016-01-01;
+            leaf sub1-bar-leaf {
+                type string;
+            }
+        }""";
+    private static final String BAZ_YANG = """
+        module baz {
+            namespace "baz";
+            prefix baz;
+            revision 2016-01-01;
+            leaf baz-leaf {
+                type string;
+            }
+        }""";
+    private static final String FOO_YANG = """
+        module foo {
+            namespace "foo";
+            prefix foo;
+            revision 2016-01-01;
+            include sub1-foo;
+            include sub2-foo;
+            leaf foo-leaf {
+                type string;
+            }
+        }""";
+    private static final String FOO_SUB1_YANG = """
+        submodule sub1-foo {
+            belongs-to foo {
+                prefix foo;
+            }
+            revision 2016-01-01;
+            leaf sub1-foo-leaf {
+                type string;
+            }
+        }""";
+    private static final String FOO_SUB2_YANG = """
+        submodule sub2-foo {
+            belongs-to foo {
+                prefix foo;
+            }
+            revision 2016-01-01;
+            leaf sub2-foo-leaf {
+                type string;
+            }
+        }""";
+
     @Test
     void testGetAllModuleIdentifiers() {
         final var foo = new SourceIdentifier("foo", "2016-01-01");
@@ -25,7 +86,8 @@ class YT691Test {
         final var bar = new SourceIdentifier("bar", "2016-01-01");
         final var sub1Bar = new SourceIdentifier("sub1-bar", "2016-01-01");
         final var baz = new SourceIdentifier("baz", "2016-01-01");
-        final var context = YangParserTestUtils.parseYangResourceDirectory("/yt691");
+        final var context = YangParserTestUtils.parseYang(BAR_YANG, BAR_SUB1_YANG, BAZ_YANG, FOO_YANG, FOO_SUB1_YANG,
+                FOO_SUB2_YANG);
         final var allModuleIdentifiers = SchemaContextUtil.getConstituentModuleIdentifiers(context);
         assertEquals(6, allModuleIdentifiers.size());
         final var allModuleIdentifiersResolved = SchemaContextUtil.getConstituentModuleIdentifiers(

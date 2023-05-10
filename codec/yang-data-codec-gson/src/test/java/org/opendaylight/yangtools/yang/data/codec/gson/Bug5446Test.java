@@ -33,11 +33,40 @@ public class Bug5446Test {
     private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2015-11-05"));
     private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
     private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
+    private static final String FOO_YANG = """
+        module foo {
+            yang-version 1;
+            namespace "foo";
+            prefix "foo";
+            revision "2015-11-05" {
+            }
+            typedef ipv4-address-binary {
+                type binary {
+                    length "4";
+                }
+            }
+            typedef ipv6-address-binary {
+                type binary {
+                    length "16";
+                }
+            }
+            typedef ip-address-binary {
+                type union {
+                    type ipv4-address-binary;
+                    type ipv6-address-binary;
+                }
+            }
+            container root {
+                leaf ip-address {
+                    type ip-address-binary;
+                }
+            }
+        }""";
     private EffectiveModelContext schemaContext;
 
     @Before
     public void init() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug5446");
+        schemaContext = YangParserTestUtils.parseYang(FOO_YANG);
     }
 
     @Test

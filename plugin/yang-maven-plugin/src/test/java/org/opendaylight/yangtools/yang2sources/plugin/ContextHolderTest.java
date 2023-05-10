@@ -15,9 +15,42 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class ContextHolderTest {
+    private static final String TEST_YANG = """
+            module test {
+                yang-version 1;
+                namespace "urn:opendaylight:test";
+                prefix "test";
+                organization "Cisco Systems, Inc.";
+                revision "2014-03-13" {
+                    description
+                        "Initial revision";
+                }
+                container cont{
+                    leaf l {
+                        type string;
+                    }
+                }
+            }""";
+    private static final String TEST2_YANG = """
+            module test2 {
+                yang-version 1;
+                namespace "urn:opendaylight:test2";
+                prefix "test";
+                organization "Cisco Systems, Inc.";
+                revision "2014-03-13" {
+                    description
+                        "Initial revision";
+                }
+                container cont2{
+                    leaf l {
+                        type string;
+                    }
+                }
+            }""";
+
     @Test
     void contextHolderTest() {
-        final var context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang", "/test2.yang");
+        final var context = YangParserTestUtils.parseYang(TEST_YANG, TEST2_YANG);
         final var holder = new ContextHolder(context, Set.of(), Set.of());
         assertSame(context, holder.getContext());
         assertEquals(Set.of(), holder.getYangModules());

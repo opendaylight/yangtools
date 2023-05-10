@@ -34,6 +34,46 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @RunWith(Parameterized.class)
 public class Bug8803Test {
+    private static final String BAR_YANG = """
+        module bar {
+            namespace bar-ns;
+            prefix bar;
+            import foo {
+                prefix foo;
+            }
+            augment "/foo:top-cont/foo:keyed-list" {
+                leaf iid-leaf {
+                    type instance-identifier;
+                }
+            }
+        }""";
+    private static final String BAZ_YANG = """
+        module baz {
+            namespace baz-ns;
+            prefix baz;
+            container top-cont {
+                list keyed-list {
+                    key key-leaf;
+                    leaf key-leaf {
+                        type int32;
+                    }
+                }
+            }
+        }""";
+    private static final String FOO_YANG = """
+        module foo {
+            namespace foo-ns;
+            prefix foo;
+            container top-cont {
+                list keyed-list {
+                    key key-leaf;
+                    leaf key-leaf {
+                        type int32;
+                    }
+                }
+            }
+        }""";
+
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return TestFactories.junitParameters();
@@ -49,7 +89,7 @@ public class Bug8803Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/bug8803");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang(BAR_YANG, BAZ_YANG, FOO_YANG);
     }
 
     @AfterClass

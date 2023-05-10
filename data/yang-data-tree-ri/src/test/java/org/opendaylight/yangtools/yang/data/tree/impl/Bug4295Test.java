@@ -31,6 +31,33 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4295Test {
 
+    private static final String FOO_YANG = """
+        module foo {
+            namespace "foo";
+            prefix foo;
+            container root {
+                container sub-root {
+                    list outer-list {
+                        key "o-id";
+                        leaf o-id {
+                            type string;
+                        }
+                        list inner-list {
+                            key "i-id";
+                            leaf i-id {
+                                type string;
+                            }
+                            leaf i {
+                                type string;
+                            }
+                        }
+                        leaf o {
+                            type string;
+                        }
+                    }
+                }
+            }
+        }""";
     private DataTree inMemoryDataTree;
     private QName root;
     private QName subRoot;
@@ -54,7 +81,7 @@ public class Bug4295Test {
         oleaf = QName.create(foo, "o");
         ileaf = QName.create(foo, "i");
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            YangParserTestUtils.parseYangResource("/bug-4295/foo.yang"));
+            YangParserTestUtils.parseYang(FOO_YANG));
     }
 
     @Test

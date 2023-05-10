@@ -21,13 +21,23 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1233Test {
+    private static final String YT1233_YANG = """
+        module foo {
+          namespace foo;
+          prefix foo;
+          anyxml foo;
+          rpc bar;
+          grouping baz {
+            anyxml xyzzy;
+          }
+        }""";
     private static EffectiveModelContext context;
 
     private final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
 
     @BeforeAll
     static void beforeClass() {
-        context = YangParserTestUtils.parseYangResource("/yt1233.yang");
+        context = YangParserTestUtils.parseYang(YT1233_YANG);
     }
 
     @Test
