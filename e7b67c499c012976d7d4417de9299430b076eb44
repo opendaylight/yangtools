@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8f9005e_2c75bd66",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-11T12:27:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7fced94_407a2cc9",
+      "revId": "e7b67c499c012976d7d4417de9299430b076eb44",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8ee2ec66_53549709",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ffa42d8_1332c895",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-11T12:27:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ee2ec66_53549709",
+      "revId": "e7b67c499c012976d7d4417de9299430b076eb44",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8d047bd6_e1550fc5",
@@ -48,6 +84,24 @@
       "writtenOn": "2023-05-10T13:36:47Z",
       "side": 1,
       "message": "This projects guide is that indent 4 is enough.",
+      "revId": "e7b67c499c012976d7d4417de9299430b076eb44",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3c4fc0f_06f426ae",
+        "filename": "codec/yang-data-codec-binfmt/src/test/java/org/opendaylight/yangtools/yang/data/codec/binfmt/DataTreeCandidateInputOutputTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-11T12:27:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d047bd6_e1550fc5",
       "revId": "e7b67c499c012976d7d4417de9299430b076eb44",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }

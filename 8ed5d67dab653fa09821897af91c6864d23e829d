@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fc0b008_a4a61156",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-11T12:27:53Z",
+      "side": 1,
+      "message": "resolved. Did not manage to setup Intellij Community to indent text blocks as desired. If yours is able to do it, please DM me",
+      "revId": "8ed5d67dab653fa09821897af91c6864d23e829d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
