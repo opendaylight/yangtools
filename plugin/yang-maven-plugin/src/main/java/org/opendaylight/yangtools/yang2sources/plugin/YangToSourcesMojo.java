@@ -37,7 +37,6 @@ import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -102,10 +101,6 @@ public final class YangToSourcesMojo extends AbstractMojo {
     // When set to "true", then the execution of the plugin is disabled
     @Parameter(property = "yang.skip", defaultValue = "false")
     private boolean yangSkip;
-
-    @Parameter(defaultValue = "DEFAULT_MODE")
-    @Deprecated(forRemoval = true)
-    private StatementParserMode parserMode;
 
     public YangToSourcesMojo() {
 
