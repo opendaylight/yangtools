@@ -86,6 +86,10 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(property = "inspectDependencies")
     private boolean inspectDependencies;
 
+    // When set to "true", then the execution of the plugin is disabled
+    @Parameter(property = "yang.skip", defaultValue = "false")
+    private boolean yangSkip;
+
     @Component
     private BuildContext buildContext;
 
@@ -97,10 +101,6 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     @Parameter(readonly = true, defaultValue = "${project.remoteArtifactRepositories}")
     private List<ArtifactRepository> remoteRepos;
-
-    // When set to "true", then the execution of the plugin is disabled
-    @Parameter(property = "yang.skip", defaultValue = "false")
-    private boolean yangSkip;
 
     public YangToSourcesMojo() {
 
