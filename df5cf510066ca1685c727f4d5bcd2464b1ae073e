@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a00a4d1_125baa95",
+        "filename": "codec/yang-data-codec-binfmt/src/test/java/org/opendaylight/yangtools/yang/data/codec/binfmt/DataTreeCandidateInputOutputTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-05-13T13:49:45Z",
+      "side": 1,
+      "message": "single-use, please inline this into the user",
+      "range": {
+        "startLine": 49,
+        "startChar": 32,
+        "endLine": 49,
+        "endChar": 40
+      },
+      "revId": "df5cf510066ca1685c727f4d5bcd2464b1ae073e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
