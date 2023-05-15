@@ -90,8 +90,9 @@ public class UtilTest {
         doReturn(artifactResolResult).when(repoSystem).resolve(any(ArtifactResolutionRequest.class));
         doReturn(artifacts).when(artifactResolResult).getArtifacts();
         doReturn(artifacts).when(project).getDependencyArtifacts();
+        doReturn(remoteRepos).when(project).getRemoteArtifactRepositories();
 
-        Util.checkClasspath(project, repoSystem, localRepo, remoteRepos);
+        Util.checkClasspath(project, repoSystem, localRepo);
         assertEquals(1, artifacts.size());
         assertEquals(1, remoteRepos.size());
         assertEquals(1, listDepcy.size());
