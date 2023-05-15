@@ -91,9 +91,6 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(readonly = true, defaultValue = "${localRepository}")
     private ArtifactRepository localRepository;
 
-    @Parameter(readonly = true, defaultValue = "${project.remoteArtifactRepositories}")
-    private List<ArtifactRepository> remoteRepos;
-
     public YangToSourcesMojo() {
 
     }
@@ -110,7 +107,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Override
     @SuppressFBWarnings(value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", justification = "yangFilesRootDir")
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
+        Util.checkClasspath(project, repoSystem, localRepository);
 
         if (yangToSourcesProcessor == null) {
             // defaults to ${basedir}/src/main/yang
