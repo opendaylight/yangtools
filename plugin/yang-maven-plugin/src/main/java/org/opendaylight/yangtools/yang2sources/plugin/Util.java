@@ -65,13 +65,14 @@ final class Util {
      *            remote repositories
      */
     static void checkClasspath(final MavenProject project, final RepositorySystem repoSystem,
-            final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos) {
+            final ArtifactRepository localRepo) {
         Plugin plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         if (plugin == null) {
             LOG.warn("{} {} not found, dependencies version check skipped", LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME);
         } else {
             Map<Artifact, Collection<Artifact>> pluginDependencies = new HashMap<>();
-            getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo, remoteRepos);
+            getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo,
+                project.getRemoteArtifactRepositories());
 
             Set<Artifact> projectDependencies = project.getDependencyArtifacts();
             for (Map.Entry<Artifact, Collection<Artifact>> entry : pluginDependencies.entrySet()) {
