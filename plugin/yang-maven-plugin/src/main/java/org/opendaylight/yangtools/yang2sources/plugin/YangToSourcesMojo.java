@@ -99,9 +99,6 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(readonly = true, defaultValue = "${localRepository}")
     private ArtifactRepository localRepository;
 
-    @Parameter(readonly = true, defaultValue = "${project.remoteArtifactRepositories}")
-    private List<ArtifactRepository> remoteRepos;
-
     public YangToSourcesMojo() {
 
     }
@@ -115,7 +112,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             return;
         }
 
-        checkClasspath(project, repoSystem, localRepository, remoteRepos);
+        checkClasspath(project, repoSystem, localRepository, project.getRemoteArtifactRepositories());
         // defaults to ${basedir}/src/main/yang
         File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
         Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
