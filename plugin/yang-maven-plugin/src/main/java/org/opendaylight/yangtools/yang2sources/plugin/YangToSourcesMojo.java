@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.LOG_PREFIX;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -18,12 +17,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
-import org.apache.maven.model.Plugin;
+import java.util.stream.Collectors;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,7 +29,14 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.RepositorySystem;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -96,8 +99,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Component
     private RepositorySystem repoSystem;
 
-    @Parameter(readonly = true, defaultValue = "${localRepository}")
-    private ArtifactRepository localRepository;
+    @Parameter(readonly = true, defaultValue = "${repositorySystemSession}")
+    private RepositorySystemSession repoSession;
 
     public YangToSourcesMojo() {
 
@@ -112,7 +115,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
             return;
         }
 
-        checkClasspath(project, repoSystem, localRepository, project.getRemoteArtifactRepositories());
+        checkClasspath();
+
         // defaults to ${basedir}/src/main/yang
         File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
         Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
@@ -122,57 +126,43 @@ public final class YangToSourcesMojo extends AbstractMojo {
     }
 
     /**
-     * Read current project dependencies and check if it don't grab incorrect
-     * artifacts versions which could be in conflict with plugin dependencies.
-     *
-     * @param project current project
-     * @param repoSystem repository system
-     * @param localRepo local repository
-     * @param remoteRepos remote repositories
+     * Read current project dependencies and check if it don't grab incorrect artifacts versions which could be in
+     * conflict with plugin dependencies.
      */
-    @VisibleForTesting
-    static void checkClasspath(final MavenProject project, final RepositorySystem repoSystem,
-            final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos) {
+    private void checkClasspath() {
         final var plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         if (plugin == null) {
             LOG.warn("{} {} not found, dependencies version check skipped", LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME);
             return;
         }
 
-        final var projectDependencies = project.getDependencyArtifacts();
-        for (var entry : getPluginTransitiveDependencies(plugin, repoSystem, localRepo, remoteRepos).entrySet()) {
+        final var remoteRepos = RepositoryUtils.toRepos(project.getRemoteArtifactRepositories());
+        final var pluginDeps = new HashMap<Artifact, Set<Artifact>>();
+        for (var mavenDep : plugin.getDependencies()) {
+            final var aetherDep = RepositoryUtils.toDependency(mavenDep, repoSession.getArtifactTypeRegistry());
+            final var collectRequest = new CollectRequest();
+            collectRequest.setRoot(aetherDep);
+            collectRequest.setRepositories(remoteRepos);
+
+            final var request = new DependencyRequest(collectRequest, null);
+            final DependencyResult result;
+            try {
+                result = repoSystem.resolveDependencies(repoSession, request);
+            } catch (DependencyResolutionException e) {
+                throw new IllegalStateException(e);
+            }
+
+            pluginDeps.put(aetherDep.getArtifact(),
+                result.getArtifactResults().stream().map(ArtifactResult::getArtifact).collect(Collectors.toSet()));
+        }
+
+        final var projectDependencies = RepositoryUtils.toArtifacts(project.getDependencyArtifacts());
+        for (var entry : pluginDeps.entrySet()) {
             checkArtifact(entry.getKey(), projectDependencies);
             for (var dependency : entry.getValue()) {
                 checkArtifact(dependency, projectDependencies);
             }
         }
-    }
-
-    /**
-     * Read transitive dependencies of given plugin and store them in map.
-     *
-     * @param plugin plugin to read
-     * @param repoSystem repository system
-     * @param localRepository local repository
-     * @param remoteRepos list of remote repositories
-     * @return a Map of transitive dependencies
-     */
-    private static Map<Artifact, Set<Artifact>> getPluginTransitiveDependencies(final Plugin plugin,
-            final RepositorySystem repoSystem, final ArtifactRepository localRepository,
-            final List<ArtifactRepository> remoteRepos) {
-        final var ret = new HashMap<Artifact, Set<Artifact>>();
-        for (var dep : plugin.getDependencies()) {
-            final var artifact = repoSystem.createDependencyArtifact(dep);
-
-            final var request = new ArtifactResolutionRequest();
-            request.setArtifact(artifact);
-            request.setResolveTransitively(true);
-            request.setLocalRepository(localRepository);
-            request.setRemoteRepositories(remoteRepos);
-
-            ret.put(artifact, repoSystem.resolve(request).getArtifacts());
-        }
-        return ret;
     }
 
     /**
@@ -182,7 +172,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
      * @param artifact artifact to check
      * @param dependencies collection of dependencies
      */
-    private static void checkArtifact(final Artifact artifact, final Set<Artifact> dependencies) {
+    private static void checkArtifact(final Artifact artifact, final Collection<Artifact> dependencies) {
         for (var dep : dependencies) {
             if (artifact.getGroupId().equals(dep.getGroupId()) && artifact.getArtifactId().equals(dep.getArtifactId())
                 && !artifact.getVersion().equals(dep.getVersion())) {
