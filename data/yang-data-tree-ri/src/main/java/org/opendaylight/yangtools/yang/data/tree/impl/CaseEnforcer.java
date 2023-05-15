@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -76,8 +75,8 @@ class CaseEnforcer implements Immutable {
             return null;
         }
         final ImmutableMap<AugmentationIdentifier, AugmentationSchemaNode> augmentations = augmentationsBuilder.build();
-        final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
-        return enforcer.isPresent() ? new EnforcingMandatory(children, augmentations, enforcer.orElseThrow())
+        final var enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
+        return enforcer != null ? new EnforcingMandatory(children, augmentations, enforcer)
                 : new CaseEnforcer(children, augmentations);
     }
 

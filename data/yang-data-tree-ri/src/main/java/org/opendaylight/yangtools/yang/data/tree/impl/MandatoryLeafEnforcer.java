@@ -12,7 +12,7 @@ import static org.opendaylight.yangtools.yang.data.tree.impl.MandatoryDescendant
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -41,17 +41,17 @@ final class MandatoryLeafEnforcer implements Immutable {
         this.mandatoryNodes = requireNonNull(mandatoryNodes);
     }
 
-    static Optional<MandatoryLeafEnforcer> forContainer(final DataNodeContainer schema,
+    static @Nullable MandatoryLeafEnforcer forContainer(final DataNodeContainer schema,
             final DataTreeConfiguration treeConfig) {
         if (!treeConfig.isMandatoryNodesValidationEnabled()) {
-            return Optional.empty();
+            return null;
         }
 
-        final Builder<MandatoryDescendant> builder = ImmutableList.builder();
-        final boolean isAugmentingNode = schema instanceof CopyableNode && ((CopyableNode) schema).isAugmenting();
+        final var builder = ImmutableList.<MandatoryDescendant>builder();
+        final var isAugmentingNode = schema instanceof CopyableNode && ((CopyableNode) schema).isAugmenting();
         findMandatoryNodes(builder, YangInstanceIdentifier.empty(), schema, treeConfig.getTreeType(), isAugmentingNode);
-        final ImmutableList<MandatoryDescendant> mandatoryNodes = builder.build();
-        return mandatoryNodes.isEmpty() ? Optional.empty() : Optional.of(new MandatoryLeafEnforcer(mandatoryNodes));
+        final var mandatoryNodes = builder.build();
+        return mandatoryNodes.isEmpty() ? null : new MandatoryLeafEnforcer(mandatoryNodes);
     }
 
     void enforceOnData(final NormalizedNode data) {
@@ -67,13 +67,12 @@ final class MandatoryLeafEnforcer implements Immutable {
         final boolean augmentedSubtree) {
         for (final DataSchemaNode child : schema.getChildNodes()) {
             if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
-                if (child instanceof ContainerSchemaNode) {
-                    final ContainerSchemaNode container = (ContainerSchemaNode) child;
+                if (child instanceof ContainerSchemaNode container) {
                     if (!container.isPresenceContainer()) {
                         if (!augmentedSubtree) {
                             // this container is not part of augmented subtree.
-                            final boolean parentSchemaAugmenting = schema instanceof CopyableNode
-                                && ((CopyableNode)schema).isAugmenting();
+                            final boolean parentSchemaAugmenting = schema instanceof CopyableNode copyable
+                                && copyable.isAugmenting();
                             if (container.isAugmenting() && !parentSchemaAugmenting) {
                                 // the container is augmenting, but the parent schema is not. Meaning this is the root
                                 // of the augmentation (the augmented subtree starts here). The container has to be
@@ -93,9 +92,9 @@ final class MandatoryLeafEnforcer implements Immutable {
                             container, type, augmentedSubtree);
                     }
                 } else {
-                    boolean needEnforce = child instanceof MandatoryAware && ((MandatoryAware) child).isMandatory();
-                    if (!needEnforce && child instanceof ElementCountConstraintAware) {
-                        needEnforce = ((ElementCountConstraintAware) child).getElementCountConstraint()
+                    boolean needEnforce = child instanceof MandatoryAware aware && aware.isMandatory();
+                    if (!needEnforce && child instanceof ElementCountConstraintAware aware) {
+                        needEnforce = aware.getElementCountConstraint()
                             .map(constraint -> {
                                 final Integer min = constraint.getMinElements();
                                 return min != null && min > 0;
