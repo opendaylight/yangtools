@@ -20,9 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import java.util.stream.Collectors;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,7 +32,18 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.RepositorySystem;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
+import org.eclipse.aether.util.artifact.JavaScopes;
+import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -61,6 +71,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     public static final String PLUGIN_NAME = "org.opendaylight.yangtools:yang-maven-plugin";
 
     private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesMojo.class);
+    private static final DependencyFilter DEP_FILTER = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
 
     /**
      * {@link FileGenerator} instances resolved via ServiceLoader can hold additional configuration, which details
@@ -96,8 +107,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Component
     private RepositorySystem repoSystem;
 
-    @Parameter(readonly = true, defaultValue = "${localRepository}")
-    private ArtifactRepository localRepository;
+    @Parameter(readonly = true, defaultValue = "${repositorySystemSession}")
+    private RepositorySystemSession repoSession;
 
     public YangToSourcesMojo() {
 
@@ -112,7 +123,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             return;
         }
 
-        checkClasspath(project, repoSystem, localRepository, project.getRemoteArtifactRepositories());
+        checkClasspath(project, repoSystem, repoSession);
         // defaults to ${basedir}/src/main/yang
         File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
         Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
@@ -127,12 +138,10 @@ public final class YangToSourcesMojo extends AbstractMojo {
      *
      * @param project current project
      * @param repoSystem repository system
-     * @param localRepo local repository
-     * @param remoteRepos remote repositories
      */
     @VisibleForTesting
     static void checkClasspath(final MavenProject project, final RepositorySystem repoSystem,
-            final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos) {
+            final RepositorySystemSession repoSession) {
         final var plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         if (plugin == null) {
             LOG.warn("{} {} not found, dependencies version check skipped", LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME);
@@ -140,7 +149,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
         }
 
         final var projectDependencies = project.getDependencyArtifacts();
-        for (var entry : getPluginTransitiveDependencies(plugin, repoSystem, localRepo, remoteRepos).entrySet()) {
+        for (var entry : getPluginTransitiveDependencies(plugin, repoSystem, repoSession,
+                RepositoryUtils.toRepos(project.getRemoteArtifactRepositories())).entrySet()) {
             checkArtifact(entry.getKey(), projectDependencies);
             for (var dependency : entry.getValue()) {
                 checkArtifact(dependency, projectDependencies);
@@ -153,24 +163,30 @@ public final class YangToSourcesMojo extends AbstractMojo {
      *
      * @param plugin plugin to read
      * @param repoSystem repository system
-     * @param localRepository local repository
      * @param remoteRepos list of remote repositories
      * @return a Map of transitive dependencies
      */
     private static Map<Artifact, Set<Artifact>> getPluginTransitiveDependencies(final Plugin plugin,
-            final RepositorySystem repoSystem, final ArtifactRepository localRepository,
-            final List<ArtifactRepository> remoteRepos) {
+            final RepositorySystem repoSystem, final RepositorySystemSession repoSession,
+            final List<RemoteRepository> remoteRepos) {
         final var ret = new HashMap<Artifact, Set<Artifact>>();
+
         for (var dep : plugin.getDependencies()) {
-            final var artifact = repoSystem.createDependencyArtifact(dep);
+            final var aetherDep = RepositoryUtils.toDependency(dep, repoSession.getArtifactTypeRegistry());
+            final var collectRequest = new CollectRequest();
+            collectRequest.setRoot(aetherDep);
+            collectRequest.setRepositories(remoteRepos);
 
-            final var request = new ArtifactResolutionRequest();
-            request.setArtifact(artifact);
-            request.setResolveTransitively(true);
-            request.setLocalRepository(localRepository);
-            request.setRemoteRepositories(remoteRepos);
+            final var request = new DependencyRequest(collectRequest, DEP_FILTER);
+            final DependencyResult result;
+            try {
+                result = repoSystem.resolveDependencies(repoSession, request);
+            } catch (DependencyResolutionException e) {
+                throw new IllegalStateException(e);
+            }
 
-            ret.put(artifact, repoSystem.resolve(request).getArtifacts());
+            ret.put(aetherDep.getArtifact(),
+                result.getArtifactResults().stream().map(ArtifactResult::getArtifact).collect(Collectors.toSet()));
         }
         return ret;
     }
@@ -182,7 +198,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
      * @param artifact artifact to check
      * @param dependencies collection of dependencies
      */
-    private static void checkArtifact(final Artifact artifact, final Set<Artifact> dependencies) {
+    private static void checkArtifact(final Artifact artifact,
+            final Set<org.apache.maven.artifact.Artifact> dependencies) {
         for (var dep : dependencies) {
             if (artifact.getGroupId().equals(dep.getGroupId()) && artifact.getArtifactId().equals(dep.getArtifactId())
                 && !artifact.getVersion().equals(dep.getVersion())) {
