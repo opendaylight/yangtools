@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -26,7 +25,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.RepositorySystem;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -88,8 +88,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Component
     private RepositorySystem repoSystem;
 
-    @Parameter(readonly = true, defaultValue = "${localRepository}")
-    private ArtifactRepository localRepository;
+    @Parameter(readonly = true, defaultValue = "${repositorySystemSession}")
+    private RepositorySystemSession repoSession;
 
     public YangToSourcesMojo() {
 
@@ -107,7 +107,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Override
     @SuppressFBWarnings(value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", justification = "yangFilesRootDir")
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Util.checkClasspath(project, repoSystem, localRepository);
+        Util.checkClasspath(project, repoSystem, repoSession);
 
         if (yangToSourcesProcessor == null) {
             // defaults to ${basedir}/src/main/yang

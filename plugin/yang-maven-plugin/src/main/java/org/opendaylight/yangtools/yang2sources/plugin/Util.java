@@ -14,16 +14,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Plugin;
+import java.util.stream.Collectors;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.RepositorySystem;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -42,7 +44,7 @@ final class Util {
 
     static List<File> getClassPath(final MavenProject project) {
         final List<File> dependencies = new ArrayList<>();
-        for (Artifact element : project.getArtifacts()) {
+        for (var element : project.getArtifacts()) {
             File asFile = element.getFile();
             if (isJar(asFile) || asFile.isDirectory()) {
                 dependencies.add(asFile);
@@ -65,56 +67,39 @@ final class Util {
      *            remote repositories
      */
     static void checkClasspath(final MavenProject project, final RepositorySystem repoSystem,
-            final ArtifactRepository localRepo) {
-        Plugin plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
+            final RepositorySystemSession repoSession) {
+        final var plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         if (plugin == null) {
             LOG.warn("{} {} not found, dependencies version check skipped", LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME);
-        } else {
-            Map<Artifact, Collection<Artifact>> pluginDependencies = new HashMap<>();
-            getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo,
-                project.getRemoteArtifactRepositories());
-
-            Set<Artifact> projectDependencies = project.getDependencyArtifacts();
-            for (Map.Entry<Artifact, Collection<Artifact>> entry : pluginDependencies.entrySet()) {
-                checkArtifact(entry.getKey(), projectDependencies);
-                for (Artifact dependency : entry.getValue()) {
-                    checkArtifact(dependency, projectDependencies);
-                }
-            }
+            return;
         }
-    }
 
-    /**
-     * Read transitive dependencies of given plugin and store them in map.
-     *
-     * @param plugin
-     *            plugin to read
-     * @param map
-     *            map, where founded transitive dependencies will be stored
-     * @param repoSystem
-     *            repository system
-     * @param localRepository
-     *            local repository
-     * @param remoteRepos
-     *            list of remote repositories
-     */
-    private static void getPluginTransitiveDependencies(final Plugin plugin,
-            final Map<Artifact, Collection<Artifact>> map, final RepositorySystem repoSystem,
-            final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepos) {
+        final var remoteRepos = RepositoryUtils.toRepos(project.getRemoteArtifactRepositories());
+        final var pluginDeps = new HashMap<Artifact, Set<Artifact>>();
+        for (var mavenDep : plugin.getDependencies()) {
+            final var aetherDep = RepositoryUtils.toDependency(mavenDep, repoSession.getArtifactTypeRegistry());
+            final var collectRequest = new CollectRequest();
+            collectRequest.setRoot(aetherDep);
+            collectRequest.setRepositories(remoteRepos);
 
-        List<Dependency> pluginDependencies = plugin.getDependencies();
-        for (Dependency dep : pluginDependencies) {
-            Artifact artifact = repoSystem.createDependencyArtifact(dep);
+            final var request = new DependencyRequest(collectRequest, null);
+            final DependencyResult result;
+            try {
+                result = repoSystem.resolveDependencies(repoSession, request);
+            } catch (DependencyResolutionException e) {
+                throw new IllegalStateException(e);
+            }
 
-            ArtifactResolutionRequest request = new ArtifactResolutionRequest();
-            request.setArtifact(artifact);
-            request.setResolveTransitively(true);
-            request.setLocalRepository(localRepository);
-            request.setRemoteRepositories(remoteRepos);
+            pluginDeps.put(aetherDep.getArtifact(),
+                result.getArtifactResults().stream().map(ArtifactResult::getArtifact).collect(Collectors.toSet()));
+        }
 
-            ArtifactResolutionResult result = repoSystem.resolve(request);
-            Set<Artifact> pluginDependencyDependencies = result.getArtifacts();
-            map.put(artifact, pluginDependencyDependencies);
+        final var projectDependencies = RepositoryUtils.toArtifacts(project.getDependencyArtifacts());
+        for (var entry : pluginDeps.entrySet()) {
+            checkArtifact(entry.getKey(), projectDependencies);
+            for (var dependency : entry.getValue()) {
+                checkArtifact(dependency, projectDependencies);
+            }
         }
     }
 
@@ -129,7 +114,7 @@ final class Util {
      *            collection of dependencies
      */
     private static void checkArtifact(final Artifact artifact, final Collection<Artifact> dependencies) {
-        for (org.apache.maven.artifact.Artifact d : dependencies) {
+        for (var d : dependencies) {
             if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())
                 && !artifact.getVersion().equals(d.getVersion())) {
                 LOG.warn("{} Dependency resolution conflict:", LOG_PREFIX);
