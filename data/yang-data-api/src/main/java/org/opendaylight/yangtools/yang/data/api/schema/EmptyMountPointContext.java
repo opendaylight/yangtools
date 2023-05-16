@@ -5,22 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc8528.data.util;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
-import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
-import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
  * A simple {@link MountPointContext} which does not contain any mount points.
  */
-@Beta
-public final class EmptyMountPointContext extends AbstractEffectiveModelContextProvider implements MountPointContext {
-    public EmptyMountPointContext(final EffectiveModelContext modelContext) {
+final class EmptyMountPointContext extends AbstractEffectiveModelContextProvider implements MountPointContext {
+    EmptyMountPointContext(final EffectiveModelContext modelContext) {
         super(modelContext);
     }
 
