@@ -18,15 +18,15 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMetadata.Builder;
 
 /**
- * A simple {@link StreamWriterMetadataExtension} implementation, which takes care of building
- * {@link NormalizedMetadata} based on additional nesting instructions.
+ * A simple {@link MetadataExtension} implementation, which takes care of building {@link NormalizedMetadata} based on
+ * additional nesting instructions.
  */
 @Beta
-public final class ImmutableNormalizedMetadataStreamWriter implements StreamWriterMetadataExtension {
+public final class ImmutableNormalizedMetadataStreamWriter implements MetadataExtension {
     private final Deque<Builder> builders = new ArrayDeque<>();
 
     private ImmutableNormalizedMetadata result;
