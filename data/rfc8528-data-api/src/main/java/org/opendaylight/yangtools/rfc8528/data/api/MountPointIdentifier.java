@@ -31,12 +31,12 @@ public final class MountPointIdentifier extends AbstractIdentifier<MountPointLab
     private static final long serialVersionUID = 1L;
 
     private static final LoadingCache<QName, MountPointIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()
-            .build(new CacheLoader<QName, MountPointIdentifier>() {
-                @Override
-                public MountPointIdentifier load(final QName key) {
-                    return new MountPointIdentifier(MountPointLabel.create(key));
-                }
-            });
+        .build(new CacheLoader<QName, MountPointIdentifier>() {
+            @Override
+            public MountPointIdentifier load(final QName key) {
+                return new MountPointIdentifier(MountPointLabel.create(key));
+            }
+        });
 
     public MountPointIdentifier(final MountPointLabel label) {
         super(label);
