@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -55,7 +55,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         }
 
         @Override
-        public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
+        public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter)
                 throws IOException {
             writer.nextDataSchemaNode(getSchema());
             final NodeIdentifierWithPredicates identifier = NodeIdentifierWithPredicates.of(getSchema().getQName(),
@@ -74,7 +74,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         }
 
         @Override
-        public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
+        public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter)
                 throws IOException {
             writer.nextDataSchemaNode(getSchema());
             writer.startUnkeyedListItem(provideNodeIdentifier(), childSizeHint());

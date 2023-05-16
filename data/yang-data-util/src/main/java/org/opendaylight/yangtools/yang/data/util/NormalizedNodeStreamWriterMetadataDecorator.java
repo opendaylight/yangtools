@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
 
 /**
  * A simple decorator on top of a NormalizedNodeStreamWriter, which attaches NormalizedMetadata to the event stream,
@@ -31,14 +30,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetada
  */
 final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormalizedNodeStreamWriter {
     private final Deque<NormalizedMetadata> stack = new ArrayDeque<>();
-    private final StreamWriterMetadataExtension metaWriter;
     private final NormalizedNodeStreamWriter writer;
+    private final MetadataExtension metaWriter;
     private final NormalizedMetadata metadata;
 
     private int absentDepth = 0;
 
     NormalizedNodeStreamWriterMetadataDecorator(final NormalizedNodeStreamWriter writer,
-            final StreamWriterMetadataExtension metaWriter, final NormalizedMetadata metadata) {
+            final MetadataExtension metaWriter, final NormalizedMetadata metadata) {
         this.writer = requireNonNull(writer);
         this.metaWriter = requireNonNull(metaWriter);
         this.metadata = requireNonNull(metadata);
