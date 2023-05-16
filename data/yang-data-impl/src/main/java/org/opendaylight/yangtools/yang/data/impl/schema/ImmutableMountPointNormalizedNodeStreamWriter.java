@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import java.io.IOException;
+import java.util.List;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.util.ImmutableMountPointNode;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
@@ -29,8 +28,8 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
     }
 
     @Override
-    public final ClassToInstanceMap<Extension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(MountPointExtension.class, this);
+    public final List<MountPointExtension> supportedExtensions() {
+        return List.of(this);
     }
 
     @Override
