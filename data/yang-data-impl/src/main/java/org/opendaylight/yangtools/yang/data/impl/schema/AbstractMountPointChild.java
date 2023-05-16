@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
-import org.opendaylight.yangtools.rfc8528.data.util.EmptyMountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointChild;
+import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
@@ -22,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 public abstract class AbstractMountPointChild implements MountPointChild {
     @Override
     public final NormalizedNode normalizeTo(final EffectiveModelContext schemaContext) throws IOException {
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        writeTo(streamWriter, new EmptyMountPointContext(schemaContext));
+        final var result = new NormalizedNodeResult();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        writeTo(streamWriter, MountPointContext.of(schemaContext));
         return result.getResult();
     }
 }
