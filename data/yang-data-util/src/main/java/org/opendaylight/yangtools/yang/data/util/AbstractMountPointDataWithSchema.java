@@ -14,7 +14,7 @@ import java.io.IOException;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -31,7 +31,7 @@ public abstract class AbstractMountPointDataWithSchema<T extends DataSchemaNode>
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
+    public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter)
             throws IOException {
         super.write(writer, metaWriter);
         if (mountedData != null) {

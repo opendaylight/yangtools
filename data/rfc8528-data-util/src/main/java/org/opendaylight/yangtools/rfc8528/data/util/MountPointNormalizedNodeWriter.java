@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountPointExtension;
 
 /**
  * A {@link MountPointNode}-aware counterpart to {@link NormalizedNodeWriter}. Based on the backing writer's capability
@@ -39,9 +39,9 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     private static final class Forwarding extends MountPointNormalizedNodeWriter {
-        private final StreamWriterMountPointExtension mountWriter;
+        private final MountPointExtension mountWriter;
 
-        Forwarding(final NormalizedNodeStreamWriter writer, final StreamWriterMountPointExtension mountWriter) {
+        Forwarding(final NormalizedNodeStreamWriter writer, final MountPointExtension mountWriter) {
             super(writer);
             this.mountWriter = requireNonNull(mountWriter);
         }
@@ -62,8 +62,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     public static @NonNull MountPointNormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer) {
-        final StreamWriterMountPointExtension mountWriter = writer.getExtensions()
-            .getInstance(StreamWriterMountPointExtension.class);
+        final var mountWriter = writer.getExtensions().getInstance(MountPointExtension.class);
         return mountWriter == null ? new Filtering(writer) : new Forwarding(writer, mountWriter);
     }
 
@@ -74,8 +73,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
         justification = "SpotBugs does not grok checkArgument()")
     public static @NonNull MountPointNormalizedNodeWriter forwardingFor(final NormalizedNodeStreamWriter writer) {
-        final StreamWriterMountPointExtension mountWriter = writer.getExtensions()
-            .getInstance(StreamWriterMountPointExtension.class);
+        final var mountWriter = writer.getExtensions().getInstance(MountPointExtension.class);
         checkArgument(mountWriter != null, "Writer %s does not support mount points", writer);
         return new Forwarding(writer, mountWriter);
     }

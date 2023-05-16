@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountPointExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
 import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -52,8 +51,7 @@ import org.w3c.dom.Text;
  * <p>
  * Values of leaf and leaf-list are NOT translated according to codecs.
  */
-public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter,
-        StreamWriterMountPointExtension {
+public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter, MountPointExtension {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
         Exclusive(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
                 final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
@@ -310,8 +308,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(StreamWriterMountPointExtension.class, this);
+    public ClassToInstanceMap<Extension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(MountPointExtension.class, this);
     }
 
     @Override

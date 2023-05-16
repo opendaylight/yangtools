@@ -15,7 +15,7 @@ import com.google.common.annotations.Beta;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 
 @Beta
@@ -44,7 +44,7 @@ public class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<AnydataS
     }
 
     @Override
-    protected void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
+    protected void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter)
             throws IOException {
         writer.nextDataSchemaNode(getSchema());
         if (writer.startAnydataNode(provideNodeIdentifier(), getObjectModel())) {
