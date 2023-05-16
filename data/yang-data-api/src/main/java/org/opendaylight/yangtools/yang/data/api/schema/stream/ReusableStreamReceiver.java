@@ -42,7 +42,7 @@ public interface ReusableStreamReceiver extends NormalizedNodeStreamWriter {
      *
      * @return Result of streaming.
      */
-    NormalizedNode getResult();
+    NormalizationResult getResult();
 
     /**
      * Reset this writer to initial state.

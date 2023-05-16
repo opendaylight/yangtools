@@ -11,9 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
 import java.util.Collection;
-import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,10 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -40,22 +36,18 @@ public class Bug890Test {
 
     @Test
     public void testinputXml() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug890/yang/foo.yang");
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug890/xml/foo.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var schemaContext = YangParserTestUtils.parseYangResource("/bug890/yang/foo.yang");
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug890/xml/foo.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO_MODULE, "root")));
         xmlParser.parse(reader);
 
         assertNotNull(result.getResult());
-        assertTrue(result.getResult() instanceof ContainerNode);
-        final ContainerNode rootContainer = (ContainerNode) result.getResult();
+        assertTrue(result.getResult().data() instanceof ContainerNode);
+        final ContainerNode rootContainer = (ContainerNode) result.getResult().data();
 
         DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(OUTGOING_LABELS_QNAME));
         assertTrue(myLeaf instanceof ContainerNode);

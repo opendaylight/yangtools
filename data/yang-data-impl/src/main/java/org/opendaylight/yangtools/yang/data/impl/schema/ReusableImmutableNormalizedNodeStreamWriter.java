@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamReceiver;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
@@ -23,29 +23,29 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 @Beta
 public final class ReusableImmutableNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
         implements ReusableStreamReceiver {
-    private final NormalizedNodeResultBuilder builder;
+    private final NormalizationResultBuilder builder;
 
     private final ImmutableLeafSetEntryNodeBuilder<?> leafsetEntryBuilder = ImmutableLeafSetEntryNodeBuilder.create();
     private final ImmutableLeafNodeBuilder<?> leafNodeBuilder = new ImmutableLeafNodeBuilder<>();
 
-    private ReusableImmutableNormalizedNodeStreamWriter(final NormalizedNodeResultBuilder builder) {
+    private ReusableImmutableNormalizedNodeStreamWriter(final NormalizationResultBuilder builder) {
         super(builder);
         this.builder = requireNonNull(builder);
     }
 
     public static @NonNull ReusableImmutableNormalizedNodeStreamWriter create() {
-        return new ReusableImmutableNormalizedNodeStreamWriter(new NormalizedNodeResultBuilder());
+        return new ReusableImmutableNormalizedNodeStreamWriter(new NormalizationResultBuilder());
     }
 
     @Override
     public void reset() {
-        builder.result().reset();
+        builder.reset();
         reset(builder);
     }
 
     @Override
-    public NormalizedNode getResult() {
-        return builder.result().getResult();
+    public NormalizationResult getResult() {
+        return builder.result();
     }
 
     @Override

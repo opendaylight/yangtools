@@ -17,9 +17,8 @@ import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.xml.sax.SAXException;
 
@@ -29,12 +28,12 @@ public class AnydataParseTest extends AbstractAnydataTest {
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(
             toInputStream("<foo xmlns=\"test-anydata\"><bar/></foo>"));
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
-            Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME), true);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME),
+            true);
         xmlParser.parse(reader);
 
-        assertThat(result.getResult(), instanceOf(AnydataNode.class));
+        assertThat(result.getResult().data(), instanceOf(AnydataNode.class));
     }
 }

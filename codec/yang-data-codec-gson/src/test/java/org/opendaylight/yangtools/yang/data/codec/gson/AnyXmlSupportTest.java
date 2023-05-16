@@ -19,7 +19,6 @@ import com.google.gson.stream.JsonReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -32,9 +31,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -50,11 +48,11 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final String inputJson = loadTextFile("/complexjson/anyxml-node-with-simple-value-in-container.json");
 
         // deserialization
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
 
         // lf12-any check
@@ -81,11 +79,11 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
     public void anyXmlNodeWithCompositeValueInContainer() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/anyxml-node-with-composite-value-in-container.json");
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
 
         // lf12-any check
@@ -151,14 +149,14 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
 
     private void verifyExpectedJson(final String inputXmlFile, final String expectedJsonFile,
             final String namespace, final String revision, final String localName) throws Exception {
-        final InputStream resourceAsStream = AnyXmlSupportTest.class.getResourceAsStream(inputXmlFile);
-        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final var resourceAsStream = AnyXmlSupportTest.class.getResourceAsStream(inputXmlFile);
+        final var result = new NormalizationResultHolder();
         loadXmlToNormalizedNodes(resourceAsStream, result, schemaContext);
 
-        assertNotNull(result.getResult());
-        assertTrue(result.getResult() instanceof ContainerNode);
+        assertNotNull(result.getResult().data());
+        assertTrue(result.getResult().data() instanceof ContainerNode);
 
-        final DataContainerChild data = ((ContainerNode) result.getResult())
+        final DataContainerChild data = ((ContainerNode) result.getResult().data())
                 .childByArg(new NodeIdentifier(QName.create(namespace, revision, localName)));
         assertNotNull(data);
         final String jsonOutput = normalizedNodesToJsonString(data, schemaContext);

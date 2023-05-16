@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
@@ -29,15 +30,17 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
     @Override
     public final ImmutableNormalizedAnydata normalizeTo(final EffectiveStatementInference inference)
             throws AnydataNormalizationException {
-        final NormalizedNodeMetadataResult result = new NormalizedNodeMetadataResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var holder = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(holder);
         try {
             writeTo(streamWriter, inference);
         } catch (IOException e) {
             throw new AnydataNormalizationException("Failed to normalize anydata", e);
         }
 
-        return ImmutableMetadataNormalizedAnydata.ofOptional(inference, result.getResult(), result.getMetadata());
+        final var result = holder.getResult();
+        return ImmutableMetadataNormalizedAnydata.ofOptional(inference, result.data(),
+            Optional.ofNullable(result.metadata()));
     }
 
     @Override
