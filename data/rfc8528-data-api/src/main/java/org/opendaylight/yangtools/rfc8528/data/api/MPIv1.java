@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class MPIv1 implements Externalizable {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private QName qname;
@@ -40,6 +41,7 @@ final class MPIv1 implements Externalizable {
         qname = QName.readFrom(in);
     }
 
+    @java.io.Serial
     private Object readResolve() {
         return MountPointIdentifier.create(qname);
     }

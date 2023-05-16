@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 @NonNullByDefault
 public final class MountPointIdentifier extends AbstractIdentifier<QName> implements PathArgument, WritableObject {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private static final LoadingCache<QName, MountPointIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()
@@ -61,6 +62,7 @@ public final class MountPointIdentifier extends AbstractIdentifier<QName> implem
         getValue().writeTo(out);
     }
 
+    @java.io.Serial
     private Object writeReplace() {
         return new MPIv1(getValue());
     }
