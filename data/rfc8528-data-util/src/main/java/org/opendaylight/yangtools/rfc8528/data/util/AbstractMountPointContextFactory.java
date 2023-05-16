@@ -11,16 +11,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -44,32 +43,14 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
     /**
      * Definition of a MountPoint, as known to RFC8528.
      */
-    protected static final class MountPointDefinition extends AbstractSimpleIdentifiable<MountPointIdentifier>
-            implements Immutable {
-        private final ImmutableSet<String> parentReferences;
-        private final boolean config;
-
-        MountPointDefinition(final MountPointIdentifier identifier, final boolean config,
-                final ImmutableSet<String> parentReferences) {
-            super(identifier);
-            this.config = config;
-            this.parentReferences = requireNonNull(parentReferences);
-        }
-
-        public boolean getConfig() {
-            return config;
-        }
-
-        // FIXME: 7.0.0: make this return a set of XPath expressions
-        public ImmutableSet<String> getParentReferences() {
-            return parentReferences;
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return super.addToStringAttributes(toStringHelper)
-                    .add("config", config)
-                    .add("parentReferences", parentReferences);
+    protected record MountPointDefinition(
+            MountPointLabel label,
+            boolean config,
+            // FIXME: make this return a set of XPath expressions
+            ImmutableSet<String> parentReferences) implements Immutable {
+        protected MountPointDefinition {
+            requireNonNull(parentReferences);
+            requireNonNull(label);
         }
     }
 
@@ -121,7 +102,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             final QNameModule module = it.next().getQNameModule();
 
             return new MountPointDefinition(
-                MountPointIdentifier.of(QName.create(module, entry.findChildByArg(LABEL).map(lbl -> {
+                MountPointLabel.create(QName.create(module, entry.findChildByArg(LABEL).map(lbl -> {
                     checkArgument(lbl instanceof LeafNode, "Unexpected label leaf %s", lbl);
                     final Object value = lbl.body();
                     checkArgument(value instanceof String, "Unexpected label leaf value %s", value);

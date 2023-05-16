@@ -43,7 +43,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants.ContainerName;
@@ -583,11 +582,9 @@ public final class XmlParserStream implements Closeable, Flushable {
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
                                 nsUri, mountId);
 
-                            final Optional<MountPointContextFactory> optFactory = codecs.mountPointContext()
-                                    .findMountPoint(mountId);
+                            final var optFactory = codecs.mountPointContext().findMountPoint(mountId.getLabel());
                             if (optFactory.isPresent()) {
-                                final MountPointData mountData =
-                                    mountParent.getMountPointData(mountId, optFactory.orElseThrow());
+                                final var mountData = mountParent.getMountPointData(mountId, optFactory.orElseThrow());
                                 addMountPointChild(mountData, nsUri, xmlElementName,
                                     new DOMSource(readAnyXmlValue(in).getDocumentElement()));
                                 continue;
