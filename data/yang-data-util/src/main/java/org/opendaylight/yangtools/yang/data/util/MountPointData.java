@@ -64,7 +64,7 @@ public final class MountPointData extends AbstractSimpleIdentifiable<MountPointL
     }
 
     void write(final @NonNull NormalizedNodeStreamWriter writer) throws IOException {
-        final var mountWriter = writer.getExtensions().getInstance(MountPointExtension.class);
+        final var mountWriter = writer.extension(MountPointExtension.class);
         if (mountWriter == null) {
             LOG.debug("Writer {} does not support mount points, ignoring data in {}", writer, getIdentifier());
             return;

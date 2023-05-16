@@ -71,7 +71,7 @@ public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
      * @throws IOException reported when thrown by the writer.
      */
     public final void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        write(writer, writer.getExtensions().getInstance(MetadataExtension.class));
+        write(writer, writer.extension(MetadataExtension.class));
     }
 
     protected abstract void write(NormalizedNodeStreamWriter writer, @Nullable MetadataExtension metaWriter)

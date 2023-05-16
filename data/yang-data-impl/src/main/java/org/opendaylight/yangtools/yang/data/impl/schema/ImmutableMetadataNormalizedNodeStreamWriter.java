@@ -11,12 +11,11 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -69,8 +68,8 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
     }
 
     @Override
-    public final ClassToInstanceMap<Extension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(MetadataExtension.class, this);
+    public final List<MetadataExtension> supportedExtensions() {
+        return List.of(this);
     }
 
     @Override
