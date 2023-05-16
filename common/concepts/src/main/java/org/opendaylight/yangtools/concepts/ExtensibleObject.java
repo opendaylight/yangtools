@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Interface specifying access to extensions attached to a particular object. This functionality is loosely based on
@@ -21,12 +25,34 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public interface ExtensibleObject<O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> {
     /**
-     * Return a map of currently-supported extensions, along with accessor objects which provide access to the specific
-     * functionality bound to this object.
+     * Return an extension interface, if currently available.
      *
-     * @return A map of supported functionality.
+     * @implSpec
+     *     Default implementation defers to linear search of {@link #supportedExtensions()}.
+     *
+     * @param <T> Extension type
+     * @param type Extension type class
+     * @return An extension instance, or {@code null}
+     * @throws NullPointerException if {@code type} is {@code null}
      */
-    default @NonNull ClassToInstanceMap<E> getExtensions() {
-        return ImmutableClassToInstanceMap.of();
+    default <T extends E> @Nullable T extension(final Class<T> type) {
+        final var nonnull = requireNonNull(type);
+        return supportedExtensions().stream().filter(nonnull::isInstance).findFirst().map(nonnull::cast).orElse(null);
+    }
+
+    default <T extends E> Optional<T> findExtension(final Class<T> type) {
+        return Optional.ofNullable(extension(type));
+    }
+
+    /**
+     * Return currently-supported extensions. Note that the returned collection may change if this object is mutable.
+     *
+     * @implSpec
+     *     Default implementations returns an empty List.
+     *
+     * @return Supported extensions
+     */
+    default @NonNull Collection<? extends E> supportedExtensions() {
+        return List.of();
     }
 }

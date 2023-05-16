@@ -105,7 +105,7 @@ public final class NormalizedMetadataWriter implements Closeable, Flushable {
         final PathArgument metaId = metadata.getIdentifier();
         checkArgument(dataId.equals(metaId), "Mismatched data %s and metadata %s", dataId, metaId);
 
-        final var metaWriter = writer.getExtensions().getInstance(MetadataExtension.class);
+        final var metaWriter = writer.extension(MetadataExtension.class);
         final NormalizedNodeStreamWriter delegate = metaWriter == null ? writer
                 : new NormalizedNodeStreamWriterMetadataDecorator(writer, metaWriter, metadata);
 

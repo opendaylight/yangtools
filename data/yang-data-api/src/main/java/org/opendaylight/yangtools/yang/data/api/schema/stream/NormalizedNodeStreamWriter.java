@@ -37,8 +37,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  *
  * <p>
  * While this interface defines basic events, the event stream may be extended through {@link Extension}s, discoverable
- * through {@link #getExtensions()} method. The set of these extensions is immutable during the lifetime of a writer and
- * may be freely cached.
+ * through {@link #supportedExtensions()} method. The set of these extensions is immutable during the lifetime of a
+ * writer and may be freely cached.
  *
  * <ul>
  * <li>{@code container} - Container node representation, start event is emitted using
@@ -388,7 +388,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
 
     /**
      * Extension interface for {@link NormalizedNodeStreamWriter}. Extensions should extend this interface and their
-     * instances should be made available through {@link NormalizedNodeStreamWriter#getExtensions()}.
+     * instances should be made available through {@link NormalizedNodeStreamWriter#supportedExtensions()}.
      */
     interface Extension extends ObjectExtension<NormalizedNodeStreamWriter, Extension> {
         // Marker interface
