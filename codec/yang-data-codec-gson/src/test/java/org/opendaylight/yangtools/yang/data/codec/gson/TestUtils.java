@@ -23,14 +23,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import javax.xml.stream.XMLStreamReader;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.codec.xml.XmlParserStream;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public final class TestUtils {
@@ -53,11 +52,11 @@ public final class TestUtils {
         return loadTextFile(new File(TestUtils.class.getResource(relativePath).toURI()));
     }
 
-    static void loadXmlToNormalizedNodes(final InputStream xmlInputStream, final NormalizedNodeResult result,
+    static void loadXmlToNormalizedNodes(final InputStream xmlInputStream, final NormalizationResultHolder result,
             final EffectiveModelContext schemaContext) throws Exception {
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(xmlInputStream);
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final var reader = UntrustedXML.createXMLStreamReader(xmlInputStream);
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         xmlParser.parse(reader);
     }
 

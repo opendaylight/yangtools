@@ -9,19 +9,15 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.InputStream;
-import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -33,14 +29,13 @@ public class YT1107Test {
 
     @Test
     public void testInterleavingLists() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/yt1107/yt1107.yang");
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/yt1107/yt1107.xml");
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var schemaContext = YangParserTestUtils.parseYangResource("/yt1107/yt1107.yang");
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/yt1107/yt1107.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
-            Inference.ofDataTreePath(schemaContext, PARENT));
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(schemaContext, PARENT));
         xmlParser.parse(reader);
 
         assertEquals(Builders.containerBuilder()
@@ -63,6 +58,6 @@ public class YT1107Test {
                     .withChild(ImmutableNodes.leafNode(NAME, "Bob"))
                     .build())
                 .build())
-            .build(), result.getResult());
+            .build(), result.getResult().data());
     }
 }

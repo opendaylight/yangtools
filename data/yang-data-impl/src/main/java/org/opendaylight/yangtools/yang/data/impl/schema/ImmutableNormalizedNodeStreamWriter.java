@@ -62,8 +62,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         builders.push(topLevelBuilder);
     }
 
-    protected ImmutableNormalizedNodeStreamWriter(final NormalizedNodeResult result) {
-        this(new NormalizedNodeResultBuilder(result));
+    protected ImmutableNormalizedNodeStreamWriter(final NormalizationResultHolder holder) {
+        this(new NormalizedNodeResultBuilder(holder));
     }
 
     /**
@@ -96,34 +96,11 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * This method is useful for clients, which knows there will be one top-level node written, but does not know which
      * type of {@link NormalizedNode} will be written.
      *
-     * @param result {@link NormalizedNodeResult} object which will hold result value.
+     * @param holder {@link NormalizationResultHolder} object which will hold result value.
      * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.
      */
-    public static @NonNull NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
-        return result instanceof NormalizedNodeMetadataResult metadataResult ? from(metadataResult)
-                : new ImmutableNormalizedNodeStreamWriter(result);
-    }
-
-    /**
-     * Creates a {@link NormalizedNodeStreamWriter} which creates one instance of top-level {@link NormalizedNode}
-     * (type of NormalizedNode) is determined by first start event.
-     *
-     * <p>
-     * Result is built when {@link #endNode()} associated with that start event is emitted.
-     *
-     * <p>
-     * Writer properly creates also nested {@link NormalizedNode} instances, if their are supported inside the scope
-     * of the first event.
-     *
-     * <p>
-     * This method is useful for clients, which knows there will be one top-level node written, but does not know which
-     * type of {@link NormalizedNode} will be written.
-     *
-     * @param result {@link NormalizedNodeResult} object which will hold result value.
-     * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.
-     */
-    public static @NonNull NormalizedNodeStreamWriter from(final NormalizedNodeMetadataResult result) {
-        return new ImmutableMetadataNormalizedNodeStreamWriter(result);
+    public static @NonNull NormalizedNodeStreamWriter from(final NormalizationResultHolder holder) {
+        return new ImmutableMetadataNormalizedNodeStreamWriter(holder);
     }
 
     @Override

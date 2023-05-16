@@ -16,8 +16,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -33,11 +31,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -75,27 +71,26 @@ public class DOMSourceXMLStreamReaderTest {
 
         // deserialization
         final Document doc = loadDocument("/dom-reader-test/foo.xml");
-        final DOMSource inputXml = new DOMSource(doc.getDocumentElement());
-        XMLStreamReader domXMLReader = new DOMSourceXMLStreamReader(inputXml);
+        final var inputXml = new DOMSource(doc.getDocumentElement());
+        var domXMLReader = new DOMSourceXMLStreamReader(inputXml);
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(SCHEMA_CONTEXT, QName.create("foo-ns", "top-cont")));
         xmlParser.parse(domXMLReader);
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
 
         // serialization
         //final StringWriter writer = new StringWriter();
-        final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
+        final var domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
+        final var xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
+        final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
                 xmlStreamWriter, SCHEMA_CONTEXT);
 
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-                xmlNormalizedNodeStreamWriter);
+        final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(transformedInput);
 
         //final String serializedXml = writer.toString();

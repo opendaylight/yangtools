@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 
 public class YT1411Test extends AbstractComplexJsonTest {
     @Test
     public void testChoiceCaseChoiceIdentifier() {
-        final var result = new NormalizedNodeResult();
+        final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.RFC7951.getShared(schemaContext));
@@ -46,7 +46,7 @@ public class YT1411Test extends AbstractComplexJsonTest {
                 ]
               }
             }""")));
-        final var cont1 = result.getResult();
+        final var cont1 = result.getResult().data();
         assertThat(cont1, instanceOf(ContainerNode.class));
 
         final QName lst11 = QName.create(CONT_1, "lst11");

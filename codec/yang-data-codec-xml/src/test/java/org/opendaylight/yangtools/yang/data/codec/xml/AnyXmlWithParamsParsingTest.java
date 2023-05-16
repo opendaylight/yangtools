@@ -32,9 +32,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -54,14 +53,14 @@ public class AnyXmlWithParamsParsingTest {
 
         final Document doc = UntrustedXML.newDocumentBuilder().parse(EDIT_CONFIG);
 
-        final NormalizedNodeResult resultHolder = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter writer = ImmutableNormalizedNodeStreamWriter.from(resultHolder);
+        final var resultHolder = new NormalizationResultHolder();
+        final var writer = ImmutableNormalizedNodeStreamWriter.from(resultHolder);
 
         final XmlParserStream xmlParser = XmlParserStream.create(writer, SchemaInferenceStack.of(context,
             Absolute.of(QName.create(IETF_NETCONF, "edit-config"), YangConstants.operationInputQName(IETF_NETCONF)))
             .toInference());
         xmlParser.traverse(new DOMSource(doc.getDocumentElement()));
-        final NormalizedNode parsed = resultHolder.getResult();
+        final NormalizedNode parsed = resultHolder.getResult().data();
 
         final DataContainerChild editCfg = ((ContainerNode) parsed).childByArg(getNodeId(parsed, "edit-content"));
         final DOMSource anyXmlParsedDom = ((DOMSourceAnyxmlNode) ((ChoiceNode) editCfg)
