@@ -635,8 +635,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         final DOMSourceMountPointChild child = new DOMSourceMountPointChild(source);
         if (YangLibraryConstants.MODULE_NAMESPACE.equals(namespace)) {
             final var optName = ContainerName.forLocalName(localName);
-            if (optName.isPresent()) {
-                mount.setContainer(optName.orElseThrow(), child);
+            if (optName != null) {
+                mount.setContainer(optName, child);
                 return;
             }
 

@@ -10,11 +10,8 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import java.util.Arrays;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 /**
@@ -61,9 +58,6 @@ public final class YangLibraryConstants {
          */
         RFC7895("modules-state");
 
-        private static final ImmutableMap<String, ContainerName> NAME_TO_ENUM = Maps.uniqueIndex(
-            Arrays.asList(values()), ContainerName::getLocalName);
-
         private final String localName;
 
         ContainerName(final String localName) {
@@ -74,8 +68,20 @@ public final class YangLibraryConstants {
             return localName;
         }
 
-        public static Optional<ContainerName> forLocalName(final String localName) {
-            return Optional.ofNullable(NAME_TO_ENUM.get(requireNonNull(localName)));
+        public static ContainerName ofLocalName(final String localName) {
+            final var ret = forLocalName(localName);
+            if (ret == null) {
+                throw new IllegalArgumentException("Unrecognized container name '" + localName + "'");
+            }
+            return ret;
+        }
+
+        public static @Nullable ContainerName forLocalName(final String localName) {
+            return switch (localName) {
+                case "yang-library" -> RFC8525;
+                case "modules-state" -> RFC7895;
+                default -> null;
+            };
         }
     }
 
