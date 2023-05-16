@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
 /**
@@ -20,14 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLike;
  * Represents a YANG container node.
  */
 public class ContainerNodeDataWithSchema extends AbstractMountPointDataWithSchema<ContainerLike> {
-
     public ContainerNodeDataWithSchema(final ContainerLike schema) {
         super(schema);
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
-            throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter) throws IOException {
         writer.nextDataSchemaNode(getSchema());
 
         writer.startContainerNode(provideNodeIdentifier(), childSizeHint());

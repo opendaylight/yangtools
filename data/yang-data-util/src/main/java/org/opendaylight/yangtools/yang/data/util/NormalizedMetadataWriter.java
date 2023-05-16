@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
 
 /**
  * A utility class to attach {@link NormalizedMetadata} into a NormalizedNode stream, such as the one produced by
@@ -105,8 +105,7 @@ public final class NormalizedMetadataWriter implements Closeable, Flushable {
         final PathArgument metaId = metadata.getIdentifier();
         checkArgument(dataId.equals(metaId), "Mismatched data %s and metadata %s", dataId, metaId);
 
-        final StreamWriterMetadataExtension metaWriter = writer.getExtensions()
-                .getInstance(StreamWriterMetadataExtension.class);
+        final var metaWriter = writer.getExtensions().getInstance(MetadataExtension.class);
         final NormalizedNodeStreamWriter delegate = metaWriter == null ? writer
                 : new NormalizedNodeStreamWriterMetadataDecorator(writer, metaWriter, metadata);
 

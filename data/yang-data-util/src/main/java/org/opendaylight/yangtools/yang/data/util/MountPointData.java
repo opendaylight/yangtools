@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory.ContainerName;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountPointExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +64,7 @@ public final class MountPointData extends AbstractSimpleIdentifiable<MountPointL
     }
 
     void write(final @NonNull NormalizedNodeStreamWriter writer) throws IOException {
-        final StreamWriterMountPointExtension mountWriter = writer.getExtensions()
-            .getInstance(StreamWriterMountPointExtension.class);
+        final var mountWriter = writer.getExtensions().getInstance(MountPointExtension.class);
         if (mountWriter == null) {
             LOG.debug("Writer {} does not support mount points, ignoring data in {}", writer, getIdentifier());
             return;

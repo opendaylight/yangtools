@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 /**
@@ -26,8 +26,7 @@ public class LeafListEntryNodeDataWithSchema extends SimpleNodeDataWithSchema<Le
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
-            throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter) throws IOException {
         writer.nextDataSchemaNode(getSchema());
 
         writer.startLeafSetEntryNode(new NodeWithValue<>(getSchema().getQName(), getValue()));
