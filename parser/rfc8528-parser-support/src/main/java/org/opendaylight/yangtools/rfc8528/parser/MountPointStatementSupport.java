@@ -9,17 +9,16 @@ package org.opendaylight.yangtools.rfc8528.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MountPointStatementSupport
-        extends AbstractQNameStatementSupport<MountPointStatement, MountPointEffectiveStatement> {
+        extends AbstractStatementSupport<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(SchemaMountStatements.MOUNT_POINT)
             .addOptional(YangStmtMapping.CONFIG)
@@ -53,25 +52,27 @@ public final class MountPointStatementSupport
     //
     // We are not doing exactly that, in that we can end up rebinding the argument through 'augment', I think.
     @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
+    public MountPointLabel parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return MountPointLabel.create(StmtContextUtils.parseIdentifier(ctx, value));
     }
 
     @Override
-    public QName adaptArgumentValue(final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
+    public MountPointLabel adaptArgumentValue(
+            final StmtContext<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> ctx,
             final QNameModule targetModule) {
-        return ctx.getArgument().bindTo(targetModule).intern();
+        return MountPointLabel.create(ctx.getArgument().qname().bindTo(targetModule));
     }
 
     @Override
-    public void onStatementAdded(final Mutable<QName, MountPointStatement, MountPointEffectiveStatement> stmt) {
-        final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
+    public void onStatementAdded(
+            final Mutable<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> stmt) {
+        final var parentDef = stmt.coerceParentContext().publicDefinition();
         SourceException.throwIf(YangStmtMapping.CONTAINER != parentDef && YangStmtMapping.LIST != parentDef, stmt,
             "Mount points may only be defined at either a container or a list");
     }
 
     @Override
-    protected MountPointStatement createDeclared(final BoundStmtCtx<QName> ctx,
+    protected MountPointStatement createDeclared(final BoundStmtCtx<MountPointLabel> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return new MountPointStatementImpl(ctx.getArgument(), substatements);
     }
@@ -83,7 +84,7 @@ public final class MountPointStatementSupport
     }
 
     @Override
-    protected MountPointEffectiveStatement createEffective(final Current<QName, MountPointStatement> stmt,
+    protected MountPointEffectiveStatement createEffective(final Current<MountPointLabel, MountPointStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new MountPointEffectiveStatementImpl(stmt, substatements);
     }
