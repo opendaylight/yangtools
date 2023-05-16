@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.annotations.Beta;
 import java.io.IOException;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
@@ -39,10 +40,9 @@ public abstract class AbstractMountPointDataWithSchema<T extends DataSchemaNode>
         }
     }
 
-    public final MountPointData getMountPointData(final MountPointIdentifier label,
-            final MountPointContextFactory factory) {
+    public final MountPointData getMountPointData(final MountPointLabel label, final MountPointContextFactory factory) {
         if (mountedData != null) {
-            final MountPointIdentifier existing = mountedData.getIdentifier();
+            final var existing = mountedData.getIdentifier();
             checkState(label.equals(existing), "Mismatched mount label {}, already have {}", label, existing);
         } else {
             mountedData = new MountPointData(label, factory);
