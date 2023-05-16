@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,8 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 /**
  * Immutable implementation of {@link NormalizedMetadata}.
  */
-@Beta
-public class ImmutableNormalizedMetadata extends AbstractSimpleIdentifiable<PathArgument>
+public sealed class ImmutableNormalizedMetadata extends AbstractSimpleIdentifiable<PathArgument>
         implements NormalizedMetadata {
     private static final class Container extends ImmutableNormalizedMetadata {
         private final @NonNull ImmutableMap<PathArgument, NormalizedMetadata> children;
