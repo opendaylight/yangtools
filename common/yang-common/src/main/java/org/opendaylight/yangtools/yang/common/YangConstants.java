@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import java.net.URI;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
@@ -64,15 +63,6 @@ public final class YangConstants {
      * Base QNameModule for all YIN statements.
      */
     public static final QNameModule RFC6020_YIN_MODULE = QNameModule.create(RFC6020_YIN_NAMESPACE).intern();
-    /**
-     * YANG Library NETCONF Capability, as defined in https://tools.ietf.org/html/rfc7950#section-16.
-     *
-     * @deprecated This constant is deprecated. Its replacement is
-     * {@code org.opendaylight.netconf.api.CapabilityURN.YANG_LIBRARY}.
-     */
-    @Deprecated(since = "10.0.7", forRemoval = true)
-    public static final URI RFC7950_YANG_LIBRARY_CAPABILITY =
-        URI.create("urn:ietf:params:netconf:capability:yang-library:1.0");
     /**
      * Prefix for YANG-specific XPath functions.
      */
