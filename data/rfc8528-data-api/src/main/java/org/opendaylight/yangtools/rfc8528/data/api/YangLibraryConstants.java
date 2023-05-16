@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc8528.data.api;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 /**
@@ -42,48 +39,6 @@ public final class YangLibraryConstants {
      * module names to reference modules.
      */
     public static final String MODULE_NAME = "ietf-yang-library";
-
-    /**
-     * Top-level containers which hold YANG Library information, ordered by descending preference, with more modern
-     * and/or preferred entries first.
-     */
-    public enum ContainerName {
-        // Note: order this enum from most-preferred to least-preferred name
-        /**
-         * Container in RFC8525 (NMDA) YANG Library.
-         */
-        RFC8525("yang-library"),
-        /**
-         * Container in RFC7895 (pre-NMDA) YANG Library.
-         */
-        RFC7895("modules-state");
-
-        private final String localName;
-
-        ContainerName(final String localName) {
-            this.localName = requireNonNull(localName);
-        }
-
-        public String getLocalName() {
-            return localName;
-        }
-
-        public static ContainerName ofLocalName(final String localName) {
-            final var ret = forLocalName(localName);
-            if (ret == null) {
-                throw new IllegalArgumentException("Unrecognized container name '" + localName + "'");
-            }
-            return ret;
-        }
-
-        public static @Nullable ContainerName forLocalName(final String localName) {
-            return switch (localName) {
-                case "yang-library" -> RFC8525;
-                case "modules-state" -> RFC7895;
-                default -> null;
-            };
-        }
-    }
 
     private YangLibraryConstants() {
         // Hidden

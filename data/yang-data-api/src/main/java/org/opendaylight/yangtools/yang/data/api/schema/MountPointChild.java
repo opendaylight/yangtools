@@ -5,19 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc8528.data.api;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * An unresolved child within a mount point. This is similar in functionality to {@link NormalizableAnydata}, but
- * rather than normalizing, the data is fed into a combination of a EffectiveModelContext and
+ * rather than normalizing, the data is fed into a combination of an EffectiveModelContext and a
  * NormalizedNodeStreamWriter.
  */
 @Beta

@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointChild;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
-import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants.ContainerName;
+import org.opendaylight.yangtools.yang.data.api.schema.MountPointChild;
+import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
+import org.opendaylight.yangtools.yang.data.api.schema.MountPointException;
+import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
+import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory.ContainerName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public final class MountPointData extends AbstractSimpleIdentifiable<MountPointI
         final MountPointContext mountCtx;
         try {
             mountCtx = contextFactory.createContext(yangLib, schemaMounts);
-        } catch (YangParserException e) {
+        } catch (MountPointException e) {
             throw new IOException("Failed to resolve mount point " + getIdentifier(), e);
         }
         try (NormalizedNodeStreamWriter nestedWriter = mountWriter.startMountPoint(getIdentifier(), mountCtx)) {
