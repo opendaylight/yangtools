@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
@@ -63,5 +64,17 @@ public interface MountPointContext extends EffectiveModelContextProvider {
      * @return An optional handler for mount point data
      * @throws NullPointerException if label is null
      */
-    Optional<MountPointContextFactory> findMountPoint(@NonNull MountPointIdentifier label);
+    Optional<MountPointContextFactory> findMountPoint(@NonNull MountPointLabel label);
+
+    /**
+     * Attempt to acquire a {@link MountPointContextFactory} to resolve schemas for the purposes of interpreting
+     * this mount point. An empty result indicates the mount point is not attached.
+     *
+     * @param label Mount point label, as defined via the use of {@code mount-point} statement
+     * @return An optional handler for mount point data
+     * @throws NullPointerException if identifier is null
+     */
+    default Optional<MountPointContextFactory> findMountPoint(final @NonNull MountPointIdentifier identifier) {
+        return findMountPoint(identifier.getLabel());
+    }
 }

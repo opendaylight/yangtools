@@ -17,6 +17,7 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.WritableObject;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.util.AbstractIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -24,7 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 
 @Beta
 @NonNullByDefault
-public final class MountPointIdentifier extends AbstractIdentifier<QName> implements PathArgument, WritableObject {
+public final class MountPointIdentifier extends AbstractIdentifier<MountPointLabel>
+        implements PathArgument, WritableObject {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
@@ -32,16 +34,16 @@ public final class MountPointIdentifier extends AbstractIdentifier<QName> implem
             .build(new CacheLoader<QName, MountPointIdentifier>() {
                 @Override
                 public MountPointIdentifier load(final QName key) {
-                    return of(key);
+                    return new MountPointIdentifier(MountPointLabel.create(key));
                 }
             });
 
-    private MountPointIdentifier(final QName qname) {
-        super(qname);
+    public MountPointIdentifier(final MountPointLabel label) {
+        super(label);
     }
 
     public static MountPointIdentifier of(final QName qname) {
-        return new MountPointIdentifier(qname);
+        return new MountPointIdentifier(new MountPointLabel(qname));
     }
 
     public static MountPointIdentifier create(final QName qname) {
@@ -53,7 +55,7 @@ public final class MountPointIdentifier extends AbstractIdentifier<QName> implem
         return create(QName.readFrom(in));
     }
 
-    public QName getLabel() {
+    public MountPointLabel getLabel() {
         return getValue();
     }
 
@@ -64,7 +66,7 @@ public final class MountPointIdentifier extends AbstractIdentifier<QName> implem
 
     @java.io.Serial
     private Object writeReplace() {
-        return new MPIv1(getValue());
+        return new MPIv1(getLabel().qname());
     }
 
     @Override
@@ -74,16 +76,16 @@ public final class MountPointIdentifier extends AbstractIdentifier<QName> implem
             // Augmentations are strictly more, in keeping of their compare
             return 1;
         }
-        if (!(o instanceof MountPointIdentifier)) {
+        if (!(o instanceof MountPointIdentifier other)) {
             // TODO: Yeah, okay, this declaration is not quite right, but we are following AugmentationIdenfier's lead
             return -1;
         }
-        return getValue().compareTo(((MountPointIdentifier) o).getLabel());
+        return getNodeType().compareTo(other.getNodeType());
     }
 
     @Override
     public QName getNodeType() {
-        return getLabel();
+        return getLabel().qname();
     }
 
     @Override

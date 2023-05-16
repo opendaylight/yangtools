@@ -17,26 +17,26 @@ import java.util.function.Function;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.util.AbstractMountPointContextFactory.MountPointDefinition;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 final class ImmutableMountPointContext extends AbstractEffectiveModelContextProvider
         implements Immutable, MountPointContext {
-    private final ImmutableMap<MountPointIdentifier, MountPointDefinition> mountPoints;
+    private final ImmutableMap<MountPointLabel, MountPointDefinition> mountPoints;
     private final Function<MountPointDefinition, MountPointContextFactory> createFactory;
 
     ImmutableMountPointContext(final EffectiveModelContext modelContext,
             final Iterable<MountPointDefinition> mountPoints,
             final Function<MountPointDefinition, MountPointContextFactory> createFactory) {
         super(modelContext);
-        this.mountPoints = Maps.uniqueIndex(mountPoints, MountPointDefinition::getIdentifier);
+        this.mountPoints = Maps.uniqueIndex(mountPoints, MountPointDefinition::label);
         this.createFactory = requireNonNull(createFactory);
     }
 
     @Override
-    public Optional<MountPointContextFactory> findMountPoint(final MountPointIdentifier label) {
+    public Optional<MountPointContextFactory> findMountPoint(final MountPointLabel label) {
         final MountPointDefinition def = mountPoints.get(requireNonNull(label));
         return def == null ? Optional.empty() : Optional.of(createFactory.apply(def));
     }

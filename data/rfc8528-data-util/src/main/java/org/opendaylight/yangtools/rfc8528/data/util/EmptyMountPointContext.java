@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
@@ -25,7 +25,7 @@ public final class EmptyMountPointContext extends AbstractEffectiveModelContextP
     }
 
     @Override
-    public Optional<MountPointContextFactory> findMountPoint(final MountPointIdentifier label) {
+    public Optional<MountPointContextFactory> findMountPoint(final MountPointLabel label) {
         return Optional.empty();
     }
 }
