@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -165,8 +164,8 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
     }
 
     @Override
-    public final ClassToInstanceMap<Extension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(MetadataExtension.class, this);
+    public final List<MetadataExtension> supportedExtensions() {
+        return List.of(this);
     }
 
     abstract void startAnydata(NodeIdentifier name);
