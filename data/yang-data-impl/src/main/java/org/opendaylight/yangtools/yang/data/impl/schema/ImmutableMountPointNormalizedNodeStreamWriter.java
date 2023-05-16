@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.List;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
-import org.opendaylight.yangtools.rfc8528.data.util.ImmutableMountPointNode;
+import org.opendaylight.yangtools.rfc8528.data.util.ImmutableNormalizedMountPoint;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -53,7 +54,8 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
                     throw new IOException("Unhandled mount data " + data);
                 }
 
-                writeChild(ImmutableMountPointNode.of(new MountPointIdentifier(label), mountCtx, container));
+                writeChild(new ImmutableNormalizedMountPoint(label, mountCtx,
+                    Maps.uniqueIndex(container.body(), DataContainerChild::getIdentifier)));
             }
         };
     }

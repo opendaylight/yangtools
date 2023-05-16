@@ -14,16 +14,15 @@ import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMountPoint;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 
 /**
- * A {@link MountPointNode}-aware counterpart to {@link NormalizedNodeWriter}. Based on the backing writer's capability
- * it either forwards or filters MountPointNodes.
+ * A {@link NormalizedMountPoint}-aware counterpart to {@link NormalizedNodeWriter}. Based on the backing writer's
+ * capability it either forwards or filters NormalizedMountPoints.
  */
 @Beta
 public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWriter {
@@ -33,7 +32,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
         }
 
         @Override
-        void writeMountPoint(final MountPointNode node) {
+        void writeMountPoint(final NormalizedMountPoint mountPoint) {
             // No-op
         }
     }
@@ -47,10 +46,9 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
         }
 
         @Override
-        void writeMountPoint(final MountPointNode node) throws IOException {
-            try (MountPointNormalizedNodeWriter writer = forStreamWriter(mountWriter.startMountPoint(
-                    node.getIdentifier().getLabel(), node.getMountPointContext()))) {
-                for (DataContainerChild child : node.body()) {
+        void writeMountPoint(final NormalizedMountPoint mountPoint) throws IOException {
+            try (var writer = forStreamWriter(mountWriter.startMountPoint(mountPoint.label(), mountPoint.context()))) {
+                for (var child : mountPoint.children().values()) {
                     writer.write(child);
                 }
             }
@@ -80,12 +78,12 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
 
     @Override
     protected final boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
-        if (node instanceof MountPointNode) {
-            writeMountPoint((MountPointNode) node);
+        if (node instanceof NormalizedMountPoint mountPoint) {
+            writeMountPoint(mountPoint);
             return true;
         }
         return super.wasProcessedAsCompositeNode(node);
     }
 
-    abstract void writeMountPoint(MountPointNode node) throws IOException;
+    abstract void writeMountPoint(NormalizedMountPoint mountPoint) throws IOException;
 }
