@@ -5,14 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.opendaylight.yangtools.rfc8528.data.util.EmptyMountPointContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
@@ -79,7 +77,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      * @return A codec factory instance.
      */
     public static XmlCodecFactory create(final EffectiveModelContext context) {
-        return create(new EmptyMountPointContext(context));
+        return create(MountPointContext.of(context));
     }
 
     @Override

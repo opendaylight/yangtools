@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
@@ -65,4 +66,14 @@ public interface MountPointContext extends EffectiveModelContextProvider {
      * @throws NullPointerException if label is null
      */
     Optional<MountPointContextFactory> findMountPoint(@NonNull MountPointLabel label);
+
+    /**
+     * Return an empty {@link MountPointContext} with the specified {@link EffectiveModelContext}.
+     *
+     * @param modelContext Backing {@link EffectiveModelContext}
+     * @return A {@link MountPointContext} containing no {@link MountPointContextFactory}.
+     */
+    static @NonNull MountPointContext of(final @NonNull EffectiveModelContext modelContext) {
+        return new EmptyMountPointContext(modelContext);
+    }
 }
