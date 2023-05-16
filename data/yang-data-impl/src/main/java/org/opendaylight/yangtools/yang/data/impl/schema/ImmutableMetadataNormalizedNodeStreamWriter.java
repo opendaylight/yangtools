@@ -43,7 +43,7 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
 
         State(final NormalizedNodeBuilder dataBuilder, final Builder metadataBuilder) {
             this.dataBuilder = requireNonNull(dataBuilder);
-            this.metaBuilder = requireNonNull(metadataBuilder);
+            metaBuilder = requireNonNull(metadataBuilder);
         }
 
         public NormalizedNodeBuilder getDataBuilder() {
@@ -56,17 +56,17 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
     }
 
     private final Deque<Builder> builders = new ArrayDeque<>();
-    private final NormalizedNodeMetadataResult result;
+    private final NormalizationResultHolder holder;
 
     protected ImmutableMetadataNormalizedNodeStreamWriter(final State state) {
         super(state.getDataBuilder());
         builders.push(state.getMetaBuilder());
-        result = null;
+        holder = null;
     }
 
-    protected ImmutableMetadataNormalizedNodeStreamWriter(final NormalizedNodeMetadataResult result) {
-        super(result);
-        this.result = requireNonNull(result);
+    protected ImmutableMetadataNormalizedNodeStreamWriter(final NormalizationResultHolder holder) {
+        super(holder);
+        this.holder = requireNonNull(holder);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
             }
         } else {
             // All done
-            result.setResult(metadata);
+            holder.setMetadata(metadata);
         }
     }
 }

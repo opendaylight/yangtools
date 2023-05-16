@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static com.google.common.base.Verify.verify;
-
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -206,7 +204,7 @@ public final class ImmutableNodes {
             return containerNode(SCHEMACONTEXT_NAME);
         }
 
-        final var result = new NormalizedNodeResult();
+        final var result = new NormalizationResultHolder();
         try (var writer = ImmutableNormalizedNodeStreamWriter.from(result)) {
             try (var iidWriter = YangInstanceIdentifierWriter.open(writer, ctx, id)) {
                 // leaf-list entry nodes are special: they require a value and we can derive it from our instance
@@ -219,7 +217,6 @@ public final class ImmutableNodes {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to convert " + id, e);
         }
-        verify(result.isFinished());
-        return result.getResult();
+        return result.getResult().data();
     }
 }

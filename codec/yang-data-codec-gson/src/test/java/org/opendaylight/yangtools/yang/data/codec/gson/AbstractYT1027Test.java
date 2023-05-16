@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -144,11 +144,11 @@ public abstract class AbstractYT1027Test {
     abstract String expectedUint64();
 
     final NormalizedNode fromJSON(final String input) throws IOException {
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, codecFactory());
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter, codecFactory());
         jsonParser.parse(new JsonReader(new StringReader(input)));
-        return result.getResult();
+        return result.getResult().data();
     }
 
     private String toJSON(final NormalizedNode input) throws IOException {

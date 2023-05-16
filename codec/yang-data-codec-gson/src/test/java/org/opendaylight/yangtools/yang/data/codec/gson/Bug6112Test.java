@@ -25,9 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -47,12 +46,12 @@ public class Bug6112Test {
     private static NormalizedNode readJson(final String jsonPath) throws IOException, URISyntaxException {
         final String inputJson = loadTextFile(jsonPath);
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        return result.getResult();
+        return result.getResult().data();
     }
 
     @Test

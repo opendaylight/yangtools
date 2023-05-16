@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 public abstract class AbstractMountPointChild implements MountPointChild {
     @Override
     public final NormalizedNode normalizeTo(final EffectiveModelContext schemaContext) throws IOException {
-        final var result = new NormalizedNodeResult();
+        final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         writeTo(streamWriter, MountPointContext.of(schemaContext));
-        return result.getResult();
+        return result.getResult().data();
     }
 }

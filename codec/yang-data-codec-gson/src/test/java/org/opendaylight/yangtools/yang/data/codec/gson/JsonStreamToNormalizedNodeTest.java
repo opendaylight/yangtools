@@ -28,9 +28,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 /**
@@ -175,38 +174,36 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     @Test
     public void parsingSkipNotExistingElement() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/not-existing-element.json");
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.createLenient(streamWriter,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.createLenient(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void listItemWithoutArray() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/keyed-list-restconf-behaviour.json");
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
             Inference.ofDataTreePath(schemaContext, CONT_1));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void listItemWithArray() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/keyed-list-yang-json-behaviour.json");
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
             Inference.ofDataTreePath(schemaContext, CONT_1));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
@@ -214,48 +211,48 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     public void multipleChoiceAugmentation() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/multiple-choice-augmentation-in-container.json");
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final QName augmentChoice1QName = QName.create(CONT_1, "augment-choice1");
         final QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(ImmutableSet.of(augmentChoice1QName));
-        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(ImmutableSet.of(augmentChoice2QName));
-        final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
-        final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
-        final NodeIdentifier containerId = new NodeIdentifier(containerQName);
+        final var cont1Normalized = containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(CONT_1))
+            .withChild(augmentationBuilder()
+                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(augmentChoice1QName)))
+                .withChild(choiceBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(augmentChoice1QName))
+                    .withChild(augmentationBuilder()
+                        .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(augmentChoice2QName)))
+                        .withChild(choiceBuilder()
+                            .withNodeIdentifier(new NodeIdentifier(augmentChoice2QName))
+                            .withChild(containerBuilder()
+                                .withNodeIdentifier(new NodeIdentifier(containerQName))
+                                .withChild(leafNode(leafQName, "leaf-value"))
+                                .build())
+                            .build())
+                        .build())
+                    .build())
+                .build())
+            .build();
 
-        final NormalizedNode cont1Normalized =
-                containerBuilder().withNodeIdentifier(new NodeIdentifier(CONT_1))
-                        .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
-                                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
-                                        .withChild(augmentationBuilder().withNodeIdentifier(aug2Id)
-                                                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice2Id)
-                                                        .withChild(containerBuilder().withNodeIdentifier(containerId)
-                                                                .withChild(leafNode(leafQName, "leaf-value"))
-                                                                .build())
-                                                        .build())
-                                                .build())
-                                        .build())
-                                .build()).build();
-
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
         assertEquals(cont1Normalized, transformedInput);
     }
 
     private static void verifyTransformationToNormalizedNode(final String inputJson,
             final NormalizedNode awaitedStructure) {
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
                 transformedInput);
     }
