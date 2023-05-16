@@ -28,12 +28,12 @@ public record MountPointLabel(QName qname) implements Identifier, WritableObject
     private static final long serialVersionUID = 1L;
 
     private static final LoadingCache<QName, MountPointLabel> CACHE = CacheBuilder.newBuilder().weakValues()
-            .build(new CacheLoader<QName, MountPointLabel>() {
-                @Override
-                public MountPointLabel load(final QName key) {
-                    return new MountPointLabel(key);
-                }
-            });
+        .build(new CacheLoader<QName, MountPointLabel>() {
+            @Override
+            public MountPointLabel load(final QName key) {
+                return new MountPointLabel(key);
+            }
+        });
 
     public MountPointLabel {
         requireNonNull(qname);
