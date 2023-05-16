@@ -83,14 +83,16 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             final ContainerNode mountData) {
         checkArgument(SCHEMA_MOUNTS.equals(mountData.getIdentifier()), "Unexpected top-level container %s", mountData);
 
-        final DataContainerChild mountPoint = mountData.childByArg(MOUNT_POINT);
+        final var mountPoint = mountData.childByArg(MOUNT_POINT);
         if (mountPoint == null) {
             LOG.debug("mount-point list not present in {}", mountData);
-            return new EmptyMountPointContext(schemaContext);
+            return MountPointContext.of(schemaContext);
         }
-        checkArgument(mountPoint instanceof MapNode, "mount-point list %s is not a MapNode", mountPoint);
+        if (!(mountPoint instanceof MapNode mapMountPoint)) {
+            throw new IllegalArgumentException("mount-point list " + mountPoint + " is not a MapNode");
+        }
 
-        return new ImmutableMountPointContext(schemaContext, ((MapNode) mountPoint).body().stream().map(entry -> {
+        return new ImmutableMountPointContext(schemaContext, mapMountPoint.body().stream().map(entry -> {
             final String moduleName = entry.findChildByArg(MODULE).map(mod -> {
                 checkArgument(mod instanceof LeafNode, "Unexpected module leaf %s", mod);
                 final Object value = mod.body();
