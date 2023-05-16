@@ -22,18 +22,17 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMetadata.Builder;
 
 /**
  * A {@link NormalizedMetadata}-aware {@link ImmutableMetadataNormalizedNodeStreamWriter}. It advertizes the
- * {@link StreamWriterMetadataExtension} extension.
+ * {@link MetadataExtension} extension.
  */
 @Beta
 public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
-        implements StreamWriterMetadataExtension {
+        implements MetadataExtension {
     /**
      * Snapshot of currently-open data- and metadatastate.
      */
@@ -70,8 +69,8 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
     }
 
     @Override
-    public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(StreamWriterMetadataExtension.class, this);
+    public final ClassToInstanceMap<Extension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(MetadataExtension.class, this);
     }
 
     @Override

@@ -18,20 +18,19 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountPointExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
 
 // FIXME: document usage of this
 @Beta
 public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
-        implements StreamWriterMountPointExtension {
+        implements MountPointExtension {
     protected ImmutableMountPointNormalizedNodeStreamWriter(final NormalizationResultHolder holder) {
         super(holder);
     }
 
     @Override
-    public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(StreamWriterMountPointExtension.class, this);
+    public final ClassToInstanceMap<Extension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(MountPointExtension.class, this);
     }
 
     @Override

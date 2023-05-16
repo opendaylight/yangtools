@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -71,17 +71,17 @@ public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
      * @throws IOException reported when thrown by the writer.
      */
     public final void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        write(writer, writer.getExtensions().getInstance(StreamWriterMetadataExtension.class));
+        write(writer, writer.getExtensions().getInstance(MetadataExtension.class));
     }
 
-    protected abstract void write(NormalizedNodeStreamWriter writer,
-            @Nullable StreamWriterMetadataExtension metaWriter) throws IOException;
+    protected abstract void write(NormalizedNodeStreamWriter writer, @Nullable MetadataExtension metaWriter)
+        throws IOException;
 
     protected final NodeIdentifier provideNodeIdentifier() {
         return NodeIdentifier.create(schema.getQName());
     }
 
-    protected final void writeMetadata(final StreamWriterMetadataExtension metaWriter) throws IOException {
+    protected final void writeMetadata(final MetadataExtension metaWriter) throws IOException {
         if (metaWriter != null && attributes != null && !attributes.isEmpty()) {
             metaWriter.metadata(attributes);
         }

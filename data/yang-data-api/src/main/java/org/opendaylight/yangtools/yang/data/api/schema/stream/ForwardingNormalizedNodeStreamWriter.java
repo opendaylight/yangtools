@@ -22,7 +22,7 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     protected abstract NormalizedNodeStreamWriter delegate();
 
     @Override
-    public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
+    public ClassToInstanceMap<Extension> getExtensions() {
         return delegate().getExtensions();
     }
 

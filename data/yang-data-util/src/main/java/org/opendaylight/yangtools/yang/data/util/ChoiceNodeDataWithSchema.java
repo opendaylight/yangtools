@@ -11,7 +11,7 @@ import static com.google.common.base.Verify.verify;
 
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -45,8 +45,7 @@ final class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema<ChoiceS
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
-            throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter) throws IOException {
         writer.nextDataSchemaNode(getSchema());
         writer.startChoiceNode(provideNodeIdentifier(), childSizeHint());
         super.write(writer, metaWriter);

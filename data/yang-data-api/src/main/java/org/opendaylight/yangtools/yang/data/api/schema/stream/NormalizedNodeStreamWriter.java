@@ -10,16 +10,22 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.ExtensibleObject;
+import org.opendaylight.yangtools.concepts.ObjectExtension;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -74,7 +80,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * Implementations of this interface must not hold user suppled objects and resources needlessly.
  */
 public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
-        ExtensibleObject<NormalizedNodeStreamWriter, NormalizedNodeStreamWriterExtension> {
+        ExtensibleObject<NormalizedNodeStreamWriter, NormalizedNodeStreamWriter.Extension> {
     /**
      * Methods in this interface allow users to hint the underlying implementation about the sizing of container-like
      * constructors (leafLists, containers, etc.). These hints may be taken into account by a particular implementation
@@ -379,4 +385,73 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
 
     @Override
     void flush() throws IOException;
+
+    /**
+     * Extension interface for {@link NormalizedNodeStreamWriter}. Extensions should extend this interface and their
+     * instances should be made available through {@link NormalizedNodeStreamWriter#getExtensions()}.
+     */
+    interface Extension extends ObjectExtension<NormalizedNodeStreamWriter, Extension> {
+        // Marker interface
+    }
+
+    /**
+     * Extension to the NormalizedNodeStreamWriter with metadata support. Semantically this extends the event model of
+     * {@link NormalizedNodeStreamWriter} with a new event, {@link #metadata(ImmutableMap)}. This event is valid on any
+     * open node. This event may be emitted only once.
+     *
+     * <p>
+     * Note that some implementations of this interface, notably those targeting streaming XML, may require metadata to
+     * be emitted before any other events. Such requirement is communicated through {@link #requireMetadataFirst()} and
+     * users must honor it. If such requirement is not set, metadata may be emitted at any time.
+     *
+     * <p>
+     * Furthermore implementations targeting RFC7952 encoding towards external systems are required to handle metadata
+     * attached to {@code leaf-list} and {@code list} nodes by correctly extending them to each entry.
+     */
+    interface MetadataExtension extends Extension {
+        /**
+         * Emit a block of metadata associated with the currently-open node. The argument is a map of annotation names,
+         * as defined {@code md:annotation} extension. Values are normalized objects, which are required to be
+         * effectively-immutable.
+         *
+         * @param metadata Metadata block
+         * @throws NullPointerException if {@code metadata} is {@code null}
+         * @throws IllegalStateException when this method is invoked outside of an open node or metadata has already
+         *                               been emitted.
+         * @throws IOException if an underlying IO error occurs
+         */
+        void metadata(ImmutableMap<QName, Object> metadata) throws IOException;
+
+        /**
+         * Indicate whether metadata is required to be emitted just after an entry is open. The default implementation
+         * returns false.
+         *
+         * @return {@code true} if metadata must occur just after the start of an entry.
+         */
+        default boolean requireMetadataFirst() {
+            return false;
+        }
+    }
+
+    /**
+     * An {@link Extension} exposed by stream writers which can handle mount point data, notably providing
+     * the facilities to resolve a mount point schema and normalize mount point contents into a normalized structure.
+     */
+    @NonNullByDefault
+    public interface MountPointExtension extends Extension {
+        /**
+         * Start a new mount point with a specific mount point context. The returned writer will be used to emit the
+         * content of the mount point, without touching the writer to which this extension is attached to. Once that is
+         * done, the returned writer will be {@link NormalizedNodeStreamWriter#close()}d, at which point the parent
+         * writer will be used again to emit the rest of the tree.
+         *
+         * @param label Mount point label
+         * @param mountCtx Mount point context
+         * @return A new NormalizedNodeStreamWriter
+         * @throws IOException if an error occurs
+         */
+        NormalizedNodeStreamWriter startMountPoint(MountPointLabel label, MountPointContext mountCtx)
+            throws IOException;
+    }
+
 }

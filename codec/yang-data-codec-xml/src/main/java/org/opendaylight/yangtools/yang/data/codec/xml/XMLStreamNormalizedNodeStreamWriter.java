@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
@@ -53,7 +52,7 @@ import org.w3c.dom.Node;
  * removed in a future version.
  */
 public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
-        implements NormalizedNodeStreamWriter, StreamWriterMetadataExtension
+        implements NormalizedNodeStreamWriter, MetadataExtension
         permits SchemaAwareXMLStreamNormalizedNodeStreamWriter, SchemalessXMLStreamNormalizedNodeStreamWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
     private static final Set<String> BROKEN_ATTRIBUTES = ConcurrentHashMap.newKeySet();
@@ -166,8 +165,8 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
     }
 
     @Override
-    public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(StreamWriterMetadataExtension.class, this);
+    public final ClassToInstanceMap<Extension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(MetadataExtension.class, this);
     }
 
     abstract void startAnydata(NodeIdentifier name);
@@ -294,9 +293,10 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
                     StreamWriterFacade.warnLegacyAttribute(localName);
                     if (!(value instanceof String)) {
                         if (BROKEN_ATTRIBUTES.add(localName)) {
-                            LOG.warn("Unbound annotation {} does not have a String value, ignoring it. Please fix the "
-                                    + "source of this annotation either by formatting it to a String or removing its "
-                                    + "use", localName, new Throwable("Call stack"));
+                            LOG.warn("""
+                            	Unbound annotation {} does not have a String value, ignoring it. Please fix the\s\
+                            	source of this annotation either by formatting it to a String or removing its\s\
+                            	use""", localName, new Throwable("Call stack"));
                         }
                         LOG.debug("Ignoring annotation {} value {}", localName, value);
                     } else {
