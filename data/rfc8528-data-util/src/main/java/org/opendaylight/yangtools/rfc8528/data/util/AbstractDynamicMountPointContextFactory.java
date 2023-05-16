@@ -63,7 +63,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractSi
 
             final EffectiveModelContext schemaContext = bindLibrary(entry.getKey(), libContainer);
             if (schemaMounts == null) {
-                return new EmptyMountPointContext(schemaContext);
+                return MountPointContext.of(schemaContext);
             }
 
             final NormalizedNode mountData;
