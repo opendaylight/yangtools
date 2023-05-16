@@ -62,7 +62,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     public static @NonNull MountPointNormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer) {
-        final var mountWriter = writer.getExtensions().getInstance(MountPointExtension.class);
+        final var mountWriter = writer.extension(MountPointExtension.class);
         return mountWriter == null ? new Filtering(writer) : new Forwarding(writer, mountWriter);
     }
 
@@ -73,7 +73,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
         justification = "SpotBugs does not grok checkArgument()")
     public static @NonNull MountPointNormalizedNodeWriter forwardingFor(final NormalizedNodeStreamWriter writer) {
-        final var mountWriter = writer.getExtensions().getInstance(MountPointExtension.class);
+        final var mountWriter = writer.extension(MountPointExtension.class);
         checkArgument(mountWriter != null, "Writer %s does not support mount points", writer);
         return new Forwarding(writer, mountWriter);
     }
