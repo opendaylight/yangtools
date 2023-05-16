@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
-import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory.ContainerName;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountPointExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * YANG Schema Mount-supported data attached to either a {@code list} item or a {@code container}.
  */
 @Beta
-public final class MountPointData extends AbstractSimpleIdentifiable<MountPointIdentifier> {
+public final class MountPointData extends AbstractSimpleIdentifiable<MountPointLabel> {
     private static final Logger LOG = LoggerFactory.getLogger(MountPointData.class);
 
     private final Map<ContainerName, MountPointChild> yangLib = new EnumMap<>(ContainerName.class);
@@ -42,8 +42,8 @@ public final class MountPointData extends AbstractSimpleIdentifiable<MountPointI
 
     private MountPointChild schemaMounts;
 
-    MountPointData(final MountPointIdentifier mountId, final MountPointContextFactory contextFactory) {
-        super(mountId);
+    MountPointData(final MountPointLabel label, final MountPointContextFactory contextFactory) {
+        super(label);
         this.contextFactory = requireNonNull(contextFactory);
     }
 

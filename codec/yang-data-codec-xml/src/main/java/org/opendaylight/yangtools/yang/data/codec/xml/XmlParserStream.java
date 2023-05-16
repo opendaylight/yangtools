@@ -42,8 +42,8 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -578,19 +578,19 @@ public final class XmlParserStream implements Closeable, Flushable {
                         }
 
                         if (optMount.isPresent()) {
-                            final var mountId = MountPointIdentifier.of(optMount.orElseThrow().getQName());
+                            final var label = new MountPointLabel(optMount.orElseThrow().getQName());
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
-                                nsUri, mountId);
+                                nsUri, label);
 
-                            final var optFactory = codecs.mountPointContext().findMountPoint(mountId.getLabel());
+                            final var optFactory = codecs.mountPointContext().findMountPoint(label);
                             if (optFactory.isPresent()) {
-                                final var mountData = mountParent.getMountPointData(mountId, optFactory.orElseThrow());
+                                final var mountData = mountParent.getMountPointData(label, optFactory.orElseThrow());
                                 addMountPointChild(mountData, nsUri, xmlElementName,
                                     new DOMSource(readAnyXmlValue(in).getDocumentElement()));
                                 continue;
                             }
 
-                            LOG.debug("Mount point {} not attached", mountId);
+                            LOG.debug("Mount point {} not attached", label);
                         }
                     }
 
