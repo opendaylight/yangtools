@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -64,12 +64,12 @@ public class Bug8803Test {
         // deserialization
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizationResultHolder result = new NormalizationResultHolder();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(SCHEMA_CONTEXT, QName.create("foo-ns", "top-cont")));
         xmlParser.parse(reader);
-        final NormalizedNode transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
 
         // serialization

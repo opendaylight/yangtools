@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.stream.Stream;
-import javax.xml.stream.XMLStreamReader;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,11 +26,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 class AnydataNormalizeContentTest extends AbstractAnydataTest {
@@ -64,14 +62,13 @@ class AnydataNormalizeContentTest extends AbstractAnydataTest {
     void anydataNormalize(final String testDesc, final String xml, final Inference inference,
             final NormalizedNode expectedData) throws Exception {
 
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(toInputStream(xml));
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser =
-                XmlParserStream.create(streamWriter, Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
+        final var reader = UntrustedXML.createXMLStreamReader(toInputStream(xml));
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
         xmlParser.parse(reader);
 
-        final AnydataNode<?> anydataNode = assertInstanceOf(AnydataNode.class, result.getResult());
+        final AnydataNode<?> anydataNode = assertInstanceOf(AnydataNode.class, result.getResult().data());
         final DOMSourceAnydata domSourceAnydata = assertInstanceOf(DOMSourceAnydata.class, anydataNode.body());
 
         final NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(inference);

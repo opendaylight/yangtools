@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountP
 @Beta
 public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
         implements StreamWriterMountPointExtension {
-    protected ImmutableMountPointNormalizedNodeStreamWriter(final NormalizedNodeResult result) {
-        super(result);
+    protected ImmutableMountPointNormalizedNodeStreamWriter(final NormalizationResultHolder holder) {
+        super(holder);
     }
 
     @Override
@@ -37,8 +37,8 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
     @Override
     public final NormalizedNodeStreamWriter startMountPoint(final MountPointLabel label,
             final MountPointContext mountCtx) {
-        final NormalizedNodeResult mountResult = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter mountDelegate = ImmutableNormalizedNodeStreamWriter.from(mountResult);
+        final var mountResult = new NormalizationResultHolder();
+        final var mountDelegate = ImmutableNormalizedNodeStreamWriter.from(mountResult);
 
         return new ForwardingNormalizedNodeStreamWriter() {
             @Override
@@ -50,7 +50,7 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
             public void close() throws IOException {
                 super.close();
 
-                final var data = mountResult.getResult();
+                final var data = mountResult.getResult().data();
                 if (!(data instanceof ContainerNode container)) {
                     throw new IOException("Unhandled mount data " + data);
                 }

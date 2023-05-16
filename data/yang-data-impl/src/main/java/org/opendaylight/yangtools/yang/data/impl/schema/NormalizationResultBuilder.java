@@ -15,21 +15,26 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 
 @SuppressWarnings("rawtypes")
-final class NormalizedNodeResultBuilder implements NormalizedNodeContainerBuilder {
-    private final @NonNull NormalizedNodeResult result;
+final class NormalizationResultBuilder implements NormalizedNodeContainerBuilder {
+    private final @NonNull NormalizationResultHolder holder;
 
-    NormalizedNodeResultBuilder() {
-        this.result = new NormalizedNodeResult();
+    NormalizationResultBuilder() {
+        holder = new NormalizationResultHolder();
     }
 
-    NormalizedNodeResultBuilder(final NormalizedNodeResult result) {
-        this.result = requireNonNull(result);
+    NormalizationResultBuilder(final NormalizationResultHolder holder) {
+        this.holder = requireNonNull(holder);
     }
 
-    @NonNull NormalizedNodeResult result() {
-        return result;
+    @NonNull NormalizationResult result() {
+        return holder.getResult();
+    }
+
+    void reset() {
+        holder.reset();
     }
 
     @Override
@@ -54,7 +59,7 @@ final class NormalizedNodeResultBuilder implements NormalizedNodeContainerBuilde
 
     @Override
     public NormalizedNodeContainerBuilder addChild(final NormalizedNode child) {
-        result.setResult(child);
+        holder.setData(child);
         return this;
     }
 

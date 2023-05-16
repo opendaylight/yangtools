@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.InputStream;
-import javax.xml.stream.XMLStreamReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,10 +17,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -44,105 +40,86 @@ public class Bug8675Test {
 
     @Test
     public void testParsingEmptyElements() throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/bug8675/foo.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-container")));
         xmlParser.parse(reader);
 
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void testParsingEmptyRootElement() throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
-                "/bug8675/foo-2.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-2.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-container")));
         xmlParser.parse(reader);
 
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void testListAsRootElement() throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-3.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-3.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-list")));
         xmlParser.parse(reader);
 
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void testAnyXmlAsRootElement() throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-4.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-4.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-anyxml")));
         xmlParser.parse(reader);
 
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void testLeafAsRootElement() throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-5.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-5.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-leaf")));
         xmlParser.parse(reader);
 
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void testLeafListAsRootElement() throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-6.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-6.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-leaf-list")));
         xmlParser.parse(reader);
 
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 }

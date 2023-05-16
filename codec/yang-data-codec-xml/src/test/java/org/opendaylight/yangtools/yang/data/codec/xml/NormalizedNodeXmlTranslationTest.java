@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
@@ -23,7 +24,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -54,7 +54,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
@@ -65,7 +64,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -237,7 +236,7 @@ public class NormalizedNodeXmlTranslationTest {
 
     public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath,
             final ContainerNode expectedNode) {
-        this.schema = YangParserTestUtils.parseYangResource(yangPath);
+        schema = YangParserTestUtils.parseYangResource(yangPath);
         this.xmlPath = xmlPath;
         this.expectedNode = expectedNode;
     }
@@ -253,22 +252,21 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private void testTranslation(final XMLOutputFactory factory) throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
+        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
 
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schema, QName.create(MODULE, "container")));
         xmlParser.parse(reader);
 
-        final NormalizedNode built = result.getResult();
+        final var built = result.getResult().data();
         assertNotNull(built);
 
         if (expectedNode != null) {
-            org.junit.Assert.assertEquals(expectedNode, built);
+            assertEquals(expectedNode, built);
         }
 
         final Document document = UntrustedXML.newDocumentBuilder().newDocument();

@@ -10,17 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
-import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -31,55 +27,53 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
+        final var schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/baz.xml");
 
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         // deserialization
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(BAZ, "top-cont")));
         xmlParser.parse(reader);
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
+        final var schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
 
-        final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/zab.xml");
+        final var resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/zab.xml");
 
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         // deserialization
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(ZAB, "top-cont")));
         xmlParser.parse(reader);
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 
     @Test
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
-
-        final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/foobar.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
+        final var resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/foobar.xml");
+        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         // deserialization
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOOBAR, "top-cont")));
         xmlParser.parse(reader);
-        final NormalizedNode transformedInput = result.getResult();
+        final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
     }
 }
