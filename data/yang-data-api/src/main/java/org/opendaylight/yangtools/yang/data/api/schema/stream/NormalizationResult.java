@@ -9,22 +9,34 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static java.util.Objects.requireNonNull;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMountpoints;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedTree;
 
 /**
- * The result of a {@link NormalizedNodeStreamWriter} stream, i.e. of a normalization operation. It contains the distict
- * parts of normalization: a mandatory {@link #data()} and optional {@link #metadata()}.
+ * The result of a {@link NormalizedNodeStreamWriter} stream, i.e. of a normalization operation. It really is just an
+ * implementation of {@link NormalizedTree}.
  */
-@NonNullByDefault
-public record NormalizationResult(NormalizedNode data, @Nullable NormalizedMetadata metadata) {
+public record NormalizationResult(
+        @NonNull NormalizedNode data,
+        @Nullable NormalizedMetadata metadata,
+        @Nullable NormalizedMountpoints mountPoints) implements NormalizedTree {
     public NormalizationResult {
         requireNonNull(data);
     }
 
-    public NormalizationResult(final NormalizedNode data) {
-        this(data, null);
+    public NormalizationResult(final @NonNull NormalizedNode data) {
+        this(data, null, null);
+    }
+
+    public NormalizationResult(final @NonNull NormalizedNode data, final @Nullable NormalizedMetadata metadata) {
+        this(data, metadata, null);
+    }
+
+    public NormalizationResult(final @NonNull NormalizedNode data, final @Nullable NormalizedMountpoints mountPoints) {
+        this(data, null, mountPoints);
     }
 }

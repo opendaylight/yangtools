@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMountpoints;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 
@@ -22,13 +23,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResul
 public final class NormalizationResultHolder implements Mutable {
     private NormalizedNode data;
     private NormalizedMetadata metadata;
+    private NormalizedMountpoints mountPoints;
 
     public @NonNull NormalizationResult getResult() {
         final var localData = data;
         if (localData == null) {
             throw new IllegalStateException("Holder " + this + " has not been completed");
         }
-        return new NormalizationResult(localData, metadata);
+        return new NormalizationResult(localData, metadata, mountPoints);
     }
 
     void setData(final NormalizedNode data) {
@@ -42,8 +44,13 @@ public final class NormalizationResultHolder implements Mutable {
         this.metadata = metadata;
     }
 
+    void setMountPoints(final NormalizedMountpoints mountPoints) {
+        this.mountPoints = mountPoints;
+    }
+
     void reset() {
         data = null;
         metadata = null;
+        mountPoints = null;
     }
 }
