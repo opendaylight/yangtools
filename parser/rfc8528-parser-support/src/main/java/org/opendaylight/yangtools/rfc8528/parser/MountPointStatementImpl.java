@@ -7,14 +7,32 @@
  */
 package org.opendaylight.yangtools.rfc8528.parser;
 
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
+import static java.util.Objects.requireNonNull;
 
-final class MountPointStatementImpl extends WithSubstatements implements MountPointStatement {
-    MountPointStatementImpl(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
+
+final class MountPointStatementImpl extends AbstractDeclaredStatement<MountPointLabel> implements MountPointStatement {
+    private final @NonNull MountPointLabel argument;
+    private final @NonNull Object substatements;
+
+    MountPointStatementImpl(final MountPointLabel argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        this.argument = requireNonNull(argument);
+        this.substatements = maskList(substatements);
+    }
+
+    @Override
+    public MountPointLabel argument() {
+        return argument;
+    }
+
+    @Override
+    public ImmutableList<? extends DeclaredStatement<?>> declaredSubstatements() {
+        return unmaskList(substatements);
     }
 }

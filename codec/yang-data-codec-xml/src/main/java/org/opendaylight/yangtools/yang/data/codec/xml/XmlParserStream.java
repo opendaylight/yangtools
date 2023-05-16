@@ -43,7 +43,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -578,7 +577,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                         }
 
                         if (optMount.isPresent()) {
-                            final var label = new MountPointLabel(optMount.orElseThrow().getQName());
+                            final var label = optMount.orElseThrow().asEffectiveStatement().argument();
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
                                 nsUri, label);
 
