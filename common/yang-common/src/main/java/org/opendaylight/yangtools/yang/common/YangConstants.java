@@ -115,6 +115,33 @@ public final class YangConstants {
      * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-13.1">RFC6020, section 13.1</a>.
      */
     public static final QName NON_UNIQUE_QNAME = QName.create(RFC6020_YANG_MODULE, "non-unique").intern();
+    /**
+     * The module name assigned to {@code ietf-yang-library}. This constant is required for JSON-like parsers, using
+     * module names to reference modules.
+     */
+    public static final String YANG_LIBRARY_MODULE_NAME = "ietf-yang-library";
+    /**
+     * The namespace assigned to {@code ietf-yang-library}. This constant is required for XML-like parsers, using
+     * XML namespaces to reference modules.
+     */
+    public static final String YANG_LIBRARY_NAMESPACE_STRING = "urn:ietf:params:xml:ns:yang:ietf-yang-library";
+    /**
+     * The namespace assigned to {@code ietf-yang-library}. This constant is useful for referencing things in a
+     * type-safe manner.
+     */
+    public static final XMLNamespace YANG_LIBRARY_NAMESPACE = XMLNamespace.of(YANG_LIBRARY_NAMESPACE_STRING).intern();
+    /**
+     * {@code ietf-yang-library} namespace bound to YANG through
+     * <a href="https://www.rfc-editor.org/rfc/rfc7895#section-2.2">ietf-yang-library@2016-06-21.yang</a>.
+     */
+    public static final QNameModule RFC7895_YANG_MODULE =
+        QNameModule.create(YANG_LIBRARY_NAMESPACE, Revision.of("2016-06-21")).intern();
+    /**
+     * {@code ietf-yang-library} namespace bound to YANG through
+     * <a href="https://datatracker.ietf.org/doc/html/rfc8525#section-4">ietf-yang-library@2019-01-04.yang</a>.
+     */
+    public static final QNameModule RFC8525_YANG_MODULE =
+        QNameModule.create(YANG_LIBRARY_NAMESPACE, Revision.of("2019-01-04")).intern();
 
     // Dummy template UnqualifiedQName. These are never leaked, but are used for efficient instantiation via
     // UnqualifiedQName#bindTo()
