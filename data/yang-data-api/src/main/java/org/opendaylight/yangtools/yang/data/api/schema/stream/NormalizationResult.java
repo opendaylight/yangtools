@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMountpoints;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -19,12 +20,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * parts of normalization: a mandatory {@link #data()} and optional {@link #metadata()}.
  */
 @NonNullByDefault
-public record NormalizationResult(NormalizedNode data, @Nullable NormalizedMetadata metadata) {
+public record NormalizationResult(
+        NormalizedNode data,
+        @Nullable NormalizedMetadata metadata,
+        @Nullable NormalizedMountpoints mountPoints) {
     public NormalizationResult {
         requireNonNull(data);
     }
 
     public NormalizationResult(final NormalizedNode data) {
-        this(data, null);
+        this(data, null, null);
+    }
+
+    public NormalizationResult(final NormalizedNode data, final NormalizedMetadata metadata) {
+        this(data, metadata, null);
+    }
+
+    public NormalizationResult(final NormalizedNode data, final NormalizedMountpoints mountPoints) {
+        this(data, null, mountPoints);
     }
 }
