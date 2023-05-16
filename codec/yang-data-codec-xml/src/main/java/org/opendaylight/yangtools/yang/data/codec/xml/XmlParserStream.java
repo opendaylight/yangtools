@@ -42,12 +42,12 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
-import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory.ContainerName;
@@ -629,7 +629,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     private static void addMountPointChild(final MountPointData mount, final XMLNamespace namespace,
             final String localName, final DOMSource source) {
         final DOMSourceMountPointChild child = new DOMSourceMountPointChild(source);
-        if (YangLibraryConstants.MODULE_NAMESPACE.equals(namespace)) {
+        if (YangConstants.YANG_LIBRARY_NAMESPACE.equals(namespace)) {
             final var optName = ContainerName.forLocalName(localName);
             if (optName != null) {
                 mount.setContainer(optName, child);
