@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 /**
  * A {@link NormalizedNodeStreamWriter} which maintains some amount of indentation.
  */
+// FIXME: implement MetadataExtension and MountPointExtension
 abstract class AbstractIndentingNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     private static final int DEFAULT_INDENT_SIZE = 2;
 

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
-import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ForwardingObject;
 import java.io.IOException;
+import java.util.Collection;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -22,8 +23,13 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     protected abstract NormalizedNodeStreamWriter delegate();
 
     @Override
-    public ClassToInstanceMap<Extension> getExtensions() {
-        return delegate().getExtensions();
+    public <T extends Extension> @Nullable T extension(final Class<T> type) {
+        return delegate().extension(type);
+    }
+
+    @Override
+    public Collection<? extends Extension> supportedExtensions() {
+        return delegate().supportedExtensions();
     }
 
     @Override

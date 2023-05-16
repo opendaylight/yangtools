@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
@@ -308,8 +308,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public ClassToInstanceMap<Extension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(MountPointExtension.class, this);
+    public Collection<? extends Extension> supportedExtensions() {
+        return List.of(this);
     }
 
     @Override
