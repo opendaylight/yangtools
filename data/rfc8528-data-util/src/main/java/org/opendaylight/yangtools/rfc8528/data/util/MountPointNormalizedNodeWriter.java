@@ -15,11 +15,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
-import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountPointExtension;
 
 /**
  * A {@link MountPointNode}-aware counterpart to {@link NormalizedNodeWriter}. Based on the backing writer's capability
@@ -49,7 +49,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
         @Override
         void writeMountPoint(final MountPointNode node) throws IOException {
             try (MountPointNormalizedNodeWriter writer = forStreamWriter(mountWriter.startMountPoint(
-                    node.getIdentifier(), node.getMountPointContext()))) {
+                    node.getIdentifier().getLabel(), node.getMountPointContext()))) {
                 for (DataContainerChild child : node.body()) {
                     writer.write(child);
                 }

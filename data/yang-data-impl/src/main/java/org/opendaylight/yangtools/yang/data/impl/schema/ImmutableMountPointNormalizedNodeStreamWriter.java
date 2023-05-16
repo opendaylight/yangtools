@@ -12,13 +12,14 @@ import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
 import java.io.IOException;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
-import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
 import org.opendaylight.yangtools.rfc8528.data.util.ImmutableMountPointNode;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMountPointExtension;
 
 // FIXME: document usage of this
 @Beta
@@ -34,7 +35,7 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
     }
 
     @Override
-    public final NormalizedNodeStreamWriter startMountPoint(final MountPointIdentifier mountId,
+    public final NormalizedNodeStreamWriter startMountPoint(final MountPointLabel label,
             final MountPointContext mountCtx) {
         final NormalizedNodeResult mountResult = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter mountDelegate = ImmutableNormalizedNodeStreamWriter.from(mountResult);
@@ -54,7 +55,7 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
                     throw new IOException("Unhandled mount data " + data);
                 }
 
-                writeChild(ImmutableMountPointNode.of(mountId, mountCtx, container));
+                writeChild(ImmutableMountPointNode.of(new MountPointIdentifier(label), mountCtx, container));
             }
         };
     }
