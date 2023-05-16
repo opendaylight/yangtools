@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c70d617f_102acbd1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-16T17:42:08Z",
+      "side": 1,
+      "message": "This is nightmare of reviews. Please split this patch by modules:\n Migrate tests for yang-data-impl....\n Migrate tests for yang-data-api....\nEtc...\nThis way it is easier to review and merge",
+      "revId": "35bbca52d0b25ea9cf11f9de06607eb7a1fb03c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
