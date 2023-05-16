@@ -15,10 +15,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 
 @Beta
 public final class NormalizedNodeTransformations {
@@ -28,12 +27,12 @@ public final class NormalizedNodeTransformations {
 
     public static NormalizedNode transformQNames(final NormalizedNode original,
             final Function<QName, QName> mapping) {
-        NormalizedNodeResult result = new NormalizedNodeResult();
-        NormalizedNodeStreamWriter nodeWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        NormalizedNodeStreamWriter transformWriter = QNameTransformingStreamWriter.fromFunction(nodeWriter, mapping);
+        final var result = new NormalizationResultHolder();
+        var nodeWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        var transformWriter = QNameTransformingStreamWriter.fromFunction(nodeWriter, mapping);
         try {
             NormalizedNodeWriter.forStreamWriter(transformWriter).write(original);
-            return result.getResult();
+            return result.getResult().data();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }

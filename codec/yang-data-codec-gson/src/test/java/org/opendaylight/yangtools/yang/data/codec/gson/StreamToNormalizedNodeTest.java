@@ -19,12 +19,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.LoggingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,26 +70,24 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
          * This is the parsing part
          */
         // This is where we will output the nodes
-        NormalizedNodeResult result = new NormalizedNodeResult();
+        var result = new NormalizationResultHolder();
 
         // StreamWriter which attaches NormalizedNode under parent
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         // JSON -> StreamWriter parser
-        try (JsonParserStream handler = JsonParserStream.create(streamWriter, lhotkaCodecFactory)) {
+        try (var handler = JsonParserStream.create(streamWriter, lhotkaCodecFactory)) {
             handler.parse(new JsonReader(new StringReader(streamAsString)));
         }
 
         // Finally build the node
-        final NormalizedNode parsedData = result.getResult();
-        LOG.debug("Parsed NormalizedNodes: {}", parsedData);
+        final var parsedData = result.getResult().data();
 
         /*
          * This is the serialization part.
          */
         // We want to write the first child out
         final DataContainerChild firstChild = (DataContainerChild) parsedData;
-        LOG.debug("Serializing first child: {}", firstChild);
 
         // String holder
         final StringWriter writer = new StringWriter();

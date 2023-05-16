@@ -8,12 +8,9 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.InputStream;
-import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,9 +21,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -53,24 +49,19 @@ public class Bug5396Test {
     }
 
     private void testInputXML(final String xmlPath, final String expectedValue) throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var reader = UntrustedXML.createXMLStreamReader(
+            XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath));
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "root")));
         xmlParser.parse(reader);
 
-        assertNotNull(result.getResult());
-        assertTrue(result.getResult() instanceof ContainerNode);
-        final ContainerNode rootContainer = (ContainerNode) result.getResult();
+        final var data = result.getResult().data();
+        assertTrue(data instanceof ContainerNode);
+        final ContainerNode rootContainer = (ContainerNode) data;
 
-        DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(
-                QName.create(FOO, "my-leaf")));
+        DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(QName.create(FOO, "my-leaf")));
         assertTrue(myLeaf instanceof LeafNode);
         assertEquals(expectedValue, myLeaf.body());
     }
