@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 public class NormalizedNodesTest {
     @Test
     public void testGetDirectChild() {
-        final var mockedPathArgument = mock(PathArgument.class);
+        final var mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
 
         final var mockedLeafNode = mock(LeafNode.class);
         assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedLeafNode, mockedPathArgument));

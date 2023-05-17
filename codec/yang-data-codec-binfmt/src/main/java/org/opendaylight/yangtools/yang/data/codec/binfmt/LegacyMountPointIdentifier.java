@@ -10,11 +10,10 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * Representation of legacy {@link MountPointIdentifier}.
+ * Representation of legacy {@code org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier}.
  */
 @Deprecated(since = "11.0.0")
 public record LegacyMountPointIdentifier(@NonNull QName qname) implements LegacyPathArgument {

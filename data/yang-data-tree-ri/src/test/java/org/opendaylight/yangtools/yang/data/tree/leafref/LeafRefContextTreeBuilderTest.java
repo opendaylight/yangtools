@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -210,7 +209,6 @@ public class LeafRefContextTreeBuilderTest {
         final IllegalStateException ise = assertThrows(IllegalStateException.class,
             () -> YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/incorrect-modules"));
         final Throwable ype = ise.getCause();
-        assertThat(ype, instanceOf(YangParserException.class));
         final Throwable reactor = ype.getCause();
         assertThat(reactor, instanceOf(ReactorException.class));
         final Throwable source = reactor.getCause();

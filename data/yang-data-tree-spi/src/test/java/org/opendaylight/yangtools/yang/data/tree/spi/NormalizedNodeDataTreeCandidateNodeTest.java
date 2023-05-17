@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -19,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -32,9 +35,9 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNode);
 
-        final PathArgument mockedPathArgument = mock(PathArgument.class);
+        final PathArgument mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
         doReturn(mockedPathArgument).when(mockedNormalizedNode).getIdentifier();
-        assertEquals(mockedPathArgument, normalizedNodeDataTreeCandidateNode.getIdentifier());
+        assertSame(mockedPathArgument, normalizedNodeDataTreeCandidateNode.getIdentifier());
 
         final Collection<DataTreeCandidateNode> childNodes = normalizedNodeDataTreeCandidateNode.getChildNodes();
         assertTrue(childNodes instanceof List);
