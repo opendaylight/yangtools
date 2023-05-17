@@ -38,8 +38,5 @@
         <module>yang-data-tree-api</module>
         <module>yang-data-tree-spi</module>
         <module>yang-data-tree-ri</module>
-
-        <!-- RFC8528 (mount-point) metamodel support -->
-        <module>rfc8528-data-util</module>
     </modules>
 </project>
