@@ -20,7 +20,6 @@ module org.opendaylight.yangtools.yang.data.codec.xml {
     requires org.opendaylight.yangtools.yang.data.impl;
     requires org.opendaylight.yangtools.rfc7952.model.api;
     requires org.opendaylight.yangtools.rfc8528.model.api;
-    requires org.opendaylight.yangtools.rfc8528.data.util;
     requires org.slf4j;
 
     // Annotations
