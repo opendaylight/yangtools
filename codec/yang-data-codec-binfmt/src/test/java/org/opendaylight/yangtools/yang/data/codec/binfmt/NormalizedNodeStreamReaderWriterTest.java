@@ -108,7 +108,7 @@ public class NormalizedNodeStreamReaderWriterTest {
         assertEquals(toasterContainer, nnin.readNormalizedNode());
     }
 
-    private ContainerNode createTestContainer() {
+    private static ContainerNode createTestContainer() {
         final byte[] bytes1 = {1, 2, 3};
         final byte[] bytes2 = {};
 
