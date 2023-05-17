@@ -16,7 +16,6 @@ module org.opendaylight.yangtools.rfc8528.data.util {
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
-    requires transitive org.opendaylight.yangtools.rfc8528.data.api;
 
     requires org.opendaylight.yangtools.rfc8528.model.api;
     requires org.opendaylight.yangtools.yang.common;

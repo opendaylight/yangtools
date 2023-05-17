@@ -26,6 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Either;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -383,5 +384,11 @@ abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput 
             case LithiumPathArgument.NODE_IDENTIFIER_WITH_VALUE -> new NodeWithValue<>(readQName(), readObject());
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument type " + type);
         };
+    }
+
+    @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public final Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
+        return Either.ofFirst(readPathArgument());
     }
 }

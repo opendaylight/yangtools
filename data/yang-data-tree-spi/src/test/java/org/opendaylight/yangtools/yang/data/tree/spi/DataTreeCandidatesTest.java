@@ -28,7 +28,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
@@ -155,24 +154,20 @@ public class DataTreeCandidatesTest {
 
         final DataTreeCandidateNode mockedChildNode1 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.DELETE).when(mockedChildNode1).getModificationType();
-        final PathArgument mockedPathArgument1 = mock(PathArgument.class);
-        doReturn(mockedPathArgument1).when(mockedChildNode1).getIdentifier();
+        doReturn(new NodeIdentifier(QName.create("test", "test1"))).when(mockedChildNode1).getIdentifier();
 
         final DataTreeCandidateNode mockedChildNode2 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.WRITE).when(mockedChildNode2).getModificationType();
         final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedChildNode2).getDataAfter();
-        final PathArgument mockedPathArgument2 = mock(PathArgument.class);
-        doReturn(mockedPathArgument2).when(mockedChildNode2).getIdentifier();
+        doReturn(new NodeIdentifier(QName.create("test", "test2"))).when(mockedChildNode2).getIdentifier();
 
         final DataTreeCandidateNode mockedChildNode3 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedChildNode3).getModificationType();
         final DataTreeCandidateNode mockedChildNode3ChildNode = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.DELETE).when(mockedChildNode3ChildNode).getModificationType();
-        final PathArgument mockedPathArgument31 = mock(PathArgument.class);
-        final PathArgument mockedPathArgument3 = mock(PathArgument.class);
-        doReturn(mockedPathArgument3).when(mockedChildNode3).getIdentifier();
-        doReturn(mockedPathArgument31).when(mockedChildNode3ChildNode).getIdentifier();
+        doReturn(new NodeIdentifier(QName.create("test", "test3"))).when(mockedChildNode3).getIdentifier();
+        doReturn(new NodeIdentifier(QName.create("test", "test4"))).when(mockedChildNode3ChildNode).getIdentifier();
         doReturn(List.of(mockedChildNode3ChildNode)).when(mockedChildNode3).getChildNodes();
 
         final List<DataTreeCandidateNode> childNodes = List.of(mockedChildNode1, mockedChildNode2, mockedChildNode3);

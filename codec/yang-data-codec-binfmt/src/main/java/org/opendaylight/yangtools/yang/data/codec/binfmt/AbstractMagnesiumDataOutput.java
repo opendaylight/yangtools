@@ -28,7 +28,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -237,8 +236,6 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
             writeAugmentationIdentifier(augid);
         } else if (pathArgument instanceof NodeWithValue<?> niv) {
             writeNodeWithValue(niv);
-        } else if (pathArgument instanceof MountPointIdentifier mpid) {
-            writeMountPointIdentifier(mpid);
         } else {
             throw new IOException("Unhandled PathArgument " + pathArgument);
         }
@@ -268,10 +265,6 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
 
     private void writeNodeIdentifier(final NodeIdentifier identifier) throws IOException {
         writePathArgumentQName(identifier.getNodeType(), MagnesiumPathArgument.NODE_IDENTIFIER);
-    }
-
-    private void writeMountPointIdentifier(final MountPointIdentifier identifier) throws IOException {
-        writePathArgumentQName(identifier.getNodeType(), MagnesiumPathArgument.MOUNTPOINT_IDENTIFIER);
     }
 
     private void writeNodeIdentifierWithPredicates(final NodeIdentifierWithPredicates identifier) throws IOException {

@@ -79,7 +79,13 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @return A PathArgument
      * @throws IOException if an error occurs
      */
-    @NonNull PathArgument readPathArgument() throws IOException;
+    default @NonNull PathArgument readPathArgument() throws IOException {
+        final var legacy = readLegacyPathArgument();
+        if (legacy.isFirst()) {
+            return legacy.getFirst();
+        }
+        throw new IOException(legacy.getSecond() + " does not have a representation");
+    }
 
     /**
      * Read a {@link PathArgument} or a {@link LegacyPathArgument} from the reader.
@@ -88,9 +94,7 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @throws IOException if an error occurs
      */
     @Deprecated(since = "11.0.0")
-    default Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
-        return Either.ofFirst(readPathArgument());
-    }
+    @NonNull Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException;
 
     @NonNull SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException;
 
