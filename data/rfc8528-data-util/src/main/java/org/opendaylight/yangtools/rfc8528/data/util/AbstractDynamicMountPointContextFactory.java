@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
@@ -30,12 +30,12 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 // FIXME: 7.0.0: consider integrating into AbstractMountPointContextFactory
-public abstract class AbstractDynamicMountPointContextFactory extends AbstractSimpleIdentifiable<MountPointIdentifier>
+public abstract class AbstractDynamicMountPointContextFactory extends AbstractSimpleIdentifiable<MountPointLabel>
         implements MountPointContextFactory {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDynamicMountPointContextFactory.class);
 
-    protected AbstractDynamicMountPointContextFactory(final @NonNull MountPointIdentifier mountId) {
-        super(mountId);
+    protected AbstractDynamicMountPointContextFactory(final @NonNull MountPointLabel label) {
+        super(label);
     }
 
     @Override

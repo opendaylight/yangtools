@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -74,8 +73,8 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
     private static final NodeIdentifier PARENT_REFERENCE = NodeIdentifier.create(
         QName.create(SchemaMountConstants.RFC8528_MODULE, "parent-reference").intern());
 
-    protected AbstractMountPointContextFactory(final MountPointIdentifier mountId) {
-        super(mountId);
+    protected AbstractMountPointContextFactory(final MountPointLabel label) {
+        super(label);
     }
 
     @Override
