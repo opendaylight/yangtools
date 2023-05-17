@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import java.io.Serial;
 import java.io.Serializable;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -78,7 +77,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  */
 public abstract sealed class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier>
         permits FixedYangInstanceIdentifier, StackedYangInstanceIdentifier {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 4L;
     private static final VarHandle TO_STRING_CACHE;
     private static final VarHandle HASH;
@@ -395,7 +394,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
 
     abstract int computeHashCode();
 
-    @Serial
+    @java.io.Serial
     final Object writeReplace() {
         return new YIDv1(this);
     }
@@ -454,7 +453,8 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
      * <li>{@link NodeWithValue} - Identifier of leaf-list entry
      * </ul>
      */
-    public interface PathArgument extends Comparable<PathArgument>, Immutable, Serializable {
+    public sealed interface PathArgument extends Comparable<PathArgument>, Immutable, Serializable
+            permits AbstractPathArgument, AugmentationIdentifier {
         /**
          * Returns unique QName of data node as defined in YANG Schema, if available.
          *
@@ -475,7 +475,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         @NonNull String toRelativeString(PathArgument previous);
     }
 
-    private abstract static class AbstractPathArgument implements PathArgument {
+    private abstract static sealed class AbstractPathArgument implements PathArgument {
         private static final long serialVersionUID = -4546547994250849340L;
         private final @NonNull QName nodeType;
         private transient volatile int hashValue;
@@ -576,7 +576,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
      * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode} leaf
      * overall data tree.
      */
-    public abstract static class NodeIdentifierWithPredicates extends AbstractPathArgument {
+    public abstract static sealed class NodeIdentifierWithPredicates extends AbstractPathArgument {
         @Beta
         public static final class Singleton extends NodeIdentifierWithPredicates {
             private static final long serialVersionUID = 1L;

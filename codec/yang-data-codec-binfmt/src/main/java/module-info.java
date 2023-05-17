@@ -16,7 +16,6 @@ module org.opendaylight.yangtools.yang.data.codec.binfmt {
     requires transitive org.opendaylight.yangtools.yang.data.tree.spi;
     requires java.xml;
     requires org.opendaylight.yangtools.yang.data.impl;
-    requires org.opendaylight.yangtools.rfc8528.data.api;
     requires org.slf4j;
 
     // Annotations

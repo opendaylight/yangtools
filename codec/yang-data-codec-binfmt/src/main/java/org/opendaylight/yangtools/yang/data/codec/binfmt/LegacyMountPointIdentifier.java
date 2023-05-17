@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.concepts.Either;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -375,22 +375,24 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
     }
 
     @Override
-    public final PathArgument readPathArgument() throws IOException {
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public final Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
         final byte header = input.readByte();
         return switch (header & MagnesiumPathArgument.TYPE_MASK) {
-            case MagnesiumPathArgument.AUGMENTATION_IDENTIFIER -> readAugmentationIdentifier(header);
+            case MagnesiumPathArgument.AUGMENTATION_IDENTIFIER -> Either.ofFirst(readAugmentationIdentifier(header));
             case MagnesiumPathArgument.NODE_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
-                yield readNodeIdentifier(header);
+                yield Either.ofFirst(readNodeIdentifier(header));
             }
-            case MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES -> readNodeIdentifierWithPredicates(header);
+            case MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES ->
+                Either.ofFirst(readNodeIdentifierWithPredicates(header));
             case MagnesiumPathArgument.NODE_WITH_VALUE -> {
                 verifyPathIdentifierOnly(header);
-                yield readNodeWithValue(header);
+                yield Either.ofFirst(readNodeWithValue(header));
             }
             case MagnesiumPathArgument.MOUNTPOINT_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
-                yield MountPointIdentifier.create(readNodeIdentifier(header).getNodeType());
+                yield Either.ofSecond(new LegacyMountPointIdentifier(readNodeIdentifier(header).getNodeType()));
             }
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument header " + header);
         };
