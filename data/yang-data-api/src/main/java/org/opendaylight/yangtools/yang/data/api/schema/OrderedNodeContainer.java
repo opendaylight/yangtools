@@ -28,6 +28,10 @@ public sealed interface OrderedNodeContainer<V extends NormalizedNode>
         extends NormalizedNodeContainer<V>, OrderingAware.User
         permits UnkeyedListNode, UserLeafSetNode, UserMapNode {
     @Override
+    NodeIdentifier name();
+
+    @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
     NodeIdentifier getIdentifier();
 
     /**
