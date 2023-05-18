@@ -18,9 +18,16 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug6856Test {
+
     @Test
     public void testImplicitInputAndOutputInRpc() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class, "/bugs/bug-6856/foo.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module foo {
+                namespace foo;
+                prefix foo;
+                revision 2017-02-28;
+                rpc foo-rpc {}
+            }""");
         assertNotNull(schemaContext);
 
         final var byteArrayOutputStream = new ByteArrayOutputStream();
@@ -39,7 +46,24 @@ public class Bug6856Test {
 
     @Test
     public void testExplicitInputAndOutputInRpc() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class, "/bugs/bug-6856/bar.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module bar {
+                namespace bar;
+                prefix bar;
+                revision 2017-02-28;
+                rpc bar-rpc {
+                    input {
+                        leaf input-leaf {
+                            type string;
+                        }
+                    }
+                    output {
+                        leaf output-leaf {
+                            type string;
+                        }
+                    }
+                }
+            }""");
         assertNotNull(schemaContext);
 
         final var byteArrayOutputStream = new ByteArrayOutputStream();

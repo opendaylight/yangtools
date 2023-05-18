@@ -20,9 +20,17 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5531Test {
+
     @Test
     public void test() throws Exception {
-        final var schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/bug5531");
+        final var schema = YangParserTestUtils.parseYang("""
+            module foo {
+                namespace "foo";
+                prefix foo;
+                revision 2015-01-01 {
+                    description "test";
+                }
+            }""");
 
         assertNotNull(schema);
         assertNotNull(schema.getModules());
