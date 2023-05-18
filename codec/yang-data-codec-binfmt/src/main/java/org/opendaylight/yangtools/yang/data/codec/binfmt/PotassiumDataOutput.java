@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -27,6 +26,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.WritableObjects;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -320,9 +320,10 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
             output.writeByte(PotassiumValue.EMPTY);
         } else if (value instanceof Set<?> set) {
             writeValue(set);
-        } else if (value instanceof BigDecimal || value instanceof Decimal64) {
-            output.writeByte(PotassiumValue.BIGDECIMAL);
-            output.writeUTF(value.toString());
+        } else if (value instanceof Decimal64 decimal) {
+            output.writeByte(PotassiumValue.DECIMAL64);
+            output.writeByte(decimal.scale());
+            WritableObjects.writeLong(output, decimal.unscaledValue());
         } else {
             throw new IOException("Unhandled value type " + value.getClass());
         }

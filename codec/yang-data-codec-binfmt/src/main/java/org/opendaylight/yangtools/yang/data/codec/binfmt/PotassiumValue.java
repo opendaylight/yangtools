@@ -8,8 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import java.io.DataOutput;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -176,18 +175,12 @@ final class PotassiumValue {
      * Reference a previously defined QNameModule. Reference number is encoded as {@code int}.
      */
     static final byte MODREF_4B      = 0x1C;
-
     /**
-     * A {@link BigDecimal}, encoded through {@link DataOutput#writeUTF(String)}.
+     * A {@link Decimal64}, encoded with fraction-digits byte and a WritableObjects.writeLong().
      */
-    // This is legacy compatibility. At some point we will remove support for writing these.
-    static final byte BIGDECIMAL     = 0x1D;
-    /**
-     * A {@link BigInteger}, encoded through {@link DataOutput#writeUTF(String)}.
-     */
-    // This is legacy compatibility. At some point we will remove support for writing these.
-    static final byte BIGINTEGER     = 0x1E;
+    static final byte DECIMAL64     = 0x1D;
 
+    // 0x1E reserved
     // 0x1F reserved
 
     /**
