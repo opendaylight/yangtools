@@ -28,7 +28,25 @@ class YT1127Test {
 
     @BeforeAll
     static void beforeClass() {
-        context = YangParserTestUtils.parseYangResource("/yt1127.yang");
+        context = YangParserTestUtils.parseYang("""
+            module foo {
+              namespace foo;
+              prefix foo;
+              grouping grp {
+                leaf leaf1 {
+                  type leafref {
+                    path "../../foo:foo_cont/foo:name";
+                  }
+                }
+              }
+              container cont {
+                leaf leaf2 {
+                   type leafref {
+                    path "../../../foo:foo_cont/foo:name";
+                  }
+                }
+              }
+            }""");
     }
 
     @AfterAll

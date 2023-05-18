@@ -34,7 +34,18 @@ class YT1292Test {
 
     @BeforeAll
     static void beforeClass() {
-        module = Iterables.getOnlyElement(YangParserTestUtils.parseYangResource("/yt1292.yang").getModuleStatements()
+        module = Iterables.getOnlyElement(YangParserTestUtils.parseYang("""
+            module foo {
+              namespace foo;
+              prefix foo;
+              yang-version 1.1;
+              rpc foo;
+              notification bar;
+              container baz {
+                action foo;
+                notification bar;
+              }
+            }""").getModuleStatements()
                 .values());
     }
 

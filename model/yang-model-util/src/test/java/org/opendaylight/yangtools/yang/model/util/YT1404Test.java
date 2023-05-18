@@ -25,7 +25,30 @@ class YT1404Test {
 
     @Test
     void testDeviatedEffectiveAugmentationSchema() {
-        final var module = YangParserTestUtils.parseYangResourceDirectory("/yt1404").findModule("foo").orElseThrow();
+        final var module = YangParserTestUtils.parseYang("""
+            module dev {
+              namespace dev;
+              prefix dev;
+              import foo {
+                prefix foo;
+              }
+              deviation /foo:foo/foo:baz {
+                deviate not-supported;
+              }
+            }""", """
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo;
+              augment /foo {
+                leaf bar {
+                  type string;
+                }
+                leaf baz {
+                  type string;
+                }
+              }
+            }""").findModule("foo").orElseThrow();
         final var augment = Iterables.getOnlyElement(module.getAugmentations());
         assertEquals(2, augment.getChildNodes().size());
         assertInstanceOf(LeafSchemaNode.class, augment.dataChildByName(BAR));
