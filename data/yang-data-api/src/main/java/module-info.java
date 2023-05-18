@@ -20,7 +20,7 @@ module org.opendaylight.yangtools.yang.data.api {
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires transitive org.opendaylight.yangtools.rfc8528.model.api;
-    requires org.opendaylight.yangtools.yang.model.util;
+    requires org.opendaylight.yangtools.yang.model.spi;
     requires org.slf4j;
 
     // Annotations
