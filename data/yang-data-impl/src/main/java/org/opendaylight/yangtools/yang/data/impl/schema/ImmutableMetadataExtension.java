@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
@@ -21,14 +21,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMetadata.Builder;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedMetadata.Builder;
 
 /**
  * A simple {@link MetadataExtension} implementation, which takes care of building {@link NormalizedMetadata} based on
  * additional nesting instructions.
  */
 @Beta
-public final class ImmutableNormalizedMetadataStreamWriter implements MetadataExtension {
+public final class ImmutableMetadataExtension implements MetadataExtension {
     @NonNullByDefault
     private record BuilderEntry(PathArgument identifier, Builder builder) {
         BuilderEntry {

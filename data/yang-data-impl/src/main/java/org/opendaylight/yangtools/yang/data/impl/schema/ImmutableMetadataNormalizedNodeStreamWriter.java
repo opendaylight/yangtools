@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMetadata;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMetadata.Builder;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedMetadata.Builder;
 
 /**
  * A {@link NormalizedMetadata}-aware {@link ImmutableMetadataNormalizedNodeStreamWriter}. It advertizes the
