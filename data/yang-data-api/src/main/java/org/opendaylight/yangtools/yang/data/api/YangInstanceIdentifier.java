@@ -18,7 +18,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import java.io.Serializable;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
@@ -37,7 +36,7 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SingletonSet;
@@ -446,7 +445,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
      * <li>{@link NodeWithValue} - Identifier of leaf-list entry
      * </ul>
      */
-    public abstract static sealed class PathArgument implements Comparable<PathArgument>, Immutable, Serializable {
+    public abstract static sealed class PathArgument implements Identifier, Comparable<PathArgument> {
         @java.io.Serial
         private static final long serialVersionUID = -4546547994250849340L;
 
