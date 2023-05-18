@@ -25,9 +25,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -111,20 +109,20 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
 
     private void enforceCases(final NormalizedNode normalizedNode) {
         verify(normalizedNode instanceof ChoiceNode);
-        final var children = ((ChoiceNode) normalizedNode).body();
-        if (!children.isEmpty()) {
-            final DataContainerChild firstChild = children.iterator().next();
-            final CaseEnforcer enforcer = verifyNotNull(caseEnforcers.get(firstChild.getIdentifier()),
+        final var choice = (ChoiceNode) normalizedNode;
+        if (!choice.isEmpty()) {
+            final var firstChild = choice.body().iterator().next();
+            final var enforcer = verifyNotNull(caseEnforcers.get(firstChild.name()),
                 "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong "
-                + "in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
+                + "in current tree type.", firstChild.name(), normalizedNode.name());
 
             // Make sure no leaves from other cases are present
-            for (final CaseEnforcer other : verifyNotNull(exclusions.get(enforcer))) {
-                for (final PathArgument id : other.getChildIdentifiers()) {
-                    final Optional<NormalizedNode> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
-                    checkArgument(!maybeChild.isPresent(),
+            for (var other : verifyNotNull(exclusions.get(enforcer))) {
+                for (var id : other.getChildIdentifiers()) {
+                    final var child = choice.childByArg(id);
+                    checkArgument(child == null,
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
-                        firstChild.getIdentifier(), enforcer, id, other, maybeChild.orElse(null));
+                        firstChild.name(), enforcer, id, other, child);
                 }
             }
 

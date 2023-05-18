@@ -101,7 +101,7 @@ public final class NormalizedMetadataWriter implements Closeable, Flushable {
      */
     public @NonNull NormalizedMetadataWriter write(final NormalizedNode data, final NormalizedMetadata metadata)
             throws IOException {
-        final PathArgument dataId = data.getIdentifier();
+        final PathArgument dataId = data.name();
         final PathArgument metaId = metadata.getIdentifier();
         checkArgument(dataId.equals(metaId), "Mismatched data %s and metadata %s", dataId, metaId);
 

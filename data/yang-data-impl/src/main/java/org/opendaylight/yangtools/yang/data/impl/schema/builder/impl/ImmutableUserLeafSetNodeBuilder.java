@@ -33,7 +33,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
     }
 
     ImmutableUserLeafSetNodeBuilder(final ImmutableUserLeafSetNode<T> node) {
-        nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.name();
         value = node.getChildren();
         dirty = true;
     }
@@ -61,14 +61,14 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withChild(final LeafSetEntryNode<T> child) {
         checkDirty();
-        this.value.put(child.getIdentifier(), child);
+        value.put(child.name(), child);
         return this;
     }
 
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withoutChild(final PathArgument key) {
         checkDirty();
-        this.value.remove(key);
+        value.remove(key);
         return this;
     }
 
@@ -80,7 +80,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
 
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
-        this.nodeIdentifier = withNodeIdentifier;
+        nodeIdentifier = withNodeIdentifier;
         return this;
     }
 

@@ -76,7 +76,7 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
             DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         final YangInstanceIdentifier ii = OUTER_LIST_1_PATH.node(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
-            .node(INNER_FOO_ENTRY_NODE.getIdentifier());
+            .node(INNER_FOO_ENTRY_NODE.name());
         modificationTree.write(ii, INNER_FOO_ENTRY_NODE);
 
         inMemoryDataTree.validate(modificationTree);

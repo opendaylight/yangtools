@@ -39,7 +39,7 @@ public class DataNodeContainerValidator {
     }
 
     public DataContainerChild validateChild(final DataContainerChild child) {
-        validateChild(child.getIdentifier());
+        validateChild(child.name());
         return child;
     }
 
@@ -48,7 +48,7 @@ public class DataNodeContainerValidator {
      * NormalizedNode API.
      */
     private static Set<QName> getChildNodes(final DataNodeContainer nodeContainer) {
-        Set<QName> allChildNodes = new HashSet<>();
+        final var allChildNodes = new HashSet<QName>();
 
         for (var childSchema : nodeContainer.getChildNodes()) {
             if (childSchema instanceof CaseSchemaNode caseChildSchema) {

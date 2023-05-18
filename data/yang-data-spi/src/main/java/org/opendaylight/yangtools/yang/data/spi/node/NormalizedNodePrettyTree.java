@@ -45,7 +45,7 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
         appendIndent(sb, depth);
         sb.append(simpleName.toLowerCase(Locale.ROOT).charAt(0)).append(simpleName, 1, simpleName.length()).append(' ');
 
-        final QName qname = node.getIdentifier().getNodeType();
+        final QName qname = node.name().getNodeType();
         final QNameModule currentNamespace = qname.getModule();
         appendNamespace(sb, parentNamespace, currentNamespace);
         sb.append(qname.getLocalName()).append(' ');

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class ImmutableMapEntryNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ImmutableMapEntryNodeBuilder.class);
+    // FIXME: NodeIdentifier instead
     protected final Map<QName, PathArgument> childrenQNamesToPaths;
 
     protected ImmutableMapEntryNodeBuilder() {
@@ -70,7 +71,7 @@ public class ImmutableMapEntryNodeBuilder
 
     private static void putQName(final Map<QName, PathArgument> map, final DataContainerChild child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-        final PathArgument identifier = child.getIdentifier();
+        final var identifier = child.name();
         map.put(identifier.getNodeType(), identifier);
     }
 

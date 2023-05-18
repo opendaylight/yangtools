@@ -137,9 +137,9 @@ public class ListConstraintsValidation {
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(fooEntryNode).build();
 
-        final YangInstanceIdentifier fooPath = MIN_MAX_LIST_PATH.node(fooEntryNode.getIdentifier());
-        final YangInstanceIdentifier barPath = MIN_MAX_LIST_PATH.node(barEntryNode.getIdentifier());
-        final YangInstanceIdentifier gooPath = MIN_MAX_LIST_PATH.node(gooEntryNode.getIdentifier());
+        final YangInstanceIdentifier fooPath = MIN_MAX_LIST_PATH.node(fooEntryNode.name());
+        final YangInstanceIdentifier barPath = MIN_MAX_LIST_PATH.node(barEntryNode.name());
+        final YangInstanceIdentifier gooPath = MIN_MAX_LIST_PATH.node(gooEntryNode.name());
 
         modificationTree.write(MIN_MAX_LIST_PATH, mapNode);
         modificationTree.merge(barPath, barEntryNode);

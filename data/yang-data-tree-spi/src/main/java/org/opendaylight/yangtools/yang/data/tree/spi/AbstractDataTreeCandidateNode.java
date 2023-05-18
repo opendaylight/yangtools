@@ -25,7 +25,7 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
 
     @Override
     public final PathArgument getIdentifier() {
-        return data.getIdentifier();
+        return data.name();
     }
 
     final @NonNull Optional<NormalizedNode> dataOptional() {
@@ -38,6 +38,6 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{data = " + this.data + "}";
+        return this.getClass().getSimpleName() + "{data = " + data + "}";
     }
 }

@@ -45,7 +45,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     }
 
     protected ImmutableMapNodeBuilder(final SystemMapNode node) {
-        nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.name();
         value = MapAdaptor.getDefaultInstance().takeSnapshot(accessChildren(node));
     }
 
@@ -63,7 +63,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
     @Override
     public ImmutableMapNodeBuilder withChild(final MapEntryNode child) {
-        value.put(child.getIdentifier(), child);
+        value.put(child.name(), child);
         return this;
     }
 
@@ -76,7 +76,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     @Override
     public ImmutableMapNodeBuilder withValue(final Collection<MapEntryNode> withValue) {
         // TODO replace or putAll ?
-        for (final MapEntryNode mapEntryNode : withValue) {
+        for (var mapEntryNode : withValue) {
             withChild(mapEntryNode);
         }
 

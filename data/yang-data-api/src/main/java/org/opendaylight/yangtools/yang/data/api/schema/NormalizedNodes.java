@@ -128,7 +128,7 @@ public final class NormalizedNodes {
 
     private static void toStringTree(final StringBuilder sb, final NormalizedNode node, final int offset) {
         final String prefix = " ".repeat(offset);
-        appendPathArgument(sb.append(prefix), node.getIdentifier());
+        appendPathArgument(sb.append(prefix), node.name());
         if (node instanceof NormalizedNodeContainer<?> container) {
             sb.append(" {\n");
             for (var child : container.body()) {

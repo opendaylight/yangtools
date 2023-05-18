@@ -17,7 +17,6 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
@@ -93,9 +92,9 @@ public class BuilderTest {
 
     @Test
     public void immutableOrderedMapBuilderTest() {
-        final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList<>();
+        final var mapEntryNodeColl = new LinkedList<MapEntryNode>();
         mapEntryNodeColl.add(LIST_MAIN_CHILD_3);
-        final Map<QName, Object> keys = new HashMap<>();
+        final var keys = new HashMap<QName, Object>();
         keys.put(LIST_MAIN_CHILD_QNAME_1, 1);
         final NodeIdentifierWithPredicates mapEntryPath = NodeIdentifierWithPredicates.of(LIST_MAIN, keys);
         final UserMapNode orderedMapNodeCreateNull = ImmutableUserMapNodeBuilder.create()
@@ -120,7 +119,7 @@ public class BuilderTest {
 
         assertEquals(SIZE, orderedMapNodeCreateNull.size());
         assertEquals(orderedMapNodeCreateNode.size(), orderedMapNodeCreateNull.size() - 1);
-        assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.getIdentifier());
+        assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.name());
         assertEquals(LIST_MAIN_CHILD_1, orderedMapNodeCreateNull.childAt(0));
         assertEquals(SIZE, orderedMapNodeCreateNull.size());
         assertEquals(orderedMapNodeSchemaAware.childAt(0), orderedMapNodeSchemaAwareMapNodeConst.childAt(0));
@@ -175,8 +174,8 @@ public class BuilderTest {
                 .build();
         final UnkeyedListEntryNode unkeyedListEntryNodeNode = ImmutableUnkeyedListEntryNodeBuilder
                 .create(unkeyedListEntryNode).build();
-        assertEquals(unkeyedListEntryNode.getIdentifier(), unkeyedListEntryNodeSize.getIdentifier());
-        assertEquals(unkeyedListEntryNodeSize.getIdentifier(), unkeyedListEntryNodeNode.getIdentifier());
+        assertEquals(unkeyedListEntryNode.name(), unkeyedListEntryNodeSize.name());
+        assertEquals(unkeyedListEntryNodeSize.name(), unkeyedListEntryNodeNode.name());
     }
 
     @Test
@@ -200,7 +199,7 @@ public class BuilderTest {
 
         assertNotNull(unkeyedListNodeSize.body());
         assertEquals(unkeyedListEntryNode, unkeyedListNodeCreated.childAt(0));
-        assertEquals(unkeyedListNode.getIdentifier(), unkeyedListNodeSize.getIdentifier());
+        assertEquals(unkeyedListNode.name(), unkeyedListNodeSize.name());
         assertNotNull(unkeyedListNodeCreated);
     }
 
@@ -209,7 +208,7 @@ public class BuilderTest {
         final ChoiceNode choiceNode = ImmutableChoiceNodeBuilder.create(1).withNodeIdentifier(NODE_IDENTIFIER_LIST)
                 .build();
         final ChoiceNode choiceNodeCreated = ImmutableChoiceNodeBuilder.create(choiceNode).build();
-        assertEquals(choiceNodeCreated.getIdentifier(), choiceNode.getIdentifier());
+        assertEquals(choiceNodeCreated.name(), choiceNode.name());
     }
 
     @Test

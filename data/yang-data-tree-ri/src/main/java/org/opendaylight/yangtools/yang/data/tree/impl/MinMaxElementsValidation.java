@@ -64,11 +64,11 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
         checkArgument(value instanceof NormalizedNodeContainer, "Value %s is not a NormalizedNodeContainer", value);
         final int children = ((NormalizedNodeContainer<?>) value).size();
         if (minElements > children) {
-            throw exceptionSupplier.get(children, value.getIdentifier()
+            throw exceptionSupplier.get(children, value.name()
                 + " does not have enough elements (" + children + "), needs at least " + minElements);
         }
         if (maxElements < children) {
-            throw exceptionSupplier.get(children, value.getIdentifier()
+            throw exceptionSupplier.get(children, value.name()
                 + " has too many elements (" + children + "), can have at most " + maxElements);
         }
     }

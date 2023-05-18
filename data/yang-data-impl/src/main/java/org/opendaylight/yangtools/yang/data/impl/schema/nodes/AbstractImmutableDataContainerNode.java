@@ -67,7 +67,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument,
             return false;
         }
         for (var child : body()) {
-            if (!child.equals(other.childByArg(child.getIdentifier()))) {
+            if (!child.equals(other.childByArg(child.name()))) {
                 return false;
             }
         }

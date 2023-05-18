@@ -33,7 +33,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     protected ImmutableUnkeyedListNodeBuilder(final ImmutableUnkeyedListNode node) {
-        nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.name();
         // FIXME: clean this up, notably reuse unmodified lists
         value = new LinkedList<>();
         Iterables.addAll(value, node.body());

@@ -115,6 +115,6 @@ public class InstanceIdToNodesTest {
         final MapEntryNode entry = value.iterator().next();
 
         // The entry must have a the proper order
-        assertArrayEquals(new Object[] { FOO, BAR }, entry.getIdentifier().keySet().toArray());
+        assertArrayEquals(new Object[] { FOO, BAR }, entry.name().keySet().toArray());
     }
 }

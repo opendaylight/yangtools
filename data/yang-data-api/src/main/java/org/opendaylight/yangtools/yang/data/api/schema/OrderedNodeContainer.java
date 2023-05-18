@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * A {@link NormalizedNodeContainer} which preserves user supplied ordering and allows addressing of child elements by
@@ -27,9 +26,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 public sealed interface OrderedNodeContainer<V extends NormalizedNode>
         extends NormalizedNodeContainer<V>, OrderingAware.User
         permits UnkeyedListNode, UserLeafSetNode, UserMapNode {
-    @Override
-    NodeIdentifier getIdentifier();
-
     /**
      * Returns child node by position.
      *

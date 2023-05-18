@@ -111,13 +111,13 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     final void verifyValueChildren(final NormalizedNode writtenValue) {
         if (verifyChildrenStructure) {
-            final DistinctNodeContainer<?, ?> container = (DistinctNodeContainer<?, ?>) writtenValue;
-            for (final NormalizedNode child : container.body()) {
-                final ModificationApplyOperation childOp = childByArg(child.getIdentifier());
+            final var container = (DistinctNodeContainer<?, ?>) writtenValue;
+            for (var child : container.body()) {
+                final ModificationApplyOperation childOp = childByArg(child.name());
                 if (childOp == null) {
                     throw new SchemaValidationFailedException(String.format(
                         "Node %s is not a valid child of %s according to the schema.",
-                        child.getIdentifier(), container.getIdentifier()));
+                        child.name(), container.name()));
                 }
                 childOp.fullVerifyStructure(child);
             }
@@ -149,13 +149,13 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
     @Override
     protected final void recursivelyVerifyStructure(final NormalizedNode value) {
-        final NormalizedNodeContainer<?> container = (NormalizedNodeContainer<?>) value;
-        for (final NormalizedNode child : container.body()) {
-            final ModificationApplyOperation childOp = childByArg(child.getIdentifier());
+        final var container = (NormalizedNodeContainer<?>) value;
+        for (var child : container.body()) {
+            final var childOp = childByArg(child.name());
             if (childOp == null) {
                 throw new SchemaValidationFailedException(
                     String.format("Node %s is not a valid child of %s according to the schema.",
-                        child.getIdentifier(), container.getIdentifier()));
+                        child.name(), container.name()));
             }
 
             childOp.recursivelyVerifyStructure(child);
@@ -241,8 +241,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         final NormalizedNode value = modification.getWrittenValue();
 
         Verify.verify(value instanceof DistinctNodeContainer, "Attempted to merge non-container %s", value);
-        for (final NormalizedNode c : ((DistinctNodeContainer<?, ?>) value).body()) {
-            final PathArgument id = c.getIdentifier();
+        for (var c : ((DistinctNodeContainer<?, ?>) value).body()) {
+            final var id = c.name();
             modification.modifyChild(id, resolveChildOperation(id), version);
         }
         return applyTouch(modification, currentMeta, version);
@@ -251,8 +251,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     private void mergeChildrenIntoModification(final ModifiedNode modification,
             final Collection<? extends NormalizedNode> children, final Version version) {
         for (final NormalizedNode c : children) {
-            final ModificationApplyOperation childOp = resolveChildOperation(c.getIdentifier());
-            final ModifiedNode childNode = modification.modifyChild(c.getIdentifier(), childOp, version);
+            final ModificationApplyOperation childOp = resolveChildOperation(c.name());
+            final ModifiedNode childNode = modification.modifyChild(c.name(), childOp, version);
             childOp.mergeIntoModifiedNode(childNode, c, version);
         }
     }

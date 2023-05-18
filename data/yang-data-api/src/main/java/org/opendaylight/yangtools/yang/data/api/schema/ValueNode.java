@@ -18,8 +18,8 @@ public sealed interface ValueNode<V> extends NormalizedNode permits LeafNode, Le
      *
      * <p>
      * <b>Implementation note</b>
-     * Invocation of {@code body()} must provide the same value as value in {@link #getIdentifier()}.
-     * {@code true == this.getIdentifier().getValue().equals(this.body())}.
+     * Invocation of {@code body()} must provide the same value as value in {@link #name()}.
+     * {@code true == this.name().getValue().equals(this.body())}.
      */
     @Override
     V body();

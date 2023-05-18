@@ -28,5 +28,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 public sealed interface DataContainerChild extends NormalizedNode
         permits ChoiceNode, ContainerNode, ForeignDataNode, LeafNode, LeafSetNode, MapNode, UnkeyedListNode {
     @Override
-    NodeIdentifier getIdentifier();
+    NodeIdentifier name();
+
+    @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    default NodeIdentifier getIdentifier() {
+        return name();
+    }
 }

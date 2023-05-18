@@ -62,7 +62,7 @@ final class MandatoryDescendant implements Immutable {
 
         // ... not found, report the error
         throw new IllegalArgumentException(String.format("Node %s is missing mandatory descendant %s",
-            data.getIdentifier(), path));
+            data.name(), path));
     }
 
     static AugmentationSchemaNode getAugIdentifierOfChild(final DataNodeContainer parent, final DataSchemaNode child) {

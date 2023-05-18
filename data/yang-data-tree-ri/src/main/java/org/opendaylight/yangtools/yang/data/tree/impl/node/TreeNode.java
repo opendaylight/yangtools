@@ -70,7 +70,7 @@ public abstract class TreeNode implements Identifiable<PathArgument>, StoreTreeN
 
     @Override
     public final PathArgument getIdentifier() {
-        return data.getIdentifier();
+        return data.name();
     }
 
     /**

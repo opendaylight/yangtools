@@ -71,7 +71,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I, R> node) {
-        nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.name();
 
         /*
          * This quite awkward. What we actually want to be saying here is: give me a copy-on-write view of your

@@ -96,7 +96,7 @@ public final class DataTreeCandidateNodes {
         final Collection<DataTreeCandidateNode> result = new ArrayList<>();
         for (NormalizedNode child : newData.body()) {
             final DataTreeCandidateNode node;
-            final NormalizedNode oldChild = oldData.childByArg(child.getIdentifier());
+            final NormalizedNode oldChild = oldData.childByArg(child.name());
             if (oldChild != null) {
                 // This does not find children which have not in fact been modified, as doing that
                 // reliably would require us running a full equals() on the two nodes.
@@ -110,7 +110,7 @@ public final class DataTreeCandidateNodes {
 
         // Process removals next, looking into new data to see if we processed it
         for (NormalizedNode child : oldData.body()) {
-            if (newData.childByArg(child.getIdentifier()) == null) {
+            if (newData.childByArg(child.name()) == null) {
                 result.add(deleteNode(child));
             }
         }

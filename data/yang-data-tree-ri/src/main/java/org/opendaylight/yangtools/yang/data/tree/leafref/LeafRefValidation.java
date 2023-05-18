@@ -204,14 +204,14 @@ public final class LeafRefValidation {
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
         for (final DataContainerChild child : node.body()) {
-            final QName qname = child.getIdentifier().getNodeType();
+            final QName qname = child.name().getNodeType();
             final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
                     : findReferencedByCtxUnderChoice(referencedByCtx, qname);
             final LeafRefContext childReferencingCtx = referencingCtx == null ? null
                     : findReferencingCtxUnderChoice(referencingCtx, qname);
             if (childReferencedByCtx != null || childReferencingCtx != null) {
                 validateNodeData(child, childReferencedByCtx, childReferencingCtx, modificationType,
-                    current.node(child.getIdentifier()));
+                    current.node(child.name()));
             }
         }
     }
@@ -219,7 +219,7 @@ public final class LeafRefValidation {
     private void validateDataContainerNodeData(final DataContainerNode node, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-        for (final DataContainerChild child : node.body()) {
+        for (var child : node.body()) {
             validateChildNodeData(child, referencedByCtx, referencingCtx, modificationType, current);
         }
     }
@@ -227,9 +227,9 @@ public final class LeafRefValidation {
     private void validateMapNodeData(final MapNode node, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-        for (final MapEntryNode mapEntry : node.asMap().values()) {
-            final YangInstanceIdentifier mapEntryIdentifier = current.node(mapEntry.getIdentifier());
-            for (final DataContainerChild child : mapEntry.body()) {
+        for (var mapEntry : node.asMap().values()) {
+            final var mapEntryIdentifier = current.node(mapEntry.name());
+            for (var child : mapEntry.body()) {
                 validateChildNodeData(child, referencedByCtx, referencingCtx, modificationType, mapEntryIdentifier);
             }
         }
@@ -238,14 +238,14 @@ public final class LeafRefValidation {
     private void validateChildNodeData(final DataContainerChild child, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-        final QName qname = child.getIdentifier().getNodeType();
+        final QName qname = child.name().getNodeType();
         final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
                 : referencedByCtx.getReferencedChildByName(qname);
         final LeafRefContext childReferencingCtx = referencingCtx == null ? null
                 : referencingCtx.getReferencingChildByName(qname);
         if (childReferencedByCtx != null || childReferencingCtx != null) {
             validateNodeData(child, childReferencedByCtx, childReferencingCtx, modificationType, current.node(
-                child.getIdentifier()));
+                child.name()));
         }
     }
 
@@ -297,11 +297,11 @@ public final class LeafRefValidation {
 
                 LOG.debug("Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node: {} path "
                         + "of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
-                        leafRefTargetNodeValues, leaf.getIdentifier(), leafRefContext.getCurrentNodePath(),
+                        leafRefTargetNodeValues, leaf.name(), leafRefContext.getCurrentNodePath(),
                         leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED);
                 errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s by validation of leafref"
                         + " TARGET node: %s path of invalid LEAFREF node: %s leafRef target path: %s %s", leafRefsValue,
-                        leafRefTargetNodeValues, leaf.getIdentifier(), leafRefContext.getCurrentNodePath(),
+                        leafRefTargetNodeValues, leaf.name(), leafRefContext.getCurrentNodePath(),
                         leafRefContext.getAbsoluteLeafRefTargetPath(),
                         FAILED));
             });
@@ -325,9 +325,9 @@ public final class LeafRefValidation {
         LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
             referencingCtx.getNodeName(), leaf.body(), FAILED);
         LOG.debug("Invalid leafref value [{}] allowed values {} of LEAFREF node: {} leafRef target path: {}",
-            leaf.body(), values, leaf.getIdentifier(), referencingCtx.getAbsoluteLeafRefTargetPath());
+            leaf.body(), values, leaf.name(), referencingCtx.getAbsoluteLeafRefTargetPath());
         errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s of LEAFREF node: %s leafRef "
-                + "target path: %s", leaf.body(), values, leaf.getIdentifier(),
+                + "target path: %s", leaf.body(), values, leaf.name(),
                 referencingCtx.getAbsoluteLeafRefTargetPath()));
     }
 
@@ -399,7 +399,7 @@ public final class LeafRefValidation {
         }
 
         return mapEntry -> {
-            for (var entryKeyValue : mapEntry.getIdentifier().entrySet()) {
+            for (var entryKeyValue : mapEntry.name().entrySet()) {
                 final var allowedValues = keyValues.get(entryKeyValue.getKey());
                 if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
                     return false;
