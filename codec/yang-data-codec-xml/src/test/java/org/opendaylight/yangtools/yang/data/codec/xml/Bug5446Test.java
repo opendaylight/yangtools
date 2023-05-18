@@ -52,7 +52,35 @@ public class Bug5446Test extends XMLTestCase {
 
     @Test
     public void test() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug5446/yang/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
+            module foo {
+                yang-version 1;
+                namespace "foo";
+                prefix "foo";
+                revision "2015-11-05" {
+                }
+                typedef ipv4-address-binary {
+                    type binary {
+                        length "4";
+                    }
+                }
+                typedef ipv6-address-binary {
+                    type binary {
+                        length "16";
+                    }
+                }
+                typedef ip-address-binary {
+                    type union {
+                        type ipv4-address-binary;
+                        type ipv6-address-binary;
+                    }
+                }
+                container root {
+                    leaf ip-address {
+                        type ip-address-binary;
+                    }
+                }
+            }""");
         final Document doc = loadDocument("/bug5446/xml/foo.xml");
 
         final ContainerNode docNode = createDocNode();

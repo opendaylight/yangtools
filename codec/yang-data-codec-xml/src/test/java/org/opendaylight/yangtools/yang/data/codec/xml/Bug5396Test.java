@@ -30,7 +30,36 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Bug5396Test {
     private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2016-03-22"));
 
-    private final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
+    private final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
+        module foo {
+            yang-version 1;
+            namespace "foo";
+            prefix "foo";
+            revision "2016-03-22" {
+                description "test";
+            }
+            container root {
+                leaf my-leaf {
+                    type my-type;
+                }
+            }
+            typedef my-type {
+                type union {
+                    type string {
+                        pattern "dp[0-9]+o[0-9]+";
+                    }
+                    type string {
+                        pattern "dp[0-9]+s[0-9]+(f[0-9]+)?(d[0-9]+)?";
+                    }
+                    type string {
+                        pattern "dp[0-9]+(P[0-9]+)?p[0-9]{1,3}s[0-9]{1,3}(f[0-9]+)?(d[0-9]+)?";
+                    }
+                    type string {
+                        pattern "dp[0-9]+p[0-9]+p[0-9]+";
+                    }
+                }
+            }
+        }""");
 
     @Test
     public void test() throws Exception {
