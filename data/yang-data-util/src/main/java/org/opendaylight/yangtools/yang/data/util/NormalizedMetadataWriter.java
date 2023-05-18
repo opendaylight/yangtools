@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -15,7 +14,6 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -96,20 +94,15 @@ public final class NormalizedMetadataWriter implements Closeable, Flushable {
      * @param metadata {@link NormalizedMetadata} metadata
      * @return NormalizedNodeWriter this
      * @throws NullPointerException if any argument is null
-     * @throws IllegalArgumentException if metadata does not match data
      * @throws IOException when thrown from the backing writer.
      */
     public @NonNull NormalizedMetadataWriter write(final NormalizedNode data, final NormalizedMetadata metadata)
             throws IOException {
-        final PathArgument dataId = data.name();
-        final PathArgument metaId = metadata.getIdentifier();
-        checkArgument(dataId.equals(metaId), "Mismatched data %s and metadata %s", dataId, metaId);
-
         final var metaWriter = writer.extension(MetadataExtension.class);
-        final NormalizedNodeStreamWriter delegate = metaWriter == null ? writer
+        final var delegate = metaWriter == null ? writer
                 : new NormalizedNodeStreamWriterMetadataDecorator(writer, metaWriter, metadata);
 
-        final NormalizedNodeWriter nnWriter = NormalizedNodeWriter.forStreamWriter(delegate, orderKeyLeaves);
+        final var nnWriter = NormalizedNodeWriter.forStreamWriter(delegate, orderKeyLeaves);
         nnWriter.write(data);
         nnWriter.flush();
         return this;

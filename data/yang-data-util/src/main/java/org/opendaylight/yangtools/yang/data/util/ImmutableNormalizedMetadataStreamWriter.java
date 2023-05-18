@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
@@ -27,22 +29,32 @@ import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMetadata.Bui
  */
 @Beta
 public final class ImmutableNormalizedMetadataStreamWriter implements MetadataExtension {
-    private final Deque<Builder> builders = new ArrayDeque<>();
+    @NonNullByDefault
+    private record BuilderEntry(PathArgument identifier, Builder builder) {
+        BuilderEntry {
+            requireNonNull(identifier);
+            requireNonNull(builder);
+        }
+    }
+
+    private final Deque<BuilderEntry> builders = new ArrayDeque<>();
 
     private ImmutableNormalizedMetadata result;
 
     public void enter(final PathArgument identifier) {
         checkNotDone();
-        builders.push(ImmutableNormalizedMetadata.builder().withIdentifier(identifier));
+        builders.push(new BuilderEntry(identifier, ImmutableNormalizedMetadata.builder()));
     }
 
     public void exit() {
         checkNotDone();
-        final ImmutableNormalizedMetadata metadata = builders.pop().build();
-        final Builder parent = builders.peek();
-        if (parent != null) {
-            if (!metadata.getAnnotations().isEmpty()) {
-                parent.withChild(metadata);
+
+        final var last = builders.pop();
+        final var metadata = last.builder.build();
+        final var current = builders.peek();
+        if (current != null) {
+            if (!metadata.getAnnotations().isEmpty() || !metadata.getChildren().isEmpty()) {
+                current.builder().withChild(last.identifier, metadata);
             }
         } else {
             result = metadata;
@@ -56,7 +68,7 @@ public final class ImmutableNormalizedMetadataStreamWriter implements MetadataEx
 
     @Override
     public void metadata(final ImmutableMap<QName, Object> metadata) throws IOException {
-        builders.peek().withAnnotations(metadata);
+        builders.peek().builder.withAnnotations(metadata);
     }
 
     private void checkNotDone() {

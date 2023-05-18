@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -25,11 +24,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * This model of metadata <em>does not</em> have the RFC7952 restriction on metadata attachment to {@code list}s and
  * {@code leaf-list}s because NormalizedNode data model has {@link LeafSetNode}, {@link MapNode} and
  * {@link UnkeyedListNode} to which metadata can be attached.
- *
- * @author Robert Varga
  */
 @Beta
-public interface NormalizedMetadata extends Identifiable<PathArgument>, Immutable {
+public interface NormalizedMetadata extends Immutable {
     /**
      * Return the set of annotations defined in this metadata node. Values are expected to be effectively-immutable
      * scalar types, like {@link String}s, {@link Number}s and similar. The map must also be effectively-immutable.

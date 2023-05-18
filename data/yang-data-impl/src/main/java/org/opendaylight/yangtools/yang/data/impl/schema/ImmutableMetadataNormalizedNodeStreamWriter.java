@@ -17,6 +17,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
@@ -36,10 +37,10 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
      * Snapshot of currently-open data- and metadatastate.
      */
     public static final class State {
-        final Builder metaBuilder;
+        final BuilderEntry metaBuilder;
         final NormalizedNodeBuilder dataBuilder;
 
-        State(final NormalizedNodeBuilder dataBuilder, final Builder metadataBuilder) {
+        State(final NormalizedNodeBuilder dataBuilder, final BuilderEntry metadataBuilder) {
             this.dataBuilder = requireNonNull(dataBuilder);
             metaBuilder = requireNonNull(metadataBuilder);
         }
@@ -49,16 +50,24 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
         }
 
         public Builder getMetaBuilder() {
-            return metaBuilder;
+            return metaBuilder.builder;
         }
     }
 
-    private final Deque<Builder> builders = new ArrayDeque<>();
+    @NonNullByDefault
+    private record BuilderEntry(PathArgument identifier, Builder builder) {
+        BuilderEntry {
+            requireNonNull(identifier);
+            requireNonNull(builder);
+        }
+    }
+
+    private final Deque<BuilderEntry> builders = new ArrayDeque<>();
     private final NormalizationResultHolder holder;
 
     protected ImmutableMetadataNormalizedNodeStreamWriter(final State state) {
-        super(state.getDataBuilder());
-        builders.push(state.getMetaBuilder());
+        super(state.dataBuilder);
+        builders.push(state.metaBuilder);
         holder = null;
     }
 
@@ -74,9 +83,9 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
 
     @Override
     public final void metadata(final ImmutableMap<QName, Object> metadata) throws IOException {
-        final Builder current = builders.peek();
+        final var current = builders.peek();
         checkState(current != null, "Attempted to emit metadata when no metadata is open");
-        current.withAnnotations(metadata);
+        current.builder.withAnnotations(metadata);
     }
 
     /**
@@ -92,17 +101,19 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
     @SuppressWarnings("rawtypes")
     final void enter(final PathArgument identifier, final NormalizedNodeBuilder next) {
         super.enter(identifier, next);
-        builders.push(ImmutableNormalizedMetadata.builder().withIdentifier(identifier));
+        builders.push(new BuilderEntry(identifier, ImmutableNormalizedMetadata.builder()));
     }
 
     @Override
     public final void endNode() {
         super.endNode();
-        final ImmutableNormalizedMetadata metadata = builders.pop().build();
-        final Builder current = builders.peek();
+
+        final var last = builders.pop();
+        final var metadata = last.builder.build();
+        final var current = builders.peek();
         if (current != null) {
             if (!metadata.getAnnotations().isEmpty() || !metadata.getChildren().isEmpty()) {
-                current.withChild(metadata);
+                current.builder.withChild(last.identifier, metadata);
             }
         } else {
             // All done
