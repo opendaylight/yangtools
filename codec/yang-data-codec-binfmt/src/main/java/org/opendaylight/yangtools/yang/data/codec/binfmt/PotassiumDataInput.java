@@ -47,8 +47,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Abstract base class for NormalizedNodeDataInput based on {@link MagnesiumNode}, {@link MagnesiumPathArgument} and
- * {@link MagnesiumValue}.
+ * Abstract base class for NormalizedNodeDataInput based on {@link PotassiumNode}, {@link PotassiumPathArgument} and
+ * {@link PotassiumValue}.
  */
 final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     private static final Logger LOG = LoggerFactory.getLogger(PotassiumDataInput.class);
@@ -83,44 +83,44 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
 
     private void streamNormalizedNode(final NormalizedNodeStreamWriter writer, final PathArgument parent,
             final byte nodeHeader) throws IOException {
-        switch (nodeHeader & MagnesiumNode.TYPE_MASK) {
-            case MagnesiumNode.NODE_LEAF:
+        switch (nodeHeader & PotassiumNode.TYPE_MASK) {
+            case PotassiumNode.NODE_LEAF:
                 streamLeaf(writer, parent, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_CONTAINER:
+            case PotassiumNode.NODE_CONTAINER:
                 streamContainer(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_LIST:
+            case PotassiumNode.NODE_LIST:
                 streamList(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_MAP:
+            case PotassiumNode.NODE_MAP:
                 streamMap(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_MAP_ORDERED:
+            case PotassiumNode.NODE_MAP_ORDERED:
                 streamMapOrdered(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_LEAFSET:
+            case PotassiumNode.NODE_LEAFSET:
                 streamLeafset(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_LEAFSET_ORDERED:
+            case PotassiumNode.NODE_LEAFSET_ORDERED:
                 streamLeafsetOrdered(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_CHOICE:
+            case PotassiumNode.NODE_CHOICE:
                 streamChoice(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_AUGMENTATION:
+            case PotassiumNode.NODE_AUGMENTATION:
                 streamAugmentation(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_ANYXML:
+            case PotassiumNode.NODE_ANYXML:
                 streamAnyxml(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_LIST_ENTRY:
+            case PotassiumNode.NODE_LIST_ENTRY:
                 streamListEntry(writer, parent, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_LEAFSET_ENTRY:
+            case PotassiumNode.NODE_LEAFSET_ENTRY:
                 streamLeafsetEntry(writer, parent, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_MAP_ENTRY:
+            case PotassiumNode.NODE_MAP_ENTRY:
                 streamMapEntry(writer, parent, nodeHeader);
                 break;
             default:
@@ -142,7 +142,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     private void streamAugmentation(final NormalizedNodeStreamWriter writer, final byte nodeHeader) throws IOException {
         final var augIdentifier = decodeAugmentationIdentifier(nodeHeader);
         LOG.trace("Streaming augmentation node {}", augIdentifier);
-        for (byte nodeType = input.readByte(); nodeType != MagnesiumNode.NODE_END; nodeType = input.readByte()) {
+        for (byte nodeType = input.readByte(); nodeType != PotassiumNode.NODE_END; nodeType = input.readByte()) {
             // FIXME: not just null, but augmentation identifier for debug
             streamNormalizedNode(writer, null, nodeType);
         }
@@ -169,7 +169,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         writer.startLeafNode(identifier);
 
         final Object value;
-        if ((nodeHeader & MagnesiumNode.PREDICATE_ONE) == MagnesiumNode.PREDICATE_ONE) {
+        if ((nodeHeader & PotassiumNode.PREDICATE_ONE) == PotassiumNode.PREDICATE_ONE) {
             if (!(parent instanceof NodeIdentifierWithPredicates nip)) {
                 throw new InvalidNormalizedNodeStreamException("Invalid predicate leaf " + identifier + " in parent "
                         + parent);
@@ -247,11 +247,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             final byte nodeHeader) throws IOException {
         final NodeIdentifier nodeId = decodeNodeIdentifier(nodeHeader, parent);
 
-        final int size = switch (mask(nodeHeader, MagnesiumNode.PREDICATE_MASK)) {
-            case MagnesiumNode.PREDICATE_ZERO -> 0;
-            case MagnesiumNode.PREDICATE_ONE -> 1;
-            case MagnesiumNode.PREDICATE_1B -> input.readUnsignedByte();
-            case MagnesiumNode.PREDICATE_4B -> input.readInt();
+        final int size = switch (mask(nodeHeader, PotassiumNode.PREDICATE_MASK)) {
+            case PotassiumNode.PREDICATE_ZERO -> 0;
+            case PotassiumNode.PREDICATE_ONE -> 1;
+            case PotassiumNode.PREDICATE_1B -> input.readUnsignedByte();
+            case PotassiumNode.PREDICATE_4B -> input.readInt();
             default ->
                 // ISE on purpose: this should never ever happen
                 throw new IllegalStateException("Failed to decode NodeIdentifierWithPredicates size from header "
@@ -265,7 +265,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
 
     private void commonStreamContainer(final NormalizedNodeStreamWriter writer, final PathArgument parent)
             throws IOException {
-        for (byte nodeType = input.readByte(); nodeType != MagnesiumNode.NODE_END; nodeType = input.readByte()) {
+        for (byte nodeType = input.readByte(); nodeType != PotassiumNode.NODE_END; nodeType = input.readByte()) {
             streamNormalizedNode(writer, parent, nodeType);
         }
         writer.endNode();
@@ -292,16 +292,16 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
 
     private NodeIdentifier decodeNodeIdentifier(final byte nodeHeader, final PathArgument parent) throws IOException {
         final int index;
-        switch (nodeHeader & MagnesiumNode.ADDR_MASK) {
-            case MagnesiumNode.ADDR_DEFINE:
+        switch (nodeHeader & PotassiumNode.ADDR_MASK) {
+            case PotassiumNode.ADDR_DEFINE:
                 return readNodeIdentifier();
-            case MagnesiumNode.ADDR_LOOKUP_1B:
+            case PotassiumNode.ADDR_LOOKUP_1B:
                 index = input.readUnsignedByte();
                 break;
-            case MagnesiumNode.ADDR_LOOKUP_4B:
+            case PotassiumNode.ADDR_LOOKUP_4B:
                 index = input.readInt();
                 break;
-            case MagnesiumNode.ADDR_PARENT:
+            case PotassiumNode.ADDR_PARENT:
                 if (parent instanceof NodeIdentifier nid) {
                     return nid;
                 }
@@ -320,13 +320,13 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
 
     private LegacyAugmentationIdentifier decodeAugmentationIdentifier(final byte nodeHeader) throws IOException {
         final int index;
-        switch (nodeHeader & MagnesiumNode.ADDR_MASK) {
-            case MagnesiumNode.ADDR_DEFINE:
+        switch (nodeHeader & PotassiumNode.ADDR_MASK) {
+            case PotassiumNode.ADDR_DEFINE:
                 return readAugmentationIdentifier();
-            case MagnesiumNode.ADDR_LOOKUP_1B:
+            case PotassiumNode.ADDR_LOOKUP_1B:
                 index = input.readUnsignedByte();
                 break;
-            case MagnesiumNode.ADDR_LOOKUP_4B:
+            case PotassiumNode.ADDR_LOOKUP_4B:
                 index = input.readInt();
                 break;
             default:
@@ -344,11 +344,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     @Override
     public YangInstanceIdentifier readYangInstanceIdentifier() throws IOException {
         final byte type = input.readByte();
-        if (type == MagnesiumValue.YIID) {
+        if (type == PotassiumValue.YIID) {
             return readYangInstanceIdentifier(input.readInt());
-        } else if (type >= MagnesiumValue.YIID_0) {
-            // Note 'byte' is range limited, so it is always '&& type <= MagnesiumValue.YIID_31'
-            return readYangInstanceIdentifier(type - MagnesiumValue.YIID_0);
+        } else if (type >= PotassiumValue.YIID_0) {
+            // Note 'byte' is range limited, so it is always '&& type <= PotassiumValue.YIID_31'
+            return readYangInstanceIdentifier(type - PotassiumValue.YIID_0);
         } else {
             throw new InvalidNormalizedNodeStreamException("Unexpected YangInstanceIdentifier type " + type);
         }
@@ -372,10 +372,10 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     public QName readQName() throws IOException {
         final byte type = input.readByte();
         return switch (type) {
-            case MagnesiumValue.QNAME -> decodeQName();
-            case MagnesiumValue.QNAME_REF_1B -> decodeQNameRef1();
-            case MagnesiumValue.QNAME_REF_2B -> decodeQNameRef2();
-            case MagnesiumValue.QNAME_REF_4B -> decodeQNameRef4();
+            case PotassiumValue.QNAME -> decodeQName();
+            case PotassiumValue.QNAME_REF_1B -> decodeQNameRef1();
+            case PotassiumValue.QNAME_REF_2B -> decodeQNameRef2();
+            case PotassiumValue.QNAME_REF_4B -> decodeQNameRef4();
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected QName type " + type);
         };
     }
@@ -384,19 +384,19 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     @Deprecated(since = "11.0.0", forRemoval = true)
     public Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
         final byte header = input.readByte();
-        return switch (header & MagnesiumPathArgument.TYPE_MASK) {
-            case MagnesiumPathArgument.AUGMENTATION_IDENTIFIER -> Either.ofSecond(readAugmentationIdentifier(header));
-            case MagnesiumPathArgument.NODE_IDENTIFIER -> {
+        return switch (header & PotassiumPathArgument.TYPE_MASK) {
+            case PotassiumPathArgument.AUGMENTATION_IDENTIFIER -> Either.ofSecond(readAugmentationIdentifier(header));
+            case PotassiumPathArgument.NODE_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
                 yield Either.ofFirst(readNodeIdentifier(header));
             }
-            case MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES ->
+            case PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES ->
                 Either.ofFirst(readNodeIdentifierWithPredicates(header));
-            case MagnesiumPathArgument.NODE_WITH_VALUE -> {
+            case PotassiumPathArgument.NODE_WITH_VALUE -> {
                 verifyPathIdentifierOnly(header);
                 yield Either.ofFirst(readNodeWithValue(header));
             }
-            case MagnesiumPathArgument.MOUNTPOINT_IDENTIFIER -> {
+            case PotassiumPathArgument.MOUNTPOINT_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
                 yield Either.ofSecond(new LegacyMountPointIdentifier(readNodeIdentifier(header).getNodeType()));
             }
@@ -411,12 +411,12 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     }
 
     private @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier(final byte header) throws IOException {
-        final byte count = mask(header, MagnesiumPathArgument.AID_COUNT_MASK);
+        final byte count = mask(header, PotassiumPathArgument.AID_COUNT_MASK);
         return switch (count) {
-            case MagnesiumPathArgument.AID_COUNT_1B -> readAugmentationIdentifier(input.readUnsignedByte());
-            case MagnesiumPathArgument.AID_COUNT_2B -> readAugmentationIdentifier(input.readUnsignedShort());
-            case MagnesiumPathArgument.AID_COUNT_4B -> readAugmentationIdentifier(input.readInt());
-            default -> readAugmentationIdentifier(rshift(count, MagnesiumPathArgument.AID_COUNT_SHIFT));
+            case PotassiumPathArgument.AID_COUNT_1B -> readAugmentationIdentifier(input.readUnsignedByte());
+            case PotassiumPathArgument.AID_COUNT_2B -> readAugmentationIdentifier(input.readUnsignedShort());
+            case PotassiumPathArgument.AID_COUNT_4B -> readAugmentationIdentifier(input.readInt());
+            default -> readAugmentationIdentifier(rshift(count, PotassiumPathArgument.AID_COUNT_SHIFT));
         };
     }
 
@@ -439,11 +439,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     }
 
     private @NonNull NodeIdentifier readNodeIdentifier(final byte header) throws IOException {
-        return switch (header & MagnesiumPathArgument.QNAME_MASK) {
-            case MagnesiumPathArgument.QNAME_DEF -> decodeNodeIdentifier();
-            case MagnesiumPathArgument.QNAME_REF_1B -> decodeNodeIdentifierRef1();
-            case MagnesiumPathArgument.QNAME_REF_2B -> decodeNodeIdentifierRef2();
-            case MagnesiumPathArgument.QNAME_REF_4B -> decodeNodeIdentifierRef4();
+        return switch (header & PotassiumPathArgument.QNAME_MASK) {
+            case PotassiumPathArgument.QNAME_DEF -> decodeNodeIdentifier();
+            case PotassiumPathArgument.QNAME_REF_1B -> decodeNodeIdentifierRef1();
+            case PotassiumPathArgument.QNAME_REF_2B -> decodeNodeIdentifierRef2();
+            case PotassiumPathArgument.QNAME_REF_4B -> decodeNodeIdentifierRef4();
             default -> throw new InvalidNormalizedNodeStreamException("Invalid QName coding in " + header);
         };
     }
@@ -451,11 +451,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     private @NonNull  NodeIdentifierWithPredicates readNodeIdentifierWithPredicates(final byte header)
             throws IOException {
         final QName qname = readNodeIdentifier(header).getNodeType();
-        return switch (mask(header, MagnesiumPathArgument.SIZE_MASK)) {
-            case MagnesiumPathArgument.SIZE_1B -> readNodeIdentifierWithPredicates(qname, input.readUnsignedByte());
-            case MagnesiumPathArgument.SIZE_2B -> readNodeIdentifierWithPredicates(qname, input.readUnsignedShort());
-            case MagnesiumPathArgument.SIZE_4B -> readNodeIdentifierWithPredicates(qname, input.readInt());
-            default -> readNodeIdentifierWithPredicates(qname, rshift(header, MagnesiumPathArgument.SIZE_SHIFT));
+        return switch (mask(header, PotassiumPathArgument.SIZE_MASK)) {
+            case PotassiumPathArgument.SIZE_1B -> readNodeIdentifierWithPredicates(qname, input.readUnsignedByte());
+            case PotassiumPathArgument.SIZE_2B -> readNodeIdentifierWithPredicates(qname, input.readUnsignedShort());
+            case PotassiumPathArgument.SIZE_4B -> readNodeIdentifierWithPredicates(qname, input.readInt());
+            default -> readNodeIdentifierWithPredicates(qname, rshift(header, PotassiumPathArgument.SIZE_SHIFT));
         };
     }
 
@@ -482,7 +482,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     }
 
     private static void verifyPathIdentifierOnly(final byte header) throws InvalidNormalizedNodeStreamException {
-        if (mask(header, MagnesiumPathArgument.SIZE_MASK) != 0) {
+        if (mask(header, PotassiumPathArgument.SIZE_MASK) != 0) {
             throw new InvalidNormalizedNodeStreamException("Invalid path argument header " + header);
         }
     }
@@ -519,13 +519,13 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         final byte type = input.readByte();
         final int index;
         switch (type) {
-            case MagnesiumValue.MODREF_1B:
+            case PotassiumValue.MODREF_1B:
                 index = input.readUnsignedByte();
                 break;
-            case MagnesiumValue.MODREF_2B:
+            case PotassiumValue.MODREF_2B:
                 index = input.readUnsignedShort() + 256;
                 break;
-            case MagnesiumValue.MODREF_4B:
+            case PotassiumValue.MODREF_4B:
                 index = input.readInt();
                 break;
             default:
@@ -544,7 +544,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         final String namespace = readRefString(type);
 
         final byte refType = input.readByte();
-        final String revision = refType == MagnesiumValue.STRING_EMPTY ? null : readRefString(refType);
+        final String revision = refType == PotassiumValue.STRING_EMPTY ? null : readRefString(refType);
         final QNameModule module;
         try {
             module = QNameFactory.createModule(namespace, revision);
@@ -564,24 +564,24 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     private @NonNull String readRefString(final byte type) throws IOException {
         final String str;
         switch (type) {
-            case MagnesiumValue.STRING_REF_1B:
+            case PotassiumValue.STRING_REF_1B:
                 return lookupString(input.readUnsignedByte());
-            case MagnesiumValue.STRING_REF_2B:
+            case PotassiumValue.STRING_REF_2B:
                 return lookupString(input.readUnsignedShort() + 256);
-            case MagnesiumValue.STRING_REF_4B:
+            case PotassiumValue.STRING_REF_4B:
                 return lookupString(input.readInt());
-            case MagnesiumValue.STRING_EMPTY:
+            case PotassiumValue.STRING_EMPTY:
                 return "";
-            case MagnesiumValue.STRING_2B:
+            case PotassiumValue.STRING_2B:
                 str = readString2();
                 break;
-            case MagnesiumValue.STRING_4B:
+            case PotassiumValue.STRING_4B:
                 str = readString4();
                 break;
-            case MagnesiumValue.STRING_CHARS:
+            case PotassiumValue.STRING_CHARS:
                 str = readCharsString();
                 break;
-            case MagnesiumValue.STRING_UTF:
+            case PotassiumValue.STRING_UTF:
                 str = input.readUTF();
                 break;
             default:
@@ -596,11 +596,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     private @NonNull String readString() throws IOException {
         final byte type = input.readByte();
         return switch (type) {
-            case MagnesiumValue.STRING_EMPTY -> "";
-            case MagnesiumValue.STRING_UTF -> input.readUTF();
-            case MagnesiumValue.STRING_2B -> readString2();
-            case MagnesiumValue.STRING_4B -> readString4();
-            case MagnesiumValue.STRING_CHARS -> readCharsString();
+            case PotassiumValue.STRING_EMPTY -> "";
+            case PotassiumValue.STRING_UTF -> input.readUTF();
+            case PotassiumValue.STRING_2B -> readString2();
+            case PotassiumValue.STRING_4B -> readString4();
+            case PotassiumValue.STRING_CHARS -> readCharsString();
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected String type " + type);
         };
     }
@@ -673,102 +673,102 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     private @NonNull Object readLeafValue() throws IOException {
         final byte type = input.readByte();
         switch (type) {
-            case MagnesiumValue.BOOLEAN_FALSE:
+            case PotassiumValue.BOOLEAN_FALSE:
                 return Boolean.FALSE;
-            case MagnesiumValue.BOOLEAN_TRUE:
+            case PotassiumValue.BOOLEAN_TRUE:
                 return Boolean.TRUE;
-            case MagnesiumValue.EMPTY:
+            case PotassiumValue.EMPTY:
                 return Empty.value();
-            case MagnesiumValue.INT8:
+            case PotassiumValue.INT8:
                 return input.readByte();
-            case MagnesiumValue.INT8_0:
+            case PotassiumValue.INT8_0:
                 return INT8_0;
-            case MagnesiumValue.INT16:
+            case PotassiumValue.INT16:
                 return input.readShort();
-            case MagnesiumValue.INT16_0:
+            case PotassiumValue.INT16_0:
                 return INT16_0;
-            case MagnesiumValue.INT32:
+            case PotassiumValue.INT32:
                 return input.readInt();
-            case MagnesiumValue.INT32_0:
+            case PotassiumValue.INT32_0:
                 return INT32_0;
-            case MagnesiumValue.INT32_2B:
+            case PotassiumValue.INT32_2B:
                 return input.readShort() & 0xFFFF;
-            case MagnesiumValue.INT64:
+            case PotassiumValue.INT64:
                 return input.readLong();
-            case MagnesiumValue.INT64_0:
+            case PotassiumValue.INT64_0:
                 return INT64_0;
-            case MagnesiumValue.INT64_4B:
+            case PotassiumValue.INT64_4B:
                 return input.readInt() & 0xFFFFFFFFL;
-            case MagnesiumValue.UINT8:
+            case PotassiumValue.UINT8:
                 return Uint8.fromByteBits(input.readByte());
-            case MagnesiumValue.UINT8_0:
+            case PotassiumValue.UINT8_0:
                 return Uint8.ZERO;
-            case MagnesiumValue.UINT16:
+            case PotassiumValue.UINT16:
                 return Uint16.fromShortBits(input.readShort());
-            case MagnesiumValue.UINT16_0:
+            case PotassiumValue.UINT16_0:
                 return Uint16.ZERO;
-            case MagnesiumValue.UINT32:
+            case PotassiumValue.UINT32:
                 return Uint32.fromIntBits(input.readInt());
-            case MagnesiumValue.UINT32_0:
+            case PotassiumValue.UINT32_0:
                 return Uint32.ZERO;
-            case MagnesiumValue.UINT32_2B:
+            case PotassiumValue.UINT32_2B:
                 return Uint32.fromIntBits(input.readShort() & 0xFFFF);
-            case MagnesiumValue.UINT64:
+            case PotassiumValue.UINT64:
                 return Uint64.fromLongBits(input.readLong());
-            case MagnesiumValue.UINT64_0:
+            case PotassiumValue.UINT64_0:
                 return Uint64.ZERO;
-            case MagnesiumValue.UINT64_4B:
+            case PotassiumValue.UINT64_4B:
                 return Uint64.fromLongBits(input.readInt() & 0xFFFFFFFFL);
-            case MagnesiumValue.BIGDECIMAL:
+            case PotassiumValue.BIGDECIMAL:
                 // FIXME: use string -> Decimal64 cache
                 return Decimal64.valueOf(input.readUTF());
-            case MagnesiumValue.STRING_EMPTY:
+            case PotassiumValue.STRING_EMPTY:
                 return "";
-            case MagnesiumValue.STRING_UTF:
+            case PotassiumValue.STRING_UTF:
                 return input.readUTF();
-            case MagnesiumValue.STRING_2B:
+            case PotassiumValue.STRING_2B:
                 return readString2();
-            case MagnesiumValue.STRING_4B:
+            case PotassiumValue.STRING_4B:
                 return readString4();
-            case MagnesiumValue.STRING_CHARS:
+            case PotassiumValue.STRING_CHARS:
                 return readCharsString();
-            case MagnesiumValue.BINARY_0:
+            case PotassiumValue.BINARY_0:
                 return BINARY_0;
-            case MagnesiumValue.BINARY_1B:
+            case PotassiumValue.BINARY_1B:
                 return readBinary(128 + input.readUnsignedByte());
-            case MagnesiumValue.BINARY_2B:
+            case PotassiumValue.BINARY_2B:
                 return readBinary(384 + input.readUnsignedShort());
-            case MagnesiumValue.BINARY_4B:
+            case PotassiumValue.BINARY_4B:
                 return readBinary(input.readInt());
-            case MagnesiumValue.YIID_0:
+            case PotassiumValue.YIID_0:
                 return YangInstanceIdentifier.empty();
-            case MagnesiumValue.YIID:
+            case PotassiumValue.YIID:
                 return readYangInstanceIdentifier(input.readInt());
-            case MagnesiumValue.QNAME:
+            case PotassiumValue.QNAME:
                 return decodeQName();
-            case MagnesiumValue.QNAME_REF_1B:
+            case PotassiumValue.QNAME_REF_1B:
                 return decodeQNameRef1();
-            case MagnesiumValue.QNAME_REF_2B:
+            case PotassiumValue.QNAME_REF_2B:
                 return decodeQNameRef2();
-            case MagnesiumValue.QNAME_REF_4B:
+            case PotassiumValue.QNAME_REF_4B:
                 return decodeQNameRef4();
-            case MagnesiumValue.BITS_0:
+            case PotassiumValue.BITS_0:
                 return ImmutableSet.of();
-            case MagnesiumValue.BITS_1B:
+            case PotassiumValue.BITS_1B:
                 return readBits(input.readUnsignedByte() + 29);
-            case MagnesiumValue.BITS_2B:
+            case PotassiumValue.BITS_2B:
                 return readBits(input.readUnsignedShort() + 285);
-            case MagnesiumValue.BITS_4B:
+            case PotassiumValue.BITS_4B:
                 return readBits(input.readInt());
 
             default:
-                if (type > MagnesiumValue.BINARY_0 && type <= MagnesiumValue.BINARY_127) {
-                    return readBinary(type - MagnesiumValue.BINARY_0);
-                } else if (type > MagnesiumValue.BITS_0 && type < MagnesiumValue.BITS_1B) {
-                    return readBits(type - MagnesiumValue.BITS_0);
-                } else if (type > MagnesiumValue.YIID_0) {
-                    // Note 'byte' is range limited, so it is always '&& type <= MagnesiumValue.YIID_31'
-                    return readYangInstanceIdentifier(type - MagnesiumValue.YIID_0);
+                if (type > PotassiumValue.BINARY_0 && type <= PotassiumValue.BINARY_127) {
+                    return readBinary(type - PotassiumValue.BINARY_0);
+                } else if (type > PotassiumValue.BITS_0 && type < PotassiumValue.BITS_1B) {
+                    return readBits(type - PotassiumValue.BITS_0);
+                } else if (type > PotassiumValue.YIID_0) {
+                    // Note 'byte' is range limited, so it is always '&& type <= PotassiumValue.YIID_31'
+                    return readYangInstanceIdentifier(type - PotassiumValue.YIID_0);
                 } else {
                     throw new InvalidNormalizedNodeStreamException("Invalid value type " + type);
                 }

@@ -45,8 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract base class for NormalizedNodeDataOutput based on {@link MagnesiumNode}, {@link MagnesiumPathArgument} and
- * {@link MagnesiumValue}.
+ * Abstract base class for NormalizedNodeDataOutput based on {@link PotassiumNode}, {@link PotassiumPathArgument} and
+ * {@link PotassiumValue}.
  */
 final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     private static final Logger LOG = LoggerFactory.getLogger(PotassiumDataOutput.class);
@@ -81,53 +81,53 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
         if (current instanceof NodeIdentifierWithPredicates nip) {
             final QName qname = name.getNodeType();
             if (nip.containsKey(qname)) {
-                writeQNameNode(MagnesiumNode.NODE_LEAF | MagnesiumNode.PREDICATE_ONE, qname);
+                writeQNameNode(PotassiumNode.NODE_LEAF | PotassiumNode.PREDICATE_ONE, qname);
                 stack.push(KEY_LEAF_STATE);
                 return;
             }
         }
 
-        startSimpleNode(MagnesiumNode.NODE_LEAF, name);
+        startSimpleNode(PotassiumNode.NODE_LEAF, name);
     }
 
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startQNameNode(MagnesiumNode.NODE_LEAFSET, name);
+        startQNameNode(PotassiumNode.NODE_LEAFSET, name);
     }
 
     @Override
     public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startQNameNode(MagnesiumNode.NODE_LEAFSET_ORDERED, name);
+        startQNameNode(PotassiumNode.NODE_LEAFSET_ORDERED, name);
     }
 
     @Override
     public void startLeafSetEntryNode(final NodeWithValue<?> name) throws IOException {
         if (matchesParentQName(name.getNodeType())) {
-            output.writeByte(MagnesiumNode.NODE_LEAFSET_ENTRY);
+            output.writeByte(PotassiumNode.NODE_LEAFSET_ENTRY);
             stack.push(NO_ENDNODE_STATE);
         } else {
-            startSimpleNode(MagnesiumNode.NODE_LEAFSET_ENTRY, name);
+            startSimpleNode(PotassiumNode.NODE_LEAFSET_ENTRY, name);
         }
     }
 
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startQNameNode(MagnesiumNode.NODE_CONTAINER, name);
+        startQNameNode(PotassiumNode.NODE_CONTAINER, name);
     }
 
     @Override
     public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startQNameNode(MagnesiumNode.NODE_LIST, name);
+        startQNameNode(PotassiumNode.NODE_LIST, name);
     }
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startInheritedNode(MagnesiumNode.NODE_LIST_ENTRY, name);
+        startInheritedNode(PotassiumNode.NODE_LIST_ENTRY, name);
     }
 
     @Override
     public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startQNameNode(MagnesiumNode.NODE_MAP, name);
+        startQNameNode(PotassiumNode.NODE_MAP, name);
     }
 
     @Override
@@ -135,14 +135,14 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
             throws IOException {
         final int size = identifier.size();
         if (size == 1) {
-            startInheritedNode((byte) (MagnesiumNode.NODE_MAP_ENTRY | MagnesiumNode.PREDICATE_ONE), identifier);
+            startInheritedNode((byte) (PotassiumNode.NODE_MAP_ENTRY | PotassiumNode.PREDICATE_ONE), identifier);
         } else if (size == 0) {
-            startInheritedNode((byte) (MagnesiumNode.NODE_MAP_ENTRY | MagnesiumNode.PREDICATE_ZERO), identifier);
+            startInheritedNode((byte) (PotassiumNode.NODE_MAP_ENTRY | PotassiumNode.PREDICATE_ZERO), identifier);
         } else if (size < 256) {
-            startInheritedNode((byte) (MagnesiumNode.NODE_MAP_ENTRY | MagnesiumNode.PREDICATE_1B), identifier);
+            startInheritedNode((byte) (PotassiumNode.NODE_MAP_ENTRY | PotassiumNode.PREDICATE_1B), identifier);
             output.writeByte(size);
         } else {
-            startInheritedNode((byte) (MagnesiumNode.NODE_MAP_ENTRY | MagnesiumNode.PREDICATE_4B), identifier);
+            startInheritedNode((byte) (PotassiumNode.NODE_MAP_ENTRY | PotassiumNode.PREDICATE_4B), identifier);
             output.writeInt(size);
         }
 
@@ -151,18 +151,18 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startQNameNode(MagnesiumNode.NODE_MAP_ORDERED, name);
+        startQNameNode(PotassiumNode.NODE_MAP_ORDERED, name);
     }
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startQNameNode(MagnesiumNode.NODE_CHOICE, name);
+        startQNameNode(PotassiumNode.NODE_CHOICE, name);
     }
 
     @Override
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
-            startSimpleNode(MagnesiumNode.NODE_ANYXML, name);
+            startSimpleNode(PotassiumNode.NODE_ANYXML, name);
             return true;
         }
         return false;
@@ -182,7 +182,7 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     @Override
     public void endNode() throws IOException {
         if (stack.pop() instanceof PathArgument) {
-            output.writeByte(MagnesiumNode.NODE_END);
+            output.writeByte(PotassiumNode.NODE_END);
         }
     }
 
@@ -204,7 +204,7 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     void writeQNameInternal(final QName qname) throws IOException {
         final Integer code = qnameCodeMap.get(qname);
         if (code == null) {
-            output.writeByte(MagnesiumValue.QNAME);
+            output.writeByte(PotassiumValue.QNAME);
             encodeQName(qname);
         } else {
             writeQNameRef(code);
@@ -225,26 +225,26 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     }
 
     private void writeNodeIdentifier(final NodeIdentifier identifier) throws IOException {
-        writePathArgumentQName(identifier.getNodeType(), MagnesiumPathArgument.NODE_IDENTIFIER);
+        writePathArgumentQName(identifier.getNodeType(), PotassiumPathArgument.NODE_IDENTIFIER);
     }
 
     private void writeNodeIdentifierWithPredicates(final NodeIdentifierWithPredicates identifier) throws IOException {
         final int size = identifier.size();
         if (size < 5) {
             writePathArgumentQName(identifier.getNodeType(),
-                (byte) (MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES
-                        | size << MagnesiumPathArgument.SIZE_SHIFT));
+                (byte) (PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES
+                        | size << PotassiumPathArgument.SIZE_SHIFT));
         } else if (size < 256) {
             writePathArgumentQName(identifier.getNodeType(),
-                (byte) (MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES | MagnesiumPathArgument.SIZE_1B));
+                (byte) (PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES | PotassiumPathArgument.SIZE_1B));
             output.writeByte(size);
         } else if (size < 65536) {
             writePathArgumentQName(identifier.getNodeType(),
-                (byte) (MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES | MagnesiumPathArgument.SIZE_2B));
+                (byte) (PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES | PotassiumPathArgument.SIZE_2B));
             output.writeShort(size);
         } else {
             writePathArgumentQName(identifier.getNodeType(),
-                (byte) (MagnesiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES | MagnesiumPathArgument.SIZE_4B));
+                (byte) (PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES | PotassiumPathArgument.SIZE_4B));
             output.writeInt(size);
         }
 
@@ -259,7 +259,7 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     }
 
     private void writeNodeWithValue(final NodeWithValue<?> identifier) throws IOException {
-        writePathArgumentQName(identifier.getNodeType(), MagnesiumPathArgument.NODE_WITH_VALUE);
+        writePathArgumentQName(identifier.getNodeType(), PotassiumPathArgument.NODE_WITH_VALUE);
         writeObject(identifier.getValue());
     }
 
@@ -268,17 +268,17 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
         if (code != null) {
             final int val = code;
             if (val < 256) {
-                output.writeByte(typeHeader | MagnesiumPathArgument.QNAME_REF_1B);
+                output.writeByte(typeHeader | PotassiumPathArgument.QNAME_REF_1B);
                 output.writeByte(val);
             } else if (val < 65792) {
-                output.writeByte(typeHeader | MagnesiumPathArgument.QNAME_REF_2B);
+                output.writeByte(typeHeader | PotassiumPathArgument.QNAME_REF_2B);
                 output.writeShort(val - 256);
             } else {
-                output.writeByte(typeHeader | MagnesiumPathArgument.QNAME_REF_4B);
+                output.writeByte(typeHeader | PotassiumPathArgument.QNAME_REF_4B);
                 output.writeInt(val);
             }
         } else {
-            // implied '| MagnesiumPathArgument.QNAME_DEF'
+            // implied '| PotassiumPathArgument.QNAME_DEF'
             output.writeByte(typeHeader);
             encodeQName(qname);
         }
@@ -317,11 +317,11 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
         } else if (value instanceof byte[] bytes) {
             writeValue(bytes);
         } else if (value instanceof Empty) {
-            output.writeByte(MagnesiumValue.EMPTY);
+            output.writeByte(PotassiumValue.EMPTY);
         } else if (value instanceof Set<?> set) {
             writeValue(set);
         } else if (value instanceof BigDecimal || value instanceof Decimal64) {
-            output.writeByte(MagnesiumValue.BIGDECIMAL);
+            output.writeByte(PotassiumValue.BIGDECIMAL);
             output.writeUTF(value.toString());
         } else {
             throw new IOException("Unhandled value type " + value.getClass());
@@ -329,115 +329,115 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     }
 
     private void writeValue(final boolean value) throws IOException {
-        output.writeByte(value ? MagnesiumValue.BOOLEAN_TRUE : MagnesiumValue.BOOLEAN_FALSE);
+        output.writeByte(value ? PotassiumValue.BOOLEAN_TRUE : PotassiumValue.BOOLEAN_FALSE);
     }
 
     private void writeValue(final byte value) throws IOException {
         if (value != 0) {
-            output.writeByte(MagnesiumValue.INT8);
+            output.writeByte(PotassiumValue.INT8);
             output.writeByte(value);
         } else {
-            output.writeByte(MagnesiumValue.INT8_0);
+            output.writeByte(PotassiumValue.INT8_0);
         }
     }
 
     private void writeValue(final short value) throws IOException {
         if (value != 0) {
-            output.writeByte(MagnesiumValue.INT16);
+            output.writeByte(PotassiumValue.INT16);
             output.writeShort(value);
         } else {
-            output.writeByte(MagnesiumValue.INT16_0);
+            output.writeByte(PotassiumValue.INT16_0);
         }
     }
 
     private void writeValue(final int value) throws IOException {
         if ((value & 0xFFFF0000) != 0) {
-            output.writeByte(MagnesiumValue.INT32);
+            output.writeByte(PotassiumValue.INT32);
             output.writeInt(value);
         } else if (value != 0) {
-            output.writeByte(MagnesiumValue.INT32_2B);
+            output.writeByte(PotassiumValue.INT32_2B);
             output.writeShort(value);
         } else {
-            output.writeByte(MagnesiumValue.INT32_0);
+            output.writeByte(PotassiumValue.INT32_0);
         }
     }
 
     private void writeValue(final long value) throws IOException {
         if ((value & 0xFFFFFFFF00000000L) != 0) {
-            output.writeByte(MagnesiumValue.INT64);
+            output.writeByte(PotassiumValue.INT64);
             output.writeLong(value);
         } else if (value != 0) {
-            output.writeByte(MagnesiumValue.INT64_4B);
+            output.writeByte(PotassiumValue.INT64_4B);
             output.writeInt((int) value);
         } else {
-            output.writeByte(MagnesiumValue.INT64_0);
+            output.writeByte(PotassiumValue.INT64_0);
         }
     }
 
     private void writeValue(final Uint8 value) throws IOException {
         final byte b = value.byteValue();
         if (b != 0) {
-            output.writeByte(MagnesiumValue.UINT8);
+            output.writeByte(PotassiumValue.UINT8);
             output.writeByte(b);
         } else {
-            output.writeByte(MagnesiumValue.UINT8_0);
+            output.writeByte(PotassiumValue.UINT8_0);
         }
     }
 
     private void writeValue(final Uint16 value) throws IOException {
         final short s = value.shortValue();
         if (s != 0) {
-            output.writeByte(MagnesiumValue.UINT16);
+            output.writeByte(PotassiumValue.UINT16);
             output.writeShort(s);
         } else {
-            output.writeByte(MagnesiumValue.UINT16_0);
+            output.writeByte(PotassiumValue.UINT16_0);
         }
     }
 
     private void writeValue(final Uint32 value) throws IOException {
         final int i = value.intValue();
         if ((i & 0xFFFF0000) != 0) {
-            output.writeByte(MagnesiumValue.UINT32);
+            output.writeByte(PotassiumValue.UINT32);
             output.writeInt(i);
         } else if (i != 0) {
-            output.writeByte(MagnesiumValue.UINT32_2B);
+            output.writeByte(PotassiumValue.UINT32_2B);
             output.writeShort(i);
         } else {
-            output.writeByte(MagnesiumValue.UINT32_0);
+            output.writeByte(PotassiumValue.UINT32_0);
         }
     }
 
     private void writeValue(final Uint64 value) throws IOException {
         final long l = value.longValue();
         if ((l & 0xFFFFFFFF00000000L) != 0) {
-            output.writeByte(MagnesiumValue.UINT64);
+            output.writeByte(PotassiumValue.UINT64);
             output.writeLong(l);
         } else if (l != 0) {
-            output.writeByte(MagnesiumValue.UINT64_4B);
+            output.writeByte(PotassiumValue.UINT64_4B);
             output.writeInt((int) l);
         } else {
-            output.writeByte(MagnesiumValue.UINT64_0);
+            output.writeByte(PotassiumValue.UINT64_0);
         }
     }
 
     private void writeValue(final String value) throws IOException {
         if (value.isEmpty()) {
-            output.writeByte(MagnesiumValue.STRING_EMPTY);
+            output.writeByte(PotassiumValue.STRING_EMPTY);
         } else if (value.length() <= Short.MAX_VALUE / 2) {
-            output.writeByte(MagnesiumValue.STRING_UTF);
+            output.writeByte(PotassiumValue.STRING_UTF);
             output.writeUTF(value);
         } else if (value.length() <= 1048576) {
             final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
             if (bytes.length < 65536) {
-                output.writeByte(MagnesiumValue.STRING_2B);
+                output.writeByte(PotassiumValue.STRING_2B);
                 output.writeShort(bytes.length);
             } else {
-                output.writeByte(MagnesiumValue.STRING_4B);
+                output.writeByte(PotassiumValue.STRING_4B);
                 output.writeInt(bytes.length);
             }
             output.write(bytes);
         } else {
-            output.writeByte(MagnesiumValue.STRING_CHARS);
+            output.writeByte(PotassiumValue.STRING_CHARS);
             output.writeInt(value.length());
             output.writeChars(value);
         }
@@ -445,15 +445,15 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
 
     private void writeValue(final byte[] value) throws IOException {
         if (value.length < 128) {
-            output.writeByte(MagnesiumValue.BINARY_0 + value.length);
+            output.writeByte(PotassiumValue.BINARY_0 + value.length);
         } else if (value.length < 384) {
-            output.writeByte(MagnesiumValue.BINARY_1B);
+            output.writeByte(PotassiumValue.BINARY_1B);
             output.writeByte(value.length - 128);
         } else if (value.length < 65920) {
-            output.writeByte(MagnesiumValue.BINARY_2B);
+            output.writeByte(PotassiumValue.BINARY_2B);
             output.writeShort(value.length - 384);
         } else {
-            output.writeByte(MagnesiumValue.BINARY_4B);
+            output.writeByte(PotassiumValue.BINARY_4B);
             output.writeInt(value.length);
         }
         output.write(value);
@@ -463,10 +463,10 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
         final List<PathArgument> args = value.getPathArguments();
         final int size = args.size();
         if (size > 31) {
-            output.writeByte(MagnesiumValue.YIID);
+            output.writeByte(PotassiumValue.YIID);
             output.writeInt(size);
         } else {
-            output.writeByte(MagnesiumValue.YIID_0 + size);
+            output.writeByte(PotassiumValue.YIID_0 + size);
         }
         for (PathArgument arg : args) {
             writePathArgumentInternal(arg);
@@ -476,15 +476,15 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     private void writeValue(final Set<?> value) throws IOException {
         final int size = value.size();
         if (size < 29) {
-            output.writeByte(MagnesiumValue.BITS_0 + size);
+            output.writeByte(PotassiumValue.BITS_0 + size);
         } else if (size < 285) {
-            output.writeByte(MagnesiumValue.BITS_1B);
+            output.writeByte(PotassiumValue.BITS_1B);
             output.writeByte(size - 29);
         } else if (size < 65821) {
-            output.writeByte(MagnesiumValue.BITS_2B);
+            output.writeByte(PotassiumValue.BITS_2B);
             output.writeShort(size - 285);
         } else {
-            output.writeByte(MagnesiumValue.BITS_4B);
+            output.writeByte(PotassiumValue.BITS_4B);
             output.writeInt(size);
         }
 
@@ -530,7 +530,7 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     private void writeQNameNode(final int type, final @NonNull QName qname) throws IOException {
         final Integer code = qnameCodeMap.get(qname);
         if (code == null) {
-            output.writeByte(type | MagnesiumNode.ADDR_DEFINE);
+            output.writeByte(type | PotassiumNode.ADDR_DEFINE);
             encodeQName(qname);
         } else {
             writeNodeType(type, code);
@@ -540,10 +540,10 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     // Write a node type + lookup
     private void writeNodeType(final int type, final int code) throws IOException {
         if (code <= 255) {
-            output.writeByte(type | MagnesiumNode.ADDR_LOOKUP_1B);
+            output.writeByte(type | PotassiumNode.ADDR_LOOKUP_1B);
             output.writeByte(code);
         } else {
-            output.writeByte(type | MagnesiumNode.ADDR_LOOKUP_4B);
+            output.writeByte(type | PotassiumNode.ADDR_LOOKUP_4B);
             output.writeInt(code);
         }
     }
@@ -566,7 +566,7 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
             if (rev.isPresent()) {
                 encodeString(rev.orElseThrow().toString());
             } else {
-                output.writeByte(MagnesiumValue.STRING_EMPTY);
+                output.writeByte(PotassiumValue.STRING_EMPTY);
             }
         } else {
             writeModuleRef(code);
@@ -591,13 +591,13 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     private void writeQNameRef(final int code) throws IOException {
         final int val = code;
         if (val < 256) {
-            output.writeByte(MagnesiumValue.QNAME_REF_1B);
+            output.writeByte(PotassiumValue.QNAME_REF_1B);
             output.writeByte(val);
         } else if (val < 65792) {
-            output.writeByte(MagnesiumValue.QNAME_REF_2B);
+            output.writeByte(PotassiumValue.QNAME_REF_2B);
             output.writeShort(val - 256);
         } else {
-            output.writeByte(MagnesiumValue.QNAME_REF_4B);
+            output.writeByte(PotassiumValue.QNAME_REF_4B);
             output.writeInt(val);
         }
     }
@@ -606,13 +606,13 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     private void writeRef(final int code) throws IOException {
         final int val = code;
         if (val < 256) {
-            output.writeByte(MagnesiumValue.STRING_REF_1B);
+            output.writeByte(PotassiumValue.STRING_REF_1B);
             output.writeByte(val);
         } else if (val < 65792) {
-            output.writeByte(MagnesiumValue.STRING_REF_2B);
+            output.writeByte(PotassiumValue.STRING_REF_2B);
             output.writeShort(val - 256);
         } else {
-            output.writeByte(MagnesiumValue.STRING_REF_4B);
+            output.writeByte(PotassiumValue.STRING_REF_4B);
             output.writeInt(val);
         }
     }
@@ -621,13 +621,13 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     private void writeModuleRef(final int code) throws IOException {
         final int val = code;
         if (val < 256) {
-            output.writeByte(MagnesiumValue.MODREF_1B);
+            output.writeByte(PotassiumValue.MODREF_1B);
             output.writeByte(val);
         } else if (val < 65792) {
-            output.writeByte(MagnesiumValue.MODREF_2B);
+            output.writeByte(PotassiumValue.MODREF_2B);
             output.writeShort(val - 256);
         } else {
-            output.writeByte(MagnesiumValue.MODREF_4B);
+            output.writeByte(PotassiumValue.MODREF_4B);
             output.writeInt(val);
         }
     }
