@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 /**
- * Path Argument types used in Potassium encoding. These are encoded as a single byte, three bits of which are reserved
+ * Path Argument types used in Potassium encoding. These are encoded as a single byte, two bits of which are reserved
  * for PathArgument type itself:
  * <pre>
  *   7 6 5 4 3 2 1 0
  *  +-+-+-+-+-+-+-+-+
- *  |         | Type|
+ *  |           |Typ|
  *  +-+-+-+-+-+-+-+-+
  * </pre>
  * There are three type defined:
@@ -22,14 +22,16 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
  *     <pre>
  *       7 6 5 4 3 2 1 0
  *      +-+-+-+-+-+-+-+-+
- *      |0 0 0| Q |0 0 1|
+ *      |0 0 0 0| Q |0 1|
  *      +-+-+-+-+-+-+-+-+
  *     </pre>
+ *     Here {@code Q} refers to one of the four possible QName encodings: {@link #QNAME_DEF}, {@link #QNAME_REF_1B},
+ *     {@link #QNAME_REF_2B} or {@link #QNAME_REF_4B}.
  *   <li>{@link #NODE_IDENTIFIER_WITH_PREDICATES}, which encodes a QName same way NodeIdentifier does:
  *     <pre>
  *       7 6 5 4 3 2 1 0
  *      +-+-+-+-+-+-+-+-+
- *      | Size| Q |0 1 0|
+ *      | Size  | Q |1 0|
  *      +-+-+-+-+-+-+-+-+
  *      </pre>
  *      but additionally encodes number of predicates contained using {@link #SIZE_0} through {@link #SIZE_4}. If that
@@ -44,7 +46,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
  *     <pre>
  *       7 6 5 4 3 2 1 0
  *      +-+-+-+-+-+-+-+-+
- *      |0 0 0| Q |0 1 1|
+ *      |0 0 0 0| Q |1 1|
  *      +-+-+-+-+-+-+-+-+
  *     </pre>
  *     but is additionally followed by a single encoded value, as per {@link PotassiumValue}.
@@ -53,40 +55,27 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
  * </ul>
  */
 final class PotassiumPathArgument {
-    // 3 bits reserved for type...
+    // 2 bits reserved for type...
+    // 0x00 reserved
     static final byte NODE_IDENTIFIER                 = 0x01;
     static final byte NODE_IDENTIFIER_WITH_PREDICATES = 0x02;
     static final byte NODE_WITH_VALUE                 = 0x03;
-
-    // ... leaving five values currently unused
-    // FIXME: this means we can use just two bits for type encoding
-    // 0x00 reserved
-    // 0x04 reserved
-    // 0x05 reserved
-    // 0x06 reserved
-    // 0x07 reserved
-
-    static final byte TYPE_MASK                       = 0x07;
+    static final byte TYPE_MASK                       = NODE_WITH_VALUE;
 
     // For normal path path arguments we can either define a QName reference or follow a 1-4 byte reference.
     static final byte QNAME_DEF                       = 0x00;
-    static final byte QNAME_REF_1B                    = 0x08; // Unsigned
-    static final byte QNAME_REF_2B                    = 0x10; // Unsigned
-    static final byte QNAME_REF_4B                    = 0x18; // Signed
+    static final byte QNAME_REF_1B                    = 0x04; // Unsigned
+    static final byte QNAME_REF_2B                    = 0x08; // Unsigned
+    static final byte QNAME_REF_4B                    = 0x0C; // Signed
     static final byte QNAME_MASK                      = QNAME_REF_4B;
 
-    // For NodeIdentifierWithPredicates we also carry the number of subsequent path arguments. The case of 0-4 arguments
-    // is indicated directly, otherwise there is 1-4 bytes carrying the reference.
-    static final byte SIZE_0                          = 0x00;
-    static final byte SIZE_1                          = 0x20;
-    static final byte SIZE_2                          = 0x40;
-    static final byte SIZE_3                          = 0x60;
-    static final byte SIZE_4                          = (byte) 0x80;
+    // For NodeIdentifierWithPredicates we also carry the number of subsequent path arguments. The case of 0-12
+    // arguments is indicated directly, otherwise there is 1-4 bytes carrying the reference.
     static final byte SIZE_1B                         = (byte) 0xA0;
     static final byte SIZE_2B                         = (byte) 0xC0;
     static final byte SIZE_4B                         = (byte) 0xE0;
-    static final byte SIZE_MASK                       = SIZE_4B;
-    static final byte SIZE_SHIFT                      = 5;
+    static final byte SIZE_MASK                       = (byte) 0xF0;
+    static final byte SIZE_SHIFT                      = 4;
 
     private PotassiumPathArgument() {
 

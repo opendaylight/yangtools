@@ -230,7 +230,7 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
 
     private void writeNodeIdentifierWithPredicates(final NodeIdentifierWithPredicates identifier) throws IOException {
         final int size = identifier.size();
-        if (size < 5) {
+        if (size < 13) {
             writePathArgumentQName(identifier.getNodeType(),
                 (byte) (PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES
                         | size << PotassiumPathArgument.SIZE_SHIFT));
