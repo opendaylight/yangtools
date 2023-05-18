@@ -52,7 +52,69 @@ public class YT891Test {
 
     @BeforeClass
     public static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yt891");
+        schemaContext = YangParserTestUtils.parseYang("""
+            module bar {
+              namespace "urn:opendaylight:params:xml:ns:yang:bar";
+              prefix bar;
+              revision 2018-07-27;
+
+              grouping grouping-with-list {
+                list list-in-grouping {
+                  key "name";
+                  leaf name {
+                    type leafref {
+                      path "../container-in-list/name";
+                    }
+                  }
+                  container container-in-list {
+                    leaf name {
+                      type string;
+                    }
+                  }
+                }
+              }
+            }""", """
+            module baz {
+              namespace "urn:opendaylight:params:xml:ns:yang:baz";
+              prefix baz;
+              revision 2018-07-27;
+
+              grouping grouping-with-leafref {
+                leaf ref {
+                  type leafref {
+                    path "/baz-top/list-in-container/name";
+                  }
+                }
+              }
+
+              container baz-top {
+                list list-in-container {
+                  key "name";
+                  leaf name {
+                    type string;
+                  }
+                }
+              }
+            }""", """
+            module foo {
+              namespace "urn:opendaylight:params:xml:ns:yang:foo";
+              prefix foo;
+
+              import bar {
+                prefix bar;
+              }
+
+              import baz {
+                prefix baz;
+              }
+
+              revision 2018-07-27;
+
+              container foo-top {
+                uses bar:grouping-with-list;
+                uses baz:grouping-with-leafref;
+              }
+            }""");
         leafRefContext = LeafRefContext.create(schemaContext);
     }
 
