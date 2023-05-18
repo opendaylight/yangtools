@@ -12,14 +12,21 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 
 /**
  * A {@link NormalizedNodeContainer} which preserves user supplied ordering and allows addressing of child elements by
- * position. All implementations of this interface must also implement {@link OrderingAware.User}.
+ * position. All implementations of this interface must also implement {@link OrderingAware.User}. This interface should
+ * not be implemented directly, but rather implementing one of it's subclasses
+ * <ul>
+ *   <li>{@link UnkeyedListNode}</li>
+ *   <li>{@link UserLeafSetNode}</li>
+ *   <li>{@link UserMapNode}</li>
+ * </ul>
  *
  * @param <V> child type
  */
 // FIXME: 9.0.0: we really want to do a List<@NonNull V> body(), but need to reconcile that with key-based lookup in
 //               implementations -- and those are using only a Map internally.
-public non-sealed interface OrderedNodeContainer<V extends NormalizedNode>
-        extends NormalizedNodeContainer<V>, MixinNode, OrderingAware.User {
+public sealed interface OrderedNodeContainer<V extends NormalizedNode>
+        extends NormalizedNodeContainer<V>, MixinNode, OrderingAware.User
+        permits UnkeyedListNode, UserLeafSetNode, UserMapNode {
     @Override
     NodeIdentifier getIdentifier();
 
