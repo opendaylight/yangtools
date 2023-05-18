@@ -25,10 +25,4 @@ public interface UnkeyedListEntryNode extends DataContainerNode {
 
     @Override
     NodeIdentifier name();
-
-    @Override
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default NodeIdentifier getIdentifier() {
-        return name();
-    }
 }
