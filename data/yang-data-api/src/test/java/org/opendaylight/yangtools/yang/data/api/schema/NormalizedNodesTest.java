@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -40,8 +39,7 @@ public class NormalizedNodesTest {
 
         final var mockedDataContainerNode = mock(DataContainerNode.class);
         final var mockedContainerNode = mock(ContainerNode.class);
-        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));
-        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any(PathArgument.class));
+        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any());
 
         assertEquals(Optional.of(mockedContainerNode),
             NormalizedNodes.getDirectChild(mockedDataContainerNode, mockedPathArgument));
@@ -52,7 +50,6 @@ public class NormalizedNodesTest {
         final var nodeIdentifierWithPredicates = NodeIdentifierWithPredicates.of(listQName, listKeyQName, "str-value");
         final var mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(mockedMapEntryNode).when(mockedMapNode).childByArg(any(NodeIdentifierWithPredicates.class));
-        doCallRealMethod().when(mockedMapNode).findChildByArg(any(NodeIdentifierWithPredicates.class));
 
         assertEquals(Optional.of(mockedMapEntryNode),
             NormalizedNodes.getDirectChild(mockedMapNode, nodeIdentifierWithPredicates));
@@ -62,7 +59,6 @@ public class NormalizedNodesTest {
         final QName leafListQName = QName.create("test-ns", "test-leaf-list");
         final NodeWithValue<?> nodeWithValue = new NodeWithValue<>(leafListQName, "str-value");
         doReturn(mockedLeafSetEntryNode).when(mockedLeafSetNode).childByArg(any(NodeWithValue.class));
-        doCallRealMethod().when(mockedLeafSetNode).findChildByArg(any(NodeWithValue.class));
         assertEquals(Optional.of(mockedLeafSetEntryNode),
             NormalizedNodes.getDirectChild(mockedLeafSetNode, nodeWithValue));
     }
@@ -72,10 +68,8 @@ public class NormalizedNodesTest {
         final DataContainerNode mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
         final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
-        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));
-        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any(PathArgument.class));
-        doReturn(mockedLeafNode).when(mockedContainerNode).childByArg(any(PathArgument.class));
-        doCallRealMethod().when(mockedContainerNode).findChildByArg(any(PathArgument.class));
+        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any());
+        doReturn(mockedLeafNode).when(mockedContainerNode).childByArg(any());
 
         final QName node1QName = QName.create("test-ns", "2016-09-16", "node1");
         final QName node2Qname = QName.create("test-ns", "2016-09-16", "node2");

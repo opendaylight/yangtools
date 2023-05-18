@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * Abstract node which does not have value but contains valid {@link DataContainerChild} nodes. Schema of this node is
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * </ul>
  */
 public interface DataContainerNode
-        extends DistinctNodeContainer<PathArgument, DataContainerChild>, OrderingAware.System {
+        extends DistinctNodeContainer<NodeIdentifier, DataContainerChild>, OrderingAware.System {
     @Override
     int hashCode();
 

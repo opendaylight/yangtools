@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 import java.util.Collection;
 import java.util.Map;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -25,7 +26,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument,
     }
 
     @Override
-    public final DataContainerChild childByArg(final PathArgument child) {
+    public final DataContainerChild childByArg(final NodeIdentifier child) {
         return LazyLeafOperations.getChild(children, child);
     }
 
