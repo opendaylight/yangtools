@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -45,29 +44,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               boundary -- like RFC8528. Hence we cannot really have a reasonably-structured concept of unverified
  *               data. Nevertheless, this interface should be named 'NormalizedData'.
  */
-public interface NormalizedNode extends Identifiable<PathArgument>, PrettyTreeAware {
+public interface NormalizedNode extends NormalizedData, PrettyTreeAware {
     @Override
-    // We override here, so that NormalizedNode.getIdentifier() has fewer implementations
-    PathArgument getIdentifier();
+    Class<? extends NormalizedNode> contract();
 
-    /**
-     * Return the contract governing this {@link NormalizedNode} instance.
-     *
-     * @apiNote
-     *     This method should be specialized in intermediate contracts like {@link MapNode} and implemented as a default
-     *     method by interfaces which form the contracts themselves, for example {@link ContainerNode}, {@link LeafNode}
-     *     and similar.
-     *
-     * @return A class identifying the NormalizedNode contract.
-     */
-    @NonNull Class<? extends NormalizedNode> contract();
+    @Override
+    PathArgument name();
 
-    /**
-     * Returns the body of this node. While the return value specifies {@link Object}, this method's return value has
-     * further semantics. The returned object must be a well-published contract, such as {@code String},
-     * {@code Collection<NormalizedNode>} or {@code DOMSource}.
-     *
-     * @return Returned value of this node.
-     */
-    @NonNull Object body();
+    @Deprecated(since = "11.0.0.", forRemoval = true)
+    @NonNull PathArgument getIdentifier();
 }
