@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5968MergeTest {
     private static final String NS = "bug5968";
@@ -45,7 +46,30 @@ public class Bug5968MergeTest {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/bug5968.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module bug5968 {
+                yang-version 1;
+                namespace bug5968;
+                prefix bug5968;
+                revision 2016-07-28 {
+                    description "test";
+                }
+                container root {
+                    list my-list {
+                        key "list-id";
+                        leaf list-id {
+                            type string;
+                        }
+                        leaf mandatory-leaf {
+                            type string;
+                            mandatory true;
+                        }
+                        leaf common-leaf {
+                            type string;
+                        }
+                    }
+                }
+            }""");
     }
 
     @AfterClass
