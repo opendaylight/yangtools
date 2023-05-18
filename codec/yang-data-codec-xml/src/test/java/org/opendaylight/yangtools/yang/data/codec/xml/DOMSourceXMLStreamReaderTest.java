@@ -58,7 +58,86 @@ public class DOMSourceXMLStreamReaderTest {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/dom-reader-test");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module bar {
+                namespace bar-ns;
+                prefix bar;
+                import foo {
+                    prefix foo;
+                }
+                augment "/foo:top-cont/foo:keyed-list" {
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""", """
+            module baz {
+                namespace baz-ns;
+                prefix baz;
+                container top-cont {
+                    /*list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                    }*/
+                }
+            }""", """
+            module foo {
+                namespace foo-ns;
+                prefix foo;
+                import rab {
+                    prefix rab;
+                }
+                container top-cont {
+                    list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                        leaf idref-leaf {
+                            type identityref {
+                                base rab:base-id;
+                            }
+                        }
+                        leaf ordinary-leaf {
+                            type int32;
+                        }
+                    }
+                }
+            }""", """
+            module rab {
+                namespace rab-ns;
+                prefix rab;
+                import baz {
+                    prefix baz;
+                }
+                augment "/baz:top-cont" {
+                    list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                    }
+                }
+                identity base-id;
+                identity id-foo {
+                    base base-id;
+                }
+            }""", """
+            module zab {
+                namespace zab-ns;
+                prefix zab;
+                import foo {
+                    prefix foo;
+                }
+                augment "/foo:top-cont/foo:keyed-list/" {
+                    /*leaf ordinary-leaf {
+                        type int32;
+                    }*/
+                    anyxml aug-anyxml;
+                }
+            }""");
     }
 
     @AfterClass

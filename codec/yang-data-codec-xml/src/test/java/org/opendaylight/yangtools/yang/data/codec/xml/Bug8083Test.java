@@ -27,7 +27,25 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module baz {
+                namespace baz-ns;
+                prefix baz-prefix;
+                container top-cont {
+                    list keyed-list {
+                        key empty-key-leaf;
+                        leaf empty-key-leaf {
+                            type empty;
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""");
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/baz.xml");
 
@@ -45,7 +63,31 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module zab {
+                namespace zab-ns;
+                prefix zab-prefix;
+                identity base-id;
+                identity derived-id {
+                    base base-id;
+                }
+                container top-cont {
+                    list keyed-list {
+                        key identityref-key-leaf;
+                        leaf identityref-key-leaf {
+                            type identityref {
+                                base base-id;
+                            }
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""");
 
         final var resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/zab.xml");
 
@@ -63,7 +105,28 @@ public class Bug8083Test {
 
     @Test
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module foobar {
+                namespace foobar-ns;
+                prefix foobar-prefix;
+                container top-cont {
+                    list keyed-list {
+                        key iid-key-leaf;
+                        leaf iid-key-leaf {
+                            type instance-identifier;
+                        }
+                        leaf regular-leaf {
+                            type int32;
+                        }
+                    }
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                    leaf leaf-b {
+                        type int32;
+                    }
+                }
+            }""");
         final var resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/foobar.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
@@ -77,3 +140,4 @@ public class Bug8083Test {
         assertNotNull(transformedInput);
     }
 }
+
