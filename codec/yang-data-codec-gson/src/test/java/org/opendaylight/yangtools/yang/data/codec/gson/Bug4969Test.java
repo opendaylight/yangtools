@@ -30,7 +30,82 @@ public class Bug4969Test {
 
     @Test
     public void newParserLeafRefTest() throws IOException, URISyntaxException {
-        EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/bug-4969/yang");
+        EffectiveModelContext context = YangParserTestUtils.parseYang("""
+            module bar {
+                namespace "bar";
+                prefix bar;
+                revision "2016-01-22" {
+                    description "Initial version";
+                }
+                typedef ref1 {
+                    type ref1-2;
+                }
+                typedef ref2 {
+                    type ref2-2;
+                }
+                typedef ref3 {
+                    type ref3-2;
+                }
+                typedef ref1-2 {
+                    type leafref {
+                        path "/bar:root/bar:l1";
+                    }
+                }
+                typedef ref2-2 {
+                    type leafref {
+                        path "/bar:root/bar:l2";
+                    }
+                }
+                typedef ref3-2 {
+                    type leafref {
+                        path "/bar:root/bar:l3";
+                    }
+                }
+                container root {
+                    leaf l1 {
+                        type bits {
+                            bit a;
+                            bit b;
+                            bit c;
+                            bit d;
+                        }
+                    }
+                    leaf l2 {
+                        type leafref {
+                            path "/root/l1";
+                        }
+                    }
+                    leaf l3 {
+                        type leafref {
+                            path "../l1";
+                        }
+                    }
+                }
+            }""", """
+            module foo {
+                namespace "foo";
+                prefix foo;
+                import bar { prefix bar; revision-date 2016-01-22; }
+                revision "2016-01-22" {
+                    description "Initial version";
+                }
+                container root {
+                    leaf ref1 {
+                        type bar:ref1;
+                    }
+                    leaf ref2 {
+                        type bar:ref2;
+                    }
+                    leaf ref3 {
+                        type bar:ref3;
+                    }
+                    leaf ref4 {
+                        type leafref {
+                            path "/bar:root/bar:l1";
+                        }
+                    }
+                }
+            }""");
         assertNotNull(context);
 
         verifyNormalizedNodeResult(context);
@@ -90,7 +165,43 @@ public class Bug4969Test {
 
     @Test
     public void newParserLeafRefTest2() throws URISyntaxException, IOException {
-        EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/leafref/yang");
+        EffectiveModelContext context = YangParserTestUtils.parseYang("""
+            module augment-leafref-module {
+                namespace "augment:leafref:module";
+                prefix "auglfrfmo";
+                revision 2014-12-16 {
+                }
+                typedef leafreftype {
+                    type leafref {
+                        path "/auglfrfmo:cont/auglfrfmo:lf3";
+                    }
+                }
+                container cont {
+                    leaf lf3 {
+                        type string;
+                    }
+                }
+            }""", """
+            module leafref-module {
+                namespace "leafref:module";
+                prefix "lfrfmo";
+                import augment-leafref-module { prefix augleafref; revision-date 2014-12-16; }
+                revision 2013-11-18 {
+                }
+                container cont {
+                    leaf lf1 {
+                        type int32;
+                    }
+                    leaf lf2 {
+                        type leafref {
+                            path "/cont/lf1";
+                        }
+                    }
+                    leaf lf4 {
+                        type augleafref:leafreftype;
+                    }
+                }
+            }""");
         assertNotNull(context);
 
         parseJsonToNormalizedNodes(context);
