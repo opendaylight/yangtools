@@ -48,12 +48,74 @@ class YT1473Test {
     private static final QName BAR_FOO = QName.create(BAR_NS, "foo"); // leaf-list of type 'foo:one' based
     private static final QName BAR_BAR = QName.create(BAR_NS, "bar"); // leaf-list of type 'instance-identifier'
     private static final QName BAR_BEE = QName.create(BAR_NS, "bee"); // leaf-list of type 'foo:bts' (bits)
-
     private static XmlCodec<YangInstanceIdentifier> CODEC;
 
     @BeforeAll
     static void beforeAll() {
-        final var modelContext = YangParserTestUtils.parseYangResourceDirectory("/yt1473");
+        final var modelContext = YangParserTestUtils.parseYang("""
+            module bar {
+              namespace barns;
+              prefix bar;
+              import foo { prefix foo; }
+              identity two {
+                base foo:one;
+              }
+              leaf-list str {
+                type string;
+              }
+              leaf-list foo {
+                type identityref {
+                  base foo:one;
+                }
+              }
+              leaf-list bar {
+                type instance-identifier;
+              }
+              leaf-list bee {
+                type foo:bitz;
+              }
+              leaf baz {
+                type instance-identifier;
+              }
+            }""", """
+            module foo {
+              namespace foons;
+              prefix foo;
+              identity one;
+              typedef bitz {
+                type bits {
+                  bit one;
+                  bit two;
+                  bit three;
+                }
+              }
+              list foo {
+                key str;
+                leaf str {
+                  type string;
+                }
+              }
+              list bar {
+                key qname;
+                leaf qname {
+                  type identityref {
+                    base one;
+                  }
+                }
+              }
+              list baz {
+                key id;
+                leaf id {
+                  type instance-identifier;
+                }
+              }
+              list bee {
+                key bts;
+                leaf bts {
+                  type bitz;
+                }
+              }
+            }""");
         final var baz = assertInstanceOf(ListSchemaNode.class, modelContext.getDataChildByName(FOO_BAZ));
         final var id = assertInstanceOf(LeafSchemaNode.class, baz.getDataChildByName(FOO_ID));
         final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, id.getType());

@@ -49,7 +49,43 @@ public class Bug8803Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/bug8803");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module bar {
+                namespace bar-ns;
+                prefix bar;
+                import foo {
+                    prefix foo;
+                }
+                augment "/foo:top-cont/foo:keyed-list" {
+                    leaf iid-leaf {
+                        type instance-identifier;
+                    }
+                }
+            }""", """
+            module baz {
+                namespace baz-ns;
+                prefix baz;
+                container top-cont {
+                    list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                    }
+                }
+            }""", """
+            module foo {
+                namespace foo-ns;
+                prefix foo;
+                container top-cont {
+                    list keyed-list {
+                        key key-leaf;
+                        leaf key-leaf {
+                            type int32;
+                        }
+                    }
+                }
+            }""");
     }
 
     @AfterClass

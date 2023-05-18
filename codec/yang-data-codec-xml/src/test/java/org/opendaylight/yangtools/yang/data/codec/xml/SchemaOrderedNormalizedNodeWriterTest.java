@@ -91,7 +91,26 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
 
-        EffectiveModelContext schemaContext = getSchemaContext("/bug1848/foo.yang");
+        EffectiveModelContext schemaContext = getSchemaContext("""
+            module foo {
+                namespace "foo";
+                prefix "foo";
+                revision "2016-02-17";
+                container root {
+                    list policy {
+                        key name;
+                        leaf name {
+                            type string;
+                        }
+                        list rule {
+                            key name;
+                            leaf name {
+                                type string;
+                            }
+                        }
+                    }
+                }
+            }""");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         try (SchemaOrderedNormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
@@ -150,7 +169,22 @@ public class SchemaOrderedNormalizedNodeWriterTest {
     public void testWriteOrder() throws XMLStreamException, IOException, SAXException {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
-        EffectiveModelContext schemaContext = getSchemaContext("/bug1848/order.yang");
+        EffectiveModelContext schemaContext = getSchemaContext("""
+            module order {
+                namespace "order";
+                prefix "order";
+                revision "2016-02-17";
+                container root {
+                    leaf id {
+                        type string;
+                    }
+                    container cont {
+                        leaf content {
+                            type string;
+                        }
+                    }
+                }
+            }""");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         try (NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
@@ -172,8 +206,8 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
 
-    private static EffectiveModelContext getSchemaContext(final String filePath) {
-        return YangParserTestUtils.parseYangResource(filePath);
+    private static EffectiveModelContext getSchemaContext(final String literalYang) {
+        return YangParserTestUtils.parseYang(literalYang);
     }
 
     private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String ns, final String name) {

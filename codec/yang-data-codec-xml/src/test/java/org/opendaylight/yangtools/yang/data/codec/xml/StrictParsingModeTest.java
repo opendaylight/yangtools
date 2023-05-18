@@ -29,7 +29,14 @@ public class StrictParsingModeTest {
 
     @BeforeClass
     public static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYangResource("/strict-parsing-mode-test/foo.yang");
+        schemaContext = YangParserTestUtils.parseYang("""
+            module foo {
+                namespace foo;
+                prefix foo;
+                container top-level-container {
+                    container inner-container {}
+                }
+            }""");
     }
 
     @AfterClass
