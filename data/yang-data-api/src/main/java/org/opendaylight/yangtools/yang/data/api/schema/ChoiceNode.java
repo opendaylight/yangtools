@@ -23,7 +23,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * {@link org.opendaylight.yangtools.yang.model.api.CaseSchemaNode}, which are retrieved via
  * {@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode#getCases()}.
  */
-public non-sealed interface ChoiceNode extends MixinNode, DataContainerNode, DataContainerChild {
+public non-sealed interface ChoiceNode extends DataContainerNode, DataContainerChild, MixinNode {
     @Override
     default Class<ChoiceNode> contract() {
         return ChoiceNode.class;

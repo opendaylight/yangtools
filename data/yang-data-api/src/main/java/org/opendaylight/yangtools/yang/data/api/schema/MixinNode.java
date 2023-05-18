@@ -8,10 +8,13 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 /**
- * Marker interface for nodes, which are mixins - their content
- * belongs to parent node and in serialized form this node
- * does not exists, but it's children are present.
+ * Marker interface for nodes, which are mixins - their content belongs to parent node and in serialized form this node
+ * does not exist, but it's children are present.
+ *
+ * @deprecated This interface assumes XML encoding. In JSON encoding only a {@link ChoiceNode} is a mixin. Users are
+ *             advised to move to explicit checking.
  */
-public interface MixinNode {
-
+@Deprecated(since = "11.0.0", forRemoval = true)
+public sealed interface MixinNode permits ChoiceNode, LeafSetNode, MapNode, UnkeyedListNode {
+    // Marker only
 }

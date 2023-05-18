@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 // FIXME: 9.0.0: we really want to do a List<@NonNull V> body(), but need to reconcile that with key-based lookup in
 //               implementations -- and those are using only a Map internally.
 public sealed interface OrderedNodeContainer<V extends NormalizedNode>
-        extends NormalizedNodeContainer<V>, MixinNode, OrderingAware.User
+        extends NormalizedNodeContainer<V>, OrderingAware.User
         permits UnkeyedListNode, UserLeafSetNode, UserMapNode {
     @Override
     NodeIdentifier getIdentifier();
