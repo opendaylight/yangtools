@@ -94,7 +94,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     @Override
     public SchemaOrderedNormalizedNodeWriter write(final NormalizedNode node) throws IOException {
         if (schemaContext.equals(root)) {
-            currentSchemaNode = schemaContext.dataChildByName(node.getIdentifier().getNodeType());
+            currentSchemaNode = schemaContext.dataChildByName(node.pathArgument().getNodeType());
         } else {
             currentSchemaNode = root;
         }
@@ -194,7 +194,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     }
 
     private static void putChild(final Multimap<QName, NormalizedNode> qnameToNodes, final NormalizedNode child) {
-        qnameToNodes.put(child.getIdentifier().getNodeType(), child);
+        qnameToNodes.put(child.pathArgument().getNodeType(), child);
     }
 
     private final class SchemaNodeSetter implements AutoCloseable {

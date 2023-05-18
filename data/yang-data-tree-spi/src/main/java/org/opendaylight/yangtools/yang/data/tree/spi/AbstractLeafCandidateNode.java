@@ -35,7 +35,7 @@ abstract class AbstractLeafCandidateNode implements DataTreeCandidateNode {
 
     @Override
     public final PathArgument getIdentifier() {
-        return data.getIdentifier();
+        return data.pathArgument();
     }
 
     @Override

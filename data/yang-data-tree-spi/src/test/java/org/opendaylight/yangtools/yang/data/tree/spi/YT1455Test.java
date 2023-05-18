@@ -36,7 +36,7 @@ public class YT1455Test {
     @Test
     public void testDeleteUnkeyedList() {
         final var childId = new NodeIdentifier(QName.create("foo", "foo"));
-        doReturn(childId).when(child).getIdentifier();
+        doReturn(childId).when(child).pathArgument();
         doReturn(List.of(child)).when(oldData).body();
         doReturn(List.of()).when(newData).body();
         doReturn(null).when(newData).childByArg(childId);

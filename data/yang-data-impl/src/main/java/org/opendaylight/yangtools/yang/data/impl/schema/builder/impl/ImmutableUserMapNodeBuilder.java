@@ -45,7 +45,7 @@ public class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEnt
     }
 
     private ImmutableUserMapNodeBuilder(final ImmutableUserMapNode node) {
-        nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.pathArgument();
         value = node.children;
         dirty = true;
     }
@@ -75,7 +75,7 @@ public class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEnt
     @Override
     public CollectionNodeBuilder<MapEntryNode, UserMapNode> withChild(final MapEntryNode child) {
         checkDirty();
-        value.put(child.getIdentifier(), child);
+        value.put(child.pathArgument(), child);
         return this;
     }
 

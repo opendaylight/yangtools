@@ -39,7 +39,7 @@ public class DataNodeContainerValidator {
     }
 
     public DataContainerChild validateChild(final DataContainerChild child) {
-        validateChild(child.getIdentifier());
+        validateChild(child.pathArgument());
         return child;
     }
 

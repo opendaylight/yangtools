@@ -24,5 +24,5 @@ public interface UnkeyedListEntryNode extends DataContainerNode {
     }
 
     @Override
-    NodeIdentifier getIdentifier();
+    NodeIdentifier pathArgument();
 }

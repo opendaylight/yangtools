@@ -64,7 +64,7 @@ public class Bug890Test {
                 NodeIdentifierWithPredicates.of(OUTGOING_LABELS_QNAME, INDEX_QNAME, 0);
         NodeIdentifierWithPredicates secondNodeId =
                 NodeIdentifierWithPredicates.of(OUTGOING_LABELS_QNAME, INDEX_QNAME, 1);
-        assertTrue(labels.stream().anyMatch(mapEntryNode -> mapEntryNode.getIdentifier().compareTo(firstNodeId) == 0));
-        assertTrue(labels.stream().anyMatch(mapEntryNode -> mapEntryNode.getIdentifier().compareTo(secondNodeId) == 0));
+        assertTrue(labels.stream().anyMatch(mapEntryNode -> mapEntryNode.pathArgument().compareTo(firstNodeId) == 0));
+        assertTrue(labels.stream().anyMatch(mapEntryNode -> mapEntryNode.pathArgument().compareTo(secondNodeId) == 0));
     }
 }

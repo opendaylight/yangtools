@@ -106,7 +106,7 @@ final class UniqueValidation extends AbstractValidation {
                 final Object masked = BinaryValue.wrap(values);
                 if (!collected.put(validator, masked)) {
                     final Map<Descendant, @Nullable Object> index = validator.indexValues(values);
-                    throw exceptionSupplier.get(cont.getIdentifier()
+                    throw exceptionSupplier.get(cont.pathArgument()
                         + " violates unique constraint on " + masked + " of " + index.keySet(), index);
                 }
             }

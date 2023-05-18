@@ -43,7 +43,7 @@ final class NormalizedNodeContainerSupport<K extends PathArgument, T extends Nor
     }
 
     NormalizedNode createEmptyValue(final NormalizedNode original) {
-        return emptyBuilder.get().withNodeIdentifier((K) cast(original).getIdentifier()).build();
+        return emptyBuilder.get().withNodeIdentifier((K) cast(original).pathArgument()).build();
     }
 
     private T cast(final NormalizedNode original) {

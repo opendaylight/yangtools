@@ -37,7 +37,7 @@ public final class LazyLeafOperations {
 
     public static void putChild(final Map<PathArgument, Object> map, final DataContainerChild child) {
         final DataContainerChild node = requireNonNull(child);
-        map.put(node.getIdentifier(), encodeExpendableChild(node));
+        map.put(node.pathArgument(), encodeExpendableChild(node));
     }
 
     static @NonNull LeafNode<?> coerceLeaf(final PathArgument key, final Object value) {

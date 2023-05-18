@@ -69,7 +69,7 @@ public class NormalizedNodeWriterTest {
         assertTrue(ex.getMessage().startsWith("It wasn't possible to serialize node"));
 
         final LeafSetEntryNode<?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
-        doReturn(new NodeWithValue<>(myLeafList, "leaflist-value-1")).when(mockedLeafSetEntryNode).getIdentifier();
+        doReturn(new NodeWithValue<>(myLeafList, "leaflist-value-1")).when(mockedLeafSetEntryNode).pathArgument();
         doReturn("leaflist-value-1").when(mockedLeafSetEntryNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafSetEntryNode));
 
@@ -87,7 +87,7 @@ public class NormalizedNodeWriterTest {
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "list-key-value-1"))
-                .when(mockedMapEntryNode).getIdentifier();
+                .when(mockedMapEntryNode).pathArgument();
         doReturn(null).when(mockedMapEntryNode).childByArg(any(NodeIdentifier.class));
         assertNotNull(orderedNormalizedNodeWriter.write(mockedMapEntryNode));
 

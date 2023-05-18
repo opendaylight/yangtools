@@ -33,7 +33,7 @@ public class YT1417Test {
     @Test
     public void testContainerNodeEquality() {
         final var mock = mock(ContainerNode.class);
-        doReturn(new NodeIdentifier(FOO)).when(mock).getIdentifier();
+        doReturn(new NodeIdentifier(FOO)).when(mock).pathArgument();
         doReturn(1).when(mock).size();
         doReturn(ImmutableNodes.leafNode(BAR, "abc")).when(mock).childByArg(new NodeIdentifier(BAR));
 
@@ -65,7 +65,7 @@ public class YT1417Test {
     @Test
     public void testSystemLeafSetNodeEquality() {
         final var mock = mock(SystemLeafSetNode.class);
-        doReturn(new NodeIdentifier(FOO)).when(mock).getIdentifier();
+        doReturn(new NodeIdentifier(FOO)).when(mock).pathArgument();
         doReturn(1).when(mock).size();
         doReturn(Builders.leafSetEntryBuilder()
             .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))
@@ -115,7 +115,7 @@ public class YT1417Test {
     @Test
     public void testUserLeafSetNodeEquality() {
         final var mock = mock(UserLeafSetNode.class);
-        doReturn(new NodeIdentifier(FOO)).when(mock).getIdentifier();
+        doReturn(new NodeIdentifier(FOO)).when(mock).pathArgument();
         doReturn(List.of(
             Builders.leafSetEntryBuilder()
                 .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))

@@ -80,7 +80,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
     @Override
     protected final MountPointContext createMountPointContext(final EffectiveModelContext schemaContext,
             final ContainerNode mountData) {
-        checkArgument(SCHEMA_MOUNTS.equals(mountData.getIdentifier()), "Unexpected top-level container %s", mountData);
+        checkArgument(SCHEMA_MOUNTS.equals(mountData.pathArgument()), "Unexpected top-level container %s", mountData);
 
         final var mountPoint = mountData.childByArg(MOUNT_POINT);
         if (mountPoint == null) {

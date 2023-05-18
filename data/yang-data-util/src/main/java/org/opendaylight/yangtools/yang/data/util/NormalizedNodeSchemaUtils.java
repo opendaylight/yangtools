@@ -25,7 +25,7 @@ public final class NormalizedNodeSchemaUtils {
     }
 
     public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild child) {
-        final QName childId = child.getIdentifier().getNodeType();
+        final QName childId = child.pathArgument().getNodeType();
         for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
             if (choiceCaseNode.dataChildByName(childId) != null) {
                 return Optional.of(choiceCaseNode);

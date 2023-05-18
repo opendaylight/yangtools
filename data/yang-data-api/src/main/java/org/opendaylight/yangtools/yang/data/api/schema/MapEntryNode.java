@@ -31,5 +31,5 @@ public interface MapEntryNode extends DataContainerNode {
      * @return identifier of this node in the context of parent node
      */
     @Override
-    NodeIdentifierWithPredicates getIdentifier();
+    NodeIdentifierWithPredicates pathArgument();
 }

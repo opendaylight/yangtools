@@ -38,7 +38,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
 
     @Override
     public PathArgument getIdentifier() {
-        return data.getIdentifier();
+        return data.pathArgument();
     }
 
     @Override

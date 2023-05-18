@@ -278,8 +278,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     static void checkIdentifierReferencesData(final PathArgument arg, final NormalizedNode data) {
-        checkArgument(arg.equals(data.getIdentifier()),
-            "Instance identifier references %s but data identifier is %s", arg, data.getIdentifier());
+        checkArgument(arg.equals(data.pathArgument()),
+            "Instance identifier references %s but data identifier is %s", arg, data.pathArgument());
     }
 
     private void checkIdentifierReferencesData(final YangInstanceIdentifier path,

@@ -32,5 +32,5 @@ public non-sealed interface LeafSetEntryNode<T> extends ValueNode<T> {
      * {@code true == this.getIdentifier().getValue().equals(this.body())}.
      */
     @Override
-    NodeWithValue<T> getIdentifier();
+    NodeWithValue<T> pathArgument();
 }

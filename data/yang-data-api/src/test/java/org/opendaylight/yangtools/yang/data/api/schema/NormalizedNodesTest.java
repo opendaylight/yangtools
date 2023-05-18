@@ -99,7 +99,7 @@ public class NormalizedNodesTest {
         final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
         final QName leafNodeQName = QName.create("test-ns", "2016-09-16", "leaf-node");
         final NodeIdentifier leafNodeId = new NodeIdentifier(leafNodeQName);
-        doReturn(leafNodeId).when(mockedLeafNode).getIdentifier();
+        doReturn(leafNodeId).when(mockedLeafNode).pathArgument();
         doReturn("str-value-1").when(mockedLeafNode).body();
 
         String stringTree = NormalizedNodes.toStringTree(mockedLeafNode);
@@ -110,12 +110,12 @@ public class NormalizedNodesTest {
 
         final SystemMapNode mockedMapNode = mock(SystemMapNode.class);
         final NodeIdentifier listNodeId = new NodeIdentifier(listQName);
-        doReturn(listNodeId).when(mockedMapNode).getIdentifier();
+        doReturn(listNodeId).when(mockedMapNode).pathArgument();
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         final NodeIdentifierWithPredicates listEntryNodeId = NodeIdentifierWithPredicates.of(listQName,
                 leafNodeQName, "key-leaf-value");
-        doReturn(listEntryNodeId).when(mockedMapEntryNode).getIdentifier();
+        doReturn(listEntryNodeId).when(mockedMapEntryNode).pathArgument();
         doReturn(List.of(mockedMapEntryNode)).when(mockedMapNode).body();
 
         doReturn(List.of(mockedLeafNode)).when(mockedMapEntryNode).body();

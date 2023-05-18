@@ -35,8 +35,8 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNode);
 
-        final PathArgument mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
-        doReturn(mockedPathArgument).when(mockedNormalizedNode).getIdentifier();
+        final var mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
+        doReturn(mockedPathArgument).when(mockedNormalizedNode).pathArgument();
         assertSame(mockedPathArgument, normalizedNodeDataTreeCandidateNode.getIdentifier());
 
         final Collection<DataTreeCandidateNode> childNodes = normalizedNodeDataTreeCandidateNode.getChildNodes();

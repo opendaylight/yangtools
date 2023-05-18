@@ -114,9 +114,9 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
         final var children = ((ChoiceNode) normalizedNode).body();
         if (!children.isEmpty()) {
             final DataContainerChild firstChild = children.iterator().next();
-            final CaseEnforcer enforcer = verifyNotNull(caseEnforcers.get(firstChild.getIdentifier()),
+            final CaseEnforcer enforcer = verifyNotNull(caseEnforcers.get(firstChild.pathArgument()),
                 "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong "
-                + "in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
+                + "in current tree type.", firstChild.pathArgument(), normalizedNode.pathArgument());
 
             // Make sure no leaves from other cases are present
             for (final CaseEnforcer other : verifyNotNull(exclusions.get(enforcer))) {
@@ -124,7 +124,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
                     final Optional<NormalizedNode> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
                     checkArgument(!maybeChild.isPresent(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
-                        firstChild.getIdentifier(), enforcer, id, other, maybeChild.orElse(null));
+                        firstChild.pathArgument(), enforcer, id, other, maybeChild.orElse(null));
                 }
             }
 

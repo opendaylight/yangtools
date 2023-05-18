@@ -17,17 +17,14 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -134,18 +131,18 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
     protected boolean wasProcessAsSimpleNode(final NormalizedNode node) throws IOException {
         if (node instanceof LeafSetEntryNode<?> nodeAsLeafList) {
-            writer.startLeafSetEntryNode(nodeAsLeafList.getIdentifier());
+            writer.startLeafSetEntryNode(nodeAsLeafList.pathArgument());
             writer.scalarValue(nodeAsLeafList.body());
             writer.endNode();
             return true;
         } else if (node instanceof LeafNode<?> nodeAsLeaf) {
-            writer.startLeafNode(nodeAsLeaf.getIdentifier());
+            writer.startLeafNode(nodeAsLeaf.pathArgument());
             writer.scalarValue(nodeAsLeaf.body());
             writer.endNode();
             return true;
         } else if (node instanceof AnyxmlNode<?> anyxmlNode) {
             final Class<?> model = anyxmlNode.bodyObjectModel();
-            if (writer.startAnyxmlNode(anyxmlNode.getIdentifier(), model)) {
+            if (writer.startAnyxmlNode(anyxmlNode.pathArgument(), model)) {
                 final Object value = node.body();
                 if (DOMSource.class.isAssignableFrom(model)) {
                     verify(value instanceof DOMSource, "Inconsistent anyxml node %s", anyxmlNode);
@@ -160,7 +157,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
         } else if (node instanceof AnydataNode<?> anydata) {
             final Class<?> model = anydata.bodyObjectModel();
-            if (writer.startAnydataNode(anydata.getIdentifier(), model)) {
+            if (writer.startAnydataNode(anydata.pathArgument(), model)) {
                 writer.scalarValue(anydata.body());
                 writer.endNode();
                 return true;
@@ -189,36 +186,36 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-        writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.body()));
+        writer.startMapEntryNode(node.pathArgument(), childSizeHint(node.body()));
         return writeChildren(node.body());
     }
 
     protected boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
         if (node instanceof ContainerNode n) {
-            writer.startContainerNode(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startContainerNode(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         } else if (node instanceof MapEntryNode n) {
             return writeMapEntryNode(n);
         } else if (node instanceof UnkeyedListEntryNode n) {
-            writer.startUnkeyedListItem(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startUnkeyedListItem(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         } else if (node instanceof ChoiceNode n) {
-            writer.startChoiceNode(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startChoiceNode(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         } else if (node instanceof UnkeyedListNode n) {
-            writer.startUnkeyedList(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startUnkeyedList(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         } else if (node instanceof UserMapNode n) {
-            writer.startOrderedMapNode(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startOrderedMapNode(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         } else if (node instanceof SystemMapNode n) {
-            writer.startMapNode(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startMapNode(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         } else if (node instanceof UserLeafSetNode<?> n) {
-            writer.startOrderedLeafSet(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startOrderedLeafSet(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         } else if (node instanceof SystemLeafSetNode<?> n) {
-            writer.startLeafSet(n.getIdentifier(), childSizeHint(n.body()));
+            writer.startLeafSet(n.pathArgument(), childSizeHint(n.body()));
             return writeChildren(n.body());
         }
         return false;
@@ -233,13 +230,14 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-            final NormalizedNodeStreamWriter nnWriter = getWriter();
-            nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.body()));
+            final var nnWriter = getWriter();
+            final var pathArgument = node.pathArgument();
+            nnWriter.startMapEntryNode(pathArgument, childSizeHint(node.body()));
 
-            final Set<QName> qnames = node.getIdentifier().keySet();
+            final var qnames = pathArgument.keySet();
             // Write out all the key children
-            for (final QName qname : qnames) {
-                final DataContainerChild child = node.childByArg(new NodeIdentifier(qname));
+            for (var qname : qnames) {
+                final var child = node.childByArg(new NodeIdentifier(qname));
                 if (child != null) {
                     write(child);
                 } else {
@@ -249,7 +247,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
             // Write all the rest
             return writeChildren(Iterables.filter(node.body(), input -> {
-                if (qnames.contains(input.getIdentifier().getNodeType())) {
+                if (qnames.contains(input.pathArgument().getNodeType())) {
                     LOG.debug("Skipping key child {}", input);
                     return false;
                 }

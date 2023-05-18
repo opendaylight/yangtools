@@ -70,7 +70,7 @@ public class ImmutableMapEntryNodeBuilder
 
     private static void putQName(final Map<QName, PathArgument> map, final DataContainerChild child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-        final PathArgument identifier = child.getIdentifier();
+        final PathArgument identifier = child.pathArgument();
         map.put(identifier.getNodeType(), identifier);
     }
 

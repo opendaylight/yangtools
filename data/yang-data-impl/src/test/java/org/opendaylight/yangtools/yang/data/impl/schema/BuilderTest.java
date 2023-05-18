@@ -120,7 +120,7 @@ public class BuilderTest {
 
         assertEquals(SIZE, orderedMapNodeCreateNull.size());
         assertEquals(orderedMapNodeCreateNode.size(), orderedMapNodeCreateNull.size() - 1);
-        assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.getIdentifier());
+        assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.pathArgument());
         assertEquals(LIST_MAIN_CHILD_1, orderedMapNodeCreateNull.childAt(0));
         assertEquals(SIZE, orderedMapNodeCreateNull.size());
         assertEquals(orderedMapNodeSchemaAware.childAt(0), orderedMapNodeSchemaAwareMapNodeConst.childAt(0));
@@ -175,8 +175,8 @@ public class BuilderTest {
                 .build();
         final UnkeyedListEntryNode unkeyedListEntryNodeNode = ImmutableUnkeyedListEntryNodeBuilder
                 .create(unkeyedListEntryNode).build();
-        assertEquals(unkeyedListEntryNode.getIdentifier(), unkeyedListEntryNodeSize.getIdentifier());
-        assertEquals(unkeyedListEntryNodeSize.getIdentifier(), unkeyedListEntryNodeNode.getIdentifier());
+        assertEquals(unkeyedListEntryNode.pathArgument(), unkeyedListEntryNodeSize.pathArgument());
+        assertEquals(unkeyedListEntryNodeSize.pathArgument(), unkeyedListEntryNodeNode.pathArgument());
     }
 
     @Test
@@ -200,7 +200,7 @@ public class BuilderTest {
 
         assertNotNull(unkeyedListNodeSize.body());
         assertEquals(unkeyedListEntryNode, unkeyedListNodeCreated.childAt(0));
-        assertEquals(unkeyedListNode.getIdentifier(), unkeyedListNodeSize.getIdentifier());
+        assertEquals(unkeyedListNode.pathArgument(), unkeyedListNodeSize.pathArgument());
         assertNotNull(unkeyedListNodeCreated);
     }
 
@@ -209,7 +209,7 @@ public class BuilderTest {
         final ChoiceNode choiceNode = ImmutableChoiceNodeBuilder.create(1).withNodeIdentifier(NODE_IDENTIFIER_LIST)
                 .build();
         final ChoiceNode choiceNodeCreated = ImmutableChoiceNodeBuilder.create(choiceNode).build();
-        assertEquals(choiceNodeCreated.getIdentifier(), choiceNode.getIdentifier());
+        assertEquals(choiceNodeCreated.pathArgument(), choiceNode.pathArgument());
     }
 
     @Test

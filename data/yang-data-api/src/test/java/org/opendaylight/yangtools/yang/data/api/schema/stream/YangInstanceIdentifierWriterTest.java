@@ -175,12 +175,12 @@ public class YangInstanceIdentifierWriterTest {
                 final QName leafQname = QName.create("test", "leaf");
 
                 final LeafSetEntryNode<?> leafNode = mock(LeafSetEntryNode.class);
-                doReturn(new NodeWithValue<>(leafQname, "test-value")).when(leafNode).getIdentifier();
+                doReturn(new NodeWithValue<>(leafQname, "test-value")).when(leafNode).pathArgument();
                 doReturn("test-value").when(leafNode).body();
                 nnWriter.write(leafNode);
 
                 final LeafSetEntryNode<?> leafNode2 = mock(LeafSetEntryNode.class);
-                doReturn(new NodeWithValue<>(leafQname, "test-value-2")).when(leafNode2).getIdentifier();
+                doReturn(new NodeWithValue<>(leafQname, "test-value-2")).when(leafNode2).pathArgument();
                 doReturn("test-value-2").when(leafNode2).body();
                 nnWriter.write(leafNode2);
             }
@@ -202,9 +202,9 @@ public class YangInstanceIdentifierWriterTest {
         final ContainerNode containerNode = mock(ContainerNode.class);
         final LeafNode<?> leafNode = mock(LeafNode.class);
 
-        doReturn(new NodeIdentifier(QName.create("test", "payload-container"))).when(containerNode).getIdentifier();
+        doReturn(new NodeIdentifier(QName.create("test", "payload-container"))).when(containerNode).pathArgument();
         doReturn(Set.of(leafNode)).when(containerNode).body();
-        doReturn(new NodeIdentifier(QName.create("test", "payload-leaf"))).when(leafNode).getIdentifier();
+        doReturn(new NodeIdentifier(QName.create("test", "payload-leaf"))).when(leafNode).pathArgument();
         doReturn("leaf-value").when(leafNode).body();
 
         return containerNode;

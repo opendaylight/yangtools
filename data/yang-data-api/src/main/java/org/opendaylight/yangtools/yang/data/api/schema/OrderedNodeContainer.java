@@ -28,7 +28,7 @@ public sealed interface OrderedNodeContainer<V extends NormalizedNode>
         extends NormalizedNodeContainer<V>, OrderingAware.User
         permits UnkeyedListNode, UserLeafSetNode, UserMapNode {
     @Override
-    NodeIdentifier getIdentifier();
+    NodeIdentifier pathArgument();
 
     /**
      * Returns child node by position.

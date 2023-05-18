@@ -42,7 +42,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
     }
 
     protected ImmutableLeafSetNodeBuilder(final ImmutableLeafSetNode<T> node) {
-        nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.pathArgument();
         value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
@@ -63,13 +63,13 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
 
     @Override
     public ImmutableLeafSetNodeBuilder<T> withChild(final LeafSetEntryNode<T> child) {
-        this.value.put(child.getIdentifier(), child);
+        value.put(child.pathArgument(), child);
         return this;
     }
 
     @Override
     public ImmutableLeafSetNodeBuilder<T> withoutChild(final PathArgument key) {
-        this.value.remove(key);
+        value.remove(key);
         return this;
     }
 
@@ -80,7 +80,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
 
     @Override
     public ImmutableLeafSetNodeBuilder<T> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
-        this.nodeIdentifier = withNodeIdentifier;
+        nodeIdentifier = withNodeIdentifier;
         return this;
     }
 
@@ -152,7 +152,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
                 return false;
             }
             for (var child : children.values()) {
-                if (!child.equals(other.childByArg(child.getIdentifier()))) {
+                if (!child.equals(other.childByArg(child.pathArgument()))) {
                     return false;
                 }
             }

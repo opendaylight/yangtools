@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -45,10 +44,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               boundary -- like RFC8528. Hence we cannot really have a reasonably-structured concept of unverified
  *               data. Nevertheless, this interface should be named 'NormalizedData'.
  */
-public interface NormalizedNode extends Identifiable<PathArgument>, PrettyTreeAware {
-    @Override
-    // We override here, so that NormalizedNode.getIdentifier() has fewer implementations
-    PathArgument getIdentifier();
+public interface NormalizedNode extends PrettyTreeAware {
+    /**
+     * Return the {@link PathArgument} associated with this node.
+     *
+     * @return A PathArgument
+     */
+    @NonNull PathArgument pathArgument();
 
     /**
      * Return the contract governing this {@link NormalizedNode} instance.
