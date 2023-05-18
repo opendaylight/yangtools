@@ -27,7 +27,7 @@ public class NipSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 95, 107, 156, 3_409, 982_867, 1_443_164 });
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 95, 107, 155, 252, 3_409, 982_867, 1_443_164 });
     }
 
     @Parameter(1)
@@ -37,10 +37,12 @@ public class NipSerializationTest extends AbstractSerializationTest {
     @Parameter(3)
     public int size5;
     @Parameter(4)
-    public int size256;
+    public int size13;
     @Parameter(5)
-    public int size65792;
+    public int size256;
     @Parameter(6)
+    public int size65792;
+    @Parameter(7)
     public int twiceSize65792;
 
     @Test
@@ -56,6 +58,11 @@ public class NipSerializationTest extends AbstractSerializationTest {
     @Test
     public void test5() {
         assertEquals(createIdentifier(5), size5);
+    }
+
+    @Test
+    public void test13() {
+        assertEquals(createIdentifier(13), size13);
     }
 
     @Test
