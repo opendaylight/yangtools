@@ -14,30 +14,31 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
 abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    private final DistinctNodeContainer<PathArgument, NormalizedNode> data;
+    private final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> data;
 
-    AbstractDataTreeCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+    AbstractDataTreeCandidateNode(final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> data) {
         this.data = requireNonNull(data);
     }
 
     @Override
     public final PathArgument getIdentifier() {
-        return data.getIdentifier();
+        return data.pathArgument();
     }
 
     final @NonNull Optional<NormalizedNode> dataOptional() {
         return Optional.of(data);
     }
 
-    final DistinctNodeContainer<PathArgument, NormalizedNode> data() {
+    final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> data() {
         return data;
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{data = " + this.data + "}";
+        return this.getClass().getSimpleName() + "{data = " + data + "}";
     }
 }

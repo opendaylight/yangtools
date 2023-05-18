@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -25,9 +24,9 @@ public final class NormalizedNodeSchemaUtils {
     }
 
     public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild child) {
-        final QName childId = child.getIdentifier().getNodeType();
-        for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
-            if (choiceCaseNode.dataChildByName(childId) != null) {
+        final var childName = child.pathArgument().getNodeType();
+        for (var choiceCaseNode : schema.getCases()) {
+            if (choiceCaseNode.dataChildByName(childName) != null) {
                 return Optional.of(choiceCaseNode);
             }
         }

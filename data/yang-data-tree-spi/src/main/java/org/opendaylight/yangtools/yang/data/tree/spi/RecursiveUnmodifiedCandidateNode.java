@@ -11,11 +11,12 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 final class RecursiveUnmodifiedCandidateNode extends AbstractRecursiveCandidateNode {
-    RecursiveUnmodifiedCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+    RecursiveUnmodifiedCandidateNode(final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> data) {
         super(data);
     }
 
@@ -35,7 +36,7 @@ final class RecursiveUnmodifiedCandidateNode extends AbstractRecursiveCandidateN
     }
 
     @Override
-    DataTreeCandidateNode createContainer(final DistinctNodeContainer<PathArgument, NormalizedNode> childData) {
+    DataTreeCandidateNode createContainer(final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> childData) {
         return new RecursiveUnmodifiedCandidateNode(childData);
     }
 

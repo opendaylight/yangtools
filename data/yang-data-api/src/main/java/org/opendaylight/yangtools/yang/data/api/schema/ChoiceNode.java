@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-
 /**
  * Node representing data instance of <code>choice</code>.
  *
@@ -30,7 +28,4 @@ public interface ChoiceNode extends MixinNode, DataContainerNode, DataContainerC
     default Class<ChoiceNode> contract() {
         return ChoiceNode.class;
     }
-
-    @Override
-    NodeIdentifier getIdentifier();
 }

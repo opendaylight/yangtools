@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 
 @Beta
@@ -45,13 +46,17 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
         appendIndent(sb, depth);
         sb.append(simpleName.toLowerCase(Locale.ROOT).charAt(0)).append(simpleName, 1, simpleName.length()).append(' ');
 
-        final QName qname = node.getIdentifier().getNodeType();
-        final QNameModule currentNamespace = qname.getModule();
-        appendNamespace(sb, parentNamespace, currentNamespace);
-        sb.append(qname.getLocalName()).append(' ');
+        final QNameModule currentNamespace;
+        if (node instanceof PathNode<?> pathNode) {
+            final QName qname = pathNode.pathArgument().getNodeType();
+            currentNamespace = qname.getModule();
+            appendNamespace(sb, parentNamespace, currentNamespace);
+            sb.append(qname.getLocalName()).append(' ');
+        } else {
+            currentNamespace = parentNamespace;
+        }
 
-        if (node instanceof NormalizedNodeContainer) {
-            final NormalizedNodeContainer<?> container = (NormalizedNodeContainer<?>) node;
+        if (node instanceof NormalizedNodeContainer<?> container) {
             sb.append("= {");
 
             final Iterator<? extends NormalizedNode> it = container.body().iterator();
@@ -69,19 +74,18 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
         } else if (node instanceof ValueNode) {
             sb.append("= ");
             final Object value = node.body();
-            if (value instanceof byte[]) {
-                sb.append("(byte[])").append(Base64.getEncoder().encodeToString((byte[]) value));
-            } else if (value instanceof String) {
-                appendString(sb, (String) value);
+            if (value instanceof byte[] bytes) {
+                sb.append("(byte[])").append(Base64.getEncoder().encodeToString(bytes));
+            } else if (value instanceof String string) {
+                appendString(sb, string);
             } else {
                 sb.append(value);
             }
-        } else if (node instanceof ForeignDataNode) {
-            final ForeignDataNode<?> data = (ForeignDataNode<?>) node;
+        } else if (node instanceof ForeignDataNode<?> data) {
             final Object body = data.body();
-            if (body instanceof PrettyTreeAware) {
+            if (body instanceof PrettyTreeAware aware) {
                 sb.append("= {\n");
-                ((PrettyTreeAware) body).prettyTree().appendTo(sb, depth + 1);
+                aware.prettyTree().appendTo(sb, depth + 1);
                 appendIndent(sb, depth);
                 sb.append('}');
             } else {

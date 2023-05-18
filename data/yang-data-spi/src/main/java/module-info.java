@@ -17,4 +17,5 @@ module org.opendaylight.yangtools.yang.data.spi {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static com.github.spotbugs.annotations;
 }

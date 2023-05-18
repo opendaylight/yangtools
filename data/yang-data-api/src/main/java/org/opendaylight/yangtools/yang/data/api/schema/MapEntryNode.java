@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 /**
  * Instance of Map entry, this node does not contains value, but child nodes.
  */
-public interface MapEntryNode extends DataContainerNode {
+public interface MapEntryNode extends DataContainerNode, PathNode<NodeIdentifierWithPredicates> {
     @Override
     default Class<MapEntryNode> contract() {
         return MapEntryNode.class;
@@ -23,13 +23,12 @@ public interface MapEntryNode extends DataContainerNode {
      * Returns identifier of this node in parent map node
      *
      * <p>
-     * Contents of identifier is defined by <code>key</code> (
-     * {@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode#getKeyDefinition()}
-     * ) statement in YANG schema for associated list item and child {@link LeafNode}s
-     * values with {@link NodeIdentifier} as defined in the schema.
+     * Contents of identifier is defined by {@code key}
+     * ({@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode#getKeyDefinition()}) statement in YANG schema
+     * for associated list item and child {@link LeafNode}s values with {@link NodeIdentifier} as defined in the schema.
      *
      * @return identifier of this node in the context of parent node
      */
     @Override
-    NodeIdentifierWithPredicates getIdentifier();
+    NodeIdentifierWithPredicates pathArgument();
 }

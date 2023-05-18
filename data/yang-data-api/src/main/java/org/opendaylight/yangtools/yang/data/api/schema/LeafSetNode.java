@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 
 /**
@@ -20,12 +19,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  * @param <T> Type of leaf node values.
  */
 public sealed interface LeafSetNode<T>
-        extends DistinctNodeContainer<NodeWithValue<?>, LeafSetEntryNode<T>>, DataContainerChild, MixinNode
+        extends DistinctNodeContainer<NodeWithValue<T>, LeafSetEntryNode<T>>, DataContainerChild, MixinNode
         permits SystemLeafSetNode, UserLeafSetNode {
     @Override
     @SuppressWarnings("rawtypes")
     Class<? extends LeafSetNode> contract();
-
-    @Override
-    NodeIdentifier getIdentifier();
 }

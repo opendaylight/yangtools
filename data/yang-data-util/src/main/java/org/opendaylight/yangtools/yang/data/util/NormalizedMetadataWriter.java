@@ -15,9 +15,9 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -101,9 +101,11 @@ public final class NormalizedMetadataWriter implements Closeable, Flushable {
      */
     public @NonNull NormalizedMetadataWriter write(final NormalizedNode data, final NormalizedMetadata metadata)
             throws IOException {
-        final PathArgument dataId = data.getIdentifier();
-        final PathArgument metaId = metadata.getIdentifier();
-        checkArgument(dataId.equals(metaId), "Mismatched data %s and metadata %s", dataId, metaId);
+        if (data instanceof PathNode<?> pathData) {
+            final var dataId = pathData.pathArgument();
+            final var metaId = metadata.getIdentifier();
+            checkArgument(dataId.equals(metaId), "Mismatched data %s and metadata %s", dataId, metaId);
+        }
 
         final var metaWriter = writer.extension(MetadataExtension.class);
         final NormalizedNodeStreamWriter delegate = metaWriter == null ? writer

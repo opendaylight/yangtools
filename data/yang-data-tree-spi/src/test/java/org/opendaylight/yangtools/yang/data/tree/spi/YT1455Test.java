@@ -20,16 +20,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class YT1455Test {
     @Mock
-    public DistinctNodeContainer<PathArgument, NormalizedNode> oldData;
+    public DistinctNodeContainer<PathArgument, PathNode<PathArgument>> oldData;
     @Mock
-    public DistinctNodeContainer<PathArgument, NormalizedNode> newData;
+    public DistinctNodeContainer<PathArgument, PathNode<PathArgument>> newData;
     @Mock
     public UnkeyedListNode child;
 

@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
 /**
@@ -26,9 +25,6 @@ public sealed interface MapNode
         permits SystemMapNode, UserMapNode {
     @Override
     Class<? extends MapNode> contract();
-
-    @Override
-    NodeIdentifier getIdentifier();
 
     /**
      * Return a {@link Map} view of this node. Note that the iteration order of the returned is map is not defined in

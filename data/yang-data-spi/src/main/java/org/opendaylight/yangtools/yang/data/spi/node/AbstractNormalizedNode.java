@@ -9,58 +9,53 @@
 package org.opendaylight.yangtools.yang.data.spi.node;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.PrettyTree;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * Abstract base class for {@link NormalizedNode} implementations.
  *
- * @param <I> Identifier type
  * @param <T> Implemented {@link NormalizedNode} specialization type
  */
 @Beta
-public abstract class AbstractNormalizedNode<I extends PathArgument, T extends NormalizedNode>
-        extends AbstractIdentifiable<PathArgument, I> implements NormalizedNode, Immutable {
-    protected AbstractNormalizedNode(final I identifier) {
-        super(identifier);
-    }
-
+public abstract class AbstractNormalizedNode<T extends NormalizedNode> implements NormalizedNode, Immutable {
     @Override
     public final PrettyTree prettyTree() {
         return new NormalizedNodePrettyTree(this);
     }
 
+    @SuppressFBWarnings("EQ_UNUSUAL")
     @Override
     public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        final Class<T> clazz = implementedType();
-        if (!clazz.isInstance(obj)) {
-            return false;
-        }
-        final T other = clazz.cast(obj);
-        return getIdentifier().equals(other.getIdentifier()) && valueEquals(other);
+        final var clazz = implementedType();
+        return clazz.isInstance(obj) && equalsImpl(clazz.cast(obj));
     }
+
+    protected abstract boolean equalsImpl(@NonNull T other);
 
     @Override
     public final int hashCode() {
-        return 31 * getIdentifier().hashCode() + valueHashCode();
+        return hashCodeImpl();
     }
 
+    protected abstract int hashCodeImpl();
+
     @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    }
+
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("body", body());
+        return toStringHelper.add("body", body());
     }
 
     protected abstract @NonNull Class<T> implementedType();
-
-    protected abstract int valueHashCode();
-
-    protected abstract boolean valueEquals(@NonNull T other);
 }

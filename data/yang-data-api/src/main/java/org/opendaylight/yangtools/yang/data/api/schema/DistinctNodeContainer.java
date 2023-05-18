@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * @param <K> Child path argument type
  * @param <V> Child Node type
  */
-public non-sealed interface DistinctNodeContainer<K extends PathArgument, V extends NormalizedNode>
+public non-sealed interface DistinctNodeContainer<K extends PathArgument, V extends PathNode<K>>
         extends NormalizedNodeContainer<V> {
     /**
      * {@inheritDoc}

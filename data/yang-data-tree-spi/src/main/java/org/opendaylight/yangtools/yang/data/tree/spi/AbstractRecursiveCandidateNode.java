@@ -13,10 +13,11 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
 abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateNode {
-    AbstractRecursiveCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+    AbstractRecursiveCandidateNode(final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> data) {
         super(data);
     }
 
@@ -30,14 +31,15 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
         return Collections2.transform(data().body(), this::createChild);
     }
 
-    abstract DataTreeCandidateNode createContainer(DistinctNodeContainer<PathArgument, NormalizedNode> childData);
+    abstract DataTreeCandidateNode createContainer(DistinctNodeContainer<PathArgument,
+        PathNode<PathArgument>> childData);
 
     abstract DataTreeCandidateNode createLeaf(NormalizedNode childData);
 
     @SuppressWarnings("unchecked")
     private DataTreeCandidateNode createChild(final NormalizedNode childData) {
         if (childData instanceof DistinctNodeContainer) {
-            return createContainer((DistinctNodeContainer<PathArgument, NormalizedNode>) childData);
+            return createContainer((DistinctNodeContainer<PathArgument, PathNode<PathArgument>>) childData);
         }
         return createLeaf(childData);
     }
