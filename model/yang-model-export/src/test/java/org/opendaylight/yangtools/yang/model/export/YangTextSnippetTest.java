@@ -24,7 +24,62 @@ public class YangTextSnippetTest {
 
     @Test
     public void testSubmoduleNamespaces() throws Exception {
-        assertFormat(YangParserTestUtils.parseYangResourceDirectory("/bugs/yt992"));
+        assertFormat(YangParserTestUtils.parseYang("""
+            module module1 {
+              yang-version "1.1";
+              namespace "urn:example:module1";
+              prefix "module1";
+
+              include module1submodule1;
+
+              revision "2019-05-17" {
+              }
+
+              container cont1 {
+                uses submodule-grouping;
+              }
+            }""", """
+            submodule module1submodule1 {
+              yang-version "1.1";
+
+              belongs-to "module1" {
+                prefix "module1";
+              }
+
+              import module2 {
+                prefix "module2";
+              }
+
+              revision "2019-05-17" {
+              }
+
+              grouping submodule-grouping {
+                uses module2:grouping1;
+
+                leaf leaf2 {
+                  type string;
+                  module2:ext1 "param1";
+                }
+              }
+            }""", """
+            module module2 {
+              yang-version "1.1";
+              namespace "urn:example:module2";
+              prefix "module2";
+
+              revision "2019-05-17" {
+              }
+
+              grouping grouping1 {
+                leaf leaf1 {
+                  type string;
+                }
+              }
+
+              extension ext1 {
+                argument "parameter";
+              }
+            }"""));
     }
 
     private static void assertFormat(final EffectiveModelContext context) {
