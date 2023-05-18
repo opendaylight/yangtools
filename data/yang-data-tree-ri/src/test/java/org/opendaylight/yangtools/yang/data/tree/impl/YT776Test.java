@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT776Test {
     private static final QName MODULE = QName.create("yt776", "yt776");
@@ -67,7 +68,43 @@ public class YT776Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/yt776.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module yt776 {
+                namespace yt776;
+                prefix yt776;
+                container box {
+                    list object {
+                        key object-id;
+                        leaf object-id {
+                            type string;
+                        }
+                        leaf-list attributes {
+                            type string;
+                            min-elements 1;
+                            max-elements 2;
+                        }
+                        list nested {
+                            key nested-attribute;
+                            max-elements 1;
+                            leaf nested-attribute {
+                                type string;
+                            }
+                        }
+                    }
+                    choice any-of {
+                        leaf some-leaf {
+                            type string;
+                        }
+                        list some-list {
+                            key some-leaf;
+                            min-elements 1;
+                            leaf some-leaf {
+                                type string;
+                            }
+                        }
+                    }
+                }
+            }""");
     }
 
     @AfterClass
