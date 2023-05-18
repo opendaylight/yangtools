@@ -28,13 +28,49 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameS
 class YT1060Test {
     private static final QName CONT = QName.create("parent", "cont");
     private static final QName LEAF1 = QName.create(CONT, "leaf1");
-
     private EffectiveModelContext context;
     private PathExpression path;
 
     @BeforeEach
     void before() {
-        context = YangParserTestUtils.parseYangResourceDirectory("/yt1060");
+        context = YangParserTestUtils.parseYang("""
+            submodule child {
+              belongs-to parent {
+                prefix par;
+              }
+              import imported {
+                prefix imp;
+              }
+              container cont {
+                leaf leaf1 {
+                  type leafref {
+                    path "/imp:root/imp:leaf1";
+                  }
+                }
+                leaf leaf2 {
+                    type imp:foo;
+                }
+              }
+            }""", """
+            module imported {
+              namespace "imported";
+              prefix imp;
+              typedef foo {
+                type string {
+                  pattern 'S(\\d+G)?(\\d+M)?';
+                }
+              }
+              container root {
+                leaf leaf1 {
+                  type string;
+                }
+              }
+            }""", """
+            module parent {
+              namespace "parent";
+              prefix par;
+              include child;
+            }""");
 
         final var module = context.findModule(CONT.getModule()).orElseThrow();
         final var cont = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(CONT));

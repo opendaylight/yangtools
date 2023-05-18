@@ -26,7 +26,48 @@ class YT588Test {
 
     @Test
     void test() {
-        final var context = YangParserTestUtils.parseYangResource("/yt588.yang");
+        final var context = YangParserTestUtils.parseYang("""
+            module foo {
+                namespace "foo";
+                prefix foo;
+                yang-version 1;
+                revision "2016-03-01" {
+                    description "test";
+                }
+                grouping grp {
+                    container con-grp {
+                        leaf l {
+                            type int16;
+                        }
+                        leaf leaf-ref {
+                            type leafref {
+                                path "../../con2/l2";
+                            }
+                        }
+                    }
+                }
+                container root {
+                    uses grp;
+                    container con2 {
+                        leaf l2 {
+                            type binary;
+                        }
+                    }
+                }
+                augment "/root" {
+                    leaf leaf-ref-2 {
+                        type leaf-ref-type2;
+                    }
+                }
+                typedef leaf-ref-type2 {
+                    type leaf-ref-type;
+                }
+                typedef leaf-ref-type {
+                    type leafref {
+                        path "../con-grp/l";
+                    }
+                }
+            }""");
         final var root = QName.create(NS, REV, "root");
         final var leafRef2 = QName.create(NS, REV, "leaf-ref-2");
         final var conGrp = QName.create(NS, REV, "con-grp");
