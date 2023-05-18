@@ -15,7 +15,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * Ordering of the elements is user-defined during construction of instance of this interface. Ordered view of elements
  * (iteration) is provided by {@link #body()} call.
  */
-public interface UnkeyedListNode extends OrderedNodeContainer<UnkeyedListEntryNode>, DataContainerChild {
+public non-sealed interface UnkeyedListNode extends OrderedNodeContainer<UnkeyedListEntryNode>, DataContainerChild {
     @Override
     default Class<UnkeyedListNode> contract() {
         return UnkeyedListNode.class;
