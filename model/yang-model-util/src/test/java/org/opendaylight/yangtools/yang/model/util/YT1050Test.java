@@ -32,7 +32,43 @@ class YT1050Test {
 
     @BeforeEach
     void before() {
-        context = YangParserTestUtils.parseYangResource("/yt1050.yang");
+        context = YangParserTestUtils.parseYang("""
+            module yt1050 {
+              yang-version 1.1;
+              namespace "yt1050";
+              prefix "yt1050";
+              identity target-base;
+              typedef target-type {
+                type identityref {
+                  base target-base;
+                }
+              }
+              grouping grp {
+                leaf id {
+                  type string;
+                }
+                leaf type {
+                  type target-type;
+                }
+                list secondary {
+                  key "id type";
+                  leaf id {
+                    type leafref {
+                      path "/grp-uses/id";
+                    }
+                  }
+                  leaf type {
+                    type leafref {
+                      path "deref(../id)/../type";
+                    }
+                  }
+                }
+              }
+              list grp-uses {
+                uses grp;
+                key "id type";
+              }
+            }""");
         module = context.getModules().iterator().next();
 
         final var grpUses = assertInstanceOf(ListSchemaNode.class, module.getDataChildByName(GRP_USES));

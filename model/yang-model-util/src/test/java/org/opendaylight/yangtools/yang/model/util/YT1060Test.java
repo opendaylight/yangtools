@@ -34,7 +34,44 @@ class YT1060Test {
 
     @BeforeEach
     void before() {
-        context = YangParserTestUtils.parseYangResourceDirectory("/yt1060");
+        context = YangParserTestUtils.parseYang("""
+            submodule child {
+              belongs-to parent {
+                prefix par;
+              }
+              import imported {
+                prefix imp;
+              }
+              container cont {
+                leaf leaf1 {
+                  type leafref {
+                    path "/imp:root/imp:leaf1";
+                  }
+                }
+                leaf leaf2 {
+                    type imp:foo;
+                }
+              }
+            }""", """
+            module imported {
+              namespace "imported";
+              prefix imp;
+              typedef foo {
+                type string {
+                  pattern 'S(\\d+G)?(\\d+M)?';
+                }
+              }
+              container root {
+                leaf leaf1 {
+                  type string;
+                }
+              }
+            }""", """
+            module parent {
+              namespace "parent";
+              prefix par;
+              include child;
+            }""");
 
         final var module = context.findModule(CONT.getModule()).orElseThrow();
         final var cont = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(CONT));
