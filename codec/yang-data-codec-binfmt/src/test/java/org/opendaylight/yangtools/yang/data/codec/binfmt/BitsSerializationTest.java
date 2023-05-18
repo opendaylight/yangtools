@@ -27,7 +27,7 @@ public class BitsSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 100, 226, 1_536, 456_764, 654_045 });
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 100, 226, 1_536, 456_764, 654_045 });
     }
 
     @Parameter(1)

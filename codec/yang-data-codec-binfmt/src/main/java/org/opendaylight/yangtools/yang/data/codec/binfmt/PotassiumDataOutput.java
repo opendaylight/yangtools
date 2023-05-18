@@ -48,8 +48,8 @@ import org.slf4j.LoggerFactory;
  * Abstract base class for NormalizedNodeDataOutput based on {@link MagnesiumNode}, {@link MagnesiumPathArgument} and
  * {@link MagnesiumValue}.
  */
-final class MagnesiumDataOutput extends AbstractNormalizedNodeDataOutput {
-    private static final Logger LOG = LoggerFactory.getLogger(MagnesiumDataOutput.class);
+final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
+    private static final Logger LOG = LoggerFactory.getLogger(PotassiumDataOutput.class);
 
     // Marker for encoding state when we have entered startLeafNode() within a startMapEntry() and that leaf corresponds
     // to a key carried within NodeIdentifierWithPredicates.
@@ -71,7 +71,7 @@ final class MagnesiumDataOutput extends AbstractNormalizedNodeDataOutput {
     private final Map<String, Integer> stringCodeMap = new HashMap<>();
     private final Map<QName, Integer> qnameCodeMap = new HashMap<>();
 
-    MagnesiumDataOutput(final DataOutput output) {
+    PotassiumDataOutput(final DataOutput output) {
         super(output);
     }
 
@@ -195,11 +195,13 @@ final class MagnesiumDataOutput extends AbstractNormalizedNodeDataOutput {
         }
     }
 
-    @Override short streamVersion() {
-        return TokenTypes.MAGNESIUM_VERSION;
+    @Override
+    short streamVersion() {
+        return TokenTypes.POTASSIUM_VERSION;
     }
 
-    @Override void writeQNameInternal(final QName qname) throws IOException {
+    @Override
+    void writeQNameInternal(final QName qname) throws IOException {
         final Integer code = qnameCodeMap.get(qname);
         if (code == null) {
             output.writeByte(MagnesiumValue.QNAME);
@@ -209,7 +211,8 @@ final class MagnesiumDataOutput extends AbstractNormalizedNodeDataOutput {
         }
     }
 
-    @Override void writePathArgumentInternal(final PathArgument pathArgument) throws IOException {
+    @Override
+    void writePathArgumentInternal(final PathArgument pathArgument) throws IOException {
         if (pathArgument instanceof NodeIdentifier nid) {
             writeNodeIdentifier(nid);
         } else if (pathArgument instanceof NodeIdentifierWithPredicates nip) {
@@ -281,7 +284,8 @@ final class MagnesiumDataOutput extends AbstractNormalizedNodeDataOutput {
         }
     }
 
-    @Override void writeYangInstanceIdentifierInternal(final YangInstanceIdentifier identifier) throws IOException {
+    @Override
+    void writeYangInstanceIdentifierInternal(final YangInstanceIdentifier identifier) throws IOException {
         writeValue(identifier);
     }
 

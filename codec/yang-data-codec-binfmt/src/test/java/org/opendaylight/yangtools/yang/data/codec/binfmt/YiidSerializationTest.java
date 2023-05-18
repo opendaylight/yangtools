@@ -26,7 +26,7 @@ public class YiidSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM,
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM,
                 96, 98, 158, 359, 164, 372, 612, 2_388, 131_684, 719_700, 916_815
             });
     }

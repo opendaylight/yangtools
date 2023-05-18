@@ -27,7 +27,7 @@ public class NipSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 95, 107, 156, 3_409, 982_867, 1_443_164 });
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 95, 107, 156, 3_409, 982_867, 1_443_164 });
     }
 
     @Parameter(1)

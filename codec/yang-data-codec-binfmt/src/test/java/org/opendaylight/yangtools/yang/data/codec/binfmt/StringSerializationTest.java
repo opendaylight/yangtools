@@ -22,7 +22,7 @@ public class StringSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 99, 32_865, 33_554_532 });
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 99, 32_865, 33_554_532 });
     }
 
     @Parameter(1)

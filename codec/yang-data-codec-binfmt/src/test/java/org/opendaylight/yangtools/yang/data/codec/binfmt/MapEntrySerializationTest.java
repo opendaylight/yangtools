@@ -27,7 +27,7 @@ public class MapEntrySerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96, 110, 125, 3_927 });
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 110, 125, 3_927 });
     }
 
     @Parameter(1)

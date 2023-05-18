@@ -85,10 +85,27 @@ public enum NormalizedNodeStreamVersion {
      * First shipping is Magnesium. Does not support {@link BigInteger} mirroring it being superseded by {@link Uint64}
      * in {@link ValueNode#body()}.
      */
+    @Deprecated(since = "11.0.0", forRemoval = true)
     MAGNESIUM {
+        /**
+         * {@inheritDoc}
+         * @implSpec
+         *     This method always throws {@link UnsupportedOperationException}.
+         * @deprecated This version is a historic one and writeout is not supported
+         */
+        @Override
+        @Deprecated(since = "11.0.0", forRemoval = true)
+        public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
+            throw new UnsupportedOperationException();
+        }
+    },
+    /**
+     * First shipping is Potassium. Does not support {@code AugmentationIdentifier} nor {@code AugmentationNode}.
+     */
+    POTASSIUM {
         @Override
         public NormalizedNodeDataOutput newDataOutput(final DataOutput output) {
-            return new MagnesiumDataOutput(output);
+            return new PotassiumDataOutput(output);
         }
     };
 
@@ -99,7 +116,7 @@ public enum NormalizedNodeStreamVersion {
      * @return Current runtime version.
      */
     public static NormalizedNodeStreamVersion current() {
-        return MAGNESIUM;
+        return POTASSIUM;
     }
 
     /**
