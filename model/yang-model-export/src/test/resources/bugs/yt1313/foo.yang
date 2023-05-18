@@ -1,9 +1,0 @@
-module foo {
-  namespace foo;
-  prefix foo;
-
-  typedef foo {
-    type string;
-  }
-}
-  
