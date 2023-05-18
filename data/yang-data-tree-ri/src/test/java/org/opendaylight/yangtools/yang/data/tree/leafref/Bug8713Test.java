@@ -29,7 +29,30 @@ public class Bug8713Test {
 
     @Test
     public void dataTreeCanditateValidationTest() throws Exception {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/bug8713/");
+        final EffectiveModelContext context = YangParserTestUtils.parseYang("""
+            module bar {
+                namespace bar;
+                prefix bar;
+                import foo { prefix foo; revision-date 2017-09-06; }
+                revision 2017-09-06;
+                augment "/foo:root" {
+                    leaf ref {
+                        type leafref {
+                            path "../target" ;
+                        }
+                    }
+                    leaf target {
+                        type string;
+                    }
+                }
+            }""", """
+            module foo {
+                namespace foo;
+                prefix foo;
+                revision 2017-09-06;
+                container root {
+                }
+            }""");
         final LeafRefContext rootLeafRefContext = LeafRefContext.create(context);
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_OPERATIONAL, context);

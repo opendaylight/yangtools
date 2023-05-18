@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1104Test {
     private static final QName MODULE = QName.create("yt1104", "yt1104");
@@ -39,7 +40,16 @@ public class YT1104Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/yt1104.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module yt1104 {
+              yang-version 1.1;
+              namespace yt1104;
+              prefix yt1104;
+              choice foo {
+                anydata bar;
+                anyxml baz;
+              }
+            }""");
     }
 
     @AfterClass

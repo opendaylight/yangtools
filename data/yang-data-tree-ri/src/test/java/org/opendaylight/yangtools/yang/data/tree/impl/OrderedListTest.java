@@ -64,7 +64,35 @@ public class OrderedListTest {
         parentOrdinaryLeaf = QName.create(testModule, "parent-ordinary-leaf");
         childOrdinaryLeaf = QName.create(testModule, "child-ordinary-leaf");
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            YangParserTestUtils.parseYangResource("/ordered-list-modification-test.yang"));
+            YangParserTestUtils.parseYang("""
+                module ordered-list-modification-test {
+                    namespace "ordered-list-modification-test";
+                    prefix "olmt";
+                    container parent-container {
+                        container child-container {
+                            list parent-ordered-list {
+                                ordered-by user;
+                                key "parent-key-leaf";
+                                leaf parent-key-leaf {
+                                    type string;
+                                }
+                                leaf parent-ordinary-leaf {
+                                    type string;
+                                }
+                                list child-ordered-list {
+                                    ordered-by user;
+                                    key "child-key-leaf";
+                                    leaf child-key-leaf {
+                                        type string;
+                                    }
+                                    leaf child-ordinary-leaf {
+                                        type string;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }"""));
     }
 
     @Test
