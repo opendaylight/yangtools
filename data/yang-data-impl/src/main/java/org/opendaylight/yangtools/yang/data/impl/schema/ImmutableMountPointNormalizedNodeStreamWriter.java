@@ -24,9 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBui
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMountPoint;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMountpoints;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedMountpoints.Builder;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedMountpoints.Builder;
 
 // FIXME: document usage of this
 @Beta
