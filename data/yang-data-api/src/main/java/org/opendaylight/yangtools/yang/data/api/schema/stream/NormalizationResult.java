@@ -14,16 +14,16 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMountpoints;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedTree;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedTuple;
 
 /**
  * The result of a {@link NormalizedNodeStreamWriter} stream, i.e. of a normalization operation. It really is just an
- * implementation of {@link NormalizedTree}.
+ * implementation of {@link NormalizedTuple}.
  */
 public record NormalizationResult(
         @NonNull NormalizedNode data,
         @Nullable NormalizedMetadata metadata,
-        @Nullable NormalizedMountpoints mountPoints) implements NormalizedTree {
+        @Nullable NormalizedMountpoints mountPoints) implements NormalizedTuple {
     public NormalizationResult {
         requireNonNull(data);
     }

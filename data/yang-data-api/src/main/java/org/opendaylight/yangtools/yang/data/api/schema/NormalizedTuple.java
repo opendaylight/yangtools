@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * A tree of normalized {@link #data()}, with corresponding {@link #metadata()} and {@link #mountPoints()}. The three
+ * A tuple of normalized {@link #data()}, with corresponding {@link #metadata()} and {@link #mountPoints()}. The three
  * views are expected to be consistent in their addressing -- i.e. when traversing {@link #data()} tree,
  * the corresponding metadata should be available through {@link NormalizedMetadata#getChildren()} and mount point
  * attachments should be available through {@link NormalizedMountpoints#getChildren()}.
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 //        the corresponding metadata and/or mount points. Most notably mount points are only defined for ContainerNode
 //        and MapEntryNode.
 @Beta
-public interface NormalizedTree extends Immutable {
+public interface NormalizedTuple extends Immutable {
     /**
      * Return the data portion of this tree.
      *

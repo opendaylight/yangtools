@@ -11,11 +11,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 
 /**
- * Normalized representation of a YANG mount point. This is a {@link NormalizedTree}, with a {@link #label()} and the
+ * Normalized representation of a YANG mount point. This is a {@link NormalizedTuple}, with a {@link #label()} and the
  * corresponding {@link #context()}. Furthermore {@link #data()} is guaranteed to point at a {@link ContainerNode}.
  */
 @NonNullByDefault
-public interface NormalizedMountPoint extends NormalizedTree {
+public interface NormalizedMountPoint extends NormalizedTuple {
     /**
      * Return the {@code mount-point} label.
      *
