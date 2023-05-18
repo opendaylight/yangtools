@@ -15,12 +15,13 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
 abstract class AbstractLeafCandidateNode implements DataTreeCandidateNode {
-    private final NormalizedNode data;
+    private final PathNode<?> data;
 
-    AbstractLeafCandidateNode(final NormalizedNode data) {
+    AbstractLeafCandidateNode(final PathNode<?> data) {
         this.data = requireNonNull(data);
     }
 
@@ -35,7 +36,7 @@ abstract class AbstractLeafCandidateNode implements DataTreeCandidateNode {
 
     @Override
     public final PathArgument getIdentifier() {
-        return data.getIdentifier();
+        return data.pathArgument();
     }
 
     @Override

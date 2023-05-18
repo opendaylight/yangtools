@@ -14,14 +14,15 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.PathNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode {
-    private final DistinctNodeContainer<PathArgument, NormalizedNode> oldData;
+    private final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> oldData;
 
-    RecursiveReplaceCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> oldData,
-            final DistinctNodeContainer<PathArgument, NormalizedNode> newData) {
+    RecursiveReplaceCandidateNode(final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> oldData,
+            final DistinctNodeContainer<PathArgument, PathNode<PathArgument>> newData) {
         super(newData);
         this.oldData = requireNonNull(oldData);
     }

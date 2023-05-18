@@ -32,9 +32,9 @@ final class DuplicateFinder {
                 d.addDuplicate(path);
             }
 
-            if (node instanceof NormalizedNodeContainer<?>) {
-                for (NormalizedNode c : ((NormalizedNodeContainer<?>) node).body()) {
-                    findDuplicates(path.node(c.getIdentifier()), c);
+            if (node instanceof NormalizedNodeContainer<?> nodeContainer) {
+                for (var child : nodeContainer.body()) {
+                    findDuplicates(path.node(child.pathArgument()), child);
                 }
             }
         } else {

@@ -17,12 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * This nodes itself does not contain any ordering information, user supplied ordering is preserved by parent node,
  * which is an instance of {@link UnkeyedListNode}.
  */
-public interface UnkeyedListEntryNode extends DataContainerNode {
+// FIXME: yeah, not really a PathNode
+public interface UnkeyedListEntryNode extends DataContainerNode, PathNode<NodeIdentifier> {
     @Override
     default Class<UnkeyedListEntryNode> contract() {
         return UnkeyedListEntryNode.class;
     }
-
-    @Override
-    NodeIdentifier getIdentifier();
 }

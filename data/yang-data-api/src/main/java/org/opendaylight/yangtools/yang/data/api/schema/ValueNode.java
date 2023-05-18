@@ -13,14 +13,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * @param <V> Value of node, which needs to be a well-published simple value type.
  */
 public sealed interface ValueNode<V> extends NormalizedNode permits LeafNode, LeafSetEntryNode {
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * <b>Implementation note</b>
-     * Invocation of {@code body()} must provide the same value as value in {@link #getIdentifier()}.
-     * {@code true == this.getIdentifier().getValue().equals(this.body())}.
-     */
     @Override
     V body();
 }

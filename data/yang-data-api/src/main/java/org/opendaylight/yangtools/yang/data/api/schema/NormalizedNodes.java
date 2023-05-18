@@ -101,12 +101,12 @@ public final class NormalizedNodes {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Optional<NormalizedNode> getDirectChild(final NormalizedNode node,
             final PathArgument pathArg) {
-        if (node instanceof DataContainerNode dataContainer) {
-            return (Optional) dataContainer.findChildByArg(pathArg);
+        if (node instanceof DataContainerNode dataContainer && pathArg instanceof NodeIdentifier nid) {
+            return (Optional) dataContainer.findChildByArg(nid);
         } else if (node instanceof MapNode map && pathArg instanceof NodeIdentifierWithPredicates nip) {
             return (Optional) map.findChildByArg(nip);
-        } else if (node instanceof LeafSetNode<?> leafSet && pathArg instanceof NodeWithValue<?> nwv) {
-            return (Optional) leafSet.findChildByArg(nwv);
+        } else if (node instanceof LeafSetNode leafSet && pathArg instanceof NodeWithValue nwv) {
+            return leafSet.findChildByArg(nwv);
         }
         // Anything else, including ValueNode
         return Optional.empty();
@@ -126,7 +126,13 @@ public final class NormalizedNodes {
 
     private static void toStringTree(final StringBuilder sb, final NormalizedNode node, final int offset) {
         final String prefix = " ".repeat(offset);
-        appendPathArgument(sb.append(prefix), node.getIdentifier());
+        sb.append(prefix);
+        if (node instanceof PathNode<?> pathNode) {
+            appendPathArgument(sb, pathNode.pathArgument());
+        } else {
+            sb.append(node.contract().getSimpleName());
+        }
+
         if (node instanceof NormalizedNodeContainer<?> container) {
             sb.append(" {\n");
             for (var child : container.body()) {
