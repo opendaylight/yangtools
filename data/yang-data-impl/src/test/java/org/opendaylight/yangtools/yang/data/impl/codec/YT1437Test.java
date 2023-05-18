@@ -17,9 +17,20 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1437Test {
+
     @Test
     public void testDecimalFractionDigits() {
-        final var module = YangParserTestUtils.parseYangResource("/yt1437.yang").findModule("yt1437").orElseThrow();
+        final var module = YangParserTestUtils.parseYang("""
+            module yt1437 {
+              namespace yt1437;
+              prefix yt1437;
+              leaf foo {
+                type decimal64 {
+                  fraction-digits 2;
+                  range "20.0..30.01 | 50";
+                }
+              }
+            }""").findModule("yt1437").orElseThrow();
         final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow();
         assertThat(foo, instanceOf(LeafSchemaNode.class));
 
