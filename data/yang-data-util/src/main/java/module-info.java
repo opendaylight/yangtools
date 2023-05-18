@@ -19,7 +19,6 @@ module org.opendaylight.yangtools.yang.data.util {
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
 
     requires java.xml;
-    requires org.opendaylight.yangtools.yang.parser.api;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
