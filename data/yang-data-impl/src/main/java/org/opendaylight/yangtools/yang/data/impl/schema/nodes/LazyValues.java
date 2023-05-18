@@ -13,7 +13,7 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 // This is *almost* the same as Guava's TransformedCollection. The main difference is delegation of hashCode()/equals()
@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 // Collection.equals() is undefined, but the expectation from users is that we will return the same view object, which
 // equals on identity.
 final class LazyValues extends AbstractCollection<DataContainerChild> {
-    private final Map<PathArgument, Object> map;
+    private final Map<NodeIdentifier, Object> map;
 
-    LazyValues(final Map<PathArgument, Object> map) {
+    LazyValues(final Map<NodeIdentifier, Object> map) {
         this.map = requireNonNull(map);
     }
 
@@ -54,9 +54,9 @@ final class LazyValues extends AbstractCollection<DataContainerChild> {
     }
 
     private static final class Iter implements Iterator<DataContainerChild> {
-        private final Iterator<Entry<PathArgument, Object>> iterator;
+        private final Iterator<Entry<NodeIdentifier, Object>> iterator;
 
-        Iter(final Iterator<Entry<PathArgument, Object>> iterator) {
+        Iter(final Iterator<Entry<NodeIdentifier, Object>> iterator) {
             this.iterator = requireNonNull(iterator);
         }
 

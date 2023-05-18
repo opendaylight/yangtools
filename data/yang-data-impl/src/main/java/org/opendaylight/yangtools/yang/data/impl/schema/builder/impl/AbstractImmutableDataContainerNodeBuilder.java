@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.ModifiableMapPhase;
 import org.opendaylight.yangtools.util.UnmodifiableMapPhase;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -43,7 +44,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
         }
     }
 
-    private Map<PathArgument, Object> value;
+    private Map<NodeIdentifier, Object> value;
     private I nodeIdentifier;
 
     /*
@@ -86,13 +87,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
         return nodeIdentifier;
     }
 
-    protected final @Nullable DataContainerChild getChild(final PathArgument child) {
+    protected final @Nullable DataContainerChild getChild(final NodeIdentifier child) {
         return LazyLeafOperations.getChild(value, child);
     }
 
-    protected final Map<PathArgument, Object> buildValue() {
+    protected final Map<NodeIdentifier, Object> buildValue() {
         if (value instanceof ModifiableMapPhase) {
-            return ((ModifiableMapPhase<PathArgument, Object>)value).toUnmodifiableMap();
+            return ((ModifiableMapPhase<NodeIdentifier, Object>)value).toUnmodifiableMap();
         }
 
         dirty = true;
@@ -102,9 +103,9 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     private void checkDirty() {
         if (dirty) {
             if (value instanceof UnmodifiableMapPhase) {
-                value = ((UnmodifiableMapPhase<PathArgument, Object>) value).toModifiableMap();
+                value = ((UnmodifiableMapPhase<NodeIdentifier, Object>) value).toModifiableMap();
             } else if (value instanceof CloneableMap) {
-                value = ((CloneableMap<PathArgument, Object>) value).createMutableClone();
+                value = ((CloneableMap<NodeIdentifier, Object>) value).createMutableClone();
             } else {
                 value = newHashMap(value);
             }

@@ -18,9 +18,9 @@ import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public abstract class AbstractImmutableDataContainerNode<K extends PathArgument, N extends DataContainerNode>
         extends AbstractNormalizedNode<K, N> implements DataContainerNode {
-    private final Map<PathArgument, Object> children;
+    private final Map<NodeIdentifier, Object> children;
 
-    protected AbstractImmutableDataContainerNode(final Map<PathArgument, Object> children, final K nodeIdentifier) {
+    protected AbstractImmutableDataContainerNode(final Map<NodeIdentifier, Object> children, final K nodeIdentifier) {
         super(nodeIdentifier);
         this.children = ImmutableOffsetMap.unorderedCopyOf(children);
     }
@@ -49,7 +49,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument,
      *
      * @return An unmodifiable view if this node's children.
      */
-    public final Map<PathArgument, Object> getChildren() {
+    public final Map<NodeIdentifier, Object> getChildren() {
         return children;
     }
 

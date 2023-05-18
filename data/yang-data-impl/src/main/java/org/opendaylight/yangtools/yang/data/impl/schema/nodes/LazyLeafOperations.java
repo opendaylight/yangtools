@@ -15,7 +15,6 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -30,26 +29,26 @@ public final class LazyLeafOperations {
         // Hidden on purpose
     }
 
-    public static @Nullable DataContainerChild getChild(final Map<PathArgument, Object> map, final PathArgument key) {
+    public static @Nullable DataContainerChild getChild(final Map<NodeIdentifier, Object> map,
+            final NodeIdentifier key) {
         final Object value = map.get(key);
         return value == null ? null : decodeChild(key, value);
     }
 
-    public static void putChild(final Map<PathArgument, Object> map, final DataContainerChild child) {
+    public static void putChild(final Map<NodeIdentifier, Object> map, final DataContainerChild child) {
         final var node = requireNonNull(child);
         map.put(node.name(), encodeExpendableChild(node));
     }
 
-    static @NonNull LeafNode<?> coerceLeaf(final PathArgument key, final Object value) {
-        verify(key instanceof NodeIdentifier, "Unexpected value %s for child %s", value, key);
-        return ImmutableNodes.leafNode((NodeIdentifier) key, value);
+    static @NonNull LeafNode<?> coerceLeaf(final NodeIdentifier key, final Object value) {
+        return ImmutableNodes.leafNode(key, value);
     }
 
-    private static @Nullable DataContainerChild decodeChild(final PathArgument key, final @NonNull Object value) {
+    private static @Nullable DataContainerChild decodeChild(final NodeIdentifier key, final @NonNull Object value) {
         return decodeExpendableChild(key, value);
     }
 
-    private static @NonNull DataContainerChild decodeExpendableChild(final PathArgument key,
+    private static @NonNull DataContainerChild decodeExpendableChild(final NodeIdentifier key,
             final @NonNull Object value) {
         return value instanceof DataContainerChild child ? child : coerceLeaf(key, value);
     }

@@ -10,13 +10,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -28,8 +26,8 @@ import org.slf4j.LoggerFactory;
 public class ImmutableMapEntryNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ImmutableMapEntryNodeBuilder.class);
-    // FIXME: NodeIdentifier instead
-    protected final Map<QName, PathArgument> childrenQNamesToPaths;
+
+    protected final Map<QName, NodeIdentifier> childrenQNamesToPaths;
 
     protected ImmutableMapEntryNodeBuilder() {
         childrenQNamesToPaths = new LinkedHashMap<>();
@@ -63,14 +61,13 @@ public class ImmutableMapEntryNodeBuilder
         return new ImmutableMapEntryNodeBuilder(immutableNode);
     }
 
-    private static void fillQNames(final Iterable<DataContainerChild> iterable, final Map<QName, PathArgument> out) {
-        for (final DataContainerChild child : iterable) {
+    private static void fillQNames(final Iterable<DataContainerChild> iterable, final Map<QName, NodeIdentifier> out) {
+        for (var child : iterable) {
             putQName(out, child);
         }
     }
 
-    private static void putQName(final Map<QName, PathArgument> map, final DataContainerChild child) {
-        // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
+    private static void putQName(final Map<QName, NodeIdentifier> map, final DataContainerChild child) {
         final var identifier = child.name();
         map.put(identifier.getNodeType(), identifier);
     }
@@ -91,12 +88,12 @@ public class ImmutableMapEntryNodeBuilder
 
     @Override
     public MapEntryNode build() {
-        for (final Entry<QName, Object> key : getNodeIdentifier().entrySet()) {
-            final DataContainerChild childNode = getChild(childrenQNamesToPaths.get(key.getKey()));
+        for (var key : getNodeIdentifier().entrySet()) {
+            final var childNode = getChild(childrenQNamesToPaths.get(key.getKey()));
 
             // We have enough information to fill-in missing leaf nodes, so let's do that
             if (childNode == null) {
-                LeafNode<Object> leaf = ImmutableNodes.leafNode(key.getKey(), key.getValue());
+                final var leaf = ImmutableNodes.leafNode(key.getKey(), key.getValue());
                 LOG.debug("Adding leaf {} implied by key {}", leaf, key);
                 withChild(leaf);
             } else {
@@ -113,7 +110,7 @@ public class ImmutableMapEntryNodeBuilder
             implements MapEntryNode {
 
         ImmutableMapEntryNode(final NodeIdentifierWithPredicates nodeIdentifier,
-                final Map<PathArgument, Object> children) {
+                final Map<NodeIdentifier, Object> children) {
             super(children, nodeIdentifier);
         }
 

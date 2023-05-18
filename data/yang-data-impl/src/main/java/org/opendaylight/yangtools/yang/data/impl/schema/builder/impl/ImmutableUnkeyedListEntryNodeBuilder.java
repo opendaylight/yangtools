@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
@@ -55,7 +54,7 @@ public class ImmutableUnkeyedListEntryNodeBuilder
     protected static final class ImmutableUnkeyedListEntryNode
             extends AbstractImmutableDataContainerNode<NodeIdentifier, UnkeyedListEntryNode>
             implements UnkeyedListEntryNode {
-        ImmutableUnkeyedListEntryNode(final NodeIdentifier nodeIdentifier, final Map<PathArgument, Object> children) {
+        ImmutableUnkeyedListEntryNode(final NodeIdentifier nodeIdentifier, final Map<NodeIdentifier, Object> children) {
             super(children, nodeIdentifier);
         }
 
