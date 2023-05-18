@@ -53,7 +53,22 @@ public class DataTreeCandidateInputOutputTest {
 
     @BeforeClass
     public static void beforeClass() {
-        CONTEXT = YangParserTestUtils.parseYangResource("/foo.yang");
+        CONTEXT = YangParserTestUtils.parseYang("""
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo {
+                leaf bar {
+                  type string;
+                }
+              }
+              container bar {
+                presence "is explicit";
+                leaf baz {
+                  type string;
+                }
+              }
+            }""");
     }
 
     @Before
