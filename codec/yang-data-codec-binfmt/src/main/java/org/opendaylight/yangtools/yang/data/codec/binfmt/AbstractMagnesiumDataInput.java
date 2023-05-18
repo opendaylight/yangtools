@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
  * Abstract base class for NormalizedNodeDataInput based on {@link MagnesiumNode}, {@link MagnesiumPathArgument} and
  * {@link MagnesiumValue}.
  */
-abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInput {
+abstract class AbstractMagnesiumDataInput extends AbstractLegacyDataInput {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMagnesiumDataInput.class);
 
     // Known singleton objects

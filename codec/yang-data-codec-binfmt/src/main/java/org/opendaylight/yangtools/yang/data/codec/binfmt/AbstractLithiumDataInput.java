@@ -48,8 +48,7 @@ import org.xml.sax.SAXException;
  * nodes. This process goes in recursive manner, where each NodeTypes object signifies the start of the object, except
  * END_NODE. If a node can have children, then that node's end is calculated based on appearance of END_NODE.
  */
-abstract class AbstractLithiumDataInput extends AbstractNormalizedNodeDataInput {
-
+abstract class AbstractLithiumDataInput extends AbstractLegacyDataInput {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLithiumDataInput.class);
 
     private final List<String> codedStringMap = new ArrayList<>();
