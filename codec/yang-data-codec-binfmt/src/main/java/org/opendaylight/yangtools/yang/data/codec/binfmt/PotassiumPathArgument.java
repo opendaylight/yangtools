@@ -16,27 +16,15 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
  *  |         | Type|
  *  +-+-+-+-+-+-+-+-+
  * </pre>
- * There are five type defined:
+ * There are three type defined:
  * <ul>
- *   <li>{@link #AUGMENTATION_IDENTIFIER}, which additionally holds the number of QName elements encoded:
- *     <pre>
- *        7 6 5 4 3 2 1 0
- *       +-+-+-+-+-+-+-+-+
- *       |  Count  |0 0 0|
- *       +-+-+-+-+-+-+-+-+
- *     </pre>
- *     Where count is coded as an unsigned integer, with {@link #AID_COUNT_1B} and {@link #AID_COUNT_2B} and
- *     {@link #AID_COUNT_4B} indicating extended coding with up to 4 additional bytes. This byte is followed by
- *     {@code count} {@link PotassiumValue} QNames.
+ *   <li>{@link #NODE_IDENTIFIER}, which encodes a QName:
  *     <pre>
  *       7 6 5 4 3 2 1 0
  *      +-+-+-+-+-+-+-+-+
  *      |0 0 0| Q |0 0 1|
  *      +-+-+-+-+-+-+-+-+
  *     </pre>
- *     Where QName coding is achieved via {@link #QNAME_DEF}, {@link #QNAME_REF_1B}, {@link #QNAME_REF_2B} and
- *     {@link #QNAME_REF_4B}.
- *   </li>
  *   <li>{@link #NODE_IDENTIFIER_WITH_PREDICATES}, which encodes a QName same way NodeIdentifier does:
  *     <pre>
  *       7 6 5 4 3 2 1 0
@@ -61,39 +49,24 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
  *     </pre>
  *     but is additionally followed by a single encoded value, as per {@link PotassiumValue}.
  *   </li>
- *   <li>{@link #MOUNTPOINT_IDENTIFIER}, which encodes a QName same way NodeIdentifier does:
- *     <pre>
- *       7 6 5 4 3 2 1 0
- *      +-+-+-+-+-+-+-+-+
- *      |0 0 0| Q |1 0 0|
- *      +-+-+-+-+-+-+-+-+
- *     </pre>
  *   </li>
  * </ul>
  */
 final class PotassiumPathArgument {
     // 3 bits reserved for type...
-    static final byte AUGMENTATION_IDENTIFIER         = 0x00;
     static final byte NODE_IDENTIFIER                 = 0x01;
     static final byte NODE_IDENTIFIER_WITH_PREDICATES = 0x02;
     static final byte NODE_WITH_VALUE                 = 0x03;
-    static final byte MOUNTPOINT_IDENTIFIER           = 0x04;
 
-    // ... leaving three values currently unused
+    // ... leaving five values currently unused
+    // FIXME: this means we can use just two bits for type encoding
+    // 0x00 reserved
+    // 0x04 reserved
     // 0x05 reserved
     // 0x06 reserved
     // 0x07 reserved
 
     static final byte TYPE_MASK                       = 0x07;
-
-    // In case of AUGMENTATION_IDENTIFIER, top 5 bits are used to encode the number of path arguments, except last three
-    // values. This means that up to AugmentationIdentifiers with up to 28 components have this length encoded inline,
-    // otherwise we encode them in following 1 (unsigned), 2 (unsigned) or 4 (signed) bytes
-    static final byte AID_COUNT_1B                    = (byte) 0xE8;
-    static final byte AID_COUNT_2B                    = (byte) 0xF0;
-    static final byte AID_COUNT_4B                    = (byte) 0xF8;
-    static final byte AID_COUNT_MASK                  = AID_COUNT_4B;
-    static final byte AID_COUNT_SHIFT                 = 3;
 
     // For normal path path arguments we can either define a QName reference or follow a 1-4 byte reference.
     static final byte QNAME_DEF                       = 0x00;

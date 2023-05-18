@@ -60,10 +60,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     private static final @NonNull Integer INT32_0 = 0;
     private static final @NonNull Long INT64_0 = 0L;
     private static final byte @NonNull[] BINARY_0 = new byte[0];
-    private static final @NonNull LegacyAugmentationIdentifier EMPTY_AID =
-        new LegacyAugmentationIdentifier(ImmutableSet.of());
 
-    private final List<LegacyAugmentationIdentifier> codedAugments = new ArrayList<>();
     private final List<NodeIdentifier> codedNodeIdentifiers = new ArrayList<>();
     private final List<QNameModule> codedModules = new ArrayList<>();
     private final List<String> codedStrings = new ArrayList<>();
@@ -109,9 +106,6 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             case PotassiumNode.NODE_CHOICE:
                 streamChoice(writer, nodeHeader);
                 break;
-            case PotassiumNode.NODE_AUGMENTATION:
-                streamAugmentation(writer, nodeHeader);
-                break;
             case PotassiumNode.NODE_ANYXML:
                 streamAnyxml(writer, nodeHeader);
                 break;
@@ -137,15 +131,6 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         if (writer.startAnyxmlNode(identifier, DOMSource.class)) {
             writer.domSourceValue(value);
             writer.endNode();
-        }
-    }
-
-    private void streamAugmentation(final NormalizedNodeStreamWriter writer, final byte nodeHeader) throws IOException {
-        final var augIdentifier = decodeAugmentationIdentifier(nodeHeader);
-        LOG.trace("Streaming augmentation node {}", augIdentifier);
-        for (byte nodeType = input.readByte(); nodeType != PotassiumNode.NODE_END; nodeType = input.readByte()) {
-            // FIXME: not just null, but augmentation identifier for debug
-            streamNormalizedNode(writer, null, nodeType);
         }
     }
 
@@ -319,29 +304,6 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         }
     }
 
-    private LegacyAugmentationIdentifier decodeAugmentationIdentifier(final byte nodeHeader) throws IOException {
-        final int index;
-        switch (nodeHeader & PotassiumNode.ADDR_MASK) {
-            case PotassiumNode.ADDR_DEFINE:
-                return readAugmentationIdentifier();
-            case PotassiumNode.ADDR_LOOKUP_1B:
-                index = input.readUnsignedByte();
-                break;
-            case PotassiumNode.ADDR_LOOKUP_4B:
-                index = input.readInt();
-                break;
-            default:
-                throw new InvalidNormalizedNodeStreamException(
-                    "Unexpected augmentation identifier addressing in header " + nodeHeader);
-        }
-
-        try {
-            return codedAugments.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            throw new InvalidNormalizedNodeStreamException("Invalid augmentation identifier reference " + index, e);
-        }
-    }
-
     @Override
     public YangInstanceIdentifier readYangInstanceIdentifier() throws IOException {
         final byte type = input.readByte();
@@ -382,57 +344,26 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
     }
 
     @Override
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    public Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
+    public PathArgument readPathArgument() throws IOException {
         final byte header = input.readByte();
         return switch (header & PotassiumPathArgument.TYPE_MASK) {
-            case PotassiumPathArgument.AUGMENTATION_IDENTIFIER -> Either.ofSecond(readAugmentationIdentifier(header));
             case PotassiumPathArgument.NODE_IDENTIFIER -> {
                 verifyPathIdentifierOnly(header);
-                yield Either.ofFirst(readNodeIdentifier(header));
+                yield readNodeIdentifier(header);
             }
-            case PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES ->
-                Either.ofFirst(readNodeIdentifierWithPredicates(header));
+            case PotassiumPathArgument.NODE_IDENTIFIER_WITH_PREDICATES -> readNodeIdentifierWithPredicates(header);
             case PotassiumPathArgument.NODE_WITH_VALUE -> {
                 verifyPathIdentifierOnly(header);
-                yield Either.ofFirst(readNodeWithValue(header));
-            }
-            case PotassiumPathArgument.MOUNTPOINT_IDENTIFIER -> {
-                verifyPathIdentifierOnly(header);
-                yield Either.ofSecond(new LegacyMountPointIdentifier(readNodeIdentifier(header).getNodeType()));
+                yield readNodeWithValue(header);
             }
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected PathArgument header " + header);
         };
     }
 
-    private @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier() throws IOException {
-        final var result = readAugmentationIdentifier(input.readInt());
-        codedAugments.add(result);
-        return result;
-    }
-
-    private @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier(final byte header) throws IOException {
-        final byte count = mask(header, PotassiumPathArgument.AID_COUNT_MASK);
-        return switch (count) {
-            case PotassiumPathArgument.AID_COUNT_1B -> readAugmentationIdentifier(input.readUnsignedByte());
-            case PotassiumPathArgument.AID_COUNT_2B -> readAugmentationIdentifier(input.readUnsignedShort());
-            case PotassiumPathArgument.AID_COUNT_4B -> readAugmentationIdentifier(input.readInt());
-            default -> readAugmentationIdentifier(rshift(count, PotassiumPathArgument.AID_COUNT_SHIFT));
-        };
-    }
-
-    private @NonNull LegacyAugmentationIdentifier readAugmentationIdentifier(final int size) throws IOException {
-        if (size > 0) {
-            final var qnames = ImmutableSet.<QName>builderWithExpectedSize(size);
-            for (int i = 0; i < size; ++i) {
-                qnames.add(readQName());
-            }
-            return new LegacyAugmentationIdentifier(qnames.build());
-        } else if (size == 0) {
-            return EMPTY_AID;
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Invalid augmentation identifier size " + size);
-        }
+    @Override
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
+        return Either.ofFirst(readPathArgument());
     }
 
     private @NonNull NodeIdentifier readNodeIdentifier() throws IOException {
