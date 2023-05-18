@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Either;
+import org.opendaylight.yangtools.concepts.WritableObjects;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -719,9 +720,8 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
                 return Uint64.ZERO;
             case PotassiumValue.UINT64_4B:
                 return Uint64.fromLongBits(input.readInt() & 0xFFFFFFFFL);
-            case PotassiumValue.BIGDECIMAL:
-                // FIXME: use string -> Decimal64 cache
-                return Decimal64.valueOf(input.readUTF());
+            case PotassiumValue.DECIMAL64:
+                return Decimal64.of(input.readByte(), WritableObjects.readLong(input));
             case PotassiumValue.STRING_EMPTY:
                 return "";
             case PotassiumValue.STRING_UTF:
