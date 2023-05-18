@@ -41,7 +41,15 @@ class YT1414Test {
 
     @Test
     void testOfUntrustedSchemaTreeInference() {
-        final var context = YangParserTestUtils.parseYangResource("/yt1414.yang");
+        final var context = YangParserTestUtils.parseYang("""
+            module foo {
+              namespace foo;
+              prefix foo;
+              container foo;
+              container bar {
+                list foo;
+              }
+            }""");
         final var foo = context.findSchemaTreeNode(Absolute.of(FOO)).orElseThrow();
         final var bar = context.findSchemaTreeNode(Absolute.of(BAR)).orElseThrow();
         final var barFoo = context.findSchemaTreeNode(BAR_FOO_ID).orElseThrow();

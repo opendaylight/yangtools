@@ -1,9 +1,0 @@
-module baz {
-    namespace "baz";
-    prefix baz;
-    revision 2016-01-01;
-
-    leaf baz-leaf {
-        type string;
-    }
-}

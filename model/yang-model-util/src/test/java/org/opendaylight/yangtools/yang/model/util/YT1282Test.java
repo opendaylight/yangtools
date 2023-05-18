@@ -27,7 +27,19 @@ class YT1282Test {
 
     @BeforeAll
     static void beforeClass() {
-        context = YangParserTestUtils.parseYangResource("/yt1282.yang");
+        context = YangParserTestUtils.parseYang("""
+            module foo {
+              prefix foo;
+              namespace foo;
+              typedef foo {
+                type leafref {
+                  path /bar;
+                }
+              }
+              leaf bar {
+                type int64;
+              }
+            }""");
     }
 
     @Test
