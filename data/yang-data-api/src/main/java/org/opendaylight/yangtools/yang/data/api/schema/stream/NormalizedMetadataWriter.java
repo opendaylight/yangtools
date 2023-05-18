@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -16,9 +16,7 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 
 /**
  * A utility class to attach {@link NormalizedMetadata} into a NormalizedNode stream, such as the one produced by
@@ -43,11 +41,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
  *
  * <p>
  * This class is NOT thread-safe.
- *
- * @author Robert Varga
  */
 @Beta
-// FIXME: 7.0.0: consider moving this class to api to keep related stuff together
 public final class NormalizedMetadataWriter implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final boolean orderKeyLeaves;
