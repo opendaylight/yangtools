@@ -51,7 +51,35 @@ public abstract class AbstractAnydataTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/test-anydata.yang");
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+            module test-anydata {
+                yang-version 1.1;
+                namespace test-anydata;
+                prefix ta;
+                anydata foo;
+                container cont {
+                    anydata cont-any;
+                    leaf cont-leaf {
+                        type string;
+                    }
+                    leaf empty-leaf {
+                        type empty;
+                    }
+                    container bar {
+                        leaf cont-leaf {
+                            type string;
+                        }
+                    }
+                }
+                list lst {
+                    leaf cont-leaf {
+                        type string;
+                    }
+                    leaf-list my-leafs {
+                        type string;
+                    }
+                }
+            }""");
     }
 
     @AfterClass

@@ -29,7 +29,26 @@ public class YT1107Test {
 
     @Test
     public void testInterleavingLists() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/yt1107/yt1107.yang");
+        final var schemaContext = YangParserTestUtils.parseYang("""
+            module yt1107 {
+                namespace "yt1107";
+                prefix "yt1107";
+                container parent {
+                    config true;
+                    list user {
+                        key name;
+                        leaf name {
+                            type string;
+                        }
+                    }
+                    list admin {
+                        key name;
+                        leaf name {
+                            type string;
+                        }
+                    }
+                }
+            }""");
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/yt1107/yt1107.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
