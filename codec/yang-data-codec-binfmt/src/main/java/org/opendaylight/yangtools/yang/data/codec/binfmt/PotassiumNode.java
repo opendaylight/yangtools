@@ -73,18 +73,15 @@ final class PotassiumNode {
     static final byte NODE_LEAFSET         = 0x06;
     static final byte NODE_LEAFSET_ORDERED = 0x07;
     static final byte NODE_CHOICE          = 0x08;
-    // static final byte NODE_AUGMENTATION    = 0x09;
-    static final byte NODE_ANYXML          = 0x0A;
-    static final byte NODE_LIST_ENTRY      = 0x0B;
-    static final byte NODE_LEAFSET_ENTRY   = 0x0C;
-    static final byte NODE_MAP_ENTRY       = 0x0D;
+    static final byte NODE_LIST_ENTRY      = 0x09;
+    static final byte NODE_LEAFSET_ENTRY   = 0x0A;
+    static final byte NODE_MAP_ENTRY       = 0x0B;
+    static final byte NODE_ANYXML          = 0x0C;
 
-    // Note: unused as of yangtools-7.0.0
-    @Deprecated
-    static final byte NODE_ANYXML_MODELED  = 0x0E;
-    // 0x0F reserved for anydata
+    // 0x0D reserved
+    // 0x0E reserved
+    // 0x0F reserved
     static final byte TYPE_MASK            = 0x0F;
-
 
     /**
      * Inherit identifier from parent. This addressing mode is applicable in:
