@@ -19,7 +19,7 @@ public class BooleanSerializationTest extends AbstractSerializationTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 96 });
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96 });
     }
 
     @Parameter(1)

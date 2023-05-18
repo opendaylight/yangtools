@@ -55,7 +55,7 @@ public class NormalizedNodeStreamReaderWriterTest {
     @Parameters(name = "{0} {1}")
     public static Iterable<Object[]> data() {
         return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.MAGNESIUM, 1_049_589, 2_289_103, 139, 796, 103, 229, 99 });
+            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 1_049_589, 2_289_103, 139, 796, 103, 229, 99 });
     }
 
     @Parameter(0)
