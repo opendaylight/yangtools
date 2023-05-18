@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+
 /**
  * Marker interface for direct children of {@link DataContainerNode}.
  *
@@ -24,5 +26,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * </ul>
  */
 public interface DataContainerChild extends NormalizedNode {
-
+    @Override
+    NodeIdentifier getIdentifier();
 }

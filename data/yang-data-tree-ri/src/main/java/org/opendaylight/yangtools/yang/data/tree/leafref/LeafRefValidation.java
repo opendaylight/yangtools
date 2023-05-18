@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -347,8 +345,8 @@ public final class LeafRefValidation {
             values.add(node.body());
             return;
         }
-        if (node instanceof LeafSetNode<?>) {
-            for (final NormalizedNode entry : ((LeafSetNode<?>) node).body()) {
+        if (node instanceof LeafSetNode<?> leafSet) {
+            for (var entry : leafSet.body()) {
                 values.add(entry.body());
             }
             return;
@@ -359,11 +357,11 @@ public final class LeafRefValidation {
             return;
         }
 
-        final PathArgument pathArgument = new NodeIdentifier(next.getQName());
-        if (node instanceof DataContainerNode) {
-            processChildNode(values, (DataContainerNode) node, pathArgument, next.getQNamePredicates(), path, current);
-        } else if (node instanceof MapNode) {
-            Stream<MapEntryNode> entries = ((MapNode) node).body().stream();
+        final var pathArgument = new NodeIdentifier(next.getQName());
+        if (node instanceof DataContainerNode dataContainer) {
+            processChildNode(values, dataContainer, pathArgument, next.getQNamePredicates(), path, current);
+        } else if (node instanceof MapNode map) {
+            Stream<MapEntryNode> entries = map.body().stream();
             if (!nodePredicates.isEmpty() && current != null) {
                 entries = entries.filter(createMapEntryPredicate(nodePredicates, current));
             }
@@ -374,15 +372,15 @@ public final class LeafRefValidation {
     }
 
     private void processChildNode(final Set<Object> values, final DataContainerNode parent,
-            final PathArgument arg, final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
+            final NodeIdentifier arg, final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
             final YangInstanceIdentifier current) {
-        final DataContainerChild child = parent.childByArg(arg);
+        final var child = parent.childByArg(arg);
         if (child == null) {
             // FIXME: YANGTOOLS-901. We have SchemaContext nearby, hence we should be able to cache how to get
             //        to the leaf with with specified QName, without having to iterate through Choices.
             //        That perhaps means we should not have QNameWithPredicates, but NodeIdentifierWithPredicates as
             //        the path specification.
-            for (final DataContainerChild mixin : parent.body()) {
+            for (var mixin : parent.body()) {
                 if (mixin instanceof ChoiceNode) {
                     addValues(values, mixin, nodePredicates, path, current);
                 }
@@ -394,15 +392,15 @@ public final class LeafRefValidation {
 
     private Predicate<MapEntryNode> createMapEntryPredicate(final List<QNamePredicate> nodePredicates,
             final YangInstanceIdentifier current) {
-        final Map<QName, Set<?>> keyValues = new HashMap<>();
-        for (QNamePredicate predicate : nodePredicates) {
+        final var keyValues = new HashMap<QName, Set<?>>();
+        for (var predicate : nodePredicates) {
             keyValues.put(predicate.getIdentifier(), getPathKeyExpressionValues(predicate.getPathKeyExpression(),
                 current));
         }
 
         return mapEntry -> {
-            for (final Entry<QName, Object> entryKeyValue : mapEntry.getIdentifier().entrySet()) {
-                final Set<?> allowedValues = keyValues.get(entryKeyValue.getKey());
+            for (var entryKeyValue : mapEntry.getIdentifier().entrySet()) {
+                final var allowedValues = keyValues.get(entryKeyValue.getKey());
                 if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
                     return false;
                 }
@@ -411,7 +409,7 @@ public final class LeafRefValidation {
         };
     }
 
-    private void addNextValues(final Set<Object> values, final NormalizedNode node,
+    private void addNextValues(final Set<Object> values, final DataContainerChild node,
             final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
             final YangInstanceIdentifier current) {
         final QNameWithPredicate element = path.pop();
@@ -425,7 +423,7 @@ public final class LeafRefValidation {
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
             final YangInstanceIdentifier current) {
         return findParentNode(Optional.of(root), current).map(parent -> {
-            final Deque<QNameWithPredicate> path = createPath(predicatePathKeyExpression);
+            final var path = createPath(predicatePathKeyExpression);
             path.pollFirst();
             return computeValues(parent, path, null);
         }).orElse(ImmutableSet.of());

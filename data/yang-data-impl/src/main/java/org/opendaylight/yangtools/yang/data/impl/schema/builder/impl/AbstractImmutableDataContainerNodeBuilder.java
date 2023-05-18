@@ -55,29 +55,31 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     private boolean dirty;
 
     AbstractImmutableDataContainerNodeBuilder() {
-        this.value = newHashMap();
-        this.dirty = false;
+        value = newHashMap();
+        dirty = false;
+        nodeIdentifier = null;
     }
 
     AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
-            this.value = newHashMap(sizeHint);
+            value = newHashMap(sizeHint);
         } else {
-            this.value = newHashMap();
+            value = newHashMap();
         }
-        this.dirty = false;
+        dirty = false;
+        nodeIdentifier = null;
     }
 
     AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I, R> node) {
-        this.nodeIdentifier = node.getIdentifier();
+        nodeIdentifier = node.getIdentifier();
 
         /*
          * This quite awkward. What we actually want to be saying here is: give me a copy-on-write view of your
          * children. The API involved in that could be a bit hairy, so we do the next best thing and rely on the fact
          * that the returned object implements a specific interface, which leaks the functionality we need.
          */
-        this.value = node.getChildren();
-        this.dirty = true;
+        value = node.getChildren();
+        dirty = true;
     }
 
     protected final I getNodeIdentifier() {
@@ -129,13 +131,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     @Override
     public DataContainerNodeBuilder<I, R> withoutChild(final PathArgument key) {
         checkDirty();
-        this.value.remove(key);
+        value.remove(key);
         return this;
     }
 
     @Override
     public DataContainerNodeBuilder<I, R> withNodeIdentifier(final I withNodeIdentifier) {
-        this.nodeIdentifier = withNodeIdentifier;
+        nodeIdentifier = withNodeIdentifier;
         return this;
     }
 

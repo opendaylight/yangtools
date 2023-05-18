@@ -40,8 +40,8 @@ public class NormalizedNodesTest {
 
         final var mockedDataContainerNode = mock(DataContainerNode.class);
         final var mockedContainerNode = mock(ContainerNode.class);
-        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));
-        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any(PathArgument.class));
+        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any());
+        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any());
 
         assertEquals(Optional.of(mockedContainerNode),
             NormalizedNodes.getDirectChild(mockedDataContainerNode, mockedPathArgument));
@@ -72,10 +72,10 @@ public class NormalizedNodesTest {
         final DataContainerNode mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
         final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
-        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));
-        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any(PathArgument.class));
-        doReturn(mockedLeafNode).when(mockedContainerNode).childByArg(any(PathArgument.class));
-        doCallRealMethod().when(mockedContainerNode).findChildByArg(any(PathArgument.class));
+        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any());
+        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any());
+        doReturn(mockedLeafNode).when(mockedContainerNode).childByArg(any());
+        doCallRealMethod().when(mockedContainerNode).findChildByArg(any());
 
         final QName node1QName = QName.create("test-ns", "2016-09-16", "node1");
         final QName node2Qname = QName.create("test-ns", "2016-09-16", "node2");

@@ -98,18 +98,20 @@ public final class NormalizedNodes {
             requireNonNull(path, "Path must not be null").getPathArguments());
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Optional<NormalizedNode> getDirectChild(final NormalizedNode node,
             final PathArgument pathArg) {
-        if (node instanceof DataContainerNode dataContainer) {
-            return (Optional) dataContainer.findChildByArg(pathArg);
+        final NormalizedNode child;
+        if (node instanceof DataContainerNode dataContainer && pathArg instanceof NodeIdentifier nid) {
+            child = dataContainer.childByArg(nid);
         } else if (node instanceof MapNode map && pathArg instanceof NodeIdentifierWithPredicates nip) {
-            return (Optional) map.findChildByArg(nip);
+            child = map.childByArg(nip);
         } else if (node instanceof LeafSetNode<?> leafSet && pathArg instanceof NodeWithValue<?> nwv) {
-            return (Optional) leafSet.findChildByArg(nwv);
+            child = leafSet.childByArg(nwv);
+        } else {
+            // Anything else, including ValueNode
+            child = null;
         }
-        // Anything else, including ValueNode
-        return Optional.empty();
+        return Optional.ofNullable(child);
     }
 
     /**
