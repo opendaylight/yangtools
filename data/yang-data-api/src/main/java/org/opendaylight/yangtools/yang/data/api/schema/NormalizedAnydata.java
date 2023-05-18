@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import com.google.common.annotations.Beta;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -48,5 +49,14 @@ public interface NormalizedAnydata extends Immutable {
 
     default void writeTo(final NormalizedNodeStreamWriter writer, final boolean orderKeyLeaves) throws IOException {
         NormalizedNodeWriter.forStreamWriter(writer, orderKeyLeaves).write(getData()).flush();
+    }
+
+    static NormalizedAnydata of(final EffectiveStatementInference inference, final NormalizedNode data) {
+        return new ImmutableNormalizedAnydata(inference, data);
+    }
+
+    static NormalizedAnydata of(final EffectiveStatementInference inference, final NormalizedNode data,
+            final @Nullable NormalizedMetadata metadata) {
+        return metadata != null ? MetadataNormalizedAnydata.of(inference, data, metadata) : of(inference, data);
     }
 }

@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
@@ -217,7 +216,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             .withNodeIdentifier(CONT_NODEID)
             .withChild(Builders.anydataBuilder(NormalizedAnydata.class)
                 .withNodeIdentifier(CONT_ANY_NODEID)
-                .withValue(new ImmutableNormalizedAnydata(
+                .withValue(NormalizedAnydata.of(
                     DefaultSchemaTreeInference.of(SCHEMA_CONTEXT, Absolute.of(CONT_QNAME)),
                     Builders.containerBuilder().withNodeIdentifier(CONT_NODEID).build()))
                 .build())

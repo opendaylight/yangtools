@@ -11,13 +11,11 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.util.ImmutableMetadataNormalizedAnydata;
-import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
 /**
@@ -28,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 @NonNullByDefault
 public abstract class AbstractNormalizableAnydata implements NormalizableAnydata {
     @Override
-    public final ImmutableNormalizedAnydata normalizeTo(final EffectiveStatementInference inference)
+    public final NormalizedAnydata normalizeTo(final EffectiveStatementInference inference)
             throws AnydataNormalizationException {
         final var holder = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(holder);
@@ -39,8 +37,7 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
         }
 
         final var result = holder.getResult();
-        return ImmutableMetadataNormalizedAnydata.ofOptional(inference, result.data(),
-            Optional.ofNullable(result.metadata()));
+        return NormalizedAnydata.of(inference, result.data(), result.metadata());
     }
 
     @Override

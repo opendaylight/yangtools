@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
 /**
  * A piece of {@link NormalizedAnydata} with a corresponding piece of {@link NormalizedMetadata}.
@@ -18,4 +19,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public interface MetadataNormalizedAnydata extends NormalizedAnydata {
 
     NormalizedMetadata getMetadata();
+
+    static NormalizedAnydata of(final EffectiveStatementInference inference, final NormalizedNode data,
+            final NormalizedMetadata metadata) {
+        return new ImmutableNormalizedAnydata.WithMetadata(inference, data, metadata);
+    }
 }
