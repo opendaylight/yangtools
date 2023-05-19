@@ -323,9 +323,9 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             for (int i = 0; i < size; ++i) {
                 builder.add(readPathArgument());
             }
-            return YangInstanceIdentifier.create(builder.build());
+            return YangInstanceIdentifier.of(builder.build());
         } else if (size == 0) {
-            return YangInstanceIdentifier.empty();
+            return YangInstanceIdentifier.of();
         } else {
             throw new InvalidNormalizedNodeStreamException("Invalid YangInstanceIdentifier size " + size);
         }
@@ -672,7 +672,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             case PotassiumValue.BINARY_4B:
                 return readBinary(input.readInt());
             case PotassiumValue.YIID_0:
-                return YangInstanceIdentifier.empty();
+                return YangInstanceIdentifier.of();
             case PotassiumValue.YIID:
                 return readYangInstanceIdentifier(input.readInt());
             case PotassiumValue.QNAME:

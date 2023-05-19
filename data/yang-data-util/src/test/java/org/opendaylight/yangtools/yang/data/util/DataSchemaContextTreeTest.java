@@ -40,8 +40,8 @@ class DataSchemaContextTreeTest {
     @Test
     void testCorrectInput() {
         assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO)).isPresent());
-        assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO).node(BAR)).isPresent());
-        assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO).node(BAR).node(BAZ)).isPresent());
+        assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR)).isPresent());
+        assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR, BAZ)).isPresent());
     }
 
     @Test
@@ -51,6 +51,6 @@ class DataSchemaContextTreeTest {
 
     @Test
     void testNestedBad() {
-        assertEquals(Optional.empty(), CONTEXT.findChild(YangInstanceIdentifier.of(BAR).node(BAZ)));
+        assertEquals(Optional.empty(), CONTEXT.findChild(YangInstanceIdentifier.of(BAR, BAZ)));
     }
 }

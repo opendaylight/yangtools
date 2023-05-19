@@ -61,18 +61,16 @@ public class Bug4454Test {
     private static final QName MIN_MAX_VALUE_LEAF_QNAME = QName.create(MASTER_CONTAINER_QNAME, "min-max-value-leaf");
     private static final QName PRESENCE_QNAME = QName.create(MASTER_CONTAINER_QNAME, "presence");
 
-    private static final YangInstanceIdentifier MASTER_CONTAINER_PATH = YangInstanceIdentifier
-            .of(MASTER_CONTAINER_QNAME);
-    private static final YangInstanceIdentifier MIN_MAX_LIST_PATH = YangInstanceIdentifier
-            .builder(MASTER_CONTAINER_PATH)
-            .node(MIN_MAX_LIST_QNAME).build();
+    private static final YangInstanceIdentifier MASTER_CONTAINER_PATH =
+        YangInstanceIdentifier.of(MASTER_CONTAINER_QNAME);
+    private static final YangInstanceIdentifier MIN_MAX_LIST_PATH =
+        YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node(MIN_MAX_LIST_QNAME).build();
     private static final YangInstanceIdentifier PRESENCE_PATH = YangInstanceIdentifier.of(PRESENCE_QNAME);
     private static final YangInstanceIdentifier PRESENCE_MIN_MAX_LIST_PATH = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME);
-    private static final YangInstanceIdentifier MIN_MAX_LIST_NO_MINMAX_PATH = YangInstanceIdentifier
-            .builder(MASTER_CONTAINER_PATH)
-            .node(MIN_MAX_LIST_QNAME_NO_MINMAX).build();
-    private static final YangInstanceIdentifier MIN_MAX_LEAF_LIST_PATH = YangInstanceIdentifier
-            .builder(MASTER_CONTAINER_PATH).node(MIN_MAX_LEAF_LIST_QNAME).build();
+    private static final YangInstanceIdentifier MIN_MAX_LIST_NO_MINMAX_PATH =
+        YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node(MIN_MAX_LIST_QNAME_NO_MINMAX).build();
+    private static final YangInstanceIdentifier MIN_MAX_LEAF_LIST_PATH =
+        YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node(MIN_MAX_LEAF_LIST_QNAME).build();
 
     private final MapEntryNode fooEntryNodeWithValue = Builders.mapEntryBuilder()
         .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo"))
@@ -342,8 +340,7 @@ public class Bug4454Test {
         inMemoryDataTree.commit(prepare);
 
         // Empty list should have disappeared, along with the container, as we are not enforcing root
-        final NormalizedNode data = inMemoryDataTree.takeSnapshot()
-                .readNode(YangInstanceIdentifier.empty()).orElseThrow();
+        final NormalizedNode data = inMemoryDataTree.takeSnapshot().readNode(YangInstanceIdentifier.of()).orElseThrow();
         assertTrue(data instanceof ContainerNode);
         assertEquals(0, ((ContainerNode) data).size());
     }

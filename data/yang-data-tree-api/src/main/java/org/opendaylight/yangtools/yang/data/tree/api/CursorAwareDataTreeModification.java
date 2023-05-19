@@ -36,6 +36,6 @@ public interface CursorAwareDataTreeModification extends DataTreeModification, C
      */
     @Override
     default DataTreeModificationCursor openCursor() {
-        return openCursor(YangInstanceIdentifier.empty()).orElseThrow();
+        return openCursor(YangInstanceIdentifier.of()).orElseThrow();
     }
 }

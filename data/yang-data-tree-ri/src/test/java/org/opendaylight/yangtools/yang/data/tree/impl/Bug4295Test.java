@@ -119,14 +119,14 @@ public class Bug4295Test {
             case 2: {
                 /* WRITE INNER LIST ENTRY */
                 MapEntryNode innerListEntryA = createInnerListEntry("a", "i-a-2");
-                path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList).node(createOuterListEntryPath("2"))
+                path = YangInstanceIdentifier.of(root, subRoot, outerList).node(createOuterListEntryPath("2"))
                     .node(innerList).node(createInnerListEntryPath("a"));
                 modification.write(path, innerListEntryA);
                 break;
             }
             case 3: {
                 /* WRITE INNER LIST WITH ENTRIES */
-                path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList).node(createOuterListEntryPath("2"))
+                path = YangInstanceIdentifier.of(root, subRoot, outerList).node(createOuterListEntryPath("2"))
                     .node(innerList);
                 modification.write(path, createInnerListBuilder()
                     .withChild(createInnerListEntry("a", "i-a-3"))
@@ -145,7 +145,7 @@ public class Bug4295Test {
     }
 
     private void writeEmptyInnerList(final DataTreeModification modification, final String outerListEntryKey) {
-        YangInstanceIdentifier path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList)
+        YangInstanceIdentifier path = YangInstanceIdentifier.of(root, subRoot, outerList)
                 .node(createOuterListEntryPath(outerListEntryKey)).node(innerList);
         modification.write(path, createInnerListBuilder().build());
     }

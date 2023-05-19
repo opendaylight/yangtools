@@ -76,9 +76,9 @@ public class NormalizedNodesTest {
         final QName node3QName = QName.create("test-ns", "2016-09-16", "node3");
         final QName node4Qname = QName.create("test-ns", "2016-09-16", "node4");
 
-        final YangInstanceIdentifier rootPath = YangInstanceIdentifier.create(new NodeIdentifier(node1QName),
+        final YangInstanceIdentifier rootPath = YangInstanceIdentifier.of(new NodeIdentifier(node1QName),
                 new NodeIdentifier(node2Qname));
-        final YangInstanceIdentifier childPath = YangInstanceIdentifier.create(new NodeIdentifier(node1QName),
+        final YangInstanceIdentifier childPath = YangInstanceIdentifier.of(new NodeIdentifier(node1QName),
                 new NodeIdentifier(node2Qname), new NodeIdentifier(node3QName), new NodeIdentifier(node4Qname));
 
         assertEquals(Optional.of(mockedLeafNode),

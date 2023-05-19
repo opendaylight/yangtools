@@ -43,8 +43,8 @@ public class DataTreeCandidateInputOutputTest {
     private static final NodeIdentifier FOO_NODEID = new NodeIdentifier(FOO);
     private static final NodeIdentifier BAR_NODEID = new NodeIdentifier(BAR);
     private static final NodeIdentifier BAZ_NODEID = new NodeIdentifier(BAZ);
-    private static final YangInstanceIdentifier FOO_BAR_PATH = YangInstanceIdentifier.create(FOO_NODEID, BAR_NODEID);
-    private static final YangInstanceIdentifier BAR_PATH = YangInstanceIdentifier.create(BAR_NODEID);
+    private static final YangInstanceIdentifier FOO_BAR_PATH = YangInstanceIdentifier.of(FOO_NODEID, BAR_NODEID);
+    private static final YangInstanceIdentifier BAR_PATH = YangInstanceIdentifier.of(BAR_NODEID);
     private static final YangInstanceIdentifier BAR_BAZ_PATH = BAR_PATH.node(BAZ_NODEID);
 
     private static EffectiveModelContext CONTEXT;
@@ -63,7 +63,7 @@ public class DataTreeCandidateInputOutputTest {
 
     @Test
     public void testWriteRoot() throws IOException {
-        assertSerialization(createCandidate(mod -> mod.write(YangInstanceIdentifier.empty(),
+        assertSerialization(createCandidate(mod -> mod.write(YangInstanceIdentifier.of(),
             ImmutableNodes.containerNode(SchemaContext.NAME))));
     }
 
@@ -91,7 +91,7 @@ public class DataTreeCandidateInputOutputTest {
 
     @Test
     public void testUnmodifiedRoot() throws IOException {
-        assertSerialization(createCandidate(mod -> mod.merge(YangInstanceIdentifier.empty(),
+        assertSerialization(createCandidate(mod -> mod.merge(YangInstanceIdentifier.of(),
             ImmutableNodes.containerNode(SchemaContext.NAME))));
     }
 
@@ -145,11 +145,10 @@ public class DataTreeCandidateInputOutputTest {
                 final Collection<DataTreeCandidateNode> actualChildren = actual.getChildNodes();
                 assertEquals(expectedChildren.size(), actualChildren.size());
 
-                final Iterator<DataTreeCandidateNode> eit = expectedChildren.iterator();
                 final Iterator<DataTreeCandidateNode> ait = actualChildren.iterator();
 
-                while (eit.hasNext()) {
-                    assertEqualNodes(eit.next(), ait.next());
+                for (DataTreeCandidateNode expectedChild : expectedChildren) {
+                    assertEqualNodes(expectedChild, ait.next());
                 }
         }
     }

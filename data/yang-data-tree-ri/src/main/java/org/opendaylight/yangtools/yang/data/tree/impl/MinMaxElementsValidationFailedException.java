@@ -37,7 +37,7 @@ final class MinMaxElementsValidationFailedException extends SchemaValidationFail
 
     @Override
     public List<YangNetconfError> getNetconfErrors() {
-        return new RequiredElementCountException(YangInstanceIdentifier.empty(), actual, min, max, "dummy")
+        return new RequiredElementCountException(YangInstanceIdentifier.of(), actual, min, max, "dummy")
             .getNetconfErrors();
     }
 }
