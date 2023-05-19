@@ -108,7 +108,7 @@ public class DataTreeConfiguration implements Immutable {
 
         public Builder(final TreeType treeType) {
             this.treeType = requireNonNull(treeType);
-            rootPath = YangInstanceIdentifier.empty();
+            rootPath = YangInstanceIdentifier.of();
         }
 
         public @NonNull Builder setUniqueIndexes(final boolean uniqueIndexes) {
