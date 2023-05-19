@@ -110,8 +110,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
     @Override
     final void verifyValueChildren(final NormalizedNode writtenValue) {
+        final var container = (DistinctNodeContainer<?, ?>) writtenValue;
         if (verifyChildrenStructure) {
-            final var container = (DistinctNodeContainer<?, ?>) writtenValue;
             for (var child : container.body()) {
                 final ModificationApplyOperation childOp = childByArg(child.name());
                 if (childOp == null) {
@@ -122,9 +122,9 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                 childOp.fullVerifyStructure(child);
             }
 
-            optionalVerifyValueChildren(writtenValue);
+            optionalVerifyValueChildren(container);
         }
-        mandatoryVerifyValueChildren(writtenValue);
+        mandatoryVerifyValueChildren(container);
     }
 
     /**
@@ -133,7 +133,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
      *
      * @param writtenValue Effective written value
      */
-    void optionalVerifyValueChildren(final NormalizedNode writtenValue) {
+    void optionalVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
         // Defaults to no-op
     }
 
@@ -143,7 +143,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
      *
      * @param writtenValue Effective written value
      */
-    void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
+    void mandatoryVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
         // Defaults to no-op
     }
 

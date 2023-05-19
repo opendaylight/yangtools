@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -32,8 +32,8 @@ class CaseEnforcer implements Immutable {
         }
 
         @Override
-        void enforceOnTreeNode(final NormalizedNode normalizedNode) {
-            enforcer.enforceOnData(normalizedNode);
+        void enforceOnTreeNode(final DataContainerNode containerNode) {
+            enforcer.enforceOnData(containerNode);
         }
     }
 
@@ -47,7 +47,7 @@ class CaseEnforcer implements Immutable {
         final TreeType type = treeConfig.getTreeType();
         final Builder<NodeIdentifier, DataSchemaNode> childrenBuilder = ImmutableMap.builder();
         if (SchemaAwareApplyOperation.belongsToTree(type, schema)) {
-            for (final DataSchemaNode child : schema.getChildNodes()) {
+            for (var child : schema.getChildNodes()) {
                 if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
                     childrenBuilder.put(NodeIdentifier.create(child.getQName()), child);
                 }
@@ -70,7 +70,7 @@ class CaseEnforcer implements Immutable {
         return children.keySet();
     }
 
-    void enforceOnTreeNode(final NormalizedNode normalizedNode) {
+    void enforceOnTreeNode(final DataContainerNode containerNode) {
         // Default is no-op
     }
 }

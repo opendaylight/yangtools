@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -36,7 +37,7 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
         }
 
         @Override
-        void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
+        void mandatoryVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 
