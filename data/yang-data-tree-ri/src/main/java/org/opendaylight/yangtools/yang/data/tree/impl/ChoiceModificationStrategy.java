@@ -25,6 +25,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -99,7 +100,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    void optionalVerifyValueChildren(final NormalizedNode writtenValue) {
+    void optionalVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
         enforceCases(writtenValue);
     }
 
@@ -127,7 +128,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
             }
 
             // Make sure all mandatory children are present
-            enforcer.enforceOnTreeNode(normalizedNode);
+            enforcer.enforceOnTreeNode(choice);
         }
     }
 

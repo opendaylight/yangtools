@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
@@ -31,7 +32,7 @@ class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy
         }
 
         @Override
-        void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
+        void mandatoryVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 
