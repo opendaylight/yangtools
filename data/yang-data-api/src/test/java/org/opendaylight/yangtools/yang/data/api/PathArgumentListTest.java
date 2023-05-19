@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class PathArgumentListTest {
-    private static final PathArgumentList LIST = new StackedPathArguments(YangInstanceIdentifier.empty(),
+    private static final PathArgumentList LIST = new StackedPathArguments(YangInstanceIdentifier.of(),
         List.of(new NodeIdentifier(QName.create("foo", "foo"))));
 
     @Test
@@ -55,7 +55,7 @@ public class PathArgumentListTest {
         entryLeaf.put(qNameList, "leaf");
         final NodeIdentifierWithPredicates nodeIdentifierWithPredicates = NodeIdentifierWithPredicates.of(qNameList,
             entryLeaf);
-        final YangInstanceIdentifier yangInstanceIdentifier = YangInstanceIdentifier.of(qNameRoot).node(qNameList)
+        final YangInstanceIdentifier yangInstanceIdentifier = YangInstanceIdentifier.ofNode(qNameRoot, qNameList)
                 .node(nodeIdentifierWithPredicates).node(qNameLeaf);
         final PathArgument pathArgumentToRoot = yangInstanceIdentifier.getAncestor(1).getPathArguments().iterator()
                 .next();

@@ -138,7 +138,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     @Override
     YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
         // TODO: can we optimize this one?
-        return YangInstanceIdentifier.create(Iterables.skip(getPathArguments(), skipFromRoot));
+        return YangInstanceIdentifier.of(Iterables.skip(getPathArguments(), skipFromRoot));
     }
 
     @Override
@@ -156,6 +156,6 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
 
     @Override
     public YangInstanceIdentifier toOptimized() {
-        return FixedYangInstanceIdentifier.create(getPathArguments());
+        return FixedYangInstanceIdentifier.of(getPathArguments());
     }
 }
