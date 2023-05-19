@@ -110,7 +110,7 @@ public class DataTreeCandidateNodesTest {
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).getModificationType();
         final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
-        DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.empty(),
+        DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
     }
@@ -121,7 +121,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
-        DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.empty(),
+        DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).delete(isNull());
     }
@@ -137,7 +137,7 @@ public class DataTreeCandidateNodesTest {
         doReturn(ModificationType.DELETE).when(mockedChildNode1).getModificationType();
         doReturn(List.of(mockedChildNode1)).when(mockedDataTreeCandidateNode).getChildNodes();
 
-        DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.empty(),
+        DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).enter((PathArgument) isNull());
         verify(mockedCursor, times(1)).delete(isNull());
@@ -150,7 +150,7 @@ public class DataTreeCandidateNodesTest {
 
         doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).getModificationType();
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.empty(),
+            () -> DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
                 mockedDataTreeCandidateNode));
         assertThat(ex.getMessage(), containsString("Unsupported modification"));
     }

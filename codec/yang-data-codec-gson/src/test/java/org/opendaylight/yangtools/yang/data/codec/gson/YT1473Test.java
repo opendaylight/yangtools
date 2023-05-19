@@ -149,11 +149,10 @@ class YT1473Test {
 
     private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final QName key,
             final Object value) {
-        return YangInstanceIdentifier.create(
-                new NodeIdentifier(node), NodeIdentifierWithPredicates.of(node, key, value));
+        return YangInstanceIdentifier.of(new NodeIdentifier(node), NodeIdentifierWithPredicates.of(node, key, value));
     }
 
     private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final Object value) {
-        return YangInstanceIdentifier.create(new NodeIdentifier(node), new NodeWithValue<>(node, value));
+        return YangInstanceIdentifier.of(new NodeIdentifier(node), new NodeWithValue<>(node, value));
     }
 }

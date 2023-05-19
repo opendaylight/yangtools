@@ -76,7 +76,7 @@ public final class LeafRefValidation {
                 final LeafRefContext referencingCtx = rootLeafRefCtx.getReferencingChildByName(childQName);
                 if (referencedByCtx != null || referencingCtx != null) {
                     validateNode(dataTreeCandidateNode, referencedByCtx, referencingCtx,
-                        YangInstanceIdentifier.create(identifier));
+                        YangInstanceIdentifier.of(identifier));
                 }
             }
         }

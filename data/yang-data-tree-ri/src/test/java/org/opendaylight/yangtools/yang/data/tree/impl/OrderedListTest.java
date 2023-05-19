@@ -99,8 +99,8 @@ public class OrderedListTest {
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1"))
                 .withChild(createChildOrderedListEntry("chkval2", "chlfval2")).build();
 
-        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer)
-                .node(parentOrderedList).node(createParentOrderedListEntryPath("pkval2")).node(childOrderedList);
+        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer, childContainer, parentOrderedList)
+            .node(createParentOrderedListEntryPath("pkval2")).node(childOrderedList);
 
         treeModification.write(path2, childOrderedListNode);
         treeModification.ready();

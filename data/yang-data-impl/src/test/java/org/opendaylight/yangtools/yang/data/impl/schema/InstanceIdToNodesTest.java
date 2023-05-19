@@ -75,8 +75,7 @@ public class InstanceIdToNodesTest {
                     .build())
                 .build())
             .build(),
-            ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey)));
+            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(rootContainer, outerList, outerListWithKey)));
     }
 
     @Test
@@ -91,14 +90,13 @@ public class InstanceIdToNodesTest {
                     .build())
                 .build())
             .build(),
-            ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, leafList, leafListWithValue)));
+            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(rootContainer, leafList, leafListWithValue)));
     }
 
     @Test
     public void testEmptyInstanceIdentifier() {
         assertEquals(ImmutableNodes.containerNode(SchemaContext.NAME),
-            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.empty()));
+            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of()));
     }
 
     @Test
@@ -107,8 +105,7 @@ public class InstanceIdToNodesTest {
         final NodeIdentifierWithPredicates id = NodeIdentifierWithPredicates.of(TWO_KEY_LIST.getNodeType(), misordered);
         assertArrayEquals(new Object[] { BAR, FOO }, id.keySet().toArray());
 
-        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
-            YangInstanceIdentifier.create(TWO_KEY_LIST, id));
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(TWO_KEY_LIST, id));
         assertThat(filter, isA(MapNode.class));
         final Collection<MapEntryNode> value = ((MapNode) filter).body();
         assertEquals(1, value.size());

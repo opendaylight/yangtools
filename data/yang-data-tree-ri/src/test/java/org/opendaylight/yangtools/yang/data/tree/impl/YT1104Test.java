@@ -64,7 +64,7 @@ public class YT1104Test {
 
     private void writeChoice(final DataContainerChild child) throws DataValidationFailedException {
         final DataTreeModification mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.create(FOO), choiceBuilder().withNodeIdentifier(FOO).withChild(child).build());
+        mod.write(YangInstanceIdentifier.of(FOO), choiceBuilder().withNodeIdentifier(FOO).withChild(child).build());
         mod.ready();
         dataTree.validate(mod);
         dataTree.commit(dataTree.prepare(mod));
