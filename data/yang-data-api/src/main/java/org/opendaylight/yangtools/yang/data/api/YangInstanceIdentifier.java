@@ -17,7 +17,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
@@ -99,9 +98,157 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
      * namespace.
      *
      * @return An empty YangInstanceIdentifier
+     * @deprecated Use {@link #of()} instead.
      */
-    public static @NonNull YangInstanceIdentifier empty() {
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public static final @NonNull YangInstanceIdentifier empty() {
+        return of();
+    }
+
+    /**
+     * Return an empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG
+     * namespace.
+     *
+     * @return An empty YangInstanceIdentifier
+     */
+    public static final @NonNull YangInstanceIdentifier of() {
         return FixedYangInstanceIdentifier.EMPTY_INSTANCE;
+    }
+
+    /**
+     * Returns a new InstanceIdentifier with only one path argument of type {@link PathArgument}.
+     *
+     * @param name QName of first node identifier
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
+    public static final @NonNull YangInstanceIdentifier of(final PathArgument name) {
+        return new FixedYangInstanceIdentifier(ImmutableList.of(name));
+    }
+
+    /**
+     * Returns a new InstanceIdentifier composed of supplied {@link PathArgument}s.
+     *
+     * @param path Path arguments
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code path} or any of its components is {@code null}
+     */
+    public static final @NonNull YangInstanceIdentifier of(final PathArgument... path) {
+        // We are forcing a copy, since we cannot trust the user
+        return of(ImmutableList.copyOf(path));
+    }
+
+    /**
+     * Returns a new InstanceIdentifier composed of supplied {@link PathArgument}s.
+     *
+     * @param path Path arguments
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code path} is {@code null}
+     */
+    public static final @NonNull YangInstanceIdentifier of(final ImmutableList<PathArgument> path) {
+        return path.isEmpty() ? of() : new FixedYangInstanceIdentifier(path);
+    }
+
+    /**
+     * Returns a new InstanceIdentifier composed of supplied {@link PathArgument}s.
+     *
+     * @param path Path arguments
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code path} or any of its components is {@code null}
+     */
+    public static final @NonNull YangInstanceIdentifier of(final Collection<? extends PathArgument> path) {
+        return path.isEmpty() ? of() : of(ImmutableList.copyOf(path));
+    }
+
+    /**
+     * Returns a new InstanceIdentifier composed of supplied {@link PathArgument}s.
+     *
+     * @param path Path arguments
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code path} or any of its components is {@code null}
+     */
+    public static final @NonNull YangInstanceIdentifier of(final Iterable<? extends PathArgument> path) {
+        return of(ImmutableList.copyOf(path));
+    }
+
+    /**
+     * Returns a new {@link YangInstanceIdentifier} with only one path argument of type {@link NodeIdentifier} with
+     * supplied {@link QName}. Note this is a convenience method aimed at test code. Production code should consider
+     * using {@link #of(PathArgument)} instead.
+     *
+     * @param name QName of first {@link NodeIdentifier}
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code name} is {@code null}
+     * @deprecated Use {@link #ofNode(QName)} instead
+     */
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public static final @NonNull YangInstanceIdentifier of(final QName name) {
+        return of(new NodeIdentifier(name));
+    }
+
+    /**
+     * Returns a new {@link YangInstanceIdentifier} with only one path argument of type {@link NodeIdentifier} with
+     * supplied {@link QName}. Note this is a convenience method aimed at test code. Production code should consider
+     * using {@link #of(PathArgument)} instead.
+     *
+     * @param name QName of first {@link NodeIdentifier}
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
+    public static final @NonNull YangInstanceIdentifier ofNode(final QName name) {
+        return of(new NodeIdentifier(name));
+    }
+
+    /**
+     * Returns a new {@link YangInstanceIdentifier} with path arguments of type {@link NodeIdentifier} with
+     * supplied {@link QName}s. Note this is a convenience method aimed at test code. Production code should consider
+     * using {@link #of(PathArgument...)} instead.
+     *
+     * @param path QNames of {@link NodeIdentifier}s
+     * @return A YangInstanceIdentifier
+     * @throws NullPointerException if {@code path} or any of its components is {@code null}
+     */
+    public static final @NonNull YangInstanceIdentifier ofNode(final QName... path) {
+        return of(Arrays.stream(path).map(NodeIdentifier::new).collect(ImmutableList.toImmutableList()));
+    }
+
+    /**
+     * Create a YangInstanceIdentifier composed of a single {@link PathArgument}.
+     *
+     * @param pathArgument Path argument
+     * @return A {@link YangInstanceIdentifier}
+     * @throws NullPointerException if {@code pathArgument} is null
+     * @deprecated Use {@link #of(NodeIdentifier)} instead.
+     */
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public static @NonNull YangInstanceIdentifier create(final PathArgument pathArgument) {
+        return of(pathArgument);
+    }
+
+    /**
+     * Create a YangInstanceIdentifier composed of specified {@link PathArgument}s.
+     *
+     * @param path Path arguments
+     * @return A {@link YangInstanceIdentifier}
+     * @throws NullPointerException if {@code path} or any of its components is {@code null}
+     * @deprecated Use {@link #of(PathArgument...)} instead.
+     */
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public static @NonNull YangInstanceIdentifier create(final PathArgument... path) {
+        return of(path);
+    }
+
+    /**
+     * Create a YangInstanceIdentifier composed of specified {@link PathArgument}s.
+     *
+     * @param path Path arguments
+     * @return A {@link YangInstanceIdentifier}
+     * @throws NullPointerException if {@code path} or any of its components is {@code null}
+     * @deprecated Use {@link #of(Iterable)} instead.
+     */
+    @Deprecated(since = "11.0.0", forRemoval = true)
+    public static @NonNull YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
+        return of(path);
     }
 
     abstract @NonNull YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
@@ -175,19 +322,6 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
      */
     public abstract PathArgument getLastPathArgument();
 
-    public static @NonNull YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
-        return Iterables.isEmpty(path) ? empty() : new FixedYangInstanceIdentifier(ImmutableList.copyOf(path));
-    }
-
-    public static @NonNull YangInstanceIdentifier create(final PathArgument pathArgument) {
-        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument));
-    }
-
-    public static @NonNull YangInstanceIdentifier create(final PathArgument... path) {
-        // We are forcing a copy, since we cannot trust the user
-        return create(Arrays.asList(path));
-    }
-
     /**
      * Create a {@link YangInstanceIdentifier} by taking a snapshot of provided path and iterating it backwards.
      *
@@ -199,7 +333,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         final ImmutableList.Builder<PathArgument> builder = ImmutableList.builderWithExpectedSize(
             pathTowardsRoot.size());
         pathTowardsRoot.descendingIterator().forEachRemaining(builder::add);
-        return YangInstanceIdentifier.create(builder.build());
+        return YangInstanceIdentifier.of(builder.build());
     }
 
     /**
@@ -212,13 +346,12 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
      */
     public static <T> @NonNull YangInstanceIdentifier createReverse(final Deque<? extends T> stackTowardsRoot,
             final Function<T, PathArgument> function) {
-        final ImmutableList.Builder<PathArgument> builder = ImmutableList.builderWithExpectedSize(
-            stackTowardsRoot.size());
-        final Iterator<? extends T> it = stackTowardsRoot.descendingIterator();
+        final var builder = ImmutableList.<PathArgument>builderWithExpectedSize(stackTowardsRoot.size());
+        final var it = stackTowardsRoot.descendingIterator();
         while (it.hasNext()) {
             builder.add(function.apply(it.next()));
         }
-        return YangInstanceIdentifier.create(builder.build());
+        return YangInstanceIdentifier.of(builder.build());
     }
 
     boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
@@ -390,19 +523,6 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
     @java.io.Serial
     final Object writeReplace() {
         return new YIDv1(this);
-    }
-
-    // Static factories & helpers
-
-    /**
-     * Returns a new InstanceIdentifier with only one path argument of type {@link NodeIdentifier} with supplied
-     * QName.
-     *
-     * @param name QName of first node identifier
-     * @return Instance Identifier with only one path argument of type {@link NodeIdentifier}
-     */
-    public static @NonNull YangInstanceIdentifier of(final QName name) {
-        return create(new NodeIdentifier(name));
     }
 
     /**
