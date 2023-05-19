@@ -22,11 +22,11 @@ final class BenchmarkModel {
     private static final QName TEST_QNAME = QName.create(
         "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test", "2014-03-13", "test").intern();
     static final NodeIdentifier TEST = NodeIdentifier.create(TEST_QNAME);
-    static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.create(TEST);
+    static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST);
 
     static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list").intern();
     static final NodeIdentifier OUTER_LIST = NodeIdentifier.create(OUTER_LIST_QNAME);
-    static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.create(TEST, OUTER_LIST);
+    static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.of(TEST, OUTER_LIST);
 
     static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list").intern();
     static final NodeIdentifier INNER_LIST = NodeIdentifier.create(INNER_LIST_QNAME);

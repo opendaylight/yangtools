@@ -42,7 +42,7 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
 
         // Prepare root
         final YangInstanceIdentifier.NodeIdentifier rootContainerId = getNId(TestModel.TEST_QNAME);
-        addListEntryModification.write(YangInstanceIdentifier.create(rootContainerId),
+        addListEntryModification.write(YangInstanceIdentifier.of(rootContainerId),
             Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
 
         final NodeIdentifierWithPredicates outerListEntryId = NodeIdentifierWithPredicates.of(
@@ -50,7 +50,7 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
 
         // Write list entry (MapEntryNode) without creating list parent (MapNode)
         final MapEntryNode outerListEntry = Builders.mapEntryBuilder().withNodeIdentifier(outerListEntryId).build();
-        final YangInstanceIdentifier outerListParentPath = YangInstanceIdentifier.create(getNId(TestModel.TEST_QNAME),
+        final YangInstanceIdentifier outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
             getNId(TestModel.OUTER_LIST_QNAME));
         final YangInstanceIdentifier outerListEntryPath = outerListParentPath.node(outerListEntryId);
         addListEntryModification.write(outerListEntryPath, outerListEntry);
@@ -79,10 +79,10 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
 
         // Prepare root container
         final YangInstanceIdentifier.NodeIdentifier rootContainerId = getNId(TestModel.TEST_QNAME);
-        addListEntryModification.write(YangInstanceIdentifier.create(rootContainerId),
+        addListEntryModification.write(YangInstanceIdentifier.of(rootContainerId),
             Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
 
-        final YangInstanceIdentifier outerListParentPath = YangInstanceIdentifier.create(getNId(TestModel.TEST_QNAME),
+        final YangInstanceIdentifier outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
             getNId(TestModel.OUTER_LIST_QNAME));
         addListEntryModification.merge(outerListParentPath, ImmutableNodes.mapNode(TestModel.OUTER_LIST_QNAME));
 
@@ -95,7 +95,7 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
         final DataTreeModification addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
 
         final YangInstanceIdentifier.NodeIdentifier rootContainerId = getNId(TestModel.NON_PRESENCE_QNAME);
-        final YangInstanceIdentifier path = YangInstanceIdentifier.create(rootContainerId);
+        final YangInstanceIdentifier path = YangInstanceIdentifier.of(rootContainerId);
         addListEntryModification.write(path, Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
 
         addListEntryModification.ready();

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -60,9 +59,8 @@ public class Bug8291Test {
     private static void writeInnerList(final DataTree inMemoryDataTree) throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
-                YangInstanceIdentifier.create(
-                        NodeIdentifierWithPredicates.of(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1))).node(
-                        INNER_LIST), Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(INNER_LIST)).build());
+            YangInstanceIdentifier.of(NodeIdentifierWithPredicates.of(OUTER_LIST, OUTER_LIST_ID, 1)).node(INNER_LIST),
+            Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(INNER_LIST)).build());
 
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
@@ -75,11 +73,12 @@ public class Bug8291Test {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final MapEntryNode outerListMapEntry = Builders.mapEntryBuilder()
-                .withNodeIdentifier(NodeIdentifierWithPredicates.of(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1)))
-                .withChild(ImmutableNodes.leafNode(OUTER_LIST_ID, 1)).build();
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(OUTER_LIST, OUTER_LIST_ID, 1))
+            .withChild(ImmutableNodes.leafNode(OUTER_LIST_ID, 1))
+            .build();
 
-        modificationTree.write(YangInstanceIdentifier.create(NodeIdentifierWithPredicates.of(OUTER_LIST,
-                ImmutableMap.of(OUTER_LIST_ID, 1))), outerListMapEntry);
+        modificationTree.write(YangInstanceIdentifier.of(NodeIdentifierWithPredicates.of(OUTER_LIST, OUTER_LIST_ID, 1)),
+            outerListMapEntry);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);

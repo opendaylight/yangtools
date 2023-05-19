@@ -355,9 +355,9 @@ abstract class AbstractMagnesiumDataInput extends AbstractLegacyDataInput {
             for (int i = 0; i < size; ++i) {
                 builder.add(readPathArgument());
             }
-            return YangInstanceIdentifier.create(builder.build());
+            return YangInstanceIdentifier.of(builder.build());
         } else if (size == 0) {
-            return YangInstanceIdentifier.empty();
+            return YangInstanceIdentifier.of();
         } else {
             throw new InvalidNormalizedNodeStreamException("Invalid YangInstanceIdentifier size " + size);
         }
@@ -738,7 +738,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractLegacyDataInput {
             case MagnesiumValue.BINARY_4B:
                 return readBinary(input.readInt());
             case MagnesiumValue.YIID_0:
-                return YangInstanceIdentifier.empty();
+                return YangInstanceIdentifier.of();
             case MagnesiumValue.YIID:
                 return readYangInstanceIdentifier(input.readInt());
             case MagnesiumValue.QNAME:

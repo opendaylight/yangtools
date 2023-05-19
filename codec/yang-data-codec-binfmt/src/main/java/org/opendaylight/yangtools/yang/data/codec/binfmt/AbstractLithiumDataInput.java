@@ -360,7 +360,7 @@ abstract class AbstractLithiumDataInput extends AbstractLegacyDataInput {
         for (int i = 0; i < size; i++) {
             pathArguments.add(readPathArgument());
         }
-        return YangInstanceIdentifier.create(pathArguments.build());
+        return YangInstanceIdentifier.of(pathArguments.build());
     }
 
     private Set<String> readObjSet() throws IOException {

@@ -104,7 +104,7 @@ public final class TestModel {
             .withChild(leafNode(TestModel.BIGDECIMAL_LEAF_QNAME, Decimal64.valueOf("1.2")))
             .withChild(leafNode(SOME_REF_QNAME,
                 // Create YangInstanceIdentifier with all path arg types.
-                YangInstanceIdentifier.create(new NodeIdentifier(QName.create(TEST_QNAME, "qname")),
+                YangInstanceIdentifier.of(new NodeIdentifier(QName.create(TEST_QNAME, "qname")),
                     NodeIdentifierWithPredicates.of(QName.create(TEST_QNAME, "list-entry"),
                         QName.create(TEST_QNAME, "key"), 10),
                     new NodeWithValue<>(QName.create(TEST_QNAME, "leaf-list-entry"), "foo"))))

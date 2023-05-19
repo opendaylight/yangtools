@@ -61,11 +61,10 @@ public class Bug5968MergeTest {
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.merge(
-                YangInstanceIdentifier.of(ROOT),
-                withMapNode ? root.withChild(
-                        Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST)).build()).build() : root
-                        .build());
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT),
+            withMapNode ? root.withChild(
+                Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST)).build()).build()
+                : root.build());
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
@@ -142,7 +141,7 @@ public class Bug5968MergeTest {
 
     private static void mergeMap(final DataTreeModification modificationTree,
             final boolean mandatoryDataMissing) throws DataValidationFailedException {
-        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), createMap(mandatoryDataMissing));
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT, MY_LIST), createMap(mandatoryDataMissing));
     }
 
     private static SystemMapNode createMap(final boolean mandatoryDataMissing) throws DataValidationFailedException {
@@ -159,15 +158,15 @@ public class Bug5968MergeTest {
                 : createMapEntry(listIdValue, mandatoryLeafValue, commonLeafValue);
 
         modificationTree.merge(
-                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
-                        .node(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue))),
-                taskEntryNode);
+            YangInstanceIdentifier.of(ROOT, MY_LIST)
+                .node(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, listIdValue)),
+            taskEntryNode);
     }
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object mandatoryLeafValue,
             final Object commonLeafValue) throws DataValidationFailedException {
         return Builders.mapEntryBuilder()
-                .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF, mandatoryLeafValue))
                 .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
@@ -236,15 +235,13 @@ public class Bug5968MergeTest {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.merge(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
-        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), createMapBuilder().build());
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT, MY_LIST), createMapBuilder().build());
         modificationTree.merge(
-                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
-                        .node(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
-                createEmptyMapEntryBuilder("1").build());
+            YangInstanceIdentifier.of(ROOT, MY_LIST).node(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, "1")),
+            createEmptyMapEntryBuilder("1").build());
         modificationTree.merge(
-                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
-                        .node(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
-                createMapEntry("1", "mandatory-value", "common-value"));
+            YangInstanceIdentifier.of(ROOT, MY_LIST).node(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, "1")),
+            createMapEntry("1", "mandatory-value", "common-value"));
 
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
@@ -258,15 +255,13 @@ public class Bug5968MergeTest {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.merge(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
-        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), createMapBuilder().build());
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT, MY_LIST), createMapBuilder().build());
         modificationTree.merge(
-                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
-                        .node(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
-                createEmptyMapEntryBuilder("1").build());
+            YangInstanceIdentifier.of(ROOT, MY_LIST).node(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, "1")),
+            createEmptyMapEntryBuilder("1").build());
         modificationTree.merge(
-                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
-                        .node(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
-                createMapEntry("1", "common-value"));
+            YangInstanceIdentifier.of(ROOT, MY_LIST).node(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, "1")),
+            createMapEntry("1", "common-value"));
 
         try {
             modificationTree.ready();

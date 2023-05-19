@@ -152,11 +152,10 @@ public final class TestingNormalizedNodeStructuresCreator {
     }
 
     private static Object lf112Value() {
-        return YangInstanceIdentifier.create(
-                new NodeIdentifier(QName.create(COMPLEX_JSON, "cont1")),
-                new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")),
-                new NodeWithValue<>(QName.create(COMPLEX_JSON, "lflst11"),"foo")
-        );
+        return YangInstanceIdentifier.of(
+            new NodeIdentifier(QName.create(COMPLEX_JSON, "cont1")),
+            new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")),
+            new NodeWithValue<>(QName.create(COMPLEX_JSON, "lflst11"), "foo"));
     }
 
     private static SystemLeafSetNode<?> childLflst11() {

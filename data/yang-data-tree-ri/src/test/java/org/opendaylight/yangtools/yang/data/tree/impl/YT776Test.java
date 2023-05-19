@@ -83,7 +83,7 @@ public class YT776Test {
     @Test
     public void testNoAttributes() {
         final DataTreeModification mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -166,14 +166,14 @@ public class YT776Test {
     @Test
     public void testEmptyAndMergeOne() throws DataValidationFailedException {
         final DataTreeModification mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
                     .build())
                 .build())
             .build());
-        mod.merge(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.merge(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -190,14 +190,14 @@ public class YT776Test {
     @Test
     public void testEmptyAndMergeOneWithListTouched() throws DataValidationFailedException {
         final DataTreeModification mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
                     .build())
                 .build())
             .build());
-        mod.merge(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.merge(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -208,7 +208,7 @@ public class YT776Test {
                 .build())
             .build());
 
-        mod.delete(YangInstanceIdentifier.create(BOX, OBJECT_LIST, OBJECT_ITEM, NESTED_LIST, NESTED_ITEM));
+        mod.delete(YangInstanceIdentifier.of(BOX, OBJECT_LIST, OBJECT_ITEM, NESTED_LIST, NESTED_ITEM));
 
         commit(mod);
     }
@@ -217,7 +217,8 @@ public class YT776Test {
     public void testDisappearInChoice() throws DataValidationFailedException {
         DataTreeModification mod = dataTree.takeSnapshot().newModification();
         // Initialize choice with list
-        mod.write(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(choiceBuilder().withNodeIdentifier(ANY_OF)
                 .withChild(mapBuilder().withNodeIdentifier(SOME_LIST_ID)
                     .withChild(mapEntryBuilder()
@@ -231,8 +232,8 @@ public class YT776Test {
 
         // Now delete the single item, causing the list to fizzle, while creating the alterinative case
         mod = dataTree.takeSnapshot().newModification();
-        mod.delete(YangInstanceIdentifier.create(BOX, ANY_OF, SOME_LIST_ID, SOME_LIST_ITEM));
-        mod.write(YangInstanceIdentifier.create(BOX, ANY_OF, SOME_LEAF_ID),
+        mod.delete(YangInstanceIdentifier.of(BOX, ANY_OF, SOME_LIST_ID, SOME_LIST_ITEM));
+        mod.write(YangInstanceIdentifier.of(BOX, ANY_OF, SOME_LEAF_ID),
             leafBuilder().withNodeIdentifier(SOME_LEAF_ID).withValue("foo").build());
 
         commit(mod);
@@ -240,13 +241,13 @@ public class YT776Test {
 
     private DataTreeModification write(final ContainerNode data) throws DataValidationFailedException {
         final DataTreeModification mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.create(BOX), data);
+        mod.write(YangInstanceIdentifier.of(BOX), data);
         return mod;
     }
 
     private void writeAndCommit(final ContainerNode data) throws DataValidationFailedException {
         final DataTreeModification mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.create(BOX), data);
+        mod.write(YangInstanceIdentifier.of(BOX), data);
         commit(mod);
     }
 

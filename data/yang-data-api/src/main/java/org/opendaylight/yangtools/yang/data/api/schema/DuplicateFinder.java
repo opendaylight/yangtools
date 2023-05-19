@@ -52,7 +52,7 @@ final class DuplicateFinder {
      */
     static Map<NormalizedNode, DuplicateEntry> findDuplicates(final NormalizedNode node) {
         final DuplicateFinder finder = new DuplicateFinder();
-        finder.findDuplicates(YangInstanceIdentifier.empty(), node);
+        finder.findDuplicates(YangInstanceIdentifier.of(), node);
         return finder.identities;
     }
 }
