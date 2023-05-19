@@ -47,12 +47,12 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
 
         final TreeNode currentRoot = getTipRoot();
         if (root.getOperation() == LogicalOperation.NONE) {
-            return new NoopDataTreeCandidate(YangInstanceIdentifier.empty(), root, currentRoot);
+            return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), root, currentRoot);
         }
 
         final var newRoot = m.getStrategy().apply(m.getRootModification(), Optional.of(currentRoot), m.getVersion());
         checkState(newRoot.isPresent(), "Apply strategy failed to produce root node for modification %s", modification);
-        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.empty(), root, currentRoot, newRoot.orElseThrow());
+        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), root, currentRoot, newRoot.orElseThrow());
     }
 
     private static InMemoryDataTreeModification checkedCast(final DataTreeModification mod) {

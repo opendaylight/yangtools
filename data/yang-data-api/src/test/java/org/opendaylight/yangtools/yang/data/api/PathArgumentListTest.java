@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class PathArgumentListTest {
-    private static final PathArgumentList LIST = new StackedPathArguments(YangInstanceIdentifier.empty(),
+    private static final PathArgumentList LIST = new StackedPathArguments(YangInstanceIdentifier.of(),
         List.of(new NodeIdentifier(QName.create("foo", "foo"))));
 
     @Test

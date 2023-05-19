@@ -12,31 +12,21 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.io.Serial;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
         ImmutableList.of());
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    private final ImmutableList<PathArgument> path;
+    private final @NonNull ImmutableList<PathArgument> path;
 
     private transient volatile YangInstanceIdentifier parent = null;
 
     FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path) {
         this.path = requireNonNull(path, "path must not be null.");
-    }
-
-    static @NonNull FixedYangInstanceIdentifier of(final ImmutableList<PathArgument> path) {
-        return path.isEmpty() ? EMPTY_INSTANCE : new FixedYangInstanceIdentifier(path);
-    }
-
-    static @NonNull FixedYangInstanceIdentifier of(final List<PathArgument> path) {
-        return path.isEmpty() ? EMPTY_INSTANCE : new FixedYangInstanceIdentifier(ImmutableList.copyOf(path));
     }
 
     @Override
@@ -61,7 +51,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
 
         YangInstanceIdentifier ret = parent;
         if (ret == null) {
-            ret = YangInstanceIdentifier.create(path.subList(0, path.size() - 1));
+            ret = YangInstanceIdentifier.of(path.subList(0, path.size() - 1));
             parent = ret;
         }
 
@@ -85,27 +75,27 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
             // Use the parent cache
             return verifyNotNull(getParent());
         }
-        return YangInstanceIdentifier.create(path.subList(0, depth));
+        return YangInstanceIdentifier.of(path.subList(0, depth));
     }
 
     @Override
-    public List<PathArgument> getPathArguments() {
+    public ImmutableList<PathArgument> getPathArguments() {
         return path;
     }
 
     @Override
-    public List<PathArgument> getReversePathArguments() {
+    public ImmutableList<PathArgument> getReversePathArguments() {
         return path.reverse();
     }
 
     @Override
-    @NonNull List<PathArgument> tryPathArguments() {
+    @NonNull ImmutableList<PathArgument> tryPathArguments() {
         return path;
     }
 
     @Override
-    @NonNull List<PathArgument> tryReversePathArguments() {
-        return path.reverse();
+    @NonNull ImmutableList<PathArgument> tryReversePathArguments() {
+        return getReversePathArguments();
     }
 
     @Override
