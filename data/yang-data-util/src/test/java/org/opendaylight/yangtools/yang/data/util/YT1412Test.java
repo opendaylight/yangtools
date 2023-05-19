@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
@@ -99,12 +98,7 @@ class YT1412Test {
 
     @Test
     void testEnterChoicePath() {
-        final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
-            new NodeIdentifier(ONE),
-            new NodeIdentifier(TWO),
-            new NodeIdentifier(THREE),
-            new NodeIdentifier(FOUR)))
-            .orElseThrow();
+        final var result = CONTEXT.enterPath(YangInstanceIdentifier.of(ONE, TWO, THREE, FOUR)).orElseThrow();
 
         assertInstanceOf(LeafContextNode.class, result.node());
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, FOUR, FOUR), result.stack().toSchemaNodeIdentifier());
@@ -112,11 +106,7 @@ class YT1412Test {
 
     @Test
     void testEnterAugmentPath() {
-        final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
-            new NodeIdentifier(ONE),
-            new NodeIdentifier(FIVE),
-            new NodeIdentifier(FIVE)))
-            .orElseThrow();
+        final var result = CONTEXT.enterPath(YangInstanceIdentifier.of(ONE, FIVE, FIVE)).orElseThrow();
 
         assertInstanceOf(UnkeyedListItemContextNode.class, result.node());
         assertEquals(Absolute.of(ONE, FIVE), result.stack().toSchemaNodeIdentifier());
@@ -124,12 +114,7 @@ class YT1412Test {
 
     @Test
     void testEnterAugmentChoicePath() {
-        final var result = CONTEXT.enterPath(YangInstanceIdentifier.create(
-            new NodeIdentifier(ONE),
-            new NodeIdentifier(TWO),
-            new NodeIdentifier(THREE),
-            new NodeIdentifier(SIX)))
-            .orElseThrow();
+        final var result = CONTEXT.enterPath(YangInstanceIdentifier.of(ONE, TWO, THREE, SIX)).orElseThrow();
 
         assertInstanceOf(LeafContextNode.class, result.node());
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, SIX, SIX), result.stack().toSchemaNodeIdentifier());

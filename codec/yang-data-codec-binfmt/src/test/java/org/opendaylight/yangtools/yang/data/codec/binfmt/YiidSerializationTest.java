@@ -56,7 +56,7 @@ public class YiidSerializationTest extends AbstractSerializationTest {
 
     @Test
     public void testEmptyIdentifier() {
-        assertSame(YangInstanceIdentifier.empty(), emptySize);
+        assertSame(YangInstanceIdentifier.of(), emptySize);
     }
 
     @Test

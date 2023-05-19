@@ -57,11 +57,9 @@ public class YT1411Test extends AbstractComplexJsonTest {
         assertThat(lf112, instanceOf(LeafNode.class));
 
         final QName augmentChoice1 = QName.create(CONT_1, "augment-choice1");
-        assertEquals(YangInstanceIdentifier.create(
-            CONT_1_NODEID,
-            new NodeIdentifier(augmentChoice1),
-            new NodeIdentifier(QName.create(CONT_1, "augment-choice2")),
-            new NodeIdentifier(QName.create(CONT_1, "case11-choice-case-container"))),
+        assertEquals(YangInstanceIdentifier.of(
+            CONT_1, augmentChoice1, QName.create(CONT_1, "augment-choice2"),
+            QName.create(CONT_1, "case11-choice-case-container")),
             ((LeafNode<?>) lf112).body());
     }
 }

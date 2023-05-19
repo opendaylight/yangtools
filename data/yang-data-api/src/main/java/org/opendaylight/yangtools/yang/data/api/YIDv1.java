@@ -10,13 +10,11 @@ package org.opendaylight.yangtools.yang.data.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serial;
-import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -39,7 +37,7 @@ final class YIDv1 implements Externalizable {
 
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
-        final List<PathArgument> args = yid.getPathArguments();
+        final var args = yid.getPathArguments();
         out.writeInt(args.size());
         for (PathArgument arg : args) {
             // Unfortunately PathArgument is an interface and we do not have control over all its implementations,
@@ -51,11 +49,11 @@ final class YIDv1 implements Externalizable {
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final int size = in.readInt();
-        final Builder<PathArgument> builder = ImmutableList.builderWithExpectedSize(size);
+        final var builder = ImmutableList.<PathArgument>builderWithExpectedSize(size);
         for (int i = 0; i < size; ++i) {
             builder.add((PathArgument) in.readObject());
         }
-        yid = YangInstanceIdentifier.create(builder.build());
+        yid = YangInstanceIdentifier.of(builder.build());
     }
 
     @Serial
