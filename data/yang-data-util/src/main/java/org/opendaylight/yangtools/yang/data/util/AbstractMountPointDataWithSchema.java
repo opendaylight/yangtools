@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * {@link #getMountPointData(MountPointLabel, MountPointContextFactory)}.
  */
 @Beta
-public abstract class AbstractMountPointDataWithSchema<T extends DataSchemaNode>
-        extends CompositeNodeDataWithSchema<T> {
+public abstract sealed class AbstractMountPointDataWithSchema<T extends DataSchemaNode>
+        extends CompositeNodeDataWithSchema<T> permits ContainerNodeDataWithSchema, ListEntryNodeDataWithSchema {
     private MountPointData mountedData;
 
     AbstractMountPointDataWithSchema(final T schema) {

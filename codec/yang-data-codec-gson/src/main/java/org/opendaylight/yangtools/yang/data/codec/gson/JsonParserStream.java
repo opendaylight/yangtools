@@ -188,8 +188,9 @@ public final class JsonParserStream implements Closeable, Flushable {
         try {
             reader.peek();
             isEmpty = false;
-            final CompositeNodeDataWithSchema<?> compositeNodeDataWithSchema =
-                    new CompositeNodeDataWithSchema<>(parentNode);
+            // FIXME: this has a special-case bypass for SchemaContext, where we end up emitting just the child while
+            //        the usual of() would result in SchemaContext.NAME being the root
+            final var compositeNodeDataWithSchema = new CompositeNodeDataWithSchema<>(parentNode);
             read(reader, compositeNodeDataWithSchema);
             compositeNodeDataWithSchema.write(writer);
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
@@ -35,7 +36,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * <p>
  * Represents a node which is composed of multiple simpler nodes.
  */
-public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T> {
+public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T>
+        permits AbstractMountPointDataWithSchema, CaseNodeDataWithSchema, ChoiceNodeDataWithSchema,
+                LeafListNodeDataWithSchema, ListNodeDataWithSchema {
     /**
      * Policy on how child nodes should be treated when an attempt is made to add them multiple times.
      */
@@ -101,8 +104,21 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
      */
     private final List<AbstractNodeDataWithSchema<?>> children = new ArrayList<>();
 
+    // FIXME: hide this when JSON codec is sane
     public CompositeNodeDataWithSchema(final T schema) {
         super(schema);
+    }
+
+    public static @NonNull CompositeNodeDataWithSchema<?> of(final DataSchemaNode schema) {
+        if (schema instanceof ListSchemaNode list) {
+            return new ListNodeDataWithSchema(list);
+        } else if (schema instanceof LeafListSchemaNode leafList) {
+            return new LeafListNodeDataWithSchema(leafList);
+        } else if (schema instanceof ContainerLike containerLike) {
+            return new ContainerNodeDataWithSchema(containerLike);
+        } else {
+            return new CompositeNodeDataWithSchema<>(schema);
+        }
     }
 
     void addChild(final AbstractNodeDataWithSchema<?> newChild) {
@@ -184,19 +200,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     }
 
     AbstractNodeDataWithSchema<?> addCompositeChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
-        final CompositeNodeDataWithSchema<?> newChild;
-
-        if (schema instanceof ListSchemaNode list) {
-            newChild = new ListNodeDataWithSchema(list);
-        } else if (schema instanceof LeafListSchemaNode leafList) {
-            newChild = new LeafListNodeDataWithSchema(leafList);
-        } else if (schema instanceof ContainerLike containerLike) {
-            newChild = new ContainerNodeDataWithSchema(containerLike);
-        } else {
-            newChild = new CompositeNodeDataWithSchema<>(schema);
-        }
-
-        return addCompositeChild(newChild, policy);
+        return addCompositeChild(of(schema), policy);
     }
 
     final AbstractNodeDataWithSchema<?> addCompositeChild(final CompositeNodeDataWithSchema<?> newChild,

@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 
 @Beta
-public class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<AnydataSchemaNode> {
+public final class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<AnydataSchemaNode> {
     private Class<?> objectModel;
 
     public AnydataNodeDataWithSchema(final AnydataSchemaNode dataSchemaNode) {
@@ -53,7 +53,7 @@ public class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<AnydataS
         }
     }
 
-    public final @NonNull Class<?> getObjectModel() {
+    public @NonNull Class<?> getObjectModel() {
         checkState(objectModel != null, "Object model not set");
         return objectModel;
     }
