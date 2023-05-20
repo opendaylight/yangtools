@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.data.util;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -100,12 +97,6 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     }
 
     /**
-     * nodes which were added to schema via augmentation and are present in data input.
-     */
-    private final Multimap<AugmentationSchemaNode, AbstractNodeDataWithSchema<?>> augmentationsToChild =
-        ArrayListMultimap.create();
-
-    /**
      * remaining data nodes (which aren't added via augment). Every of one them should have the same QName.
      */
     private final List<AbstractNodeDataWithSchema<?>> children = new ArrayList<>();
@@ -140,25 +131,10 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             caseCandidate.getClass());
         final CaseSchemaNode caseNode = (CaseSchemaNode) caseCandidate;
 
-        final AugmentationSchemaNode augSchema;
-        if (choiceCandidate.isAugmenting()) {
-            augSchema = NormalizedNodeSchemaUtils.findCorrespondingAugment(getSchema(), choiceCandidate);
-        } else {
-            augSchema = null;
-        }
-
-        // looking for existing choice
-        final Collection<AbstractNodeDataWithSchema<?>> childNodes;
-        if (augSchema != null) {
-            childNodes = augmentationsToChild.get(augSchema);
-        } else {
-            childNodes = children;
-        }
-
-        CompositeNodeDataWithSchema<?> caseNodeDataWithSchema = findChoice(childNodes, choiceCandidate, caseCandidate);
+        CompositeNodeDataWithSchema<?> caseNodeDataWithSchema = findChoice(children, choiceCandidate, caseCandidate);
         if (caseNodeDataWithSchema == null) {
             ChoiceNodeDataWithSchema choiceNodeDataWithSchema = new ChoiceNodeDataWithSchema(choiceNode);
-            childNodes.add(choiceNodeDataWithSchema);
+            children.add(choiceNodeDataWithSchema);
             caseNodeDataWithSchema = choiceNodeDataWithSchema.addCompositeChild(caseNode, ChildReusePolicy.NOOP);
         }
 
@@ -182,20 +158,8 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             return null;
         }
 
-        final AugmentationSchemaNode augSchema;
-        if (schema.isAugmenting()) {
-            augSchema = NormalizedNodeSchemaUtils.findCorrespondingAugment(getSchema(), schema);
-        } else {
-            augSchema = null;
-        }
-
         // FIXME: 7.0.0: use policy to determine if we should reuse or replace the child
-
-        if (augSchema != null) {
-            augmentationsToChild.put(augSchema, newChild);
-        } else {
-            addChild(newChild);
-        }
+        addChild(newChild);
         return newChild;
     }
 
@@ -237,10 +201,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
 
     final AbstractNodeDataWithSchema<?> addCompositeChild(final CompositeNodeDataWithSchema<?> newChild,
             final ChildReusePolicy policy) {
-        final var augSchema = NormalizedNodeSchemaUtils.findCorrespondingAugment(getSchema(), newChild.getSchema());
-        final var view = augSchema == null ? children : augmentationsToChild.get(augSchema);
-
-        return policy.appendChild(view, newChild);
+        return policy.appendChild(children, newChild);
     }
 
     /**
@@ -253,13 +214,9 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter) throws IOException {
-        for (AbstractNodeDataWithSchema<?> child : children) {
+        // FIXME: we probably want to emit children with the same namespace first
+        for (var child : children) {
             child.write(writer, metaWriter);
-        }
-        for (var childsFromAgumentation : augmentationsToChild.asMap().values()) {
-            for (var nodeDataWithSchema : childsFromAgumentation) {
-                nodeDataWithSchema.write(writer, metaWriter);
-            }
         }
     }
 }

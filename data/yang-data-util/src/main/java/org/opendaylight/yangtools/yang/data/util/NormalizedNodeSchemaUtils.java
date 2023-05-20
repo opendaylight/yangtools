@@ -11,11 +11,8 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 // FIXME: 8.0.0: re-examine usefulness of these methods
 @Beta
@@ -26,31 +23,11 @@ public final class NormalizedNodeSchemaUtils {
 
     public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild child) {
         final QName childId = child.name().getNodeType();
-        for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
+        for (var choiceCaseNode : schema.getCases()) {
             if (choiceCaseNode.dataChildByName(childId) != null) {
                 return Optional.of(choiceCaseNode);
             }
         }
         return Optional.empty();
-    }
-
-    /**
-     * Tries to find in {@code parent} which is dealed as augmentation target node with QName as {@code child}. If such
-     * node is found then it is returned, else null.
-     *
-     * @param parent parent node
-     * @param child child node
-     * @return augmentation schema
-     */
-    public static AugmentationSchemaNode findCorrespondingAugment(final DataSchemaNode parent,
-            final DataSchemaNode child) {
-        if (parent instanceof AugmentationTarget target && !(parent instanceof ChoiceSchemaNode)) {
-            for (final AugmentationSchemaNode augmentation : target.getAvailableAugmentations()) {
-                if (augmentation.dataChildByName(child.getQName()) != null) {
-                    return augmentation;
-                }
-            }
-        }
-        return null;
     }
 }
