@@ -73,7 +73,7 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode {
 
     @Override
     void pushToStack(final @NonNull SchemaInferenceStack stack) {
-        stack.enterChoice(pathArgument().getNodeType());
+        stack.enterChoice(dataSchemaNode.getQName());
     }
 
     private @Nullable DataSchemaContextNode pushToStack(final @Nullable AbstractDataSchemaContextNode child,
