@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
 import java.util.Optional;
 import java.util.Set;
@@ -19,12 +20,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
  * {@link NotificationDefinition#toContainerLike()}. This class is exposed only for the unlikely need users of those
  * methods need to do tricks when encountering those containers.
  */
-public abstract sealed class ContainerLikeCompat extends ForwardingObject implements ContainerLike
-        permits NotificationAsContainer, OperationAsContainer {
-    ContainerLikeCompat() {
-        // Hidden on purpose
-    }
-
+@Beta
+public abstract class ContainerLikeCompat extends ForwardingObject implements ContainerLike {
     @Override
     protected abstract @NonNull SchemaNode delegate();
 
