@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -103,12 +103,12 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             final QNameModule module = it.next().getQNameModule();
 
             return new MountPointDefinition(
-                MountPointLabel.create(QName.create(module, entry.findChildByArg(LABEL).map(lbl -> {
+                new MountPointLabel(QName.create(module, entry.findChildByArg(LABEL).map(lbl -> {
                     checkArgument(lbl instanceof LeafNode, "Unexpected label leaf %s", lbl);
                     final Object value = lbl.body();
                     checkArgument(value instanceof String, "Unexpected label leaf value %s", value);
                     return (String) value;
-                }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry)))),
+                }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry)))).intern(),
                 entry.findChildByArg(CONFIG).map(cfg -> {
                     checkArgument(cfg instanceof LeafNode, "Unexpected config leaf %s", cfg);
                     final Object value = cfg.body();

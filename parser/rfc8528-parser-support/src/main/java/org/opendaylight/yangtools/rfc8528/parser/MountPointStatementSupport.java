@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.rfc8528.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -53,14 +53,14 @@ public final class MountPointStatementSupport
     // We are not doing exactly that, in that we can end up rebinding the argument through 'augment', I think.
     @Override
     public MountPointLabel parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return MountPointLabel.create(StmtContextUtils.parseIdentifier(ctx, value));
+        return new MountPointLabel(StmtContextUtils.parseIdentifier(ctx, value)).intern();
     }
 
     @Override
     public MountPointLabel adaptArgumentValue(
             final StmtContext<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> ctx,
             final QNameModule targetModule) {
-        return MountPointLabel.create(ctx.getArgument().qname().bindTo(targetModule));
+        return new MountPointLabel(ctx.getArgument().qname().bindTo(targetModule)).intern();
     }
 
     @Override

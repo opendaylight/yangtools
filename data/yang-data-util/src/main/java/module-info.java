@@ -20,6 +20,7 @@ module org.opendaylight.yangtools.yang.data.util {
 
     requires java.xml;
     requires org.opendaylight.yangtools.util;
+    requires org.opendaylight.yangtools.rfc8528.model.api;
     requires org.slf4j;
 
     // Annotations
