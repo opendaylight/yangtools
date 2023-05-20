@@ -13,13 +13,13 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * The binary built-in type represents any binary data, i.e., a sequence of octets. Binary values are encoded with the
- * Base64 encoding scheme (see <a href="https://tools.ietf.org/html/rfc4648#section-4">[RFC4648], Section 4</a>).<br>
+ * Base64 encoding scheme (see <a href="https://www.rfc-editor.org/rfc/rfc4648#section-4">[RFC4648], Section 4</a>).<br>
  * The canonical form of a binary value follows the rules defined in
- * <a href="https://tools.ietf.org/html/rfc4648">[RFC4648]</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc4648">[RFC4648]</a>.
  *
  * <p>
  * This interface was modeled according to definition in
- * <a href="https://tools.ietf.org/html/rfc6020#section-9.8">[RFC-6020] The binary Built-In Type</a>
+ * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-9.8">[RFC-6020] The binary Built-In Type</a>
  */
 public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition> {
     static String toString(final @NonNull BinaryTypeDefinition type) {

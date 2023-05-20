@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Enumeration of {@code error-severity} values, as defined by
- * <a href="https://datatracker.ietf.org/doc/html/rfc4741#section-4.3">RFC4741, section 4.3</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc4741#section-4.3">RFC4741, section 4.3</a>.
  */
 @NonNullByDefault
 public enum ErrorSeverity {

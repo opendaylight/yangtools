@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG parser public API. It allows compiling a set of <a href="https://tools.ietf.org/html/rfc7950">YANG (or YIN)</a>
+ * YANG parser public API. It allows compiling a set of <a href="https://www.rfc-editor.org/rfc/rfc7950">YANG (or YIN)</a>
  * modules into a
  * {@link org.opendaylight.yangtools.yang.model.api.EffectiveModelContext cross-referenced representation}. The primary
  * entry point is {@link YangParserFactory}, which is a thread-safe service. Its

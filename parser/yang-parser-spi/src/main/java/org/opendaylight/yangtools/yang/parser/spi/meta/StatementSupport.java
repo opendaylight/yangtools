@@ -429,7 +429,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
     /**
      * Returns true if this statement support and all its substatements ignore if-feature statements (e.g. yang-data
-     * extension defined in <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>). Default
+     * extension defined in <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>). Default
      * implementation returns false.
      *
      * @return true if this statement support ignores if-feature statements, otherwise false.
@@ -441,7 +441,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
     /**
      * Returns true if this statement support and all its substatements ignore config statements (e.g. yang-data
-     * extension defined in <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>). Default
+     * extension defined in <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>). Default
      * implementation returns false.
      *
      * @return true if this statement support ignores config statements,

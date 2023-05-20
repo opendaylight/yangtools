@@ -35,7 +35,7 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
         /**
          * Length constraint imposed on YANG string type by our implementation. {@link String#length()} is an integer,
          * capping our ability to support strings up to 18446744073709551615 as defined in
-         * http://tools.ietf.org/html/rfc6020#section-9.4.4.
+         * http://www.rfc-editor.org/rfc/rfc6020#section-9.4.4.
          *
          * FIXME: We could bump this number up to allow such models, but that could lead to unexpected run-time errors.
          *        In order to do that, the parser would need another pass on the effective statements, which would cap

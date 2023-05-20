@@ -27,7 +27,7 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
 
         @Override
         public Optional<String> getReference() {
-            return Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4");
+            return Optional.of("https://www.rfc-editor.org/rfc/rfc6020#section-9.3.4");
         }
 
         @Override

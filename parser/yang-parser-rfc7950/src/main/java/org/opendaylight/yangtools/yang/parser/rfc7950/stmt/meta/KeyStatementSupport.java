@@ -47,7 +47,7 @@ public final class KeyStatementSupport
 
     /**
      * Splitter corresponding to {@code key-arg} ABNF as defined
-     * in <a href="https://tools.ietf.org/html/rfc6020#section-12">RFC6020, section 12</a>:
+     * in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-12">RFC6020, section 12</a>:
      *
      * <p>
      * {@code key-arg             = node-identifier *(sep node-identifier)}

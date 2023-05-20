@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
 
 /**
  * Tests for {@code MUST NOT} statements around include/import interop of RFC6020 and RFC7950, as per
- * <a href="https://datatracker.ietf.org/doc/html/rfc7950#section-12">RFC7950 section 12</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-12">RFC7950 section 12</a>.
  */
 class YT1339Test extends AbstractYangTest {
     @Test

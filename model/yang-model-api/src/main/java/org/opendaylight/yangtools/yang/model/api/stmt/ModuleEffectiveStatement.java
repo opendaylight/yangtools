@@ -26,10 +26,10 @@ public non-sealed interface ModuleEffectiveStatement
                 TypedefAwareEffectiveStatement<Unqualified, ModuleStatement>,
                 SchemaTreeRoot {
     /**
-     * Conformance type, as defined by <a href="https://datatracker.ietf.org/doc/html/rfc7895#page-9">RFC7895</a> and
-     * indirectly referenced in <a href="https://datatracker.ietf.org/doc/html/rfc7950#section-5.6.4">RFC7950</a>. The
-     * NMDA revision of <a href="https://datatracker.ietf.org/doc/html/rfc8525">YANG Library</a> does not directly
-     * define these, but makes a distiction on the same concept.
+     * Conformance type, as defined by <a href="https://www.rfc-editor.org/rfc/rfc7895#page-9">RFC7895</a> and
+     * indirectly referenced in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-5.6.4">RFC7950</a>. The NMDA
+     * revision of <a href="https://www.rfc-editor.org/rfc/rfc8525">YANG Library</a> does not directly define these, but
+     * makes a distiction on the same concept.
      */
     enum ConformanceType {
         /**

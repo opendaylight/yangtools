@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
 
 /**
  * Declared statement representation of 'yang-data' extension defined in
- * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>.
  */
 final class YangDataStatementImpl extends WithSubstatements<YangDataName> implements YangDataStatement {
     YangDataStatementImpl(final YangDataName argument,

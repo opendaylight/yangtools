@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextPr
 /**
  * Utility {@link YangNamespaceContext} backed by a SchemaContext, resolving namespaces to their module names. This
  * is useful for implementing namespace resolution according to
- * <a href="https://tools.ietf.org/html/rfc7951#section-4">RFC7951 Section 4</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc7951#section-4">RFC7951 Section 4</a>.
  *
  * <p>
  * When multiple revisions of a particular namespace are present in the backing SchemaContext, this ambiguity is

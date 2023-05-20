@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective statement representation of 'annotation' extension defined in
- * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
 @Beta
 public interface AnnotationEffectiveStatement extends UnknownEffectiveStatement<QName, AnnotationStatement>,

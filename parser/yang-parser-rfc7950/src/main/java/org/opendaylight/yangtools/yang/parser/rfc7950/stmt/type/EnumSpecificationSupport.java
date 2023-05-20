@@ -93,7 +93,7 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
 
     private static SourceException noEnum(final CommonStmtCtx stmt) {
         /*
-         *  https://tools.ietf.org/html/rfc7950#section-9.6.4
+         *  https://www.rfc-editor.org/rfc/rfc7950#section-9.6.4
          *
          *     The "enum" statement, which is a substatement to the "type"
          *     statement, MUST be present if the type is "enumeration".

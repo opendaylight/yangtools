@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of 'yang-data' extension defined in
- * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>.
  */
 public interface YangDataStatement extends UnknownStatement<YangDataName> {
     @Override

@@ -114,7 +114,7 @@ public final class YangErrorInfos {
 
     /**
      * {@code non-unique} as defined in
-     * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-13.1">RFC6020, section 13.1</a>. Note this
+     * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-13.1">RFC6020, section 13.1</a>. Note this
      * is only a prototype, which needs to be bound to a path representation type.
      */
     public static YangErrorInfo nonUnique(final YangInstanceIdentifier leafPath) {
@@ -123,7 +123,7 @@ public final class YangErrorInfos {
 
     /**
      * {@code missing-choice} as defined in
-     * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-13.7">RFC6020, section 13.7</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-13.7">RFC6020, section 13.7</a>.
      */
     public static YangErrorInfo missingChoice(final NodeIdentifier choiceName) {
         return of(MISSING_CHOICE_NODEID, choiceName);

@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * and anydata.
  *
  * <p>
- * Defined in <a href="https://tools.ietf.org/html/rfc6020#section-3">RFC6020, Section 3</a>, as {@code data-def-stmt}
+ * Defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-3">RFC6020, Section 3</a>, as {@code data-def-stmt}
  * ABNF rule.
  */
 public interface DataDefinitionStatement

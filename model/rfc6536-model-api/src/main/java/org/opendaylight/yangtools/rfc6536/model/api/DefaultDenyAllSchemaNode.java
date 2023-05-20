@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
  * Represents the effect of 'default-deny-all' extension, as defined in
- * <a href="https://tools.ietf.org/html/rfc6536">RFC6536</a>, being attached to a SchemaNode.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>, being attached to a SchemaNode.
  */
 @Beta
 public interface DefaultDenyAllSchemaNode extends UnknownSchemaNode {

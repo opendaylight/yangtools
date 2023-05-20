@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
  * Dedicated exception for reporting conditions where {@code error-tag} should be reported as {@code invalid-value}.
- * This is covered by <a href="https://tools.ietf.org/html/rfc7950#section-8.3.1">RFC7950 section 8.3.1</a>:
+ * This is covered by <a href="https://www.rfc-editor.org/rfc/rfc7950#section-8.3.1">RFC7950 section 8.3.1</a>:
  * <pre>
  *   If a leaf data value does not match the type constraints for the
  *   leaf, including those defined in the type's "range", "length", and
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  * </pre>
  *
  * <p>
- * This error tag also references <a href="https://tools.ietf.org/html/rfc6241#appendix-A">RFC6241 Appendix A</a>,
+ * This error tag also references <a href="https://www.rfc-editor.org/rfc/rfc6241#appendix-A">RFC6241 Appendix A</a>,
  * which defines the appropriate severity and adds more semantics.
  */
 @Beta

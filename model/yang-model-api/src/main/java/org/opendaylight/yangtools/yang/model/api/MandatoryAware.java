@@ -17,7 +17,7 @@ public interface MandatoryAware {
     /**
      * Return whether this node is mandatory or not. Note this reflects the declared model, as defined by 'mandatory'
      * statement, not the effective model. This notably means this attribute does not mirror the definition of
-     * {@code mandatory node} as per <a href="https://tools.ietf.org/html/rfc7950#page-14">RFC7950 Terminology</a>.
+     * {@code mandatory node} as per <a href="https://www.rfc-editor.org/rfc/rfc7950#page-14">RFC7950 Terminology</a>.
      *
      * @return True if this node is marked as mandatory.
      */

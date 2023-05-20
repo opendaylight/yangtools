@@ -215,7 +215,7 @@ public final class UsesStatementSupport
     }
 
     private static boolean shouldCopy(final StmtContext<?, ?, ?> stmt) {
-        // https://tools.ietf.org/html/rfc7950#section-7.13:
+        // https://www.rfc-editor.org/rfc/rfc7950#section-7.13:
         //
         //        The effect of a "uses" reference to a grouping is that the nodes
         //        defined by the grouping are copied into the current schema tree and
@@ -228,12 +228,12 @@ public final class UsesStatementSupport
             return true;
         }
 
-        // As per https://tools.ietf.org/html/rfc7950#section-7.13.2:
+        // As per https://www.rfc-editor.org/rfc/rfc7950#section-7.13.2:
         //
         //        o  Any node can get refined extensions, if the extension allows
         //           refinement.  See Section 7.19 for details.
         //
-        // and https://tools.ietf.org/html/rfc7950#section-7.19:
+        // and https://www.rfc-editor.org/rfc/rfc7950#section-7.19:
         //
         //        An extension can allow refinement (see Section 7.13.2) and deviations
         //        (Section 7.20.3.2), but the mechanism for how this is defined is

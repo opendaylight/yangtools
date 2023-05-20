@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Enumeration of {@code error-type} values. These provide glue between {@link NetconfLayer} and various sources of
  * such errors. This enumeration is not extensible in YANG as it is modeled in
- * <a href="https://datatracker.ietf.org/doc/html/rfc8040#section-3.9">RFC8040</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-3.9">RFC8040</a>.
  */
 @NonNullByDefault
 public enum ErrorType {

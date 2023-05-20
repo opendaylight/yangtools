@@ -84,7 +84,7 @@ final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpeci
 
     private static SourceException noPath(final CommonStmtCtx stmt) {
         /*
-         *  https://tools.ietf.org/html/rfc7950#section-9.12
+         *  https://www.rfc-editor.org/rfc/rfc7950#section-9.12
          *
          *     When the type is "union", the "type" statement (Section 7.4) MUST be
          *     present.

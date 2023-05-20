@@ -11,29 +11,26 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * IETF YANG Module Tags Registry, as defined in
- * <a href="https://datatracker.ietf.org/doc/html/rfc8819#section-7.2">RFC8819</a> section 7.2, table 2.
+ * <a href="https://www.rfc-editor.org/rfc/rfc8819#section-7.2">RFC8819</a> section 7.2, table 2.
  *
  * <p>
- * This registry allocates tags that have the registered prefix "ietf:".
- * New values should be well considered and not achievable through a
- * combination of already existing IETF tags.  IANA assigned tags must
- * conform to Net-Unicode as defined in
- * <a href="https://datatracker.ietf.org/doc/html/rfc5198">RFC5198</a>, and they shall not
- * need normalization.
+ * This registry allocates tags that have the registered prefix "ietf:". New values should be well considered and not
+ * achievable through a combination of already existing IETF tags. IANA assigned tags must conform to Net-Unicode as
+ * defined in <a href="https://www.rfc-editor.org/rfc/rfc5198">RFC5198</a>, and they shall not need normalization.
  */
 @NonNullByDefault
 public final class IetfTags {
     /**
      * {@code ietf:network-element-class} {@link IetfTags}.
      * <pre>
-     *    Network element as defined in <a href="https://datatracker.ietf.org/doc/html/rfc8199">RFC8199</a>.
+     *    Network element as defined in <a href="https://www.rfc-editor.org/rfc/rfc8199">RFC8199</a>.
      * </pre>
      */
     public static final Tag NETWORK_ELEMENT_CLASS = new Tag("ietf:network-element-class").intern();
     /**
      * {@code ietf:network-service-class} {@link IetfTags}
      * <pre>
-     *    Network element as defined in <a href="https://datatracker.ietf.org/doc/html/rfc8199">RFC8199</a>.
+     *    Network element as defined in <a href="https://www.rfc-editor.org/rfc/rfc8199">RFC8199</a>.
      * </pre>
      */
     public static final Tag NETWORK_SERVICE_CLASS = new Tag("ietf:network-service-class").intern();

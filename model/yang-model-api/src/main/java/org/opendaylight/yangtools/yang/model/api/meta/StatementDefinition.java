@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * keyword, followed by zero or one argument </blockquote>
  *
  * <p>
- * Source: <a href="https://tools.ietf.org/html/rfc6020#section-6.3"> </a>
+ * Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3"> </a>
  */
 public interface StatementDefinition extends Immutable {
     /**

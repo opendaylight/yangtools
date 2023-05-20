@@ -16,8 +16,8 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A YANG keyword, as defined, as defined by section 6.1.2 of both
- * <a href="https://tools.ietf.org/html/rfc6020#section-6.1.2">RFC6020</a> and
- * <a href="https://tools.ietf.org/html/rfc7950#section-6.1.2">RFC7950</a>. The two options are discerned by nullability
+ * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.2">RFC6020</a> and
+ * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.1.2">RFC7950</a>. The two options are discerned by nullability
  * of {@link #prefix()} method's return, as hinted by the ABNF for {@code node-identifier} -- and while a keyword is a
  * semantically different construct, it shares the same value space.
  *

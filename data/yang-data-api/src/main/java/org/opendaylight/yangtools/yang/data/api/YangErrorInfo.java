@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 /**
  * An element of {@code error-info} container, as modeled in {@code errorInfoType} of
- * <a href="https://datatracker.ietf.org/doc/html/rfc6241#appendix-B">RFC6241, Appendix B</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6241#appendix-B">RFC6241, Appendix B</a>.
  */
 @Beta
 @NonNullByDefault

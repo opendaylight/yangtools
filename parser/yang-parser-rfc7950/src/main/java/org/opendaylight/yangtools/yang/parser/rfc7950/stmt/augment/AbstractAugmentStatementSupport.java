@@ -64,8 +64,8 @@ abstract class AbstractAugmentStatementSupport
             "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses", value);
 
         // As per:
-        //   https://tools.ietf.org/html/rfc6020#section-7.15
-        //   https://tools.ietf.org/html/rfc7950#section-7.17
+        //   https://www.rfc-editor.org/rfc/rfc6020#section-7.15
+        //   https://www.rfc-editor.org/rfc/rfc7950#section-7.17
         //
         // The argument is either Absolute or Descendant based on whether the statement is declared within a 'uses'
         // statement. The mechanics differs wildly between the two cases, so let's start by ensuring our argument

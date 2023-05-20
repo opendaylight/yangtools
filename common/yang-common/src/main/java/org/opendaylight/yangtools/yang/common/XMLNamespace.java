@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * A simple type capture of {@code namespace} statement's argument according to
- * <a href="https://tools.ietf.org/html/rfc6020#section-7.1.3">RFC6020</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-7.1.3">RFC6020</a>.
  */
 public final class XMLNamespace implements Comparable<XMLNamespace>, Immutable, Serializable {
     private static final Interner<XMLNamespace> INTERNER = Interners.newWeakInterner();

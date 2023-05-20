@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 abstract class ArgumentContextUtils {
     /**
      * YANG 1.0 version of strings, which were not completely clarified in
-     * <a href="https://tools.ietf.org/html/rfc6020#section-6.1.3">RFC6020</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.3">RFC6020</a>.
      */
     private static final class RFC6020 extends ArgumentContextUtils {
         private static final @NonNull RFC6020 INSTANCE = new RFC6020();
@@ -44,7 +44,7 @@ abstract class ArgumentContextUtils {
 
     /**
      * YANG 1.1 version of strings, which were clarified in
-     * <a href="https://tools.ietf.org/html/rfc7950#section-6.1.3">RFC7950</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3">RFC7950</a>.
      */
     // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
     //       understand versions and needs to work with both.

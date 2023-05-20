@@ -7,7 +7,7 @@
  */
 /**
  * YANG metamodel extensions to support NETCONF, filters as defined in
- * <a href="https://tools.ietf.org/html/rfc6241">RFC6241</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  *
  * @author Robert Varga
  */

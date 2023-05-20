@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.common;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Item ordering, as specified by <a href="https://tools.ietf.org/html/rfc7950#section-7.7.1">RFC7950 section 7.7.1</a>.
+ * Item ordering, as specified by
+ * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.7.1">RFC7950 section 7.7.1</a>.
  */
 @NonNullByDefault
 public enum Ordering {
@@ -47,13 +48,10 @@ public enum Ordering {
      * @throws IllegalArgumentException if the argument string is not a valid Ordering
      */
     public static Ordering forArgument(final String argumentString) {
-        switch (argumentString) {
-            case "system":
-                return SYSTEM;
-            case "user":
-                return USER;
-            default:
-                throw new IllegalArgumentException("Invalid ordering string '" + argumentString + "'");
-        }
+        return switch (argumentString) {
+            case "system" -> SYSTEM;
+            case "user" -> USER;
+            default -> throw new IllegalArgumentException("Invalid ordering string '" + argumentString + "'");
+        };
     }
 }

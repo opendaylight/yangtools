@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
  * Represents 'yang-data' extension statement defined in
- * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC8040</a>. This statement must appear as a top-level
+ * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC8040</a>. This statement must appear as a top-level
  * statement, otherwise it is ignored and does not appear in the final schema context.
  */
 @Beta

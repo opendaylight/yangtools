@@ -18,13 +18,13 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Maximum allowed access, as defined by
- * <a href="https://tools.ietf.org/html/rfc2578#section-7.3">RFC2578 Section 7.3</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc2578#section-7.3">RFC2578 Section 7.3</a>.
  */
 @Beta
 public enum MaxAccess {
     /**
      * Indicates the annotated object is an auxiliary object, as per
-     * <a href="https://tools.ietf.org/html/rfc2578#section-7.7">RFC2578 Section 7.7</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc2578#section-7.7">RFC2578 Section 7.7</a>.
      */
     NOT_ACCESSIBLE("not-accessible"),
     /**

@@ -37,7 +37,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
         @Override
         public Either<Decimal64, CanonicalValueViolation> fromString(final String str) {
-            // https://tools.ietf.org/html/rfc6020#section-9.3.1
+            // https://www.rfc-editor.org/rfc/rfc6020#section-9.3.1
             //
             // A decimal64 value is lexically represented as an optional sign ("+"
             // or "-"), followed by a sequence of decimal digits, optionally
@@ -554,7 +554,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     @Override
     public final String toCanonicalString() {
-        // https://tools.ietf.org/html/rfc6020#section-9.3.2
+        // https://www.rfc-editor.org/rfc/rfc6020#section-9.3.2
         //
         // The canonical form of a positive decimal64 does not include the sign
         // "+".  The decimal point is required.  Leading and trailing zeros are

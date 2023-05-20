@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of 'module-tag' extension defined in
- * <a href="https://datatracker.ietf.org/doc/html/rfc8819">RFC8819</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc8819">RFC8819</a>.
  */
 @Beta
 public interface ModuleTagStatement extends UnknownStatement<Tag> {

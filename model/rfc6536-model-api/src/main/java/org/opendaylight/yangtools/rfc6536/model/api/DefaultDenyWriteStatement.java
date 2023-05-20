@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of 'default-deny-write' extension defined in
- * <a href="https://tools.ietf.org/html/rfc6536">RFC6536</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  */
 @Beta
 public interface DefaultDenyWriteStatement extends UnknownStatement<Empty> {

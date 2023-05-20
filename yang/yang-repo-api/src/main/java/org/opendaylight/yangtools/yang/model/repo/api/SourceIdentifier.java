@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * information to look up YANG module (or submodule) source and to be used by various SchemaSourceProviders.
  *
  * <p>
- * For further reference see: <a href="https://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
- * and <a href="https://tools.ietf.org/html/rfc6022#section-3.1">RFC6022</a>.
+ * For further reference see: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC6020</a>
+ * and <a href="https://www.rfc-editor.org/rfc/rfc6022#section-3.1">RFC6022</a>.
  */
 public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision revision) implements Identifier {
     private static final long serialVersionUID = 3L;
@@ -92,7 +92,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Returns filename in format <code>name ['@' revision] '.yang'</code>, where revision is date in format YYYY-mm-dd.
      *
      * <p>
-     * @see <a href="http://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
+     * @see <a href="http://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC6020</a>
      *
      * @return Filename for this source identifier.
      */
@@ -117,7 +117,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * where Where revision-date is in format YYYY-mm-dd.
      *
      * <p>
-     * See http://tools.ietf.org/html/rfc6020#section-5.2
+     * See http://www.rfc-editor.org/rfc/rfc6020#section-5.2
      *
      * @param moduleName module name
      * @param revision optional revision

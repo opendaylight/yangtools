@@ -49,7 +49,7 @@ class Bug6874Test extends AbstractYangTest {
         ModuleImport importStmt = testModule.getImports().iterator().next();
         assertEquals(Optional.of("Yang 1.1: Allow description and reference in include and import."),
             importStmt.getDescription());
-        assertEquals(Optional.of("https://tools.ietf.org/html/rfc7950 section-7.1.5/6"),
+        assertEquals(Optional.of("https://www.rfc-editor.org/rfc/rfc7950 section-7.1.5/6"),
             importStmt.getReference());
     }
 
@@ -90,7 +90,7 @@ class Bug6874Test extends AbstractYangTest {
                 ((DescriptionStatement) stmt).argument());
         }
         if (stmt instanceof ReferenceStatement) {
-            assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6", ((ReferenceStatement) stmt).argument());
+            assertEquals("https://www.rfc-editor.org/rfc/rfc7950 section-7.1.5/6", ((ReferenceStatement) stmt).argument());
         }
     }
 }
