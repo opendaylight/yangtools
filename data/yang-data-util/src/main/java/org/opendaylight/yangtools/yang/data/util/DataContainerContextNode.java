@@ -79,7 +79,7 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
     private DataSchemaContextNode<?> register(final DataSchemaContextNode<?> potential) {
         if (potential != null) {
             // FIXME: use putIfAbsent() to make sure we do not perform accidental overrwrites
-            byArg.put(potential.getIdentifier(), potential);
+            byArg.put(potential.pathArgument(), potential);
             for (QName qname : potential.qnameIdentifiers()) {
                 byQName.put(qname, potential);
             }

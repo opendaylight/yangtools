@@ -113,7 +113,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         current = current.getChild(name);
         checkValid(current != null, "%s is not correct schema node identifier.", name);
         while (current.isMixin()) {
-            product.add(current.getIdentifier());
+            product.add(current.pathArgument());
             current = current.getChild(name);
         }
         stack.enterDataTree(name);
@@ -184,7 +184,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private PathArgument computeIdentifier(final QName name) {
         DataSchemaContextNode<?> currentNode = nextContextNode(name);
         checkValid(!currentNode.isKeyedEntry(), "Entry %s requires key or value predicate to be present", name);
-        return currentNode.getIdentifier();
+        return currentNode.pathArgument();
     }
 
     /**
