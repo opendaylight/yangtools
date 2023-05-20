@@ -5,36 +5,36 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-abstract class AbstractLeafContextNode<T extends PathArgument, S extends DataSchemaNode>
-        extends DataSchemaContextNode<T> {
-    AbstractLeafContextNode(final T identifier, final S schema) {
-        super(identifier, schema);
+abstract class AbstractLeafContextNode<S extends DataSchemaNode> extends AbstractDataSchemaContextNode {
+    AbstractLeafContextNode(final PathArgument pathArgument, final S schema) {
+        super(pathArgument, schema);
     }
 
     @Override
-    public final DataSchemaContextNode<?> getChild(final PathArgument child) {
+    public final DataSchemaContextNode getChild(final PathArgument child) {
         return null;
     }
 
     @Override
-    public final DataSchemaContextNode<?> getChild(final QName child) {
+    public final DataSchemaContextNode getChild(final QName child) {
         return null;
     }
 
     @Override
-    protected final DataSchemaContextNode<?> enterChild(final QName child, final SchemaInferenceStack stack) {
+    protected final DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
         return null;
     }
 
     @Override
-    protected final DataSchemaContextNode<?> enterChild(final PathArgument child, final SchemaInferenceStack stack) {
+    protected final DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
         return null;
     }
 }
