@@ -131,7 +131,7 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
         } else if (schema instanceof ChoiceSchemaNode choice) {
             return new ChoiceNodeContextNode(choice);
         } else if (schema instanceof LeafListSchemaNode leafList) {
-            return fromLeafListSchemaNode(leafList);
+            return new LeafListMixinContextNode(leafList);
         } else if (schema instanceof AnydataSchemaNode anydata) {
             return new AnydataContextNode(anydata);
         } else if (schema instanceof AnyxmlSchemaNode anyxml) {
@@ -152,7 +152,7 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
         } else if (schema instanceof ChoiceSchemaNode choice) {
             return new ChoiceNodeContextNode(choice);
         } else if (schema instanceof LeafListSchemaNode leafList) {
-            return fromLeafListSchemaNode(leafList);
+            return new LeafListMixinContextNode(leafList);
         } else if (schema instanceof AnydataSchemaNode anydata) {
             return new AnydataContextNode(anydata);
         } else if (schema instanceof AnyxmlSchemaNode anyxml) {
@@ -165,19 +165,9 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
     private static @NonNull AbstractDataSchemaContextNode fromListSchemaNode(final ListSchemaNode potential) {
         var keyDefinition = potential.getKeyDefinition();
         if (keyDefinition.isEmpty()) {
-            return new UnkeyedListMixinContextNode(potential);
-        } else if (potential.isUserOrdered()) {
-            return new OrderedMapMixinContextNode(potential);
+            return new ListMixinContextNode(potential);
         } else {
-            return new UnorderedMapMixinContextNode(potential);
+            return new MapMixinContextNode(potential);
         }
-    }
-
-    private static @NonNull AbstractDataSchemaContextNode fromLeafListSchemaNode(
-            final LeafListSchemaNode potential) {
-        if (potential.isUserOrdered()) {
-            return new OrderedLeafListMixinContextNode(potential);
-        }
-        return new UnorderedLeafListMixinContextNode(potential);
     }
 }

@@ -71,10 +71,10 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var five = assertInstanceOf(UnkeyedListMixinContextNode.class, one.enterChild(FIVE, stack));
+        final var five = assertInstanceOf(ListMixinContextNode.class, one.enterChild(FIVE, stack));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
-        assertInstanceOf(UnkeyedListItemContextNode.class, five.enterChild(FIVE, stack));
+        assertInstanceOf(ListItemContextNode.class, five.enterChild(FIVE, stack));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, FIVE), stack.toSchemaNodeIdentifier());
@@ -109,7 +109,7 @@ class YT1412Test {
     void testEnterAugmentPath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.of(ONE, FIVE, FIVE)).orElseThrow();
 
-        assertInstanceOf(UnkeyedListItemContextNode.class, result.node());
+        assertInstanceOf(ListItemContextNode.class, result.node());
         assertEquals(Absolute.of(ONE, FIVE), result.stack().toSchemaNodeIdentifier());
     }
 
