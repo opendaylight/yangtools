@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class LeafContextNode extends AbstractLeafNodeContext<NodeIdentifier, LeafSchemaNode> {
-    LeafContextNode(final LeafSchemaNode schema) {
-        super(NodeIdentifier.create(schema.getQName()), schema);
+final class UnkeyedListItemContextNode extends AbstractListItemContextNode<NodeIdentifier> {
+    UnkeyedListItemContextNode(final ListSchemaNode schema) {
+        super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
 }

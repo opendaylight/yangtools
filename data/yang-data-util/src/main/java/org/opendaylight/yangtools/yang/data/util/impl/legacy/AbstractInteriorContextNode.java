@@ -5,18 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractMixinContextNode<T extends PathArgument> extends AbstractInteriorContextNode<T> {
-    AbstractMixinContextNode(final T identifier, final DataSchemaNode schema) {
+abstract class AbstractInteriorContextNode<T extends PathArgument> extends AbstractDataSchemaContextNode<T> {
+    AbstractInteriorContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier, schema);
     }
 
     @Override
-    public final boolean isMixin() {
-        return true;
+    public final boolean isLeaf() {
+        return false;
     }
 }
