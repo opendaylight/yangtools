@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
@@ -20,4 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 public interface YangDataSchemaNode extends UnknownSchemaNode, DataNodeContainer {
     @Override
     YangDataEffectiveStatement asEffectiveStatement();
+
+    default @NonNull ContainerLikeCompat toContainerLike() {
+        return new YangDataAsContainer(this);
+    }
 }
