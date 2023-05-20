@@ -30,6 +30,6 @@ final class LeafListMixinContextNode extends AbstractListLikeContextNode {
     @Override
     public DataSchemaContextNode getChild(final QName child) {
         // FIXME: requireNonNull, common code with UnkeyedListMixinNode
-        return pathArgument().getNodeType().equals(child) ? innerOp : null;
+        return dataSchemaNode.getQName().equals(child) ? innerOp : null;
     }
 }
