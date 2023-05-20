@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 
 /**
  * Normalized representation of a YANG mount point. This is a {@link NormalizedTuple}, with a {@link #label()} and the

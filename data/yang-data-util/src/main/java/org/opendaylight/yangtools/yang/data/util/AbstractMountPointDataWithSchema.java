@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;

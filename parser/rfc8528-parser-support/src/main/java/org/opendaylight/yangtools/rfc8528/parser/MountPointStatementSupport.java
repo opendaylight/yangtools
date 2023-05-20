@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.rfc8528.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;

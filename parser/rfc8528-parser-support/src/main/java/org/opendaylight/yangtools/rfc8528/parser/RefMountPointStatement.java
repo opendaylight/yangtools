@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc8528.parser;
 
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
