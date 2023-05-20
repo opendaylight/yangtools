@@ -11,7 +11,8 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.MetadataStatements;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.StatementPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -28,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class AnnotationStatementSupport
-         extends AbstractStatementSupport<QName, AnnotationStatement, AnnotationEffectiveStatement> {
+         extends AbstractStatementSupport<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(MetadataStatements.ANNOTATION)
         .addMandatory(YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -43,19 +45,27 @@ public final class AnnotationStatementSupport
     }
 
     @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
+    public AnnotationName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return new AnnotationName(StmtContextUtils.parseIdentifier(ctx, value)).intern();
     }
 
     @Override
-    public void onStatementAdded(final Mutable<QName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
+    public AnnotationName adaptArgumentValue(
+            final StmtContext<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
+            final QNameModule targetModule) {
+        return new AnnotationName(ctx.getArgument().qname().bindTo(targetModule)).intern();
+    }
+
+    @Override
+    public void onStatementAdded(
+            final Mutable<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
         final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
         SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
                 stmt, "Annotations may only be defined at root of either a module or a submodule");
     }
 
     @Override
-    protected AnnotationStatement createDeclared(final BoundStmtCtx<QName> ctx,
+    protected AnnotationStatement createDeclared(final BoundStmtCtx<AnnotationName> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return new AnnotationStatementImpl(ctx.getArgument(), substatements);
     }
@@ -67,7 +77,7 @@ public final class AnnotationStatementSupport
     }
 
     @Override
-    protected AnnotationEffectiveStatement createEffective(final Current<QName, AnnotationStatement> stmt,
+    protected AnnotationEffectiveStatement createEffective(final Current<AnnotationName, AnnotationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new AnnotationEffectiveStatementImpl(stmt, substatements);
     }

@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -27,8 +28,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public class AnnotationTest {
-    private static final QName LAST_MODIFIED_QNAME = QName.create("http://example.org/example-last-modified",
-            "last-modified");
+    private static final AnnotationName LAST_MODIFIED =
+        new AnnotationName(QName.create("http://example.org/example-last-modified", "last-modified"));
     private static CrossSourceStatementReactor REACTOR;
 
     @BeforeClass
@@ -54,10 +55,10 @@ public class AnnotationTest {
 
         final var annotations = AnnotationSchemaNode.findAll(context);
         assertEquals(1, annotations.size());
-        final var annotation = annotations.get(LAST_MODIFIED_QNAME);
+        final var annotation = annotations.get(LAST_MODIFIED);
         assertNotNull(annotation);
 
-        final var findAnnotation = AnnotationSchemaNode.find(context, LAST_MODIFIED_QNAME);
+        final var findAnnotation = AnnotationSchemaNode.find(context, LAST_MODIFIED);
         assertTrue(findAnnotation.isPresent());
         assertSame(annotation, findAnnotation.orElseThrow());
 
