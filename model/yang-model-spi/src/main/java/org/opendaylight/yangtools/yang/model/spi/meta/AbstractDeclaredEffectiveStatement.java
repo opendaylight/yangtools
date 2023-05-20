@@ -94,7 +94,7 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
         }
 
         protected Default(final Default<A, D> original) {
-            this.declared = original.declared;
+            declared = original.declared;
         }
 
         @Override
@@ -125,7 +125,7 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
 
             protected WithSubstatements(final WithSubstatements<A, D> original) {
                 super(original);
-                this.substatements = original.substatements;
+                substatements = original.substatements;
             }
 
             @Override
@@ -200,17 +200,17 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
             this.substatements = maskList(substatements);
-            this.schemaTree = immutableNamespaceOf(createSchemaTreeNamespace(substatements));
+            schemaTree = immutableNamespaceOf(createSchemaTreeNamespace(substatements));
         }
 
         protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D> original) {
-            this.declared = original.declared;
-            this.schemaTree = original.schemaTree;
-            this.substatements = original.substatements;
+            declared = original.declared;
+            schemaTree = original.schemaTree;
+            substatements = original.substatements;
         }
 
         @Override
-        public final D getDeclared() {
+        public final @NonNull D getDeclared() {
             return declared;
         }
 
@@ -264,19 +264,19 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
 
             // Note we call schema.values() so we do not retain them, as that is just pure memory overhead
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
-            this.schemaTree = immutableNamespaceOf(schema);
-            this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
+            schemaTree = immutableNamespaceOf(schema);
+            dataTree = createDataTreeNamespace(schema.values(), schemaTree);
         }
 
         protected DefaultWithDataTree(final DefaultWithDataTree<A, D> original) {
-            this.declared = original.declared;
-            this.schemaTree = original.schemaTree;
-            this.dataTree = original.dataTree;
-            this.substatements = original.substatements;
+            declared = original.declared;
+            schemaTree = original.schemaTree;
+            dataTree = original.dataTree;
+            substatements = original.substatements;
         }
 
         @Override
-        public final D getDeclared() {
+        public final @NonNull D getDeclared() {
             return declared;
         }
 
