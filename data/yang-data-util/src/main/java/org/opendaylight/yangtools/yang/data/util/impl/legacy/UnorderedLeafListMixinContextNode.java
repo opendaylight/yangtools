@@ -8,17 +8,17 @@
 package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-class UnorderedLeafListMixinContextNode extends AbstractListLikeContextNode {
+sealed class UnorderedLeafListMixinContextNode extends AbstractListLikeContextNode
+        permits OrderedLeafListMixinContextNode {
     private final LeafListEntryContextNode innerOp;
 
     UnorderedLeafListMixinContextNode(final LeafListSchemaNode schema) {
-        super(NodeIdentifier.create(schema.getQName()), schema);
+        super(schema);
         innerOp = new LeafListEntryContextNode(schema);
     }
 

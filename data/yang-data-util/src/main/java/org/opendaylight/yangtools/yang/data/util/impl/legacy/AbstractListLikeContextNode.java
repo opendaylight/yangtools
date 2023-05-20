@@ -18,9 +18,10 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * representation of these nodes is similar to JSON encoding and therefore we have two {@link DataSchemaContextNode}
  * levels backed by a single {@link DataSchemaNode}.
  */
-abstract class AbstractListLikeContextNode extends AbstractMixinContextNode {
-    AbstractListLikeContextNode(final PathArgument pathArgument, final DataSchemaNode schema) {
-        super(pathArgument, schema);
+abstract sealed class AbstractListLikeContextNode extends AbstractMixinContextNode
+        permits UnkeyedListMixinContextNode, UnorderedLeafListMixinContextNode, UnorderedMapMixinContextNode {
+    AbstractListLikeContextNode(final DataSchemaNode schema) {
+        super(schema);
     }
 
     @Override
