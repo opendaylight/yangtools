@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.util.impl.legacy.AbstractMixinContextNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -29,32 +30,36 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode} and serialization format defined in RFC6020,
  * since the mapping is not one-to-one.
  */
-// FIXME: YANGTOOLS-1413: this really should be an interface, as there is a ton of non-trivial composition going on:
-//        - getDataSchemaNode() cannot return AugmentationSchemaNode, which is guarded by isMixinNode() and users should
-//          not be touching mixin details anyway
 public interface DataSchemaContextNode {
+    /**
+    * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
+    * one of
+    * <ul>
+    *   <li>{@link ChoiceNode} backed by a {@link ChoiceSchemaNode}, or</li>
+    *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}, or</li>
+    *   <li>{@link MapNode} backed by a {@link ListSchemaNode} with a non-empty
+    *       {@link ListSchemaNode#getKeyDefinition()}, or</li>
+    *   <li>{@link UnkeyedListNode} backed by a {@link ListSchemaNode} with an empty
+    *       {@link ListSchemaNode#getKeyDefinition()}</li>
+    * </ul>
+    *
+    * <p>
+    * This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
+    */
+    sealed interface PathMixin extends DataSchemaContextNode permits AbstractMixinContextNode {
+        /**
+         * The mixed-in {@link PathArgument}.
+         *
+         * @return Mixed-in PathArgument
+         */
+        @NonNull PathArgument mixinPathArgument();
+    }
 
     @NonNull DataSchemaNode getDataSchemaNode();
 
     // FIXME: YANGTOOLS-1413: this idea is wrong -- if does the wrong thing for items of leaf-list and keyed list
     //                        because those identifiers need a value.
     @NonNull PathArgument pathArgument();
-
-     /**
-     * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
-     * one of
-     * <ul>
-     *   <li>{@link ChoiceNode} backed by a {@link ChoiceSchemaNode}, or</li>
-     *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}, or</li>
-     *   <li>{@link MapNode} backed by a {@link ListSchemaNode} with a non-empty
-     *       {@link ListSchemaNode#getKeyDefinition()}, or</li>
-     *   <li>{@link UnkeyedListNode} backed by a {@link ListSchemaNode} with an empty
-     *       {@link ListSchemaNode#getKeyDefinition()}</li>
-     * </ul>
-     *
-     * @return {@code} false if this node corresponds to an XML element, or {@code true} if it is an encapsulation node.
-     */
-    boolean isMixin();
 
     // FIXME: YANGTOOLS-1413: document this method and (most likely) split it out to a separate interface
     boolean isKeyedEntry();
@@ -75,9 +80,9 @@ public interface DataSchemaContextNode {
     /**
      * Find a child node identifier by its {code data tree} {@link QName}. This method returns intermediate nodes
      * significant from {@link YangInstanceIdentifier} hierarchy of {@link PathArgument}s. If the returned node
-     * indicates {@code true} via {@link #isMixin()}, it represents a {@link NormalizedNode} encapsulation which is
-     * not visible in RFC7950 XML encoding, and a further call to this method with the same {@code child} argument will
-     * provide the next step.
+     * indicates is also a {@link PathMixin}, it represents a {@link NormalizedNode} encapsulation which is not visible
+     * in RFC7950 XML encoding, and a further call to this method with the same {@code child} argument will provide the
+     * next step.
      *
      * @param child Child data tree QName
      * @return A child node, or null if not found
