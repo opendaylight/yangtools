@@ -44,7 +44,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     @Override
     protected final String serializeImpl(final YangInstanceIdentifier data) {
         final StringBuilder sb = new StringBuilder();
-        DataSchemaContextNode<?> current = getDataContextTree().getRoot();
+        DataSchemaContextNode current = getDataContextTree().getRoot();
         QNameModule lastModule = null;
         for (var arg : data.getPathArguments()) {
             current = current.getChild(arg);
