@@ -18,6 +18,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
+/**
+ * The name (label) of a YANG schema mount instance, as defined in
+ * <a href="https://www.rfc-editor.org/rfc/rfc8528">RFC8528</a>.
+ */
 @NonNullByDefault
 public record MountPointLabel(QName qname) implements Identifier, WritableObject {
     @java.io.Serial
