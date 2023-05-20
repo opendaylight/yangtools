@@ -21,6 +21,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
+import org.opendaylight.yangtools.yang.data.util.impl.legacy.AbstractDataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.impl.legacy.AbstractMixinContextNode;
 import org.opendaylight.yangtools.yang.data.util.impl.legacy.LeafContextNode;
 import org.opendaylight.yangtools.yang.data.util.impl.legacy.LeafListEntryContextNode;
@@ -35,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode} and serialization format defined in RFC6020,
  * since the mapping is not one-to-one.
  */
-public interface DataSchemaContextNode {
+public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextNode, PathMixin, SimpleValue {
     /**
     * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
     * one of

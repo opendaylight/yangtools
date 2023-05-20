@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Abstract superclass for individual list items -- be it {@link MapItemContextNode} or
  * {@link ListItemContextNode}.
  */
-abstract class AbstractListItemContextNode extends DataContainerContextNode {
+abstract sealed class AbstractListItemContextNode extends DataContainerContextNode
+        permits ListItemContextNode, MapItemContextNode {
     AbstractListItemContextNode(final NodeIdentifier pathStep, final DataNodeContainer container,
             final DataSchemaNode schema) {
         super(pathStep, container, schema);

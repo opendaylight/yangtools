@@ -35,7 +35,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode} and serialization format defined in RFC6020,
  * since the mapping is not one-to-one.
  */
-public abstract class AbstractDataSchemaContextNode implements DataSchemaContextNode {
+public abstract sealed class AbstractDataSchemaContextNode implements DataSchemaContextNode
+        permits AbstractInteriorContextNode, AbstractLeafContextNode {
     private final @Nullable NodeIdentifier pathStep;
 
     final @NonNull DataSchemaNode dataSchemaNode;

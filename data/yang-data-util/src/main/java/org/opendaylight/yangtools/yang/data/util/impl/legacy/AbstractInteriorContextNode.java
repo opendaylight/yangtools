@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractInteriorContextNode extends AbstractDataSchemaContextNode {
+abstract sealed class AbstractInteriorContextNode extends AbstractDataSchemaContextNode
+        permits AbstractMixinContextNode, DataContainerContextNode {
     AbstractInteriorContextNode(final NodeIdentifier pathStep, final DataSchemaNode schema) {
         super(pathStep, schema);
     }

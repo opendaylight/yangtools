@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-abstract class DataContainerContextNode extends AbstractInteriorContextNode {
+abstract sealed class DataContainerContextNode extends AbstractInteriorContextNode
+        permits AbstractListItemContextNode, ContainerContextNode {
     private final ConcurrentMap<PathArgument, AbstractDataSchemaContextNode> byArg = new ConcurrentHashMap<>();
     private final ConcurrentMap<QName, AbstractDataSchemaContextNode> byQName = new ConcurrentHashMap<>();
     private final DataNodeContainer container;

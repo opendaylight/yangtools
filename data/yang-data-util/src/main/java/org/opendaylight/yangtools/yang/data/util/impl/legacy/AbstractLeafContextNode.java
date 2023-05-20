@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-abstract class AbstractLeafContextNode extends AbstractDataSchemaContextNode {
+abstract sealed class AbstractLeafContextNode extends AbstractDataSchemaContextNode
+        permits LeafContextNode, LeafListEntryContextNode, OpaqueContextNode {
     AbstractLeafContextNode(final NodeIdentifier pathStep, final DataSchemaNode schema) {
         super(pathStep, schema);
     }
