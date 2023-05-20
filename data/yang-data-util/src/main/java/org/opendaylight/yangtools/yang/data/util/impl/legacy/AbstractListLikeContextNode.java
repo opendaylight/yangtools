@@ -5,10 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -17,19 +18,19 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * representation of these nodes is similar to JSON encoding and therefore we have two {@link DataSchemaContextNode}
  * levels backed by a single {@link DataSchemaNode}.
  */
-abstract class AbstractListLikeContextNode<T extends PathArgument> extends AbstractMixinContextNode<T> {
-    AbstractListLikeContextNode(final T identifier, final DataSchemaNode schema) {
-        super(identifier, schema);
+abstract class AbstractListLikeContextNode extends AbstractMixinContextNode {
+    AbstractListLikeContextNode(final PathArgument pathArgument, final DataSchemaNode schema) {
+        super(pathArgument, schema);
     }
 
     @Override
-    protected final DataSchemaContextNode<?> enterChild(final QName child, final SchemaInferenceStack stack) {
+    protected final DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
         // Stack is already pointing to the corresponding statement, now we are just working with the child
         return getChild(child);
     }
 
     @Override
-    protected final DataSchemaContextNode<?> enterChild(final PathArgument child, final SchemaInferenceStack stack) {
+    protected final DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
         return getChild(child);
     }
 }

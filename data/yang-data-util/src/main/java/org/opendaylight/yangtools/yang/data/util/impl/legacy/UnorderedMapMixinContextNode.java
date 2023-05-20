@@ -5,35 +5,36 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnkeyedListMixinContextNode extends AbstractListLikeContextNode<NodeIdentifier> {
-    private final UnkeyedListItemContextNode innerNode;
+class UnorderedMapMixinContextNode extends AbstractListLikeContextNode {
+    private final ListItemContextNode innerNode;
 
-    UnkeyedListMixinContextNode(final ListSchemaNode list) {
+    UnorderedMapMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
-        innerNode = new UnkeyedListItemContextNode(list);
+        innerNode = new ListItemContextNode(list);
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final PathArgument child) {
-        // FIXME: 10.0.0: checkArgument() on PathArgument
+    public final DataSchemaContextNode getChild(final PathArgument child) {
+        // FIXME: validate PathArgument type
         return innerNodeIfMatch(child.getNodeType());
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final QName child) {
+    public final DataSchemaContextNode getChild(final QName child) {
         return innerNodeIfMatch(child);
     }
 
     // FIXME: dead ringers in other AbstractMixinContextNode subclasses
-    private @Nullable DataSchemaContextNode<?> innerNodeIfMatch(final QName qname) {
+    private @Nullable DataSchemaContextNode innerNodeIfMatch(final QName qname) {
         // FIXME: 10.0.0: requireNonNull(qname)
         return pathArgument().getNodeType().equals(qname) ? innerNode : null;
     }

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
@@ -16,25 +16,24 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
-    private final ImmutableMap<PathArgument, DataSchemaContextNode<?>> byArg;
-    private final ImmutableMap<QName, DataSchemaContextNode<?>> byQName;
-    private final ImmutableMap<DataSchemaContextNode<?>, QName> childToCase;
+final class ChoiceNodeContextNode extends AbstractMixinContextNode {
+    private final ImmutableMap<PathArgument, AbstractDataSchemaContextNode> byArg;
+    private final ImmutableMap<QName, AbstractDataSchemaContextNode> byQName;
+    private final ImmutableMap<DataSchemaContextNode, QName> childToCase;
 
     ChoiceNodeContextNode(final ChoiceSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
-        ImmutableMap.Builder<DataSchemaContextNode<?>, QName> childToCaseBuilder = ImmutableMap.builder();
-        ImmutableMap.Builder<QName, DataSchemaContextNode<?>> byQNameBuilder = ImmutableMap.builder();
-        ImmutableMap.Builder<PathArgument, DataSchemaContextNode<?>> byArgBuilder = ImmutableMap.builder();
+        final var childToCaseBuilder = ImmutableMap.<DataSchemaContextNode, QName>builder();
+        final var byQNameBuilder = ImmutableMap.<QName, AbstractDataSchemaContextNode>builder();
+        final var byArgBuilder = ImmutableMap.<PathArgument, AbstractDataSchemaContextNode>builder();
 
-        for (CaseSchemaNode caze : schema.getCases()) {
-            for (DataSchemaNode cazeChild : caze.getChildNodes()) {
-                DataSchemaContextNode<?> childOp = DataSchemaContextNode.of(cazeChild);
+        for (var caze : schema.getCases()) {
+            for (var cazeChild : caze.getChildNodes()) {
+                final var childOp = AbstractDataSchemaContextNode.of(cazeChild);
                 byArgBuilder.put(childOp.pathArgument(), childOp);
                 childToCaseBuilder.put(childOp, caze.getQName());
                 for (QName qname : childOp.qnameIdentifiers()) {
@@ -49,12 +48,12 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final PathArgument child) {
+    public AbstractDataSchemaContextNode getChild(final PathArgument child) {
         return byArg.get(child);
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final QName child) {
+    public AbstractDataSchemaContextNode getChild(final QName child) {
         return byQName.get(child);
     }
 
@@ -64,12 +63,12 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
     }
 
     @Override
-    protected DataSchemaContextNode<?> enterChild(final QName child, final SchemaInferenceStack stack) {
+    protected DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
         return pushToStack(getChild(child), stack);
     }
 
     @Override
-    protected DataSchemaContextNode<?> enterChild(final PathArgument child, final SchemaInferenceStack stack) {
+    protected DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
         return pushToStack(getChild(child), stack);
     }
 
@@ -78,7 +77,7 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifie
         stack.enterChoice(pathArgument().getNodeType());
     }
 
-    private @Nullable DataSchemaContextNode<?> pushToStack(final @Nullable DataSchemaContextNode<?> child,
+    private @Nullable DataSchemaContextNode pushToStack(final @Nullable AbstractDataSchemaContextNode child,
             final @NonNull SchemaInferenceStack stack) {
         if (child != null) {
             final var caseName = verifyNotNull(childToCase.get(child), "No case statement for %s in %s", child, this);
