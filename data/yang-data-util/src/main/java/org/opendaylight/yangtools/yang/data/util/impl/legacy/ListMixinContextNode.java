@@ -35,6 +35,6 @@ final class ListMixinContextNode extends AbstractListLikeContextNode {
     // FIXME: dead ringers in other AbstractMixinContextNode subclasses
     private @Nullable DataSchemaContextNode innerNodeIfMatch(final QName qname) {
         // FIXME: 10.0.0: requireNonNull(qname)
-        return pathArgument().getNodeType().equals(qname) ? innerNode : null;
+        return dataSchemaNode.getQName().equals(qname) ? innerNode : null;
     }
 }
