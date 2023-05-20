@@ -10,21 +10,19 @@ package org.opendaylight.yangtools.rfc7952.model.api;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 
 /**
  * Interface for entities which can lookup {@link AnnotationSchemaNode}s based on their name.
- *
- * @author Robert Varga
  */
 @Beta
 public interface AnnotationSchemaNodeAware {
     /**
      * Find an annotation based on its QName.
      *
-     * @param qname Annotation name
+     * @param name Annotation name
      * @return AnnotationSchemaNode if found
      * @throws NullPointerException if {@code qname} is null
      */
-    @NonNull Optional<AnnotationSchemaNode> findAnnotation(QName qname);
+    @NonNull Optional<AnnotationSchemaNode> findAnnotation(AnnotationName name);
 }

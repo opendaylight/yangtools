@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,14 +24,15 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSc
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class AnnotationEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<QName, AnnotationStatement>
+final class AnnotationEffectiveStatementImpl
+        extends AbstractEffectiveUnknownSchmemaNode<AnnotationName, AnnotationStatement>
         implements AnnotationEffectiveStatement, AnnotationSchemaNode {
     private final @NonNull TypeDefinition<?> type;
 
-    AnnotationEffectiveStatementImpl(final Current<QName, AnnotationStatement> stmt,
+    AnnotationEffectiveStatementImpl(final Current<AnnotationName, AnnotationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
-        final QName qname = stmt.getArgument();
+        final QName qname = stmt.getArgument().qname();
 
         // FIXME: move this into onFullDefinitionDeclared()
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
@@ -41,11 +43,6 @@ final class AnnotationEffectiveStatementImpl extends AbstractEffectiveUnknownSch
             qname);
         findFirstEffectiveSubstatementArgument(UnitsEffectiveStatement.class).ifPresent(builder::setUnits);
         type = builder.build();
-    }
-
-    @Override
-    public QName getQName() {
-        return argument();
     }
 
     @Override

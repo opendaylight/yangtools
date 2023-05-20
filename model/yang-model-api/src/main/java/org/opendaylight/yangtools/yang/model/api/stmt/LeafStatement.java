@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code leaf} statement.
  */
-public interface LeafStatement extends DataDefinitionStatement, TypeAwareDeclaredStatement,
+public interface LeafStatement extends DataDefinitionStatement, TypeAwareDeclaredStatement<QName>,
         ConfigStatementAwareDeclaredStatement<QName>, DefaultStatementAwareDeclaredStatement,
         MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
     @Override

@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -33,7 +33,7 @@ public interface NormalizedMetadata extends Immutable {
      *
      * @return The set of annotations attached to the corresponding data node.
      */
-    @NonNull Map<QName, Object> getAnnotations();
+    @NonNull Map<AnnotationName, Object> getAnnotations();
 
     /**
      * Returns child nodes. Default implementation returns an empty immutable map.
