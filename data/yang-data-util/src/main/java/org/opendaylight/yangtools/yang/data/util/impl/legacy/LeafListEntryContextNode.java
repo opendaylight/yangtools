@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-final class LeafListEntryContextNode extends AbstractLeafNodeContext<NodeWithValue<?>, LeafListSchemaNode> {
+final class LeafListEntryContextNode extends AbstractLeafNodeContext<LeafListSchemaNode> {
     LeafListEntryContextNode(final LeafListSchemaNode schema) {
-        // FIXME: Empty() here is NOT NICE -- it assumes the list is of such entries...
+        // FIXME: YANGTOOLS-1413: Empty() here is NOT NICE -- it assumes the list is of such entries...
         super(new NodeWithValue<>(schema.getQName(), Empty.value()), schema);
     }
 
