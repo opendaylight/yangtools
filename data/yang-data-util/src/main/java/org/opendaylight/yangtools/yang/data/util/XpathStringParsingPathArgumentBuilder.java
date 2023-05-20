@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -112,8 +113,8 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private DataSchemaContextNode nextContextNode(final QName name) {
         current = current.getChild(name);
         checkValid(current != null, "%s is not correct schema node identifier.", name);
-        while (current.isMixin()) {
-            product.add(current.pathArgument());
+        while (current instanceof PathMixin mixin) {
+            product.add(mixin.mixinPathArgument());
             current = current.getChild(name);
         }
         stack.enterDataTree(name);
