@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractOpaqueContextNode<S extends DataSchemaNode> extends AbstractLeafContextNode<S> {
-    AbstractOpaqueContextNode(final S schema) {
+abstract class AbstractOpaqueContextNode extends AbstractLeafContextNode {
+    AbstractOpaqueContextNode(final DataSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
     }
 
