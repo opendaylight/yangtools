@@ -160,8 +160,10 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
             // Break-out from method for leaf-list case
             if (key == null && currentNode.isLeaf()) {
                 checkValid(offset == data.length(), "Leaf argument must be last argument of instance identifier.");
-                final Object value = codec.deserializeKeyValue(currentNode.getDataSchemaNode(),
-                    type -> resolveLeafref(currentNode.getIdentifier().getNodeType(), type), keyValue);
+                final var currentSchema = currentNode.getDataSchemaNode();
+
+                final Object value = codec.deserializeKeyValue(currentSchema,
+                    type -> resolveLeafref(currentSchema.getQName(), type), keyValue);
                 return new NodeWithValue<>(name, value);
             }
             final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
