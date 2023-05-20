@@ -18,6 +18,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -58,7 +59,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
             throws XMLStreamException {
-        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
+        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(),
+            new AnnotationName(qname));
         if (optAnnotation.isPresent()) {
             return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.orElseThrow().getType()), value,
                 qname.getModule());

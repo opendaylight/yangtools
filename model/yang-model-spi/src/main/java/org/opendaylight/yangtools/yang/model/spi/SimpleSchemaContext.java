@@ -28,7 +28,7 @@ import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNodeAwareSchemaContext;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -44,7 +44,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
     private final ImmutableSetMultimap<String, Module> nameToModules;
     private final ImmutableMap<QNameModule, Module> moduleMap;
     private final ImmutableSet<Module> modules;
-    private final ImmutableMap<QName, AnnotationSchemaNode> annotations;
+    private final ImmutableMap<AnnotationName, AnnotationSchemaNode> annotations;
 
     protected SimpleSchemaContext(final Collection<? extends @NonNull Module> modules) {
         /*
@@ -97,7 +97,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
     }
 
     @Override
-    public final Optional<AnnotationSchemaNode> findAnnotation(final QName qname) {
+    public final Optional<AnnotationSchemaNode> findAnnotation(final AnnotationName qname) {
         return Optional.ofNullable(annotations.get(requireNonNull(qname)));
     }
 

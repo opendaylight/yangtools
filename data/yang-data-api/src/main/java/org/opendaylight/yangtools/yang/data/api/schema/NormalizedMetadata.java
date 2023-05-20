@@ -33,6 +33,7 @@ public interface NormalizedMetadata extends Immutable {
      *
      * @return The set of annotations attached to the corresponding data node.
      */
+    // FIXME: use AnnotationName instead of QName once we sort out the XML codec/NETCONF story
     @NonNull Map<QName, Object> getAnnotations();
 
     /**

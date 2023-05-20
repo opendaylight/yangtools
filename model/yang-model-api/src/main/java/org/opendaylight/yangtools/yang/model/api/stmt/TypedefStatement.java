@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code typedef} statement.
  */
-public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus<QName>, TypeAwareDeclaredStatement,
-        DefaultStatementAwareDeclaredStatement {
+public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
+        TypeAwareDeclaredStatement<QName>, DefaultStatementAwareDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.TYPEDEF;

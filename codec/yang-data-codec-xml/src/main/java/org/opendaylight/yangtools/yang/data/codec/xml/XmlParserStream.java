@@ -44,6 +44,7 @@ import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -397,7 +398,8 @@ public final class XmlParserStream implements Closeable, Flushable {
             final Optional<QNameModule> optModule = resolveXmlNamespace(attributeNS);
             if (optModule.isPresent()) {
                 final QName qname = QName.create(optModule.orElseThrow(), localName);
-                final var optAnnotation = AnnotationSchemaNode.find(codecs.getEffectiveModelContext(), qname);
+                final var optAnnotation = AnnotationSchemaNode.find(codecs.getEffectiveModelContext(),
+                    new AnnotationName(qname));
                 if (optAnnotation.isPresent()) {
                     final AnnotationSchemaNode schema = optAnnotation.orElseThrow();
                     final Object value = codecs.codecFor(schema, stack)
