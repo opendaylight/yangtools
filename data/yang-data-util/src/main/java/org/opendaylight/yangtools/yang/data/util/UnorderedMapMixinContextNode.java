@@ -35,6 +35,6 @@ class UnorderedMapMixinContextNode extends AbstractListLikeContextNode<NodeIdent
     // FIXME: dead ringers in other AbstractMixinContextNode subclasses
     private @Nullable DataSchemaContextNode<?> innerNodeIfMatch(final QName qname) {
         // FIXME: 10.0.0: requireNonNull(qname)
-        return getIdentifier().getNodeType().equals(qname) ? innerNode : null;
+        return pathArgument().getNodeType().equals(qname) ? innerNode : null;
     }
 }

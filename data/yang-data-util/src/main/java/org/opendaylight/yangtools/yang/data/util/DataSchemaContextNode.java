@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -46,25 +45,29 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 // FIXME: YANGTOOLS-1413: this really should be an interface, as there is a ton of non-trivial composition going on:
 //        - getDataSchemaNode() cannot return AugmentationSchemaNode, which is guarded by isMixinNode() and users should
 //          not be touching mixin details anyway
-//        - the idea of getIdentifier() is wrong -- if does the wrong thing for items of leaf-list and keyed list
-//          because those identifiers need a value. We also do not expect users to store the results in a Map, which
-//          defeats the idea of Identifiable
 //        - the generic argument is really an implementation detail and we really would like to also make dataSchemaNode
 //          (or rather: underlying SchemaNode) an argument. Both of these are not something users can influence and
 //          therefore we should not burden them with <?> on each reference to this class
-public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractSimpleIdentifiable<T> {
+public abstract class DataSchemaContextNode<T extends PathArgument> {
     private final @NonNull DataSchemaNode dataSchemaNode;
+    private final @NonNull T pathArgument;
 
-    DataSchemaContextNode(final T identifier, final DataSchemaNode schema) {
-        super(identifier);
-        dataSchemaNode = requireNonNull(schema);
+    DataSchemaContextNode(final T pathArgument, final DataSchemaNode dataSchemaNode) {
+        this.dataSchemaNode = requireNonNull(dataSchemaNode);
+        this.pathArgument = requireNonNull(pathArgument);
     }
 
     public final @NonNull DataSchemaNode getDataSchemaNode() {
         return dataSchemaNode;
     }
 
-    /**
+    // FIXME: YANGTOOLS-1413: this idea is wrong -- if does the wrong thing for items of leaf-list and keyed list
+    //                        because those identifiers need a value.
+    public final @NonNull T pathArgument() {
+        return pathArgument;
+    }
+
+     /**
      * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
      * one of
      * <ul>
@@ -92,7 +95,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     public abstract boolean isLeaf();
 
     Set<QName> qnameIdentifiers() {
-        return ImmutableSet.of(getIdentifier().getNodeType());
+        return ImmutableSet.of(pathArgument().getNodeType());
     }
 
     /**
@@ -160,7 +163,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
      */
     void pushToStack(final @NonNull SchemaInferenceStack stack) {
         // Accurate for most subclasses
-        stack.enterSchemaTree(getIdentifier().getNodeType());
+        stack.enterSchemaTree(pathArgument().getNodeType());
     }
 
     /**
