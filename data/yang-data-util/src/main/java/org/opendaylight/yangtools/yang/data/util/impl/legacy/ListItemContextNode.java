@@ -7,17 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class ListItemContextNode extends AbstractListItemContextNode {
     ListItemContextNode(final ListSchemaNode schema) {
-        // FIXME: YANGTOOLS-1413: this is wrong: we have no predicates at all!
-        super(NodeIdentifierWithPredicates.of(schema.getQName()), schema, schema);
-    }
-
-    @Override
-    public boolean isKeyedEntry() {
-        return true;
+        super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
 }

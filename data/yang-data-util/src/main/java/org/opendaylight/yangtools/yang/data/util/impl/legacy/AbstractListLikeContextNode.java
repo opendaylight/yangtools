@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * levels backed by a single {@link DataSchemaNode}.
  */
 abstract sealed class AbstractListLikeContextNode extends AbstractMixinContextNode
-        permits UnkeyedListMixinContextNode, UnorderedLeafListMixinContextNode, UnorderedMapMixinContextNode {
+        permits ListMixinContextNode, LeafListMixinContextNode, MapMixinContextNode {
     AbstractListLikeContextNode(final DataSchemaNode schema) {
         super(schema);
     }
