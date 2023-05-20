@@ -35,9 +35,10 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * since the mapping is not one-to-one.
  */
 public abstract class AbstractDataSchemaContextNode implements DataSchemaContextNode {
-    private final @NonNull DataSchemaNode dataSchemaNode;
     // FIXME: YANGTOOLS-1413: this field should not be needed
     private final @NonNull PathArgument pathArgument;
+
+    final @NonNull DataSchemaNode dataSchemaNode;
 
     AbstractDataSchemaContextNode(final PathArgument pathArgument, final DataSchemaNode dataSchemaNode) {
         this.dataSchemaNode = requireNonNull(dataSchemaNode);
@@ -60,7 +61,7 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
     }
 
     Set<QName> qnameIdentifiers() {
-        return ImmutableSet.of(pathArgument().getNodeType());
+        return ImmutableSet.of(dataSchemaNode.getQName());
     }
 
     @Override
@@ -92,7 +93,7 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
      */
     void pushToStack(final @NonNull SchemaInferenceStack stack) {
         // Accurate for most subclasses
-        stack.enterSchemaTree(pathArgument().getNodeType());
+        stack.enterSchemaTree(dataSchemaNode.getQName());
     }
 
     static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
