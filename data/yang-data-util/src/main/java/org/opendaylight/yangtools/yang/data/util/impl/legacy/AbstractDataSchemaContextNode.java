@@ -134,9 +134,9 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
         } else if (schema instanceof LeafListSchemaNode leafList) {
             return new LeafListMixinContextNode(leafList);
         } else if (schema instanceof AnydataSchemaNode anydata) {
-            return new AnydataContextNode(anydata);
+            return new OpaqueContextNode(anydata);
         } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            return new AnyXmlContextNode(anyxml);
+            return new OpaqueContextNode(anyxml);
         } else {
             throw new IllegalStateException("Unhandled schema " + schema);
         }
@@ -155,9 +155,9 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
         } else if (schema instanceof LeafListSchemaNode leafList) {
             return new LeafListMixinContextNode(leafList);
         } else if (schema instanceof AnydataSchemaNode anydata) {
-            return new AnydataContextNode(anydata);
+            return new OpaqueContextNode(anydata);
         } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            return new AnyXmlContextNode(anyxml);
+            return new OpaqueContextNode(anyxml);
         } else {
             return null;
         }
