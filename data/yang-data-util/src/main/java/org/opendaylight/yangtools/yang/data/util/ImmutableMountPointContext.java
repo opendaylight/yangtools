@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 import java.util.Optional;
 import java.util.function.Function;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointLabel;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.data.util.AbstractMountPointContextFactory.MountPointDefinition;
