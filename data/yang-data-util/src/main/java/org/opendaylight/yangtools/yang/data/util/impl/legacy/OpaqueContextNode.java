@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractOpaqueContextNode extends AbstractLeafContextNode {
-    AbstractOpaqueContextNode(final DataSchemaNode schema) {
+final class OpaqueContextNode extends AbstractLeafContextNode {
+    OpaqueContextNode(final DataSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
     }
 
     @Override
-    public final boolean isLeaf() {
+    public boolean isLeaf() {
         return false;
     }
 }
