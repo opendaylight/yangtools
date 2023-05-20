@@ -13,22 +13,22 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-sealed class UnorderedMapMixinContextNode extends AbstractListLikeContextNode permits OrderedMapMixinContextNode {
-    private final ListItemContextNode innerNode;
+final class MapMixinContextNode extends AbstractListLikeContextNode {
+    private final MapItemContextNode innerNode;
 
-    UnorderedMapMixinContextNode(final ListSchemaNode list) {
+    MapMixinContextNode(final ListSchemaNode list) {
         super(list);
-        innerNode = new ListItemContextNode(list);
+        innerNode = new MapItemContextNode(list);
     }
 
     @Override
-    public final DataSchemaContextNode getChild(final PathArgument child) {
+    public DataSchemaContextNode getChild(final PathArgument child) {
         // FIXME: validate PathArgument type
         return innerNodeIfMatch(child.getNodeType());
     }
 
     @Override
-    public final DataSchemaContextNode getChild(final QName child) {
+    public DataSchemaContextNode getChild(final QName child) {
         return innerNodeIfMatch(child);
     }
 

@@ -13,12 +13,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnkeyedListMixinContextNode extends AbstractListLikeContextNode {
-    private final UnkeyedListItemContextNode innerNode;
+final class ListMixinContextNode extends AbstractListLikeContextNode {
+    private final ListItemContextNode innerNode;
 
-    UnkeyedListMixinContextNode(final ListSchemaNode list) {
+    ListMixinContextNode(final ListSchemaNode list) {
         super(list);
-        innerNode = new UnkeyedListItemContextNode(list);
+        innerNode = new ListItemContextNode(list);
     }
 
     @Override
