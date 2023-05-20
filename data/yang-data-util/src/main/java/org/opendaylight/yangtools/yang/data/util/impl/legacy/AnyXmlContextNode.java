@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
-final class AnyXmlContextNode extends AbstractOpaqueContextNode<AnyxmlSchemaNode> {
+final class AnyXmlContextNode extends AbstractOpaqueContextNode {
     AnyXmlContextNode(final AnyxmlSchemaNode schema) {
         super(schema);
     }
