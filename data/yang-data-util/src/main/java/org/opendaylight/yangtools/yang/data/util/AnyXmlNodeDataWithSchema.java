@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
  * <p>
  * Represents a YANG anyxml node.
  */
-public class AnyXmlNodeDataWithSchema extends SimpleNodeDataWithSchema<AnyxmlSchemaNode> {
+public final class AnyXmlNodeDataWithSchema extends SimpleNodeDataWithSchema<AnyxmlSchemaNode> {
     public AnyXmlNodeDataWithSchema(final AnyxmlSchemaNode dataSchemaNode) {
         super(dataSchemaNode);
     }
