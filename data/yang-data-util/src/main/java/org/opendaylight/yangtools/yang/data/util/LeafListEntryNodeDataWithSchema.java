@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
  * <p>
  * Represents a YANG leaf-list entry node.
  */
-public class LeafListEntryNodeDataWithSchema extends SimpleNodeDataWithSchema<LeafListSchemaNode> {
+public final class LeafListEntryNodeDataWithSchema extends SimpleNodeDataWithSchema<LeafListSchemaNode> {
     public LeafListEntryNodeDataWithSchema(final LeafListSchemaNode dataSchemaNode) {
         super(dataSchemaNode);
     }

@@ -27,11 +27,12 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
  */
 @Beta
-public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
+public abstract sealed class AbstractNodeDataWithSchema<T extends DataSchemaNode>
+        permits SimpleNodeDataWithSchema, CompositeNodeDataWithSchema {
     private final T schema;
     private ImmutableMap<QName, Object> attributes;
 
-    public AbstractNodeDataWithSchema(final T schema) {
+    AbstractNodeDataWithSchema(final T schema) {
         this.schema = requireNonNull(schema);
     }
 
