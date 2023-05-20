@@ -14,9 +14,4 @@ final class OpaqueContextNode extends AbstractLeafContextNode {
     OpaqueContextNode(final DataSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
     }
-
-    @Override
-    public boolean isLeaf() {
-        return false;
-    }
 }

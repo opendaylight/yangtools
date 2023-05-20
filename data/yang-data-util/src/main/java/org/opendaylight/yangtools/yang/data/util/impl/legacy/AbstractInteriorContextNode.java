@@ -14,9 +14,4 @@ abstract class AbstractInteriorContextNode extends AbstractDataSchemaContextNode
     AbstractInteriorContextNode(final PathArgument pathArgument, final DataSchemaNode schema) {
         super(pathArgument, schema);
     }
-
-    @Override
-    public final boolean isLeaf() {
-        return false;
-    }
 }
