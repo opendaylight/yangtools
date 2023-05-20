@@ -12,17 +12,24 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import org.eclipse.jdt.annotation.NonNull;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Identifier;
+import org.opendaylight.yangtools.concepts.WritableObject;
 
 /**
- * Identifier of a RESTCONF {@code yang-data} extension template instantiation. The {@link #module()} method returns
- * the namespace and revision of use and {@link #name()} returns the name of the template.
+ * Identifier of a RESTCONF {@code yang-data} extension template instantiation.
+ *
+ * @param module namespace of defining module
+ * @param name template name
  */
-public record YangDataName(@NonNull QNameModule module, @NonNull String name) implements Identifier {
+@NonNullByDefault
+public record YangDataName(QNameModule module, String name) implements Identifier, WritableObject {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
-    private static final Interner<@NonNull YangDataName> INTERNER = Interners.newWeakInterner();
+    private static final Interner<YangDataName> INTERNER = Interners.newWeakInterner();
 
     public YangDataName {
         requireNonNull(module);
@@ -34,7 +41,24 @@ public record YangDataName(@NonNull QNameModule module, @NonNull String name) im
      *
      * @return An interned instance.
      */
-    public @NonNull YangDataName intern() {
-        return INTERNER.intern(this);
+    public YangDataName intern() {
+        final var cacheMod = module.intern();
+
+        // Identity comparison is here on purpose, as we are deciding whether to potentially store 'module' into the
+        // interner. It is important that it does not hold user-supplied reference (such a String instance from
+        // parsing of an XML document).
+        final var template = cacheMod == module ? this : new YangDataName(cacheMod, name.intern());
+
+        return INTERNER.intern(template);
+    }
+
+    public static YangDataName readFrom(final DataInput in) throws IOException {
+        return new YangDataName(QNameModule.readFrom(in), in.readUTF());
+    }
+
+    @Override
+    public void writeTo(final DataOutput out) throws IOException {
+        module.writeTo(out);
+        out.writeUTF(name);
     }
 }
