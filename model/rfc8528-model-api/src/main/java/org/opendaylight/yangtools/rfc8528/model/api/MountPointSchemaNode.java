@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
  * Represents the effect of 'mount-point' extension, as defined in
- * <a href="https://tools.ietf.org/html/rfc8528">RFC8528</a>, being attached to a SchemaNode.
+ * <a href="https://www.rfc-editor.org/rfc/rfc8528">RFC8528</a>, being attached to a SchemaNode.
  */
 @Beta
 public interface MountPointSchemaNode extends UnknownSchemaNode {

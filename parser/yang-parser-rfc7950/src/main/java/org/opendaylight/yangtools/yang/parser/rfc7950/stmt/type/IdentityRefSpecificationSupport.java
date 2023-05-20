@@ -112,7 +112,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
 
     private static SourceException noBase(final CommonStmtCtx stmt) {
         /*
-         *  https://tools.ietf.org/html/rfc7950#section-9.10.2
+         *  https://www.rfc-editor.org/rfc/rfc7950#section-9.10.2
          *
          *     The "base" statement, which is a substatement to the "type"
          *     statement, MUST be present at least once if the type is

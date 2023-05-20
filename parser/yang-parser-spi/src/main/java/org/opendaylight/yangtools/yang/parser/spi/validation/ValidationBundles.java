@@ -35,7 +35,7 @@ public final class ValidationBundles {
         SUPPORTED_AUGMENT_TARGETS,
 
         /**
-         * Whether a <a href="https://tools.ietf.org/html/rfc6020#section-7.9.2">case shorthand</a> can be created for a
+         * Whether a <a href="https://www.rfc-editor.org/rfc/rfc6020#section-7.9.2">case shorthand</a> can be created for a
          * node.
          */
         // FIXME: 7.0.0: consider removing this constant, this functionality is part of statement support.

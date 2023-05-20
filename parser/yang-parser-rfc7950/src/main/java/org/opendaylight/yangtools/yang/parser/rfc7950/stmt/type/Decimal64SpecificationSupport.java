@@ -78,7 +78,7 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
 
     private static SourceException noFracDigits(final CommonStmtCtx stmt) {
         /*
-         *  https://tools.ietf.org/html/rfc7950#section-9.3.4
+         *  https://www.rfc-editor.org/rfc/rfc7950#section-9.3.4
          *
          *     The "fraction-digits" statement, which is a substatement to the
          *     "type" statement, MUST be present if the type is "decimal64".

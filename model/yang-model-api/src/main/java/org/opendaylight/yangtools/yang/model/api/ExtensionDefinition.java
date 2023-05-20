@@ -18,7 +18,7 @@ public interface ExtensionDefinition extends SchemaNode, EffectiveStatementEquiv
      * Keyword. If no argument statement is present the method will return
      * <code>null</code> <br>
      * The argument statement is defined in <a
-     * href="https://tools.ietf.org/html/rfc6020#section-7.17.2">[RFC-6020] The
+     * href="https://www.rfc-editor.org/rfc/rfc6020#section-7.17.2">[RFC-6020] The
      * argument Statement</a>
      *
      * @return the <code>String</code> that is the name of argument to the
@@ -36,7 +36,7 @@ public interface ExtensionDefinition extends SchemaNode, EffectiveStatementEquiv
      *
      * <p>
      * For more specific definition please look into <a
-     * href="https://tools.ietf.org/html/rfc6020#section-7.17.2.2">[RFC-6020]
+     * href="https://www.rfc-editor.org/rfc/rfc6020#section-7.17.2.2">[RFC-6020]
      * The yin-element Statement</a>
      *
      * @return <code>true</code> if the argument is mapped to an XML element in

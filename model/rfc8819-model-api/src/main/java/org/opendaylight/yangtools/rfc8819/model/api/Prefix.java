@@ -16,7 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * YANG Module Tag Prefixes Registry, as defined in
- * <a href="https://datatracker.ietf.org/doc/html/rfc8819#section-7.1">RFC8819</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc8819#section-7.1">RFC8819</a>.
  *
  * <p>
  * This registry allocates tag prefixes.  All YANG module tags SHOULD

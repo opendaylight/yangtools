@@ -64,7 +64,7 @@ public abstract sealed class BinaryStringCodec extends TypeDefinitionAwareCodec<
 
     @Override
     public final byte[] deserializeImpl(final String product) {
-        // https://tools.ietf.org/html/rfc4648#section-4 plus lenient to allow for MIME blocks
+        // https://www.rfc-editor.org/rfc/rfc4648#section-4 plus lenient to allow for MIME blocks
         final byte[] ret = Base64.getMimeDecoder().decode(product);
         validate(ret);
         return ret;

@@ -16,23 +16,23 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 @NonNullByDefault
 public final class YangConstants {
     /**
-     * YANG File Extension, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
+     * YANG File Extension, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_YANG_FILE_EXTENSION = ".yang";
     /**
-     * YANG Media Type, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
+     * YANG Media Type, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_YANG_MAC_FILE_TYPE = "TEXT";
     /**
-     * YANG Media Type, as defined in h<a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
+     * YANG Media Type, as defined in h<a href="https://www.rfc-editor.org/rfc/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_YANG_MEDIA_TYPE = "application/yang";
     /**
-     * YANG namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14, in String format.
+     * YANG namespace, as defined in https://www.rfc-editor.org/rfc/rfc6020#section-14, in String format.
      */
     public static final String RFC6020_YANG_NAMESPACE_STRING = "urn:ietf:params:xml:ns:yang:1";
     /**
-     * YANG namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14, in URI format.
+     * YANG namespace, as defined in https://www.rfc-editor.org/rfc/rfc6020#section-14, in URI format.
      */
     public static final XMLNamespace RFC6020_YANG_NAMESPACE = XMLNamespace.of(RFC6020_YANG_NAMESPACE_STRING).intern();
     /**
@@ -40,23 +40,23 @@ public final class YangConstants {
      */
     public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE).intern();
     /**
-     * YIN File Extension, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.2">RFC6020</a>.
+     * YIN File Extension, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-14.2">RFC6020</a>.
      */
     public static final String RFC6020_YIN_FILE_EXTENSION = ".yin";
     /**
-     * YANG Media Type, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.1">RFC6020</a>.
+     * YANG Media Type, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-14.1">RFC6020</a>.
      */
     public static final String RFC6020_MAC_FILE_TYPE = "TEXT";
     /**
-     * YANG Media Type, as defined in <a href="https://tools.ietf.org/html/rfc6020#section-14.2">RFC6020</a>.
+     * YANG Media Type, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-14.2">RFC6020</a>.
      */
     public static final String RFC6020_YIN_MEDIA_TYPE = "application/yin+xml";
     /**
-     * YIN namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14, in String format.
+     * YIN namespace, as defined in https://www.rfc-editor.org/rfc/rfc6020#section-14, in String format.
      */
     public static final String RFC6020_YIN_NAMESPACE_STRING = "urn:ietf:params:xml:ns:yang:yin:1";
     /**
-     * YIN namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14, in URI format.
+     * YIN namespace, as defined in https://www.rfc-editor.org/rfc/rfc6020#section-14, in URI format.
      */
     public static final XMLNamespace RFC6020_YIN_NAMESPACE = XMLNamespace.of(RFC6020_YIN_NAMESPACE_STRING).intern();
     /**
@@ -69,17 +69,17 @@ public final class YangConstants {
     public static final String YANG_XPATH_FUNCTIONS_PREFIX = "yang";
     /**
      * NETCONF protocol elements' namespace, as defined in
-     * <a href="https://datatracker.ietf.org/doc/html/rfc4741#section-3.1">RFC4741 section 3.1</a>, in String format.
+     * <a href="https://www.rfc-editor.org/rfc/rfc4741#section-3.1">RFC4741 section 3.1</a>, in String format.
      */
     public static final String NETCONF_NAMESPACE_STRING = "urn:ietf:params:xml:ns:netconf:base:1.0";
     /**
      * NETCONF protocol elements' namespace, as defined in
-     * <a href="https://datatracker.ietf.org/doc/html/rfc4741#section-3.1">RFC4741 section 3.1</a>, in String format.
+     * <a href="https://www.rfc-editor.org/rfc/rfc4741#section-3.1">RFC4741 section 3.1</a>, in String format.
      */
     public static final XMLNamespace NETCONF_NAMESPACE = XMLNamespace.of(NETCONF_NAMESPACE_STRING).intern();
     /**
      * NETCONF namespace bound to YANG through
-     * <a href="https://datatracker.ietf.org/doc/html/rfc6241#section-10.3">ietf-netconf@2011-06-01.yang</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc6241#section-10.3">ietf-netconf@2011-06-01.yang</a>.
      */
     public static final QNameModule RFC6241_YANG_MODULE =
         QNameModule.create(NETCONF_NAMESPACE, Revision.of("2011-06-01")).intern();
@@ -107,12 +107,12 @@ public final class YangConstants {
     public static final QName OK_ELEMENT_QNAME = QName.create(RFC6241_YANG_MODULE, "ok-element").intern();
     /**
      * {@code missing-choice} as defined in
-     * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-13.7">RFC6020, section 13.7</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-13.7">RFC6020, section 13.7</a>.
      */
     public static final QName MISSING_CHOICE_QNAME = QName.create(RFC6020_YANG_MODULE, "missing-choice").intern();
     /**
      * {@code non-unique} as defined in
-     * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-13.1">RFC6020, section 13.1</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-13.1">RFC6020, section 13.1</a>.
      */
     public static final QName NON_UNIQUE_QNAME = QName.create(RFC6020_YANG_MODULE, "non-unique").intern();
     /**
@@ -138,7 +138,7 @@ public final class YangConstants {
         QNameModule.create(YANG_LIBRARY_NAMESPACE, Revision.of("2016-06-21")).intern();
     /**
      * {@code ietf-yang-library} namespace bound to YANG through
-     * <a href="https://datatracker.ietf.org/doc/html/rfc8525#section-4">ietf-yang-library@2019-01-04.yang</a>.
+     * <a href="https://www.rfc-editor.org/rfc/rfc8525#section-4">ietf-yang-library@2019-01-04.yang</a>.
      */
     public static final QNameModule RFC8525_YANG_MODULE =
         QNameModule.create(YANG_LIBRARY_NAMESPACE, Revision.of("2019-01-04")).intern();

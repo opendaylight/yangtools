@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 @NonNullByDefault({ PARAMETER, RETURN_TYPE })
 final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
-    // https://tools.ietf.org/html/rfc7950#section-6.1.3
+    // https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3
     //            An unquoted string is any sequence of characters that does not
     //            contain any space, tab, carriage return, or line feed characters, a
     //            single or double quote character, a semicolon (";"), braces ("{" or
@@ -52,7 +52,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         YangStmtMapping.REFERENCE);
 
     /*
-     * https://tools.ietf.org/html/rfc6087#section-4.3:
+     * https://www.rfc-editor.org/rfc/rfc6087#section-4.3:
      *            In general, it is suggested that substatements containing very common
      *            default values SHOULD NOT be present.  The following substatements
      *            are commonly used with the default value, which would make the module

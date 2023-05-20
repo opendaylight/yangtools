@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
  * A single value length restriction, as expressed by a length statement, as specified by
- * <a href="https://tools.ietf.org/html/rfc6020#section-9.4.4">[RFC-6020] The length Statement</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-9.4.4">[RFC-6020] The length Statement</a>.
  */
 public interface LengthConstraint extends ConstraintMetaDefinition {
     /**

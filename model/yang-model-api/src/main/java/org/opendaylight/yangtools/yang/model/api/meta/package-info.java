@@ -16,7 +16,7 @@
  *
  * <h2>Statements</h2>
  * YANG source is defined as sequence of statement in
- * <a href="https://tools.ietf.org/html/rfc6020#section-6.3">RFC6020, Section 6.3</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3">RFC6020, Section 6.3</a>.
  * this model is also correct for YIN, which is XML serialisation of YANG source.
  *
  * <p>

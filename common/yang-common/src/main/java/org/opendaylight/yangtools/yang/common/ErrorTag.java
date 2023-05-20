@@ -16,9 +16,9 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Extensible enumeration of {@code error-tag} values, as defined in
- * <a href="https://datatracker.ietf.org/doc/html/rfc6241#appendix-A">RFC6241</a>. These values are an extensible
- * enumeration, since YANG does not place restriction on possible values in
- * <a href="https://datatracker.ietf.org/doc/html/rfc8040#section-3.9">RFC8040</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc6241#appendix-A">RFC6241</a>. These values are an extensible enumeration,
+ * since YANG does not place restriction on possible values in
+ * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-3.9">RFC8040</a>.
  *
  * <p>
  * Error tag defines overall error semantics. Additional tag-specific information may be associated with a particular
@@ -78,7 +78,7 @@ public final class ErrorTag implements Serializable {
     public static final ErrorTag LOCK_DENIED = new ErrorTag("lock-denied");
     /**
      * {@code unknown-element} {@link ErrorTag}. Covers mechanics specified in
-     * <a href="https://datatracker.ietf.org/doc/html/rfc6241#page-80">RFC6241, Appendix A, last item</a>. Note the
+     * <a href="https://www.rfc-editor.org/rfc/rfc6241#page-80">RFC6241, Appendix A, last item</a>. Note the
      * specification expressly forbids reporting this tag for NETCONF clients older than {@code :base:1.1}.
      */
     public static final ErrorTag MALFORMED_MESSAGE = new ErrorTag("malformed-message");

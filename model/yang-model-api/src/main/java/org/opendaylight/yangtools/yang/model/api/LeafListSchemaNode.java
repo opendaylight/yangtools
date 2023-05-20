@@ -19,7 +19,7 @@ public non-sealed interface LeafListSchemaNode extends TypedDataSchemaNode, Must
 
     /**
      * Return the default value of this leaf-list, as per the rules outlined in
-     * <a href="https://tools.ietf.org/html/rfc7950#section-7.7.4">Section 7.4.4 of RFC7950</a>. RFC6020 does not
+     * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.7.4">Section 7.4.4 of RFC7950</a>. RFC6020 does not
      * allow for default value of leaf-list, hence the returned list will be empty.
      *
      * @return Ordered list of Strings which specify the default values of this leaf-list

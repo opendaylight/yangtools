@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.common;
 
 /**
  * Enumeration of NETCONF layers, as established in
- * <a href="https://datatracker.ietf.org/doc/html/rfc4741#section-1.1">NETCONF</a>. This enumeration exists because
- * its semantics are implied by RFC6020 references to {@code error-tag} and its XML encoding.
+ * <a href="https://www.rfc-editor.org/rfc/rfc4741#section-1.1">NETCONF</a>. This enumeration exists because its
+ * semantics are implied by RFC6020 references to {@code error-tag} and its XML encoding.
  *
  * <p>
  * This enumeration corresponds to the {@code Layer} in:
@@ -35,7 +35,7 @@ package org.opendaylight.yangtools.yang.common;
  *         |   Protocol  |      |                             |
  *         +-------------+      +-----------------------------+
  * </code></pre>
- * as acknowledged in <a href="https://datatracker.ietf.org/doc/html/rfc6241#section-1.2">RFC6241</a>:
+ * as acknowledged in <a href="https://www.rfc-editor.org/rfc/rfc6241#section-1.2">RFC6241</a>:
  * <pre>
  *   The YANG data modeling language [RFC6020] has been developed for
  *   specifying NETCONF data models and protocol operations, covering the

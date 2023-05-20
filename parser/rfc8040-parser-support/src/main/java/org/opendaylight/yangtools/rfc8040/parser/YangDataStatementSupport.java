@@ -89,7 +89,7 @@ public final class YangDataStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<YangDataName, YangDataStatement, YangDataEffectiveStatement> ctx) {
-        // as per https://tools.ietf.org/html/rfc8040#section-8,
+        // as per https://www.rfc-editor.org/rfc/rfc8040#section-8,
         // yang-data is ignored unless it appears as a top-level statement
         if (ctx.coerceParentContext().getParentContext() != null) {
             ctx.setUnsupported();

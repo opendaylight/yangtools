@@ -34,7 +34,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * name, but from different schemas.
  *
  * <p>
- * The local name must conform to <a href="https://tools.ietf.org/html/rfc7950#section-6.2">RFC7950 Section 6.2</a>.
+ * The local name must conform to <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.2">RFC7950 Section 6.2</a>.
  *
  * <ul>
  * <li><b>XMLNamespace</b> - {@link #getNamespace()} - the namespace assigned to the YANG module which

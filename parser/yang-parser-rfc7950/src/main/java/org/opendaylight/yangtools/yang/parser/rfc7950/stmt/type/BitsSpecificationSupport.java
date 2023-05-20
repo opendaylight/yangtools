@@ -89,7 +89,7 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
 
     private static SourceException noBits(final CommonStmtCtx stmt) {
         /*
-         *  https://tools.ietf.org/html/rfc7950#section-9.7.4:
+         *  https://www.rfc-editor.org/rfc/rfc7950#section-9.7.4:
          *
          *     The "bit" statement, which is a substatement to the "type" statement,
          *     MUST be present if the type is "bits".

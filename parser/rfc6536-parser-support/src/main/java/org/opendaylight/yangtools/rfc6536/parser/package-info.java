@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG parser support for metamodel extensions defined in <a href="https://tools.ietf.org/html/rfc6536">RFC6536</a>.
+ * YANG parser support for metamodel extensions defined in <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  * Add {@link org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport} and
  * {@link org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport} to your reactor to add support
  * for this extension.

@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 /**
  * An exception indicating source-level problem across multiple YANG sources relating to how they are allowed to be
  * linked between YANG versions. This typically indicates a direct violation of
- * <a href="https://datatracker.ietf.org/doc/html/rfc7950#section-12">RFC7950 section 12</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-12">RFC7950 section 12</a>.
  */
 @Beta
 public class YangVersionLinkageException extends SourceException {

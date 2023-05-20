@@ -16,8 +16,8 @@ import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An argument to a YANG statement, as defined by section 6.1.3 of both
- * <a href="https://tools.ietf.org/html/rfc6020#section-6.1.3">RFC6020</a> and
- * <a href="https://tools.ietf.org/html/rfc7950#section-6.1.3">RFC7950</a>. An argument is effectively any old string,
+ * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.3">RFC6020</a> and
+ * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3">RFC7950</a>. An argument is effectively any old string,
  * except it can be defined in a number of ways:
  * <ul>
  *   <li>it can be a simple unquoted string, or</li>

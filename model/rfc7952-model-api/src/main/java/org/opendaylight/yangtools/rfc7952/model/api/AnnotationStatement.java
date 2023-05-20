@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of 'annotation' extension defined in
- * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
 @Beta
 public interface AnnotationStatement extends UnknownStatement<QName>, WithStatus<QName>,

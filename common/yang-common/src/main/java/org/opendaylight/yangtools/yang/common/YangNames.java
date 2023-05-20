@@ -39,7 +39,7 @@ public final class YangNames {
     }
 
     /**
-     * Parse a file name according to rules outlined in https://tools.ietf.org/html/rfc6020#section-5.2. Input string
+     * Parse a file name according to rules outlined in https://www.rfc-editor.org/rfc/rfc6020#section-5.2. Input string
      * should be the base path with file extension stripped.
      *
      * @param baseName file base name

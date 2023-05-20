@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG metamodel extensions to support NACM, as defined in <a href="https://tools.ietf.org/html/rfc6536">RFC6536</a>.
+ * YANG metamodel extensions to support NACM, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  *
  * @author Robert Varga
  */

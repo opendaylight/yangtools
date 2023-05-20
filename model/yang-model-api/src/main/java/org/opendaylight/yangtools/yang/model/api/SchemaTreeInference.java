@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 /**
  * An {@link EffectiveStatementInference} consisting purely of steps along the {@code schema tree} axis, so that it
  * represents a {@code schema tree node} based on resolution of {@code absolute-schema-nodeid} as specified by
- * <a href="https://tools.ietf.org/html/rfc7950#section-6.5">RFC7950 section 6.5</a>.
+ * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.5">RFC7950 section 6.5</a>.
  */
 public interface SchemaTreeInference extends EffectiveStatementInference {
     /**

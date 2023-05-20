@@ -65,7 +65,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *   <li>{@link NodeWithValue} - Identifier of instance {@code leaf} node or {@code leaf-list} node</li>
  * </ul>
  *
- * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
+ * @see <a href="http://www.rfc-editor.org/rfc/rfc6020#section-9.13">RFC6020</a>
  */
 public abstract sealed class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier>
         permits FixedYangInstanceIdentifier, StackedYangInstanceIdentifier {

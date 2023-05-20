@@ -12,8 +12,8 @@ package org.opendaylight.yangtools.yang.parser.api;
  */
 public enum ImportResolutionMode {
     /**
-     * Standard method as specified by <a href="https://tools.ietf.org/html/rfc6020#section-7.1.5">RFC6020</a> and
-     * refined by <a href="https://tools.ietf.org/html/rfc7950#section-7.1.5">RFC7950</a>. {@code import}s are resolved
+     * Standard method as specified by <a href="https://www.rfc-editor.org/rfc/rfc6020#section-7.1.5">RFC6020</a> and
+     * refined by <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.1.5">RFC7950</a>. {@code import}s are resolved
      * based on exact match of {@code revision-date} statement. In case it is not specified, latest available revision
      * is used.
      */

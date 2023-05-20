@@ -64,7 +64,7 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
 
     private Revision(final @NonNull String str) {
         /*
-         * According to RFC7950 (https://tools.ietf.org/html/rfc7950#section-7.1.9):
+         * According to RFC7950 (https://www.rfc-editor.org/rfc/rfc7950#section-7.1.9):
          *
          *   The "revision" statement specifies the editorial revision history of
          *   the module, including the initial revision.  A series of "revision"
