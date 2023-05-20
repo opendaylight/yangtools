@@ -14,7 +14,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -26,7 +25,7 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode {
     private final ImmutableMap<DataSchemaContextNode, QName> childToCase;
 
     ChoiceNodeContextNode(final ChoiceSchemaNode schema) {
-        super(NodeIdentifier.create(schema.getQName()), schema);
+        super(schema);
         final var childToCaseBuilder = ImmutableMap.<DataSchemaContextNode, QName>builder();
         final var byQNameBuilder = ImmutableMap.<QName, AbstractDataSchemaContextNode>builder();
         final var byArgBuilder = ImmutableMap.<PathArgument, AbstractDataSchemaContextNode>builder();
