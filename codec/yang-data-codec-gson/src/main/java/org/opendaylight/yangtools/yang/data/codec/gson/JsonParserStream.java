@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -46,6 +47,7 @@ import org.opendaylight.yangtools.yang.data.util.NotificationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.YangDataAsContainer;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -97,6 +99,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                 parentNode = OperationAsContainer.of(oper);
             } else if (parent instanceof NotificationDefinition notif) {
                 parentNode = NotificationAsContainer.of(notif);
+            } else if (parent instanceof YangDataSchemaNode yangData) {
+                parentNode = new YangDataAsContainer(yangData);
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + parent);
             }
