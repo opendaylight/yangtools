@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
@@ -51,12 +52,10 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
             checkArgument(current != null, "Invalid input %s: schema for argument %s (after %s) not found", data, arg,
                     sb);
 
-            if (current.isMixin()) {
+            if (current instanceof PathMixin) {
                 /*
-                 * XML/YANG instance identifier does not have concept
-                 * of augmentation identifier, or list as whole which
-                 * identifies a mixin (same as the parent element),
-                 * so we can safely ignore it if it is part of path
+                 * XML/YANG instance identifier does not have concept of augmentation identifier, or list as whole which
+                 * identifies a mixin (same as the parent element), so we can safely ignore it if it is part of path
                  * (since child node) is identified in same fashion.
                  */
                 continue;
