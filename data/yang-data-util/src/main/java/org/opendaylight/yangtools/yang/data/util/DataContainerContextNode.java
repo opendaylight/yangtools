@@ -80,7 +80,7 @@ abstract class DataContainerContextNode<T extends PathArgument> extends Abstract
         if (potential != null) {
             // FIXME: use putIfAbsent() to make sure we do not perform accidental overrwrites
             byArg.put(potential.getIdentifier(), potential);
-            for (QName qname : potential.getQNameIdentifiers()) {
+            for (QName qname : potential.qnameIdentifiers()) {
                 byQName.put(qname, potential);
             }
         }

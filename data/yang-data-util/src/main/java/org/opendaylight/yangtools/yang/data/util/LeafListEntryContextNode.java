@@ -24,7 +24,7 @@ final class LeafListEntryContextNode extends AbstractLeafNodeContext<NodeWithVal
     }
 
     @Override
-    protected void pushToStack(final SchemaInferenceStack stack) {
+    void pushToStack(final SchemaInferenceStack stack) {
         // No-op
     }
 }
