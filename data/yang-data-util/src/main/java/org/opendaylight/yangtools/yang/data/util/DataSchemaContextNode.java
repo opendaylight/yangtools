@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.util.impl.legacy.AbstractMixinContextNode;
+import org.opendaylight.yangtools.yang.data.util.impl.legacy.LeafContextNode;
+import org.opendaylight.yangtools.yang.data.util.impl.legacy.LeafListEntryContextNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -55,6 +57,13 @@ public interface DataSchemaContextNode {
         @NonNull PathArgument mixinPathArgument();
     }
 
+    /**
+     * Marker interface for contexts which boil down to a simple, not-structured value. The
+     */
+    sealed interface SimpleValue extends DataSchemaContextNode permits LeafContextNode, LeafListEntryContextNode {
+        // Marker interface
+    }
+
     @NonNull DataSchemaNode getDataSchemaNode();
 
     // FIXME: YANGTOOLS-1413: this idea is wrong -- if does the wrong thing for items of leaf-list and keyed list
@@ -63,10 +72,6 @@ public interface DataSchemaContextNode {
 
     // FIXME: YANGTOOLS-1413: document this method and (most likely) split it out to a separate interface
     boolean isKeyedEntry();
-
-    // FIXME: YANGTOOLS-1413: this is counter-intuitive: anydata/anyxml are considered non-leaf. This method needs
-    //                        a better name and a proper description.
-    boolean isLeaf();
 
     /**
      * Find a child node identifier by its {@link PathArgument}.

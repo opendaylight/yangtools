@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-final class LeafListEntryContextNode extends AbstractLeafNodeContext {
+public final class LeafListEntryContextNode extends AbstractLeafContextNode implements SimpleValue {
     LeafListEntryContextNode(final LeafListSchemaNode schema) {
         // FIXME: YANGTOOLS-1413: Empty() here is NOT NICE -- it assumes the list is of such entries...
         super(new NodeWithValue<>(schema.getQName(), Empty.value()), schema);

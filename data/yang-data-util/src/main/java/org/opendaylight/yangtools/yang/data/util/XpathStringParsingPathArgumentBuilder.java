@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -159,7 +160,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
             checkCurrentAndSkip(PRECONDITION_END, "Precondition must ends with ']'");
 
             // Break-out from method for leaf-list case
-            if (key == null && currentNode.isLeaf()) {
+            if (key == null && currentNode instanceof SimpleValue) {
                 checkValid(offset == data.length(), "Leaf argument must be last argument of instance identifier.");
                 final var currentSchema = currentNode.getDataSchemaNode();
 
