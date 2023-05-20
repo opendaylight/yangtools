@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
-final class LeafContextNode extends AbstractLeafNodeContext<LeafSchemaNode> {
+final class LeafContextNode extends AbstractLeafNodeContext {
     LeafContextNode(final LeafSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
     }
