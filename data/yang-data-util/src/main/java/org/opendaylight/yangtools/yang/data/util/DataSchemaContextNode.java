@@ -7,12 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import static java.util.Objects.requireNonNull;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -23,15 +18,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -39,8 +28,6 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Schema derived data providing necessary information for mapping between
  * {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode} and serialization format defined in RFC6020,
  * since the mapping is not one-to-one.
- *
- * @param <T> Path Argument type
  */
 // FIXME: YANGTOOLS-1413: this really should be an interface, as there is a ton of non-trivial composition going on:
 //        - getDataSchemaNode() cannot return AugmentationSchemaNode, which is guarded by isMixinNode() and users should
@@ -48,24 +35,13 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 //        - the generic argument is really an implementation detail and we really would like to also make dataSchemaNode
 //          (or rather: underlying SchemaNode) an argument. Both of these are not something users can influence and
 //          therefore we should not burden them with <?> on each reference to this class
-public abstract class DataSchemaContextNode<T extends PathArgument> {
-    private final @NonNull DataSchemaNode dataSchemaNode;
-    private final @NonNull T pathArgument;
+public interface DataSchemaContextNode {
 
-    DataSchemaContextNode(final T pathArgument, final DataSchemaNode dataSchemaNode) {
-        this.dataSchemaNode = requireNonNull(dataSchemaNode);
-        this.pathArgument = requireNonNull(pathArgument);
-    }
-
-    public final @NonNull DataSchemaNode getDataSchemaNode() {
-        return dataSchemaNode;
-    }
+    @NonNull DataSchemaNode getDataSchemaNode();
 
     // FIXME: YANGTOOLS-1413: this idea is wrong -- if does the wrong thing for items of leaf-list and keyed list
     //                        because those identifiers need a value.
-    public final @NonNull T pathArgument() {
-        return pathArgument;
-    }
+    @NonNull PathArgument pathArgument();
 
      /**
      * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
@@ -81,22 +57,14 @@ public abstract class DataSchemaContextNode<T extends PathArgument> {
      *
      * @return {@code} false if this node corresponds to an XML element, or {@code true} if it is an encapsulation node.
      */
-    public boolean isMixin() {
-        return false;
-    }
+    boolean isMixin();
 
     // FIXME: document this method
-    public boolean isKeyedEntry() {
-        return false;
-    }
+    boolean isKeyedEntry();
 
     // FIXME: this is counter-intuitive: anydata/anyxml are considered non-leaf. This method needs a better name and
     //        a proper description.
-    public abstract boolean isLeaf();
-
-    Set<QName> qnameIdentifiers() {
-        return ImmutableSet.of(pathArgument().getNodeType());
-    }
+    boolean isLeaf();
 
     /**
      * Find a child node identifier by its {@link PathArgument}.
@@ -105,7 +73,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> {
      * @return A child node, or null if not found
      */
     // FIXME: document PathArgument type mismatch
-    public abstract @Nullable DataSchemaContextNode<?> getChild(PathArgument child);
+    @Nullable DataSchemaContextNode getChild(PathArgument child);
 
     /**
      * Find a child node identifier by its {code data tree} {@link QName}. This method returns intermediate nodes
@@ -118,7 +86,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> {
      * @return A child node, or null if not found
      */
     // FIXME: document child == null
-    public abstract @Nullable DataSchemaContextNode<?> getChild(QName child);
+    @Nullable DataSchemaContextNode getChild(QName child);
 
     /**
      * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
@@ -131,9 +99,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> {
      * @return A DataSchemaContextNode on the path towards the specified child
      * @throws NullPointerException if any argument is {@code null}
      */
-    public final @Nullable DataSchemaContextNode<?> enterChild(final SchemaInferenceStack stack, final QName child) {
-        return enterChild(requireNonNull(child), requireNonNull(stack));
-    }
+    @Nullable DataSchemaContextNode enterChild(SchemaInferenceStack stack, QName child);
 
     /**
      * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
@@ -146,25 +112,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> {
      * @return A DataSchemaContextNode for the specified child
      * @throws NullPointerException if any argument is {@code null}
      */
-    public final @Nullable DataSchemaContextNode<?> enterChild(final SchemaInferenceStack stack,
-            final PathArgument child) {
-        return enterChild(requireNonNull(child), requireNonNull(stack));
-    }
-
-    abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull QName child, @NonNull SchemaInferenceStack stack);
-
-    abstract @Nullable DataSchemaContextNode<?> enterChild(@NonNull PathArgument child,
-        @NonNull SchemaInferenceStack stack);
-
-    /**
-     * Push this node into specified {@link SchemaInferenceStack}.
-     *
-     * @param stack {@link SchemaInferenceStack}
-     */
-    void pushToStack(final @NonNull SchemaInferenceStack stack) {
-        // Accurate for most subclasses
-        stack.enterSchemaTree(pathArgument().getNodeType());
-    }
+    @Nullable DataSchemaContextNode enterChild(SchemaInferenceStack stack, PathArgument child);
 
     /**
      * Find a child node as identified by a {@link YangInstanceIdentifier} relative to this node.
@@ -173,97 +121,14 @@ public abstract class DataSchemaContextNode<T extends PathArgument> {
      * @return Child node if present, or empty when corresponding child is not found.
      * @throws NullPointerException if {@code path} is null
      */
-    public final @NonNull Optional<@NonNull DataSchemaContextNode<?>> findChild(
-            final @NonNull YangInstanceIdentifier path) {
-        DataSchemaContextNode<?> currentOp = this;
-        for (PathArgument arg : path.getPathArguments()) {
+    default @NonNull Optional<@NonNull DataSchemaContextNode> findChild(final @NonNull YangInstanceIdentifier path) {
+        var currentOp = this;
+        for (var arg : path.getPathArguments()) {
             currentOp = currentOp.getChild(arg);
             if (currentOp == null) {
                 return Optional.empty();
             }
         }
         return Optional.of(currentOp);
-    }
-
-    static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
-        final DataSchemaNode potential = parent.dataChildByName(child);
-        return potential == null ? findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child)
-                : potential;
-    }
-
-    static DataSchemaContextNode<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
-        return lenientOf(findChildSchemaNode(schema, child));
-    }
-
-    // FIXME: this looks like it should be a Predicate on a stream with findFirst()
-    private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
-        for (ChoiceSchemaNode choice : choices) {
-            // FIXME: this looks weird: what are we looking for again?
-            for (CaseSchemaNode caze : choice.getCases()) {
-                if (findChildSchemaNode(caze, child) != null) {
-                    return choice;
-                }
-            }
-        }
-        return null;
-    }
-
-    static @NonNull DataSchemaContextNode<?> of(final @NonNull DataSchemaNode schema) {
-        if (schema instanceof ContainerLike containerLike) {
-            return new ContainerContextNode(containerLike);
-        } else if (schema instanceof ListSchemaNode list) {
-            return fromListSchemaNode(list);
-        } else if (schema instanceof LeafSchemaNode leaf) {
-            return new LeafContextNode(leaf);
-        } else if (schema instanceof ChoiceSchemaNode choice) {
-            return new ChoiceNodeContextNode(choice);
-        } else if (schema instanceof LeafListSchemaNode leafList) {
-            return fromLeafListSchemaNode(leafList);
-        } else if (schema instanceof AnydataSchemaNode anydata) {
-            return new AnydataContextNode(anydata);
-        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            return new AnyXmlContextNode(anyxml);
-        } else {
-            throw new IllegalStateException("Unhandled schema " + schema);
-        }
-    }
-
-    // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
-    static @Nullable DataSchemaContextNode<?> lenientOf(final @Nullable DataSchemaNode schema) {
-        if (schema instanceof ContainerLike containerLike) {
-            return new ContainerContextNode(containerLike);
-        } else if (schema instanceof ListSchemaNode list) {
-            return fromListSchemaNode(list);
-        } else if (schema instanceof LeafSchemaNode leaf) {
-            return new LeafContextNode(leaf);
-        } else if (schema instanceof ChoiceSchemaNode choice) {
-            return new ChoiceNodeContextNode(choice);
-        } else if (schema instanceof LeafListSchemaNode leafList) {
-            return fromLeafListSchemaNode(leafList);
-        } else if (schema instanceof AnydataSchemaNode anydata) {
-            return new AnydataContextNode(anydata);
-        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            return new AnyXmlContextNode(anyxml);
-        } else {
-            return null;
-        }
-    }
-
-    private static @NonNull DataSchemaContextNode<?> fromListSchemaNode(final ListSchemaNode potential) {
-        var keyDefinition = potential.getKeyDefinition();
-        if (keyDefinition.isEmpty()) {
-            return new UnkeyedListMixinContextNode(potential);
-        } else if (potential.isUserOrdered()) {
-            return new OrderedMapMixinContextNode(potential);
-        } else {
-            return new UnorderedMapMixinContextNode(potential);
-        }
-    }
-
-    private static @NonNull DataSchemaContextNode<?> fromLeafListSchemaNode(final LeafListSchemaNode potential) {
-        if (potential.isUserOrdered()) {
-            return new OrderedLeafListMixinContextNode(potential);
-        }
-        return new UnorderedLeafListMixinContextNode(potential);
     }
 }

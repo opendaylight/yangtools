@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
-final class UnkeyedListItemContextNode extends AbstractListItemContextNode<NodeIdentifier> {
-    UnkeyedListItemContextNode(final ListSchemaNode schema) {
+public final class ContainerContextNode extends DataContainerContextNode<NodeIdentifier> {
+    public ContainerContextNode(final ContainerLike schema) {
         super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
 }
