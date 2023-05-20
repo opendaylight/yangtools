@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -35,14 +36,13 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * since the mapping is not one-to-one.
  */
 public abstract class AbstractDataSchemaContextNode implements DataSchemaContextNode {
-    // FIXME: YANGTOOLS-1413: this field should not be needed
-    private final @NonNull PathArgument pathArgument;
+    private final @Nullable NodeIdentifier pathStep;
 
     final @NonNull DataSchemaNode dataSchemaNode;
 
-    AbstractDataSchemaContextNode(final PathArgument pathArgument, final DataSchemaNode dataSchemaNode) {
+    AbstractDataSchemaContextNode(final NodeIdentifier pathStep, final DataSchemaNode dataSchemaNode) {
         this.dataSchemaNode = requireNonNull(dataSchemaNode);
-        this.pathArgument = requireNonNull(pathArgument);
+        this.pathStep = pathStep;
     }
 
     @Override
@@ -51,13 +51,8 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
     }
 
     @Override
-    public final PathArgument pathArgument() {
-        return pathArgument;
-    }
-
-    @Override
-    public boolean isKeyedEntry() {
-        return false;
+    public final NodeIdentifier pathStep() {
+        return pathStep;
     }
 
     Set<QName> qnameIdentifiers() {

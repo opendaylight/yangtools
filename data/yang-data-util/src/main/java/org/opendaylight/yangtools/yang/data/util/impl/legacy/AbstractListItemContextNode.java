@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * {@link ListItemContextNode}.
  */
 abstract class AbstractListItemContextNode extends DataContainerContextNode {
-    AbstractListItemContextNode(final PathArgument pathArgument, final DataNodeContainer container,
+    AbstractListItemContextNode(final NodeIdentifier pathStep, final DataNodeContainer container,
             final DataSchemaNode schema) {
-        super(pathArgument, container, schema);
+        super(pathStep, container, schema);
     }
 
     @Override

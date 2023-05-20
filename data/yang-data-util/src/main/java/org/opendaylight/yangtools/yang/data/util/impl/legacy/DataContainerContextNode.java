@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -25,39 +26,37 @@ abstract class DataContainerContextNode extends AbstractInteriorContextNode {
     private final ConcurrentMap<QName, AbstractDataSchemaContextNode> byQName = new ConcurrentHashMap<>();
     private final DataNodeContainer container;
 
-    DataContainerContextNode(final PathArgument pathArgument, final DataNodeContainer container,
+    DataContainerContextNode(final NodeIdentifier pathStep, final DataNodeContainer container,
             final DataSchemaNode schema) {
-        super(pathArgument, schema);
+        super(pathStep, schema);
         this.container = requireNonNull(container);
     }
 
     @Override
-    public AbstractDataSchemaContextNode getChild(final PathArgument child) {
-        var potential = byArg.get(child);
-        if (potential != null) {
-            return potential;
+    public final AbstractDataSchemaContextNode getChild(final PathArgument child) {
+        final var existing = byArg.get(child);
+        if (existing != null) {
+            return existing;
         }
-        potential = fromLocalSchema(child);
-        return register(potential);
+        return register(fromLocalSchema(child));
     }
 
     @Override
-    public AbstractDataSchemaContextNode getChild(final QName child) {
-        AbstractDataSchemaContextNode potential = byQName.get(child);
-        if (potential != null) {
-            return potential;
+    public final AbstractDataSchemaContextNode getChild(final QName child) {
+        var existing = byQName.get(child);
+        if (existing != null) {
+            return existing;
         }
-        potential = fromLocalSchemaAndQName(container, child);
-        return register(potential);
+        return register(fromLocalSchemaAndQName(container, child));
     }
 
     @Override
-    protected final DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
+    final DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
         return pushToStack(getChild(child), stack);
     }
 
     @Override
-    protected final DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
+    final DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
         return pushToStack(getChild(child), stack);
     }
 
@@ -73,7 +72,7 @@ abstract class DataContainerContextNode extends AbstractInteriorContextNode {
         return fromSchemaAndQNameChecked(container, child.getNodeType());
     }
 
-    protected AbstractDataSchemaContextNode fromLocalSchemaAndQName(final DataNodeContainer schema,
+    private static AbstractDataSchemaContextNode fromLocalSchemaAndQName(final DataNodeContainer schema,
             final QName child) {
         return fromSchemaAndQNameChecked(schema, child);
     }
@@ -81,7 +80,7 @@ abstract class DataContainerContextNode extends AbstractInteriorContextNode {
     private AbstractDataSchemaContextNode register(final AbstractDataSchemaContextNode potential) {
         if (potential != null) {
             // FIXME: use putIfAbsent() to make sure we do not perform accidental overrwrites
-            byArg.put(potential.pathArgument(), potential);
+            byArg.put(potential.getPathStep(), potential);
             for (QName qname : potential.qnameIdentifiers()) {
                 byQName.put(qname, potential);
             }

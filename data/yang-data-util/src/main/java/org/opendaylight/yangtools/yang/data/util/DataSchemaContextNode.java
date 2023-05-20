@@ -12,9 +12,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
@@ -50,11 +53,13 @@ public interface DataSchemaContextNode {
     */
     sealed interface PathMixin extends DataSchemaContextNode permits AbstractMixinContextNode {
         /**
-         * The mixed-in {@link PathArgument}.
+         * The mixed-in {@link NodeIdentifier}.
          *
-         * @return Mixed-in PathArgument
+         * @return Mixed-in NodeIdentifier
          */
-        @NonNull PathArgument mixinPathArgument();
+        default @NonNull NodeIdentifier mixinPathStep() {
+            return getPathStep();
+        }
     }
 
     /**
@@ -66,12 +71,27 @@ public interface DataSchemaContextNode {
 
     @NonNull DataSchemaNode getDataSchemaNode();
 
-    // FIXME: YANGTOOLS-1413: this idea is wrong -- if does the wrong thing for items of leaf-list and keyed list
-    //                        because those identifiers need a value.
-    @NonNull PathArgument pathArgument();
+    /**
+     * Return the fixed {@link YangInstanceIdentifier} step, if available. This method returns {@code null} for contexts
+     * like {@link MapEntryNode} and {@link LeafSetEntryNode}, where the step depends on the actual node value.
+     *
+     * @return A {@link NodeIdentifier}, or {@code null}
+     */
+    @Nullable NodeIdentifier pathStep();
 
-    // FIXME: YANGTOOLS-1413: document this method and (most likely) split it out to a separate interface
-    boolean isKeyedEntry();
+    /**
+     * Return the fixed {@link YangInstanceIdentifier} step.
+     *
+     * @return A {@link NodeIdentifier}
+     * @throws UnsupportedOperationException if this node does not have fixed step
+     */
+    default @NonNull NodeIdentifier getPathStep() {
+        final var arg = pathStep();
+        if (arg != null) {
+            return arg;
+        }
+        throw new UnsupportedOperationException(this + " does not have a fixed path step");
+    }
 
     /**
      * Find a child node identifier by its {@link PathArgument}.

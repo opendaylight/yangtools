@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 abstract class AbstractLeafContextNode extends AbstractDataSchemaContextNode {
-    AbstractLeafContextNode(final PathArgument pathArgument, final DataSchemaNode schema) {
-        super(pathArgument, schema);
+    AbstractLeafContextNode(final NodeIdentifier pathStep, final DataSchemaNode schema) {
+        super(pathStep, schema);
     }
 
     @Override

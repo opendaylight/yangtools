@@ -25,13 +25,13 @@ abstract sealed class AbstractListLikeContextNode extends AbstractMixinContextNo
     }
 
     @Override
-    protected final DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
+    final DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
         // Stack is already pointing to the corresponding statement, now we are just working with the child
         return getChild(child);
     }
 
     @Override
-    protected final DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
+    final DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
         return getChild(child);
     }
 }

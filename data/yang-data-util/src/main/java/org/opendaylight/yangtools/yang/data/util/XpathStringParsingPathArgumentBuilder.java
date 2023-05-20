@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -115,7 +116,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         current = current.getChild(name);
         checkValid(current != null, "%s is not correct schema node identifier.", name);
         while (current instanceof PathMixin mixin) {
-            product.add(mixin.mixinPathArgument());
+            product.add(mixin.mixinPathStep());
             current = current.getChild(name);
         }
         stack.enterDataTree(name);
@@ -138,10 +139,12 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      * @return PathArgument representing node selection with predictes
      */
     private PathArgument computeIdentifierWithPredicate(final QName name) {
-        final DataSchemaContextNode currentNode = nextContextNode(name);
-        checkValid(currentNode.isKeyedEntry(), "Entry %s does not allow specifying predicates.", name);
+        final var currentNode = nextContextNode(name);
+        if (currentNode.pathStep() != null) {
+            throw iae("Entry %s does not allow specifying predicates.", name);
+        }
 
-        ImmutableMap.Builder<QName, Object> keyValues = ImmutableMap.builder();
+        final var keyValues = ImmutableMap.<QName, Object>builder();
         while (!allCharactersConsumed() && PRECONDITION_START == currentChar()) {
             skipCurrentChar();
             skipWhitespaces();
@@ -183,10 +186,13 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         return tmp.resolveLeafref(type);
     }
 
-    private PathArgument computeIdentifier(final QName name) {
-        DataSchemaContextNode currentNode = nextContextNode(name);
-        checkValid(!currentNode.isKeyedEntry(), "Entry %s requires key or value predicate to be present", name);
-        return currentNode.pathArgument();
+    private @NonNull NodeIdentifier computeIdentifier(final QName name) {
+        final var currentNode = nextContextNode(name);
+        final var currentArg = currentNode.pathStep();
+        if (currentArg == null) {
+            throw iae("Entry %s requires key or value predicate to be present", name);
+        }
+        return currentArg;
     }
 
     /**

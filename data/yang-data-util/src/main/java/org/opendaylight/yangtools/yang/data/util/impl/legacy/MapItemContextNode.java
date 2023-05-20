@@ -7,17 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class MapItemContextNode extends AbstractListItemContextNode {
     MapItemContextNode(final ListSchemaNode schema) {
-        // FIXME: YANGTOOLS-1413: this is wrong: we have no predicates at all!
-        super(NodeIdentifierWithPredicates.of(schema.getQName()), schema, schema);
-    }
-
-    @Override
-    public boolean isKeyedEntry() {
-        return true;
+        super(null, schema, schema);
     }
 }

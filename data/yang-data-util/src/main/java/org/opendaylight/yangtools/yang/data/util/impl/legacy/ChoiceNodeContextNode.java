@@ -33,7 +33,7 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode {
         for (var caze : schema.getCases()) {
             for (var cazeChild : caze.getChildNodes()) {
                 final var childOp = AbstractDataSchemaContextNode.of(cazeChild);
-                byArgBuilder.put(childOp.pathArgument(), childOp);
+                byArgBuilder.put(childOp.getPathStep(), childOp);
                 childToCaseBuilder.put(childOp, caze.getQName());
                 for (QName qname : childOp.qnameIdentifiers()) {
                     byQNameBuilder.put(qname, childOp);
@@ -62,12 +62,12 @@ final class ChoiceNodeContextNode extends AbstractMixinContextNode {
     }
 
     @Override
-    protected DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
+    DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
         return pushToStack(getChild(child), stack);
     }
 
     @Override
-    protected DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
+    DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
         return pushToStack(getChild(child), stack);
     }
 
