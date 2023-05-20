@@ -109,7 +109,7 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
         final DataSchemaContextTree contextTree = DataSchemaContextTree.from(newSchemaContext);
-        final Optional<DataSchemaContextNode<?>> rootContextNode = contextTree.findChild(getRootPath());
+        final Optional<DataSchemaContextNode> rootContextNode = contextTree.findChild(getRootPath());
         if (!rootContextNode.isPresent()) {
             LOG.warn("Could not find root {} in new schema context, not upgrading", getRootPath());
             return;

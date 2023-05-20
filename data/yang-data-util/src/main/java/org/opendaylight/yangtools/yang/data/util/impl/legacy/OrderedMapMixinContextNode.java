@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class AnyXmlContextNode extends AbstractOpaqueContextNode<AnyxmlSchemaNode> {
-    AnyXmlContextNode(final AnyxmlSchemaNode schema) {
-        super(schema);
+final class OrderedMapMixinContextNode extends UnorderedMapMixinContextNode {
+    OrderedMapMixinContextNode(final ListSchemaNode list) {
+        super(list);
     }
 }

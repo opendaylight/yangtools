@@ -67,7 +67,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private final SchemaInferenceStack stack;
     private final String data;
 
-    private DataSchemaContextNode<?> current;
+    private DataSchemaContextNode current;
     private QNameModule lastModule;
     private int offset;
 
@@ -109,7 +109,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         return computeIdentifierWithPredicate(name);
     }
 
-    private DataSchemaContextNode<?> nextContextNode(final QName name) {
+    private DataSchemaContextNode nextContextNode(final QName name) {
         current = current.getChild(name);
         checkValid(current != null, "%s is not correct schema node identifier.", name);
         while (current.isMixin()) {
@@ -136,7 +136,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      * @return PathArgument representing node selection with predictes
      */
     private PathArgument computeIdentifierWithPredicate(final QName name) {
-        final DataSchemaContextNode<?> currentNode = nextContextNode(name);
+        final DataSchemaContextNode currentNode = nextContextNode(name);
         checkValid(currentNode.isKeyedEntry(), "Entry %s does not allow specifying predicates.", name);
 
         ImmutableMap.Builder<QName, Object> keyValues = ImmutableMap.builder();
@@ -166,7 +166,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
                     type -> resolveLeafref(currentSchema.getQName(), type), keyValue);
                 return new NodeWithValue<>(name, value);
             }
-            final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
+            final DataSchemaContextNode keyNode = currentNode.getChild(key);
             checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
             final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(),
                 type -> resolveLeafref(key, type), keyValue);
@@ -182,7 +182,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     }
 
     private PathArgument computeIdentifier(final QName name) {
-        DataSchemaContextNode<?> currentNode = nextContextNode(name);
+        DataSchemaContextNode currentNode = nextContextNode(name);
         checkValid(!currentNode.isKeyedEntry(), "Entry %s requires key or value predicate to be present", name);
         return currentNode.pathArgument();
     }
