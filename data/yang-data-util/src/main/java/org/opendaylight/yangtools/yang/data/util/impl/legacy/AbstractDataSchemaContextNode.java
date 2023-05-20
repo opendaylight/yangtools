@@ -61,12 +61,6 @@ public abstract sealed class AbstractDataSchemaContextNode implements DataSchema
     }
 
     @Override
-    public abstract @Nullable DataSchemaContextNode getChild(PathArgument child);
-
-    @Override
-    public abstract @Nullable DataSchemaContextNode getChild(QName child);
-
-    @Override
     public final @Nullable DataSchemaContextNode enterChild(final SchemaInferenceStack stack, final QName child) {
         return enterChild(requireNonNull(child), requireNonNull(stack));
     }
