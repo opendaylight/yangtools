@@ -55,11 +55,6 @@ public abstract class AbstractDataSchemaContextNode implements DataSchemaContext
     }
 
     @Override
-    public boolean isMixin() {
-        return false;
-    }
-
-    @Override
     public boolean isKeyedEntry() {
         return false;
     }
