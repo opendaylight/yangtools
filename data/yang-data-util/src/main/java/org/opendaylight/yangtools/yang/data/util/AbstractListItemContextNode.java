@@ -22,7 +22,7 @@ abstract class AbstractListItemContextNode<T extends PathArgument> extends DataC
     }
 
     @Override
-    protected void pushToStack(final SchemaInferenceStack stack) {
+    void pushToStack(final SchemaInferenceStack stack) {
         // No-op
     }
 }

@@ -53,14 +53,15 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 //          (or rather: underlying SchemaNode) an argument. Both of these are not something users can influence and
 //          therefore we should not burden them with <?> on each reference to this class
 public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractSimpleIdentifiable<T> {
-    // FIXME: this can be null only for AugmentationContextNode and in that case the interior part is handled by a
-    //        separate field in DataContainerContextNode. We need to re-examine our base interface class hierarchy
-    //        so that the underlying (effective in augment's case) SchemaNode is always available.
-    private final DataSchemaNode dataSchemaNode;
+    private final @NonNull DataSchemaNode dataSchemaNode;
 
     DataSchemaContextNode(final T identifier, final DataSchemaNode schema) {
         super(identifier);
-        this.dataSchemaNode = schema;
+        dataSchemaNode = requireNonNull(schema);
+    }
+
+    public final @NonNull DataSchemaNode getDataSchemaNode() {
+        return dataSchemaNode;
     }
 
     /**
@@ -90,7 +91,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     //        a proper description.
     public abstract boolean isLeaf();
 
-    protected Set<QName> getQNameIdentifiers() {
+    Set<QName> qnameIdentifiers() {
         return ImmutableSet.of(getIdentifier().getNodeType());
     }
 
@@ -157,15 +158,9 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
      *
      * @param stack {@link SchemaInferenceStack}
      */
-    // FIXME: make this method package-private once the protected constructor is gone
-    protected void pushToStack(final @NonNull SchemaInferenceStack stack) {
+    void pushToStack(final @NonNull SchemaInferenceStack stack) {
         // Accurate for most subclasses
         stack.enterSchemaTree(getIdentifier().getNodeType());
-    }
-
-    // FIXME: final
-    public @Nullable DataSchemaNode getDataSchemaNode() {
-        return dataSchemaNode;
     }
 
     /**
