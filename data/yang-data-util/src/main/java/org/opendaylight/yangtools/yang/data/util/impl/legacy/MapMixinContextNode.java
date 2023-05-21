@@ -14,11 +14,11 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class MapMixinContextNode extends AbstractListLikeContextNode {
-    private final MapItemContextNode innerNode;
+    private final ListItemContextNode innerNode;
 
     MapMixinContextNode(final ListSchemaNode list) {
         super(list);
-        innerNode = new MapItemContextNode(list);
+        innerNode = new ListItemContextNode(null, list);
     }
 
     @Override
