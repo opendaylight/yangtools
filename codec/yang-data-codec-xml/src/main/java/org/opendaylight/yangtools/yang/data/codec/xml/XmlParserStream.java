@@ -42,6 +42,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
@@ -159,6 +160,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                 parentNode = oper.toContainerLike();
             } else if (stmt instanceof NotificationDefinition notif) {
                 parentNode = notif.toContainerLike();
+            } else if (stmt instanceof YangDataSchemaNode yangData) {
+                parentNode = yangData.toContainerLike();
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + stmt);
             }
