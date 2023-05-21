@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.SimpleValue;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -71,7 +71,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private final SchemaInferenceStack stack;
     private final String data;
 
-    private DataSchemaContextNode current;
+    private DataSchemaContext current;
     private QNameModule lastModule;
     private int offset;
 
@@ -113,7 +113,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         return computeIdentifierWithPredicate(name);
     }
 
-    private DataSchemaContextNode nextContextNode(final QName qname) {
+    private DataSchemaContext nextContextNode(final QName qname) {
         current = getChild(current, qname);
         checkValid(current != null, "%s is not correct schema node identifier.", qname);
         while (current instanceof PathMixin mixin) {
@@ -124,7 +124,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         return current;
     }
 
-    private static DataSchemaContextNode getChild(final DataSchemaContextNode parent, final QName qname) {
+    private static DataSchemaContext getChild(final DataSchemaContext parent, final QName qname) {
         return parent instanceof Composite composite ? composite.childByQName(qname) : null;
     }
 
@@ -170,7 +170,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
             // Break-out from method for leaf-list case
             if (key == null && currentNode instanceof SimpleValue) {
                 checkValid(offset == data.length(), "Leaf argument must be last argument of instance identifier.");
-                final var currentSchema = currentNode.getDataSchemaNode();
+                final var currentSchema = currentNode.dataSchemaNode();
 
                 final Object value = codec.deserializeKeyValue(currentSchema,
                     type -> resolveLeafref(currentSchema.getQName(), type), keyValue);
@@ -181,7 +181,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
                 throw iae("%s is not correct schema node identifier.", key);
             }
 
-            final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(),
+            final Object value = codec.deserializeKeyValue(keyNode.dataSchemaNode(),
                 type -> resolveLeafref(key, type), keyValue);
             keyValues.put(key, value);
         }

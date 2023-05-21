@@ -20,13 +20,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
-import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractCompositeContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractDataSchemaContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractMixinContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.model.LeafContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.model.LeafListItemContextNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.SimpleValue;
+import org.opendaylight.yangtools.yang.data.util.impl.context.AbstractCompositeContext;
+import org.opendaylight.yangtools.yang.data.util.impl.context.AbstractContext;
+import org.opendaylight.yangtools.yang.data.util.impl.context.AbstractPathMixinContext;
+import org.opendaylight.yangtools.yang.data.util.impl.context.LeafContext;
+import org.opendaylight.yangtools.yang.data.util.impl.context.LeafListItemContext;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -38,11 +38,11 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode} and serialization format defined in RFC6020,
  * since the mapping is not one-to-one.
  */
-public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextNode, Composite, SimpleValue {
+public sealed interface DataSchemaContext permits AbstractContext, Composite, SimpleValue {
     /**
-     * A {@link DataSchemaContextNode} containing other {@link DataSchemaContextNode}s.
+     * A {@link DataSchemaContext} containing other {@link DataSchemaContext}s.
      */
-    sealed interface Composite extends DataSchemaContextNode permits PathMixin, AbstractCompositeContextNode {
+    sealed interface Composite extends DataSchemaContext permits PathMixin, AbstractCompositeContext {
         /**
          * Find a child node identifier by its {@link PathArgument}.
          *
@@ -50,7 +50,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
          * @return A child node, or {@code null} if not found
          * @throws NullPointerException if {@code arg} is {@code null}
          */
-        @Nullable DataSchemaContextNode childByArg(PathArgument arg);
+        @Nullable DataSchemaContext childByArg(PathArgument arg);
 
         /**
          * Find a child node identifier by its {code data tree} {@link QName}. This method returns intermediate nodes
@@ -63,7 +63,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
          * @return A child node, or {@code null} if not found
          * @throws NullPointerException if {@code arg} is {@code null}
          */
-        @Nullable DataSchemaContextNode childByQName(QName qname);
+        @Nullable DataSchemaContext childByQName(QName qname);
 
         /**
          * Find a child node as identified by a {@link YangInstanceIdentifier} relative to this node.
@@ -72,7 +72,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
          * @return Child node if present, or empty when corresponding child is not found.
          * @throws NullPointerException if {@code path} is {@code null}
          */
-        default @Nullable DataSchemaContextNode childByPath(final @NonNull YangInstanceIdentifier path) {
+        default @Nullable DataSchemaContext childByPath(final @NonNull YangInstanceIdentifier path) {
             final var it = path.getPathArguments().iterator();
             if (!it.hasNext()) {
                 return this;
@@ -92,7 +92,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
         }
 
         /**
-         * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
+         * Attempt to enter a child {@link DataSchemaContext} towards the {@link DataSchemaNode} child identified by
          * specified {@code data tree} {@link QName}, adjusting provided {@code stack} with inference steps
          * corresponding to the transition to the returned node. The stack is expected to be correctly pointing at this
          * node's schema, otherwise the results of this method are undefined.
@@ -102,10 +102,10 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
          * @return A DataSchemaContextNode on the path towards the specified child
          * @throws NullPointerException if any argument is {@code null}
          */
-        @Nullable DataSchemaContextNode enterChild(SchemaInferenceStack stack, QName child);
+        @Nullable DataSchemaContext enterChild(SchemaInferenceStack stack, QName child);
 
         /**
-         * Attempt to enter a child {@link DataSchemaContextNode} towards the {@link DataSchemaNode} child identified by
+         * Attempt to enter a child {@link DataSchemaContext} towards the {@link DataSchemaNode} child identified by
          * specified {@link PathArgument}, adjusting provided {@code stack} with inference steps corresponding to
          * the transition to the returned node. The stack is expected to be correctly pointing at this node's schema,
          * otherwise the results of this method are undefined.
@@ -115,7 +115,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
          * @return A DataSchemaContextNode for the specified child
          * @throws NullPointerException if any argument is {@code null}
          */
-        @Nullable DataSchemaContextNode enterChild(SchemaInferenceStack stack, PathArgument child);
+        @Nullable DataSchemaContext enterChild(SchemaInferenceStack stack, PathArgument child);
     }
 
     /**
@@ -133,7 +133,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
     * <p>
     * This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
     */
-    sealed interface PathMixin extends Composite permits AbstractMixinContextNode {
+    sealed interface PathMixin extends Composite permits AbstractPathMixinContext {
         /**
          * The mixed-in {@link NodeIdentifier}.
          *
@@ -147,11 +147,11 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
     /**
      * Marker interface for contexts which boil down to a simple, not-structured value. The
      */
-    sealed interface SimpleValue extends DataSchemaContextNode permits LeafContextNode, LeafListItemContextNode {
+    sealed interface SimpleValue extends DataSchemaContext permits LeafContext, LeafListItemContext {
         // Marker interface
     }
 
-    @NonNull DataSchemaNode getDataSchemaNode();
+    @NonNull DataSchemaNode dataSchemaNode();
 
     /**
      * Return the fixed {@link YangInstanceIdentifier} step, if available. This method returns {@code null} for contexts
