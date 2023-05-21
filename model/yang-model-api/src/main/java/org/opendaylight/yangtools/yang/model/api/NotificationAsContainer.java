@@ -5,31 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
-@Beta
-public final class NotificationAsContainer extends AbstractAsContainer implements NotificationDefinition {
+final class NotificationAsContainer extends AbstractAsContainer implements NotificationDefinition {
     private final @NonNull NotificationDefinition delegate;
 
     NotificationAsContainer(final NotificationDefinition delegate) {
         this.delegate = requireNonNull(delegate);
-    }
-
-    public static @NonNull NotificationAsContainer of(final NotificationDefinition delegate) {
-        return new NotificationAsContainer(delegate);
     }
 
     @Override

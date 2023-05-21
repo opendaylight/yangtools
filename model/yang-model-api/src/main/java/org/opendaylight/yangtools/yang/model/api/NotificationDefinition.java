@@ -10,10 +10,18 @@ package org.opendaylight.yangtools.yang.model.api;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
- * Interface describing YANG 'notification' statement. The notification
- * statement is used to define a NETCONF notification.
+ * Interface describing YANG 'notification' statement. The notification statement is used to define a NETCONF
+ * notification. Note that this interface is not a {@link DataSchemaNode}, which renders compatibility problematic. Use
+ * {@link #toContainerLike()} to get a {@link ContainerLike}, which can serve as a bridge.
  */
 public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget, CopyableNode,
         MustConstraintAware, EffectiveStatementEquivalent<NotificationEffectiveStatement> {
-
+    /**
+     * Return a {@link ContainerLike} backed by this definition's {@link #getInput()} and {@link #getOutput()}.
+     *
+     * @return A compatibility {@link ContainerLike}
+     */
+    default ContainerLike toContainerLike() {
+        return new NotificationAsContainer(this);
+    }
 }

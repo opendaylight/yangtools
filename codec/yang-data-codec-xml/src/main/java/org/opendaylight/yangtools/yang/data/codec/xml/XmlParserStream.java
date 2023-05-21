@@ -68,8 +68,6 @@ import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MountPointData;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.NotificationAsContainer;
-import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -158,9 +156,9 @@ public final class XmlParserStream implements Closeable, Flushable {
             if (stmt instanceof DataSchemaNode data) {
                 parentNode = data;
             } else if (stmt instanceof OperationDefinition oper) {
-                parentNode = OperationAsContainer.of(oper);
+                parentNode = oper.toContainerLike();
             } else if (stmt instanceof NotificationDefinition notif) {
-                parentNode = NotificationAsContainer.of(notif);
+                parentNode = notif.toContainerLike();
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + stmt);
             }
