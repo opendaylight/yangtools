@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -36,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * since the mapping is not one-to-one.
  */
 public abstract sealed class AbstractDataSchemaContextNode implements DataSchemaContextNode
-        permits AbstractInteriorContextNode, AbstractLeafContextNode {
+        permits AbstractCompositeContextNode, LeafContextNode, LeafListEntryContextNode, OpaqueContextNode {
     private final @Nullable NodeIdentifier pathStep;
 
     final @NonNull DataSchemaNode dataSchemaNode;
@@ -59,22 +58,6 @@ public abstract sealed class AbstractDataSchemaContextNode implements DataSchema
     Set<QName> qnameIdentifiers() {
         return ImmutableSet.of(dataSchemaNode.getQName());
     }
-
-    @Override
-    public final @Nullable DataSchemaContextNode enterChild(final SchemaInferenceStack stack, final QName child) {
-        return enterChild(requireNonNull(child), requireNonNull(stack));
-    }
-
-    @Override
-    public final @Nullable DataSchemaContextNode enterChild(final SchemaInferenceStack stack,
-            final PathArgument child) {
-        return enterChild(requireNonNull(child), requireNonNull(stack));
-    }
-
-    abstract @Nullable DataSchemaContextNode enterChild(@NonNull QName child, @NonNull SchemaInferenceStack stack);
-
-    abstract @Nullable DataSchemaContextNode enterChild(@NonNull PathArgument child,
-        @NonNull SchemaInferenceStack stack);
 
     /**
      * Push this node into specified {@link SchemaInferenceStack}.
