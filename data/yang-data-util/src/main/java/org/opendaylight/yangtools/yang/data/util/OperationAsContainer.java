@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.data.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -71,7 +70,6 @@ public class OperationAsContainer extends AbstractAsContainer implements Operati
             };
         }
         return null;
-
     }
 
     @Override
@@ -81,15 +79,6 @@ public class OperationAsContainer extends AbstractAsContainer implements Operati
 
     @Override
     public final Collection<? extends DataSchemaNode> getChildNodes() {
-        final List<DataSchemaNode> ret = new ArrayList<>();
-        final InputSchemaNode input = getInput();
-        if (input != null) {
-            ret.add(input);
-        }
-        final OutputSchemaNode output = getOutput();
-        if (output != null) {
-            ret.add(output);
-        }
-        return ret;
+        return ImmutableList.of(getInput(), getOutput());
     }
 }
