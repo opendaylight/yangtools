@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.CheckedValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
-import org.opendaylight.yangtools.yang.data.util.impl.model.ContainerContextNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.impl.context.ContainerContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -28,8 +28,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * schema and data has differences, the mapping is not trivial -- which is where this class comes in.
  */
 public final class DataSchemaContextTree extends AbstractEffectiveModelContextProvider {
-    public record NodeAndStack(@NonNull DataSchemaContextNode node, @NonNull SchemaInferenceStack stack) {
-        public NodeAndStack(final @NonNull DataSchemaContextNode node, final @NonNull SchemaInferenceStack stack) {
+    public record NodeAndStack(@NonNull DataSchemaContext node, @NonNull SchemaInferenceStack stack) {
+        public NodeAndStack(final @NonNull DataSchemaContext node, final @NonNull SchemaInferenceStack stack) {
             this.node = requireNonNull(node);
             this.stack = requireNonNull(stack);
         }
@@ -43,11 +43,11 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
             }
         });
 
-    private final @NonNull ContainerContextNode root;
+    private final @NonNull ContainerContext root;
 
     private DataSchemaContextTree(final EffectiveModelContext ctx) {
         super(ctx);
-        root = new ContainerContextNode(ctx);
+        root = new ContainerContext(ctx);
     }
 
     public static @NonNull DataSchemaContextTree from(final @NonNull EffectiveModelContext ctx) {
@@ -61,7 +61,7 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
      * @return Child node if present, or empty when corresponding child is not found.
      * @throws NullPointerException if {@code path} is null
      */
-    public @NonNull Optional<@NonNull DataSchemaContextNode> findChild(final @NonNull YangInstanceIdentifier path) {
+    public @NonNull Optional<@NonNull DataSchemaContext> findChild(final @NonNull YangInstanceIdentifier path) {
         // Optional.ofNullable() inline due to annotations
         final var child = root.childByPath(path);
         return child == null ? Optional.empty() : Optional.of(child);
@@ -77,8 +77,8 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
      */
     public @NonNull CheckedValue<@NonNull NodeAndStack, @NonNull IllegalArgumentException> enterPath(
             final YangInstanceIdentifier path) {
-        final var stack = SchemaInferenceStack.of((EffectiveModelContext) root.getDataSchemaNode());
-        DataSchemaContextNode node = root;
+        final var stack = SchemaInferenceStack.of((EffectiveModelContext) root.dataSchemaNode());
+        DataSchemaContext node = root;
         for (var arg : path.getPathArguments()) {
             final var child = node instanceof Composite composite ? composite.enterChild(stack, arg) : null;
             if (child == null) {
@@ -90,7 +90,7 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
         return CheckedValue.ofValue(new NodeAndStack(node, stack));
     }
 
-    public DataSchemaContextNode.@NonNull Composite getRoot() {
+    public DataSchemaContext.@NonNull Composite getRoot() {
         return root;
     }
 }

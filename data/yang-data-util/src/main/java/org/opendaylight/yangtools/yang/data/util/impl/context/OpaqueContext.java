@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.model;
+package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class OpaqueContextNode extends AbstractDataSchemaContextNode {
-    OpaqueContextNode(final DataSchemaNode schema) {
+final class OpaqueContext extends AbstractContext {
+    OpaqueContext(final DataSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
     }
 }

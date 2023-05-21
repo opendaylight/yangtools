@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
@@ -46,7 +46,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     @Override
     protected final String serializeImpl(final YangInstanceIdentifier data) {
         final StringBuilder sb = new StringBuilder();
-        DataSchemaContextNode current = getDataContextTree().getRoot();
+        DataSchemaContext current = getDataContextTree().getRoot();
         QNameModule lastModule = null;
         for (var arg : data.getPathArguments()) {
             current = current instanceof Composite composite ? composite.childByArg(arg) : null;
