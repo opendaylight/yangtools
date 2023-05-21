@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.model;
+package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-public abstract sealed class AbstractMixinContextNode extends AbstractDataSchemaContextNode implements PathMixin
-        permits AbstractListLikeContextNode, ChoiceContextNode {
-    AbstractMixinContextNode(final DataSchemaNode schema) {
+public abstract sealed class AbstractPathMixinContext extends AbstractContext implements PathMixin
+        permits AbstractListLikeContext, ChoiceContext {
+    AbstractPathMixinContext(final DataSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
     }
 }

@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.model;
+package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
-public final class ContainerContextNode extends AbstractCompositeContextNode {
-    public ContainerContextNode(final ContainerLike schema) {
+public final class ContainerContext extends AbstractCompositeContext {
+    public ContainerContext(final ContainerLike schema) {
         super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
 }

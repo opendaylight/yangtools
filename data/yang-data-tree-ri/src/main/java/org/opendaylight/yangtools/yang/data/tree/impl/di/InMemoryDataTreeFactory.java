@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl.di;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
@@ -31,7 +30,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedExcepti
 import org.opendaylight.yangtools.yang.data.tree.impl.InMemoryDataTree;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -155,11 +153,11 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     private static DataSchemaNode getRootSchemaNode(final EffectiveModelContext schemaContext,
             final YangInstanceIdentifier rootPath) {
-        final DataSchemaContextTree contextTree = DataSchemaContextTree.from(schemaContext);
-        final Optional<DataSchemaContextNode> rootContextNode = contextTree.findChild(rootPath);
+        final var contextTree = DataSchemaContextTree.from(schemaContext);
+        final var rootContextNode = contextTree.findChild(rootPath);
         checkArgument(rootContextNode.isPresent(), "Failed to find root %s in schema context", rootPath);
 
-        final DataSchemaNode rootSchemaNode = rootContextNode.orElseThrow().getDataSchemaNode();
+        final var rootSchemaNode = rootContextNode.orElseThrow().dataSchemaNode();
         checkArgument(rootSchemaNode instanceof DataNodeContainer, "Root %s resolves to non-container type %s",
             rootPath, rootSchemaNode);
         return rootSchemaNode;

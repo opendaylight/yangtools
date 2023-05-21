@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.model;
+package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import static java.util.Objects.requireNonNull;
 
@@ -13,13 +13,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class MapContextNode extends AbstractListLikeContextNode {
-    MapContextNode(final ListSchemaNode list) {
-        super(list, new ListItemContextNode(null, list));
+final class MapContext extends AbstractListLikeContext {
+    MapContext(final ListSchemaNode list) {
+        super(list, new ListItemContext(null, list));
     }
 
     @Override
-    public AbstractDataSchemaContextNode childByArg(final PathArgument arg) {
+    public AbstractContext childByArg(final PathArgument arg) {
         return requireNonNull(arg) instanceof NodeIdentifierWithPredicates ? childByQName(arg.getNodeType()) : null;
     }
 }

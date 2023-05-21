@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -76,14 +74,14 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
     }
 
     private ModificationApplyOperation getOperation(final DataSchemaNode rootSchemaNode) {
-        if (rootSchemaNode instanceof ContainerLike && maskMandatory) {
-            return new ContainerModificationStrategy((ContainerLike) rootSchemaNode, treeConfig);
+        if (rootSchemaNode instanceof ContainerLike rootContainerLike && maskMandatory) {
+            return new ContainerModificationStrategy(rootContainerLike, treeConfig);
         }
-        if (rootSchemaNode instanceof ListSchemaNode) {
+        if (rootSchemaNode instanceof ListSchemaNode rootList) {
             final PathArgument arg = treeConfig.getRootPath().getLastPathArgument();
             if (arg instanceof NodeIdentifierWithPredicates) {
-                return maskMandatory ? new MapEntryModificationStrategy((ListSchemaNode) rootSchemaNode, treeConfig)
-                        : MapEntryModificationStrategy.of((ListSchemaNode) rootSchemaNode, treeConfig);
+                return maskMandatory ? new MapEntryModificationStrategy(rootList, treeConfig)
+                        : MapEntryModificationStrategy.of(rootList, treeConfig);
             }
         }
 
@@ -108,20 +106,20 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
 
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
-        final DataSchemaContextTree contextTree = DataSchemaContextTree.from(newSchemaContext);
-        final Optional<DataSchemaContextNode> rootContextNode = contextTree.findChild(getRootPath());
+        final var contextTree = DataSchemaContextTree.from(newSchemaContext);
+        final var rootContextNode = contextTree.findChild(getRootPath());
         if (!rootContextNode.isPresent()) {
             LOG.warn("Could not find root {} in new schema context, not upgrading", getRootPath());
             return;
         }
 
-        final DataSchemaNode rootSchemaNode = rootContextNode.orElseThrow().getDataSchemaNode();
+        final var rootSchemaNode = rootContextNode.orElseThrow().dataSchemaNode();
         if (!(rootSchemaNode instanceof DataNodeContainer)) {
             LOG.warn("Root {} resolves to non-container type {}, not upgrading", getRootPath(), rootSchemaNode);
             return;
         }
 
-        final ModificationApplyOperation rootNode = getOperation(rootSchemaNode);
+        final var rootNode = getOperation(rootSchemaNode);
         DataTreeState currentState;
         DataTreeState newState;
         do {

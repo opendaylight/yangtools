@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.model;
+package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -51,16 +51,16 @@ class YT1412Test {
 
     @Test
     void testEnterThroughChoice() {
-        final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
+        final var one = assertInstanceOf(ContainerContext.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(stack, FOUR));
+        final var two = assertInstanceOf(ChoiceContext.class, one.enterChild(stack, FOUR));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(stack, FOUR));
+        final var three = assertInstanceOf(ChoiceContext.class, two.enterChild(stack, FOUR));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        assertInstanceOf(LeafContextNode.class, three.enterChild(stack, FOUR));
+        assertInstanceOf(LeafContext.class, three.enterChild(stack, FOUR));
         assertInstanceOf(LeafEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, FOUR, FOUR), stack.toSchemaNodeIdentifier());
@@ -68,13 +68,13 @@ class YT1412Test {
 
     @Test
     void testEnterThroughAugment() {
-        final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
+        final var one = assertInstanceOf(ContainerContext.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var five = assertInstanceOf(ListContextNode.class, one.enterChild(stack, FIVE));
+        final var five = assertInstanceOf(ListContext.class, one.enterChild(stack, FIVE));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
-        assertInstanceOf(ListItemContextNode.class, five.enterChild(stack, FIVE));
+        assertInstanceOf(ListItemContext.class, five.enterChild(stack, FIVE));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, FIVE), stack.toSchemaNodeIdentifier());
@@ -82,16 +82,16 @@ class YT1412Test {
 
     @Test
     void testEnterThroughAugmentChoiceAugment() {
-        final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
+        final var one = assertInstanceOf(ContainerContext.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(stack, SIX));
+        final var two = assertInstanceOf(ChoiceContext.class, one.enterChild(stack, SIX));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(stack, SIX));
+        final var three = assertInstanceOf(ChoiceContext.class, two.enterChild(stack, SIX));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        assertInstanceOf(LeafContextNode.class, three.enterChild(stack, SIX));
+        assertInstanceOf(LeafContext.class, three.enterChild(stack, SIX));
         assertInstanceOf(LeafEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, SIX, SIX), stack.toSchemaNodeIdentifier());
@@ -101,7 +101,7 @@ class YT1412Test {
     void testEnterChoicePath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.of(ONE, TWO, THREE, FOUR)).orElseThrow();
 
-        assertInstanceOf(LeafContextNode.class, result.node());
+        assertInstanceOf(LeafContext.class, result.node());
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, FOUR, FOUR), result.stack().toSchemaNodeIdentifier());
     }
 
@@ -109,7 +109,7 @@ class YT1412Test {
     void testEnterAugmentPath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.of(ONE, FIVE, FIVE)).orElseThrow();
 
-        assertInstanceOf(ListItemContextNode.class, result.node());
+        assertInstanceOf(ListItemContext.class, result.node());
         assertEquals(Absolute.of(ONE, FIVE), result.stack().toSchemaNodeIdentifier());
     }
 
@@ -117,7 +117,7 @@ class YT1412Test {
     void testEnterAugmentChoicePath() {
         final var result = CONTEXT.enterPath(YangInstanceIdentifier.of(ONE, TWO, THREE, SIX)).orElseThrow();
 
-        assertInstanceOf(LeafContextNode.class, result.node());
+        assertInstanceOf(LeafContext.class, result.node());
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, SIX, SIX), result.stack().toSchemaNodeIdentifier());
     }
 }

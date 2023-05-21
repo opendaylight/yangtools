@@ -5,37 +5,35 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.model;
+package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-public abstract sealed class AbstractCompositeContextNode extends AbstractDataSchemaContextNode implements Composite
-        permits ListItemContextNode, ContainerContextNode {
+public abstract sealed class AbstractCompositeContext extends AbstractContext implements Composite
+        permits ListItemContext, ContainerContext {
     // FIXME: ImmutableMaps with compare-and-swap updates
-    private final ConcurrentMap<PathArgument, AbstractDataSchemaContextNode> byArg = new ConcurrentHashMap<>();
-    private final ConcurrentMap<QName, AbstractDataSchemaContextNode> byQName = new ConcurrentHashMap<>();
+    private final ConcurrentMap<PathArgument, AbstractContext> byArg = new ConcurrentHashMap<>();
+    private final ConcurrentMap<QName, AbstractContext> byQName = new ConcurrentHashMap<>();
     private final DataNodeContainer container;
 
-    AbstractCompositeContextNode(final NodeIdentifier pathStep, final DataNodeContainer container,
+    AbstractCompositeContext(final NodeIdentifier pathStep, final DataNodeContainer container,
             final DataSchemaNode schema) {
         super(pathStep, schema);
         this.container = requireNonNull(container);
     }
 
     @Override
-    public final AbstractDataSchemaContextNode childByArg(final PathArgument arg) {
+    public final AbstractContext childByArg(final PathArgument arg) {
         final var existing = byArg.get(requireNonNull(arg));
         if (existing != null) {
             return existing;
@@ -44,7 +42,7 @@ public abstract sealed class AbstractCompositeContextNode extends AbstractDataSc
     }
 
     @Override
-    public final AbstractDataSchemaContextNode childByQName(final QName qname) {
+    public final AbstractContext childByQName(final QName qname) {
         var existing = byQName.get(requireNonNull(qname));
         if (existing != null) {
             return existing;
@@ -53,17 +51,16 @@ public abstract sealed class AbstractCompositeContextNode extends AbstractDataSc
     }
 
     @Override
-    public final DataSchemaContextNode enterChild(final SchemaInferenceStack stack, final QName qname) {
+    public final AbstractContext enterChild(final SchemaInferenceStack stack, final QName qname) {
         return pushToStack(stack, childByQName(qname));
     }
 
     @Override
-    public final DataSchemaContextNode enterChild(final SchemaInferenceStack stack, final PathArgument arg) {
+    public final AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument arg) {
         return pushToStack(stack, childByArg(arg));
     }
 
-    private static @Nullable DataSchemaContextNode pushToStack(final SchemaInferenceStack stack,
-            final @Nullable AbstractDataSchemaContextNode child) {
+    private static AbstractContext pushToStack(final SchemaInferenceStack stack, final AbstractContext child) {
         requireNonNull(stack);
         if (child != null) {
             child.pushToStack(stack);
@@ -71,20 +68,19 @@ public abstract sealed class AbstractCompositeContextNode extends AbstractDataSc
         return child;
     }
 
-    private AbstractDataSchemaContextNode fromLocalSchema(final PathArgument child) {
+    private AbstractContext fromLocalSchema(final PathArgument child) {
         return fromSchemaAndQNameChecked(container, child.getNodeType());
     }
 
-    private static AbstractDataSchemaContextNode fromLocalSchemaAndQName(final DataNodeContainer schema,
-            final QName child) {
+    private static AbstractContext fromLocalSchemaAndQName(final DataNodeContainer schema, final QName child) {
         return fromSchemaAndQNameChecked(schema, child);
     }
 
-    private AbstractDataSchemaContextNode register(final AbstractDataSchemaContextNode potential) {
+    private AbstractContext register(final AbstractContext potential) {
         if (potential != null) {
             // FIXME: use putIfAbsent() to make sure we do not perform accidental overrwrites
             byArg.put(potential.getPathStep(), potential);
-            for (QName qname : potential.qnameIdentifiers()) {
+            for (var qname : potential.qnameIdentifiers()) {
                 byQName.put(qname, potential);
             }
         }

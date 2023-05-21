@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.model;
+package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Individual list items -- be {@link MapEntryNode} or {@link UnkeyedListEntryNode}.
  */
-final class ListItemContextNode extends AbstractCompositeContextNode {
-    ListItemContextNode(final NodeIdentifier pathStep, final ListSchemaNode schema) {
+final class ListItemContext extends AbstractCompositeContext {
+    ListItemContext(final NodeIdentifier pathStep, final ListSchemaNode schema) {
         super(pathStep, schema, schema);
     }
 
