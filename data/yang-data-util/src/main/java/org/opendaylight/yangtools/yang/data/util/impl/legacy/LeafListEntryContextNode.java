@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleVal
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-public final class LeafListEntryContextNode extends AbstractLeafContextNode implements SimpleValue {
+public final class LeafListEntryContextNode extends AbstractSimpleContextNode implements SimpleValue {
     LeafListEntryContextNode(final LeafListSchemaNode schema) {
         super(null, schema);
     }

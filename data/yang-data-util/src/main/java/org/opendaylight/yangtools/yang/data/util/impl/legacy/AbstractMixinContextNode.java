@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-public abstract sealed class AbstractMixinContextNode extends AbstractInteriorContextNode implements PathMixin
+public abstract sealed class AbstractMixinContextNode extends AbstractCompositeContextNode implements PathMixin
         permits AbstractListLikeContextNode, ChoiceNodeContextNode {
     AbstractMixinContextNode(final DataSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);

@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
@@ -48,7 +49,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         DataSchemaContextNode current = getDataContextTree().getRoot();
         QNameModule lastModule = null;
         for (var arg : data.getPathArguments()) {
-            current = current.getChild(arg);
+            current = current instanceof Composite composite ? composite.getChild(arg) : null;
             checkArgument(current != null, "Invalid input %s: schema for argument %s (after %s) not found", data, arg,
                     sb);
 
