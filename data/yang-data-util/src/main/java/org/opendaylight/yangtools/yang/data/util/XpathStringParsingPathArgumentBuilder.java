@@ -113,19 +113,19 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         return computeIdentifierWithPredicate(name);
     }
 
-    private DataSchemaContextNode nextContextNode(final QName name) {
-        current = getChild(current, name);
-        checkValid(current != null, "%s is not correct schema node identifier.", name);
+    private DataSchemaContextNode nextContextNode(final QName qname) {
+        current = getChild(current, qname);
+        checkValid(current != null, "%s is not correct schema node identifier.", qname);
         while (current instanceof PathMixin mixin) {
             product.add(mixin.mixinPathStep());
-            current = getChild(current, name);
+            current = getChild(current, qname);
         }
-        stack.enterDataTree(name);
+        stack.enterDataTree(qname);
         return current;
     }
 
-    private static DataSchemaContextNode getChild(final DataSchemaContextNode parent, final QName name) {
-        return parent instanceof Composite composite ? composite.getChild(name) : null;
+    private static DataSchemaContextNode getChild(final DataSchemaContextNode parent, final QName qname) {
+        return parent instanceof Composite composite ? composite.childByQName(qname) : null;
     }
 
     /**
@@ -176,7 +176,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
                     type -> resolveLeafref(currentSchema.getQName(), type), keyValue);
                 return new NodeWithValue<>(name, value);
             }
-            final var keyNode = currentNode instanceof Composite composite ? composite.getChild(key) : null;
+            final var keyNode = currentNode instanceof Composite composite ? composite.childByQName(key) : null;
             if (keyNode == null) {
                 throw iae("%s is not correct schema node identifier.", key);
             }

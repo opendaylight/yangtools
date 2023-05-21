@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
 import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractCompositeContextNode;
 import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractDataSchemaContextNode;
@@ -40,19 +38,19 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode} and serialization format defined in RFC6020,
  * since the mapping is not one-to-one.
  */
-public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextNode, Composite, PathMixin, SimpleValue {
+public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextNode, Composite, SimpleValue {
     /**
      * A {@link DataSchemaContextNode} containing other {@link DataSchemaContextNode}s.
      */
-    sealed interface Composite extends DataSchemaContextNode permits AbstractCompositeContextNode {
+    sealed interface Composite extends DataSchemaContextNode permits PathMixin, AbstractCompositeContextNode {
         /**
          * Find a child node identifier by its {@link PathArgument}.
          *
-         * @param child Child path argument
-         * @return A child node, or null if not found
+         * @param arg Child path argument
+         * @return A child node, or {@code null} if not found
+         * @throws NullPointerException if {@code arg} is {@code null}
          */
-        // FIXME: YANGTOOLS-1413: document PathArgument type mismatch, nullness and also rename it to 'childForArg'
-        @Nullable DataSchemaContextNode getChild(PathArgument child);
+        @Nullable DataSchemaContextNode childByArg(PathArgument arg);
 
         /**
          * Find a child node identifier by its {code data tree} {@link QName}. This method returns intermediate nodes
@@ -62,37 +60,32 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
          * provide the next step.
          *
          * @param child Child data tree QName
-         * @return A child node, or null if not found
+         * @return A child node, or {@code null} if not found
+         * @throws NullPointerException if {@code arg} is {@code null}
          */
-        // FIXME: YANGTOOLS-1413: document child == null, also rename to 'childForQName'
-        @Nullable DataSchemaContextNode getChild(QName child);
+        @Nullable DataSchemaContextNode childByQName(QName qname);
 
         /**
          * Find a child node as identified by a {@link YangInstanceIdentifier} relative to this node.
          *
          * @param path Path towards the child node
          * @return Child node if present, or empty when corresponding child is not found.
-         * @throws NullPointerException if {@code path} is null
+         * @throws NullPointerException if {@code path} is {@code null}
          */
-        // FIXME: YANGTOOLS-1413: rename add a childForPath() method and rename this to 'findChildForPath'
-        default @NonNull Optional<@NonNull DataSchemaContextNode> findChild(
-                final @NonNull YangInstanceIdentifier path) {
+        default @Nullable DataSchemaContextNode childByPath(final @NonNull YangInstanceIdentifier path) {
             final var it = path.getPathArguments().iterator();
             if (!it.hasNext()) {
-                return Optional.of(this);
+                return this;
             }
 
             var current = this;
             while (true) {
-                final var child = current.getChild(it.next());
-                if (child == null) {
-                    return Optional.empty();
-                }
-                if (!it.hasNext()) {
-                    return Optional.of(child);
+                final var child = current.childByArg(it.next());
+                if (child == null || !it.hasNext()) {
+                    return child;
                 }
                 if (!(child instanceof Composite compositeChild)) {
-                    return Optional.empty();
+                    return null;
                 }
                 current = compositeChild;
             }
@@ -140,7 +133,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
     * <p>
     * This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
     */
-    sealed interface PathMixin extends DataSchemaContextNode permits AbstractMixinContextNode {
+    sealed interface PathMixin extends Composite permits AbstractMixinContextNode {
         /**
          * The mixed-in {@link NodeIdentifier}.
          *

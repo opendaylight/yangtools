@@ -49,7 +49,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         DataSchemaContextNode current = getDataContextTree().getRoot();
         QNameModule lastModule = null;
         for (var arg : data.getPathArguments()) {
-            current = current instanceof Composite composite ? composite.getChild(arg) : null;
+            current = current instanceof Composite composite ? composite.childByArg(arg) : null;
             checkArgument(current != null, "Invalid input %s: schema for argument %s (after %s) not found", data, arg,
                     sb);
 

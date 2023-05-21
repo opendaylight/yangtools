@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util.impl.model;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
-public final class ContainerContextNode extends DataContainerContextNode {
+public final class ContainerContextNode extends AbstractCompositeContextNode {
     public ContainerContextNode(final ContainerLike schema) {
         super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
