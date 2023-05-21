@@ -21,11 +21,11 @@ final class BinaryValue implements Immutable {
     }
 
     static Object wrap(final Object value) {
-        return value instanceof byte[] ? new BinaryValue((byte[]) value) : value;
+        return value instanceof byte[] bytes ? new BinaryValue(bytes) : value;
     }
 
     static Object wrapToString(final Object value) {
-        return value instanceof byte[] ? toString((byte[]) value) : value;
+        return value instanceof byte[] bytes ? toString(bytes) : value;
     }
 
     @Override
@@ -35,7 +35,7 @@ final class BinaryValue implements Immutable {
 
     @Override
     public boolean equals(final Object obj) {
-        return obj == this || obj instanceof BinaryValue && Arrays.equals(value, ((BinaryValue) obj).value);
+        return obj == this || obj instanceof BinaryValue other && Arrays.equals(value, other.value);
     }
 
     @Override

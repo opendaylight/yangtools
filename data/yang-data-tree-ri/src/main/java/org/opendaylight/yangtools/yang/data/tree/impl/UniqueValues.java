@@ -35,7 +35,7 @@ final class UniqueValues implements Immutable, Iterable<Object> {
     private UniqueValues(final Object[] objects) {
         verify(objects.length != 0);
         this.objects = objects;
-        this.hashCode = Arrays.deepHashCode(objects);
+        hashCode = Arrays.deepHashCode(objects);
     }
 
     @Override
@@ -50,7 +50,7 @@ final class UniqueValues implements Immutable, Iterable<Object> {
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof UniqueValues && Arrays.deepEquals(objects, ((UniqueValues) obj).objects);
+        return this == obj || obj instanceof UniqueValues other && Arrays.deepEquals(objects, other.objects);
     }
 
     @Override
