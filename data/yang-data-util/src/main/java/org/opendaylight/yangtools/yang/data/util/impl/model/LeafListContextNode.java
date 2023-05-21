@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.legacy;
+package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -13,12 +13,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-final class LeafListMixinContextNode extends AbstractListLikeContextNode {
-    private final LeafListEntryContextNode innerOp;
+final class LeafListContextNode extends AbstractListLikeContextNode {
+    private final LeafListItemContextNode innerOp;
 
-    LeafListMixinContextNode(final LeafListSchemaNode schema) {
+    LeafListContextNode(final LeafListSchemaNode schema) {
         super(schema);
-        innerOp = new LeafListEntryContextNode(schema);
+        innerOp = new LeafListItemContextNode(schema);
     }
 
     @Override

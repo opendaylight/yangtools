@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.legacy;
+package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
@@ -19,12 +19,12 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-final class ChoiceNodeContextNode extends AbstractMixinContextNode {
+final class ChoiceContextNode extends AbstractMixinContextNode {
     private final ImmutableMap<PathArgument, AbstractDataSchemaContextNode> byArg;
     private final ImmutableMap<QName, AbstractDataSchemaContextNode> byQName;
     private final ImmutableMap<DataSchemaContextNode, QName> childToCase;
 
-    ChoiceNodeContextNode(final ChoiceSchemaNode schema) {
+    ChoiceContextNode(final ChoiceSchemaNode schema) {
         super(schema);
         final var childToCaseBuilder = ImmutableMap.<DataSchemaContextNode, QName>builder();
         final var byQNameBuilder = ImmutableMap.<QName, AbstractDataSchemaContextNode>builder();

@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.legacy;
+package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-public final class LeafListEntryContextNode extends AbstractDataSchemaContextNode implements SimpleValue {
-    LeafListEntryContextNode(final LeafListSchemaNode schema) {
+public final class LeafListItemContextNode extends AbstractDataSchemaContextNode implements SimpleValue {
+    LeafListItemContextNode(final LeafListSchemaNode schema) {
         super(null, schema);
     }
 

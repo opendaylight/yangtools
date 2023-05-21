@@ -24,11 +24,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
-import org.opendaylight.yangtools.yang.data.util.impl.legacy.AbstractCompositeContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.legacy.AbstractDataSchemaContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.legacy.AbstractMixinContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.legacy.LeafContextNode;
-import org.opendaylight.yangtools.yang.data.util.impl.legacy.LeafListEntryContextNode;
+import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractCompositeContextNode;
+import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractDataSchemaContextNode;
+import org.opendaylight.yangtools.yang.data.util.impl.model.AbstractMixinContextNode;
+import org.opendaylight.yangtools.yang.data.util.impl.model.LeafContextNode;
+import org.opendaylight.yangtools.yang.data.util.impl.model.LeafListItemContextNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -154,7 +154,7 @@ public sealed interface DataSchemaContextNode permits AbstractDataSchemaContextN
     /**
      * Marker interface for contexts which boil down to a simple, not-structured value. The
      */
-    sealed interface SimpleValue extends DataSchemaContextNode permits LeafContextNode, LeafListEntryContextNode {
+    sealed interface SimpleValue extends DataSchemaContextNode permits LeafContextNode, LeafListItemContextNode {
         // Marker interface
     }
 

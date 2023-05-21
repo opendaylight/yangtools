@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.legacy;
+package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -54,10 +54,10 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = assertInstanceOf(ChoiceNodeContextNode.class, one.enterChild(FOUR, stack));
+        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(FOUR, stack));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = assertInstanceOf(ChoiceNodeContextNode.class, two.enterChild(FOUR, stack));
+        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(FOUR, stack));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
         assertInstanceOf(LeafContextNode.class, three.enterChild(FOUR, stack));
@@ -71,7 +71,7 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var five = assertInstanceOf(ListMixinContextNode.class, one.enterChild(FIVE, stack));
+        final var five = assertInstanceOf(ListContextNode.class, one.enterChild(FIVE, stack));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
         assertInstanceOf(ListItemContextNode.class, five.enterChild(FIVE, stack));
@@ -85,10 +85,10 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = assertInstanceOf(ChoiceNodeContextNode.class, one.enterChild(SIX, stack));
+        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(SIX, stack));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = assertInstanceOf(ChoiceNodeContextNode.class, two.enterChild(SIX, stack));
+        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(SIX, stack));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
         assertInstanceOf(LeafContextNode.class, three.enterChild(SIX, stack));

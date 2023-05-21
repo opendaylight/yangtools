@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.legacy;
+package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * levels backed by a single {@link DataSchemaNode}.
  */
 abstract sealed class AbstractListLikeContextNode extends AbstractMixinContextNode
-        permits ListMixinContextNode, LeafListMixinContextNode, MapMixinContextNode {
+        permits ListContextNode, LeafListContextNode, MapContextNode {
     AbstractListLikeContextNode(final DataSchemaNode schema) {
         super(schema);
     }

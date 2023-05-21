@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.legacy;
+package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import static java.util.Objects.requireNonNull;
 
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * since the mapping is not one-to-one.
  */
 public abstract sealed class AbstractDataSchemaContextNode implements DataSchemaContextNode
-        permits AbstractCompositeContextNode, LeafContextNode, LeafListEntryContextNode, OpaqueContextNode {
+        permits AbstractCompositeContextNode, LeafContextNode, LeafListItemContextNode, OpaqueContextNode {
     private final @Nullable NodeIdentifier pathStep;
 
     final @NonNull DataSchemaNode dataSchemaNode;
@@ -100,9 +100,9 @@ public abstract sealed class AbstractDataSchemaContextNode implements DataSchema
         } else if (schema instanceof LeafSchemaNode leaf) {
             return new LeafContextNode(leaf);
         } else if (schema instanceof ChoiceSchemaNode choice) {
-            return new ChoiceNodeContextNode(choice);
+            return new ChoiceContextNode(choice);
         } else if (schema instanceof LeafListSchemaNode leafList) {
-            return new LeafListMixinContextNode(leafList);
+            return new LeafListContextNode(leafList);
         } else if (schema instanceof AnydataSchemaNode anydata) {
             return new OpaqueContextNode(anydata);
         } else if (schema instanceof AnyxmlSchemaNode anyxml) {
@@ -121,9 +121,9 @@ public abstract sealed class AbstractDataSchemaContextNode implements DataSchema
         } else if (schema instanceof LeafSchemaNode leaf) {
             return new LeafContextNode(leaf);
         } else if (schema instanceof ChoiceSchemaNode choice) {
-            return new ChoiceNodeContextNode(choice);
+            return new ChoiceContextNode(choice);
         } else if (schema instanceof LeafListSchemaNode leafList) {
-            return new LeafListMixinContextNode(leafList);
+            return new LeafListContextNode(leafList);
         } else if (schema instanceof AnydataSchemaNode anydata) {
             return new OpaqueContextNode(anydata);
         } else if (schema instanceof AnyxmlSchemaNode anyxml) {
@@ -136,9 +136,9 @@ public abstract sealed class AbstractDataSchemaContextNode implements DataSchema
     private static @NonNull AbstractDataSchemaContextNode fromListSchemaNode(final ListSchemaNode potential) {
         var keyDefinition = potential.getKeyDefinition();
         if (keyDefinition.isEmpty()) {
-            return new ListMixinContextNode(potential);
+            return new ListContextNode(potential);
         } else {
-            return new MapMixinContextNode(potential);
+            return new MapContextNode(potential);
         }
     }
 }

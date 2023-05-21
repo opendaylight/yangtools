@@ -5,28 +5,25 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util.impl.legacy;
+package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class ListMixinContextNode extends AbstractListLikeContextNode {
+final class MapContextNode extends AbstractListLikeContextNode {
     private final ListItemContextNode innerNode;
 
-    ListMixinContextNode(final ListSchemaNode schema) {
-        super(schema);
-        // FIXME: yeah, NodeIdentifier is being used for individual nodes, but it really should not
-        //        (they are not addressable)
-        innerNode = new ListItemContextNode(NodeIdentifier.create(schema.getQName()), schema);
+    MapContextNode(final ListSchemaNode list) {
+        super(list);
+        innerNode = new ListItemContextNode(null, list);
     }
 
     @Override
     public DataSchemaContextNode getChild(final PathArgument child) {
-        // FIXME: 10.0.0: checkArgument() on PathArgument
+        // FIXME: validate PathArgument type
         return innerNodeIfMatch(child.getNodeType());
     }
 
