@@ -14,6 +14,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.CheckedValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -58,8 +59,19 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
      * Find a child node as identified by an absolute {@link YangInstanceIdentifier}.
      *
      * @param path Path towards the child node
+     * @return Child node if present, or {@code null} when corresponding child is not found.
+     * @throws NullPointerException if {@code path} is {@code null}
+     */
+    public @Nullable DataSchemaContext childByPath(final @NonNull YangInstanceIdentifier path) {
+        return root.childByPath(path);
+    }
+
+    /**
+     * Find a child node as identified by an absolute {@link YangInstanceIdentifier}.
+     *
+     * @param path Path towards the child node
      * @return Child node if present, or empty when corresponding child is not found.
-     * @throws NullPointerException if {@code path} is null
+     * @throws NullPointerException if {@code path} is {@code null}
      */
     public @NonNull Optional<@NonNull DataSchemaContext> findChild(final @NonNull YangInstanceIdentifier path) {
         // Optional.ofNullable() inline due to annotations

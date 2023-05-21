@@ -154,10 +154,10 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static DataSchemaNode getRootSchemaNode(final EffectiveModelContext schemaContext,
             final YangInstanceIdentifier rootPath) {
         final var contextTree = DataSchemaContextTree.from(schemaContext);
-        final var rootContextNode = contextTree.findChild(rootPath);
-        checkArgument(rootContextNode.isPresent(), "Failed to find root %s in schema context", rootPath);
+        final var rootContextNode = contextTree.childByPath(rootPath);
+        checkArgument(rootContextNode != null, "Failed to find root %s in schema context", rootPath);
 
-        final var rootSchemaNode = rootContextNode.orElseThrow().dataSchemaNode();
+        final var rootSchemaNode = rootContextNode.dataSchemaNode();
         checkArgument(rootSchemaNode instanceof DataNodeContainer, "Root %s resolves to non-container type %s",
             rootPath, rootSchemaNode);
         return rootSchemaNode;
