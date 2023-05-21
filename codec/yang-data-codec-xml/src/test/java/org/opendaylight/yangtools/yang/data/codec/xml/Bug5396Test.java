@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Bug5396Test {
     private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2016-03-22"));
 
-    private final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
+    private final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug5396/yang");
 
     @Test
     public void test() throws Exception {
