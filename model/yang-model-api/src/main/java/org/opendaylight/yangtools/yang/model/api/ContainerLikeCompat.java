@@ -5,24 +5,26 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.collect.ForwardingObject;
-import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-abstract class AbstractAsContainer extends ForwardingObject implements ContainerLike {
+/**
+ * Base class supporting {@link OperationDefinition#toContainerLike()} and
+ * {@link NotificationDefinition#toContainerLike()}. This class is exposed only for the unlikely need users of those
+ * methods need to do tricks when encountering those containers.
+ */
+public abstract sealed class ContainerLikeCompat extends ForwardingObject implements ContainerLike
+        permits NotificationAsContainer, OperationAsContainer {
+    ContainerLikeCompat() {
+        // Hidden on purpose
+    }
+
     @Override
     protected abstract @NonNull SchemaNode delegate();
 
@@ -64,23 +66,23 @@ abstract class AbstractAsContainer extends ForwardingObject implements Container
     }
 
     @Override
-    public final Collection<? extends ActionDefinition> getActions() {
-        return ImmutableSet.of();
+    public final Set<ActionDefinition> getActions() {
+        return Set.of();
     }
 
     @Override
-    public final Collection<? extends NotificationDefinition> getNotifications() {
-        return ImmutableSet.of();
+    public final Set<NotificationDefinition> getNotifications() {
+        return Set.of();
     }
 
     @Override
-    public final Collection<? extends UsesNode> getUses() {
-        return ImmutableSet.of();
+    public final Set<UsesNode> getUses() {
+        return Set.of();
     }
 
     @Override
-    public final Collection<? extends @NonNull MustDefinition> getMustConstraints() {
-        return ImmutableSet.of();
+    public final Set<@NonNull MustDefinition> getMustConstraints() {
+        return Set.of();
     }
 
     @Override

@@ -42,8 +42,6 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.NotificationAsContainer;
-import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -94,9 +92,9 @@ public final class JsonParserStream implements Closeable, Flushable {
             if (parent instanceof DataSchemaNode data) {
                 parentNode = data;
             } else if (parent instanceof OperationDefinition oper) {
-                parentNode = OperationAsContainer.of(oper);
+                parentNode = oper.toContainerLike();
             } else if (parent instanceof NotificationDefinition notif) {
-                parentNode = NotificationAsContainer.of(notif);
+                parentNode = notif.toContainerLike();
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + parent);
             }

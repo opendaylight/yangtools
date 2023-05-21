@@ -11,7 +11,9 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Common interface for an operation, such as an {@link RpcDefinition} or an {@link ActionDefinition}.
+ * Common interface for an operation, such as an {@link RpcDefinition} or an {@link ActionDefinition}. Note that this
+ * interface is not a {@link DataSchemaNode}, which renders compatibility problematic. Use {@link #toContainerLike()} to
+ * get a {@link ContainerLike}, which can serve as a bridge.
  */
 @NonNullByDefault
 public interface OperationDefinition extends SchemaNode {
@@ -44,4 +46,13 @@ public interface OperationDefinition extends SchemaNode {
      *         substatements of output define nodes under the operation's output node.
      */
     OutputSchemaNode getOutput();
+
+    /**
+     * Return a {@link ContainerLike} backed by this definition's {@link #getInput()} and {@link #getOutput()}.
+     *
+     * @return A compatibility {@link ContainerLike}
+     */
+    default ContainerLikeCompat toContainerLike() {
+        return new OperationAsContainer(this);
+    }
 }

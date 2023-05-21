@@ -49,7 +49,7 @@ public final class ContainerSchemaNodes {
 
     @Beta
     public static @NonNull ContainerLike forRPC(final RpcDefinition rpc) {
-        return new RpcContainerSchemaNode(rpc);
+        return rpc.toContainerLike();
     }
 
     private abstract static class AbstractContainerSchemaNode<T extends SchemaNode> implements ContainerLike {
@@ -114,47 +114,6 @@ public final class ContainerSchemaNodes {
         @Override
         public Optional<? extends QualifiedBound> getWhenCondition() {
             return Optional.empty();
-        }
-    }
-
-    private static final class RpcContainerSchemaNode extends AbstractContainerSchemaNode<RpcDefinition> {
-        RpcContainerSchemaNode(final RpcDefinition rpcDefinition) {
-            super(rpcDefinition);
-        }
-
-        @Override
-        public Collection<? extends GroupingDefinition> getGroupings() {
-            return schemaNode.getGroupings();
-        }
-
-        @Override
-        public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
-            return schemaNode.getTypeDefinitions();
-        }
-
-        @Override
-        public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
-            return ImmutableSet.of();
-        }
-
-        @Override
-        public Collection<? extends DataSchemaNode> getChildNodes() {
-            return ImmutableList.of(schemaNode.getInput(), schemaNode.getOutput());
-        }
-
-        @Override
-        public DataSchemaNode dataChildByName(final QName name) {
-            // FIXME: also check namespace
-            return switch (name.getLocalName()) {
-                case "input" -> schemaNode.getInput();
-                case "output" -> schemaNode.getOutput();
-                default -> null;
-            };
-        }
-
-        @Override
-        public Collection<? extends NotificationDefinition> getNotifications() {
-            return ImmutableSet.of();
         }
     }
 
