@@ -9,14 +9,12 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Iterables;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
@@ -120,18 +118,6 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         writer.close();
     }
 
-    /**
-     * Emit a best guess of a hint for a particular set of children. It evaluates the
-     * iterable to see if the size can be easily gotten to. If it is, we hint at the
-     * real number of child nodes. Otherwise we emit UNKNOWN_SIZE.
-     *
-     * @param children Child nodes
-     * @return Best estimate of the collection size required to hold all the children.
-     */
-    protected static int childSizeHint(final Iterable<?> children) {
-        return children instanceof Collection ? ((Collection<?>) children).size() : UNKNOWN_SIZE;
-    }
-
     protected boolean wasProcessAsSimpleNode(final NormalizedNode node) throws IOException {
         if (node instanceof LeafSetEntryNode<?> nodeAsLeafList) {
             writer.startLeafSetEntryNode(nodeAsLeafList.name());
@@ -180,7 +166,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @throws IOException when the writer reports it
      */
     protected boolean writeChildren(final Iterable<? extends NormalizedNode> children) throws IOException {
-        for (final NormalizedNode child : children) {
+        for (var child : children) {
             write(child);
         }
 
@@ -189,36 +175,36 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-        writer.startMapEntryNode(node.name(), childSizeHint(node.body()));
+        writer.startMapEntryNode(node.name(), node.size());
         return writeChildren(node.body());
     }
 
     protected boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
         if (node instanceof ContainerNode n) {
-            writer.startContainerNode(n.name(), childSizeHint(n.body()));
+            writer.startContainerNode(n.name(), n.size());
             return writeChildren(n.body());
         } else if (node instanceof MapEntryNode n) {
             return writeMapEntryNode(n);
         } else if (node instanceof UnkeyedListEntryNode n) {
-            writer.startUnkeyedListItem(n.name(), childSizeHint(n.body()));
+            writer.startUnkeyedListItem(n.name(), n.size());
             return writeChildren(n.body());
         } else if (node instanceof ChoiceNode n) {
-            writer.startChoiceNode(n.name(), childSizeHint(n.body()));
+            writer.startChoiceNode(n.name(), n.size());
             return writeChildren(n.body());
         } else if (node instanceof UnkeyedListNode n) {
-            writer.startUnkeyedList(n.name(), childSizeHint(n.body()));
+            writer.startUnkeyedList(n.name(), n.size());
             return writeChildren(n.body());
         } else if (node instanceof UserMapNode n) {
-            writer.startOrderedMapNode(n.name(), childSizeHint(n.body()));
+            writer.startOrderedMapNode(n.name(), n.size());
             return writeChildren(n.body());
         } else if (node instanceof SystemMapNode n) {
-            writer.startMapNode(n.name(), childSizeHint(n.body()));
+            writer.startMapNode(n.name(), n.size());
             return writeChildren(n.body());
         } else if (node instanceof UserLeafSetNode<?> n) {
-            writer.startOrderedLeafSet(n.name(), childSizeHint(n.body()));
+            writer.startOrderedLeafSet(n.name(), n.size());
             return writeChildren(n.body());
         } else if (node instanceof SystemLeafSetNode<?> n) {
-            writer.startLeafSet(n.name(), childSizeHint(n.body()));
+            writer.startLeafSet(n.name(), n.size());
             return writeChildren(n.body());
         }
         return false;
@@ -234,7 +220,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
-            nnWriter.startMapEntryNode(node.name(), childSizeHint(node.body()));
+            nnWriter.startMapEntryNode(node.name(), node.size());
 
             final Set<QName> qnames = node.name().keySet();
             // Write out all the key children
