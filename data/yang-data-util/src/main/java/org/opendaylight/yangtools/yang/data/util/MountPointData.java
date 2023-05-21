@@ -17,7 +17,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
@@ -33,18 +32,23 @@ import org.slf4j.LoggerFactory;
  * YANG Schema Mount-supported data attached to either a {@code list} item or a {@code container}.
  */
 @Beta
-public final class MountPointData extends AbstractSimpleIdentifiable<MountPointLabel> {
+public final class MountPointData {
     private static final Logger LOG = LoggerFactory.getLogger(MountPointData.class);
 
     private final Map<ContainerName, MountPointChild> yangLib = new EnumMap<>(ContainerName.class);
     private final List<MountPointChild> children = new ArrayList<>();
     private final MountPointContextFactory contextFactory;
+    private final @NonNull MountPointLabel label;
 
     private MountPointChild schemaMounts;
 
     MountPointData(final MountPointLabel label, final MountPointContextFactory contextFactory) {
-        super(label);
+        this.label = requireNonNull(label);
         this.contextFactory = requireNonNull(contextFactory);
+    }
+
+    public @NonNull MountPointLabel label() {
+        return label;
     }
 
     public void setContainer(final @NonNull ContainerName containerName, final @NonNull MountPointChild data) {
@@ -66,7 +70,7 @@ public final class MountPointData extends AbstractSimpleIdentifiable<MountPointL
     void write(final @NonNull NormalizedNodeStreamWriter writer) throws IOException {
         final var mountWriter = writer.extension(MountPointExtension.class);
         if (mountWriter == null) {
-            LOG.debug("Writer {} does not support mount points, ignoring data in {}", writer, getIdentifier());
+            LOG.debug("Writer {} does not support mount points, ignoring data in {}", writer, label);
             return;
         }
 
@@ -74,9 +78,9 @@ public final class MountPointData extends AbstractSimpleIdentifiable<MountPointL
         try {
             mountCtx = contextFactory.createContext(yangLib, schemaMounts);
         } catch (MountPointException e) {
-            throw new IOException("Failed to resolve mount point " + getIdentifier(), e);
+            throw new IOException("Failed to resolve mount point " + label, e);
         }
-        try (NormalizedNodeStreamWriter nestedWriter = mountWriter.startMountPoint(getIdentifier(), mountCtx)) {
+        try (NormalizedNodeStreamWriter nestedWriter = mountWriter.startMountPoint(label, mountCtx)) {
             for (MountPointChild child : children) {
                 child.writeTo(nestedWriter, mountCtx);
             }

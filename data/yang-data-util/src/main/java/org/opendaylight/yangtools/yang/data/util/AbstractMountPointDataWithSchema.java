@@ -40,7 +40,7 @@ public abstract sealed class AbstractMountPointDataWithSchema<T extends DataSche
 
     public final MountPointData getMountPointData(final MountPointLabel label, final MountPointContextFactory factory) {
         if (mountedData != null) {
-            final var existing = mountedData.getIdentifier();
+            final var existing = mountedData.label();
             checkState(label.equals(existing), "Mismatched mount label %s, already have %s", label, existing);
         } else {
             mountedData = new MountPointData(label, factory);
