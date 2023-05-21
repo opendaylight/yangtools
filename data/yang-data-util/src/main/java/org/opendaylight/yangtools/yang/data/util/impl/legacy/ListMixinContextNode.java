@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.util.impl.legacy;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -16,9 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class ListMixinContextNode extends AbstractListLikeContextNode {
     private final ListItemContextNode innerNode;
 
-    ListMixinContextNode(final ListSchemaNode list) {
-        super(list);
-        innerNode = new ListItemContextNode(list);
+    ListMixinContextNode(final ListSchemaNode schema) {
+        super(schema);
+        // FIXME: yeah, NodeIdentifier is being used for individual nodes, but it really should not
+        //        (they are not addressable)
+        innerNode = new ListItemContextNode(NodeIdentifier.create(schema.getQName()), schema);
     }
 
     @Override
