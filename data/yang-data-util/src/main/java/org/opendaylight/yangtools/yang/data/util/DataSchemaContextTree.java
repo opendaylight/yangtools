@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.CheckedValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
 import org.opendaylight.yangtools.yang.data.util.impl.legacy.ContainerContextNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
@@ -77,7 +78,7 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
         final var stack = SchemaInferenceStack.of((EffectiveModelContext) root.getDataSchemaNode());
         DataSchemaContextNode node = root;
         for (var arg : path.getPathArguments()) {
-            final var child = node.enterChild(stack, arg);
+            final var child = node instanceof Composite composite ? composite.enterChild(stack, arg) : null;
             if (child == null) {
                 return CheckedValue.ofException(new IllegalArgumentException("Failed to find " + arg + " in " + node));
             }
@@ -87,7 +88,7 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
         return CheckedValue.ofValue(new NodeAndStack(node, stack));
     }
 
-    public @NonNull DataSchemaContextNode getRoot() {
+    public DataSchemaContextNode.@NonNull Composite getRoot() {
         return root;
     }
 }

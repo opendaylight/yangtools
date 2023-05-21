@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.PathMixin;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode.SimpleValue;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -113,14 +114,18 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     }
 
     private DataSchemaContextNode nextContextNode(final QName name) {
-        current = current.getChild(name);
+        current = getChild(current, name);
         checkValid(current != null, "%s is not correct schema node identifier.", name);
         while (current instanceof PathMixin mixin) {
             product.add(mixin.mixinPathStep());
-            current = current.getChild(name);
+            current = getChild(current, name);
         }
         stack.enterDataTree(name);
         return current;
+    }
+
+    private static DataSchemaContextNode getChild(final DataSchemaContextNode parent, final QName name) {
+        return parent instanceof Composite composite ? composite.getChild(name) : null;
     }
 
     /**
@@ -171,8 +176,11 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
                     type -> resolveLeafref(currentSchema.getQName(), type), keyValue);
                 return new NodeWithValue<>(name, value);
             }
-            final DataSchemaContextNode keyNode = currentNode.getChild(key);
-            checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
+            final var keyNode = currentNode instanceof Composite composite ? composite.getChild(key) : null;
+            if (keyNode == null) {
+                throw iae("%s is not correct schema node identifier.", key);
+            }
+
             final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(),
                 type -> resolveLeafref(key, type), keyValue);
             keyValues.put(key, value);
