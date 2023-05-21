@@ -60,27 +60,6 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Collection<? extends UsesNode> getUses() {
-            return ImmutableSet.of();
-        }
-
-        @Override
-        @Deprecated
-        public boolean isAugmenting() {
-            return false;
-        }
-
-        @Override
-        public Optional<Boolean> effectiveConfig() {
-            return Optional.empty();
-        }
-
-        @Override
-        public QName getQName() {
-            return schemaNode.getQName();
-        }
-
-        @Override
         public Optional<String> getDescription() {
             return schemaNode.getDescription();
         }
@@ -93,6 +72,38 @@ public final class ContainerSchemaNodes {
         @Override
         public Status getStatus() {
             return schemaNode.getStatus();
+        }
+
+        @Override
+        public QName getQName() {
+            return schemaNode.getQName();
+        }
+
+        @Override
+        @Deprecated
+        public boolean isAugmenting() {
+            return false;
+        }
+
+        @Override
+        @Deprecated(forRemoval = true)
+        public boolean isAddedByUses() {
+            return false;
+        }
+
+        @Override
+        public Optional<Boolean> effectiveConfig() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Collection<? extends ActionDefinition> getActions() {
+            return ImmutableSet.of();
+        }
+
+        @Override
+        public Collection<? extends UsesNode> getUses() {
+            return ImmutableSet.of();
         }
 
         @Override
@@ -142,17 +153,6 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        @Deprecated(forRemoval = true)
-        public boolean isAddedByUses() {
-            return false;
-        }
-
-        @Override
-        public Collection<? extends ActionDefinition> getActions() {
-            return ImmutableSet.of();
-        }
-
-        @Override
         public Collection<? extends NotificationDefinition> getNotifications() {
             return ImmutableSet.of();
         }
@@ -195,18 +195,6 @@ public final class ContainerSchemaNodes {
         @Override
         public DataSchemaNode dataChildByName(final QName name) {
             return mapNodes.get(requireNonNull(name));
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        public boolean isAddedByUses() {
-            // FIXME: reference to https://jira.opendaylight.org/browse/YANGTOOLS-685
-            return false;
-        }
-
-        @Override
-        public Collection<? extends ActionDefinition> getActions() {
-            return ImmutableSet.of();
         }
     }
 }
