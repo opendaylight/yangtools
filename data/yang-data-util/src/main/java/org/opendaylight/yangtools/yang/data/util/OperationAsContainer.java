@@ -18,13 +18,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 @Beta
-public class OperationAsContainer extends AbstractAsContainer implements OperationDefinition {
+public class OperationAsContainer extends AbstractAsContainer {
     private final @NonNull OperationDefinition delegate;
 
     OperationAsContainer(final OperationDefinition parentNode) {
@@ -51,23 +49,14 @@ public class OperationAsContainer extends AbstractAsContainer implements Operati
     }
 
     @Override
-    public final InputSchemaNode getInput() {
-        return delegate.getInput();
-    }
-
-    @Override
-    public final OutputSchemaNode getOutput() {
-        return delegate.getOutput();
-    }
-
-    @Override
     public final DataSchemaNode dataChildByName(final QName name) {
-        if (name.getModule().equals(getQName().getModule())) {
-            return switch (name.getLocalName()) {
-                case "input" -> delegate.getInput();
-                case "output" -> delegate.getOutput();
-                default -> null;
-            };
+        final var input = delegate.getInput();
+        if (name.equals(input.getQName())) {
+            return input;
+        }
+        final var output = delegate.getOutput();
+        if (name.equals(output.getQName())) {
+            return output;
         }
         return null;
     }
@@ -79,6 +68,6 @@ public class OperationAsContainer extends AbstractAsContainer implements Operati
 
     @Override
     public final Collection<? extends DataSchemaNode> getChildNodes() {
-        return ImmutableList.of(getInput(), getOutput());
+        return ImmutableList.of(delegate.getInput(), delegate.getOutput());
     }
 }
