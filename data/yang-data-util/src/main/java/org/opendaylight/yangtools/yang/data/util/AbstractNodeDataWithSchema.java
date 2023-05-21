@@ -20,7 +20,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
  * Utility abstract class for tracking parser state, as needed by StAX-like parser.
@@ -34,6 +40,24 @@ public abstract sealed class AbstractNodeDataWithSchema<T extends DataSchemaNode
 
     AbstractNodeDataWithSchema(final T schema) {
         this.schema = requireNonNull(schema);
+    }
+
+    public static @NonNull AbstractNodeDataWithSchema<?> of(final DataSchemaNode schema) {
+        if (schema instanceof ContainerLike containerLike) {
+            return new ContainerNodeDataWithSchema(containerLike);
+        } else if (schema instanceof ListSchemaNode list) {
+            return new ListNodeDataWithSchema(list);
+        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
+            return new AnyXmlNodeDataWithSchema(anyxml);
+        } else if (schema instanceof LeafSchemaNode leaf) {
+            return new LeafNodeDataWithSchema(leaf);
+        } else if (schema instanceof LeafListSchemaNode leafList) {
+            return new LeafListNodeDataWithSchema(leafList);
+        } else if (schema instanceof AnydataSchemaNode anydata) {
+            return new AnydataNodeDataWithSchema(anydata);
+        } else {
+            throw new IllegalStateException("Unsupported schema " + schema);
+        }
     }
 
     /**

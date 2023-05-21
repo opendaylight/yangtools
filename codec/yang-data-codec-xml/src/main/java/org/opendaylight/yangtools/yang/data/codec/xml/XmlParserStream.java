@@ -74,13 +74,11 @@ import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -327,23 +325,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, IOException {
         if (reader.hasNext()) {
             reader.nextTag();
-            final AbstractNodeDataWithSchema<?> nodeDataWithSchema;
-            if (parentNode instanceof ContainerLike containerLike) {
-                nodeDataWithSchema = new ContainerNodeDataWithSchema(containerLike);
-            } else if (parentNode instanceof ListSchemaNode list) {
-                nodeDataWithSchema = new ListNodeDataWithSchema(list);
-            } else if (parentNode instanceof AnyxmlSchemaNode anyxml) {
-                nodeDataWithSchema = new AnyXmlNodeDataWithSchema(anyxml);
-            } else if (parentNode instanceof LeafSchemaNode leaf) {
-                nodeDataWithSchema = new LeafNodeDataWithSchema(leaf);
-            } else if (parentNode instanceof LeafListSchemaNode leafList) {
-                nodeDataWithSchema = new LeafListNodeDataWithSchema(leafList);
-            } else if (parentNode instanceof AnydataSchemaNode anydata) {
-                nodeDataWithSchema = new AnydataNodeDataWithSchema(anydata);
-            } else {
-                throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
-            }
-
+            final var nodeDataWithSchema = AbstractNodeDataWithSchema.of(parentNode);
             read(reader, nodeDataWithSchema, reader.getLocalName());
             nodeDataWithSchema.write(writer);
         }

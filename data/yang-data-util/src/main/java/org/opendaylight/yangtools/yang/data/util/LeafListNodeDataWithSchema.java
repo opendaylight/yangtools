@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
  */
 public final class LeafListNodeDataWithSchema extends CompositeNodeDataWithSchema<LeafListSchemaNode>
         implements MultipleEntryDataWithSchema<LeafListEntryNodeDataWithSchema> {
-    public LeafListNodeDataWithSchema(final LeafListSchemaNode schema) {
+    LeafListNodeDataWithSchema(final LeafListSchemaNode schema) {
         super(schema);
     }
 

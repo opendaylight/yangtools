@@ -22,11 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 public final class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<AnydataSchemaNode> {
     private Class<?> objectModel;
 
-    public AnydataNodeDataWithSchema(final AnydataSchemaNode dataSchemaNode) {
+    AnydataNodeDataWithSchema(final AnydataSchemaNode dataSchemaNode) {
         super(dataSchemaNode);
     }
 
-    public AnydataNodeDataWithSchema(final AnydataSchemaNode dataSchemaNode, final Class<?> objectModel) {
+    AnydataNodeDataWithSchema(final AnydataSchemaNode dataSchemaNode, final Class<?> objectModel) {
         super(dataSchemaNode);
         this.objectModel = requireNonNull(objectModel);
     }
