@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Individual list items -- be {@link MapEntryNode} or {@link UnkeyedListEntryNode}.
  */
-final class ListItemContextNode extends DataContainerContextNode {
+final class ListItemContextNode extends AbstractCompositeContextNode {
     ListItemContextNode(final NodeIdentifier pathStep, final ListSchemaNode schema) {
         super(pathStep, schema, schema);
     }

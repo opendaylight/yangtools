@@ -62,7 +62,9 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
      * @throws NullPointerException if {@code path} is null
      */
     public @NonNull Optional<@NonNull DataSchemaContextNode> findChild(final @NonNull YangInstanceIdentifier path) {
-        return root.findChild(path);
+        // Optional.ofNullable() inline due to annotations
+        final var child = root.childByPath(path);
+        return child == null ? Optional.empty() : Optional.of(child);
     }
 
     /**

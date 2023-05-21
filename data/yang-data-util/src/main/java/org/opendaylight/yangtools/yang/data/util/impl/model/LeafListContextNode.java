@@ -7,29 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.util.impl.model;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 final class LeafListContextNode extends AbstractListLikeContextNode {
-    private final LeafListItemContextNode innerOp;
-
     LeafListContextNode(final LeafListSchemaNode schema) {
-        super(schema);
-        innerOp = new LeafListItemContextNode(schema);
+        super(schema, new LeafListItemContextNode(schema));
     }
 
     @Override
-    public DataSchemaContextNode getChild(final PathArgument child) {
-        // FIXME: 10.0.0: reject null and invalid
-        return child instanceof NodeWithValue ? innerOp : null;
-    }
-
-    @Override
-    public DataSchemaContextNode getChild(final QName child) {
-        // FIXME: requireNonNull, common code with UnkeyedListMixinNode
-        return dataSchemaNode.getQName().equals(child) ? innerOp : null;
+    public AbstractDataSchemaContextNode childByArg(final PathArgument arg) {
+        return requireNonNull(arg) instanceof NodeWithValue ? childByQName(arg.getNodeType()) : null;
     }
 }

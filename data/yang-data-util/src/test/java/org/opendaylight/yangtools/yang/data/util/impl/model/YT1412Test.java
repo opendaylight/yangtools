@@ -54,13 +54,13 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(FOUR, stack));
+        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(stack, FOUR));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(FOUR, stack));
+        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(stack, FOUR));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        assertInstanceOf(LeafContextNode.class, three.enterChild(FOUR, stack));
+        assertInstanceOf(LeafContextNode.class, three.enterChild(stack, FOUR));
         assertInstanceOf(LeafEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, FOUR, FOUR), stack.toSchemaNodeIdentifier());
@@ -71,10 +71,10 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var five = assertInstanceOf(ListContextNode.class, one.enterChild(FIVE, stack));
+        final var five = assertInstanceOf(ListContextNode.class, one.enterChild(stack, FIVE));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
-        assertInstanceOf(ListItemContextNode.class, five.enterChild(FIVE, stack));
+        assertInstanceOf(ListItemContextNode.class, five.enterChild(stack, FIVE));
         assertInstanceOf(ListEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, FIVE), stack.toSchemaNodeIdentifier());
@@ -85,13 +85,13 @@ class YT1412Test {
         final var one = assertInstanceOf(ContainerContextNode.class, CONTEXT.getRoot().enterChild(stack, ONE));
         assertInstanceOf(ContainerEffectiveStatement.class, stack.currentStatement());
 
-        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(SIX, stack));
+        final var two = assertInstanceOf(ChoiceContextNode.class, one.enterChild(stack, SIX));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(SIX, stack));
+        final var three = assertInstanceOf(ChoiceContextNode.class, two.enterChild(stack, SIX));
         assertInstanceOf(ChoiceEffectiveStatement.class, stack.currentStatement());
 
-        assertInstanceOf(LeafContextNode.class, three.enterChild(SIX, stack));
+        assertInstanceOf(LeafContextNode.class, three.enterChild(stack, SIX));
         assertInstanceOf(LeafEffectiveStatement.class, stack.currentStatement());
 
         assertEquals(Absolute.of(ONE, TWO, THREE, THREE, SIX, SIX), stack.toSchemaNodeIdentifier());

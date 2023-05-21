@@ -8,19 +8,21 @@
 package org.opendaylight.yangtools.yang.data.util.impl.model;
 
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class ChoiceContextNode extends AbstractMixinContextNode {
-    private final ImmutableMap<PathArgument, AbstractDataSchemaContextNode> byArg;
+    private final ImmutableMap<NodeIdentifier, AbstractDataSchemaContextNode> byArg;
     private final ImmutableMap<QName, AbstractDataSchemaContextNode> byQName;
     private final ImmutableMap<DataSchemaContextNode, QName> childToCase;
 
@@ -28,7 +30,7 @@ final class ChoiceContextNode extends AbstractMixinContextNode {
         super(schema);
         final var childToCaseBuilder = ImmutableMap.<DataSchemaContextNode, QName>builder();
         final var byQNameBuilder = ImmutableMap.<QName, AbstractDataSchemaContextNode>builder();
-        final var byArgBuilder = ImmutableMap.<PathArgument, AbstractDataSchemaContextNode>builder();
+        final var byArgBuilder = ImmutableMap.<NodeIdentifier, AbstractDataSchemaContextNode>builder();
 
         for (var caze : schema.getCases()) {
             for (var cazeChild : caze.getChildNodes()) {
@@ -47,13 +49,13 @@ final class ChoiceContextNode extends AbstractMixinContextNode {
     }
 
     @Override
-    public AbstractDataSchemaContextNode getChild(final PathArgument child) {
-        return byArg.get(child);
+    public AbstractDataSchemaContextNode childByArg(final PathArgument arg) {
+        return byArg.get(requireNonNull(arg));
     }
 
     @Override
-    public AbstractDataSchemaContextNode getChild(final QName child) {
-        return byQName.get(child);
+    public AbstractDataSchemaContextNode childByQName(final QName child) {
+        return byQName.get(requireNonNull(child));
     }
 
     @Override
@@ -62,13 +64,13 @@ final class ChoiceContextNode extends AbstractMixinContextNode {
     }
 
     @Override
-    DataSchemaContextNode enterChild(final QName child, final SchemaInferenceStack stack) {
-        return pushToStack(getChild(child), stack);
+    public DataSchemaContextNode enterChild(final SchemaInferenceStack stack, final QName qname) {
+        return pushToStack(stack, childByQName(qname));
     }
 
     @Override
-    DataSchemaContextNode enterChild(final PathArgument child, final SchemaInferenceStack stack) {
-        return pushToStack(getChild(child), stack);
+    public DataSchemaContextNode enterChild(final SchemaInferenceStack stack, final PathArgument arg) {
+        return pushToStack(stack, childByArg(arg));
     }
 
     @Override
@@ -76,8 +78,9 @@ final class ChoiceContextNode extends AbstractMixinContextNode {
         stack.enterChoice(dataSchemaNode.getQName());
     }
 
-    private @Nullable DataSchemaContextNode pushToStack(final @Nullable AbstractDataSchemaContextNode child,
-            final @NonNull SchemaInferenceStack stack) {
+    private @Nullable DataSchemaContextNode pushToStack(final SchemaInferenceStack stack,
+            final @Nullable AbstractDataSchemaContextNode child) {
+        requireNonNull(stack);
         if (child != null) {
             final var caseName = verifyNotNull(childToCase.get(child), "No case statement for %s in %s", child, this);
             stack.enterSchemaTree(caseName);

@@ -7,37 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.data.util.impl.model;
 
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class ListContextNode extends AbstractListLikeContextNode {
-    private final ListItemContextNode innerNode;
-
     ListContextNode(final ListSchemaNode schema) {
-        super(schema);
         // FIXME: yeah, NodeIdentifier is being used for individual nodes, but it really should not
         //        (they are not addressable)
-        innerNode = new ListItemContextNode(NodeIdentifier.create(schema.getQName()), schema);
+        super(schema, new ListItemContextNode(NodeIdentifier.create(schema.getQName()), schema));
     }
 
     @Override
-    public DataSchemaContextNode getChild(final PathArgument child) {
-        // FIXME: 10.0.0: checkArgument() on PathArgument
-        return innerNodeIfMatch(child.getNodeType());
-    }
-
-    @Override
-    public DataSchemaContextNode getChild(final QName child) {
-        return innerNodeIfMatch(child);
-    }
-
-    // FIXME: dead ringers in other AbstractMixinContextNode subclasses
-    private @Nullable DataSchemaContextNode innerNodeIfMatch(final QName qname) {
-        // FIXME: 10.0.0: requireNonNull(qname)
-        return dataSchemaNode.getQName().equals(qname) ? innerNode : null;
+    public AbstractDataSchemaContextNode childByArg(final PathArgument arg) {
+        return requireNonNull(arg) instanceof NodeIdentifier ? childByQName(arg.getNodeType()) : null;
     }
 }

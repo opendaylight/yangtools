@@ -35,7 +35,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * since the mapping is not one-to-one.
  */
 public abstract sealed class AbstractDataSchemaContextNode implements DataSchemaContextNode
-        permits AbstractCompositeContextNode, LeafContextNode, LeafListItemContextNode, OpaqueContextNode {
+        permits AbstractMixinContextNode, AbstractCompositeContextNode,
+                LeafContextNode, LeafListItemContextNode, OpaqueContextNode {
     private final @Nullable NodeIdentifier pathStep;
 
     final @NonNull DataSchemaNode dataSchemaNode;
@@ -69,14 +70,14 @@ public abstract sealed class AbstractDataSchemaContextNode implements DataSchema
         stack.enterSchemaTree(dataSchemaNode.getQName());
     }
 
-    static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
+    static AbstractDataSchemaContextNode fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
+        return lenientOf(findChildSchemaNode(schema, child));
+    }
+
+    private static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
         final DataSchemaNode potential = parent.dataChildByName(child);
         return potential == null ? findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child)
                 : potential;
-    }
-
-    static AbstractDataSchemaContextNode fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
-        return lenientOf(findChildSchemaNode(schema, child));
     }
 
     // FIXME: this looks like it should be a Predicate on a stream with findFirst()
@@ -113,7 +114,7 @@ public abstract sealed class AbstractDataSchemaContextNode implements DataSchema
     }
 
     // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
-    static @Nullable AbstractDataSchemaContextNode lenientOf(final @Nullable DataSchemaNode schema) {
+    private static @Nullable AbstractDataSchemaContextNode lenientOf(final @Nullable DataSchemaNode schema) {
         if (schema instanceof ContainerLike containerLike) {
             return new ContainerContextNode(containerLike);
         } else if (schema instanceof ListSchemaNode list) {
