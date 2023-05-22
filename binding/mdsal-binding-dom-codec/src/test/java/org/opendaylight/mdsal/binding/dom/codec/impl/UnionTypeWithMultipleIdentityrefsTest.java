@@ -12,15 +12,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
 import java.util.Optional;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.IdentOne;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.IdentTwo;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.TopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.UnionType;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -70,8 +69,7 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
             .withChild(ImmutableNodes.leafNode(NodeIdentifier.create(UNION_LEAF_QNAME), identityQname))
             .build();
-        final Map.Entry<InstanceIdentifier<?>, DataObject> translated =
-            codecContext.fromNormalizedNode(YangInstanceIdentifier.create(NodeIdentifier.create(TOP_QNAME)), top);
+        final var translated = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(TOP_QNAME), top);
         assertNotNull(translated);
         assertNotNull(translated.getValue());
         assertTrue(translated.getValue() instanceof Top);
@@ -82,11 +80,11 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
         // create binding instance with identity
         final Top topContainer = new TopBuilder().setTestUnionLeaf(chosenIdentity).build();
         // translate via codec into NN
-        final Map.Entry<YangInstanceIdentifier, NormalizedNode> translated =
-            codecContext.toNormalizedNode(InstanceIdentifier.builder(Top.class).build(), topContainer);
+        final var translated = (NodeResult) codecContext.toNormalizedNode(InstanceIdentifier.builder(Top.class).build(),
+            topContainer);
         assertNotNull(translated);
         // verify translation worked
-        final NormalizedNode translatedNN = translated.getValue();
+        final var translatedNN = translated.node();
         assertNotNull(translatedNN);
         // verify the union leaf is present
         // verify the leaf is the correct identity

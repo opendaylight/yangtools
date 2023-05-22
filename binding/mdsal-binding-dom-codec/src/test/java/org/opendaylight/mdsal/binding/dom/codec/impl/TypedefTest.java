@@ -9,23 +9,18 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Map.Entry;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicy;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicyBuilder;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.PolicyLoggingFlag;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestCont;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestContBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TypedefEmpty;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-
 
 public class TypedefTest extends AbstractBindingCodecTest {
-
     private static final InstanceIdentifier<DefaultPolicy> BA_DEFAULT_POLICY =
             InstanceIdentifier.builder(DefaultPolicy.class).build();
     private static final InstanceIdentifier<TestCont> BA_TEST_CONT =
@@ -38,13 +33,10 @@ public class TypedefTest extends AbstractBindingCodecTest {
                 .setAction2(new PolicyLoggingFlag(false))
                 .setAction3(true)
                 .build();
-        final Entry<YangInstanceIdentifier, NormalizedNode> dom =
-                codecContext.toNormalizedNode(BA_DEFAULT_POLICY, binding);
-        final Entry<InstanceIdentifier<?>, DataObject> readed =
-                codecContext.fromNormalizedNode(dom.getKey(),dom.getValue());
+        final var dom = (NodeResult) codecContext.toNormalizedNode(BA_DEFAULT_POLICY, binding);
+        final var readed = codecContext.fromNormalizedNode(dom.path(),dom.node());
 
-        assertEquals(binding,readed.getValue());
-
+        assertEquals(binding, readed.getValue());
     }
 
     @Test
@@ -54,12 +46,9 @@ public class TypedefTest extends AbstractBindingCodecTest {
                 .setEmptyLeaf2(new TypedefEmpty(Empty.value()))
                 .setEmptyLeaf3(Empty.value())
                 .build();
-        final Entry<YangInstanceIdentifier, NormalizedNode> dom =
-                codecContext.toNormalizedNode(BA_TEST_CONT, binding);
-        final Entry<InstanceIdentifier<?>, DataObject> readed =
-                codecContext.fromNormalizedNode(dom.getKey(),dom.getValue());
+        final var dom = (NodeResult) codecContext.toNormalizedNode(BA_TEST_CONT, binding);
+        final var readed = codecContext.fromNormalizedNode(dom.path(),dom.node());
 
-        assertEquals(binding,readed.getValue());
-
+        assertEquals(binding, readed.getValue());
     }
 }

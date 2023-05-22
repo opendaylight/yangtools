@@ -42,9 +42,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
  */
 final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
-        DataObjectCodecContext.class, DistinctNodeContainer.class);
+        AbstractDataObjectCodecContext.class, DistinctNodeContainer.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
-        DataObjectCodecContext.class, DistinctNodeContainer.class);
+        AbstractDataObjectCodecContext.class, DistinctNodeContainer.class);
 
     final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;

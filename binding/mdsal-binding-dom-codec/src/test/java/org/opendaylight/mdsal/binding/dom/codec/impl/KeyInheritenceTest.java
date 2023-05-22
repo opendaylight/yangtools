@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map.Entry;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.Def;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.DefBuilder;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstBuilder;
@@ -20,8 +21,6 @@ import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.Use;
 import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.UseBuilder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class KeyInheritenceTest extends AbstractBindingCodecTest {
     private static final LstKey KEY = new LstKey("foo");
@@ -37,25 +36,24 @@ public class KeyInheritenceTest extends AbstractBindingCodecTest {
 
     @Test
     public void testFromBinding() {
-        final Entry<YangInstanceIdentifier, NormalizedNode> domDef = codecContext.toNormalizedNode(DEF_IID, DEF);
-        Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(domDef.getKey(),
-            domDef.getValue());
+        final var domDef = (NodeResult) codecContext.toNormalizedNode(DEF_IID, DEF);
+        Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(domDef.path(), domDef.node());
         assertEquals(DEF_IID, entry.getKey());
         final Def codecDef = (Def) entry.getValue();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode> domUse = codecContext.toNormalizedNode(USE_IID, USE);
-        entry = codecContext.fromNormalizedNode(domUse.getKey(), domUse.getValue());
+        final var domUse = (NodeResult) codecContext.toNormalizedNode(USE_IID, USE);
+        entry = codecContext.fromNormalizedNode(domUse.path(), domUse.node());
         assertEquals(USE_IID, entry.getKey());
         final Use codecUse = (Use) entry.getValue();
 
         Use copiedUse = new UseBuilder(DEF).build();
         assertEquals(USE, copiedUse);
-        assertEquals(domUse.getValue(), codecContext.toNormalizedNode(USE_IID, copiedUse).getValue());
+        assertEquals(domUse.node(), ((NodeResult) codecContext.toNormalizedNode(USE_IID, copiedUse)).node());
         copiedUse = new UseBuilder(codecDef).build();
         assertEquals(USE, copiedUse);
-        assertEquals(domUse.getValue(), codecContext.toNormalizedNode(USE_IID, copiedUse).getValue());
+        assertEquals(domUse.node(), ((NodeResult) codecContext.toNormalizedNode(USE_IID, copiedUse)).node());
         copiedUse = new UseBuilder(codecUse).build();
         assertEquals(USE, copiedUse);
-        assertEquals(domUse.getValue(), codecContext.toNormalizedNode(USE_IID, copiedUse).getValue());
+        assertEquals(domUse.node(), ((NodeResult) codecContext.toNormalizedNode(USE_IID, copiedUse)).node());
     }
 }

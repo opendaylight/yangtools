@@ -44,5 +44,5 @@ public interface BindingDataObjectCodecTreeParent<T> {
      * @return Context of child
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
-    <E extends DataObject> @NonNull BindingDataObjectCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
+    <E extends DataObject> @NonNull CommonDataObjectCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
 }

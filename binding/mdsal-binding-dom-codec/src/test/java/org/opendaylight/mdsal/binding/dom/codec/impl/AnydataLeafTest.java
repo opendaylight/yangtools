@@ -18,6 +18,7 @@ import static org.junit.Assert.assertSame;
 import java.util.Map.Entry;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.Cont;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.ContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.cont.ContAny;
@@ -96,10 +97,10 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
 
     @Test
     public void testAnydataFromBinding() {
-        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
+        final var entry = (NodeResult) codecContext.toNormalizedNode(
             InstanceIdentifier.create(Cont.class), new ContBuilder().setContAny(new FakeCont()).build());
-        assertEquals(YangInstanceIdentifier.create(CONT_NODE_ID), entry.getKey());
-        assertEquals(cont, entry.getValue());
+        assertEquals(YangInstanceIdentifier.create(CONT_NODE_ID), entry.path());
+        assertEquals(cont, entry.node());
     }
 
     private final class FakeData extends AbstractOpaqueData<DOMSource> {

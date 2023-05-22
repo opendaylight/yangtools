@@ -22,8 +22,6 @@ import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.Lst;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lst.Foo;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test.bi.ba.notification.rev150205.OutOfPixieDustNotification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock.rev180723.KnockKnockInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
@@ -39,7 +37,6 @@ import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -50,15 +47,10 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier
             .builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build();
-    private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY =
-            BA_TOP_LEVEL_LIST.augmentation(TreeLeafOnlyAugment.class);
-    private static final InstanceIdentifier<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES =
-            BA_TOP_LEVEL_LIST.augmentation(TreeComplexUsesAugment.class);
 
     public static final QName TOP_QNAME = Top.QNAME;
     public static final QName TOP_LEVEL_LIST_QNAME = QName.create(TOP_QNAME, "top-level-list");
     public static final QName TOP_LEVEL_LIST_KEY = QName.create(TOP_QNAME, "name");
-    private static final QName SIMPLE_VALUE_QNAME = QName.create(TreeComplexUsesAugment.QNAME, "simple-value");
 
     public static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.of(TOP_QNAME);
     public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_PATH = BI_TOP_PATH.node(TOP_LEVEL_LIST_QNAME);
@@ -118,20 +110,6 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
         assertTrue(lastPathArgument instanceof NodeIdentifierWithPredicates);
         assertTrue(((NodeIdentifierWithPredicates) lastPathArgument).values().contains(TOP_LEVEL_LIST_KEY_VALUE));
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
-    }
-
-    @Test
-    public void testBindingAwareIIToYangIIAugmentation() {
-        final PathArgument lastArg = codecContext.toYangInstanceIdentifier(BA_TREE_COMPLEX_USES).getLastPathArgument();
-        assertTrue(lastArg instanceof AugmentationIdentifier);
-    }
-
-    @Test
-    public void testBindingAwareIIToYangIILeafOnlyAugmentation() {
-        final PathArgument leafOnlyLastArg = codecContext.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY)
-                .getLastPathArgument();
-        assertTrue(leafOnlyLastArg instanceof AugmentationIdentifier);
-        assertTrue(((AugmentationIdentifier) leafOnlyLastArg).getPossibleChildNames().contains(SIMPLE_VALUE_QNAME));
     }
 
     @Test

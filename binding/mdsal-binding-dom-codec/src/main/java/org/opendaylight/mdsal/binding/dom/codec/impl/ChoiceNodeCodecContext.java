@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -32,10 +33,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
+import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
@@ -44,9 +48,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
-import org.opendaylight.yangtools.yang.data.util.NormalizedNodeSchemaUtils;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.slf4j.Logger;
@@ -99,7 +100,8 @@ import org.slf4j.LoggerFactory;
  * ambiguous reference and issue warn once when they are encountered -- tracking warning information in
  * {@link #ambiguousByCaseChildWarnings}.
  */
-final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceRuntimeType> {
+final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceRuntimeType>
+        implements BindingDataObjectCodecTreeNode<D> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceNodeCodecContext.class);
 
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChild;
@@ -134,16 +136,6 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             // Updates collection of YANG instance identifier to case
             for (var stmt : cazeDef.getType().statement().effectiveSubstatements()) {
                 if (stmt instanceof DataSchemaNode cazeChild) {
-                    if (cazeChild.isAugmenting()) {
-                        final AugmentationSchemaNode augment = NormalizedNodeSchemaUtils.findCorrespondingAugment(
-                            // FIXME: bad cast
-                            (DataSchemaNode) cazeDef.getType().statement(), cazeChild);
-                        if (augment != null) {
-                            byYangCaseChildBuilder.put(DataSchemaContextNode.augmentationIdentifierFrom(augment),
-                                cazeDef);
-                            continue;
-                        }
-                    }
                     byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), cazeDef);
                 }
             }
@@ -271,7 +263,12 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             return null;
         }
         final DataContainerCodecPrototype<?> caze = byYangCaseChild.get(first.getIdentifier());
-        return (D) caze.get().deserialize(data);
+        return (D) caze.getDataObject().deserialize(data);
+    }
+
+    @Override
+    public NormalizedNode serialize(final D data) {
+        return serializeImpl(data);
     }
 
     @Override
@@ -289,6 +286,12 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     public YangInstanceIdentifier.PathArgument serializePathArgument(final PathArgument arg) {
         // FIXME: check for null, since binding container is null.
         return getDomPathArgument();
+    }
+
+    @Override
+    public BindingNormalizedNodeCachingCodec<D> createCachingCodec(
+            final ImmutableCollection<Class<? extends BindingObject>> cacheSpecifier) {
+        return createCachingCodec(this, cacheSpecifier);
     }
 
     DataContainerCodecContext<?, ?> getCaseByChildClass(final @NonNull Class<? extends DataObject> type) {

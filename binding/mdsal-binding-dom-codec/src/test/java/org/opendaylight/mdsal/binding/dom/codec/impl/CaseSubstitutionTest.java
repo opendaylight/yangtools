@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
@@ -26,7 +27,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class CaseSubstitutionTest extends AbstractBindingCodecTest {
 
@@ -53,8 +53,8 @@ public class CaseSubstitutionTest extends AbstractBindingCodecTest {
             .withKey(CHOICE_FOO_KEY)
             .setChoiceInChoiceList(new ComplexViaUsesBuilder(createComplexData()).build())
             .build();
-        final NormalizedNode domTreeEntry = codecContext.toNormalizedNode(BA_CHOICE_LIST, baTree).getValue();
-        final NormalizedNode domRpcEntry = codecContext.toNormalizedNode(BA_CHOICE_LIST, baRpc).getValue();
+        final var domTreeEntry = ((NodeResult) codecContext.toNormalizedNode(BA_CHOICE_LIST, baTree)).node();
+        final var domRpcEntry = ((NodeResult) codecContext.toNormalizedNode(BA_CHOICE_LIST, baRpc)).node();
         assertEquals(domTreeEntry, domRpcEntry);
     }
 

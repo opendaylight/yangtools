@@ -16,6 +16,7 @@ import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
@@ -38,11 +39,13 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
+import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
@@ -69,6 +72,7 @@ import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -119,6 +123,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
+    private static final @NonNull NodeIdentifier FAKE_NODEID = new NodeIdentifier(QName.create("fake", "fake"));
     private static final File BYTECODE_DIRECTORY;
 
     static {
@@ -272,7 +277,19 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             checkArgument(currentNode instanceof DataContainerCodecContext,
                 "Unexpected child of non-container node %s", currentNode);
             final var previous = (DataContainerCodecContext<?, ?>) currentNode;
-            final var nextNode = previous.yangPathArgumentChild(domArg);
+            var nextNode = previous.yangPathArgumentChild(domArg);
+
+            /**
+             * Compatibility case: if it's determined the node belongs to augmentation
+             * then insert augmentation path argument in between.
+             */
+            if (nextNode instanceof AugmentationNodeContext<?> augmContext) {
+                if (bindingArguments != null) {
+                    bindingArguments.add(augmContext.bindingArg());
+                }
+                currentNode = nextNode;
+                nextNode = augmContext.yangPathArgumentChild(domArg);
+            }
 
             /*
              * List representation in YANG Instance Identifier consists of two
@@ -487,15 +504,26 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <E extends DataObject> BindingDataObjectCodecTreeNode<E> streamChild(final Class<E> childClass) {
+    public <E extends DataObject> CommonDataObjectCodecTreeNode<E> streamChild(final Class<E> childClass) {
         return root.streamChild(childClass);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
+    public <T extends DataObject> CodecWithPath<T> getSubtreeCodecWithPath(final InstanceIdentifier<T> path) {
+        final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();
+        final var codecContext = getCodecContextNode(path, yangArgs);
+
         // TODO Do we need defensive check here?
-        return (BindingDataObjectCodecTreeNode<T>) getCodecContextNode(path, null);
+        return new CodecWithPath<>((CommonDataObjectCodecTreeNode<T>) codecContext,
+            YangInstanceIdentifier.create(yangArgs));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends DataObject> CommonDataObjectCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
+        // TODO Do we need defensive check here?
+        return (CommonDataObjectCodecTreeNode<T>) getCodecContextNode(path, null);
     }
 
     @Override
@@ -519,24 +547,43 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode> toNormalizedNode(
-            final InstanceIdentifier<T> path, final T data) {
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-        // We create DOM stream writer which produces normalized nodes
-        final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
+    public <T extends DataObject> NormalizedResult toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
-        final Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = newWriterAndIdentifier(path,
-            domWriter);
+        final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();
+        final var codecContext = getCodecContextNode(path, yangArgs);
+        final var yangPath = YangInstanceIdentifier.create(yangArgs);
 
-        // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
+        // We create DOM stream writer which produces normalized nodes
+        final var result = new NormalizedNodeResult();
+        final var domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var bindingWriter = new BindingToNormalizedStreamWriter(codecContext, domWriter);
+        final var augment = codecContext instanceof BindingAugmentationCodecTreeNode<?> augmentNode ? augmentNode
+            : null;
+
         try {
-            getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
+            // Augmentations do not have a representation, so we are faking a ContainerNode as the parent and we will be
+            // extracting the resulting children.
+            if (augment != null) {
+                domWriter.startContainerNode(FAKE_NODEID, NormalizedNodeStreamWriter.UNKNOWN_SIZE);
+            }
+
+            // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
+            getSerializer(path.getTargetType()).serialize(data, bindingWriter);
+
+            if (augment != null) {
+                domWriter.endNode();
+            }
         } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
         }
-        return Map.entry(writeCtx.getKey(), result.getResult());
+
+        // Terminate the fake container and extract it to the result
+        if (augment != null) {
+            return new AugmentationResult(yangPath, augment.childPathArguments(),
+                ImmutableList.copyOf(((ContainerNode) result.getResult()).body()));
+        }
+        return new NodeResult(yangPath, result.getResult());
     }
 
     @Override

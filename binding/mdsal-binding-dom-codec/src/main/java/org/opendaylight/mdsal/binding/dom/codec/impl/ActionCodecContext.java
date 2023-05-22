@@ -16,20 +16,20 @@ import org.opendaylight.mdsal.binding.runtime.api.OutputRuntimeType;
  * This is not really a codec context, but rather a holder of input and output codec contexts.
  */
 final class ActionCodecContext {
-    private final DataContainerCodecContext<?, InputRuntimeType> input;
-    private final DataContainerCodecContext<?, OutputRuntimeType> output;
+    private final DataObjectCodecContext<?, InputRuntimeType> input;
+    private final DataObjectCodecContext<?, OutputRuntimeType> output;
 
-    ActionCodecContext(final DataContainerCodecContext<?, InputRuntimeType> input,
-        final DataContainerCodecContext<?, OutputRuntimeType> output) {
+    ActionCodecContext(final DataObjectCodecContext<?, InputRuntimeType> input,
+            final DataObjectCodecContext<?, OutputRuntimeType> output) {
         this.input = requireNonNull(input);
         this.output = requireNonNull(output);
     }
 
-    DataContainerCodecContext<?, InputRuntimeType> input() {
+    DataObjectCodecContext<?, InputRuntimeType> input() {
         return input;
     }
 
-    DataContainerCodecContext<?, OutputRuntimeType> output() {
+    DataObjectCodecContext<?, OutputRuntimeType> output() {
         return output;
     }
 }

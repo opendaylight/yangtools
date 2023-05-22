@@ -72,8 +72,8 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
     @Before
     public void before() {
         super.before();
-        topNode = codecContext.getSubtreeCodec(TOP_PATH);
-        contNode = codecContext.getSubtreeCodec(CONT_PATH);
+        topNode = (BindingDataObjectCodecTreeNode<Top>) codecContext.getSubtreeCodec(TOP_PATH);
+        contNode = (BindingDataObjectCodecTreeNode<Cont>) codecContext.getSubtreeCodec(CONT_PATH);
     }
 
     private static Map<TopLevelListKey, TopLevelList> createList(final int num) {

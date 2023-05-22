@@ -69,7 +69,7 @@ public class Bug5524augmentUses extends AbstractBindingCodecTest {
                 .build())
             .build();
 
-        final BindingDataObjectCodecTreeNode<Module4Main> subtreeCodec = codecContext.getSubtreeCodec(
+        final var subtreeCodec = (BindingDataObjectCodecTreeNode<Module4Main>) codecContext.getSubtreeCodec(
                 InstanceIdentifier.create(Module4Main.class));
         final NormalizedNode serialized = subtreeCodec.serialize(module4Main);
         final NormalizedNode manualSerialized = subtreeCodec.serialize(manualModule4Main);

@@ -7,25 +7,87 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
+import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
-        extends DataObjectCodecContext<D, AugmentRuntimeType> {
-    AugmentationNodeContext(final DataContainerCodecPrototype<AugmentRuntimeType> prototype) {
-        super(prototype);
+        extends AbstractDataObjectCodecContext<D, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<D> {
+    AugmentationNodeContext(final DataContainerCodecPrototype.Augmentation prototype) {
+        super(prototype, new CodecDataObjectAnalysis<>(prototype, CodecItemFactory.of(), null));
     }
 
     @Override
-    public D deserialize(final NormalizedNode data) {
-        return createBindingProxy(checkDataArgument(AugmentationNode.class, data));
+    public PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
+        if (!bindingArg().equals(arg)) {
+            throw new IllegalArgumentException("Unexpected argument " + arg);
+        }
+        return null;
+    }
+
+    @Override
+    public InstanceIdentifier.PathArgument deserializePathArgument(final PathArgument arg) {
+        if (arg != null) {
+            throw new IllegalArgumentException("Unexpected argument " + arg);
+        }
+        return bindingArg();
+    }
+
+    @Override
+    public D filterFrom(final DataContainerNode parentData) {
+        for (var childArg : ((DataContainerCodecPrototype.Augmentation) prototype).getChildArgs()) {
+            if (parentData.childByArg(childArg) != null) {
+                return createProxy(parentData);
+            }
+        }
+        return null;
+    }
+
+    private @NonNull D createProxy(final @NonNull DataContainerNode parentData) {
+        return createBindingProxy(parentData);
+    }
+
+    @Override
+    public void streamTo(final NormalizedNodeStreamWriter writer, final D data) throws IOException {
+        eventStreamSerializer().serialize(requireNonNull(data), new BindingToNormalizedStreamWriter(this, writer));
+    }
+
+    @Override
+    public ImmutableSet<PathArgument> childPathArguments() {
+        return byYangKeySet();
+    }
+
+    @Override
+    public ImmutableSet<Class<?>> childBindingClasses() {
+        return byBindingArgClassKeySet();
     }
 
     @Override
     protected Object deserializeObject(final NormalizedNode normalizedNode) {
-        return deserialize(normalizedNode);
+        return filterFrom(checkDataArgument(DataContainerNode.class, normalizedNode));
+    }
+
+    @Override
+    protected PathArgument getDomPathArgument() {
+        return null;
+    }
+
+    @Override
+    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
+            final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+        return Map.of();
     }
 }

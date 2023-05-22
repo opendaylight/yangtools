@@ -9,14 +9,12 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Map.Entry;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
     protected BindingCodecContext codecContext;
@@ -33,14 +31,13 @@ public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTes
 
     @Before
     public void before() {
-        this.codecContext = new BindingCodecContext(getRuntimeContext());
+        codecContext = new BindingCodecContext(getRuntimeContext());
     }
 
     @SuppressWarnings("unchecked")
     protected <T extends DataObject> T thereAndBackAgain(final InstanceIdentifier<T> path, final T data) {
-        final Entry<YangInstanceIdentifier, NormalizedNode> there = codecContext.toNormalizedNode(path, data);
-        final Entry<InstanceIdentifier<?>, DataObject> backAgain = codecContext.fromNormalizedNode(there.getKey(),
-            there.getValue());
+        final var there = (NodeResult) codecContext.toNormalizedNode(path, data);
+        final var backAgain = codecContext.fromNormalizedNode(there.path(), there.node());
         assertEquals(path, backAgain.getKey());
         return (T) backAgain.getValue();
     }

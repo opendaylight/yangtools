@@ -10,13 +10,11 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.Map.Entry;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryList;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryListBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class BinaryKeyTest extends AbstractBindingCodecTest {
     private final InstanceIdentifier<BinaryList> instanceIdentifier = InstanceIdentifier.create(BinaryList.class);
@@ -46,8 +44,7 @@ public class BinaryKeyTest extends AbstractBindingCodecTest {
     }
 
     private BinaryList process(final BinaryList binaryList) {
-        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
-            instanceIdentifier, binaryList);
-        return (BinaryList) codecContext.fromNormalizedNode(entry.getKey(), entry.getValue()).getValue();
+        final var entry = (NodeResult) codecContext.toNormalizedNode(instanceIdentifier, binaryList);
+        return (BinaryList) codecContext.fromNormalizedNode(entry.path(), entry.node()).getValue();
     }
 }

@@ -16,6 +16,7 @@ import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -24,6 +25,8 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
@@ -38,6 +41,7 @@ import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
+import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -60,7 +64,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
-final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, BindingRuntimeTypes> {
+final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, BindingRuntimeTypes>
+        implements BindingDataObjectCodecTreeNode<D> {
 
     private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
@@ -231,6 +236,11 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         throw new UnsupportedOperationException("Could not create Binding data representation for root");
     }
 
+    @Override
+    public NormalizedNode serialize(final D data) {
+        return serializeImpl(data);
+    }
+
     ActionCodecContext getAction(final Class<? extends Action<?, ?, ?>> action) {
         return getOrRethrow(actionsByClass, action);
     }
@@ -284,9 +294,9 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         final ActionRuntimeType schema = factory().getRuntimeContext().getActionDefinition(action);
         return new ActionCodecContext(
             DataContainerCodecPrototype.from(asClass(args[inputOffset], RpcInput.class), schema.input(),
-                factory()).get(),
+                factory()).getDataObject(),
             DataContainerCodecPrototype.from(asClass(args[outputOffset], RpcOutput.class), schema.output(),
-                factory()).get());
+                factory()).getDataObject());
     }
 
     private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
@@ -359,6 +369,12 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         }
 
         return super.bindingPathArgumentChild(arg, builder);
+    }
+
+    @Override
+    public BindingNormalizedNodeCachingCodec<D> createCachingCodec(
+            final ImmutableCollection<Class<? extends BindingObject>> cacheSpecifier) {
+        return createCachingCodec(this, cacheSpecifier);
     }
 
     private static Class<?> findCaseChoice(final Class<? extends DataObject> caseClass) {

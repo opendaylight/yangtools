@@ -16,6 +16,8 @@ import org.opendaylight.yang.gen.v1.mdsal._355.norev.OspfStatLsdbBrief;
 import org.opendaylight.yang.gen.v1.mdsal._355.norev.OspfStatLsdbBriefKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ListViaUses;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ListViaUsesKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
@@ -25,10 +27,8 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class InstanceIdentifierTest extends AbstractBindingCodecTest {
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
@@ -36,25 +36,24 @@ public class InstanceIdentifierTest extends AbstractBindingCodecTest {
             .child(TopLevelList.class, TOP_FOO_KEY).build();
     private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY = BA_TOP_LEVEL_LIST
             .augmentation(TreeLeafOnlyAugment.class);
-    private static final InstanceIdentifier<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST
-            .augmentation(TreeComplexUsesAugment.class);
-    private static final QName SIMPLE_VALUE_QNAME = QName.create(TreeComplexUsesAugment.QNAME, "simple-value");
+    private static final InstanceIdentifier<ListViaUses> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST
+            .augmentation(TreeComplexUsesAugment.class).child(ListViaUses.class, new ListViaUsesKey("bar"));
 
     @Test
     public void testComplexAugmentationSerialization() {
-        final YangInstanceIdentifier yangII = codecContext.toYangInstanceIdentifier(BA_TREE_COMPLEX_USES);
-        final PathArgument lastArg = yangII.getLastPathArgument();
-        assertTrue("Last argument should be AugmentationIdentifier", lastArg instanceof AugmentationIdentifier);
-        final InstanceIdentifier<?> bindingII = codecContext.fromYangInstanceIdentifier(yangII);
-        assertEquals(BA_TREE_COMPLEX_USES, bindingII);
+        // augmentation child pointer fully recoverable after reverse transformation
+        final YangInstanceIdentifier yii = codecContext.toYangInstanceIdentifier(BA_TREE_COMPLEX_USES);
+        final InstanceIdentifier<?> converted = codecContext.fromYangInstanceIdentifier(yii);
+        assertEquals(BA_TREE_COMPLEX_USES, converted);
     }
 
     @Test
     public void testLeafOnlyAugmentationSerialization() {
-        final PathArgument leafOnlyLastArg = codecContext.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY)
-                .getLastPathArgument();
-        assertTrue("Last argument should be AugmentationIdentifier", leafOnlyLastArg instanceof AugmentationIdentifier);
-        assertTrue(((AugmentationIdentifier) leafOnlyLastArg).getPossibleChildNames().contains(SIMPLE_VALUE_QNAME));
+        // augmentation only pointer translated to parent node being augmented,
+        // because of augmentation only have no corresponding yang identifier
+        final YangInstanceIdentifier yii = codecContext.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
+        final InstanceIdentifier<?> converted = codecContext.fromYangInstanceIdentifier(yii);
+        assertEquals(BA_TOP_LEVEL_LIST, converted);
     }
 
     @Test

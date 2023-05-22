@@ -10,19 +10,21 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-class CachingNormalizedNodeCodec<D extends DataObject> extends AbstractBindingNormalizedNodeCacheHolder implements
-        BindingNormalizedNodeCachingCodec<D> {
-    private final DataContainerCodecContext<D, ?> context;
+class CachingNormalizedNodeCodec<D extends DataObject,
+        C extends DataContainerCodecContext<D, ?> & BindingNormalizedNodeCodec<D>>
+        extends AbstractBindingNormalizedNodeCacheHolder implements BindingNormalizedNodeCachingCodec<D> {
+    private final @NonNull C context;
 
-    CachingNormalizedNodeCodec(final DataContainerCodecContext<D, ?> subtreeRoot,
-            final ImmutableSet<Class<? extends BindingObject>> cacheSpec) {
+    CachingNormalizedNodeCodec(final C context, final ImmutableSet<Class<? extends BindingObject>> cacheSpec) {
         super(cacheSpec);
-        this.context = requireNonNull(subtreeRoot);
+        this.context = requireNonNull(context);
     }
 
     @Override

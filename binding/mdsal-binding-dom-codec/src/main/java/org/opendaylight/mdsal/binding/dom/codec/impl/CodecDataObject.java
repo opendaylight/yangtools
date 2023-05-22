@@ -41,7 +41,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         }
     }
 
-    private final @NonNull DataObjectCodecContext<T, ?> context;
+    private final @NonNull AbstractDataObjectCodecContext<T, ?> context;
     @SuppressWarnings("rawtypes")
     private final @NonNull DistinctNodeContainer data;
 
@@ -50,7 +50,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     // FIXME: consider using a primitive int-based cache (with 0 being uninit)
     private volatile Integer cachedHashcode;
 
-    protected CodecDataObject(final DataObjectCodecContext<T, ?> context, final DistinctNodeContainer<?, ?> data) {
+    protected CodecDataObject(final AbstractDataObjectCodecContext<T, ?> context,
+            final DistinctNodeContainer<?, ?> data) {
         this.data = requireNonNull(data, "Data must not be null");
         this.context = requireNonNull(context, "Context must not be null");
     }
@@ -105,7 +106,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     protected abstract boolean codecEquals(Object obj);
 
-    final @NonNull DataObjectCodecContext<T, ?> codecContext() {
+    final @NonNull AbstractDataObjectCodecContext<T, ?> codecContext() {
         return context;
     }
 
