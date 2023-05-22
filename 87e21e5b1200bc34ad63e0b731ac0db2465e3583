@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "895814d7_e10d362d",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/StringPatternCheckingCodecTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-22T17:19:06Z",
+      "side": 1,
+      "message": "Delete pls",
+      "revId": "87e21e5b1200bc34ad63e0b731ac0db2465e3583",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "463f40e9_fbd28ae8",
+        "filename": "data/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/YT1437Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-22T17:19:06Z",
+      "side": 1,
+      "message": "Delete pls",
+      "revId": "87e21e5b1200bc34ad63e0b731ac0db2465e3583",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
