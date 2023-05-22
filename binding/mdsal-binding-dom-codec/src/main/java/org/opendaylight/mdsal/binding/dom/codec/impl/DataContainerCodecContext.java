@@ -267,17 +267,12 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
         final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
         final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        writeAsNormalizedNode(data, domWriter);
-        return result.getResult();
-    }
-
-    @Override
-    public void writeAsNormalizedNode(final D data, final NormalizedNodeStreamWriter writer) {
         try {
-            eventStreamSerializer().serialize(data, new BindingToNormalizedStreamWriter(this, writer));
+            eventStreamSerializer().serialize(data, new BindingToNormalizedStreamWriter(this, domWriter));
         } catch (final IOException e) {
             throw new IllegalStateException("Failed to serialize Binding DTO",e);
         }
+        return result.getResult();
     }
 
     static final <T extends NormalizedNode> @NonNull T checkDataArgument(final @NonNull Class<T> expectedType,

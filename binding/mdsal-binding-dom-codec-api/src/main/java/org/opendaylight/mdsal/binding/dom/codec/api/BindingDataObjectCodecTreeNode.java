@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 @Beta
 public interface BindingDataObjectCodecTreeNode<T extends DataObject>
@@ -125,9 +124,6 @@ public interface BindingDataObjectCodecTreeNode<T extends DataObject>
      */
     @NonNull BindingNormalizedNodeCachingCodec<T> createCachingCodec(
             @NonNull ImmutableCollection<Class<? extends BindingObject>> cacheSpecifier);
-
-    @Beta
-    void writeAsNormalizedNode(T data, NormalizedNodeStreamWriter writer);
 
     /**
      * Enumeration of possible addressability attribute of all children.
