@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
         extends DataObjectCodecContext<D, AugmentRuntimeType> {
-
     AugmentationNodeContext(final DataContainerCodecPrototype<AugmentRuntimeType> prototype) {
         super(prototype);
     }

@@ -227,7 +227,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
     }
 
     @CheckReturnValue
-    private static @NonNull IllegalArgumentException childNullException(final BindingRuntimeContext runtimeContext,
+    static @NonNull IllegalArgumentException childNullException(final BindingRuntimeContext runtimeContext,
             final Class<?> childClass, final String message, final Object... args) {
         final CompositeRuntimeType schema;
         if (Augmentation.class.isAssignableFrom(childClass)) {

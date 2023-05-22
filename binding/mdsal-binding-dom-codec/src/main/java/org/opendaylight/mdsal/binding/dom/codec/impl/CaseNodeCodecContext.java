@@ -12,26 +12,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.List;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, CaseRuntimeType> {
     CaseNodeCodecContext(final DataContainerCodecPrototype<CaseRuntimeType> prototype) {
-        super(prototype);
-    }
-
-    @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    Item<?> createBindingArg(final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
-        // FIXME: MDSAL-697: see overridden method for further guidance
-        return childSchema instanceof AddedByUsesAware aware && aware.isAddedByUses()
-            ? Item.of((Class)getBindingClass(), (Class)childClass)
-                : super.createBindingArg(childClass, childSchema);
+        super(prototype, CodecItemFactory.of(prototype.getBindingClass()));
     }
 
     @Override
