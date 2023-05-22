@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -63,45 +64,45 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
         }
     }
 
-    private final T type;
-    private final QNameModule namespace;
-    private final CodecContextFactory factory;
-    private final Item<?> bindingArg;
-    private final PathArgument yangArg;
-    private final ChildAddressabilitySummary childAddressabilitySummary;
+    private final @NonNull T type;
+    private final @NonNull QNameModule namespace;
+    private final @NonNull CodecContextFactory factory;
+    private final @NonNull Item<?> bindingArg;
+    private final @NonNull PathArgument yangArg;
+    private final @NonNull ChildAddressabilitySummary childAddressabilitySummary;
 
     // Accessed via INSTANCE
     @SuppressWarnings("unused")
     private volatile DataContainerCodecContext<?, T> instance;
 
     @SuppressWarnings("unchecked")
-    private DataContainerCodecPrototype(final Class<?> cls, final PathArgument arg, final T type,
+    private DataContainerCodecPrototype(final Class<?> cls, final PathArgument yangArg, final T type,
             final CodecContextFactory factory) {
-        this(Item.of((Class<? extends DataObject>) cls), arg, type, factory);
+        this(Item.of((Class<? extends DataObject>) cls), yangArg, type, factory);
     }
 
-    private DataContainerCodecPrototype(final Item<?> bindingArg, final PathArgument arg, final T type,
+    private DataContainerCodecPrototype(final Item<?> bindingArg, final PathArgument yangArg, final T type,
             final CodecContextFactory factory) {
-        this.bindingArg = bindingArg;
-        this.yangArg = arg;
-        this.type = type;
-        this.factory = factory;
+        this.bindingArg = requireNonNull(bindingArg);
+        this.yangArg = requireNonNull(yangArg);
+        this.type = requireNonNull(type);
+        this.factory = requireNonNull(factory);
 
-        if (arg instanceof AugmentationIdentifier augId) {
+        if (yangArg instanceof AugmentationIdentifier augId) {
             final var childNames = augId.getPossibleChildNames();
             verify(!childNames.isEmpty(), "Unexpected empty identifier for %s", type);
-            this.namespace = childNames.iterator().next().getModule();
+            namespace = childNames.iterator().next().getModule();
         } else {
-            this.namespace = arg.getNodeType().getModule();
+            namespace = yangArg.getNodeType().getModule();
         }
 
-        this.childAddressabilitySummary = type instanceof RuntimeType
+        childAddressabilitySummary = type instanceof RuntimeType
             ? computeChildAddressabilitySummary(((RuntimeType) type).statement())
                 // BindingRuntimeTypes, does not matter
                 : ChildAddressabilitySummary.MIXED;
     }
 
-    private static ChildAddressabilitySummary computeChildAddressabilitySummary(final Object nodeSchema) {
+    private static @NonNull ChildAddressabilitySummary computeChildAddressabilitySummary(final Object nodeSchema) {
         // FIXME: rework this to work on EffectiveStatements
         if (nodeSchema instanceof DataNodeContainer contaner) {
             boolean haveAddressable = false;
@@ -147,7 +148,8 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
         return ChildAddressabilitySummary.UNADDRESSABLE;
     }
 
-    private static ChildAddressabilitySummary computeChildAddressabilitySummary(final ChoiceSchemaNode choice) {
+    private static @NonNull ChildAddressabilitySummary computeChildAddressabilitySummary(
+            final ChoiceSchemaNode choice) {
         boolean haveAddressable = false;
         boolean haveUnaddressable = false;
         for (CaseSchemaNode child : choice.getCases()) {
@@ -196,8 +198,8 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
 
     static DataContainerCodecPrototype<NotificationRuntimeType> from(final Class<?> augClass,
             final NotificationRuntimeType schema, final CodecContextFactory factory) {
-        final PathArgument arg = NodeIdentifier.create(schema.statement().argument());
-        return new DataContainerCodecPrototype<>(augClass, arg, schema, factory);
+        return new DataContainerCodecPrototype<>(augClass, NodeIdentifier.create(schema.statement().argument()), schema,
+            factory);
     }
 
     private static @NonNull NodeIdentifier createIdentifier(final CompositeRuntimeType type) {
@@ -210,27 +212,27 @@ final class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implemen
         return type;
     }
 
-    ChildAddressabilitySummary getChildAddressabilitySummary() {
+    @NonNull ChildAddressabilitySummary getChildAddressabilitySummary() {
         return childAddressabilitySummary;
     }
 
-    QNameModule getNamespace() {
+    @NonNull QNameModule getNamespace() {
         return namespace;
     }
 
-    CodecContextFactory getFactory() {
+    @NonNull CodecContextFactory getFactory() {
         return factory;
     }
 
-    Class<?> getBindingClass() {
+    @NonNull Class<?> getBindingClass() {
         return bindingArg.getType();
     }
 
-    Item<?> getBindingArg() {
+    @NonNull Item<?> getBindingArg() {
         return bindingArg;
     }
 
-    PathArgument getYangArg() {
+    @NonNull PathArgument getYangArg() {
         return yangArg;
     }
 
