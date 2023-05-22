@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60d373d7_8a7d8b07",
+        "filename": "model/yang-model-export/src/test/java/org/opendaylight/yangtools/yang/model/export/Bug5531Test.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-22T17:10:42Z",
+      "side": 1,
+      "message": "Some new empty lines here and in next tests",
+      "revId": "6414e87169d504779d2047ec41bc5ff40b35269a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
