@@ -336,12 +336,10 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
         return DataContainer.class.isAssignableFrom(type) ? optionalDataContainer(type) : Optional.empty();
     }
 
-
     // FIXME: MDSAL-780: remove this method
     static final Optional<Class<? extends DataContainer>> optionalDataContainer(final Class<?> type) {
         return Optional.of(type.asSubclass(DataContainer.class));
     }
-
 
     /**
      * Determines if two augmentation classes or case classes represents same data.
@@ -373,7 +371,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
     //                   when we create BindingRuntimeTypes. Achieving that will bring us one step closer to being able
     //                   to have a pre-compiled Binding Runtime.
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    static boolean isSubstitutionFor(final Class potential, final Class target) {
+    static final boolean isSubstitutionFor(final Class potential, final Class target) {
         Set<Class> subImplemented = new HashSet<>(Arrays.asList(potential.getInterfaces()));
         Set<Class> targetImplemented = new HashSet<>(Arrays.asList(target.getInterfaces()));
         if (!subImplemented.equals(targetImplemented)) {
