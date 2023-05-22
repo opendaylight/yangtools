@@ -36,7 +36,7 @@ public class NonCachingCodecTest {
 
     @Test
     public void basicTest() {
-        try (NonCachingCodec<DataObject> nonCachingCodec = new NonCachingCodec<>(codec)) {
+        try (var nonCachingCodec = new NonCachingCodec<>(codec)) {
             nonCachingCodec.serialize(object);
             verify(codec).serialize(object);
             nonCachingCodec.deserialize(node);

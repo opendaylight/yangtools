@@ -7,17 +7,18 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-class NonCachingCodec<D extends DataObject> implements BindingNormalizedNodeCachingCodec<D> {
-
+final class NonCachingCodec<D extends DataObject> implements BindingNormalizedNodeCachingCodec<D> {
     private final BindingNormalizedNodeCodec<D> delegate;
 
-    protected NonCachingCodec(final BindingNormalizedNodeCodec<D> delegate) {
-        this.delegate = delegate;
+    NonCachingCodec(final BindingNormalizedNodeCodec<D> delegate) {
+        this.delegate = requireNonNull(delegate);
     }
 
     @Override
@@ -34,5 +35,4 @@ class NonCachingCodec<D extends DataObject> implements BindingNormalizedNodeCach
     public void close() {
         // NOOP
     }
-
 }
