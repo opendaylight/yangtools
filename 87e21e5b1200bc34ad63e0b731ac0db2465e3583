@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a532ee1_15923fce",
+        "filename": "data/yang-data-tree-ri/src/test/java/org/opendaylight/yangtools/yang/data/tree/leafref/YT891Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-22T17:17:47Z",
+      "side": 0,
+      "message": "Revert pls. Split between static and non-static is ok.",
+      "revId": "87e21e5b1200bc34ad63e0b731ac0db2465e3583",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
