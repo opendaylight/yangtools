@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b29b5292_e814560d",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/Bug4969Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-22T17:24:28Z",
+      "side": 1,
+      "message": "2 space pls - not 4",
+      "range": {
+        "startLine": 169,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 18
+      },
+      "revId": "bdde1098015ddf079542ab8541cae27e9a06db9a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
