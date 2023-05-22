@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "56b62a99_070e51e7",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/Bug4501Test.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-22T11:29:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c8c36a81_db6ea174",
+      "range": {
+        "startLine": 40,
+        "startChar": 14,
+        "endLine": 40,
+        "endChar": 16
+      },
+      "revId": "a9cf67dbc9ffdd40a3d2386331324f1514e93a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ad756ac0_c12f9eb5",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-05-22T08:17:54Z",
       "side": 1,
       "message": "merge to previous line, here and everywhere else",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 53
+      },
+      "revId": "a9cf67dbc9ffdd40a3d2386331324f1514e93a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19a8c47a_787beb55",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/Bug4501Test.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-05-22T11:29:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad756ac0_c12f9eb5",
       "range": {
         "startLine": 51,
         "startChar": 0,
