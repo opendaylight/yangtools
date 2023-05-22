@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "224b0d7c_8f5d581e",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/Bug8083Test.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-22T17:22:04Z",
+      "side": 1,
+      "message": "Delete pls",
+      "revId": "f29b700264a75b6e856d8e5c03aeefb0f12b309a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}

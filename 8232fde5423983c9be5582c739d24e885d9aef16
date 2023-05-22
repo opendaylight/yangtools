@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f89a116c_4b2c4fd2",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/YT1473Test.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-22T17:22:04Z",
+      "side": 0,
+      "message": "Revert pls",
+      "revId": "8232fde5423983c9be5582c739d24e885d9aef16",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
