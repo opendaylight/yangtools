@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import java.io.Serial;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Thrown where incorrect nesting of data structures was detected and was caused by user. This typically indicates
@@ -24,7 +25,12 @@ public class IncorrectNestingException extends IllegalArgumentException {
         super(message);
     }
 
-    public static IncorrectNestingException create(final String message, final Object... args) {
-        return new IncorrectNestingException(String.format(message, args));
+    public IncorrectNestingException(final String message, final Object... args) {
+        this(message.formatted(args));
+    }
+
+    @Deprecated(since = "12.0.0", forRemoval = true)
+    public static @NonNull IncorrectNestingException create(final String message, final Object... args) {
+        return new IncorrectNestingException(message, args);
     }
 }

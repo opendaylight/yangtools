@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -210,17 +211,24 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
         return nullable;
     }
 
+    @CheckReturnValue
     private IllegalArgumentException childNullException(final QName child, final String message, final Object... args) {
         final QNameModule module = child.getModule();
         if (!factory().getRuntimeContext().getEffectiveModelContext().findModule(module).isPresent()) {
-            throw new MissingSchemaException("Module " + module + " is not present in current schema context.");
+            return new MissingSchemaException("Module " + module + " is not present in current schema context.");
         }
-        throw IncorrectNestingException.create(message, args);
+        return new IncorrectNestingException(message, args);
     }
 
-    private IllegalArgumentException childNullException(final Class<?> childClass, final String message,
+    @CheckReturnValue
+    private @NonNull IllegalArgumentException childNullException(final Class<?> childClass, final String message,
             final Object... args) {
-        final BindingRuntimeContext runtimeContext = factory().getRuntimeContext();
+        return childNullException(factory().getRuntimeContext(), childClass, message, args);
+    }
+
+    @CheckReturnValue
+    private static @NonNull IllegalArgumentException childNullException(final BindingRuntimeContext runtimeContext,
+            final Class<?> childClass, final String message, final Object... args) {
         final CompositeRuntimeType schema;
         if (Augmentation.class.isAssignableFrom(childClass)) {
             schema = runtimeContext.getAugmentationDefinition(childClass.asSubclass(Augmentation.class));
@@ -228,17 +236,17 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
             schema = runtimeContext.getSchemaDefinition(childClass);
         }
         if (schema == null) {
-            throw new MissingSchemaForClassException(childClass);
+            return new MissingSchemaForClassException(childClass);
         }
 
         try {
             runtimeContext.loadClass(Type.of(childClass));
         } catch (final ClassNotFoundException e) {
-            throw new MissingClassInLoadingStrategyException(
+            return new MissingClassInLoadingStrategyException(
                 "User supplied class " + childClass.getName() + " is not available in " + runtimeContext, e);
         }
 
-        throw IncorrectNestingException.create(message, args);
+        return new IncorrectNestingException(message, args);
     }
 
     private static QName extractName(final YangInstanceIdentifier.PathArgument child) {
