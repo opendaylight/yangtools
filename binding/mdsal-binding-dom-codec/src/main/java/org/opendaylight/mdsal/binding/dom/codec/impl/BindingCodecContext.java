@@ -265,11 +265,11 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         NodeCodecContext currentNode = root;
         ListNodeCodecContext<?> currentList = null;
 
-        for (final YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
+        for (var domArg : dom.getPathArguments()) {
             checkArgument(currentNode instanceof DataContainerCodecContext,
                 "Unexpected child of non-container node %s", currentNode);
-            final DataContainerCodecContext<?,?> previous = (DataContainerCodecContext<?, ?>) currentNode;
-            final NodeCodecContext nextNode = previous.yangPathArgumentChild(domArg);
+            final var previous = (DataContainerCodecContext<?, ?>) currentNode;
+            final var nextNode = previous.yangPathArgumentChild(domArg);
 
             /*
              * List representation in YANG Instance Identifier consists of two
@@ -290,17 +290,17 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 }
                 currentList = null;
                 currentNode = nextNode;
-            } else if (nextNode instanceof ListNodeCodecContext) {
+            } else if (nextNode instanceof ListNodeCodecContext<?> listNode) {
                 // We enter list, we do not update current Node yet,
                 // since we need to verify
-                currentList = (ListNodeCodecContext<?>) nextNode;
+                currentList = listNode;
             } else if (nextNode instanceof ChoiceNodeCodecContext) {
                 // We do not add path argument for choice, since
                 // it is not supported by binding instance identifier.
                 currentNode = nextNode;
-            } else if (nextNode instanceof DataContainerCodecContext) {
+            } else if (nextNode instanceof DataContainerCodecContext<?, ?> containerNode) {
                 if (bindingArguments != null) {
-                    bindingArguments.add(((DataContainerCodecContext<?, ?>) nextNode).getBindingPathArgument(domArg));
+                    bindingArguments.add(containerNode.getBindingPathArgument(domArg));
                 }
                 currentNode = nextNode;
             } else if (nextNode instanceof ValueNodeCodecContext) {
@@ -349,14 +349,14 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     public ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(final Class<?> type,
             final EffectiveStatement<?, ?> schema) {
-        final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
+        final var getterToLeafSchema = new HashMap<String, DataSchemaNode>();
         for (var stmt : schema.effectiveSubstatements()) {
-            if (stmt instanceof TypedDataSchemaNode) {
-                putLeaf(getterToLeafSchema, (TypedDataSchemaNode) stmt);
-            } else if (stmt instanceof AnydataSchemaNode) {
-                putLeaf(getterToLeafSchema, (AnydataSchemaNode) stmt);
-            } else if (stmt instanceof AnyxmlSchemaNode) {
-                putLeaf(getterToLeafSchema, (AnyxmlSchemaNode) stmt);
+            if (stmt instanceof TypedDataSchemaNode typedSchema) {
+                putLeaf(getterToLeafSchema, typedSchema);
+            } else if (stmt instanceof AnydataSchemaNode anydataSchema) {
+                putLeaf(getterToLeafSchema, anydataSchema);
+            } else if (stmt instanceof AnyxmlSchemaNode anyxmlSchema) {
+                putLeaf(getterToLeafSchema, anyxmlSchema);
             }
         }
         return getLeafNodesUsingReflection(type, getterToLeafSchema);
@@ -368,8 +368,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     private ImmutableMap<Method, ValueNodeCodecContext> getLeafNodesUsingReflection(
             final Class<?> parentClass, final Map<String, DataSchemaNode> getterToLeafSchema) {
-        final Map<Method, ValueNodeCodecContext> leaves = new HashMap<>();
-        for (final Method method : parentClass.getMethods()) {
+        final var leaves = new HashMap<Method, ValueNodeCodecContext>();
+        for (var method : parentClass.getMethods()) {
             // Only consider non-bridge methods with no arguments
             if (method.getParameterCount() == 0 && !method.isBridge()) {
                 final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
@@ -382,7 +382,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     final ValueCodec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
                     valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
                         context.getEffectiveModelContext());
-                } else if (schema instanceof LeafListSchemaNode) {
+                } else if (schema instanceof LeafListSchemaNode leafListSchema) {
                     final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
                         method.getGenericReturnType());
                     checkState(optType.isPresent(), "Failed to find return type for %s", method);
@@ -400,14 +400,13 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                         throw new IllegalStateException("Unexpected return type " + genericType);
                     }
 
-                    final LeafListSchemaNode leafListSchema = (LeafListSchemaNode) schema;
                     final ValueCodec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
                     valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName());
-                } else if (schema instanceof AnyxmlSchemaNode) {
-                    valueNode = new OpaqueNodeCodecContext.Anyxml<>((AnyxmlSchemaNode) schema, method.getName(),
+                } else if (schema instanceof AnyxmlSchemaNode anyxmlSchema) {
+                    valueNode = new OpaqueNodeCodecContext.Anyxml<>(anyxmlSchema, method.getName(),
                             opaqueReturnType(method), loader);
-                } else if (schema instanceof AnydataSchemaNode) {
-                    valueNode = new OpaqueNodeCodecContext.Anydata<>((AnydataSchemaNode) schema, method.getName(),
+                } else if (schema instanceof AnydataSchemaNode anydataSchema) {
+                    valueNode = new OpaqueNodeCodecContext.Anydata<>(anydataSchema, method.getName(),
                             opaqueReturnType(method), loader);
                 } else {
                     verify(schema == null, "Unhandled schema %s for method %s", schema, method);
@@ -447,9 +446,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             return new CompositeValueCodec.OfIdentity(valueType, identityCodec);
         } else if (typeDef instanceof InstanceIdentifierTypeDefinition) {
             return new CompositeValueCodec.OfInstanceIdentifier(valueType, instanceIdentifierCodec);
-        } else if (typeDef instanceof UnionTypeDefinition) {
+        } else if (typeDef instanceof UnionTypeDefinition unionType) {
             try {
-                return UnionTypeCodec.of(valueType, (UnionTypeDefinition) typeDef, this);
+                return UnionTypeCodec.of(valueType, unionType, this);
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
@@ -457,10 +456,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             final var typeWithSchema = context.getTypeWithSchema(valueType);
             final var schema = typeWithSchema.statement();
             final TypeDefinition<?> def;
-            if (schema instanceof TypeDefinitionAware) {
-                def = ((TypeDefinitionAware) schema).getTypeDefinition();
-            } else if (schema instanceof TypeAware) {
-                def = ((TypeAware) schema).getType();
+            if (schema instanceof TypeDefinitionAware typeDefAware) {
+                def = typeDefAware.getTypeDefinition();
+            } else if (schema instanceof TypeAware typeAware) {
+                def = typeAware.getType();
             } else {
                 throw new IllegalStateException("Unexpected schema " + schema);
             }
