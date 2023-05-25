@@ -16,6 +16,24 @@
       "message": "Revert pls. Split between static and non-static is ok.",
       "revId": "87e21e5b1200bc34ad63e0b731ac0db2465e3583",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef9d21f3_34b7cb7a",
+        "filename": "data/yang-data-tree-ri/src/test/java/org/opendaylight/yangtools/yang/data/tree/leafref/YT891Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-25T15:44:27Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "1a532ee1_15923fce",
+      "revId": "87e21e5b1200bc34ad63e0b731ac0db2465e3583",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
