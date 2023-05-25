@@ -16,6 +16,24 @@
       "message": "Remove this pls. In other tests too - you have more",
       "revId": "18ea9db990b0fa57cbbbab8d3af73323cc738752",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bddd11dd_c6027bff",
+        "filename": "model/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/YT1100Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-25T15:43:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d52bc0a_780ef78f",
+      "revId": "18ea9db990b0fa57cbbbab8d3af73323cc738752",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

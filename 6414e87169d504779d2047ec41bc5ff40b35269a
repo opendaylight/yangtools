@@ -16,6 +16,24 @@
       "message": "Split between static and non-static vars is ok.",
       "revId": "6414e87169d504779d2047ec41bc5ff40b35269a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3cda2f5b_e1a7a437",
+        "filename": "model/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/YT1060Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2023-05-25T15:43:27Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "11c6c740_9f7b8446",
+      "revId": "6414e87169d504779d2047ec41bc5ff40b35269a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
