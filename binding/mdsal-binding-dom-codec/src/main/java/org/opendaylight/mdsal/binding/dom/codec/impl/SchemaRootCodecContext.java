@@ -198,19 +198,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             }
         });
 
-    private SchemaRootCodecContext(final DataContainerCodecPrototype<BindingRuntimeTypes> dataPrototype) {
-        super(dataPrototype);
-    }
-
-    /**
-     * Creates RootNode from supplied CodecContextFactory.
-     *
-     * @param factory
-     *            CodecContextFactory
-     * @return A new root node
-     */
-    static SchemaRootCodecContext<?> create(final CodecContextFactory factory) {
-        return new SchemaRootCodecContext<>(DataContainerCodecPrototype.rootPrototype(factory));
+    SchemaRootCodecContext(final CodecContextFactory factory) {
+        super(DataContainerCodecPrototype.rootPrototype(factory));
     }
 
     @Override

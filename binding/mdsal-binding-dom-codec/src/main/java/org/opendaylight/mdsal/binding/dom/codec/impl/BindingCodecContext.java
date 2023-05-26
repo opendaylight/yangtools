@@ -149,7 +149,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     private final @NonNull InstanceIdentifierCodec instanceIdentifierCodec;
     private final @NonNull IdentityCodec identityCodec;
     private final @NonNull BindingRuntimeContext context;
-    private final SchemaRootCodecContext<?> root;
+    private final @NonNull SchemaRootCodecContext<?> root;
 
     public BindingCodecContext() {
         this(ServiceLoader.load(BindingRuntimeContext.class).findFirst()
@@ -158,7 +158,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     public BindingCodecContext(final BindingRuntimeContext context) {
         this.context = requireNonNull(context, "Binding Runtime Context is required.");
-        root = SchemaRootCodecContext.create(this);
+        root = new SchemaRootCodecContext<>(this);
         identityCodec = new IdentityCodec(context);
         instanceIdentifierCodec = new InstanceIdentifierCodec(this);
     }
@@ -237,14 +237,18 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return new BindingToNormalizedStreamWriter(getActionCodec(action).output(), domWriter);
     }
 
-    DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,
+    @NonNull DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,
             final List<YangInstanceIdentifier.PathArgument> builder) {
-        DataContainerCodecContext<?,?> currentNode = root;
-        for (final InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
-            currentNode = currentNode.bindingPathArgumentChild(bindingArg, builder);
-            checkArgument(currentNode != null, "Supplied Instance Identifier %s is not valid.", binding);
+        DataContainerCodecContext<?, ?> current = root;
+        for (var bindingArg : binding.getPathArguments()) {
+            final var next = current.bindingPathArgumentChild(bindingArg, builder);
+            if (next == null) {
+                throw new IllegalArgumentException("%s is not valid: parent %s does not have a child %s".formatted(
+                    binding, current.bindingArg(), bindingArg));
+            }
+            current = next;
         }
-        return currentNode;
+        return current;
     }
 
     /**
