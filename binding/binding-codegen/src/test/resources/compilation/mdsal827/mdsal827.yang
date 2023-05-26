@@ -1,0 +1,32 @@
+module mdsal827 {
+  namespace mdsal827;
+  prefix mdsal767;
+
+  typedef foo {
+    type uint16;
+  }
+
+  typedef bar {
+    type uint16 {
+      range 0..65535;
+    }
+  }
+
+  typedef my-type1 {
+    type int32 {
+      range "1..4 | 10..20";
+    }
+  }
+
+  typedef my-type2 {
+    type my-type1 {
+      range "1..4 | 10..20";
+    }
+  }
+
+  typedef my-type3 {
+    type my-type2 {
+      range "1..4";
+    }
+  }
+}
