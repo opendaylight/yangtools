@@ -23,8 +23,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  */
 // TODO: Add more detailed documentation
 public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty> {
-
-    @Nullable <T extends DataObject> BindingDataObjectCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
+    /**
+     * Look up the codec for specified path.
+     *
+     * @param <T> DataObject type
+     * @param path Binding path
+     * @return A {@link BindingDataObjectCodecTreeNode}
+     * @throws NullPointerException if {@code path} is {@code null}
+     * @throws IllegalArgumentException if the codec cannot be resolved
+     */
+    <T extends DataObject> @NonNull BindingDataObjectCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
 
     @Nullable BindingCodecTreeNode getSubtreeCodec(YangInstanceIdentifier path);
 
