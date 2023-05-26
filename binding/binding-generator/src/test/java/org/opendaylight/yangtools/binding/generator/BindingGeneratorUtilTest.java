@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,9 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
-import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidLengthConstraintException;
@@ -71,14 +68,24 @@ class BindingGeneratorUtilTest {
     }
 
     @Test
+    void getRedundantRestrictionsTest() {
+        final var builder = RestrictedTypes.newUint16Builder(BaseTypes.uint16Type(), ROOT);
+        builder.setRangeConstraint(constraintMeta, List.of(ValueRange.of(0, 65535)));
+        final var restrictions = BindingGeneratorUtil.getRestrictions(builder.build());
+
+        assertNotNull(restrictions);
+        assertTrue(restrictions.isEmpty());
+        assertEquals(Optional.empty(), restrictions.getLengthConstraint());
+        assertEquals(List.of(), restrictions.getPatternConstraints());
+    }
+
+    @Test
     void getDefaultIntegerRestrictionsTest() {
         final var type = DerivedTypes.derivedTypeBuilder(BaseTypes.int16Type(), ROOT).build();
         final var restrictions = BindingGeneratorUtil.getRestrictions(type);
 
         assertNotNull(restrictions);
-        assertFalse(restrictions.isEmpty());
-        assertEquals(assertInstanceOf(Int16TypeDefinition.class, type.getBaseType()).getRangeConstraint(),
-                restrictions.getRangeConstraint());
+        assertTrue(restrictions.isEmpty());
         assertEquals(Optional.empty(), restrictions.getLengthConstraint());
         assertEquals(List.of(), restrictions.getPatternConstraints());
     }
@@ -89,9 +96,7 @@ class BindingGeneratorUtilTest {
         final var restrictions = BindingGeneratorUtil.getRestrictions(type);
 
         assertNotNull(restrictions);
-        assertFalse(restrictions.isEmpty());
-        assertEquals(assertInstanceOf(Uint16TypeDefinition.class, type.getBaseType()).getRangeConstraint(),
-                restrictions.getRangeConstraint());
+        assertTrue(restrictions.isEmpty());
         assertEquals(Optional.empty(), restrictions.getLengthConstraint());
         assertEquals(List.of(), restrictions.getPatternConstraints());
     }
