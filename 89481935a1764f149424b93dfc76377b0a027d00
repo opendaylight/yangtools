@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eab6b919_d75ff8aa",
+        "filename": "model/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/YT1050Test.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-05-27T02:01:58Z",
+      "side": 1,
+      "message": "please retain basic whitespace between top-level components -- it makes navigating the proposed model easier.",
+      "range": {
+        "startLine": 40,
+        "startChar": 14,
+        "endLine": 40,
+        "endChar": 35
+      },
+      "revId": "89481935a1764f149424b93dfc76377b0a027d00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
