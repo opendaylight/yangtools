@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class ReplaceLeafCandidateNode extends AbstractWriteCandidate {
-    private final NormalizedNode oldData;
+    private final @NonNull NormalizedNode oldData;
 
     ReplaceLeafCandidateNode(final NormalizedNode oldData, final NormalizedNode newData) {
         super(newData);
@@ -21,7 +21,7 @@ final class ReplaceLeafCandidateNode extends AbstractWriteCandidate {
     }
 
     @Override
-    public Optional<NormalizedNode> getDataBefore() {
-        return Optional.of(oldData);
+    public NormalizedNode dataBefore() {
+        return oldData;
     }
 }

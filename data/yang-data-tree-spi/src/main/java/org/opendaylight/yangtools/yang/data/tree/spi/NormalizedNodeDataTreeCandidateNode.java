@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -37,14 +36,29 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     }
 
     @Override
-    public PathArgument getIdentifier() {
+    public PathArgument name() {
         return data.name();
     }
 
     @Override
-    public Collection<DataTreeCandidateNode> getChildNodes() {
-        if (data instanceof DistinctNodeContainer) {
-            return Collections2.transform(((DistinctNodeContainer<?, ?>) data).body(),
+    public ModificationType modificationType() {
+        return ModificationType.WRITE;
+    }
+
+    @Override
+    public NormalizedNode dataBefore() {
+        return null;
+    }
+
+    @Override
+    public NormalizedNode dataAfter() {
+        return data;
+    }
+
+    @Override
+    public Collection<DataTreeCandidateNode> childNodes() {
+        if (data instanceof DistinctNodeContainer<?, ?> container) {
+            return Collections2.transform(container.body(),
                 input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input));
         }
         return ImmutableList.of();
@@ -52,26 +66,11 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childIdentifier) {
-        if (data instanceof DistinctNodeContainer) {
-            return ((Optional<@NonNull NormalizedNode>) ((DistinctNodeContainer)data).findChildByArg(childIdentifier))
-                .map(NormalizedNodeDataTreeCandidateNode::new);
+    public DataTreeCandidateNode modifiedChild(final PathArgument childName) {
+        if (data instanceof DistinctNodeContainer container) {
+            final var child = container.childByArg(childName);
+            return child != null ? new NormalizedNodeDataTreeCandidateNode(child) : null;
         }
-        return Optional.empty();
-    }
-
-    @Override
-    public ModificationType getModificationType() {
-        return ModificationType.WRITE;
-    }
-
-    @Override
-    public Optional<NormalizedNode> getDataAfter() {
-        return Optional.of(data);
-    }
-
-    @Override
-    public Optional<NormalizedNode> getDataBefore() {
-        return Optional.empty();
+        return null;
     }
 }

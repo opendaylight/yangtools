@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -20,18 +19,18 @@ final class RecursiveWriteCandidateNode extends AbstractRecursiveCandidateNode {
     }
 
     @Override
-    public ModificationType getModificationType() {
+    public ModificationType modificationType() {
         return ModificationType.WRITE;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataAfter() {
-        return dataOptional();
+    public NormalizedNode dataBefore() {
+        return null;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataBefore() {
-        return Optional.empty();
+    public NormalizedNode dataAfter() {
+        return data;
     }
 
     @Override

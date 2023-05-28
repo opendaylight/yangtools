@@ -17,23 +17,19 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
 abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    private final DistinctNodeContainer<PathArgument, NormalizedNode> data;
+    final @NonNull DistinctNodeContainer<PathArgument, NormalizedNode> data;
 
     AbstractDataTreeCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
         this.data = requireNonNull(data);
     }
 
     @Override
-    public final PathArgument getIdentifier() {
+    public final PathArgument name() {
         return data.name();
     }
 
     final @NonNull Optional<NormalizedNode> dataOptional() {
         return Optional.of(data);
-    }
-
-    final DistinctNodeContainer<PathArgument, NormalizedNode> data() {
-        return data;
     }
 
     @Override
