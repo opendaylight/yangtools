@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +20,6 @@ import static org.mockito.Mockito.mock;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -37,34 +38,33 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
 
         final var mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
         doReturn(mockedPathArgument).when(mockedNormalizedNode).name();
-        assertSame(mockedPathArgument, normalizedNodeDataTreeCandidateNode.getIdentifier());
+        assertSame(mockedPathArgument, normalizedNodeDataTreeCandidateNode.name());
 
-        final Collection<DataTreeCandidateNode> childNodes = normalizedNodeDataTreeCandidateNode.getChildNodes();
+        final Collection<DataTreeCandidateNode> childNodes = normalizedNodeDataTreeCandidateNode.childNodes();
         assertTrue(childNodes instanceof List);
         assertTrue(childNodes.isEmpty());
 
-        assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode.getModifiedChild(mockedPathArgument));
+        assertNull(normalizedNodeDataTreeCandidateNode.modifiedChild(mockedPathArgument));
 
-        assertEquals(ModificationType.WRITE, normalizedNodeDataTreeCandidateNode.getModificationType());
-        assertEquals(Optional.of(mockedNormalizedNode), normalizedNodeDataTreeCandidateNode.getDataAfter());
-        assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode.getDataBefore());
+        assertEquals(ModificationType.WRITE, normalizedNodeDataTreeCandidateNode.modificationType());
+        assertEquals(mockedNormalizedNode, normalizedNodeDataTreeCandidateNode.dataAfter());
+        assertEquals(null, normalizedNodeDataTreeCandidateNode.dataBefore());
 
         final DistinctNodeContainer mockedNormalizedNodeContainer = mock(DistinctNodeContainer.class);
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode2 = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNodeContainer);
         final NormalizedNode mockedChildNormNode1 = mock(NormalizedNode.class);
         final NormalizedNode mockedChildNormNode2 = mock(NormalizedNode.class);
-        final Collection<NormalizedNode> mockedChildNodes = Arrays.asList(mockedChildNormNode1,
-                mockedChildNormNode2, null);
+        final var mockedChildNodes = Arrays.asList(mockedChildNormNode1, mockedChildNormNode2, null);
         doReturn(mockedChildNodes).when(mockedNormalizedNodeContainer).body();
-        final Collection<DataTreeCandidateNode> childNodes2 = normalizedNodeDataTreeCandidateNode2.getChildNodes();
+        final var childNodes2 = normalizedNodeDataTreeCandidateNode2.childNodes();
         assertEquals(3, childNodes2.size());
 
         doReturn(null).when(mockedNormalizedNodeContainer).childByArg(any(PathArgument.class));
         doCallRealMethod().when(mockedNormalizedNodeContainer).findChildByArg(any(PathArgument.class));
-        assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument));
+        assertNull(normalizedNodeDataTreeCandidateNode2.modifiedChild(mockedPathArgument));
 
         doReturn(mockedChildNormNode1).when(mockedNormalizedNodeContainer).childByArg(any(PathArgument.class));
-        assertTrue(normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument).isPresent());
+        assertNotNull(normalizedNodeDataTreeCandidateNode2.modifiedChild(mockedPathArgument));
     }
 }

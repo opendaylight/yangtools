@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -31,17 +30,17 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     }
 
     @Override
-    public final Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument identifier) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public final ModificationType getModificationType() {
+    public final ModificationType modificationType() {
         return type;
     }
 
     @Override
-    public final Optional<NormalizedNode> getDataBefore() {
+    public final DataTreeCandidateNode modifiedChild(final PathArgument identifier) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public final NormalizedNode dataBefore() {
         throw new UnsupportedOperationException("Before-image not available after serialization");
     }
 }

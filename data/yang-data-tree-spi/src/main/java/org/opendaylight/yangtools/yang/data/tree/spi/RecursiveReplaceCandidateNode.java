@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.spi;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode {
-    private final DistinctNodeContainer<PathArgument, NormalizedNode> oldData;
+    private final @NonNull DistinctNodeContainer<PathArgument, NormalizedNode> oldData;
 
     RecursiveReplaceCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> oldData,
             final DistinctNodeContainer<PathArgument, NormalizedNode> newData) {
@@ -27,27 +27,27 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
     }
 
     @Override
-    public ModificationType getModificationType() {
+    public ModificationType modificationType() {
         return ModificationType.WRITE;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataAfter() {
-        return dataOptional();
+    public NormalizedNode dataBefore() {
+        return oldData;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataBefore() {
-        return Optional.of(oldData);
+    public NormalizedNode dataAfter() {
+        return data;
     }
 
     @Override
-    public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument identifier) {
-        return DataTreeCandidateNodes.containerDelta(oldData, data(), identifier);
+    public DataTreeCandidateNode modifiedChild(final PathArgument childName) {
+        return DataTreeCandidateNodes.containerDelta(oldData, data, childName);
     }
 
     @Override
-    public Collection<DataTreeCandidateNode> getChildNodes() {
-        return DataTreeCandidateNodes.containerDelta(oldData, data());
+    public Collection<DataTreeCandidateNode> childNodes() {
+        return DataTreeCandidateNodes.containerDelta(oldData, data);
     }
 }

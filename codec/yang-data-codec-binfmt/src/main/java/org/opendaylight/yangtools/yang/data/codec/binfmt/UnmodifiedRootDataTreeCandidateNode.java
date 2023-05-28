@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import java.util.Collection;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
@@ -22,17 +21,17 @@ final class UnmodifiedRootDataTreeCandidateNode extends AbstractDataTreeCandidat
     }
 
     @Override
-    public PathArgument getIdentifier() {
+    public PathArgument name() {
         throw new UnsupportedOperationException("Root node does not have an identifier");
     }
 
     @Override
-    public Optional<NormalizedNode> getDataAfter() {
+    public NormalizedNode dataAfter() {
         throw new UnsupportedOperationException("After-image not available after serialization");
     }
 
     @Override
-    public Collection<DataTreeCandidateNode> getChildNodes() {
+    public Collection<DataTreeCandidateNode> childNodes() {
         throw new UnsupportedOperationException("Children not available after serialization");
     }
 }

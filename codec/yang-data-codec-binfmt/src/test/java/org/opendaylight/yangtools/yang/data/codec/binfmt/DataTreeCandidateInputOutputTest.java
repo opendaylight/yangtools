@@ -148,16 +148,16 @@ public class DataTreeCandidateInputOutputTest {
     }
 
     private static void assertEqualMod(final DataTreeCandidateNode expected, final DataTreeCandidateNode actual) {
-        assertEquals(expected.getModificationType(), actual.getModificationType());
+        assertEquals(expected.modificationType(), actual.modificationType());
 
-        switch (expected.getModificationType()) {
+        switch (expected.modificationType()) {
             case DELETE:
             case UNMODIFIED:
                 // No children to verify
                 break;
             default:
-                final Collection<DataTreeCandidateNode> expectedChildren = expected.getChildNodes();
-                final Collection<DataTreeCandidateNode> actualChildren = actual.getChildNodes();
+                final Collection<DataTreeCandidateNode> expectedChildren = expected.childNodes();
+                final Collection<DataTreeCandidateNode> actualChildren = actual.childNodes();
                 assertEquals(expectedChildren.size(), actualChildren.size());
 
                 final Iterator<DataTreeCandidateNode> ait = actualChildren.iterator();
@@ -169,7 +169,7 @@ public class DataTreeCandidateInputOutputTest {
     }
 
     private static void assertEqualNodes(final DataTreeCandidateNode expected, final DataTreeCandidateNode actual) {
-        assertEquals(expected.getIdentifier(), actual.getIdentifier());
+        assertEquals(expected.name(), actual.name());
         assertEqualMod(expected, actual);
     }
 }

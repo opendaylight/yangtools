@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 abstract class AbstractAvailableLeafCandidateNode extends AbstractLeafCandidateNode {
@@ -16,7 +15,7 @@ abstract class AbstractAvailableLeafCandidateNode extends AbstractLeafCandidateN
     }
 
     @Override
-    public final Optional<NormalizedNode> getDataAfter() {
-        return dataOptional();
+    public final NormalizedNode dataAfter() {
+        return data;
     }
 }
