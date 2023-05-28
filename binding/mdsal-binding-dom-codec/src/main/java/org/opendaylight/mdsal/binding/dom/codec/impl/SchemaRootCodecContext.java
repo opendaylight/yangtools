@@ -161,8 +161,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 final var child = childNonNull(type.schemaTreeChild(qname), qname,
                     "Argument %s is not valid child of %s", qname, type);
                 if (!(child instanceof DataRuntimeType)) {
-                    throw IncorrectNestingException.create("Argument %s is not valid data tree child of %s", qname,
-                        type);
+                    throw new IncorrectNestingException("Argument %s is not valid data tree child of %s", qname, type);
                 }
 
                 // TODO: improve this check?
@@ -271,7 +270,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         if (childSchema instanceof CompositeRuntimeType composite && childSchema instanceof DataRuntimeType) {
             return DataContainerCodecPrototype.from(key, composite, factory()).get();
         }
-        throw IncorrectNestingException.create("%s is not a valid data tree child of %s", key, this);
+        throw new IncorrectNestingException("%s is not a valid data tree child of %s", key, this);
     }
 
     ActionCodecContext createActionContext(final Class<? extends Action<?, ?, ?>> action) {
