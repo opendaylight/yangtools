@@ -158,10 +158,6 @@ public abstract class AbstractDataObjectCodecContext<D extends DataObject, T ext
         return byYang.keySet();
     }
 
-    final @NonNull ImmutableSet<Class<?>> byBindingArgClassKeySet() {
-        return byBindingArgClass.keySet();
-    }
-
     abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
         DistinctNodeContainer<PathArgument, NormalizedNode> data);
 }

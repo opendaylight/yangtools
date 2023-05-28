@@ -7,10 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableSet;
-import java.io.IOException;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
@@ -22,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
         extends AbstractDataObjectCodecContext<D, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<D> {
@@ -61,18 +57,8 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    public void streamTo(final NormalizedNodeStreamWriter writer, final D data) throws IOException {
-        eventStreamSerializer().serialize(requireNonNull(data), new BindingToNormalizedStreamWriter(this, writer));
-    }
-
-    @Override
     public ImmutableSet<PathArgument> childPathArguments() {
         return byYangKeySet();
-    }
-
-    @Override
-    public ImmutableSet<Class<?>> childBindingClasses() {
-        return byBindingArgClassKeySet();
     }
 
     @Override

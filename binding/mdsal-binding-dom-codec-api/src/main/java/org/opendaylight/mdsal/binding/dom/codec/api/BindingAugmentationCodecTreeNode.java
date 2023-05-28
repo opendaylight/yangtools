@@ -11,15 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 @Beta
 public interface BindingAugmentationCodecTreeNode<T extends Augmentation<?>>
@@ -52,27 +49,9 @@ public interface BindingAugmentationCodecTreeNode<T extends Augmentation<?>>
     }
 
     /**
-     * Write the contents of an {@link Augmentation} into a writer. The writer must beinitialized at the
-     * augmentations's {@link Augmentable} parent's equivalent {@link DataContainerNode}.
-     *
-     * @param writer Writer to stream to
-     * @param data Data to stream
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws IOException if a streaming error occurs
-     */
-    void streamTo(@NonNull NormalizedNodeStreamWriter writer, @NonNull T data) throws IOException;
-
-    /**
      * Returns the {@link PathArgument}s of items contained in this {@link Augmentation}.
      *
      * @return A non-empty set of path arguments
      */
     @NonNull ImmutableSet<PathArgument> childPathArguments();
-
-    /**
-     * Returns the {@link Class}es of items contain in this {@link Augmentation}.
-     *
-     * @return A non-empty set of classes
-     */
-    @NonNull ImmutableSet<Class<?>> childBindingClasses();
 }
