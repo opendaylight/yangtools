@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.binding.BaseIdentity
 import org.opendaylight.yangtools.yang.binding.contract.Naming
 import org.opendaylight.yangtools.yang.common.YangDataName
 
-abstract class BaseTemplate extends JavaFileTemplate {
+abstract class BaseTemplate extends AbstractBaseTemplate {
     static final char NEW_LINE = '\n'
     static final char SPACE = ' '
     static val WS_MATCHER = CharMatcher.anyOf("\n\t")
@@ -50,23 +50,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         super(javaType, type)
     }
 
-    final def generate() {
-        val _body = body()
-        '''
-            package «type.packageName»;
-            «generateImportBlock»
-
-            «_body»
-        '''.toString
-    }
-
-    protected abstract def CharSequence body();
-
     // Helper patterns
-    final protected def fieldName(GeneratedProperty property) {
-        "_" + property.name
-    }
-
     /**
      * Template method which generates the getter method for <code>field</code>
      *
@@ -85,14 +69,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
             «ENDIF»
         }
     '''
-
-    final protected def getterMethodName(GeneratedProperty field) {
-        return field.name.getterMethodName
-    }
-
-    final protected def getterMethodName(String propName) {
-        return '''«Naming.GETTER_PREFIX»«propName.toFirstUpper»'''
-    }
 
     /**
      * Template method which generates the setter method for <code>field</code>
