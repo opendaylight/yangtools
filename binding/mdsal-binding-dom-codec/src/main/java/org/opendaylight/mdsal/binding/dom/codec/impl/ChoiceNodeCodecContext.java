@@ -262,7 +262,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             // FIXME: this needs to be sorted out
             return null;
         }
-        final DataContainerCodecPrototype<?> caze = byYangCaseChild.get(first.getIdentifier());
+        final DataContainerCodecPrototype<?> caze = byYangCaseChild.get(first.name());
         return (D) caze.getDataObject().deserialize(data);
     }
 

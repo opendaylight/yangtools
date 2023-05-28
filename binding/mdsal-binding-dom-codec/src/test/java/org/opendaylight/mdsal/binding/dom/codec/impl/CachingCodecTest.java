@@ -160,7 +160,7 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         final MapNode secondMap = getListItems(secondTop);
 
         for (final MapEntryNode initial : initialNodes) {
-            final MapEntryNode second = secondMap.childByArg(initial.getIdentifier());
+            final MapEntryNode second = secondMap.childByArg(initial.name());
             assertEquals(initial, second);
             assertSame(initial, second);
         }

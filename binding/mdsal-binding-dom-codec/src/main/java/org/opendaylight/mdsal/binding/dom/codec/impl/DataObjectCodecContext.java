@@ -248,11 +248,11 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
          */
         final var builders = new HashMap<Class<?>, DataContainerNodeBuilder>();
         for (var childValue : data.body()) {
-            final var bindingClass = yangToAugmentClass.get(childValue.getIdentifier());
+            final var bindingClass = yangToAugmentClass.get(childValue.name());
             if (bindingClass != null) {
                 builders.computeIfAbsent(bindingClass,
                     key -> Builders.containerBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(data.getIdentifier().getNodeType())))
+                        .withNodeIdentifier(new NodeIdentifier(data.name().getNodeType())))
                         .addChild(childValue);
             }
         }
