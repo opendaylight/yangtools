@@ -48,6 +48,6 @@ public class Bug3674Test extends AbstractTestModelTest {
 
         final DataTreeCandidate candidate = tree.prepare(mod);
         final DataTreeCandidateNode root = candidate.getRootNode();
-        assertEquals(ModificationType.UNMODIFIED, root.getModificationType());
+        assertEquals(ModificationType.UNMODIFIED, root.modificationType());
     }
 }

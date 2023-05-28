@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,10 +44,10 @@ public class YT1455Test {
         assertEquals(1, delta.size());
 
         final var first = delta.iterator().next();
-        assertEquals(childId, first.getIdentifier());
-        assertEquals(ModificationType.DELETE, first.getModificationType());
-        assertEquals(Optional.of(child), first.getDataBefore());
-        assertEquals(Optional.empty(), first.getDataAfter());
-        assertEquals(0, first.getChildNodes().size());
+        assertEquals(childId, first.name());
+        assertEquals(ModificationType.DELETE, first.modificationType());
+        assertEquals(child, first.dataBefore());
+        assertEquals(null, first.dataAfter());
+        assertEquals(0, first.childNodes().size());
     }
 }

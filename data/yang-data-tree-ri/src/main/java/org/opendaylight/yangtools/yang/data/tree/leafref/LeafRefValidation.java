@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayDeque;
@@ -58,18 +60,17 @@ public final class LeafRefValidation {
 
     public static void validate(final DataTreeCandidate tree, final LeafRefContext rootLeafRefCtx)
             throws LeafRefDataValidationFailedException {
-        final var root = tree.getRootNode().getDataAfter();
-        if (root.isPresent()) {
-            new LeafRefValidation(root.orElseThrow())
-                .validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
+        final var root = tree.getRootNode().dataAfter();
+        if (root != null) {
+            new LeafRefValidation(root).validateChildren(rootLeafRefCtx, tree.getRootNode().childNodes());
         }
     }
 
     private void validateChildren(final LeafRefContext rootLeafRefCtx, final Collection<DataTreeCandidateNode> children)
             throws LeafRefDataValidationFailedException {
         for (var dataTreeCandidateNode : children) {
-            if (dataTreeCandidateNode.getModificationType() != ModificationType.UNMODIFIED) {
-                final PathArgument identifier = dataTreeCandidateNode.getIdentifier();
+            if (dataTreeCandidateNode.modificationType() != ModificationType.UNMODIFIED) {
+                final PathArgument identifier = dataTreeCandidateNode.name();
                 final QName childQName = identifier.getNodeType();
 
                 final LeafRefContext referencedByCtx = rootLeafRefCtx.getReferencedChildByName(childQName);
@@ -93,28 +94,29 @@ public final class LeafRefValidation {
     }
 
     private void validateNode(final DataTreeCandidateNode node, final LeafRefContext referencedByCtx,
-        final LeafRefContext referencingCtx, final YangInstanceIdentifier current) {
+            final LeafRefContext referencingCtx, final YangInstanceIdentifier current) {
+        final var modType = node.modificationType();
 
-        if (node.getModificationType() == ModificationType.WRITE && node.getDataAfter().isPresent()) {
-            validateNodeData(node.getDataAfter().orElseThrow(), referencedByCtx, referencingCtx,
-                node.getModificationType(), current);
+        if (modType == ModificationType.WRITE) {
+            final var dataAfter = node.dataAfter();
+            if (dataAfter != null) {
+                validateNodeData(dataAfter, referencedByCtx, referencingCtx, ModificationType.WRITE, current);
+            }
             return;
         }
 
-        if (node.getModificationType() == ModificationType.DELETE && referencedByCtx != null) {
-            validateNodeData(node.getDataBefore().orElseThrow(), referencedByCtx, null, node.getModificationType(),
-                current);
+        if (modType == ModificationType.DELETE && referencedByCtx != null) {
+            validateNodeData(verifyNotNull(node.dataBefore()), referencedByCtx, null, node.modificationType(), current);
             return;
         }
 
-        for (var childNode : node.getChildNodes()) {
-            if (childNode.getModificationType() != ModificationType.UNMODIFIED) {
+        for (var childNode : node.childNodes()) {
+            if (childNode.modificationType() != ModificationType.UNMODIFIED) {
                 final LeafRefContext childReferencedByCtx = getReferencedByCtxChild(referencedByCtx, childNode);
                 final LeafRefContext childReferencingCtx = getReferencingCtxChild(referencingCtx, childNode);
 
                 if (childReferencedByCtx != null || childReferencingCtx != null) {
-                    validateNode(childNode, childReferencedByCtx,childReferencingCtx,
-                        current.node(childNode.getIdentifier()));
+                    validateNode(childNode, childReferencedByCtx,childReferencingCtx, current.node(childNode.name()));
                 }
             }
         }
@@ -126,10 +128,10 @@ public final class LeafRefValidation {
             return null;
         }
 
-        final QName childQName = childNode.getIdentifier().getNodeType();
+        final QName childQName = childNode.name().getNodeType();
         LeafRefContext childReferencingCtx = referencingCtx.getReferencingChildByName(childQName);
         if (childReferencingCtx == null) {
-            final NormalizedNode data = childNode.getDataAfter().orElseThrow();
+            final NormalizedNode data = verifyNotNull(childNode.dataAfter());
             if (data instanceof MapEntryNode || data instanceof UnkeyedListEntryNode) {
                 childReferencingCtx = referencingCtx;
             }
@@ -144,10 +146,10 @@ public final class LeafRefValidation {
             return null;
         }
 
-        final QName childQName = childNode.getIdentifier().getNodeType();
+        final QName childQName = childNode.name().getNodeType();
         LeafRefContext childReferencedByCtx = referencedByCtx.getReferencedChildByName(childQName);
         if (childReferencedByCtx == null) {
-            final NormalizedNode data = childNode.getDataAfter().orElseThrow();
+            final NormalizedNode data = verifyNotNull(childNode.dataAfter());
             if (data instanceof MapEntryNode || data instanceof UnkeyedListEntryNode) {
                 childReferencedByCtx = referencedByCtx;
             }

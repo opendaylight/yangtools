@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class WriteLeafCandidateNode extends AbstractWriteCandidate {
@@ -16,7 +15,7 @@ final class WriteLeafCandidateNode extends AbstractWriteCandidate {
     }
 
     @Override
-    public Optional<NormalizedNode> getDataBefore() {
-        return Optional.empty();
+    public NormalizedNode dataBefore() {
+        return null;
     }
 }

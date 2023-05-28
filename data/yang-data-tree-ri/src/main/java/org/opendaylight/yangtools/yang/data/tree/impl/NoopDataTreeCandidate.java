@@ -10,9 +10,8 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -29,33 +28,33 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
     private static final DataTreeCandidateNode ROOT = new DataTreeCandidateNode() {
         @Override
-        public ModificationType getModificationType() {
+        public ModificationType modificationType() {
             return ModificationType.UNMODIFIED;
         }
 
         @Override
-        public Collection<DataTreeCandidateNode> getChildNodes() {
-            return ImmutableList.of();
+        public Collection<DataTreeCandidateNode> childNodes() {
+            return List.of();
         }
 
         @Override
-        public PathArgument getIdentifier() {
+        public PathArgument name() {
             throw new IllegalStateException("Attempted to read identifier of the no-operation change");
         }
 
         @Override
-        public Optional<NormalizedNode> getDataAfter() {
-            return Optional.empty();
+        public NormalizedNode dataAfter() {
+            return null;
         }
 
         @Override
-        public Optional<NormalizedNode> getDataBefore() {
-            return Optional.empty();
+        public NormalizedNode dataBefore() {
+            return null;
         }
 
         @Override
-        public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument identifier) {
-            return Optional.empty();
+        public DataTreeCandidateNode modifiedChild(final PathArgument identifier) {
+            return null;
         }
     };
 

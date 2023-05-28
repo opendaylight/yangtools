@@ -11,46 +11,46 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
-    private final PathArgument identifier;
+    private final @NonNull PathArgument name;
 
-    EmptyDataTreeCandidateNode(final PathArgument identifier) {
-        this.identifier = requireNonNull(identifier, "Identifier should not be null");
+    EmptyDataTreeCandidateNode(final PathArgument name) {
+        this.name = requireNonNull(name);
     }
 
     @Override
-    public PathArgument getIdentifier() {
-        return identifier;
+    public PathArgument name() {
+        return name;
     }
 
     @Override
-    public Collection<DataTreeCandidateNode> getChildNodes() {
+    public Collection<DataTreeCandidateNode> childNodes() {
         return ImmutableList.of();
     }
 
     @Override
-    public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childIdentifier) {
-        return Optional.empty();
+    public DataTreeCandidateNode modifiedChild(final PathArgument childName) {
+        return null;
     }
 
     @Override
-    public ModificationType getModificationType() {
+    public ModificationType modificationType() {
         return ModificationType.UNMODIFIED;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataAfter() {
-        return Optional.empty();
+    public NormalizedNode dataAfter() {
+        return null;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataBefore() {
-        return Optional.empty();
+    public NormalizedNode dataBefore() {
+        return null;
     }
 }

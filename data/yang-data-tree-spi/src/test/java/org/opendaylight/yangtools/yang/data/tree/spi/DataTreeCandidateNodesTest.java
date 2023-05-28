@@ -19,7 +19,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -44,9 +43,9 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).modificationType();
         final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
-        doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
+        doReturn(mockedNormalizedNode).when(mockedDataTreeCandidateNode).dataAfter();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
     }
@@ -56,7 +55,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).modificationType();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).delete(isNull());
     }
@@ -66,24 +65,24 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).modificationType();
 
         final DataTreeCandidateNode mockedChildNode1 = mock(DataTreeCandidateNode.class);
-        doReturn(ModificationType.DELETE).when(mockedChildNode1).getModificationType();
+        doReturn(ModificationType.DELETE).when(mockedChildNode1).modificationType();
 
         final DataTreeCandidateNode mockedChildNode2 = mock(DataTreeCandidateNode.class);
-        doReturn(ModificationType.WRITE).when(mockedChildNode2).getModificationType();
+        doReturn(ModificationType.WRITE).when(mockedChildNode2).modificationType();
         final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
-        doReturn(Optional.of(mockedNormalizedNode)).when(mockedChildNode2).getDataAfter();
+        doReturn(mockedNormalizedNode).when(mockedChildNode2).dataAfter();
 
         final DataTreeCandidateNode mockedChildNode3 = mock(DataTreeCandidateNode.class);
-        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedChildNode3).getModificationType();
+        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedChildNode3).modificationType();
         final DataTreeCandidateNode mockedChildNode3ChildNode = mock(DataTreeCandidateNode.class);
-        doReturn(ModificationType.DELETE).when(mockedChildNode3ChildNode).getModificationType();
-        doReturn(List.of(mockedChildNode3ChildNode)).when(mockedChildNode3).getChildNodes();
+        doReturn(ModificationType.DELETE).when(mockedChildNode3ChildNode).modificationType();
+        doReturn(List.of(mockedChildNode3ChildNode)).when(mockedChildNode3).childNodes();
 
         doReturn(List.of(mockedChildNode1, mockedChildNode2, mockedChildNode3))
-            .when(mockedDataTreeCandidateNode).getChildNodes();
+            .when(mockedDataTreeCandidateNode).childNodes();
 
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(2)).enter((PathArgument) isNull());
@@ -96,7 +95,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode));
         assertThat(ex.getMessage(), containsString("Unsupported modification"));
@@ -107,9 +106,9 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).modificationType();
         final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
-        doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
+        doReturn(mockedNormalizedNode).when(mockedDataTreeCandidateNode).dataAfter();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
@@ -120,7 +119,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).modificationType();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).delete(isNull());
@@ -131,11 +130,11 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).modificationType();
 
         final DataTreeCandidateNode mockedChildNode1 = mock(DataTreeCandidateNode.class);
-        doReturn(ModificationType.DELETE).when(mockedChildNode1).getModificationType();
-        doReturn(List.of(mockedChildNode1)).when(mockedDataTreeCandidateNode).getChildNodes();
+        doReturn(ModificationType.DELETE).when(mockedChildNode1).modificationType();
+        doReturn(List.of(mockedChildNode1)).when(mockedDataTreeCandidateNode).childNodes();
 
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
@@ -148,7 +147,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
                 mockedDataTreeCandidateNode));
@@ -160,11 +159,11 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).modificationType();
 
         final DataTreeCandidateNode mockedChildNode1 = mock(DataTreeCandidateNode.class);
-        doReturn(ModificationType.DELETE).when(mockedChildNode1).getModificationType();
-        doReturn(List.of(mockedChildNode1)).when(mockedDataTreeCandidateNode).getChildNodes();
+        doReturn(ModificationType.DELETE).when(mockedChildNode1).modificationType();
+        doReturn(List.of(mockedChildNode1)).when(mockedDataTreeCandidateNode).childNodes();
 
         DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).delete(isNull());
@@ -172,11 +171,11 @@ public class DataTreeCandidateNodesTest {
 
     @Test
     public void testApplyRootToCursorWithDeleteModificationType() {
-        final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
+        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        final var mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).modificationType();
+        final var ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode));
         assertThat(ex.getMessage(), containsString("Can not delete root"));
     }
@@ -186,7 +185,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
-        doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).getModificationType();
+        doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode));
         assertThat(ex.getMessage(), containsString("Unsupported modification"));

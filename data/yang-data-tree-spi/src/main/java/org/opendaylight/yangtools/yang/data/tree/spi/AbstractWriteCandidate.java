@@ -16,7 +16,7 @@ abstract class AbstractWriteCandidate extends AbstractAvailableLeafCandidateNode
     }
 
     @Override
-    public final ModificationType getModificationType() {
+    public final ModificationType modificationType() {
         return ModificationType.WRITE;
     }
 }

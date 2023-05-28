@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -33,13 +33,8 @@ import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.data.tree.spi.DataTreeCandidates;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DataTreeCandidatesTest extends AbstractTestModelTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidatesTest.class);
-
     private DataTree dataTree;
 
     @Before
@@ -86,13 +81,8 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         final DataTreeCandidate newCandidate = DataTreeCandidates.newDataTreeCandidate(TestModel.INNER_CONTAINER_PATH,
             candidate.getRootNode());
 
-        try {
-            // lets see if getting the identifier of the root node throws an exception
-            newCandidate.getRootNode().getIdentifier();
-            fail();
-        } catch (IllegalStateException e) {
-            LOG.debug("Cannot get identifier of root node candidate which is correct", e);
-        }
+        // lets see if getting the identifier of the root node throws an exception
+        assertThrows(IllegalStateException.class, () ->  newCandidate.getRootNode().name());
 
         // lets see if we can apply this rooted candidate to a new dataTree
         DataTreeCandidates.applyToModification(newModification,
@@ -112,10 +102,10 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         // The entire transaction needs to fizzle to a no-op
         DataTreeCandidate candidate = dataTree.prepare(modification);
         DataTreeCandidateNode node = candidate.getRootNode();
-        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+        assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'test'
-        assertUnmodified(1, node.getChildNodes());
+        assertUnmodified(1, node.childNodes());
     }
 
     @Test
@@ -128,10 +118,10 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         // The entire transaction needs to fizzle to a no-op
         DataTreeCandidate candidate = dataTree.prepare(modification);
         DataTreeCandidateNode node = candidate.getRootNode();
-        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+        assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'test'
-        assertUnmodified(1, node.getChildNodes());
+        assertUnmodified(1, node.childNodes());
     }
 
     @Test
@@ -145,10 +135,10 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         final DataTreeCandidate candidate = dataTree.prepare(modification);
         assertEquals(YangInstanceIdentifier.of(), candidate.getRootPath());
         final DataTreeCandidateNode node = candidate.getRootNode();
-        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+        assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'test'
-        assertUnmodified(1, node.getChildNodes());
+        assertUnmodified(1, node.childNodes());
     }
 
     @Test
@@ -171,10 +161,10 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         final DataTreeCandidate candidate = dataTree.prepare(modification);
         assertEquals(YangInstanceIdentifier.of(), candidate.getRootPath());
         final DataTreeCandidateNode node = candidate.getRootNode();
-        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+        assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'non-presence' and 'test'
-        assertUnmodified(2, node.getChildNodes());
+        assertUnmodified(2, node.childNodes());
     }
 
     @Test
@@ -195,9 +185,9 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         DataTreeCandidate candidate2 = dataTree.prepare(modification2);
         dataTree.commit(candidate2);
 
-        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(Arrays.asList(candidate1,candidate2));
+        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.UNMODIFIED,aggregateCandidate.getRootNode().getModificationType());
+        assertEquals(ModificationType.UNMODIFIED, aggregateCandidate.getRootNode().modificationType());
     }
 
     @Test
@@ -227,13 +217,13 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         DataTreeCandidate candidate2 = dataTree.prepare(modification2);
         dataTree.commit(candidate2);
 
-        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(Arrays.asList(candidate1,candidate2));
+        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(ModificationType.SUBTREE_MODIFIED,aggregateCandidate.getRootNode().getModificationType());
+        assertEquals(ModificationType.SUBTREE_MODIFIED,aggregateCandidate.getRootNode().modificationType());
     }
 
     private static void assertUnmodified(final int expSize, final Collection<DataTreeCandidateNode> nodes) {
         assertEquals(expSize, nodes.size());
-        nodes.forEach(node -> assertEquals(ModificationType.UNMODIFIED, node.getModificationType()));
+        nodes.forEach(node -> assertEquals(ModificationType.UNMODIFIED, node.modificationType()));
     }
 }

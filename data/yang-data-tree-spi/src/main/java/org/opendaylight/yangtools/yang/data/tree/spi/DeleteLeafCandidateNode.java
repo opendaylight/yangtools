@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
@@ -17,17 +16,17 @@ final class DeleteLeafCandidateNode extends AbstractLeafCandidateNode {
     }
 
     @Override
-    public ModificationType getModificationType() {
+    public ModificationType modificationType() {
         return ModificationType.DELETE;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataAfter() {
-        return Optional.empty();
+    public NormalizedNode dataBefore() {
+        return data;
     }
 
     @Override
-    public Optional<NormalizedNode> getDataBefore() {
-        return dataOptional();
+    public NormalizedNode dataAfter() {
+        return null;
     }
 }

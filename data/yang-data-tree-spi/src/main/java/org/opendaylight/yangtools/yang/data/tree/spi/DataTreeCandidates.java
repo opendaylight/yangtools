@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -63,7 +62,7 @@ public final class DataTreeCandidates {
 
         final DataTreeCandidateNode node = candidate.getRootNode();
         final YangInstanceIdentifier path = candidate.getRootPath();
-        switch (node.getModificationType()) {
+        switch (node.modificationType()) {
             case DELETE:
                 modification.delete(path);
                 LOG.debug("Modification {} deleted path {}", modification, path);
@@ -71,7 +70,7 @@ public final class DataTreeCandidates {
             case SUBTREE_MODIFIED:
                 LOG.debug("Modification {} modified path {}", modification, path);
 
-                NodeIterator iterator = new NodeIterator(null, path, node.getChildNodes().iterator());
+                NodeIterator iterator = new NodeIterator(null, path, node.childNodes().iterator());
                 do {
                     iterator = iterator.next(modification);
                 } while (iterator != null);
@@ -81,11 +80,11 @@ public final class DataTreeCandidates {
                 // No-op
                 break;
             case WRITE:
-                modification.write(path, node.getDataAfter().orElseThrow());
+                modification.write(path, verifyNotNull(node.dataAfter()));
                 LOG.debug("Modification {} written path {}", modification, path);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
         }
     }
 
@@ -119,26 +118,24 @@ public final class DataTreeCandidates {
 
     private static DataTreeCandidateNode fastCompressNode(final DataTreeCandidateNode first,
                                                           final List<DataTreeCandidateNode> input) {
-        final DataTreeCandidateNode last = input.get(input.size() - 1);
-        ModificationType nodeModification = last.getModificationType();
-        Optional<NormalizedNode> dataBefore = first.getDataBefore();
-        Optional<NormalizedNode> dataAfter = last.getDataAfter();
+        final var last = input.get(input.size() - 1);
+        final var nodeModification = last.modificationType();
+        final var dataBefore = first.dataBefore();
+        final var dataAfter = last.dataAfter();
         switch (nodeModification) {
             case DELETE:
-                ModificationType previous = first.getModificationType();
+                ModificationType previous = first.modificationType();
                 // Check if node had data before
-                if (previous == ModificationType.DELETE
-                        || previous == ModificationType.DISAPPEARED
-                        || previous == ModificationType.UNMODIFIED && dataBefore.isEmpty()) {
+                if (previous == ModificationType.DELETE || previous == ModificationType.DISAPPEARED
+                    || previous == ModificationType.UNMODIFIED && dataBefore == null) {
                     illegalModification(ModificationType.DELETE, ModificationType.DELETE);
                 }
-                if (dataBefore.isEmpty()) {
+                if (dataBefore == null) {
                     return new TerminalDataTreeCandidateNode(null, ModificationType.UNMODIFIED, null, null);
                 }
-                return new TerminalDataTreeCandidateNode(null, nodeModification, dataBefore.orElseThrow(), null);
+                return new TerminalDataTreeCandidateNode(null, nodeModification, verifyNotNull(dataBefore), null);
             case WRITE:
-                return new TerminalDataTreeCandidateNode(null, nodeModification, dataBefore.orElse(null),
-                        dataAfter.orElseThrow());
+                return new TerminalDataTreeCandidateNode(null, nodeModification, dataBefore, verifyNotNull(dataAfter));
             case APPEARED:
             case DISAPPEARED:
             case SUBTREE_MODIFIED:
@@ -153,10 +150,9 @@ public final class DataTreeCandidates {
     private static DataTreeCandidateNode slowCompressNodes(final DataTreeCandidateNode first,
                                                            final List<DataTreeCandidateNode> input) {
         // finalNode contains summarized changes
-        TerminalDataTreeCandidateNode finalNode = new TerminalDataTreeCandidateNode(
-                null, first.getDataBefore().orElse(null));
+        TerminalDataTreeCandidateNode finalNode = new TerminalDataTreeCandidateNode(null, first.dataBefore());
         input.forEach(node -> compressNode(finalNode, node, null));
-        finalNode.setAfter(input.get(input.size() - 1).getDataAfter().orElse(null));
+        finalNode.setAfter(input.get(input.size() - 1).dataAfter());
         return cleanUpTree(finalNode);
     }
 
@@ -164,7 +160,7 @@ public final class DataTreeCandidates {
                                      final PathArgument parent) {
         PathArgument identifier;
         try {
-            identifier = node.getIdentifier();
+            identifier = node.name();
         } catch (IllegalStateException e) {
             identifier = null;
         }
@@ -174,12 +170,12 @@ public final class DataTreeCandidates {
                     .orElseThrow(() -> new IllegalArgumentException("No node found for " + parent + " identifier"));
             TerminalDataTreeCandidateNode childNode = new TerminalDataTreeCandidateNode(
                     identifier,
-                    node.getDataBefore().orElse(null),
+                    node.dataBefore(),
                     parentNode);
             parentNode.addChildNode(childNode);
         }
 
-        ModificationType nodeModification = node.getModificationType();
+        ModificationType nodeModification = node.modificationType();
         switch (nodeModification) {
             case UNMODIFIED:
                 // If node is unmodified there is no need iterate through its child nodes
@@ -191,10 +187,10 @@ public final class DataTreeCandidates {
             case SUBTREE_MODIFIED:
                 finalNode.setModification(identifier,
                         compressModifications(finalNode.getModification(identifier), nodeModification,
-                                finalNode.getDataAfter(identifier).isEmpty()));
-                finalNode.setData(identifier, node.getDataAfter().orElse(null));
+                                finalNode.dataAfter(identifier) == null));
+                finalNode.setData(identifier, node.dataAfter());
 
-                for (DataTreeCandidateNode child : node.getChildNodes()) {
+                for (DataTreeCandidateNode child : node.childNodes()) {
                     compressNode(finalNode, child, identifier);
                 }
                 break;
@@ -211,13 +207,13 @@ public final class DataTreeCandidates {
     // Compare data before and after in order to find modified nodes without actual changes
     private static DataTreeCandidateNode cleanUpTree(final TerminalDataTreeCandidateNode finalNode,
                                                      final TerminalDataTreeCandidateNode node) {
-        PathArgument identifier = node.getIdentifier();
-        ModificationType nodeModification = node.getModificationType();
-        Collection<DataTreeCandidateNode> childNodes = node.getChildNodes();
-        for (DataTreeCandidateNode childNode : childNodes) {
+        final var identifier = node.name();
+        final var nodeModification = node.modificationType();
+        final var childNodes = node.childNodes();
+        for (var childNode : childNodes) {
             cleanUpTree(finalNode, (TerminalDataTreeCandidateNode) childNode);
         }
-        Optional<NormalizedNode> dataBefore = finalNode.getDataBefore(identifier);
+        final var dataBefore = finalNode.dataBefore(identifier);
 
         switch (nodeModification) {
             case UNMODIFIED:
@@ -226,12 +222,12 @@ public final class DataTreeCandidates {
             case WRITE:
                 return finalNode;
             case DELETE:
-                if (dataBefore.isEmpty()) {
+                if (dataBefore == null) {
                     finalNode.deleteNode(identifier);
                 }
                 return finalNode;
             case APPEARED:
-                if (dataBefore.isPresent()) {
+                if (dataBefore != null) {
                     illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
                 }
                 if (childNodes.isEmpty()) {
@@ -239,12 +235,12 @@ public final class DataTreeCandidates {
                 }
                 return finalNode;
             case DISAPPEARED:
-                if (dataBefore.isEmpty() || childNodes.isEmpty()) {
+                if (dataBefore == null || childNodes.isEmpty()) {
                     finalNode.deleteNode(identifier);
                 }
                 return finalNode;
             case SUBTREE_MODIFIED:
-                if (dataBefore.isEmpty()) {
+                if (dataBefore == null) {
                     illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
                 }
                 if (childNodes.isEmpty()) {
@@ -262,102 +258,61 @@ public final class DataTreeCandidates {
         switch (firstModification) {
             case UNMODIFIED:
                 if (hasNoDataBefore) {
-                    switch (secondModification) {
-                        case UNMODIFIED:
-                        case WRITE:
-                        case APPEARED:
-                            return secondModification;
-                        case DELETE:
-                            return illegalModification(ModificationType.DELETE, ModificationType.DELETE);
-                        case SUBTREE_MODIFIED:
-                            return illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
-                        case DISAPPEARED:
-                            return illegalModification(ModificationType.DISAPPEARED, ModificationType.DELETE);
-                        default:
+                    return switch (secondModification) {
+                        case UNMODIFIED, WRITE, APPEARED -> secondModification;
+                        case DELETE -> illegalModification(ModificationType.DELETE, ModificationType.DELETE);
+                        case SUBTREE_MODIFIED ->
+                            illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
+                        case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, ModificationType.DELETE);
+                        default ->
                             throw new IllegalStateException("Unsupported modification type " + secondModification);
-                    }
+                    };
                 }
                 if (secondModification == ModificationType.APPEARED) {
                     return illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
                 }
                 return secondModification;
             case WRITE:
-                switch (secondModification) {
-                    case UNMODIFIED:
-                    case WRITE:
-                    case SUBTREE_MODIFIED:
-                        return ModificationType.WRITE;
-                    case DELETE:
-                        return ModificationType.DELETE;
-                    case DISAPPEARED:
-                        return ModificationType.DISAPPEARED;
-                    case APPEARED:
-                        return illegalModification(ModificationType.APPEARED, firstModification);
-                    default:
-                        throw new IllegalStateException("Unsupported modification type " + secondModification);
-                }
+                return switch (secondModification) {
+                    case UNMODIFIED, WRITE, SUBTREE_MODIFIED -> ModificationType.WRITE;
+                    case DELETE -> ModificationType.DELETE;
+                    case DISAPPEARED -> ModificationType.DISAPPEARED;
+                    case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
+                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
+                };
             case DELETE:
-                switch (secondModification) {
-                    case UNMODIFIED:
-                        return ModificationType.DELETE;
-                    case WRITE:
-                    case APPEARED:
-                        return ModificationType.WRITE;
-                    case DELETE:
-                        return illegalModification(ModificationType.DELETE, firstModification);
-                    case DISAPPEARED:
-                        return illegalModification(ModificationType.DISAPPEARED, firstModification);
-                    case SUBTREE_MODIFIED:
-                        return illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
-                    default:
-                        throw new IllegalStateException("Unsupported modification type " + secondModification);
-                }
+                return switch (secondModification) {
+                    case UNMODIFIED -> ModificationType.DELETE;
+                    case WRITE, APPEARED -> ModificationType.WRITE;
+                    case DELETE -> illegalModification(ModificationType.DELETE, firstModification);
+                    case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, firstModification);
+                    case SUBTREE_MODIFIED -> illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
+                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
+                };
             case APPEARED:
-                switch (secondModification) {
-                    case UNMODIFIED:
-                    case SUBTREE_MODIFIED:
-                        return ModificationType.APPEARED;
-                    case DELETE:
-                    case DISAPPEARED:
-                        return ModificationType.UNMODIFIED;
-                    case WRITE:
-                        return ModificationType.WRITE;
-                    case APPEARED:
-                        return illegalModification(ModificationType.APPEARED, firstModification);
-                    default:
-                        throw new IllegalStateException("Unsupported modification type " + secondModification);
-                }
+                return switch (secondModification) {
+                    case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.APPEARED;
+                    case DELETE, DISAPPEARED -> ModificationType.UNMODIFIED;
+                    case WRITE -> ModificationType.WRITE;
+                    case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
+                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
+                };
             case DISAPPEARED:
-                switch (secondModification) {
-                    case UNMODIFIED:
-                    case WRITE:
-                        return secondModification;
-                    case APPEARED:
-                        return ModificationType.SUBTREE_MODIFIED;
-                    case DELETE:
-                        return illegalModification(ModificationType.DELETE, firstModification);
-                    case DISAPPEARED:
-                        return illegalModification(ModificationType.DISAPPEARED, firstModification);
-
-                    case SUBTREE_MODIFIED:
-                        return illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
-                    default:
-                        throw new IllegalStateException("Unsupported modification type " + secondModification);
-                }
+                return switch (secondModification) {
+                    case UNMODIFIED, WRITE -> secondModification;
+                    case APPEARED -> ModificationType.SUBTREE_MODIFIED;
+                    case DELETE -> illegalModification(ModificationType.DELETE, firstModification);
+                    case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, firstModification);
+                    case SUBTREE_MODIFIED -> illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
+                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
+                };
             case SUBTREE_MODIFIED:
-                switch (secondModification) {
-                    case UNMODIFIED:
-                    case SUBTREE_MODIFIED:
-                        return ModificationType.SUBTREE_MODIFIED;
-                    case WRITE:
-                    case DELETE:
-                    case DISAPPEARED:
-                        return secondModification;
-                    case APPEARED:
-                        return illegalModification(ModificationType.APPEARED, firstModification);
-                    default:
-                        throw new IllegalStateException("Unsupported modification type " + secondModification);
-                }
+                return switch (secondModification) {
+                    case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.SUBTREE_MODIFIED;
+                    case WRITE, DELETE, DISAPPEARED -> secondModification;
+                    case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
+                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
+                };
             default:
                 throw new IllegalStateException("Unsupported modification type " + secondModification);
         }
@@ -397,9 +352,9 @@ public final class DataTreeCandidates {
         NodeIterator next(final DataTreeModification modification) {
             while (iterator.hasNext()) {
                 final DataTreeCandidateNode node = iterator.next();
-                final YangInstanceIdentifier child = path.node(node.getIdentifier());
+                final YangInstanceIdentifier child = path.node(node.name());
 
-                switch (node.getModificationType()) {
+                switch (node.modificationType()) {
                     case DELETE:
                         modification.delete(child);
                         LOG.debug("Modification {} deleted path {}", modification, child);
@@ -408,17 +363,17 @@ public final class DataTreeCandidates {
                     case DISAPPEARED:
                     case SUBTREE_MODIFIED:
                         LOG.debug("Modification {} modified path {}", modification, child);
-                        return new NodeIterator(this, child, node.getChildNodes().iterator());
+                        return new NodeIterator(this, child, node.childNodes().iterator());
                     case UNMODIFIED:
                         LOG.debug("Modification {} unmodified path {}", modification, child);
                         // No-op
                         break;
                     case WRITE:
-                        modification.write(child, node.getDataAfter().orElseThrow());
+                        modification.write(child, verifyNotNull(node.dataAfter()));
                         LOG.debug("Modification {} written path {}", modification, child);
                         break;
                     default:
-                        throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                        throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
                 }
             }
             return parent;

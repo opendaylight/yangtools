@@ -37,27 +37,26 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
 
         final var mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
         doReturn(mockedPathArgument).when(mockedNormalizedNode).name();
-        assertSame(mockedPathArgument, normalizedNodeDataTreeCandidateNode.getIdentifier());
+        assertSame(mockedPathArgument, normalizedNodeDataTreeCandidateNode.name());
 
-        final Collection<DataTreeCandidateNode> childNodes = normalizedNodeDataTreeCandidateNode.getChildNodes();
+        final Collection<DataTreeCandidateNode> childNodes = normalizedNodeDataTreeCandidateNode.childNodes();
         assertTrue(childNodes instanceof List);
         assertTrue(childNodes.isEmpty());
 
         assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode.getModifiedChild(mockedPathArgument));
 
-        assertEquals(ModificationType.WRITE, normalizedNodeDataTreeCandidateNode.getModificationType());
-        assertEquals(Optional.of(mockedNormalizedNode), normalizedNodeDataTreeCandidateNode.getDataAfter());
-        assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode.getDataBefore());
+        assertEquals(ModificationType.WRITE, normalizedNodeDataTreeCandidateNode.modificationType());
+        assertEquals(mockedNormalizedNode, normalizedNodeDataTreeCandidateNode.dataAfter());
+        assertEquals(null, normalizedNodeDataTreeCandidateNode.dataBefore());
 
         final DistinctNodeContainer mockedNormalizedNodeContainer = mock(DistinctNodeContainer.class);
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode2 = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNodeContainer);
         final NormalizedNode mockedChildNormNode1 = mock(NormalizedNode.class);
         final NormalizedNode mockedChildNormNode2 = mock(NormalizedNode.class);
-        final Collection<NormalizedNode> mockedChildNodes = Arrays.asList(mockedChildNormNode1,
-                mockedChildNormNode2, null);
+        final var mockedChildNodes = Arrays.asList(mockedChildNormNode1, mockedChildNormNode2, null);
         doReturn(mockedChildNodes).when(mockedNormalizedNodeContainer).body();
-        final Collection<DataTreeCandidateNode> childNodes2 = normalizedNodeDataTreeCandidateNode2.getChildNodes();
+        final var childNodes2 = normalizedNodeDataTreeCandidateNode2.childNodes();
         assertEquals(3, childNodes2.size());
 
         doReturn(null).when(mockedNormalizedNodeContainer).childByArg(any(PathArgument.class));
