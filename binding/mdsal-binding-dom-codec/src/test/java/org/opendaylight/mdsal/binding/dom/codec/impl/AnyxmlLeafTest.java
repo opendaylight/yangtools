@@ -62,7 +62,7 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
     @Test
     public void testAnyxmlToBinding() {
         final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
-            YangInstanceIdentifier.create(CONT_NODE_ID), cont);
+            YangInstanceIdentifier.of(CONT_NODE_ID), cont);
         assertEquals(InstanceIdentifier.create(Cont.class), entry.getKey());
         final DataObject ldo = entry.getValue();
         assertThat(ldo, instanceOf(Cont.class));
@@ -99,7 +99,7 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
     public void testAnyxmlFromBinding() {
         final var entry = (NodeResult) codecContext.toNormalizedNode(
             InstanceIdentifier.create(Cont.class), new ContBuilder().setContAny(new FakeCont()).build());
-        assertEquals(YangInstanceIdentifier.create(CONT_NODE_ID), entry.path());
+        assertEquals(YangInstanceIdentifier.of(CONT_NODE_ID), entry.path());
         assertEquals(cont, entry.node());
     }
 

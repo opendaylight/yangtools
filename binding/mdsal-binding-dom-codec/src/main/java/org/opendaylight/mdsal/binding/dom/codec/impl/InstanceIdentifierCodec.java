@@ -49,7 +49,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     public @NonNull YangInstanceIdentifier fromBinding(@NonNull final InstanceIdentifier<?> bindingPath) {
         final List<PathArgument> domArgs = new ArrayList<>();
         context.getCodecContextNode(bindingPath, domArgs);
-        return YangInstanceIdentifier.create(domArgs);
+        return YangInstanceIdentifier.of(domArgs);
     }
 
     @Override

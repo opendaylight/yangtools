@@ -34,7 +34,7 @@ public class Mdsal668Test extends AbstractBindingCodecTest {
                 .withChild(Builders.leafSetBuilder()
                     .withNodeIdentifier(new NodeIdentifier(Bar.QNAME))
                     .withChild(Builders.leafSetEntryBuilder()
-                        // FIXME: MDSAL-670: these should get translated to YangInstanceIdentifier.create(FOO)
+                        // FIXME: MDSAL-670: these should get translated to YangInstanceIdentifier.of(FOO)
                         .withNodeIdentifier(new NodeWithValue<>(Bar.QNAME, FOO_IID))
                         .withValue(FOO_IID)
                         .build())

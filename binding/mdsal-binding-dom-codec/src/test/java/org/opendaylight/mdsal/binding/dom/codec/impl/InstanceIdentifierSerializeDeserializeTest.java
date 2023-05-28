@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTest {
     public static final String TOP_LEVEL_LIST_KEY_VALUE = "foo";
@@ -60,22 +59,20 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testYangIIToBindingAwareII() {
-        final InstanceIdentifier<?> instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_PATH);
+        final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_PATH);
         assertEquals(Top.class, instanceIdentifier.getTargetType());
     }
 
     @Test
     public void testYangIIToBindingAwareIIListWildcarded() {
-        final InstanceIdentifier<?> instanceIdentifier = codecContext.fromYangInstanceIdentifier(
-            BI_TOP_LEVEL_LIST_PATH);
+        final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_PATH);
         assertNull(instanceIdentifier);
     }
 
     @Test
     public void testYangIIToBindingAwareIIListWithKey() {
-        final InstanceIdentifier<?> instanceIdentifier = codecContext.fromYangInstanceIdentifier(
-            BI_TOP_LEVEL_LIST_1_PATH);
-        final InstanceIdentifier.PathArgument last = Iterables.getLast(instanceIdentifier.getPathArguments());
+        final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_1_PATH);
+        final var last = Iterables.getLast(instanceIdentifier.getPathArguments());
         assertEquals(TopLevelList.class, instanceIdentifier.getTargetType());
         assertFalse(instanceIdentifier.isWildcarded());
         assertTrue(last instanceof InstanceIdentifier.IdentifiableItem);
@@ -86,27 +83,27 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testBindingAwareIIToYangIContainer() {
-        final YangInstanceIdentifier yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
+        final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class));
-        final PathArgument lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
+        final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifier);
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
     }
 
     @Test
     public void testBindingAwareIIToYangIIWildcard() {
-        final YangInstanceIdentifier yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
+        final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class));
-        final PathArgument lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
+        final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifier);
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
     }
 
     @Test
     public void testBindingAwareIIToYangIIListWithKey() {
-        final YangInstanceIdentifier yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
+        final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class, TOP_FOO_KEY));
-        final PathArgument lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
+        final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifierWithPredicates);
         assertTrue(((NodeIdentifierWithPredicates) lastPathArgument).values().contains(TOP_LEVEL_LIST_KEY_VALUE));
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
@@ -114,61 +111,58 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testChoiceCaseGroupingFromBinding() {
-        final YangInstanceIdentifier contBase = codecContext.toYangInstanceIdentifier(
+        final var contBase = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
-        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
+        assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)), contBase);
 
-        final YangInstanceIdentifier contAug = codecContext.toYangInstanceIdentifier(
+        final var contAug = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
-        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
+        assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME),
             NodeIdentifier.create(GrpCont.QNAME.bindTo(ContAug.QNAME.getModule()))), contAug);
 
         // Legacy: downcast the child to Class, losing type safety but still working. Faced with ambiguity, it will
         //         select the lexically-lower class
         assertEquals(1, ContBase.class.getCanonicalName().compareTo(ContAug.class.getCanonicalName()));
-        final YangInstanceIdentifier contAugLegacy = codecContext.toYangInstanceIdentifier(
+        final var contAugLegacy = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(Cont.class).child((Class) GrpCont.class).build());
         assertEquals(contAug, contAugLegacy);
 
-        final YangInstanceIdentifier rootBase = codecContext.toYangInstanceIdentifier(
+        final var rootBase = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(RootBase.class, GrpCont.class).build());
-        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
+        assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME)), rootBase);
 
-        final YangInstanceIdentifier rootAug = codecContext.toYangInstanceIdentifier(
+        final var rootAug = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(RootAug.class, GrpCont.class).build());
-        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
+        assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME.bindTo(RootAug.QNAME.getModule()))), rootAug);
     }
 
     @Test
     public void testChoiceCaseGroupingToBinding() {
-        final InstanceIdentifier<?> contBase = codecContext.fromYangInstanceIdentifier(
-            YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
-            NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)));
+        final var contBase = codecContext.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.of(Cont.QNAME, ContChoice.QNAME, GrpCont.QNAME));
         assertEquals(InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
 
-        final InstanceIdentifier<?> contAug = codecContext.fromYangInstanceIdentifier(
-            YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME), NodeIdentifier.create(ContChoice.QNAME),
-                NodeIdentifier.create(GrpCont.QNAME.bindTo(ContAug.QNAME.getModule()))));
+        final var contAug = codecContext.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.of(Cont.QNAME, ContChoice.QNAME, GrpCont.QNAME.bindTo(ContAug.QNAME.getModule())));
         assertEquals(InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
 
-        final InstanceIdentifier<?> rootBase = codecContext.fromYangInstanceIdentifier(
-            YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME), NodeIdentifier.create(GrpCont.QNAME)));
+        final var rootBase = codecContext.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.of(Root.QNAME, GrpCont.QNAME));
         assertEquals(InstanceIdentifier.builder(RootBase.class, GrpCont.class).build(), rootBase);
 
-        final InstanceIdentifier<?> rootAug = codecContext.fromYangInstanceIdentifier(
-            YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
-                NodeIdentifier.create(GrpCont.QNAME.bindTo(RootAug.QNAME.getModule()))));
+        final var rootAug = codecContext.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.of(Root.QNAME, GrpCont.QNAME.bindTo(RootAug.QNAME.getModule())));
         assertEquals(InstanceIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);
     }
 
     @Test
     public void testRejectNotificationQName() {
         // A purposely-wrong YangInstanceIdentifier
-        final var yiid = YangInstanceIdentifier.create(NodeIdentifier.create(OutOfPixieDustNotification.QNAME));
+        final var yiid = YangInstanceIdentifier.of(OutOfPixieDustNotification.QNAME);
         final var ex = assertThrows(IncorrectNestingException.class,
             () -> codecContext.fromYangInstanceIdentifier(yiid));
         assertThat(ex.getMessage(),
@@ -179,9 +173,9 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testRejectRpcQName() {
         // A purposely-wrong YangInstanceIdentifier
-        final var yiid = YangInstanceIdentifier.create(NodeIdentifier.create(
+        final var yiid = YangInstanceIdentifier.of(
             // TODO: use the RPC interface once we are generating it
-            QName.create(KnockKnockInput.QNAME, "knock-knock")));
+            QName.create(KnockKnockInput.QNAME, "knock-knock"));
         final var ex = assertThrows(IncorrectNestingException.class,
             () -> codecContext.fromYangInstanceIdentifier(yiid));
         assertThat(ex.getMessage(), startsWith("Argument (urn:opendaylight:params:xml:ns:yang:md:sal:knock-knock"
@@ -191,7 +185,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testRejectActionQName() {
         // A purposely-wrong YangInstanceIdentifier
-        final var yiid = YangInstanceIdentifier.create(
+        final var yiid = YangInstanceIdentifier.of(
             NodeIdentifier.create(Lst.QNAME),
             NodeIdentifierWithPredicates.of(Lst.QNAME, QName.create(Lst.QNAME, "key"), "foo"),
             NodeIdentifier.create(Foo.QNAME));

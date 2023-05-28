@@ -32,7 +32,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
      */
     @Test
     public void testNonnullContainer() {
-        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.create(FOO),
+        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
             Builders.containerBuilder().withNodeIdentifier(FOO).build());
         assertNotNull(entry);
         assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
@@ -51,7 +51,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
      */
     @Test
     public void testEmptyContainer() {
-        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.create(FOO),
+        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
             Builders.containerBuilder()
                 .withNodeIdentifier(FOO)
                 .withChild(Builders.containerBuilder().withNodeIdentifier(BAR).build())
@@ -72,7 +72,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
      */
     @Test
     public void testNotEmptyContainer() {
-        // FIXME: MDSAL-670: these should get translated to YangInstanceIdentifier.create(FOO)
+        // FIXME: MDSAL-670: these should get translated to YangInstanceIdentifier.of(FOO)
         final var identifier = new YangInstanceIdentifier.NodeWithValue<>(Bar.QNAME, FOO);
         final var data = Builders.containerBuilder()
             .withNodeIdentifier(FOO)
@@ -84,7 +84,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
                     .build())
                 .build())
             .build();
-        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.create(FOO), data);
+        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO), data);
         assertNotNull(entry);
         assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
 

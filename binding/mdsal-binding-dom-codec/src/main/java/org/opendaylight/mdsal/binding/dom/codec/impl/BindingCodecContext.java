@@ -208,7 +208,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
         final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
-        return Map.entry(YangInstanceIdentifier.create(yangArgs),
+        return Map.entry(YangInstanceIdentifier.of(yangArgs),
             new BindingToNormalizedStreamWriter(codecContext, domWriter));
     }
 
@@ -516,7 +516,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
         // TODO Do we need defensive check here?
         return new CodecWithPath<>((CommonDataObjectCodecTreeNode<T>) codecContext,
-            YangInstanceIdentifier.create(yangArgs));
+            YangInstanceIdentifier.of(yangArgs));
     }
 
     @Override
@@ -551,7 +551,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
         final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
-        final var yangPath = YangInstanceIdentifier.create(yangArgs);
+        final var yangPath = YangInstanceIdentifier.of(yangArgs);
 
         // We create DOM stream writer which produces normalized nodes
         final var result = new NormalizationResultHolder();

@@ -58,7 +58,7 @@ public class InstanceIdentifierTest extends AbstractBindingCodecTest {
 
     @Test
     public void testCamelCaseKeys() {
-        final InstanceIdentifier<?> result = codecContext.fromYangInstanceIdentifier(YangInstanceIdentifier.create(
+        final InstanceIdentifier<?> result = codecContext.fromYangInstanceIdentifier(YangInstanceIdentifier.of(
             NodeIdentifier.create(OspfStatLsdbBrief.QNAME),
             NodeIdentifierWithPredicates.of(OspfStatLsdbBrief.QNAME, ImmutableMap.of(
                 QName.create(OspfStatLsdbBrief.QNAME, "AreaIndex"), 1,
