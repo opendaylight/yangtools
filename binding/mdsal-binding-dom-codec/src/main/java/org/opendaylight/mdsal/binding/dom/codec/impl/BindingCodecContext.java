@@ -58,6 +58,7 @@ import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -506,6 +507,28 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     public <E extends DataObject> CommonDataObjectCodecTreeNode<E> streamChild(final Class<E> childClass) {
         return root.streamChild(childClass);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <A extends Augmentation<?>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
+            final InstanceIdentifier<A> path) {
+        final var codecContext = getCodecContextNode(path, null);
+        if (codecContext instanceof BindingAugmentationCodecTreeNode) {
+            return (BindingAugmentationCodecTreeNode<A>) codecContext;
+        }
+        throw new IllegalArgumentException(path + " does not refer to an Augmentation");
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getDataObjectCodec(
+            final InstanceIdentifier<T> path) {
+        final var codecContext = getCodecContextNode(path, null);
+        if (codecContext instanceof BindingDataObjectCodecTreeNode) {
+            return (BindingDataObjectCodecTreeNode<T>) codecContext;
+        }
+        throw new IllegalArgumentException(path + " does not refer to a plain DataObject");
     }
 
     @Override

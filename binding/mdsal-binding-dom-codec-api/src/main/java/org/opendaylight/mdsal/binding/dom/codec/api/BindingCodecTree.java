@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -38,6 +39,29 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
             requireNonNull(path);
         }
     }
+
+    /**
+     * Look up the codec for specified augmentation path.
+     *
+     * @param <A> DataObject type
+     * @param path Binding path
+     * @return A {@link BindingAugmentationCodecTreeNode}
+     * @throws NullPointerException if {@code path} is {@code null}
+     * @throws IllegalArgumentException if the codec cannot be resolved
+     */
+    <A extends Augmentation<?>> @NonNull BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
+        InstanceIdentifier<A> path);
+
+    /**
+     * Look up the codec for specified ordinary DataObject path.
+     *
+     * @param <T> DataObject type
+     * @param path Binding path
+     * @return A {@link BindingDataObjectCodecTreeNode}
+     * @throws NullPointerException if {@code path} is {@code null}
+     * @throws IllegalArgumentException if the codec cannot be resolved or refers to an Augmentation
+     */
+    <T extends DataObject> @NonNull BindingDataObjectCodecTreeNode<T> getDataObjectCodec(InstanceIdentifier<T> path);
 
     /**
      * Look up the codec for specified path, constructing the {@link YangInstanceIdentifier} corresponding to it.

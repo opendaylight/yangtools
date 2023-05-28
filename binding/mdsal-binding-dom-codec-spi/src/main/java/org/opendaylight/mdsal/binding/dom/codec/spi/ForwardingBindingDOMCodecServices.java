@@ -12,7 +12,9 @@ import com.google.common.collect.ForwardingObject;
 import java.time.Instant;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
@@ -20,6 +22,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Action;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -166,6 +169,18 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     @Override
     public <T extends DataObject> CodecWithPath<T> getSubtreeCodecWithPath(final InstanceIdentifier<T> path) {
         return delegate().getSubtreeCodecWithPath(path);
+    }
+
+    @Override
+    public <A extends Augmentation<?>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
+            final InstanceIdentifier<A> path) {
+        return delegate().getAugmentationCodec(path);
+    }
+
+    @Override
+    public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getDataObjectCodec(
+            final InstanceIdentifier<T> path) {
+        return delegate().getDataObjectCodec(path);
     }
 
     @Override

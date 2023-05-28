@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Collections;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainer;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListBuilder;
@@ -19,7 +18,6 @@ import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.Bo
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListIntKey;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
     @Test
@@ -41,11 +39,10 @@ public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
                         .build()))
                 .build();
 
-        final var subtreeCodec = (BindingDataObjectCodecTreeNode<BooleanContainer>) codecContext.getSubtreeCodec(
-                InstanceIdentifier.create(BooleanContainer.class));
-        final NormalizedNode serializedInt = subtreeCodec.serialize(booleanContainerInt);
+        final var subtreeCodec = codecContext.getDataObjectCodec(InstanceIdentifier.create(BooleanContainer.class));
+        final var serializedInt = subtreeCodec.serialize(booleanContainerInt);
         assertNotNull(serializedInt);
-        final NormalizedNode serialized = subtreeCodec.serialize(booleanContainer);
+        final var serialized = subtreeCodec.serialize(booleanContainer);
         assertNotNull(serialized);
     }
 }

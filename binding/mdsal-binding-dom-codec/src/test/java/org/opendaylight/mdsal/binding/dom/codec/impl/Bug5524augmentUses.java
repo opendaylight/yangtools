@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.ListModule11Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.list.module1._1.ListModule12Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.list.module1._1.list.module1._2.ContainerModule1Builder;
@@ -28,7 +27,6 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev1
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.ContainerModule4Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.container.module._4.ManualContainerModule11Builder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class Bug5524augmentUses extends AbstractBindingCodecTest {
     @Test
@@ -69,11 +67,10 @@ public class Bug5524augmentUses extends AbstractBindingCodecTest {
                 .build())
             .build();
 
-        final var subtreeCodec = (BindingDataObjectCodecTreeNode<Module4Main>) codecContext.getSubtreeCodec(
-                InstanceIdentifier.create(Module4Main.class));
-        final NormalizedNode serialized = subtreeCodec.serialize(module4Main);
-        final NormalizedNode manualSerialized = subtreeCodec.serialize(manualModule4Main);
-        final NormalizedNode containerManualSerialized = subtreeCodec.serialize(contManualModule4Main);
+        final var subtreeCodec = codecContext.getDataObjectCodec(InstanceIdentifier.create(Module4Main.class));
+        final var serialized = subtreeCodec.serialize(module4Main);
+        final var manualSerialized = subtreeCodec.serialize(manualModule4Main);
+        final var containerManualSerialized = subtreeCodec.serialize(contManualModule4Main);
         assertNotNull(serialized);
         assertNotNull(manualSerialized);
         assertNotNull(containerManualSerialized);
