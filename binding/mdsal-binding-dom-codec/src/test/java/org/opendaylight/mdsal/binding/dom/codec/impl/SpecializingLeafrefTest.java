@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanCont;
@@ -30,7 +29,7 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
     public void specifiedBooleanLeafTest() {
         final BooleanCont booleanCont  = new BooleanContBuilder().setIsFoo(true).build();
 
-        final var res = (NodeResult) codecContext.toNormalizedNode(BOOLEAN_CONT_II, booleanCont);
+        final var res = codecContext.toNormalizedDataObject(BOOLEAN_CONT_II, booleanCont);
 
         final var booleanContBinding = (BooleanCont) codecContext.fromNormalizedNode(res.path(), res.node()).getValue();
 
@@ -41,7 +40,7 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
     public void specifiedCommonLeafTest() {
         final BarCont barCont  = new BarContBuilder().setLeaf2("foo").build();
 
-        final var res = (NodeResult) codecContext.toNormalizedNode(BAR_CONT_II, barCont);
+        final var res = codecContext.toNormalizedDataObject(BAR_CONT_II, barCont);
 
         final var booleanContBinding = (BarCont) codecContext.fromNormalizedNode(res.path(), res.node()).getValue();
 
@@ -53,7 +52,7 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
         final Set<String> testSet = Set.of("test");
         final BarCont barCont  = new BarContBuilder().setLeafList1(testSet).build();
 
-        final var res = (NodeResult) codecContext.toNormalizedNode(BAR_CONT_II, barCont);
+        final var res = codecContext.toNormalizedDataObject(BAR_CONT_II, barCont);
 
         final var barContAfterConverting = (BarCont) codecContext.fromNormalizedNode(res.path(), res.node()).getValue();
 

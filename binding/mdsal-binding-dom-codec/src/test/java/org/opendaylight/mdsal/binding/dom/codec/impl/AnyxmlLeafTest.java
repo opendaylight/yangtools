@@ -18,7 +18,6 @@ import static org.junit.Assert.assertSame;
 import java.util.Map.Entry;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.Cont;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.ContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.cont.ContAny;
@@ -97,8 +96,8 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
 
     @Test
     public void testAnyxmlFromBinding() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(
-            InstanceIdentifier.create(Cont.class), new ContBuilder().setContAny(new FakeCont()).build());
+        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Cont.class),
+            new ContBuilder().setContAny(new FakeCont()).build());
         assertEquals(YangInstanceIdentifier.of(CONT_NODE_ID), entry.path());
         assertEquals(cont, entry.node());
     }

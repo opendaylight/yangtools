@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.FooBuilder;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
@@ -41,7 +40,7 @@ public class Mdsal668Test extends AbstractBindingCodecTest {
                     .build())
                 .build())
             .build(),
-            ((NodeResult) codecContext.toNormalizedNode(FOO_IID,
-                new FooBuilder().setBar(new BarBuilder().setBar(Set.of(FOO_IID)).build()).build())).node());
+            codecContext.toNormalizedDataObject(FOO_IID,
+                new FooBuilder().setBar(new BarBuilder().setBar(Set.of(FOO_IID)).build()).build()).node());
     }
 }

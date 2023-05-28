@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryList;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryListBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -44,7 +43,7 @@ public class BinaryKeyTest extends AbstractBindingCodecTest {
     }
 
     private BinaryList process(final BinaryList binaryList) {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(instanceIdentifier, binaryList);
+        final var entry = codecContext.toNormalizedDataObject(instanceIdentifier, binaryList);
         return (BinaryList) codecContext.fromNormalizedNode(entry.path(), entry.node()).getValue();
     }
 }

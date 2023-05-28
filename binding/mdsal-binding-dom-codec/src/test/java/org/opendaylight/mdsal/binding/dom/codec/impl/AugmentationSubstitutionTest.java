@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
@@ -36,8 +35,8 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
             .withKey(TOP_FOO_KEY)
             .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
-        final var domTreeEntry = ((NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree)).node();
-        final var domRpcEntry = ((NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc)).node();
+        final var domTreeEntry = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, baTree).node();
+        final var domRpcEntry = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, baRpc).node();
         assertEquals(domTreeEntry, domRpcEntry);
     }
 
@@ -48,7 +47,7 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
             .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
 
-        final var result = (NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, manuallyConstructed);
+        final var result = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, manuallyConstructed);
         final TopLevelList deserialized =
             (TopLevelList) codecContext.fromNormalizedNode(result.path(), result.node()).getValue();
         assertEquals(manuallyConstructed, deserialized);

@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ContainerWithUsesBuilder;
@@ -38,8 +37,7 @@ public class EmptyLeafTest extends AbstractBindingCodecTest {
             .withKey(TOP_FOO_KEY)
             .setChoiceInList(new EmptyLeafBuilder().setEmptyType(Empty.value()).build())
             .build();
-        final var dom = (NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
-            withEmptyCase);
+        final var dom = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, withEmptyCase);
         final var readed = codecContext.fromNormalizedNode(dom.path(), dom.node());
         final ChoiceInList list = ((TopLevelList) readed.getValue()).getChoiceInList();
         assertTrue(list instanceof EmptyLeaf);

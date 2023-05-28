@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicy;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicyBuilder;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.PolicyLoggingFlag;
@@ -33,7 +32,7 @@ public class TypedefTest extends AbstractBindingCodecTest {
                 .setAction2(new PolicyLoggingFlag(false))
                 .setAction3(true)
                 .build();
-        final var dom = (NodeResult) codecContext.toNormalizedNode(BA_DEFAULT_POLICY, binding);
+        final var dom = codecContext.toNormalizedDataObject(BA_DEFAULT_POLICY, binding);
         final var readed = codecContext.fromNormalizedNode(dom.path(),dom.node());
 
         assertEquals(binding, readed.getValue());
@@ -46,7 +45,7 @@ public class TypedefTest extends AbstractBindingCodecTest {
                 .setEmptyLeaf2(new TypedefEmpty(Empty.value()))
                 .setEmptyLeaf3(Empty.value())
                 .build();
-        final var dom = (NodeResult) codecContext.toNormalizedNode(BA_TEST_CONT, binding);
+        final var dom = codecContext.toNormalizedDataObject(BA_TEST_CONT, binding);
         final var readed = codecContext.fromNormalizedNode(dom.path(),dom.node());
 
         assertEquals(binding, readed.getValue());

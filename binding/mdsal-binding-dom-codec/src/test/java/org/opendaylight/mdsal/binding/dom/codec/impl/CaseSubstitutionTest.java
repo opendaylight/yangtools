@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
@@ -53,8 +52,8 @@ public class CaseSubstitutionTest extends AbstractBindingCodecTest {
             .withKey(CHOICE_FOO_KEY)
             .setChoiceInChoiceList(new ComplexViaUsesBuilder(createComplexData()).build())
             .build();
-        final var domTreeEntry = ((NodeResult) codecContext.toNormalizedNode(BA_CHOICE_LIST, baTree)).node();
-        final var domRpcEntry = ((NodeResult) codecContext.toNormalizedNode(BA_CHOICE_LIST, baRpc)).node();
+        final var domTreeEntry = codecContext.toNormalizedDataObject(BA_CHOICE_LIST, baTree).node();
+        final var domRpcEntry = codecContext.toNormalizedDataObject(BA_CHOICE_LIST, baRpc).node();
         assertEquals(domTreeEntry, domRpcEntry);
     }
 

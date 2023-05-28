@@ -70,6 +70,18 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
+    public <A extends Augmentation<?>> @NonNull AugmentationResult toNormalizedAugmentation(
+            final InstanceIdentifier<A> path, final A data) {
+        return delegate().toNormalizedAugmentation(path, data);
+    }
+
+    @Override
+    public <T extends DataObject> @NonNull NodeResult toNormalizedDataObject(final InstanceIdentifier<T> path,
+            final T data) {
+        return delegate().toNormalizedDataObject(path, data);
+    }
+
+    @Override
     public ContainerNode toNormalizedNodeNotification(final Notification<?> data) {
         return delegate().toNormalizedNodeNotification(data);
     }

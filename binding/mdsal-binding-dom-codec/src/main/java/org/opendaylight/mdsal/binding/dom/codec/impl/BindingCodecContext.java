@@ -570,6 +570,25 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
+    public <A extends Augmentation<?>> AugmentationResult toNormalizedAugmentation(final InstanceIdentifier<A> path,
+            final A data) {
+        final var result = toNormalizedNode(path, data);
+        if (result instanceof AugmentationResult augment) {
+            return augment;
+        }
+        throw new IllegalArgumentException(path + " does not identify an Augmentation");
+    }
+
+    @Override
+    public <T extends DataObject> NodeResult toNormalizedDataObject(final InstanceIdentifier<T> path, final T data) {
+        final var result = toNormalizedNode(path, data);
+        if (result instanceof NodeResult node) {
+            return node;
+        }
+        throw new IllegalArgumentException(path + " does not identify a plain DataObject");
+    }
+
+    @Override
     public <T extends DataObject> NormalizedResult toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
         final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();

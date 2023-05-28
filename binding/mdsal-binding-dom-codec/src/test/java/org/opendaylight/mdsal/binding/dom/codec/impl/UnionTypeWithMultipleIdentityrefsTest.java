@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.IdentOne;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.IdentTwo;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.Top;
@@ -47,7 +46,7 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
     }
 
     @Test
-    public void fromNNToBindingTest() throws NoSuchFieldException {
+    public void fromNNToBindingTest() {
         verifyIdentityWasTranslatedToBindingCorrectly(IDENTITY_ONE_QNAME, new UnionType(IdentOne.VALUE));
         verifyIdentityWasTranslatedToBindingCorrectly(IDENTITY_TWO_QNAME, new UnionType(IdentTwo.VALUE));
     }
@@ -80,7 +79,7 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
         // create binding instance with identity
         final Top topContainer = new TopBuilder().setTestUnionLeaf(chosenIdentity).build();
         // translate via codec into NN
-        final var translated = (NodeResult) codecContext.toNormalizedNode(InstanceIdentifier.builder(Top.class).build(),
+        final var translated = codecContext.toNormalizedDataObject(InstanceIdentifier.builder(Top.class).build(),
             topContainer);
         assertNotNull(translated);
         // verify translation worked

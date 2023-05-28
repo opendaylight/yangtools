@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
@@ -36,7 +35,7 @@ public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTes
 
     @SuppressWarnings("unchecked")
     protected <T extends DataObject> T thereAndBackAgain(final InstanceIdentifier<T> path, final T data) {
-        final var there = (NodeResult) codecContext.toNormalizedNode(path, data);
+        final var there = codecContext.toNormalizedDataObject(path, data);
         final var backAgain = codecContext.fromNormalizedNode(there.path(), there.node());
         assertEquals(path, backAgain.getKey());
         return (T) backAgain.getValue();

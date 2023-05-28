@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.ThirdParty;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexLeaves;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexLeavesBuilder;
@@ -41,8 +40,7 @@ public class LeafReferenceTest extends AbstractBindingCodecTest {
             .setName("foo")
             .addAugmentation(augment)
             .build();
-        final var dom = (NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
-            list);
+        final var dom = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, list);
         final var readed = codecContext.fromNormalizedNode(dom.path(), dom.node());
         final var readAugment = ((TopLevelList) readed.getValue()).augmentation(TreeComplexLeaves.class);
 

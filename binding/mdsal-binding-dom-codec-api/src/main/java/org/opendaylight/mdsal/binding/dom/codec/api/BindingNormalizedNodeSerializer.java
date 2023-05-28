@@ -110,6 +110,27 @@ public interface BindingNormalizedNodeSerializer {
     <T extends DataObject> @NonNull NormalizedResult toNormalizedNode(InstanceIdentifier<T> path, T data);
 
     /**
+     * Translates supplied Binding Instance Identifier and data into NormalizedNode representation.
+     *
+     * @param path Binding Instance Identifier pointing to data
+     * @param data Data object representing data
+     * @return {@link NormalizedResult} representation
+     * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
+     */
+    <A extends Augmentation<?>> @NonNull AugmentationResult toNormalizedAugmentation(InstanceIdentifier<A> path,
+        A data);
+
+    /**
+     * Translates supplied Binding Instance Identifier and data into NormalizedNode representation.
+     *
+     * @param path Binding Instance Identifier pointing to data
+     * @param data Data object representing data
+     * @return {@link NormalizedResult} representation
+     * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
+     */
+    <T extends DataObject> @NonNull NodeResult toNormalizedDataObject(InstanceIdentifier<T> path, T data);
+
+    /**
      * Translates supplied YANG Instance Identifier and NormalizedNode into Binding data.
      *
      * @param path Binding Instance Identifier

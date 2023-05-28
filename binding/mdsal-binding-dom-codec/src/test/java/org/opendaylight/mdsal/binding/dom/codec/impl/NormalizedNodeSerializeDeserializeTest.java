@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment2Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
@@ -97,7 +96,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void containerToNormalized() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(InstanceIdentifier.create(Top.class), top());
+        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class), top());
         assertEquals(getEmptyTop(), entry.node());
     }
 
@@ -122,10 +121,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
             getNormalizedTopWithChildren(leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE));
         final ContainerNode topNormalized = getEmptyTop();
 
-        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_TOP_PATH,
-            topNormalized);
-        final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH,
-            topNormalizedWithAugments);
+        final var entry = codecContext.fromNormalizedNode(BI_TOP_PATH, topNormalized);
+        final var entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH, topNormalizedWithAugments);
 
         // Equals on other with no augmentation should be false
         assertNotEquals(top(), entryWithAugments.getValue());
@@ -156,8 +153,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         final ContainerNode topNormalizedWithAugments = getNormalizedTopWithChildren(
             leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE),
             leafNode(AUGMENT_INT_Q, AUGMENT_INT_VALUE));
-        final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH,
-            topNormalizedWithAugments);
+        final var entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH, topNormalizedWithAugments);
         Top topWithAugments = topWithAugments(Map.of(
             Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build(),
             Top2.class, new Top2Builder().setAugmentedInt(AUGMENT_INT_VALUE).build()));
@@ -193,8 +189,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void listWithKeysToNormalized() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
-            topLevelList(TOP_LEVEL_LIST_FOO_KEY));
+        final var entry = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, topLevelList(TOP_LEVEL_LIST_FOO_KEY));
         assertEquals(mapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
                 TOP_LEVEL_LIST_FOO_KEY_VALUE))
@@ -215,7 +210,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void leafOnlyAugmentationToNormalized() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
+        final var entry = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST,
             topLevelList(TOP_LEVEL_LIST_FOO_KEY,
                 new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build()));
         assertEquals(mapEntryBuilder()
@@ -243,7 +238,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void orderedleafListToNormalized() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(InstanceIdentifier.create(Top.class),
+        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class),
             new TopBuilder().setTopLevelOrderedLeafList(List.of("foo")).build());
         assertEquals(containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
@@ -260,7 +255,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void leafListToNormalized() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(
+        final var entry = codecContext.toNormalizedDataObject(
             InstanceIdentifier.create(Top.class), new TopBuilder().setTopLevelLeafList(Set.of("foo")).build());
         assertEquals(containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
@@ -306,7 +301,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void choiceToNormalized() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(InstanceIdentifier.create(ChoiceContainer.class),
+        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(ChoiceContainer.class),
             new ChoiceContainerBuilder()
                 .setIdentifier(new ExtendedBuilder()
                     .setExtendedId(new ExtendedIdBuilder().setId("identifier_value").build())
@@ -423,7 +418,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void orderedLisToNormalized() {
-        final var entry = (NodeResult) codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, new TopLevelListBuilder()
+        final var entry = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, new TopLevelListBuilder()
             .withKey(TOP_LEVEL_LIST_FOO_KEY)
             .setNestedList(List.of(
                 new NestedListBuilder().withKey(new NestedListKey("foo")).build(),
@@ -489,7 +484,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
             ).build()
         ).build();
 
-        final var biResult = (NodeResult) codecContext.toNormalizedNode(InstanceIdentifier.create(Top.class), top);
+        final var biResult = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class), top);
 
         final var topNormalized = containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))

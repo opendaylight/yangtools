@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer.NodeResult;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.Cont;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.Cont.Ref;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContBuilder;
@@ -33,7 +32,7 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         final InstanceIdentifier<Cont> BA_II_CONT = InstanceIdentifier.builder(Cont.class).build();
         final Ref refVal = new Ref("myvalue");
         final Cont data = new ContBuilder().setRef(refVal).build();
-        final var normalizedNode = (NodeResult) codecContext.toNormalizedNode(BA_II_CONT, data);
+        final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 
         final var fromNormalizedNode = codecContext.fromNormalizedNode(contYII, normalizedNode.node());
@@ -51,7 +50,7 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         final InstanceIdentifier<ContInt32> BA_II_CONT = InstanceIdentifier.builder(ContInt32.class).build();
         final RefUnionInt32 refVal = new RefUnionInt32(Uint32.valueOf(5));
         final ContInt32 data = new ContInt32Builder().setRefUnionInt32(refVal).build();
-        final var normalizedNode = (NodeResult) codecContext.toNormalizedNode(BA_II_CONT, data);
+        final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 
         final var fromNormalizedNode = codecContext.fromNormalizedNode(contYII, normalizedNode.node());
