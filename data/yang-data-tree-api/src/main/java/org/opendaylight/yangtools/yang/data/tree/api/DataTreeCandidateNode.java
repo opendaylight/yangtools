@@ -28,37 +28,12 @@ public interface DataTreeCandidateNode {
     @NonNull PathArgument name();
 
     /**
-     * Get the node identifier.
-     *
-     * @implSpec Default implementation defers to {@link #name()}.
-     * @return The node identifier.
-     * @deprecated Use {@link #name()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull PathArgument getIdentifier() {
-        return name();
-    }
-
-    /**
      * Get an unmodifiable collection of modified child nodes. Note that the collection may include
      * {@link ModificationType#UNMODIFIED} nodes, which the caller is expected to handle as if they were not present.
      *
      * @return Unmodifiable collection of modified child nodes.
      */
     @NonNull Collection<DataTreeCandidateNode> childNodes();
-
-    /**
-     * Get an unmodifiable collection of modified child nodes. Note that the collection may include
-     * {@link ModificationType#UNMODIFIED} nodes, which the caller is expected to handle as if they were not present.
-     *
-     * @implSpec Default implementation defers to {@link #childNodes()}.
-     * @return Unmodifiable collection of modified child nodes.
-     * @deprecated Use {@link #childNodes()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Collection<DataTreeCandidateNode> getChildNodes() {
-        return childNodes();
-    }
 
     /**
      * Returns modified child or empty. Note that this method may return an {@link ModificationType#UNMODIFIED} node
@@ -87,39 +62,11 @@ public interface DataTreeCandidateNode {
     }
 
     /**
-     * Returns modified child or empty. Note that this method may return an {@link ModificationType#UNMODIFIED} node
-     * when there is evidence of the node or its parent being involved in modification which has turned out not to
-     * modify the node's contents.
-     *
-     * @implSpec Default implementation defers to {@link #findModifiedChild(PathArgument)}.
-     * @param childName Identifier of child node
-     * @return Modified child or empty.
-     * @throws NullPointerException if {@code childIdentifier} is {@code null}
-     * @deprecated Use {@link #modifiedChild(PathArgument)} or {@link #findModifiedChild(PathArgument)} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childName) {
-        return findModifiedChild(childName);
-    }
-
-    /**
      * Return the type of modification this node is undergoing.
      *
      * @return Node modification type.
      */
     @NonNull ModificationType modificationType();
-
-    /**
-     * Return the type of modification this node is undergoing.
-     *
-     * @implSpec Default implementation defers to {@link #modificationType()}.
-     * @return Node modification type.
-     * @deprecated Use {@link #modificationType()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull ModificationType getModificationType() {
-        return modificationType();
-    }
 
     /**
      * Return the before-image of data corresponding to the node.
@@ -139,18 +86,6 @@ public interface DataTreeCandidateNode {
     }
 
     /**
-     * Return the before-image of data corresponding to the node.
-     *
-     * @implSpec Default implementation defers to {@link #findDataBefore()}.
-     * @return Node data as they were present in the tree before the modification was applied.
-     * @deprecated Use {@link #dataBefore()} or {@link #findDataBefore()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Optional<NormalizedNode> getDataBefore() {
-        return findDataBefore();
-    }
-
-    /**
      * Return the after-image of data corresponding to the node.
      *
      * @return Node data as they will be present in the tree after the modification is applied
@@ -165,17 +100,5 @@ public interface DataTreeCandidateNode {
      */
     default @NonNull Optional<NormalizedNode> findDataAfter() {
         return Optional.ofNullable(dataAfter());
-    }
-
-    /**
-     * Return the after-image of data corresponding to the node.
-     *
-     * @implSpec Default implementation defers to {@link #findDataAfter()}.
-     * @return Node data as they will be present in the tree after the modification is applied.
-     * @deprecated Use {@link #dataAfter()} or {@link #findDataAfter()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Optional<NormalizedNode> getDataAfter() {
-        return findDataAfter();
     }
 }
