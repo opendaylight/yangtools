@@ -31,37 +31,12 @@ public interface DataTreeCandidateNode {
     @NonNull PathArgument name();
 
     /**
-     * Get the node identifier.
-     *
-     * @implSpec Default implementation defers to {@link #name()}.
-     * @return The node identifier.
-     * @deprecated Use {@link #name()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull PathArgument getIdentifier() {
-        return name();
-    }
-
-    /**
      * Get an unmodifiable collection of modified child nodes. Note that the collection may include
      * {@link ModificationType#UNMODIFIED} nodes, which the caller is expected to handle as if they were not present.
      *
      * @return Unmodifiable collection of modified child nodes.
      */
     @NonNull Collection<DataTreeCandidateNode> childNodes();
-
-    /**
-     * Get an unmodifiable collection of modified child nodes. Note that the collection may include
-     * {@link ModificationType#UNMODIFIED} nodes, which the caller is expected to handle as if they were not present.
-     *
-     * @implSpec Default implementation defers to {@link #childNodes()}.
-     * @return Unmodifiable collection of modified child nodes.
-     * @deprecated Use {@link #childNodes()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Collection<DataTreeCandidateNode> getChildNodes() {
-        return childNodes();
-    }
 
     /**
      * Returns modified child or empty. Note that this method may return an {@link ModificationType#UNMODIFIED} node
@@ -110,18 +85,6 @@ public interface DataTreeCandidateNode {
      * @return Node modification type.
      */
     @NonNull ModificationType modificationType();
-
-    /**
-     * Return the type of modification this node is undergoing.
-     *
-     * @implSpec Default implementation defers to {@link #modificationType()}.
-     * @return Node modification type.
-     * @deprecated Use {@link #modificationType()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull ModificationType getModificationType() {
-        return modificationType();
-    }
 
     /**
      * Return the before-image of data corresponding to the node.
