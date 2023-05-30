@@ -16,7 +16,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -33,24 +32,21 @@ class MethodSignatureImplTest {
         var name = "customMethod";
         final var comment = TypeMemberComment.contractOf("This is just a comment");
         final var accessModifier = AccessModifier.PUBLIC;
-        Type returnType = Types.STRING;
         boolean isFinal = false;
         boolean isAbstract = false;
         boolean isStatic = false;
 
         signature1 = new MethodSignatureImpl(name, List.of(), comment,
-                accessModifier, returnType, List.of(), isFinal, isAbstract,
+                accessModifier, Types.STRING, List.of(), isFinal, isAbstract,
                 isStatic);
         signature2 = new MethodSignatureImpl(name, List.of(), comment,
-                accessModifier, returnType, List.of(), isFinal, isAbstract,
+                accessModifier, Types.STRING, List.of(), isFinal, isAbstract,
                 isStatic);
-        returnType = null;
         signature3 = new MethodSignatureImpl(name, List.of(), comment,
-                accessModifier, returnType, List.of(), isFinal, isAbstract,
+                accessModifier, Types.BOOLEAN, List.of(), isFinal, isAbstract,
                 isStatic);
-        name = null;
-        signature4 = new MethodSignatureImpl(name, List.of(), comment,
-                accessModifier, returnType, List.of(), isFinal, isAbstract,
+        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment,
+                accessModifier, Types.BOOLEAN, List.of(), isFinal, isAbstract,
                 isStatic);
 
         hash1 = signature1.hashCode();
