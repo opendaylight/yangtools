@@ -9,87 +9,49 @@ package org.opendaylight.yangtools.concepts;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.annotations.Beta;
 import java.io.Serializable;
-import java.util.Objects;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A single version according to <a href="http://semver.org/">Semantic Versioning</a>.
+ *
+ * @param major Major version number
+ * @param minor Minor version number
+ * @param patch Patch version number
  */
-@Beta
-public final class SemVer implements Comparable<SemVer>, Serializable {
-    private static final long serialVersionUID = 1L;
-    private final int major;
-    private final int minor;
-    private final int patch;
-
-    private SemVer(final int major, final int minor, final int patch) {
-        checkArgument(major >= 0);
-        this.major = major;
-        checkArgument(minor >= 0);
-        this.minor = minor;
-        checkArgument(patch >= 0);
-        this.patch = patch;
+public record SemVer(@NonNegative int major, @NonNegative int minor, @NonNegative int patch)
+        implements Comparable<SemVer>, Serializable {
+    public SemVer {
+        checkArgument(major >= 0, "Major version has to be non-negative");
+        checkArgument(minor >= 0, "Minor version has to be non-negative");
+        checkArgument(patch >= 0, "Patch version has to be non-negative");
     }
 
-    public static @NonNull SemVer create(final @NonNegative int major) {
-        return create(major, 0);
+    public SemVer(final @NonNegative int major) {
+        this(major, 0);
     }
 
-    public static @NonNull SemVer create(final @NonNegative int major, final @NonNegative int minor) {
-        return create(major, minor, 0);
-    }
-
-    public static @NonNull  SemVer create(final @NonNegative int major, final @NonNegative int minor,
-            final @NonNegative int patch) {
-        return new SemVer(major, minor, patch);
+    public SemVer(final @NonNegative int major, final @NonNegative int minor) {
+        this(major, minor, 0);
     }
 
     public static @NonNull SemVer valueOf(final @NonNull String str) {
         final int minorIdx = str.indexOf('.');
         if (minorIdx == -1) {
-            return create(Integer.parseInt(str));
+            return new SemVer(Integer.parseInt(str));
         }
 
         final String minorStr;
         final int patchIdx = str.indexOf('.', minorIdx + 1);
         if (patchIdx == -1) {
             minorStr = str.substring(minorIdx + 1);
-            return create(Integer.parseInt(str.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10));
+            return new SemVer(Integer.parseInt(str.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10));
         }
 
         minorStr = str.substring(minorIdx + 1, patchIdx);
-        return create(Integer.parseInt(str.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10),
+        return new SemVer(Integer.parseInt(str.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10),
             Integer.parseInt(str.substring(patchIdx + 1), 10));
-    }
-
-    /**
-     * Return the major version number.
-     *
-     * @return major version number
-     */
-    public int getMajor() {
-        return major;
-    }
-
-    /**
-     * Return the minor version number.
-     *
-     * @return minor version number
-     */
-    public int getMinor() {
-        return minor;
-    }
-
-    /**
-     * Return the patch version number.
-     *
-     * @return patch version number
-     */
-    public int getPatch() {
-        return patch;
     }
 
     @Override
@@ -103,17 +65,6 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         }
 
         return cmp;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(major, minor, patch);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return this == obj || obj instanceof SemVer other && major == other.major && minor == other.minor
-            && patch == other.patch;
     }
 
     @Override
