@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
-import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
@@ -493,17 +492,17 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         for (var stmt : statement.effectiveSubstatements()) {
             switch (stmt) {
                 case ActionEffectiveStatement action -> {
-                    if (!isAugmenting(action)) {
+                    if (!introducedByAugmentation(action)) {
                         tmp.add(new ActionGenerator(action, this));
                     }
                 }
                 case AnydataEffectiveStatement anydata -> {
-                    if (!isAugmenting(anydata)) {
+                    if (!introducedByAugmentation(anydata)) {
                         tmp.add(new OpaqueObjectGenerator.Anydata(anydata, this));
                     }
                 }
                 case AnyxmlEffectiveStatement anyxml -> {
-                    if (!isAugmenting(anyxml)) {
+                    if (!introducedByAugmentation(anyxml)) {
                         tmp.add(new OpaqueObjectGenerator.Anyxml(anyxml, this));
                     }
                 }
@@ -528,12 +527,12 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 case IdentityEffectiveStatement identity -> tmp.add(new IdentityGenerator(identity, this));
                 case InputEffectiveStatement input -> tmp.add(new InputGenerator(input, this));
                 case LeafEffectiveStatement leaf -> {
-                    if (!isAugmenting(leaf)) {
+                    if (!introducedByAugmentation(leaf)) {
                         tmp.add(new LeafGenerator(leaf, this));
                     }
                 }
                 case LeafListEffectiveStatement leafList -> {
-                    if (!isAugmenting(leafList)) {
+                    if (!introducedByAugmentation(leafList)) {
                         tmp.add(new LeafListGenerator(leafList, this));
                     }
                 }
@@ -549,7 +548,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                     }
                 }
                 case NotificationEffectiveStatement notification -> {
-                    if (!isAugmenting(notification)) {
+                    if (!introducedByAugmentation(notification)) {
                         switch (this) {
                             case GroupingGenerator grouping -> {
                                 if (!isAddedByUses(notification)) {
@@ -624,9 +623,9 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
 
     // Utility equivalent of (!isAddedByUses(stmt) && !isAugmenting(stmt)). Takes advantage of relationship between
     // CopyableNode and AddedByUsesAware
-    private static boolean isOriginalDeclaration(final EffectiveStatement<?, ?> stmt) {
+    private boolean isOriginalDeclaration(final EffectiveStatement<?, ?> stmt) {
         if (stmt instanceof AddedByUsesAware aware
-            && (aware.isAddedByUses() || aware instanceof CopyableNode copyable && copyable.isAugmenting())) {
+                && (aware.isAddedByUses() || introducedByAugmentation(stmt))) {
             return false;
         }
         return true;
@@ -634,9 +633,5 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
 
     private static boolean isAddedByUses(final EffectiveStatement<?, ?> stmt) {
         return stmt instanceof AddedByUsesAware aware && aware.isAddedByUses();
-    }
-
-    private static boolean isAugmenting(final EffectiveStatement<?, ?> stmt) {
-        return stmt instanceof CopyableNode copyable && copyable.isAugmenting();
     }
 }
