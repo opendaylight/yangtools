@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class GeneratedTOBuilderTest {
     @Test
@@ -19,8 +21,8 @@ class GeneratedTOBuilderTest {
         final var genTypeBuilder = new CodegenGeneratedTOBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
-        genTypeBuilder.setSUID(genTypeBuilder.addProperty("SUID"));
-        genTypeBuilder.addMethod("addCount");
+        genTypeBuilder.setSUID(genTypeBuilder.addProperty("SUID").setReturnType(BindingTypes.SCALAR_TYPE_OBJECT));
+        genTypeBuilder.addMethod("addCount").setReturnType(Types.VOID);
 
         var genTO = genTypeBuilder.build();
         genTypeBuilder.setExtendsType(genTO);

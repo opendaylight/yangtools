@@ -29,6 +29,7 @@ class MethodSignatureBuilderTest {
     @BeforeEach
     void setup() {
         builder1 = new MethodSignatureBuilderImpl("methodSignature");
+        builder1.setReturnType(Types.VOID);
         builder2 = new MethodSignatureBuilderImpl("otherMethodSignature");
         builder2.setReturnType(Types.STRING);
         builder3 = new MethodSignatureBuilderImpl(null);

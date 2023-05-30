@@ -318,9 +318,9 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     static final void addSerialVersionUID(final GeneratedTOBuilder gto) {
-        final GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
-        prop.setValue(Long.toString(SerialVersionHelper.computeDefaultSUID(gto)));
-        gto.setSUID(prop);
+        gto.setSUID(new GeneratedPropertyBuilderImpl("serialVersionUID")
+            .setReturnType(Types.primitiveLongType())
+            .setValue(Long.toString(SerialVersionHelper.computeDefaultSUID(gto))));
     }
 
     /**
