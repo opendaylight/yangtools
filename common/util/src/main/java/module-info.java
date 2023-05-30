@@ -20,9 +20,10 @@ module org.opendaylight.yangtools.util {
     requires static transitive java.compiler;
     requires static transitive java.management;
     requires static transitive org.eclipse.jdt.annotation;
+    // FIXME: Yeah, because we fluffin' provide something that touches Guava's Function
+    requires static static org.gaul.modernizer_maven_annotations;
     requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
-    requires static org.gaul.modernizer_maven_annotations;
     requires static org.immutables.value.annotations;
     requires static org.osgi.annotation.bundle;
 }
