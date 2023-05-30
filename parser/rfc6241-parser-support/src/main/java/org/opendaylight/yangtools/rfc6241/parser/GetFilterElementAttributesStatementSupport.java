@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6241.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
@@ -27,7 +26,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Beta
+/**
+ * Support for {@link GetFilterElementAttributesStatement} and its effective view.
+ */
 public final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStatementSupport<
         GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
