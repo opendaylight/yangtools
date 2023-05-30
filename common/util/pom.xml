@@ -68,4 +68,19 @@
             <artifactId>guava-testlib</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.gaul</groupId>
+                <artifactId>modernizer-maven-plugin</artifactId>
+                <configuration>
+                    <exclusions>
+                        <!-- ExceptionMapper implements this -->
+                        <exclusion>com/google/common/base/Function</exclusion>
+                    </exclusions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

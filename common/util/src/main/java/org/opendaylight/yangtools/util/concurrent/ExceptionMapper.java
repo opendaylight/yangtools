@@ -14,7 +14,6 @@ import com.google.common.base.Function;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 
 /**
  * Utility exception mapper which translates an Exception to a specified type of Exception. This mapper is intended to
@@ -28,9 +27,7 @@ import org.gaul.modernizer_maven_annotations.SuppressModernizer;
  * @param <X> the exception type
  * @author Thomas Pantelis
  */
-@SuppressModernizer
 public abstract class ExceptionMapper<X extends Exception> implements Function<Exception, X> {
-
     private final Class<X> exceptionType;
     private final String opName;
 
