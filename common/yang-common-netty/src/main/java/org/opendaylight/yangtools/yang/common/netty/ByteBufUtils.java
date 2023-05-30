@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common.netty;
 
-import com.google.common.annotations.Beta;
 import io.netty.buffer.ByteBuf;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -33,10 +32,9 @@ import org.opendaylight.yangtools.yang.common.Uint8;
  *       instead.</li>
  * </ul>
  */
-@Beta
 public final class ByteBufUtils {
     private ByteBufUtils() {
-
+        // Hidden on purpose
     }
 
     /**
