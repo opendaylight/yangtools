@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
@@ -16,10 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Utility class for handling various naming conventions mentioned in YANG and related specifications.
- *
- * @author Robert Varga
  */
-@Beta
 public final class YangNames {
     /**
      * A {@link CharMatcher} matching the first character of a YANG {@code identifier} ABNF production,
