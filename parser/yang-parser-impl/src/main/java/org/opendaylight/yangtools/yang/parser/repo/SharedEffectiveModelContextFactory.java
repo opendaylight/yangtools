@@ -195,7 +195,7 @@ final class SharedEffectiveModelContextFactory implements EffectiveModelContextF
         //        and react appropriately:
         //        - in case we failed certainly want to invalidate the entry
         //        - in case of success ... that's something to consider
-        Futures.addCallback(cf, new FutureCallback<EffectiveModelContext>() {
+        Futures.addCallback(cf, new FutureCallback<>() {
             @Override
             public void onSuccess(final EffectiveModelContext result) {
                 LOG.debug("Finished assembly of {} sources in {}", sources.size(), sw);
