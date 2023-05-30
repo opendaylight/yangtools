@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -29,9 +30,12 @@ import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +189,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     @Override
     public final boolean isAugmenting() {
-        return statement instanceof CopyableNode copyable && copyable.isAugmenting();
+        return introducedByAugmentation(statement);
     }
 
     /**
@@ -398,5 +402,108 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             return ret;
         }
         throw new VerifyException("Unexpected type " + type);
+    }
+
+    /**
+     * Determines, whether the given {@link EffectiveStatement} was introduced by augmentation.
+     * The given {@link EffectiveStatement} is assumed to be a descendant of {@code this}
+     * {@link AbstractExplicitGenerator}
+     *
+     * @param stmt {@link EffectiveStatement} which is assumed to be a descendant
+     *             of {@code this} {@link AbstractExplicitGenerator}
+     * @return {@code true} if the given {@link EffectiveStatement} was introduced into the schema tree by augmentation
+     *         or {@code false} otherwise
+     */
+    protected final boolean introducedByAugmentation(final EffectiveStatement<?, ?> stmt) {
+        if (this instanceof ModuleGenerator) {
+            return false;
+        }
+        Optional<GeneratorWithTarget> maybeGenWithTarget = getClosestGeneratorWithTarget(this);
+
+        while (maybeGenWithTarget.isPresent()) {
+            final GeneratorWithTarget candidate = maybeGenWithTarget.orElseThrow();
+            for (final AugmentationSchemaNode augmentation : candidate.target().getAvailableAugmentations()) {
+                if (isAugmentingVia(stmt, augmentation)) {
+                    return true;
+                }
+            }
+            maybeGenWithTarget = getClosestGeneratorWithTarget(candidate.generator().getParent());
+        }
+        return false;
+    }
+
+    /**
+     * Determines whether the specified {@link EffectiveStatement} is a descendant
+     * of the given {@link AugmentationSchemaNode}.
+     *
+     * @param stmt Descendant candidate
+     * @param augmentation Root of the recursive search for the descendant candidate
+     * @return true if the {@code stmt} is the descendant of the given {@code augmentation} or false if not
+     */
+    private boolean isAugmentingVia(final EffectiveStatement<?, ?> stmt, final AugmentationSchemaNode augmentation) {
+        if (stmt.argument() instanceof QName qName
+                && augmentation instanceof SchemaTreeAwareEffectiveStatement<?, ?> schemaTree) {
+            return isInSchemaTree(qName, schemaTree);
+        }
+        return false;
+    }
+
+    /**
+     * Searches for a {@link AbstractExplicitGenerator} in a 'reverse' fashion, traversing the tree by parent
+     * for the closest parent whose associated {@link AbstractExplicitGenerator#statement}
+     * is of {@link AugmentationTarget} instance.
+     *
+     * <p>The search is performed until such a generator is found or if the generator is of {@link ModuleGenerator}
+     * instance, which does not have any statement associated with it.
+     *
+     * @param parent the {@link AbstractExplicitGenerator} whose closest parent with {@link AugmentationTarget}
+     *               we are looking for
+     * @return the closest (in up direction - traverse by parent => {@link AbstractCompositeGenerator#getParent()})
+     *          generator, whose associated statement is instance of {@link AugmentationTarget} wrapped
+     *          in a DTO {@link GeneratorWithTarget} returned as {@link Optional}
+     *          or {@link Optional#empty} if none found
+     */
+    private Optional<GeneratorWithTarget> getClosestGeneratorWithTarget(
+            final AbstractExplicitGenerator<?, ?> parent) {
+        AbstractExplicitGenerator<?, ?> possibleTarget = parent;
+
+        while (!(possibleTarget instanceof ModuleGenerator)) {
+            if (possibleTarget.statement() instanceof AugmentationTarget augTarget) {
+                return Optional.of(new GeneratorWithTarget(possibleTarget, augTarget));
+            }
+            possibleTarget = possibleTarget.getParent();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Recursively searches the schema tree until it finds the specified {@code child}.
+     *
+     * @param child Descendant identifier
+     * @param stmt The parent, whose descendant we are searching for
+     * @return true if the given {@code child} is a descendant of the given {@code stmt} otherwise return false
+     */
+    private boolean isInSchemaTree(final QName child, final SchemaTreeAwareEffectiveStatement<?, ?> stmt) {
+        if (stmt.findSchemaTreeNode(child).isPresent()) {
+            return true;
+        }
+
+        for (final EffectiveStatement<?, ?> s : stmt.effectiveSubstatements()) {
+            if (s instanceof SchemaTreeAwareEffectiveStatement<?, ?> schemaAware) {
+                if (isInSchemaTree(child, schemaAware)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Serves as a DTO (or a tuple) as a mean of returning a generator and its statement
+     * that is cast to {@link AugmentationTarget}.
+     * @param generator {@link AbstractExplicitGenerator} whose statement is instance of {@link AugmentationTarget}
+     * @param target statement, associated with the given {@code generator}
+     */
+    private record GeneratorWithTarget(AbstractExplicitGenerator<?, ?> generator, AugmentationTarget target) {
     }
 }
