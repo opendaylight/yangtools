@@ -14,17 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class MethodSignatureBuilderImplTest {
     @Test
     void testCreateNewInstance() {
         final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
-        assertNotNull(signatureBuilderImpl);
+        assertEquals("testMethod", signatureBuilderImpl.getName());
     }
 
     @Test
     void testSetAbstractMethod() {
-        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
+        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod").setReturnType(Types.VOID);
         signatureBuilderImpl.setAbstract(true);
         final var methodSignature = signatureBuilderImpl.toInstance(null);
         assertTrue(methodSignature.isAbstract());
@@ -32,7 +33,7 @@ class MethodSignatureBuilderImplTest {
 
     @Test
     void testAddParameterMethod() {
-        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
+        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod").setReturnType(Types.VOID);
         final var ipAddressType = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"));
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");

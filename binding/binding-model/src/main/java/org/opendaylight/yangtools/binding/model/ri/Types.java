@@ -54,6 +54,7 @@ public final class Types {
     private static final @NonNull ConcreteType OBJECT = typeForClass(Object.class);
     private static final @NonNull ConcreteType PRIMITIVE_BOOLEAN = typeForClass(boolean.class);
     private static final @NonNull ConcreteType PRIMITIVE_INT = typeForClass(int.class);
+    private static final @NonNull ConcreteType PRIMITIVE_LONG = typeForClass(long.class);
     private static final @NonNull ConcreteType PRIMITIVE_VOID = typeForClass(void.class);
     private static final @NonNull ConcreteType SERIALIZABLE = typeForClass(Serializable.class);
     private static final @NonNull ConcreteType SET_TYPE = typeForClass(Set.class);
@@ -113,6 +114,14 @@ public final class Types {
      */
     public static @NonNull ConcreteType primitiveIntType() {
         return PRIMITIVE_INT;
+    }
+
+    /**
+     * {@return {@link ConcreteType} instance which represents Java {@code long} type}
+     * @since 15.0.0
+     */
+    public static @NonNull ConcreteType primitiveLongType() {
+        return PRIMITIVE_LONG;
     }
 
     /**

@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -18,6 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechani
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
+@NonNullByDefault
 final class BuilderGeneratedProperty implements GeneratedProperty {
     private final MethodSignature getter;
     private final String name;
@@ -51,13 +54,13 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         return obj == this || obj instanceof BuilderGeneratedProperty other
             && name.equals(other.name) && getter.equals(other.getter);
     }
 
     @Override
-    public TypeMemberComment getComment() {
+    public @Nullable TypeMemberComment getComment() {
         throw uoe();
     }
 

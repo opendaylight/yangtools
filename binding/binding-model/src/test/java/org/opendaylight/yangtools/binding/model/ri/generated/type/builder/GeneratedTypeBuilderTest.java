@@ -117,8 +117,8 @@ class GeneratedTypeBuilderTest {
     void addPropertyTest() {
         var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
 
-        var propertyBuilder = generatedTypeBuilder.addProperty("myProperty");
-        var propertyBuilder2 = generatedTypeBuilder.addProperty("myProperty2");
+        var propertyBuilder = generatedTypeBuilder.addProperty("myProperty").setReturnType(Types.STRING);
+        var propertyBuilder2 = generatedTypeBuilder.addProperty("myProperty2").setReturnType(Types.primitiveIntType());
 
         assertNotNull(propertyBuilder);
         assertNotNull(propertyBuilder2);
@@ -134,7 +134,9 @@ class GeneratedTypeBuilderTest {
 
         assertTrue(properties.contains(propertyBuilder.toInstance()));
         assertTrue(properties.contains(propertyBuilder2.toInstance()));
-        assertFalse(properties.contains(new GeneratedPropertyBuilderImpl("myProperty3").toInstance()));
+        assertFalse(properties.contains(new GeneratedPropertyBuilderImpl("myProperty3")
+            .setReturnType(Types.STRING)
+            .toInstance()));
     }
 
     @Test
@@ -147,8 +149,8 @@ class GeneratedTypeBuilderTest {
     void addMethodTest() {
         var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
 
-        var methodBuilder = generatedTypeBuilder.addMethod("myMethodName");
-        var methodBuilder2 = generatedTypeBuilder.addMethod("myMethodName2");
+        var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
+        var methodBuilder2 = generatedTypeBuilder.addMethod("myMethodName2").setReturnType(Types.STRING);
 
         assertNotNull(methodBuilder);
         assertNotNull(methodBuilder2);
@@ -164,7 +166,9 @@ class GeneratedTypeBuilderTest {
 
         assertTrue(methodDefinitions.contains(methodBuilder.toInstance(instance)));
         assertTrue(methodDefinitions.contains(methodBuilder2.toInstance(instance)));
-        assertFalse(methodDefinitions.contains(new MethodSignatureBuilderImpl("myMethodName3").toInstance(instance)));
+        assertFalse(methodDefinitions.contains(new MethodSignatureBuilderImpl("myMethodName3")
+            .setReturnType(Types.BOOLEAN)
+            .toInstance(instance)));
     }
 
     @Test

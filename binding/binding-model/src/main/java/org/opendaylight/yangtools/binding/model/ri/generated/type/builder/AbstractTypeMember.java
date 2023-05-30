@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -16,35 +19,33 @@ import org.opendaylight.yangtools.binding.model.api.TypeMember;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 abstract class AbstractTypeMember implements TypeMember {
-
-    private final String name;
+    private final @NonNull String name;
     private final TypeMemberComment comment;
-    private final Type returnType;
-    private final List<AnnotationType> annotations;
+    private final @NonNull Type returnType;
+    private final @NonNull List<AnnotationType> annotations;
     private final boolean isFinal;
     private final boolean isStatic;
     private final AccessModifier accessModifier;
 
-    protected AbstractTypeMember(final String name,  final List<AnnotationType> annotations,
-            final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
-            final boolean isFinal, final boolean isStatic) {
-        this.name = name;
-        this.annotations = annotations;
+    AbstractTypeMember(final String name, final List<AnnotationType> annotations, final TypeMemberComment comment,
+            final AccessModifier accessModifier, final Type returnType, final boolean isFinal, final boolean isStatic) {
+        this.name = requireNonNull(name);
+        this.annotations = requireNonNull(annotations);
         this.comment = comment;
         this.accessModifier = accessModifier;
-        this.returnType = returnType;
+        this.returnType = requireNonNull(returnType);
         this.isFinal = isFinal;
         this.isStatic = isStatic;
     }
 
     @Override
     public List<AnnotationType> getAnnotations() {
-        return this.annotations;
+        return annotations;
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
     @Override
@@ -54,22 +55,22 @@ abstract class AbstractTypeMember implements TypeMember {
 
     @Override
     public AccessModifier getAccessModifier() {
-        return this.accessModifier;
+        return accessModifier;
     }
 
     @Override
     public Type getReturnType() {
-        return this.returnType;
+        return returnType;
     }
 
     @Override
     public boolean isFinal() {
-        return this.isFinal;
+        return isFinal;
     }
 
     @Override
     public boolean isStatic() {
-        return this.isStatic;
+        return isStatic;
     }
 
     @Override

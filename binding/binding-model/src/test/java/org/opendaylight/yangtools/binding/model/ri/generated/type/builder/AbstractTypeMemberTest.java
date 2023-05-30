@@ -15,11 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class AbstractTypeMemberTest {
     @Test
     void testMethodsForAbstractTypeMemberBuilder() {
-        final var methodSignatureBuilderImpl = new MethodSignatureBuilderImpl("TestProperty");
+        final var methodSignatureBuilderImpl = new MethodSignatureBuilderImpl("TestProperty")
+            .setReturnType(Types.STRING);
         final var typeBuilderImpl = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "TestType"));
         final var typeBuilderImpl2 = new CodegenGeneratedTypeBuilder(
@@ -35,7 +37,8 @@ class AbstractTypeMemberTest {
         assertTrue(genProperty.isStatic());
         assertEquals(genProperty.hashCode(), genProperty2.hashCode());
         assertEquals("MethodSignatureImpl [name=TestProperty, comment=TypeMemberComment{contract=test comment}, "
-            + "returnType=null, params=[], annotations=[]]", genProperty.toString());
+            + "returnType=ConcreteTypeImpl{identifier=java.lang.String}, params=[], annotations=[]]",
+            genProperty.toString());
         assertNotNull(genProperty.toString());
         assertTrue(genProperty.equals(genProperty2));
         assertFalse(genProperty.equals(null));
