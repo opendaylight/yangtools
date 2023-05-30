@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -17,11 +16,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
 
 /**
- * Dedicated type for YANG's 'type uint8' type.
- *
- * @author Robert Varga
+ * Dedicated type for YANG's {@code type uint8} type.
  */
-@Beta
 @NonNullByDefault
 public class Uint8 extends Number implements CanonicalValue<Uint8> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint8> {

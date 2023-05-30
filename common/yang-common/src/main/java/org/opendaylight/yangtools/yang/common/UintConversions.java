@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import com.google.common.annotations.Beta;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 import java.math.BigInteger;
@@ -26,10 +25,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *     Uint32 one = fromJava(32L);
  *   </code>
  * </pre>
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public final class UintConversions {
     private UintConversions() {

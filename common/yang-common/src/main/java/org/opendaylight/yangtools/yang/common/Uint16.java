@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.Serial;
@@ -19,11 +18,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
 
 /**
- * Dedicated type for YANG's 'type uint16' type.
- *
- * @author Robert Varga
+ * Dedicated type for YANG's {@code type uint16} type.
  */
-@Beta
 @NonNullByDefault
 public class Uint16 extends Number implements CanonicalValue<Uint16> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint16> {

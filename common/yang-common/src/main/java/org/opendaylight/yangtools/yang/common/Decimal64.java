@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -24,10 +23,7 @@ import org.opendaylight.yangtools.concepts.Either;
 /**
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
  * efficient storage, as it has fixed precision.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     public static final class Support extends AbstractCanonicalValueSupport<Decimal64> {

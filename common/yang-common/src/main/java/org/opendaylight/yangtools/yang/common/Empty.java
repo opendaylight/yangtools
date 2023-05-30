@@ -13,9 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * Dedicated singleton type for YANG's 'type empty' value.
- *
- * @author Robert Varga
+ * Dedicated singleton type for YANG's {@code type empty} value.
  */
 @NonNullByDefault
 public final class Empty implements Immutable, Serializable {

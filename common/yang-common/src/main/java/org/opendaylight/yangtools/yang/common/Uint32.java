@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
@@ -20,11 +19,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
 
 /**
- * Dedicated type for YANG's 'type uint32' type.
- *
- * @author Robert Varga
+ * Dedicated type for YANG's {@code type uint32} type.
  */
-@Beta
 @NonNullByDefault
 public class Uint32 extends Number implements CanonicalValue<Uint32> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint32> {
