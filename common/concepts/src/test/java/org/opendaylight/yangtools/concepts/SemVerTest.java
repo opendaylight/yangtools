@@ -12,33 +12,45 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HexFormat;
 import org.junit.jupiter.api.Test;
 
-public class SemVerTest {
+class SemVerTest {
+    private static final HexFormat HEX_FORMAT = HexFormat.of().withUpperCase().withDelimiter(":");
+    private static final String SERIALIZED = """
+        AC:ED:00:05:73:72:00:2A:6F:72:67:2E:6F:70:65:6E:64:61:79:6C:69:67:68:74:2E:79:61:6E:67:74:\
+        6F:6F:6C:73:2E:63:6F:6E:63:65:70:74:73:2E:53:65:6D:56:65:72:00:00:00:00:00:00:00:01:02:00:\
+        03:49:00:05:6D:61:6A:6F:72:49:00:05:6D:69:6E:6F:72:49:00:05:70:61:74:63:68:78:70:00:00:00:\
+        01:00:00:00:02:00:00:00:03""";
+
     @Test
-    public void testSemVer() {
-        final SemVer semVer = SemVer.create(5);
+    void testSemVer() {
+        final var semVer = SemVer.create(5);
         assertNotNull(semVer);
 
         assertEquals(5, semVer.getMajor());
         assertEquals(0, semVer.getMinor());
         assertEquals(0, semVer.getPatch());
 
-        final SemVer semVer2 = SemVer.valueOf("1.2.3");
+        final var semVer2 = SemVer.valueOf("1.2.3");
         assertNotNull(semVer2);
 
         assertEquals(1, semVer2.getMajor());
         assertEquals(2, semVer2.getMinor());
         assertEquals(3, semVer2.getPatch());
 
-        final SemVer semVer3 = SemVer.valueOf("1");
+        final var semVer3 = SemVer.valueOf("1");
         assertNotNull(semVer3);
 
         assertEquals(1, semVer3.getMajor());
         assertEquals(0, semVer3.getMinor());
         assertEquals(0, semVer3.getPatch());
 
-        final SemVer semVer4 = SemVer.valueOf("1.2");
+        final var semVer4 = SemVer.valueOf("1.2");
         assertNotNull(semVer4);
 
         assertEquals(1, semVer4.getMajor());
@@ -56,5 +68,27 @@ public class SemVerTest {
         assertEquals(semVer2.hashCode(), semVer2.hashCode());
 
         assertEquals("1.0.0", semVer3.toString());
+    }
+
+    @Test
+    void testSerialize() throws Exception {
+        final byte[] bytes;
+        try (var bos = new ByteArrayOutputStream()) {
+            try (var oos = new ObjectOutputStream(bos)) {
+                oos.writeObject(SemVer.create(1, 2, 3));
+            }
+            bytes = bos.toByteArray();
+        }
+
+        assertEquals(SERIALIZED, HEX_FORMAT.formatHex(bytes));
+    }
+
+    @Test
+    void testDeserialize() throws Exception {
+        final Object value;
+        try (var oos = new ObjectInputStream(new ByteArrayInputStream(HEX_FORMAT.parseHex(SERIALIZED)))) {
+            value = oos.readObject();
+        }
+        assertEquals(SemVer.create(1, 2, 3), value);
     }
 }
