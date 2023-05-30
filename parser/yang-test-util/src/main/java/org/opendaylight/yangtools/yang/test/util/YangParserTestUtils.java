@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.test.util;
 
-import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -38,11 +37,9 @@ import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 
 /**
  * Utility class which provides convenience methods for producing effective schema context based on the supplied
- * yang/yin sources or paths to these sources.
+ * YANG/YIN sources or paths to these sources.
  */
-@Beta
 public final class YangParserTestUtils {
-
     private static final FileFilter YANG_FILE_FILTER = file -> {
         // Locale keeps SpotBugs happy. It should not matter that much anyway.
         final String name = file.getName().toLowerCase(Locale.ENGLISH);
