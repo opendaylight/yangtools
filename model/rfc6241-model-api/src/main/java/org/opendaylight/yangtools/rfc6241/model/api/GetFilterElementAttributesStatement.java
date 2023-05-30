@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6241.model.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * Declared statement representation of 'get-filter-element-attributes' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
-@Beta
 public interface GetFilterElementAttributesStatement extends UnknownStatement<Empty> {
     @Override
     default StatementDefinition statementDefinition() {

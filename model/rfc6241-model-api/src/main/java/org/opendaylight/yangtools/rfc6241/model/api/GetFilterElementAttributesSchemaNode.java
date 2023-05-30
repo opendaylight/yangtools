@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6241.model.api;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * Represents the effect of 'get-filter-element-attributes' extension, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
-@Beta
 public interface GetFilterElementAttributesSchemaNode extends UnknownSchemaNode {
     /**
      * Attempt to find a {@link GetFilterElementAttributesSchemaNode} in a parent {@link AnyxmlSchemaNode}.

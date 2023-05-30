@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.rfc6241.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,10 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * {@link StatementDefinition}s for statements defined by RFC6241.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public enum NetconfStatements implements StatementDefinition {
     GET_FILTER_ELEMENT_ATTRIBUTES(QName.create(NetconfConstants.RFC6241_MODULE, "get-filter-element-attributes"),

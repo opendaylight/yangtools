@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6241.model.api;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -19,10 +18,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Constants associated with RFC6241.
- *
- * @author Robert Varga
  */
-@Beta
 @NonNullByDefault
 public final class NetconfConstants {
     private static final Unqualified MODULE_NAME = Unqualified.of("ietf-netconf").intern();
