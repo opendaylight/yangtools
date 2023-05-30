@@ -9,13 +9,8 @@ package org.opendaylight.yangtools.util;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -29,8 +24,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class ClassLoaderUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ClassLoaderUtils.class);
-    private static final Joiner DOT_JOINER = Joiner.on(".");
-    private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     private ClassLoaderUtils() {
         // Hidden on purpose
@@ -49,11 +42,10 @@ public final class ClassLoaderUtils {
      * @return Result of function invocation.
      * @throws NullPointerException if class loader or function is null
      */
-    @Beta
     public static <T, R> R applyWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Function<T, R> function,
             final T input) {
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader oldCls = currentThread.getContextClassLoader();
+        final var currentThread = Thread.currentThread();
+        final var oldCls = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(requireNonNull(cls));
         try {
             return requireNonNull(function).apply(input);
@@ -74,11 +66,10 @@ public final class ClassLoaderUtils {
      * @throws NullPointerException if class loader or callable is null
      * @throws Exception if the callable fails
      */
-    @Beta
     public static <V> V callWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Callable<V> callable)
             throws Exception {
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader oldCls = currentThread.getContextClassLoader();
+        final var currentThread = Thread.currentThread();
+        final var oldCls = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(requireNonNull(cls));
         try {
             return requireNonNull(callable).call();
@@ -98,10 +89,9 @@ public final class ClassLoaderUtils {
      * @return Result of supplier invocation.
      * @throws NullPointerException if class loader or supplier is null
      */
-    @Beta
     public static <V> V getWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Supplier<V> supplier) {
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader oldCls = currentThread.getContextClassLoader();
+        final var currentThread = Thread.currentThread();
+        final var oldCls = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(requireNonNull(cls));
         try {
             return requireNonNull(supplier).get();
@@ -119,10 +109,9 @@ public final class ClassLoaderUtils {
      * @param runnable Function to be executed.
      * @throws NullPointerException if class loader or runnable is null
      */
-    @Beta
     public static void runWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Runnable runnable) {
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader oldCls = currentThread.getContextClassLoader();
+        final var currentThread = Thread.currentThread();
+        final var oldCls = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(requireNonNull(cls));
         try {
             requireNonNull(runnable).run();
@@ -131,89 +120,12 @@ public final class ClassLoaderUtils {
         }
     }
 
-    /**
-     * Loads class using this supplied classloader.
-     *
-     * @param cls class loader
-     * @param name String name of class.
-     * @return Loaded class
-     * @throws ClassNotFoundException if the class cannot be loaded
-     * @throws NullPointerException if any argument is null
-     */
-    public static Class<?> loadClass(final ClassLoader cls, final String name) throws ClassNotFoundException {
-        if ("byte[]".equals(name)) {
-            return byte[].class;
-        }
-        if ("char[]".equals(name)) {
-            return char[].class;
-        }
-        return loadClass0(cls, name);
-    }
-
-    private static Class<?> loadClass0(final ClassLoader cls, final String name) throws ClassNotFoundException {
-        try {
-            return cls.loadClass(name);
-        } catch (final ClassNotFoundException e) {
-            final List<String> components = DOT_SPLITTER.splitToList(name);
-
-            if (isInnerClass(components)) {
-                final int length = components.size() - 1;
-                final String outerName = DOT_JOINER.join(Iterables.limit(components, length));
-                final String innerName = outerName + "$" + components.get(length);
-                return cls.loadClass(innerName);
-            }
-
-            throw e;
-        }
-    }
-
-    private static boolean isInnerClass(final List<String> components) {
-        final int length = components.size();
-        if (length < 2) {
-            return false;
-        }
-
-        final String potentialOuter = components.get(length - 2);
-        if (potentialOuter == null) {
-            return false;
-        }
-        return Character.isUpperCase(potentialOuter.charAt(0));
-    }
-
-    public static Class<?> loadClassWithTCCL(final String name) throws ClassNotFoundException {
-        final Thread thread = Thread.currentThread();
-        final ClassLoader tccl = thread.getContextClassLoader();
-        if (tccl == null) {
-            throw new ClassNotFoundException("Thread " + thread + " does not have a Context Class Loader, cannot load "
-                    + name);
-        }
-        return loadClass(tccl, name);
-    }
-
-    public static Optional<Class<?>> tryToLoadClassWithTCCL(final String fullyQualifiedClassName) {
-        final Thread thread = Thread.currentThread();
-        final ClassLoader tccl = thread.getContextClassLoader();
-        if (tccl == null) {
-            LOG.debug("Thread {} does not have a Context Class Loader, not loading class {}", thread,
-                fullyQualifiedClassName);
-            return Optional.empty();
-        }
-
-        try {
-            return Optional.of(loadClass(tccl, fullyQualifiedClassName));
-        } catch (final ClassNotFoundException e) {
-            LOG.debug("Failed to load class {}", fullyQualifiedClassName, e);
-            return Optional.empty();
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static <S, G, P> Optional<Class<P>> findFirstGenericArgument(final Class<S> scannedClass,
             final Class<G> genericType) {
-        return getWithClassLoader(scannedClass.getClassLoader(), () -> {
-            return findParameterizedType(scannedClass, genericType)
-                    .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[0]);
-        });
+        return getWithClassLoader(scannedClass.getClassLoader(),
+            () -> findParameterizedType(scannedClass, genericType)
+                .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[0]));
     }
 
     /**
@@ -227,9 +139,8 @@ public final class ClassLoaderUtils {
             final Class<?> genericType) {
         requireNonNull(genericType);
 
-        for (final Type type : subclass.getGenericInterfaces()) {
-            if (type instanceof ParameterizedType) {
-                final ParameterizedType ptype = (ParameterizedType) type;
+        for (var type : subclass.getGenericInterfaces()) {
+            if (type instanceof ParameterizedType ptype) {
                 if (genericType.equals(ptype.getRawType())) {
                     return Optional.of(ptype);
                 }
@@ -249,7 +160,7 @@ public final class ClassLoaderUtils {
      */
     public static Optional<Type> getFirstGenericParameter(final Type type) {
         requireNonNull(type);
-        return type instanceof ParameterizedType ? Optional.of(((ParameterizedType) type).getActualTypeArguments()[0])
-                : Optional.empty();
+        return type instanceof ParameterizedType ptype ? Optional.of(ptype.getActualTypeArguments()[0])
+            : Optional.empty();
     }
 }
