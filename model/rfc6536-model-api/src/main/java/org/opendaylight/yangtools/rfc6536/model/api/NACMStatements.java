@@ -19,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * {@link StatementDefinition}s for statements defined by RFC6536.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 public enum NACMStatements implements StatementDefinition {

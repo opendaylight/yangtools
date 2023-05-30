@@ -7,7 +7,5 @@
  */
 /**
  * YANG metamodel extensions to support NACM, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
- *
- * @author Robert Varga
  */
 package org.opendaylight.yangtools.rfc6536.model.api;

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6536.model.api;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * Represents the effect of 'default-deny-write' extension, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>, being attached to a SchemaNode.
  */
-@Beta
 public interface DefaultDenyWriteSchemaNode extends UnknownSchemaNode {
     /**
      * Attempt to find a {@link DefaultDenyWriteSchemaNode} in a parent {@link DataSchemaNode}.
@@ -25,8 +23,10 @@ public interface DefaultDenyWriteSchemaNode extends UnknownSchemaNode {
      * @return {@link DefaultDenyWriteSchemaNode} child, if present.
      */
     static Optional<DefaultDenyWriteSchemaNode> findIn(final DataSchemaNode parent) {
-        return parent.getUnknownSchemaNodes().stream().filter(DefaultDenyWriteSchemaNode.class::isInstance).findAny()
-                .map(DefaultDenyWriteSchemaNode.class::cast);
+        return parent.getUnknownSchemaNodes().stream()
+            .filter(DefaultDenyWriteSchemaNode.class::isInstance)
+            .findAny()
+            .map(DefaultDenyWriteSchemaNode.class::cast);
     }
 
     @Override

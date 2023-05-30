@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6536.model.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * Effective statement representation of 'default-deny-all' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  */
-@Beta
 public interface DefaultDenyAllEffectiveStatement extends UnknownEffectiveStatement<Empty, DefaultDenyAllStatement> {
     @Override
     default StatementDefinition statementDefinition() {

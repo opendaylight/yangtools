@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Constants associated with RFC6536.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 public final class NACMConstants {
