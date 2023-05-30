@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -52,7 +51,6 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
  * a particular {@link EffectiveModelContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
-@Beta
 public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     static final class Lhotka02 extends JSONCodecFactory {
         Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {

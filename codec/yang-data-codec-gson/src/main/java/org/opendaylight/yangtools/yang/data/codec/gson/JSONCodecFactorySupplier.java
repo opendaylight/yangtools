@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -37,10 +36,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Robert Varga
  */
-@Beta
 public enum JSONCodecFactorySupplier {
     /**
-     * Source of {@link JSONCodecFactory} instances compliant with RFC7951.
+     * Source of {@link JSONCodecFactory} instances compliant with
+     * <a href="https://www.rfc-editor.org/rfc/rfc7951">RFC7951</a>.
      */
     RFC7951() {
         @Override
@@ -49,8 +48,11 @@ public enum JSONCodecFactorySupplier {
         }
     },
     /**
-     * Source of {@link JSONCodecFactory} instances compliant with draft-lhotka-netmod-yang-json-02.
+     * Source of {@link JSONCodecFactory} instances compliant with {@code draft-lhotka-netmod-yang-json-02}.
+     *
+     * @deprecated This is a historic implementation, retained for compatibility. Please migrate to {@link #RFC7951}.
      */
+    @Deprecated
     DRAFT_LHOTKA_NETMOD_YANG_JSON_02() {
         @Override
         JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {

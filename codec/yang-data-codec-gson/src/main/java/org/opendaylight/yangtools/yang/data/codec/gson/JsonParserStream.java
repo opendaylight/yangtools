@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -66,7 +65,6 @@ import org.w3c.dom.Text;
  * This class parses JSON elements from a GSON JsonReader. It disallows multiple elements of the same name unlike the
  * default GSON JsonParser.
  */
-@Beta
 public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 

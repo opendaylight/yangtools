@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.annotations.Beta;
 import com.google.gson.stream.JsonWriter;
 import java.io.Writer;
 
 /**
  * Factory Method class for JsonWriter creation.
  */
-@Beta
 public final class JsonWriterFactory {
     private JsonWriterFactory() {
         // Hidden on purpose
