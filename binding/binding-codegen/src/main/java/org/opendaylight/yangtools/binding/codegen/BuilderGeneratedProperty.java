@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 final class BuilderGeneratedProperty implements GeneratedProperty {
     private final MethodSignature getter;
-    private final String name;
+    private final @NonNull String name;
 
     BuilderGeneratedProperty(final String name, final MethodSignature getter) {
         this.name = requireNonNull(name);

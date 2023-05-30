@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -54,12 +55,12 @@ public interface TypeMember {
      *
      * @return the returning Type of member.
      */
-    Type getReturnType();
+    @NonNull Type getReturnType();
 
     /**
      * Returns the name of member.
      *
      * @return the name of member.
      */
-    String getName();
+    @NonNull String getName();
 }
