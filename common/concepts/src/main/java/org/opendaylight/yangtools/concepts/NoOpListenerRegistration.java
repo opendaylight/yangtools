@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.annotations.Beta;
 import java.util.EventListener;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
@@ -16,7 +15,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * @param <T> Type of registered listener
  */
-@Beta
 @NonNullByDefault
 public final class NoOpListenerRegistration<T extends EventListener> extends NoOpObjectRegistration<T>
         implements ListenerRegistration<T> {
