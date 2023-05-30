@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +21,6 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <T> Item order type
  */
-@Beta
 public sealed interface ItemOrder<T extends ItemOrder<T>> {
     /**
      * Items are ordered and their order is significant. A {@link List} is an example of a collection which conforms to
