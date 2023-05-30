@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -33,16 +31,16 @@ final class StmtNamespaceContext implements YangNamespaceContext {
 
     StmtNamespaceContext(final StmtContext<?, ?, ?> ctx) {
         // QNameModule -> prefix mappings
-        final Map<QNameModule, String> qnameToPrefix = ctx.namespace(ModuleQNameToPrefix.INSTANCE);
+        final var qnameToPrefix = ctx.namespace(ModuleQNameToPrefix.INSTANCE);
         moduleToPrefix = qnameToPrefix == null ? ImmutableBiMap.of() : ImmutableBiMap.copyOf(qnameToPrefix);
 
         // Additional mappings
-        final Map<String, QNameModule> additional = new HashMap<>();
-        final Map<String, StmtContext<?, ?, ?>> imports = ctx.namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        final var additional = new HashMap<String, QNameModule>();
+        final var imports = ctx.namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
         if (imports != null) {
-            for (Entry<String, StmtContext<?, ?, ?>> entry : imports.entrySet()) {
+            for (var entry : imports.entrySet()) {
                 if (!moduleToPrefix.containsValue(entry.getKey())) {
-                    QNameModule qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, entry.getValue());
+                    var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, entry.getValue());
                     if (qnameModule == null && ctx.producesDeclared(SubmoduleStatement.class)) {
                         qnameModule = ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
                             ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, entry.getKey()));
@@ -55,11 +53,10 @@ final class StmtNamespaceContext implements YangNamespaceContext {
             }
         }
         if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final Map<String, Unqualified> belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME);
+            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME);
             if (belongsTo != null) {
-                for (Entry<String, Unqualified> entry : belongsTo.entrySet()) {
-                    final QNameModule module = ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-                        entry.getValue());
+                for (var entry : belongsTo.entrySet()) {
+                    final var module = ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME, entry.getValue());
                     if (module != null && !additional.containsKey(entry.getKey())) {
                         additional.put(entry.getKey(), module);
                     }
@@ -71,13 +68,14 @@ final class StmtNamespaceContext implements YangNamespaceContext {
     }
 
     @Override
-    public Optional<String> findPrefixForNamespace(final QNameModule namespace) {
-        return Optional.ofNullable(moduleToPrefix.get(namespace));
+    public String prefixForNamespace(final QNameModule namespace) {
+        return moduleToPrefix.get(requireNonNull(namespace));
     }
 
     @Override
-    public Optional<QNameModule> findNamespaceForPrefix(final String prefix) {
-        final QNameModule normal = moduleToPrefix.inverse().get(prefix);
-        return normal != null ? Optional.of(normal) : Optional.ofNullable(prefixToModule.get(prefix));
+    public QNameModule namespaceForPrefix(final String prefix) {
+        final var checked = requireNonNull(prefix);
+        final var normal = moduleToPrefix.inverse().get(checked);
+        return normal != null ? normal : prefixToModule.get(checked);
     }
 }

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableBiMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
@@ -26,12 +25,11 @@ import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextPr
  * <p>
  * When multiple revisions of a particular namespace are present in the backing SchemaContext, this ambiguity is
  * resolved by using the latest revision available.
- *
- * @author Robert Varga
  */
 @Beta
 public final class ModuleNameNamespaceContext extends AbstractEffectiveModelContextProvider
         implements YangNamespaceContext {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     @SuppressFBWarnings(value = "SE_NO_SUITABLE_CONSTRUCTOR", justification = "Handled through writeReplace()")
@@ -54,15 +52,17 @@ public final class ModuleNameNamespaceContext extends AbstractEffectiveModelCont
     }
 
     @Override
-    public Optional<QNameModule> findNamespaceForPrefix(final String prefix) {
-        return getEffectiveModelContext().findModules(prefix).stream().findFirst().map(Module::getQNameModule);
+    public QNameModule namespaceForPrefix(final String prefix) {
+        return getEffectiveModelContext().findModules(prefix).stream().findFirst().map(Module::getQNameModule)
+            .orElse(null);
     }
 
     @Override
-    public Optional<String> findPrefixForNamespace(final QNameModule namespace) {
-        return getEffectiveModelContext().findModule(namespace).map(Module::getName);
+    public String prefixForNamespace(final QNameModule namespace) {
+        return getEffectiveModelContext().findModule(namespace).map(Module::getName).orElse(null);
     }
 
+    @java.io.Serial
     private Object writeReplace() {
         return toBiMap();
     }

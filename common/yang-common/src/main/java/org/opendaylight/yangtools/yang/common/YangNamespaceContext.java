@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import com.google.common.annotations.Beta;
 import java.io.Serializable;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -23,34 +21,59 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <p>
  * Each namespace context has a set of prefix/namespace mappings. A namespace can be bound to multiple prefixes at the
  * same time.
- *
- * @author Robert Varga
  */
-@Beta
 public interface YangNamespaceContext extends Immutable, Serializable {
     /**
      * Return QNameModule to which a particular prefix is bound.
      *
      * @param prefix Prefix to look up
-     * @return QNameModule bound to specified prefix
-     * @throws NullPointerException if {@code prefix} is null
+     * @return QNameModule bound to specified prefix, or {@code null}
+     * @throws NullPointerException if {@code prefix} is {@code null}
      */
-    @NonNull Optional<QNameModule> findNamespaceForPrefix(String prefix);
+    @Nullable QNameModule namespaceForPrefix(String prefix);
+
+    /**
+     * Return QNameModule to which a particular prefix is bound.
+     *
+     * @implSpec Default implementation defers to {@link #namespaceForPrefix(String)}
+     * @param prefix Prefix to look up
+     * @return QNameModule bound to specified prefix
+     * @throws NullPointerException if {@code prefix} is {@code null}
+     */
+    default @NonNull Optional<QNameModule> findNamespaceForPrefix(final String prefix) {
+        return Optional.ofNullable(namespaceForPrefix(prefix));
+    }
 
     /**
      * Return a prefix to which a particular QNameModule is bound. If a namespace is bound to multiple prefixes, it is
      * left unspecified which of those prefixes is returned.
      *
      * @param namespace QNameModule to look up
-     * @return Prefix to which the QNameModule is bound
-     * @throws NullPointerException if {@code module} is null
+     * @return Prefix to which the QNameModule is bound, or {@code null}
+     * @throws NullPointerException if {@code module} is {@code null}
      */
-    @NonNull Optional<String> findPrefixForNamespace(QNameModule namespace);
+    @Nullable String prefixForNamespace(QNameModule namespace);
+
+    /**
+     * Return a prefix to which a particular QNameModule is bound. If a namespace is bound to multiple prefixes, it is
+     * left unspecified which of those prefixes is returned.
+     *
+     * @implSpec Default implementation defers to {@link #prefixForNamespace(QNameModule)}
+     * @param namespace QNameModule to look up
+     * @return Prefix to which the QNameModule is bound
+     * @throws NullPointerException if {@code module} is {@code null}
+     */
+    default @NonNull Optional<String> findPrefixForNamespace(final QNameModule namespace) {
+        return Optional.ofNullable(prefixForNamespace(namespace));
+    }
 
     /**
      * Create a {@link QName} by resolving a prefix against currently-bound prefixes and combining it with specified
      * local name.
      *
+     * @implSpec
+     *     Default implementation defers to {@link #namespaceForPrefix(String)} and constructs QName based on its
+     *     return.
      * @param prefix Namespace prefix
      * @param localName QName local name
      * @return A QName.
@@ -59,8 +82,10 @@ public interface YangNamespaceContext extends Immutable, Serializable {
      *                                  prefix is not bound in this context.
      */
     default @NonNull QName createQName(final String prefix, final String localName) {
-        final Optional<QNameModule> namespace = findNamespaceForPrefix(prefix);
-        checkArgument(namespace.isPresent(), "Prefix %s is not bound", prefix);
-        return QName.create(namespace.orElseThrow(), localName);
+        final var namespace = namespaceForPrefix(prefix);
+        if (namespace == null) {
+            throw new IllegalArgumentException("Prefix " + prefix + " is not bound");
+        }
+        return QName.create(namespace, localName);
     }
 }
