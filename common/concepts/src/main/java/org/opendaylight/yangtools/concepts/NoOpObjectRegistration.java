@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.concepts;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
@@ -18,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * @param <T> Type of registered object
  */
-@Beta
 @NonNullByDefault
 public class NoOpObjectRegistration<T> implements Immutable, ObjectRegistration<T> {
     private final T instance;
