@@ -28,33 +28,33 @@ class SemVerTest {
 
     @Test
     void testSemVer() {
-        final var semVer = SemVer.create(5);
+        final var semVer = new SemVer(5);
         assertNotNull(semVer);
 
-        assertEquals(5, semVer.getMajor());
-        assertEquals(0, semVer.getMinor());
-        assertEquals(0, semVer.getPatch());
+        assertEquals(5, semVer.major());
+        assertEquals(0, semVer.minor());
+        assertEquals(0, semVer.patch());
 
         final var semVer2 = SemVer.valueOf("1.2.3");
         assertNotNull(semVer2);
 
-        assertEquals(1, semVer2.getMajor());
-        assertEquals(2, semVer2.getMinor());
-        assertEquals(3, semVer2.getPatch());
+        assertEquals(1, semVer2.major());
+        assertEquals(2, semVer2.minor());
+        assertEquals(3, semVer2.patch());
 
         final var semVer3 = SemVer.valueOf("1");
         assertNotNull(semVer3);
 
-        assertEquals(1, semVer3.getMajor());
-        assertEquals(0, semVer3.getMinor());
-        assertEquals(0, semVer3.getPatch());
+        assertEquals(1, semVer3.major());
+        assertEquals(0, semVer3.minor());
+        assertEquals(0, semVer3.patch());
 
         final var semVer4 = SemVer.valueOf("1.2");
         assertNotNull(semVer4);
 
-        assertEquals(1, semVer4.getMajor());
-        assertEquals(2, semVer4.getMinor());
-        assertEquals(0, semVer4.getPatch());
+        assertEquals(1, semVer4.major());
+        assertEquals(2, semVer4.minor());
+        assertEquals(0, semVer4.patch());
 
         assertEquals(1, semVer2.compareTo(semVer3));
         assertEquals(-1, semVer3.compareTo(semVer2));
@@ -74,7 +74,7 @@ class SemVerTest {
         final byte[] bytes;
         try (var bos = new ByteArrayOutputStream()) {
             try (var oos = new ObjectOutputStream(bos)) {
-                oos.writeObject(SemVer.create(1, 2, 3));
+                oos.writeObject(new SemVer(1, 2, 3));
             }
             bytes = bos.toByteArray();
         }
@@ -88,6 +88,6 @@ class SemVerTest {
         try (var oos = new ObjectInputStream(new ByteArrayInputStream(HEX_FORMAT.parseHex(SERIALIZED)))) {
             value = oos.readObject();
         }
-        assertEquals(SemVer.create(1, 2, 3), value);
+        assertEquals(new SemVer(1, 2, 3), value);
     }
 }
