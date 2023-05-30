@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -82,12 +81,10 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
         }
 
         @Override
-        @SuppressFBWarnings(value = "ES_COMPARING_STRINGS_WITH_EQ", justification = "Interning identity check")
         public Qualified intern() {
             // Make sure to intern the string and check whether it refers to the same name as we are
-            final String name = getLocalName();
-            final String internedName = name.intern();
-            final Qualified template = internedName == name ? this : new Qualified(prefix.intern(), internedName);
+            final String internedName = DoNotLeakSpotbugs.internedString(getLocalName());
+            final Qualified template = internedName == null ? this : new Qualified(prefix.intern(), internedName);
             return INTERNER.intern(template);
         }
 
@@ -172,12 +169,10 @@ public abstract sealed class UnresolvedQName extends AbstractQName {
         }
 
         @Override
-        @SuppressFBWarnings(value = "ES_COMPARING_STRINGS_WITH_EQ", justification = "Interning identity check")
         public Unqualified intern() {
             // Make sure to intern the string and check whether it refers to the same name as we are
-            final String name = getLocalName();
-            final String internedName = name.intern();
-            final Unqualified template = internedName == name ? this : new Unqualified(internedName);
+            final var internedName = DoNotLeakSpotbugs.internedString(getLocalName());
+            final var template = internedName == null ? this : new Unqualified(internedName);
             return INTERNER.intern(template);
         }
 
