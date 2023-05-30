@@ -16,6 +16,8 @@ module org.opendaylight.yangtools.yang.binding {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
-    requires static com.github.spotbugs.annotations;
+    // FIXME: yeah, because ... we use this in public classes, so tools need
+    //        to resolve it. Why exactly?!
+    requires static transitive com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
 }

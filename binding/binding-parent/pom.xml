@@ -47,6 +47,11 @@
                     <groupId>org.opendaylight.mdsal</groupId>
                     <artifactId>yang-binding</artifactId>
                 </dependency>
+                <dependency>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-annotations</artifactId>
+                    <optional>true</optional>
+                </dependency>
             </dependencies>
             <build>
                 <pluginManagement>
