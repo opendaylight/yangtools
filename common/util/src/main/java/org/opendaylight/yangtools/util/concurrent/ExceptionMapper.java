@@ -30,7 +30,6 @@ import org.gaul.modernizer_maven_annotations.SuppressModernizer;
  */
 @SuppressModernizer
 public abstract class ExceptionMapper<X extends Exception> implements Function<Exception, X> {
-
     private final Class<X> exceptionType;
     private final String opName;
 
