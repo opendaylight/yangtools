@@ -27,6 +27,7 @@ import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
+import com.google.common.base.Verify
 import com.google.common.collect.ImmutableSet
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import java.util.ArrayList
@@ -320,22 +321,29 @@ class ClassTemplate extends BaseTemplate {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
-        «FOR p : allProperties»
-            «generateRestrictions(type, p.fieldName, p.returnType)»
-        «ENDFOR»
+        «val value = Verify.verifyNotNull(allProperties.valueProperty)»
+        «val fieldName = value.fieldName»
+        «IF properties.valueProperty !== null»
+        this.«fieldName» = «CODEHELPERS.importedName».requireValue(«fieldName»)«value.cloneCall»;
+        «ENDIF»
+        «generateRestrictions(type, fieldName, value.returnType)»
         «/*
          * If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code is
          * structured.
          */»
-        «CODEHELPERS.importedName».requireValue(_value);
-        «genPatternEnforcer("_value")»
-
-        «FOR p : properties»
-            «val fieldName = p.fieldName»
-            this.«fieldName» = «fieldName»«p.cloneCall»;
-        «ENDFOR»
+        «genPatternEnforcer(fieldName)»
     }
     '''
+
+    def private GeneratedProperty valueProperty(List<GeneratedProperty> props) {
+        if (props.empty) {
+            return null
+        }
+        Verify.verify(props.size() == 1, "Unexpected properties %s", props);
+        val prop = props.get(0)
+        Verify.verify(TypeConstants.VALUE_PROP.equals(prop.name), "Unexpected property %s", prop)
+        return prop
+    }
 
     def protected genUnionConstructor() '''
     «FOR p : allProperties»
