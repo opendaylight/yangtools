@@ -301,7 +301,7 @@ public final class UsesStatementSupport
 
         // Target is a prerequisite for the 'refine', hence if the target is not supported, the refine is not supported
         // as well. Otherwise add a pointer to the target into refine's local namespace.
-        if (refineTargetNodeCtx.isSupportedToBuildEffective()) {
+        if (refineTargetNodeCtx.isSupportedToBuildEffective() && refineTargetNodeCtx.isSupportedByFeatures()) {
             subStmtCtx.addToNs(RefineTargetNamespace.INSTANCE, Empty.value(), refineTargetNodeCtx);
         } else {
             subStmtCtx.setUnsupported();
