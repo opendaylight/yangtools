@@ -18,12 +18,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +41,7 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
 
     OriginalStmtCtx(final OriginalStmtCtx<A, D, E> original) {
         super(original);
-        this.ref = original.ref;
+        ref = original.ref;
     }
 
     OriginalStmtCtx(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref) {
@@ -119,6 +122,13 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     final boolean noSensitiveSubstatements() {
         return hasEmptySubstatements()
             || noSensitiveSubstatements(effective) && noSensitiveSubstatements(mutableDeclaredSubstatements());
+    }
+
+    @Override
+    final boolean computeSupportedByFeatures() {
+        // If the set of supported features has not been provided, all features are supported by default.
+        final var supportedFeatures = getFromNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
+        return supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
     }
 
     @Override

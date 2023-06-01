@@ -737,6 +737,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    boolean computeSupportedByFeatures() {
+        return prototype.isSupportedByFeatures();
+    }
+
+    @Override
     protected boolean isParentSupportedByFeatures() {
         return parent.isSupportedByFeatures();
     }
