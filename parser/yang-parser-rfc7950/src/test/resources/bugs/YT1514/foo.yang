@@ -1,0 +1,25 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  feature feat;
+
+  grouping grp {
+    choice foo {
+      case bar {
+        if-feature feat;
+        leaf baz {
+          type string;
+        }
+      }
+    }
+  }
+
+  container cont {
+    uses grp {
+      refine foo/bar/baz {
+        reference "something";
+      }
+    }
+  }
+}

@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -484,22 +482,24 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             return true;
         }
 
-        /*
-         * If parent is supported, we need to check if-features statements of this context.
-         */
-        if (isParentSupportedByFeatures()) {
-            // If the set of supported features has not been provided, all features are supported by default.
-            final var supportedFeatures = namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
-            if (supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures)) {
-                flags |= SET_SUPPORTED_BY_FEATURES;
-                return true;
-            }
+        // If parent is supported, we need to check if-features statements of this context.
+        if (isParentSupportedByFeatures() && computeSupportedByFeatures()) {
+            flags |= SET_SUPPORTED_BY_FEATURES;
+            return true;
         }
 
         // Either parent is not supported or this statement is not supported
         flags |= HAVE_SUPPORTED_BY_FEATURES;
         return false;
     }
+
+    /**
+     * Compute whether this statement is supported by features. Returned value is combined with
+     * {@link #isParentSupportedByFeatures()} and cached.
+     *
+     * @return {@code true} if the current feature set matches {@code if-feature} of this statement
+     */
+    abstract boolean computeSupportedByFeatures();
 
     protected abstract boolean isParentSupportedByFeatures();
 
