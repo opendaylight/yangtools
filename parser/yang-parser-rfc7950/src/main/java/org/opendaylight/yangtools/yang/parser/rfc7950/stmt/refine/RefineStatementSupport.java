@@ -28,7 +28,9 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -73,6 +75,23 @@ public final class RefineStatementSupport
     @Override
     public Descendant parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return ArgumentUtils.parseDescendantSchemaNodeIdentifier(ctx, value);
+    }
+
+    @Override
+    public void onFullDefinitionDeclared(final Mutable<Descendant, RefineStatement, RefineEffectiveStatement> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+
+        // Refine is a rather arcane bit of logic. Our parent statement is expected to be 'uses' and that in turn is
+        // expected to have a parent, which the root of our logic.
+        final var parentUses = stmt.coerceParentContext();
+        final var refineBase = parentUses.coerceParentContext();
+
+        // First step is to resolve whether we need to apply any effects at all. We need that to happen as part of
+        // the parent becoming fully and we need the 'uses' statement to be fully-declared to evaluate whether it is
+        // supported by features. Once that is
+        final var action = refineBase.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
+        final var usesPrereq = action.requiresCtx(parentUses, ModelProcessingPhase.FULL_DECLARATION);
+        action.apply(new RefineBaseAction(stmt, refineBase, usesPrereq));
     }
 
     @Override
