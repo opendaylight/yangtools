@@ -274,6 +274,11 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    boolean computeSupportedByFeatures() {
+        return source.isSupportedByFeatures();
+    }
+
+    @Override
     protected boolean isParentSupportedByFeatures() {
         return parent.isSupportedByFeatures();
     }

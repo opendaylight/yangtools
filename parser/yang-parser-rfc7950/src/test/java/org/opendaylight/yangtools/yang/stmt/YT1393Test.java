@@ -35,7 +35,7 @@ public class YT1393Test {
         final var module = StmtTestUtils.parseYangSource("/bugs/YT1393/baz.yang", Set.of())
             .findModuleStatement(QName.create("baz", "baz"))
             .orElseThrow();
-        assertEquals(5, module.effectiveSubstatements().size());
+        assertEquals(4, module.effectiveSubstatements().size());
     }
 
     @Test
