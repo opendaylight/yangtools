@@ -19,17 +19,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
@@ -37,10 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -56,8 +50,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,13 +95,6 @@ public final class UsesStatementSupport
                 final var sourceGrpStmtCtx = sourceGroupingPre.resolve(ctx);
 
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
-
-                // Apply any refine statements
-                for (var subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
-                    if (subStmtCtx.producesDeclared(RefineStatement.class) && areFeaturesSupported(subStmtCtx)) {
-                        performRefine(subStmtCtx, targetNodeStmtCtx);
-                    }
-                }
 
                 StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
                 usesNode.addToNs(SourceGroupingNamespace.INSTANCE, Empty.value(), sourceGrpStmtCtx);
@@ -263,99 +248,5 @@ public final class UsesStatementSupport
         }
 
         return null;
-    }
-
-    private static boolean areFeaturesSupported(final StmtContext<?, ?, ?> subStmtCtx) {
-        /*
-         * In case of Yang 1.1, checks whether features are supported.
-         */
-        return !YangVersion.VERSION_1_1.equals(subStmtCtx.yangVersion()) || subStmtCtx.isSupportedByFeatures();
-    }
-
-    private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
-        final Object refineArgument = subStmtCtx.argument();
-        if (!(refineArgument instanceof SchemaNodeIdentifier refineTarget)) {
-            throw new InferenceException(subStmtCtx,
-                "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
-        }
-
-        // FIXME: this really should be handled via separate inference, i.e. we first instantiate the template and when
-        //        it appears, this refine will trigger on it. This reinforces the FIXME below.
-        final var optRefineTargetCtx = ParserNamespaces.findSchemaTreeStatement(usesParentCtx, refineTarget);
-        InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx, "Refine target node %s not found.",
-            refineTarget);
-
-        // FIXME: This communicates the looked-up target node to RefineStatementSupport.buildEffective(). We should do
-        //        this trick through a shared namespace or similar reactor-agnostic meeting place. It really feels like
-        //        an inference action RefineStatementSupport should be doing.
-        final var refineTargetNodeCtx = optRefineTargetCtx.orElseThrow();
-        if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
-            LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
-                + "Refine has been skipped. At line: {}", subStmtCtx.argument(),
-                subStmtCtx.coerceParentContext().argument(), refineTargetNodeCtx.argument(),
-                subStmtCtx.sourceReference());
-        } else {
-            verify(refineTargetNodeCtx instanceof Mutable, "Unexpected target %s", refineTargetNodeCtx);
-            addOrReplaceNodes(subStmtCtx, (Mutable<?, ?, ?>) refineTargetNodeCtx);
-        }
-
-        // Target is a prerequisite for the 'refine', hence if the target is not supported, the refine is not supported
-        // as well. Otherwise add a pointer to the target into refine's local namespace.
-        if (refineTargetNodeCtx.isSupportedToBuildEffective()) {
-            subStmtCtx.addToNs(RefineTargetNamespace.INSTANCE, Empty.value(), refineTargetNodeCtx);
-        } else {
-            subStmtCtx.setUnsupported();
-        }
-    }
-
-    private static void addOrReplaceNodes(final StmtContext<?, ?, ?> subStmtCtx,
-            final Mutable<?, ?, ?> refineTargetNodeCtx) {
-        for (StmtContext<?, ?, ?> refineSubstatementCtx : subStmtCtx.declaredSubstatements()) {
-            if (isSupportedRefineSubstatement(refineSubstatementCtx)) {
-                addOrReplaceNode(refineSubstatementCtx, refineTargetNodeCtx);
-            }
-        }
-    }
-
-    private static void addOrReplaceNode(final StmtContext<?, ?, ?> refineSubstatementCtx,
-            final Mutable<?, ?, ?> refineTargetNodeCtx) {
-
-        final StatementDefinition refineSubstatementDef = refineSubstatementCtx.publicDefinition();
-
-        // FIXME: this is quite costly, use an explicit block
-        SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
-                refineSubstatementCtx,
-                "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
-                refineSubstatementCtx.getRoot().rawArgument(), refineSubstatementCtx.coerceParentContext().argument(),
-                refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());
-
-        if (!isAllowedToAddByRefine(refineSubstatementDef)) {
-            refineTargetNodeCtx.removeStatementFromEffectiveSubstatements(refineSubstatementDef);
-        }
-        // FIXME: childCopyOf() should handle this through per-statement copy policy, right?
-        refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx.replicaAsChildOf(refineTargetNodeCtx));
-    }
-
-    // FIXME: clarify this and inline into single caller
-    private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
-        return YangStmtMapping.MUST.equals(publicDefinition);
-    }
-
-    private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {
-        final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.namespaceItem(
-                ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
-
-        return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
-                || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())
-                || StmtContextUtils.isUnknownStatement(refineSubstatementCtx);
-    }
-
-    private static boolean isSupportedRefineTarget(final StmtContext<?, ?, ?> refineSubstatementCtx,
-            final StmtContext<?, ?, ?> refineTargetNodeCtx) {
-        final Collection<?> supportedRefineTargets = YangValidationBundles.SUPPORTED_REFINE_TARGETS.get(
-            refineSubstatementCtx.publicDefinition());
-
-        return supportedRefineTargets == null || supportedRefineTargets.isEmpty()
-                || supportedRefineTargets.contains(refineTargetNodeCtx.publicDefinition());
     }
 }
