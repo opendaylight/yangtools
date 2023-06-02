@@ -7,6 +7,8 @@ module incorrect-list-keys-test5 {
         description "Bug 6855: Test for uses stmt with refine substatement";
     }
 
+    feature feature-a;
+
     grouping a {
         leaf a1 {
             type int32;
