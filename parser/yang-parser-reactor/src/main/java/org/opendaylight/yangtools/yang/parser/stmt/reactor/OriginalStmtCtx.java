@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -124,8 +126,17 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
             || noSensitiveSubstatements(effective) && noSensitiveSubstatements(mutableDeclaredSubstatements());
     }
 
+    // Non-final for RootStatementContext
     @Override
-    final boolean computeSupportedByFeatures() {
+    boolean computeSupportedByFeatures() {
+        final byte order = executionOrder();
+        if (order < ExecutionOrder.FULL_DECLARATION) {
+            if (order == 0) {
+                throw new VerifyException(this + " has not started processing");
+            }
+            throw new VerifyException(this + " is in phase " + ModelProcessingPhase.ofExecutionOrder(order));
+        }
+
         // If the set of supported features has not been provided, all features are supported by default.
         final var supportedFeatures = namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
         return supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures);

@@ -214,6 +214,11 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         return true;
     }
 
+    @Override
+    boolean computeSupportedByFeatures() {
+        return true;
+    }
+
     void setRootIdentifierImpl(final SourceIdentifier identifier) {
         rootIdentifier = requireNonNull(identifier);
     }
