@@ -473,6 +473,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final boolean isSupportedByFeatures() {
+        final byte order = executionOrder();
+        if (order < ExecutionOrder.FULL_DECLARATION) {
+            throw new VerifyException("Attempted to examine features during " + order);
+        }
+
         final int fl = flags & SET_SUPPORTED_BY_FEATURES;
         if (fl != 0) {
             return fl == SET_SUPPORTED_BY_FEATURES;
