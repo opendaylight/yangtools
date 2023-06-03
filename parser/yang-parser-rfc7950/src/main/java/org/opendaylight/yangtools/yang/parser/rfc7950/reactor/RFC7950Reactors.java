@@ -72,6 +72,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.PrefixStatementS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.PresenceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.RangeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ReferenceStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.RefineStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.RequireInstanceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.RevisionDateStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.RevisionStatementSupport;
@@ -91,8 +92,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.Notifica
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path.PathStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern.PatternStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule.SubmoduleStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.BaseTypeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC6020Support;
@@ -365,7 +364,6 @@ public final class RFC7950Reactors {
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, new AugmentStatementRFC6020Support(config))
             .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRFC7950Support(config))
-            .addSupport(RefineTargetNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, RefineStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, RefineStatementSupport.rfc7950Instance(config))
             .addSupport(new FeatureStatementSupport(config))
