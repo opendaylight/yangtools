@@ -17,6 +17,5 @@ module org.opendaylight.yangtools.yang.repo.spi {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
-    requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
 }

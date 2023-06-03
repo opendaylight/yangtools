@@ -19,6 +19,5 @@ module org.opendaylight.yangtools.yang.data.codec.binfmt {
     requires org.slf4j;
 
     // Annotations
-    requires static com.github.spotbugs.annotations;
     requires static org.eclipse.jdt.annotation;
 }
