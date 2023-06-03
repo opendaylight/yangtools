@@ -18,11 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -127,8 +125,7 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     @Override
     final boolean computeSupportedByFeatures() {
         // If the set of supported features has not been provided, all features are supported by default.
-        final var supportedFeatures = namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
-        return supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
+        return StmtContextUtils.evaluateIfFeatures(this);
     }
 
     @Override

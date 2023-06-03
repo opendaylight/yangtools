@@ -29,66 +29,91 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
-public final class RefineStatementSupport
+public abstract sealed class RefineStatementSupport
         extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
-        .addOptional(YangStmtMapping.DEFAULT)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.CONFIG)
-        .addOptional(YangStmtMapping.MANDATORY)
-        .addOptional(YangStmtMapping.PRESENCE)
-        .addAny(YangStmtMapping.MUST)
-        .addOptional(YangStmtMapping.MIN_ELEMENTS)
-        .addOptional(YangStmtMapping.MAX_ELEMENTS)
-        .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
-        .addOptional(YangStmtMapping.DEFAULT)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.CONFIG)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addOptional(YangStmtMapping.MANDATORY)
-        .addOptional(YangStmtMapping.PRESENCE)
-        .addAny(YangStmtMapping.MUST)
-        .addOptional(YangStmtMapping.MIN_ELEMENTS)
-        .addOptional(YangStmtMapping.MAX_ELEMENTS)
-        .build();
+    private static final class Rfc6020 extends RefineStatementSupport {
+        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.PRESENCE)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .build();
+
+        Rfc6020(final YangParserConfiguration config) {
+            super(config, VALIDATOR);
+        }
+    }
+
+    private static final class Rfc7950 extends RefineStatementSupport {
+        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.PRESENCE)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .build();
+
+        Rfc7950(final YangParserConfiguration config) {
+            super(config, VALIDATOR);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final Mutable<Descendant, RefineStatement, RefineEffectiveStatement> stmt) {
+            super.onFullDefinitionDeclared(stmt);
+
+            if (!StmtContextUtils.evaluateIfFeatures(stmt)) {
+                stmt.setUnsupported();
+            }
+        }
+    }
 
     private RefineStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.REFINE, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull RefineStatementSupport rfc6020Instance(final YangParserConfiguration config) {
-        return new RefineStatementSupport(config, RFC6020_VALIDATOR);
+        return new Rfc6020(config);
     }
 
     public static @NonNull RefineStatementSupport rfc7950Instance(final YangParserConfiguration config) {
-        return new RefineStatementSupport(config, RFC7950_VALIDATOR);
+        return new Rfc7950(config);
     }
 
     @Override
-    public Descendant parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public final Descendant parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return ArgumentUtils.parseDescendantSchemaNodeIdentifier(ctx, value);
     }
 
     @Override
-    protected RefineStatement createDeclared(final BoundStmtCtx<Descendant> ctx,
+    protected final RefineStatement createDeclared(final BoundStmtCtx<Descendant> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createRefine(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected RefineStatement attachDeclarationReference(final RefineStatement stmt,
+    protected final RefineStatement attachDeclarationReference(final RefineStatement stmt,
             final DeclarationReference reference) {
         return DeclaredStatementDecorators.decorateRefine(stmt, reference);
     }
 
     @Override
-    protected RefineEffectiveStatement createEffective(final Current<Descendant, RefineStatement> stmt,
+    protected final RefineEffectiveStatement createEffective(final Current<Descendant, RefineStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
         return new RefineEffectiveStatementImpl(stmt.declared(), substatements,

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -210,6 +211,18 @@ public final class StmtContextUtils {
      */
     public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
         return UnknownStatement.class.isAssignableFrom(stmtCtx.publicDefinition().getDeclaredRepresentationClass());
+    }
+
+    /**
+     * Evaluate {@code if-feature} substatement of a statement and indicate whether they result in the statement being
+     * supported.
+     *
+     * @param stmt Parent statement
+     * @return {@code true} if the statement is indicated to be supported under currently-supported features
+     */
+    public static boolean evaluateIfFeatures(final @NonNull StmtContext<?, ?, ?> stmt) {
+        final var supportedFeatures = stmt.namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
+        return supportedFeatures == null || checkFeatureSupport(stmt, supportedFeatures);
     }
 
     public static boolean checkFeatureSupport(final StmtContext<?, ?, ?> stmtContext,
