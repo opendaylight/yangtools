@@ -123,6 +123,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
@@ -217,6 +219,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYinElementEff
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ExtensionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ImportEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.NotificationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularArgumentEffectiveStatement;
@@ -563,8 +566,7 @@ public final class EffectiveStatements {
 
     public static LeafEffectiveStatement copyLeaf(final LeafEffectiveStatement original, final QName argument,
             final int flags) {
-        if (original instanceof AbstractLeafEffectiveStatement) {
-            final var orig = (AbstractLeafEffectiveStatement) original;
+        if (original instanceof AbstractLeafEffectiveStatement orig) {
             return argument.equals(orig.getDeclared().argument()) ? new EmptyLeafEffectiveStatement(orig, flags)
                 : new RegularLeafEffectiveStatement(orig, argument, flags);
         } else if (original instanceof UndeclaredLeafEffectiveStatement) {
@@ -779,6 +781,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? createReference(declared)
             : new RegularReferenceEffectiveStatement(declared, substatements);
+    }
+
+    public static RefineEffectiveStatement createRefine(final RefineStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
+        return new RefineEffectiveStatementImpl(declared, substatements);
     }
 
     public static RevisionEffectiveStatement createRevision(final RevisionStatement declared,

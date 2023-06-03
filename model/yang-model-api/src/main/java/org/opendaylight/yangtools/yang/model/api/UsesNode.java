@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
@@ -36,8 +38,11 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode,
     /**
      * Some of the properties of each node in the grouping can be refined with the "refine" statement.
      *
-     * @return Map, where key is schema node identifier of refined node and value is refined node.
+     * @return {@link Descendant} paths of {@code refine}d children.
      */
-    // FIXME: 7.0.0: expose only refined paths and let users deal with locating them
-    @NonNull Map<Descendant, SchemaNode> getRefines();
+    default @NonNull Set<Descendant> getRefines() {
+        return asEffectiveStatement().streamEffectiveSubstatements(RefineEffectiveStatement.class)
+            .map(RefineEffectiveStatement::argument)
+            .collect(ImmutableSet.toImmutableSet());
+    }
 }
