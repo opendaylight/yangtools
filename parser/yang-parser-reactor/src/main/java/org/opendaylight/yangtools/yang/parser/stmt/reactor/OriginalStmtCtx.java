@@ -174,6 +174,8 @@ abstract sealed class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E exten
      * @param phase processing phase that ended
      */
     final void finishDeclaration(final ModelProcessingPhase phase) {
+        // FIXME: right, but the our execution does not reflect this. How does this callback align
+        //        with tryToCompletePhase()?!
         definition().onDeclarationFinished(this, phase);
     }
 
