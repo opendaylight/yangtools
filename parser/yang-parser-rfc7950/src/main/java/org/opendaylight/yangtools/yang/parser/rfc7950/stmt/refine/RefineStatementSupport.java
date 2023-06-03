@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -73,6 +75,15 @@ public final class RefineStatementSupport
     @Override
     public Descendant parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return ArgumentUtils.parseDescendantSchemaNodeIdentifier(ctx, value);
+    }
+
+    @Override
+    public void onFullDefinitionDeclared(final Mutable<Descendant, RefineStatement, RefineEffectiveStatement> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+
+        if (!StmtContextUtils.evaluateIfFeatures(stmt)) {
+            stmt.setUnsupported();
+        }
     }
 
     @Override
