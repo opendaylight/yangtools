@@ -12,16 +12,12 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -38,8 +34,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -159,17 +153,6 @@ public final class UsesStatementSupport
             return new SimpleCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags, substatements);
         }
         return new FullCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags, substatements);
-    }
-
-    static @NonNull ImmutableMap<Descendant, SchemaNode> indexRefines(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final var refines = new LinkedHashMap<Descendant, SchemaNode>();
-        for (var effectiveStatement : substatements) {
-            if (effectiveStatement instanceof RefineEffectiveStatementImpl refineStmt) {
-                refines.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
-            }
-        }
-        return ImmutableMap.copyOf(refines);
     }
 
     /**
@@ -297,10 +280,8 @@ public final class UsesStatementSupport
         }
 
         // Target is a prerequisite for the 'refine', hence if the target is not supported, the refine is not supported
-        // as well. Otherwise add a pointer to the target into refine's local namespace.
-        if (refineTargetCtx.isSupportedToBuildEffective() && refineTargetCtx.isSupportedByFeatures()) {
-            refineStmtCtx.addToNs(RefineTargetNamespace.INSTANCE, Empty.value(), refineTargetCtx);
-        } else {
+        // as well.
+        if (!refineTargetCtx.isSupportedToBuildEffective() || !refineTargetCtx.isSupportedByFeatures()) {
             refineStmtCtx.setUnsupported();
         }
     }

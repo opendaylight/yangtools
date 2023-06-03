@@ -7,11 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
@@ -21,16 +17,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 
 public final class RefineEffectiveStatementImpl extends WithSubstatements<Descendant, RefineStatement>
         implements RefineEffectiveStatement, DocumentedNodeMixin<Descendant, RefineStatement> {
-    private final @NonNull SchemaNode refineTargetNode;
-
     RefineEffectiveStatementImpl(final RefineStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaNode refineTargetNode) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
-        this.refineTargetNode = requireNonNull(refineTargetNode);
-    }
-
-    // FIXME: 8.0.0: discover this through namespace population
-    public SchemaNode getRefineTargetNode() {
-        return refineTargetNode;
     }
 }

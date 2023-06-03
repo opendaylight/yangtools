@@ -9,16 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
@@ -68,10 +64,5 @@ class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, UsesStatem
     @Override
     public final Collection<? extends AugmentationSchemaNode> getAugmentations() {
         return filterEffectiveStatements(AugmentationSchemaNode.class);
-    }
-
-    @Override
-    public Map<Descendant, SchemaNode> getRefines() {
-        return ImmutableMap.of();
     }
 }

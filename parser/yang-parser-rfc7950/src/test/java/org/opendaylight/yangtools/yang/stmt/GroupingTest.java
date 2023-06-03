@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.common.collect.Iterables;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -53,7 +54,7 @@ class GroupingTest extends AbstractModelTest {
         final var usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
-        final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
+        final Set<Descendant> refines = usesNode.getRefines();
         assertEquals(4, refines.size());
 
         LeafSchemaNode refineLeaf = null;

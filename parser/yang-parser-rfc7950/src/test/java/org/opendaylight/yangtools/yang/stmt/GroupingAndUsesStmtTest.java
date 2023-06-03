@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -97,14 +95,11 @@ class GroupingAndUsesStmtTest extends AbstractYangTest {
         usesNode = container.getUses().iterator().next();
         assertEquals("target", usesNode.getSourceGrouping().getQName().getLocalName());
 
-        final Map<Descendant, SchemaNode> refines = usesNode.getRefines();
-        assertEquals(4, refines.size());
-
         assertEquals(List.of(
                 Descendant.of(QName.create(peer, "address")),
                 Descendant.of(QName.create(peer, "port")),
                 Descendant.of(QName.create(peer, "addresses")),
                 Descendant.of(QName.create(peer, "addresses"), QName.create(peer, "id"))),
-            List.copyOf(refines.keySet()));
+            List.copyOf(usesNode.getRefines()));
     }
 }
