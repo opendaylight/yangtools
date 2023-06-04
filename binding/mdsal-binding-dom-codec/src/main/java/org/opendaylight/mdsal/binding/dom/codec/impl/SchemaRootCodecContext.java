@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.KeyedListAction;
 import org.opendaylight.yangtools.yang.binding.Notification;
@@ -54,6 +55,7 @@ import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -62,10 +64,27 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, BindingRuntimeTypes>
         implements BindingDataObjectCodecTreeNode<D> {
+    /**
+     * Prototype for the root of YANG modeled world. This class only exists because DataContainerCodecContext requires
+     * a prototype.
+     */
+    private static final class Prototype extends DataObjectCodecPrototype<BindingRuntimeTypes> {
+        private static final @NonNull NodeIdentifier ROOT_NODEID = NodeIdentifier.create(SchemaContext.NAME);
+
+        Prototype(final CodecContextFactory factory) {
+            super(DataRoot.class, ROOT_NODEID, factory.getRuntimeContext().getTypes(), factory);
+        }
+
+        @Override
+        DataContainerCodecContext<?, BindingRuntimeTypes> createInstance() {
+            throw new UnsupportedOperationException("Should never be invoked");
+        }
+    }
 
     private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
@@ -203,7 +222,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         });
 
     SchemaRootCodecContext(final CodecContextFactory factory) {
-        super(DataContainerCodecPrototype.rootPrototype(factory));
+        super(new Prototype(factory));
     }
 
     @Override

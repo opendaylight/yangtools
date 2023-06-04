@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 
-final class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extends DataContainerCodecPrototype<T> {
+// FIXME: abstract and sealed
+non-sealed class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extends DataContainerCodecPrototype<T> {
     private final @NonNull NodeIdentifier yangArg;
 
     @SuppressWarnings("unchecked")
@@ -39,7 +40,7 @@ final class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extends Dat
     }
 
     @Override
-    NodeIdentifier getYangArg() {
+    final NodeIdentifier getYangArg() {
         return yangArg;
     }
 
