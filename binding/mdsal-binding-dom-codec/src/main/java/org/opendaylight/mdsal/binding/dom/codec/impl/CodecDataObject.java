@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
@@ -90,8 +90,10 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     private @NonNull Object emptyObject(final @NonNull Class<? extends DataObject> bindingClass) {
         final var childContext = context.streamChild(bindingClass);
-        verify(childContext instanceof NonPresenceContainerNodeCodecContext, "Unexpected context %s", childContext);
-        return ((NonPresenceContainerNodeCodecContext<?>) childContext).emptyObject();
+        if (childContext instanceof NonPresenceContainerNodeCodecContext<?> nonPresence) {
+            return nonPresence.emptyObject();
+        }
+        throw new VerifyException("Unexpected context " + childContext);
     }
 
     protected final @NonNull Object codecKey(final VarHandle handle) {
@@ -124,10 +126,14 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // Helper split out of codecKey to aid its inlining
     private @NonNull Object loadKey(final VarHandle handle) {
-        verify(data instanceof MapEntryNode, "Unsupported value %s", data);
-        verify(context instanceof KeyedListNodeCodecContext, "Unexpected context %s", context);
-        final Object obj = ((KeyedListNodeCodecContext<?, ?>) context)
-                .deserialize(((MapEntryNode) data).name());
+        if (!(data instanceof MapEntryNode mapEntry)) {
+            throw new VerifyException("Unsupported value " + data);
+        }
+        if (!(context instanceof KeyedListNodeCodecContext<?, ?> listContext)) {
+            throw new VerifyException("Unexpected context " + context);
+        }
+
+        final Object obj = listContext.deserialize(mapEntry.name());
         // key is known to be non-null, no need to mask it
         final Object witness = handle.compareAndExchangeRelease(this, null, obj);
         return witness == null ? obj : witness;
