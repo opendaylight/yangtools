@@ -39,6 +39,7 @@ import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.EventInstantAware;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -68,9 +69,9 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
 
     private final MethodHandle eventProxy;
 
-    NotificationCodecContext(final Class<?> key, final NotificationRuntimeType schema,
+    NotificationCodecContext(final Class<?> notificationClass, final NotificationRuntimeType type,
             final CodecContextFactory factory) {
-        super(DataContainerCodecPrototype.from(key, schema, factory));
+        super(new Prototype<>(notificationClass, type, factory));
         final Class<D> bindingClass = getBindingClass();
 
         final Class<?> awareClass = CodecPackage.EVENT_AWARE.generateClass(factory().getLoader(), bindingClass,
@@ -119,6 +120,22 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
     @Override
     protected Object deserializeObject(final NormalizedNode normalizedNode) {
         return deserialize(normalizedNode);
+    }
+
+    /**
+     * Prototype for a {@code notiofication}. This class only exists because DataContainerCodecContext requires a
+     * prototype.
+     */
+    private static final class Prototype<D extends DataObject & BaseNotification>
+            extends DataObjectCodecPrototype<NotificationRuntimeType> {
+        Prototype(final Class<?> cls, final NotificationRuntimeType type, final CodecContextFactory factory) {
+            super(cls, NodeIdentifier.create(type.statement().argument()), type, factory);
+        }
+
+        @Override
+        DataContainerCodecContext<?, NotificationRuntimeType> createInstance() {
+            throw new UnsupportedOperationException("Should never be invoked");
+        }
     }
 
     private enum ConstructorImplementation implements Implementation {

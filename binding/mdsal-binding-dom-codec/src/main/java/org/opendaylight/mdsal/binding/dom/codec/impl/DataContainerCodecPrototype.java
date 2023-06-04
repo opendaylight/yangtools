@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
@@ -159,12 +158,6 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
     static <T extends CompositeRuntimeType> DataContainerCodecPrototype<T> from(final Item<?> bindingArg, final T type,
             final CodecContextFactory factory) {
         return new DataObjectCodecPrototype<>(bindingArg, createIdentifier(type), type, factory);
-    }
-
-    static DataContainerCodecPrototype<NotificationRuntimeType> from(final Class<?> augClass,
-            final NotificationRuntimeType schema, final CodecContextFactory factory) {
-        return new DataObjectCodecPrototype<>(augClass, NodeIdentifier.create(schema.statement().argument()), schema,
-            factory);
     }
 
     private static @NonNull NodeIdentifier createIdentifier(final CompositeRuntimeType type) {

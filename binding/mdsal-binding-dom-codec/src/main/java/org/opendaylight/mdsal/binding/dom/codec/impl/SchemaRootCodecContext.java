@@ -114,14 +114,15 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         .build(new CacheLoader<Class<?>, NotificationCodecContext<?>>() {
             @Override
             public NotificationCodecContext<?> load(final Class<?> key) {
+                // FIXME: sharpen check to an Notification.class
                 checkArgument(key.isInterface(), "Supplied class must be interface.");
 
                 // TODO: we should be able to work with bindingChild() instead of schemaTreeChild() here
-                final QName qname = BindingReflections.findQName(key);
-                final RuntimeType child = getType().schemaTreeChild(qname);
-                checkArgument(child instanceof NotificationRuntimeType, "Supplied %s is not valid notification",
-                    key);
-                return new NotificationCodecContext<>(key, (NotificationRuntimeType) child, factory());
+                final var qname = BindingReflections.findQName(key);
+                if (getType().schemaTreeChild(qname) instanceof NotificationRuntimeType type) {
+                    return new NotificationCodecContext<>(key, type, factory());
+                }
+                throw new IllegalArgumentException("Supplied " + key + " is not valid notification");
             }
         });
 
@@ -214,10 +215,12 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public NotificationCodecContext<?> load(final Absolute key) {
-                final Class<?> cls = factory().getRuntimeContext().getClassForSchema(key);
-                checkArgument(Notification.class.isAssignableFrom(cls), "Path %s does not represent a notification",
-                    key);
-                return getNotificationImpl(cls);
+                final var cls = factory().getRuntimeContext().getClassForSchema(key);
+                try {
+                    return getNotificationImpl(cls.asSubclass(Notification.class));
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException("Path " + key + " does not represent a notification", e);
+                }
             }
         });
 
