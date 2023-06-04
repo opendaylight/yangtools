@@ -95,8 +95,8 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
 
     @Override
     protected InstanceIdentifier.PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
-        return domArg instanceof NodeIdentifierWithPredicates
-            ? codec.domToBinding((NodeIdentifierWithPredicates) domArg) : super.getBindingPathArgument(domArg);
+        return domArg instanceof NodeIdentifierWithPredicates nip ? codec.domToBinding(nip)
+            : super.getBindingPathArgument(domArg);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -104,19 +104,19 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
         return codec.bindingToDom(IdentifiableItem.of((Class)getBindingClass(), (Identifier)key));
     }
 
-    @NonNull Identifier<?> deserialize(final NodeIdentifierWithPredicates arg) {
+    @NonNull Identifier<?> deserialize(final @NonNull NodeIdentifierWithPredicates arg) {
         return codec.deserializeIdentifier(arg);
     }
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        return arg instanceof IdentifiableItem
-            ? codec.bindingToDom((IdentifiableItem<?, ?>) arg) : super.serializePathArgument(arg);
+        return arg instanceof IdentifiableItem<?, ?> identifiable ? codec.bindingToDom(identifiable)
+            : super.serializePathArgument(arg);
     }
 
     @Override
     public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        return arg instanceof NodeIdentifierWithPredicates
-            ? codec.domToBinding((NodeIdentifierWithPredicates) arg) : super.deserializePathArgument(arg);
+        return arg instanceof NodeIdentifierWithPredicates nip ? codec.domToBinding(nip)
+            : super.deserializePathArgument(arg);
     }
 }
