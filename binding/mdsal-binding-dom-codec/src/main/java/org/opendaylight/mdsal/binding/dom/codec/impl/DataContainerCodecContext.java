@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
@@ -96,7 +97,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends Runtime
     }
 
     @Override
-    protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
+    protected NodeIdentifier getDomPathArgument() {
         return prototype.getYangArg();
     }
 

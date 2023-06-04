@@ -15,7 +15,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -34,11 +34,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 abstract class NodeCodecContext implements BindingCodecTreeNode {
     /**
-     * Returns Yang Instance Identifier Path Argument of current node.
+     * Returns {@link NodeIdentifier} of current node, if applicable.
      *
-     * @return DOM Path Argument of node
+     * @return NodeIdentifier of node, or {@code null} if not applicable
      */
-    protected abstract YangInstanceIdentifier.PathArgument getDomPathArgument();
+    protected abstract @Nullable NodeIdentifier getDomPathArgument();
 
     /**
      * Immutable factory, which provides access to runtime context, create leaf nodes and provides path argument codecs.

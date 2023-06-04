@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -62,7 +61,7 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
         }
 
         @Override
-        PathArgument getYangArg() {
+        NodeIdentifier getYangArg() {
             throw new UnsupportedOperationException("Augmentation does not have PathArgument address");
         }
 
@@ -78,22 +77,22 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
     }
 
     static final class Regular<T extends RuntimeTypeContainer> extends DataContainerCodecPrototype<T> {
-        private final @NonNull PathArgument yangArg;
+        private final @NonNull NodeIdentifier yangArg;
 
         @SuppressWarnings("unchecked")
-        private Regular(final Class<?> cls, final PathArgument yangArg, final T type,
+        private Regular(final Class<?> cls, final NodeIdentifier yangArg, final T type,
                 final CodecContextFactory factory) {
             this(Item.of((Class<? extends DataObject>) cls), yangArg, type, factory);
         }
 
-        private Regular(final Item<?> bindingArg, final PathArgument yangArg, final T type,
+        private Regular(final Item<?> bindingArg, final NodeIdentifier yangArg, final T type,
                 final CodecContextFactory factory) {
             super(bindingArg, yangArg.getNodeType().getModule(), type, factory);
             this.yangArg = requireNonNull(yangArg);
         }
 
         @Override
-        PathArgument getYangArg() {
+        NodeIdentifier getYangArg() {
             return yangArg;
         }
 
@@ -284,7 +283,7 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
         return bindingArg;
     }
 
-    abstract @NonNull PathArgument getYangArg();
+    abstract @NonNull NodeIdentifier getYangArg();
 
     @Override
     public final DataContainerCodecContext<?, T> get() {

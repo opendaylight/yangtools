@@ -15,6 +15,7 @@ import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -57,7 +58,7 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    public ImmutableSet<PathArgument> childPathArguments() {
+    public ImmutableSet<NodeIdentifier> childPathArguments() {
         return byYangKeySet();
     }
 
@@ -67,7 +68,7 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    protected PathArgument getDomPathArgument() {
+    protected NodeIdentifier getDomPathArgument() {
         return null;
     }
 

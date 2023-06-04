@@ -12,7 +12,6 @@ import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 
 /**
@@ -43,11 +42,8 @@ final class NonPresenceContainerNodeCodecContext<D extends DataObject> extends C
     }
 
     private @NonNull D loadEmptyObject() {
-        final var domArg = getDomPathArgument();
-        if (!(domArg instanceof NodeIdentifier nodeId)) {
-            throw new IllegalStateException("Unexpected identifier " + domArg);
-        }
-        final var local = createBindingProxy(Builders.containerBuilder().withNodeIdentifier(nodeId).build());
+        final var local = createBindingProxy(
+            Builders.containerBuilder().withNodeIdentifier(getDomPathArgument()).build());
         final var witness = (D) EMPTY_OBJECT.compareAndExchangeRelease(this, null, local);
         return witness != null ? witness : local;
     }

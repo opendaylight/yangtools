@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -58,12 +57,12 @@ public interface BindingNormalizedNodeSerializer {
      * A {@link NormalizedResult} for an {@link Augmentation}.
      *
      * @param path A YangInstanceIdentifier identifying the parent of this augmentation
-     * @param possibleChildren {@link PathArgument}s of each possible child
+     * @param possibleChildren {@link NodeIdentifier}s of each possible child
      * @param children Augmentation children
      */
     record AugmentationResult(
             @NonNull YangInstanceIdentifier path,
-            @NonNull ImmutableSet<PathArgument> possibleChildren,
+            @NonNull ImmutableSet<NodeIdentifier> possibleChildren,
             @NonNull ImmutableList<DataContainerChild> children) implements NormalizedResult {
         public AugmentationResult {
             requireNonNull(path);

@@ -49,7 +49,7 @@ public abstract class AbstractDataObjectCodecContext<D extends DataObject, T ext
         extends DataContainerCodecContext<D, T> {
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
-    private final ImmutableMap<PathArgument, NodeContextSupplier> byYang;
+    private final ImmutableMap<NodeIdentifier, NodeContextSupplier> byYang;
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final MethodHandle proxyConstructor;
 
@@ -124,15 +124,18 @@ public abstract class AbstractDataObjectCodecContext<D extends DataObject, T ext
 
     @Override
     public final NodeCodecContext yangPathArgumentChild(final PathArgument arg) {
-        final var lookup = arg instanceof NodeIdentifierWithPredicates ? new NodeIdentifier(arg.getNodeType()) : arg;
-        return childNonNull(yangChildSupplier(lookup), arg,
-            "Argument %s is not valid child of %s", arg, getSchema())
-            .get();
+        NodeContextSupplier supplier;
+        if (arg instanceof NodeIdentifier nodeId) {
+            supplier = yangChildSupplier(nodeId);
+        } else if (arg instanceof NodeIdentifierWithPredicates nip) {
+            supplier = yangChildSupplier(new NodeIdentifier(nip.getNodeType()));
+        } else {
+            supplier = null;
+        }
+        return childNonNull(supplier, arg, "Argument %s is not valid child of %s", arg, getSchema()).get();
     }
 
-    // FIXME: Never contains NodeIdentifierWithPredicates, what about NodeWithValue?
-    //        If it can't be here, it is always NodeIdentifier and we should specify that
-    @Nullable NodeContextSupplier yangChildSupplier(final @NonNull PathArgument arg) {
+    @Nullable NodeContextSupplier yangChildSupplier(final @NonNull NodeIdentifier arg) {
         return byYang.get(arg);
     }
 
@@ -154,7 +157,7 @@ public abstract class AbstractDataObjectCodecContext<D extends DataObject, T ext
         return value;
     }
 
-    final @NonNull ImmutableSet<PathArgument> byYangKeySet() {
+    final @NonNull ImmutableSet<NodeIdentifier> byYangKeySet() {
         return byYang.keySet();
     }
 

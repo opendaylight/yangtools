@@ -63,7 +63,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
     }
 
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype.Augmentation> augmentToPrototype;
-    private final ImmutableMap<PathArgument, Class<?>> yangToAugmentClass;
+    private final ImmutableMap<NodeIdentifier, Class<?>> yangToAugmentClass;
     private final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
 
     // Note this the content of this field depends only of invariants expressed as this class's fields or
@@ -91,7 +91,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
         generatedClass = analysis.generatedClass;
 
         // Deal with augmentations, which are not something we analysis provides
-        final var augPathToBinding = new HashMap<PathArgument, Class<?>>();
+        final var augPathToBinding = new HashMap<NodeIdentifier, Class<?>>();
         final var augClassToProto = new HashMap<Class<?>, DataContainerCodecPrototype.Augmentation>();
         for (var augment : analysis.possibleAugmentations) {
             final var augProto = loadAugmentPrototype(augment);
@@ -123,7 +123,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
     }
 
     @Override
-    final NodeContextSupplier yangChildSupplier(final PathArgument arg) {
+    final NodeContextSupplier yangChildSupplier(final NodeIdentifier arg) {
         final var child = super.yangChildSupplier(arg);
         if (child == null) {
             final var augClass = yangToAugmentClass.get(arg);

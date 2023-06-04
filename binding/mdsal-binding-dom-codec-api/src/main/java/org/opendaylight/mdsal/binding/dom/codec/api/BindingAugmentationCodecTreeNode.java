@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -49,9 +49,9 @@ public interface BindingAugmentationCodecTreeNode<T extends Augmentation<?>>
     }
 
     /**
-     * Returns the {@link PathArgument}s of items contained in this {@link Augmentation}.
+     * Returns the {@link NodeIdentifier}s of items contained in this {@link Augmentation}.
      *
      * @return A non-empty set of path arguments
      */
-    @NonNull ImmutableSet<PathArgument> childPathArguments();
+    @NonNull ImmutableSet<NodeIdentifier> childPathArguments();
 }
