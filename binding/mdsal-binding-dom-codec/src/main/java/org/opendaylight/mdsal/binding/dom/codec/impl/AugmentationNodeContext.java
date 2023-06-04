@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
@@ -73,8 +72,7 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
-            final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(final DataContainerNode data) {
         return Map.of();
     }
 }

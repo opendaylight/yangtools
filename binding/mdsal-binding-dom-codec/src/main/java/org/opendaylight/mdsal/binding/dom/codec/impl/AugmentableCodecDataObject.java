@@ -12,13 +12,13 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 
 /**
  * A base class for {@link DataObject}s which are also {@link Augmentable}, backed by {@link DataObjectCodecContext}.
@@ -45,7 +45,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     private volatile ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> cachedAugmentations;
 
     protected AugmentableCodecDataObject(final AbstractDataObjectCodecContext<T, ?> context,
-            final DistinctNodeContainer<?, ?> data) {
+            final DataContainerNode data) {
         super(context, data);
     }
 
@@ -69,7 +69,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
             // the augmentation the user is requesting -- otherwise a strict receiver would end up with a cryptic
             // ClassCastException.
             if (augmentationType.isAssignableFrom(augCtx.getBindingClass())) {
-                final var augObj = augCtx.filterFrom((DataContainerNode) codecData());
+                final var augObj = augCtx.filterFrom(codecData());
                 if (augObj != null) {
                     return augObj;
                 }
@@ -80,7 +80,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     @Override
     public final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
-        final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> local = acquireAugmentations();
+        final var local = acquireAugmentations();
         return local != null ? local : loadAugmentations();
     }
 
@@ -90,7 +90,9 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     @SuppressWarnings("unchecked")
     private @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> loadAugmentations() {
-        final var ret = ImmutableMap.copyOf(codecContext().getAllAugmentationsFrom(codecData()));
+        @SuppressWarnings("rawtypes")
+        final Map extracted = codecContext().getAllAugmentationsFrom(codecData());
+        final var ret = ImmutableMap.<Class<? extends Augmentation<T>>, Augmentation<T>>copyOf(extracted);
         final Object witness = CACHED_AUGMENTATIONS.compareAndExchangeRelease(this, null, ret);
         return witness == null ? ret : (ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>>) witness;
     }

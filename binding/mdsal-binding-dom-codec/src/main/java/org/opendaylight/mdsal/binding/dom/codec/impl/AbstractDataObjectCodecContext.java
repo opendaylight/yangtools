@@ -24,8 +24,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
 /**
@@ -140,7 +139,7 @@ public abstract class AbstractDataObjectCodecContext<D extends DataObject, T ext
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    final @NonNull D createBindingProxy(final DistinctNodeContainer<?, ?> node) {
+    final @NonNull D createBindingProxy(final DataContainerNode node) {
         try {
             return (D) proxyConstructor.invokeExact(this, node);
         } catch (final Throwable e) {
@@ -161,6 +160,6 @@ public abstract class AbstractDataObjectCodecContext<D extends DataObject, T ext
         return byYang.keySet();
     }
 
-    abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
-        DistinctNodeContainer<PathArgument, NormalizedNode> data);
+    abstract @NonNull Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
+        DataContainerNode data);
 }

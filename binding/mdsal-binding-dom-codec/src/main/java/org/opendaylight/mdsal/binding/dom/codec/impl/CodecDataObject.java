@@ -15,9 +15,8 @@ import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * A base class for {@link DataObject}s backed by {@link DataObjectCodecContext}. While this class is public, it not
@@ -42,23 +41,21 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     private final @NonNull AbstractDataObjectCodecContext<T, ?> context;
-    @SuppressWarnings("rawtypes")
-    private final @NonNull DistinctNodeContainer data;
+    private final @NonNull DataContainerNode data;
 
     // Accessed via a VarHandle
     @SuppressWarnings("unused")
     // FIXME: consider using a primitive int-based cache (with 0 being uninit)
     private volatile Integer cachedHashcode;
 
-    protected CodecDataObject(final AbstractDataObjectCodecContext<T, ?> context,
-            final DistinctNodeContainer<?, ?> data) {
+    protected CodecDataObject(final AbstractDataObjectCodecContext<T, ?> context, final DataContainerNode data) {
         this.data = requireNonNull(data, "Data must not be null");
         this.context = requireNonNull(context, "Context must not be null");
     }
 
     @Override
     public final int hashCode() {
-        final Integer cached = (Integer) CACHED_HASH_CODE.getAcquire(this);
+        final var cached = (Integer) CACHED_HASH_CODE.getAcquire(this);
         return cached != null ? cached : loadHashCode();
     }
 
@@ -110,15 +107,13 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return context;
     }
 
-    @SuppressWarnings("rawtypes")
-    final @NonNull DistinctNodeContainer codecData() {
+    final @NonNull DataContainerNode codecData() {
         return data;
     }
 
     // Helper split out of codecMember to aid its inlining
     private Object loadMember(final VarHandle handle, final NodeCodecContext childCtx) {
-        @SuppressWarnings("unchecked")
-        final NormalizedNode child = data.childByArg(childCtx.getDomPathArgument());
+        final var child = data.childByArg(childCtx.getDomPathArgument());
 
         // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
         // normal value because defaultObject() may end up throwing an exception intentionally.

@@ -22,7 +22,7 @@ import java.util.function.UnaryOperator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ final class LazyBindingList<E extends DataObject> extends AbstractList<E> implem
     }
 
     static <E extends DataObject> @NonNull List<E> create(final ListNodeCodecContext<E> codec, final int size,
-            final Collection<? extends DistinctNodeContainer<?, ?>> entries) {
+            final Collection<? extends DataContainerNode> entries) {
         if (size == 1) {
             // Do not bother with lazy instantiation in case of a singleton
             return List.of(codec.createBindingProxy(entries.iterator().next()));
@@ -82,11 +82,11 @@ final class LazyBindingList<E extends DataObject> extends AbstractList<E> implem
     }
 
     private static <E extends DataObject> @NonNull List<E> eagerList(final ListNodeCodecContext<E> codec,
-            final int size, final Collection<? extends DistinctNodeContainer<?, ?>> entries) {
+            final int size, final Collection<? extends DataContainerNode> entries) {
         @SuppressWarnings("unchecked")
         final E[] objs = (E[]) new DataObject[size];
         int offset = 0;
-        for (DistinctNodeContainer<?, ?> node : entries) {
+        for (var node : entries) {
             objs[offset++] = codec.createBindingProxy(node);
         }
         verify(offset == objs.length);
@@ -107,10 +107,10 @@ final class LazyBindingList<E extends DataObject> extends AbstractList<E> implem
         //
         // We could do a Class.isInstance() check here, but since the implementation is not marked as final (yet) we
         // would be at the mercy of CHA being able to prove this invariant.
-        return obj.getClass() == codec.generatedClass() ? (E) obj : load(index, (DistinctNodeContainer<?, ?>) obj);
+        return obj.getClass() == codec.generatedClass() ? (E) obj : load(index, (DataContainerNode) obj);
     }
 
-    private @NonNull E load(final int index, final DistinctNodeContainer<?, ?> node) {
+    private @NonNull E load(final int index, final DataContainerNode node) {
         final E ret = codec.createBindingProxy(node);
         final Object witness;
         return (witness = OBJ_AA.compareAndExchangeRelease(objects, index, node, ret)) == node ? ret : (E) witness;

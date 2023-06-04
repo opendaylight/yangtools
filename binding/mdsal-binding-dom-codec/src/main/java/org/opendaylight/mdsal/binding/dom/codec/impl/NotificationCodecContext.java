@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.EventInstantAware;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class NotificationCodecContext<D extends DataObject & BaseNotification>
@@ -57,11 +57,11 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
     }
 
     private static final Generic BB_DOCC = TypeDefinition.Sort.describe(DataObjectCodecContext.class);
-    private static final Generic BB_DNC = TypeDefinition.Sort.describe(DistinctNodeContainer.class);
+    private static final Generic BB_DCN = TypeDefinition.Sort.describe(DataContainerNode.class);
     private static final Generic BB_I = TypeDefinition.Sort.describe(Instant.class);
 
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, DataObjectCodecContext.class,
-        DistinctNodeContainer.class, Instant.class);
+        DataContainerNode.class, Instant.class);
     private static final MethodType NOTIFICATION_TYPE = MethodType.methodType(BaseNotification.class,
         NotificationCodecContext.class, ContainerNode.class, Instant.class);
     private static final String INSTANT_FIELD = "instant";
@@ -83,7 +83,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
                     .name(fqcn)
                     .defineField(INSTANT_FIELD, BB_I, Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC)
                     .defineConstructor(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC)
-                        .withParameters(BB_DOCC, BB_DNC, BB_I)
+                        .withParameters(BB_DOCC, BB_DCN, BB_I)
                         .intercept(ConstructorImplementation.INSTANCE)
                     .defineMethod(EVENT_INSTANT_NAME, EVENT_INSTANT_RETTYPE, Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC)
                         .intercept(EventInstantImplementation.INSTANCE)
@@ -131,7 +131,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
             try {
                 LOAD_CTOR_ARGS = MethodVariableAccess.allArgumentsOf(new MethodDescription.ForLoadedConstructor(
                     AugmentableCodecDataObject.class.getDeclaredConstructor(AbstractDataObjectCodecContext.class,
-                        DistinctNodeContainer.class)));
+                        DataContainerNode.class)));
             } catch (NoSuchMethodException e) {
                 throw new ExceptionInInitializerError(e);
             }

@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
 /**
  * Analysis of a {@link DataObject} specialization class. The primary point of this class is to separate out creation
@@ -42,9 +42,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
  */
 final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
-        AbstractDataObjectCodecContext.class, DistinctNodeContainer.class);
+        AbstractDataObjectCodecContext.class, DataContainerNode.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
-        AbstractDataObjectCodecContext.class, DistinctNodeContainer.class);
+        AbstractDataObjectCodecContext.class, DataContainerNode.class);
 
     final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;

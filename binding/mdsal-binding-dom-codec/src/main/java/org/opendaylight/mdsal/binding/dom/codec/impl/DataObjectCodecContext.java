@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -240,8 +240,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Com
 
     @Override
     @SuppressWarnings("unchecked")
-    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
-            final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
+    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(final DataContainerNode data) {
         /**
          * Due to augmentation fields are at same level as direct children the data of each augmentation needs to be
          * aggregated into own container node, then only deserialized using associated prototype.
