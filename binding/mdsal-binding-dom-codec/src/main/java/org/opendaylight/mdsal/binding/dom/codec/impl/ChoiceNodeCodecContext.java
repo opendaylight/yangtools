@@ -117,20 +117,22 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         final var factory = prototype.getFactory();
         final var localCases = new HashSet<JavaTypeName>();
         for (var caseType : choiceType.validCaseChildren()) {
-            final var cazeDef = loadCase(factory, caseType);
+            final var caseProto = new CaseNodeCodecContext.Prototype(loadCase(factory.getRuntimeContext(), caseType),
+                caseType, factory);
+
             localCases.add(caseType.getIdentifier());
-            byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
+            byClassBuilder.put(caseProto.getBindingClass(), caseProto);
 
             // Updates collection of case children
             @SuppressWarnings("unchecked")
-            final var cazeCls = (Class<? extends DataObject>) cazeDef.getBindingClass();
+            final var cazeCls = (Class<? extends DataObject>) caseProto.getBindingClass();
             for (var cazeChild : getChildrenClasses(cazeCls)) {
-                childToCase.put(cazeChild, cazeDef);
+                childToCase.put(cazeChild, caseProto);
             }
             // Updates collection of YANG instance identifier to case
-            for (var stmt : cazeDef.getType().statement().effectiveSubstatements()) {
+            for (var stmt : caseProto.getType().statement().effectiveSubstatements()) {
                 if (stmt instanceof DataSchemaNode cazeChild) {
-                    byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), cazeDef);
+                    byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), caseProto);
                 }
             }
         }
@@ -186,11 +188,6 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
         byClassBuilder.putAll(bySubstitutionBuilder);
         byClass = ImmutableMap.copyOf(byClassBuilder);
-    }
-
-    private static DataContainerCodecPrototype<CaseRuntimeType> loadCase(final CodecContextFactory factory,
-            final CaseRuntimeType caseType) {
-        return DataContainerCodecPrototype.from(loadCase(factory.getRuntimeContext(), caseType), caseType, factory);
     }
 
     private static Class<?> loadCase(final BindingRuntimeContext context, final CaseRuntimeType caseType) {

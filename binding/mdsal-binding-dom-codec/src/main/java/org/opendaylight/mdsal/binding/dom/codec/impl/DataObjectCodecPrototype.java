@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
-import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
@@ -61,8 +60,6 @@ non-sealed class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extend
                             : new ListNodeCodecContext(this);
         } else if (type instanceof ChoiceRuntimeType) {
             return new ChoiceNodeCodecContext(this);
-        } else if (type instanceof CaseRuntimeType) {
-            return new CaseNodeCodecContext(this);
         }
         throw new IllegalArgumentException("Unsupported type " + getBindingClass() + " " + type);
     }
