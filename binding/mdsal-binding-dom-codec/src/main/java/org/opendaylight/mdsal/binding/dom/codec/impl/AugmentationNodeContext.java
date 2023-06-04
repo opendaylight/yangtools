@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
         extends AbstractDataObjectCodecContext<D, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<D> {
-    AugmentationNodeContext(final DataContainerCodecPrototype.Augmentation prototype) {
+    AugmentationNodeContext(final AugmentationCodecPrototype prototype) {
         super(prototype, new CodecDataObjectAnalysis<>(prototype, CodecItemFactory.of(), null));
     }
 
@@ -44,7 +44,7 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
 
     @Override
     public D filterFrom(final DataContainerNode parentData) {
-        for (var childArg : ((DataContainerCodecPrototype.Augmentation) prototype).getChildArgs()) {
+        for (var childArg : ((AugmentationCodecPrototype) prototype).getChildArgs()) {
             if (parentData.childByArg(childArg) != null) {
                 return createProxy(parentData);
             }

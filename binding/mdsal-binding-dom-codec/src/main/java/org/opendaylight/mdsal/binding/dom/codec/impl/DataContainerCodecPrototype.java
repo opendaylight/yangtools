@@ -10,26 +10,17 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
-import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -45,81 +36,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implements NodeContextSupplier {
-    static final class Augmentation extends DataContainerCodecPrototype<AugmentRuntimeType> {
-        private final @NonNull ImmutableSet<NodeIdentifier> childArgs;
-
-        @SuppressWarnings("unchecked")
-        Augmentation(final Class<?> cls, final QNameModule namespace, final AugmentRuntimeType type,
-                final CodecContextFactory factory, final ImmutableSet<NodeIdentifier> childArgs) {
-            super(Item.of((Class<? extends DataObject>) cls), namespace, type, factory);
-            this.childArgs = requireNonNull(childArgs);
-        }
-
-        @Override
-        NodeIdentifier getYangArg() {
-            throw new UnsupportedOperationException("Augmentation does not have PathArgument address");
-        }
-
-        @Override
-        AugmentationNodeContext<?> createInstance() {
-            return new AugmentationNodeContext<>(this);
-        }
-
-        // Guaranteed to be non-empty
-        @NonNull ImmutableSet<NodeIdentifier> getChildArgs() {
-            return childArgs;
-        }
-    }
-
-    static final class Regular<T extends RuntimeTypeContainer> extends DataContainerCodecPrototype<T> {
-        private final @NonNull NodeIdentifier yangArg;
-
-        @SuppressWarnings("unchecked")
-        private Regular(final Class<?> cls, final NodeIdentifier yangArg, final T type,
-                final CodecContextFactory factory) {
-            this(Item.of((Class<? extends DataObject>) cls), yangArg, type, factory);
-        }
-
-        private Regular(final Item<?> bindingArg, final NodeIdentifier yangArg, final T type,
-                final CodecContextFactory factory) {
-            super(bindingArg, yangArg.getNodeType().getModule(), type, factory);
-            this.yangArg = requireNonNull(yangArg);
-        }
-
-        @Override
-        NodeIdentifier getYangArg() {
-            return yangArg;
-        }
-
-        @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        DataContainerCodecContext<?, T> createInstance() {
-            final var type = getType();
-            if (type instanceof ContainerLikeRuntimeType containerLike) {
-                if (containerLike instanceof ContainerRuntimeType container
-                    && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class)
-                        .isEmpty()) {
-                    return new NonPresenceContainerNodeCodecContext(this);
-                }
-                return new ContainerNodeCodecContext(this);
-            } else if (type instanceof ListRuntimeType) {
-                return Identifiable.class.isAssignableFrom(getBindingClass())
-                        ? KeyedListNodeCodecContext.create((DataContainerCodecPrototype<ListRuntimeType>) this)
-                                : new ListNodeCodecContext(this);
-            } else if (type instanceof ChoiceRuntimeType) {
-                return new ChoiceNodeCodecContext(this);
-            } else if (type instanceof CaseRuntimeType) {
-                return new CaseNodeCodecContext(this);
-            }
-            throw new IllegalArgumentException("Unsupported type " + getBindingClass() + " " + type);
-        }
-    }
-
+abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implements NodeContextSupplier
+        permits AugmentationCodecPrototype, DataObjectCodecPrototype {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecPrototype.class);
 
     private static final VarHandle INSTANCE;
@@ -146,7 +67,7 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
     @SuppressWarnings("unused")
     private volatile DataContainerCodecContext<?, T> instance;
 
-    private DataContainerCodecPrototype(final Item<?> bindingArg, final QNameModule namespace, final T type,
+    DataContainerCodecPrototype(final Item<?> bindingArg, final QNameModule namespace, final T type,
             final CodecContextFactory factory) {
         this.bindingArg = requireNonNull(bindingArg);
         this.namespace = requireNonNull(namespace);
@@ -234,23 +155,24 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
     }
 
     static DataContainerCodecPrototype<BindingRuntimeTypes> rootPrototype(final CodecContextFactory factory) {
-        return new Regular<>(DataRoot.class, NodeIdentifier.create(SchemaContext.NAME),
+        return new DataObjectCodecPrototype<>(DataRoot.class, NodeIdentifier.create(SchemaContext.NAME),
             factory.getRuntimeContext().getTypes(), factory);
     }
 
     static <T extends CompositeRuntimeType> DataContainerCodecPrototype<T> from(final Class<?> cls, final T type,
             final CodecContextFactory factory) {
-        return new Regular<>(cls, createIdentifier(type), type, factory);
+        return new DataObjectCodecPrototype<>(cls, createIdentifier(type), type, factory);
     }
 
     static <T extends CompositeRuntimeType> DataContainerCodecPrototype<T> from(final Item<?> bindingArg, final T type,
             final CodecContextFactory factory) {
-        return new Regular<>(bindingArg, createIdentifier(type), type, factory);
+        return new DataObjectCodecPrototype<>(bindingArg, createIdentifier(type), type, factory);
     }
 
     static DataContainerCodecPrototype<NotificationRuntimeType> from(final Class<?> augClass,
             final NotificationRuntimeType schema, final CodecContextFactory factory) {
-        return new Regular<>(augClass, NodeIdentifier.create(schema.statement().argument()), schema, factory);
+        return new DataObjectCodecPrototype<>(augClass, NodeIdentifier.create(schema.statement().argument()), schema,
+            factory);
     }
 
     private static @NonNull NodeIdentifier createIdentifier(final CompositeRuntimeType type) {
@@ -304,7 +226,6 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
         return witness == null ? tmp : witness;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     // This method must allow concurrent loading, i.e. nothing in it may have effects outside of the loaded object
     abstract @NonNull DataContainerCodecContext<?, T> createInstance();
 }
