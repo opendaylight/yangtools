@@ -14,23 +14,11 @@ import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, CaseRuntimeType> {
-    static final class Prototype extends DataObjectCodecPrototype<CaseRuntimeType> {
-        Prototype(final Class<?> cls, final CaseRuntimeType type, final CodecContextFactory factory) {
-            super(cls, NodeIdentifier.create(type.statement().argument()), type, factory);
-        }
-
-        @Override
-        DataContainerCodecContext<?, CaseRuntimeType> createInstance() {
-            return new CaseNodeCodecContext<>(this);
-        }
-    }
-
-    private CaseNodeCodecContext(final Prototype prototype) {
+    CaseNodeCodecContext(final CaseCodecPrototype prototype) {
         super(prototype, CodecItemFactory.of(prototype.getBindingClass()));
     }
 

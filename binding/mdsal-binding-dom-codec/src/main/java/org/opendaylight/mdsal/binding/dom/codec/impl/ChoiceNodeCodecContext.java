@@ -117,20 +117,19 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         final var factory = prototype.getFactory();
         final var localCases = new HashSet<JavaTypeName>();
         for (var caseType : choiceType.validCaseChildren()) {
-            final var caseProto = new CaseNodeCodecContext.Prototype(loadCase(factory.getRuntimeContext(), caseType),
-                caseType, factory);
+            @SuppressWarnings("unchecked")
+            final var caseClass = (Class<? extends DataObject>) loadCase(factory.getRuntimeContext(), caseType);
+            final var caseProto = new CaseCodecPrototype(caseClass, caseType, factory);
 
             localCases.add(caseType.getIdentifier());
-            byClassBuilder.put(caseProto.getBindingClass(), caseProto);
+            byClassBuilder.put(caseClass, caseProto);
 
             // Updates collection of case children
-            @SuppressWarnings("unchecked")
-            final var cazeCls = (Class<? extends DataObject>) caseProto.getBindingClass();
-            for (var cazeChild : getChildrenClasses(cazeCls)) {
+            for (var cazeChild : getChildrenClasses(caseClass)) {
                 childToCase.put(cazeChild, caseProto);
             }
             // Updates collection of YANG instance identifier to case
-            for (var stmt : caseProto.getType().statement().effectiveSubstatements()) {
+            for (var stmt : caseType.statement().effectiveSubstatements()) {
                 if (stmt instanceof DataSchemaNode cazeChild) {
                     byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), caseProto);
                 }
