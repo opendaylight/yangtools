@@ -1,0 +1,25 @@
+module base {
+  yang-version 1;
+  namespace urn:opendaylight:base;
+  prefix "bb";
+
+  organization "opendaylight";
+  contact "http://www.opendaylight.org/";
+
+  revision "2023-06-06" {
+    reference "Creation";
+  }
+
+  container top {
+    choice options {
+      case original-full {
+        leaf node {
+          type string;
+        }
+      }
+      leaf original-shorthand {
+        type string;
+      }
+    }
+  }
+}
