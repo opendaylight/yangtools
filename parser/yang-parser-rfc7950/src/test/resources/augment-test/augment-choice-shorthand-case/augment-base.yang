@@ -1,0 +1,28 @@
+module augment-base {
+  yang-version 1;
+  namespace urn:opendaylight:augment:base;
+  prefix "ab";
+
+  import base {
+    prefix "bb";
+    revision-date 2023-06-06;
+  }
+
+  organization "opendaylight";
+  contact "http://www.opendaylight.org/";
+
+  revision "2023-06-06" {
+    reference "Creation";
+  }
+
+  augment "/bb:top/bb:options" {
+    case augmented-full {
+      leaf node {
+        type int32;
+      }
+    }
+    leaf augmented-shorthand {
+      type int32;
+    }
+  }
+}
