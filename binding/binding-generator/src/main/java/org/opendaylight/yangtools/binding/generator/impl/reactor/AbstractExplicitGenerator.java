@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
@@ -45,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 // FIXME: unify this with Generator
 public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
-        extends Generator implements CopyableNode, StatementRepresentation<S> {
+        extends Generator implements AddedByUsesAware, StatementRepresentation<S> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractExplicitGenerator.class);
 
     private final @NonNull S statement;
@@ -187,8 +186,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return statement instanceof AddedByUsesAware aware && aware.isAddedByUses();
     }
 
-    @Override
-    public final boolean isAugmenting() {
+    final boolean isAugmenting() {
         return introducedByAugmentation(statement);
     }
 
