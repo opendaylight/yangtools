@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * </ul>
  */
 public interface DataContainerNode
-        extends DistinctNodeContainer<NodeIdentifier, DataContainerChild>, OrderingAware.System {
+        extends DataContainer, DistinctNodeContainer<NodeIdentifier, DataContainerChild> {
     @Override
     int hashCode();
 
