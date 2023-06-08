@@ -13,10 +13,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * Abstract node which does not have value but contains valid {@link DataContainerChild} nodes. Schema of this node is
  * described by instance of {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer}.
  *
- * <p>
- * <b>NOTE:</b>
- * All implementations of this interface are assumed to be {@link OrderingAware.System}, i.e. order-independent.
- *
  * <h2>Implementation notes</h2>
  * This interface should not be implemented directly, but rather implementing one of it's subclasses
  * <ul>
@@ -27,10 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * </ul>
  */
 public interface DataContainerNode
-        extends DistinctNodeContainer<NodeIdentifier, DataContainerChild>, OrderingAware.System {
-    @Override
-    int hashCode();
-
-    @Override
-    boolean equals(Object obj);
+        extends DataContainer, DistinctNodeContainer<NodeIdentifier, DataContainerChild> {
+    // Just a composition of DataContainer and DistingNodeContainer
 }
