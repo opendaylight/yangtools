@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
  * The contents of a {@code yang-data} template instance, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#page-80">RFC8040</a>'s {@code ietf-restconf} module.
  */
-public interface NormalizedYangData extends NormalizedData {
+public non-sealed interface NormalizedYangData extends DataContainer {
     @Override
     default Class<NormalizedYangData> contract() {
         return NormalizedYangData.class;
@@ -21,7 +21,4 @@ public interface NormalizedYangData extends NormalizedData {
 
     @Override
     YangDataName name();
-
-    @Override
-    DataContainerChild body();
 }

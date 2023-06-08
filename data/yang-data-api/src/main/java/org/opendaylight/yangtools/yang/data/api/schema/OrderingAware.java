@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.Ordering;
  */
 @Beta
 @NonNullByDefault
-public sealed interface OrderingAware permits NormalizedNodeContainer, OrderingAware.System, OrderingAware.User {
+public sealed interface OrderingAware permits NormalizedContainer, OrderingAware.System, OrderingAware.User {
     /**
      * Marker interface for NormalizedNodeContainer implementations which correspond to {@code ordered-by system}. These
      * follow the {@link Unordered} contract.
