@@ -19,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * {@link StatementDefinition}s for statements defined by RFC8040.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 public enum YangDataStatements implements StatementDefinition {
@@ -36,7 +34,7 @@ public enum YangDataStatements implements StatementDefinition {
             final Class<? extends DeclaredStatement<?>> declaredRepresentation,
                     final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
-        this.argumentDef = ArgumentDefinition.of(QName.create(statementName, argumentName).intern(), false);
+        argumentDef = ArgumentDefinition.of(QName.create(statementName, argumentName).intern(), false);
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
     }

@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 @Beta
 public abstract class ContainerLikeCompat extends ForwardingObject implements ContainerLike {
     @Override
-    protected abstract @NonNull SchemaNode delegate();
+    public abstract @NonNull SchemaNode delegate();
 
     @Override
     public final Optional<String> getDescription() {

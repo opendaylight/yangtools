@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc8040.model.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -18,11 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC8040</a>. This statement must appear as a top-level
  * statement, otherwise it is ignored and does not appear in the final schema context.
  */
-@Beta
 public interface YangDataSchemaNode extends UnknownSchemaNode, DataNodeContainer {
     @Override
     YangDataEffectiveStatement asEffectiveStatement();
 
+    /**
+     * Return a {@link ContainerLike} backed by this definition's {@link #getChildNodes()}.
+     *
+     * @return A compatibility {@link ContainerLike}
+     */
     default @NonNull ContainerLikeCompat toContainerLike() {
         return new YangDataAsContainer(this);
     }

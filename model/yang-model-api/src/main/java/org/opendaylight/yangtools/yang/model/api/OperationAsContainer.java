@@ -23,7 +23,7 @@ final class OperationAsContainer extends ContainerLikeCompat {
     }
 
     @Override
-    protected OperationDefinition delegate() {
+    public OperationDefinition delegate() {
         return delegate;
     }
 
