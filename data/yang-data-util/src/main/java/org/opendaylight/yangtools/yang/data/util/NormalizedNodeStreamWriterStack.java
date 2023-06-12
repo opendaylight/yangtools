@@ -174,7 +174,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     }
 
     public Object getParent() {
-        final WithStatus schema = schemaStack.peek();
+        final var schema = schemaStack.peek();
         return schema == null ? root : schema;
     }
 
