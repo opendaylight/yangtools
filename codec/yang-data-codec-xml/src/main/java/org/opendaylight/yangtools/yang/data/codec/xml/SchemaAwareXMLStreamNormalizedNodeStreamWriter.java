@@ -120,8 +120,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
 
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final var schema = tracker.startContainerNode(name);
-        startElement(schema.getQName());
+        tracker.startContainerNode(name);
+        startElement(name.getNodeType());
     }
 
     @Override
