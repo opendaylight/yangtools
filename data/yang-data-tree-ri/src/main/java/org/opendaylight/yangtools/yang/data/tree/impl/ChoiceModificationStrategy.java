@@ -11,15 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -32,9 +26,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.AbstractNodeContainerModificationStrategy.Visible;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, ChoiceNode> SUPPORT =
@@ -43,19 +35,19 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
 
     private final ImmutableMap<PathArgument, ModificationApplyOperation> childNodes;
     // FIXME: enforce leaves not coming from two case statements at the same time
-    private final ImmutableMap<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
+    private final ImmutableMap<CaseEnforcer, ImmutableList<CaseEnforcer>> exclusions;
     private final ImmutableMap<PathArgument, CaseEnforcer> caseEnforcers;
     private final @NonNull ChoiceNode emptyNode;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, treeConfig, schema);
 
-        final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
-        final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
-        for (final CaseSchemaNode caze : schema.getCases()) {
-            final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeConfig);
+        final var childBuilder = ImmutableMap.<PathArgument, ModificationApplyOperation>builder();
+        final var enforcerBuilder = ImmutableMap.<PathArgument, CaseEnforcer>builder();
+        for (var caze : schema.getCases()) {
+            final var enforcer = CaseEnforcer.forTree(caze, treeConfig);
             if (enforcer != null) {
-                for (final Entry<NodeIdentifier, DataSchemaNode> entry : enforcer.getChildEntries()) {
+                for (var entry : enforcer.getChildEntries()) {
                     final ModificationApplyOperation childOper;
                     try {
                         childOper = SchemaAwareApplyOperation.from(entry.getValue(), treeConfig);
@@ -72,10 +64,11 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
         childNodes = childBuilder.build();
         caseEnforcers = enforcerBuilder.build();
 
-        final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusionsBuilder = new HashMap<>();
-        for (final CaseEnforcer e : caseEnforcers.values()) {
-            exclusionsBuilder.put(e, ImmutableList.copyOf(
-                Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
+        final var exclusionsBuilder = new HashMap<CaseEnforcer, ImmutableList<CaseEnforcer>>();
+        for (var key : caseEnforcers.values()) {
+            exclusionsBuilder.put(key, caseEnforcers.values().stream()
+                .filter(enforcer -> !key.equals(enforcer))
+                .collect(ImmutableList.toImmutableList()));
         }
         exclusions = ImmutableMap.copyOf(exclusionsBuilder);
         emptyNode = ImmutableNodes.choiceNode(schema.getQName());
