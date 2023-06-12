@@ -216,16 +216,20 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         return (LeafListSchemaNode) schema;
     }
 
-    public LeafListSchemaNode leafSetEntryNode(final QName qname) {
+    private @NonNull LeafListSchemaNode leafSetEntryNode(final QName qname) {
         final Object parent = getParent();
         if (parent instanceof LeafListSchemaNode leafList) {
             return leafList;
         }
-        checkArgument(parent instanceof DataNodeContainer, "Cannot lookup %s in parent %s", qname, parent);
-        final DataSchemaNode child = ((DataNodeContainer) parent).dataChildByName(qname);
-        checkArgument(child instanceof LeafListSchemaNode,
-            "Node %s is neither a leaf-list nor currently in a leaf-list", child);
-        return (LeafListSchemaNode) child;
+        if (parent instanceof DataNodeContainer parentContainer) {
+            final var child = parentContainer.dataChildByName(qname);
+            if (child instanceof LeafListSchemaNode childLeafList) {
+                return childLeafList;
+            }
+            throw new IllegalArgumentException(
+                "Node " + child + " is neither a leaf-list nor currently in a leaf-list");
+        }
+        throw new IllegalArgumentException("Cannot lookup " + qname + " in parent " + parent);
     }
 
     public void startLeafSetEntryNode(final NodeWithValue<?> name) {
