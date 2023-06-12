@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.AbstractNodeContainerModificationStrategy.Visible;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Type of the container node
  */
-class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithStatus> extends Visible<T> {
+class DataNodeContainerModificationStrategy<T extends DataSchemaNode & DataNodeContainer> extends Visible<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
     private static final VarHandle CHILDREN;
 
@@ -65,7 +65,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
     }
 
     private ModificationApplyOperation resolveChild(final PathArgument identifier) {
-        final T schema = getSchema();
+        final var schema = getSchema();
         final var qname = identifier.getNodeType();
         final var child = schema.dataChildByName(qname);
         if (child == null) {

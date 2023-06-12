@@ -32,11 +32,11 @@ import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
+abstract class AbstractNodeContainerModificationStrategy<T extends DataSchemaNode>
         extends SchemaAwareApplyOperation<T> {
-    abstract static class Invisible<T extends WithStatus> extends AbstractNodeContainerModificationStrategy<T> {
+    abstract static class Invisible<T extends DataSchemaNode> extends AbstractNodeContainerModificationStrategy<T> {
         private final @NonNull SchemaAwareApplyOperation<T> entryStrategy;
 
         Invisible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
@@ -60,11 +60,11 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         }
     }
 
-    abstract static class Visible<T extends WithStatus> extends AbstractNodeContainerModificationStrategy<T> {
+    abstract static class Visible<T extends DataSchemaNode> extends AbstractNodeContainerModificationStrategy<T> {
         private final @NonNull T schema;
 
         Visible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
-            final T schema) {
+                final T schema) {
             super(support, treeConfig);
             this.schema = requireNonNull(schema);
         }

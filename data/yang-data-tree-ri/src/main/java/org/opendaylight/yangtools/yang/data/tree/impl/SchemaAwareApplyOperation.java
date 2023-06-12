@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -39,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class SchemaAwareApplyOperation<T extends WithStatus> extends ModificationApplyOperation {
+abstract class SchemaAwareApplyOperation<T extends DataSchemaNode> extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
     static ModificationApplyOperation from(final DataSchemaNode schemaNode,
@@ -277,7 +276,8 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
             Optional<? extends TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
-     * Return the {@link WithStatus}-subclass schema associated with this operation.
+     * Return the {@link DataSchemaNode}-subclass schema associated with this operation.
+     *
      * @return A model node
      */
     abstract @NonNull T getSchema();
