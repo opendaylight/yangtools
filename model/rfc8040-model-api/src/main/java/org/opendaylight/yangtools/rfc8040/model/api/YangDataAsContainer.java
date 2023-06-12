@@ -27,7 +27,7 @@ final class YangDataAsContainer extends ContainerLikeCompat {
     }
 
     @Override
-    protected YangDataSchemaNode delegate() {
+    public YangDataSchemaNode delegate() {
         return delegate;
     }
 

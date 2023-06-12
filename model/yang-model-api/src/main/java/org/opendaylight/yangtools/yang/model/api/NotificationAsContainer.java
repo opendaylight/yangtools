@@ -21,7 +21,7 @@ final class NotificationAsContainer extends ContainerLikeCompat {
     }
 
     @Override
-    protected NotificationDefinition delegate() {
+    public NotificationDefinition delegate() {
         return delegate;
     }
 
