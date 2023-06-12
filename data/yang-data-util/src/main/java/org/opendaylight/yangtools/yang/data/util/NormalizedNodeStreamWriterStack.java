@@ -209,11 +209,10 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         schemaStack.push(schema);
     }
 
-    public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
+    public void startLeafSet(final NodeIdentifier name) {
         final SchemaNode schema = enterDataTree(name);
         checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema);
         schemaStack.push(schema);
-        return (LeafListSchemaNode) schema;
     }
 
     private @NonNull LeafListSchemaNode leafSetEntryNode(final QName qname) {
