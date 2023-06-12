@@ -127,7 +127,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
             }
 
             // Make sure all mandatory children are present
-            enforcer.enforceOnTreeNode(normalizedNode);
+            enforcer.enforceOnChoice(choice);
         }
     }
 
