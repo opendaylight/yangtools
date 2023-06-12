@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -178,7 +177,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         return schema == null ? root : schema;
     }
 
-    private SchemaNode enterDataTree(final PathArgument name) {
+    private @NonNull SchemaNode enterDataTree(final PathArgument name) {
         final QName qname = name.getNodeType();
         final DataTreeEffectiveStatement<?> stmt = dataTree.enterDataTree(qname);
         verify(stmt instanceof SchemaNode, "Unexpected result %s", stmt);
@@ -191,10 +190,21 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         return ret;
     }
 
+    private <T extends DataSchemaNode> @NonNull T enterDataTree(final PathArgument name,
+            final @NonNull Class<T> expectedClass, final @NonNull String humanString) {
+        final var schema = enterDataTree(name);
+        final T casted;
+        try {
+            casted = expectedClass.cast(schema);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Node " + schema + " is not " + humanString);
+        }
+        schemaStack.push(casted);
+        return casted;
+    }
+
     public void startList(final PathArgument name) {
-        final SchemaNode schema = enterDataTree(name);
-        checkArgument(schema instanceof ListSchemaNode, "Node %s is not a list", schema);
-        schemaStack.push(schema);
+        enterDataTree(name, ListSchemaNode.class, "a list");
     }
 
     public void startListItem(final PathArgument name) throws IOException {
@@ -204,15 +214,11 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     }
 
     public void startLeafNode(final NodeIdentifier name) throws IOException {
-        final SchemaNode schema = enterDataTree(name);
-        checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema);
-        schemaStack.push(schema);
+        enterDataTree(name, LeafSchemaNode.class, "a leaf");
     }
 
     public void startLeafSet(final NodeIdentifier name) {
-        final SchemaNode schema = enterDataTree(name);
-        checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema);
-        schemaStack.push(schema);
+        enterDataTree(name, LeafListSchemaNode.class, "a leaf-list");
     }
 
     private @NonNull LeafListSchemaNode leafSetEntryNode(final QName qname) {
@@ -237,7 +243,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
 
     public void startChoiceNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
-        final ChoiceEffectiveStatement stmt = dataTree.enterChoice(name.getNodeType());
+        final var stmt = dataTree.enterChoice(name.getNodeType());
         verify(stmt instanceof ChoiceSchemaNode, "Node %s is not a choice", stmt);
         schemaStack.push((ChoiceSchemaNode) stmt);
     }
@@ -252,29 +258,24 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
             // FIXME: 8.0.0: factor this special case out to something more reasonable, like being initialized at the
             //               Notification's parent and knowing to enterSchemaTree() instead of enterDataTree().
             schema = notification;
+            schemaStack.push(schema);
         } else {
-            schema = enterDataTree(name);
-            checkArgument(schema instanceof ContainerLike, "Node %s is not a container", schema);
+            schema = enterDataTree(name, ContainerLike.class, "a container");
         }
 
-        schemaStack.push(schema);
         return schema;
     }
 
     public void startAnyxmlNode(final NodeIdentifier name) {
-        final SchemaNode schema = enterDataTree(name);
-        checkArgument(schema instanceof AnyxmlSchemaNode, "Node %s is not anyxml", schema);
-        schemaStack.push(schema);
+        enterDataTree(name, AnyxmlSchemaNode.class, "anyxml");
     }
 
     public void startAnydataNode(final NodeIdentifier name) {
-        final SchemaNode schema = enterDataTree(name);
-        checkArgument(schema instanceof AnydataSchemaNode, "Node %s is not anydata", schema);
-        schemaStack.push(schema);
+        enterDataTree(name, AnydataSchemaNode.class, "anydata");
     }
 
     public Object endNode() {
-        final Object ret = schemaStack.pop();
+        final var ret = schemaStack.pop();
         // If this is a data tree node, make sure it is updated. Before that, though, we need to check if this is not
         // actually listEntry -> list or leafListEntry -> leafList exit.
         if (!(ret instanceof AugmentationSchemaNode) && getParent() != ret) {
