@@ -72,10 +72,12 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     private NormalizedNodeStreamWriterStack(final SchemaInferenceStack dataTree) {
         this.dataTree = requireNonNull(dataTree);
         if (!dataTree.isEmpty()) {
-            final EffectiveStatement<?, ?> current = dataTree.currentStatement();
-            checkArgument(current instanceof DataNodeContainer, "Cannot instantiate on %s", current);
-
-            root = (DataNodeContainer) current;
+            final var current = dataTree.currentStatement();
+            if (current instanceof DataNodeContainer container) {
+                root = container;
+            } else {
+                throw new IllegalArgumentException("Cannot instantiate on " + current);
+            }
         } else {
             root = dataTree.getEffectiveModelContext();
         }
