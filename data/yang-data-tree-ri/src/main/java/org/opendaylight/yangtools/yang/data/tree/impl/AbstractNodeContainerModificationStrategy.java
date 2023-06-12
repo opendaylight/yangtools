@@ -110,10 +110,10 @@ abstract class AbstractNodeContainerModificationStrategy<T extends DataSchemaNod
 
     @Override
     final void verifyValueChildren(final NormalizedNode writtenValue) {
+        final var container = (DistinctNodeContainer<?, ?>) writtenValue;
         if (verifyChildrenStructure) {
-            final var container = (DistinctNodeContainer<?, ?>) writtenValue;
             for (var child : container.body()) {
-                final ModificationApplyOperation childOp = childByArg(child.name());
+                final var childOp = childByArg(child.name());
                 if (childOp == null) {
                     throw new SchemaValidationFailedException(String.format(
                         "Node %s is not a valid child of %s according to the schema.",
@@ -122,9 +122,9 @@ abstract class AbstractNodeContainerModificationStrategy<T extends DataSchemaNod
                 childOp.fullVerifyStructure(child);
             }
 
-            optionalVerifyValueChildren(writtenValue);
+            optionalVerifyValueChildren(container);
         }
-        mandatoryVerifyValueChildren(writtenValue);
+        mandatoryVerifyValueChildren(container);
     }
 
     /**
@@ -133,7 +133,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends DataSchemaNod
      *
      * @param writtenValue Effective written value
      */
-    void optionalVerifyValueChildren(final NormalizedNode writtenValue) {
+    void optionalVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
         // Defaults to no-op
     }
 
@@ -143,7 +143,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends DataSchemaNod
      *
      * @param writtenValue Effective written value
      */
-    void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
+    void mandatoryVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
         // Defaults to no-op
     }
 
