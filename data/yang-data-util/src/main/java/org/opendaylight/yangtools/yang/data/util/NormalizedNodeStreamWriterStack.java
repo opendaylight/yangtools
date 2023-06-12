@@ -235,13 +235,11 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         schemaStack.push(leafSetEntryNode(name.getNodeType()));
     }
 
-    public ChoiceSchemaNode startChoiceNode(final NodeIdentifier name) {
+    public void startChoiceNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
         final ChoiceEffectiveStatement stmt = dataTree.enterChoice(name.getNodeType());
         verify(stmt instanceof ChoiceSchemaNode, "Node %s is not a choice", stmt);
-        final ChoiceSchemaNode ret = (ChoiceSchemaNode) stmt;
-        schemaStack.push(ret);
-        return ret;
+        schemaStack.push((ChoiceSchemaNode) stmt);
     }
 
     public SchemaNode startContainerNode(final NodeIdentifier name) {
