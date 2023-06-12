@@ -13,6 +13,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -26,12 +27,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -59,7 +57,7 @@ import org.slf4j.LoggerFactory;
 public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeStreamWriterStack.class);
 
-    private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
+    private final Deque<DataSchemaNode> schemaStack = new ArrayDeque<>();
     private final SchemaInferenceStack dataTree;
     private final DataNodeContainer root;
 
@@ -178,13 +176,13 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     }
 
     private @NonNull SchemaNode enterDataTree(final PathArgument name) {
-        final QName qname = name.getNodeType();
-        final DataTreeEffectiveStatement<?> stmt = dataTree.enterDataTree(qname);
-        verify(stmt instanceof SchemaNode, "Unexpected result %s", stmt);
-        final SchemaNode ret = (SchemaNode) stmt;
-        final Object parent = getParent();
-        if (parent instanceof ChoiceSchemaNode choice) {
-            final DataSchemaNode check = choice.findDataSchemaChild(qname).orElse(null);
+        final var qname = name.getNodeType();
+        final var stmt = dataTree.enterDataTree(qname);
+        if (!(stmt instanceof SchemaNode ret)) {
+            throw new VerifyException("Unexpected result " + stmt);
+        }
+        if (getParent() instanceof ChoiceSchemaNode choice) {
+            final var check = choice.findDataSchemaChild(qname).orElse(null);
             verify(check == ret, "Data tree result %s does not match choice result %s", ret, check);
         }
         return ret;
@@ -208,9 +206,10 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     }
 
     public void startListItem(final PathArgument name) throws IOException {
-        final Object schema = getParent();
-        checkArgument(schema instanceof ListSchemaNode, "List item is not appropriate");
-        schemaStack.push((ListSchemaNode) schema);
+        if (!(getParent() instanceof ListSchemaNode parentList)) {
+            throw new IllegalArgumentException("List item is not appropriate");
+        }
+        schemaStack.push(parentList);
     }
 
     public void startLeafNode(final NodeIdentifier name) throws IOException {
@@ -244,20 +243,23 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     public void startChoiceNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
         final var stmt = dataTree.enterChoice(name.getNodeType());
-        verify(stmt instanceof ChoiceSchemaNode, "Node %s is not a choice", stmt);
-        schemaStack.push((ChoiceSchemaNode) stmt);
+        if (stmt instanceof ChoiceSchemaNode choice) {
+            schemaStack.push(choice);
+        } else {
+            throw new VerifyException("Node " + stmt + " is not a choice");
+        }
     }
 
-    public SchemaNode startContainerNode(final NodeIdentifier name) {
+    public @NonNull ContainerLike startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
 
-        final SchemaNode schema;
+        final ContainerLike schema;
         if (schemaStack.isEmpty() && root instanceof NotificationDefinition notification) {
             // Special case for stacks initialized at notification. We pretend the first container is contained within
             // itself.
             // FIXME: 8.0.0: factor this special case out to something more reasonable, like being initialized at the
             //               Notification's parent and knowing to enterSchemaTree() instead of enterDataTree().
-            schema = notification;
+            schema = notification.toContainerLike();
             schemaStack.push(schema);
         } else {
             schema = enterDataTree(name, ContainerLike.class, "a container");
@@ -278,7 +280,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         final var ret = schemaStack.pop();
         // If this is a data tree node, make sure it is updated. Before that, though, we need to check if this is not
         // actually listEntry -> list or leafListEntry -> leafList exit.
-        if (!(ret instanceof AugmentationSchemaNode) && getParent() != ret) {
+        if (getParent() != ret) {
             dataTree.exit();
         }
         return ret;
