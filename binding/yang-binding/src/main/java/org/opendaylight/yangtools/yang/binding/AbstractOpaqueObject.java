@@ -27,14 +27,8 @@ public abstract class AbstractOpaqueObject<T extends OpaqueObject<T>> implements
 
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof OpaqueObject)) {
-            return false;
-        }
-        final OpaqueObject<?> other = (OpaqueObject<?>) obj;
-        return implementedInterface().equals(other.implementedInterface()) && valueEquals(other.getValue());
+        return this == obj || obj instanceof OpaqueObject<?> other
+            && implementedInterface().equals(other.implementedInterface()) && valueEquals(other.getValue());
     }
 
     @Override

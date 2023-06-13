@@ -32,14 +32,8 @@ public abstract class AbstractOpaqueData<T> implements OpaqueData<T> {
 
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof OpaqueData)) {
-            return false;
-        }
-        final OpaqueData<?> other = (OpaqueData<?>) obj;
-        return getObjectModel().equals(other.getObjectModel()) && dataEquals(other.getData());
+        return this == obj || obj instanceof OpaqueData<?> other
+            && getObjectModel().equals(other.getObjectModel()) && dataEquals(other.getData());
     }
 
     @Override
