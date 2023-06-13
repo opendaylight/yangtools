@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Codec support for extracting the {@link Identifiable#key()} method return from a MapEntryNode.
  */
-// FIXME: sealed class when we have JDK17+
-abstract class IdentifiableItemCodec {
+abstract sealed class IdentifiableItemCodec {
     private static final class SingleKey extends IdentifiableItemCodec {
         private static final MethodType CTOR_TYPE = MethodType.methodType(Identifier.class, Object.class);
 
@@ -126,7 +125,7 @@ abstract class IdentifiableItemCodec {
     private final Class<?> identifiable;
     private final QName qname;
 
-    IdentifiableItemCodec(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
+    private IdentifiableItemCodec(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
             final Class<?> identifiable) {
         this.identifiable = requireNonNull(identifiable);
         qname = schema.argument();
