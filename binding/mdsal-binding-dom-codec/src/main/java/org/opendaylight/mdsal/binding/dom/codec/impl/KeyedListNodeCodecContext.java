@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 
-abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
+abstract sealed class KeyedListNodeCodecContext<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
         extends ListNodeCodecContext<D> {
     private static final class Ordered<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
             extends KeyedListNodeCodecContext<I, D> {

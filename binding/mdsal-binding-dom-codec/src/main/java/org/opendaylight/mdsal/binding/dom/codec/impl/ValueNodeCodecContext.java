@@ -17,8 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * Abstract base class for atomic nodes. These are nodes which are not decomposed in the Binding Specification, such
  * as LeafNodes and LeafSetNodes.
  */
-abstract class ValueNodeCodecContext extends NodeCodecContext implements NodeContextSupplier {
-    abstract static class WithCodec extends ValueNodeCodecContext {
+abstract sealed class ValueNodeCodecContext extends NodeCodecContext implements NodeContextSupplier
+        permits OpaqueNodeCodecContext, ValueNodeCodecContext.WithCodec {
+    abstract static sealed class WithCodec extends ValueNodeCodecContext
+            permits LeafNodeCodecContext, LeafSetNodeCodecContext {
         private final @NonNull ValueCodec<Object, Object> valueCodec;
 
         WithCodec(final DataSchemaNode schema, final ValueCodec<Object, Object> codec, final String getterName,

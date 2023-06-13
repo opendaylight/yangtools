@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNodeCodecContext
+abstract sealed class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNodeCodecContext
         implements BindingOpaqueObjectCodecTreeNode<T> {
     static final class Anyxml<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
         Anyxml(final AnyxmlSchemaNode schema, final String getterName, final Class<T> bindingClass,

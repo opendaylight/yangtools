@@ -44,8 +44,9 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  * While this class is public, it not part of API surface and is an implementation detail. The only reason for it being
  * public is that it needs to be accessible by code generated at runtime.
  */
-public abstract class AbstractDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
-        extends DataContainerCodecContext<D, T> {
+public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
+        extends DataContainerCodecContext<D, T>
+        permits AugmentationNodeContext, DataObjectCodecContext {
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<NodeIdentifier, NodeContextSupplier> byYang;

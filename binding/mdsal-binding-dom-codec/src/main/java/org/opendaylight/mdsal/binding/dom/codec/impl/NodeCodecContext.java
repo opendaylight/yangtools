@@ -19,13 +19,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * <p>
  * Two core subtypes of codec context are available:
  * <ul>
- * <li>{@link ValueNodeCodecContext} - Context for nodes, which does not contain any nested YANG modeled substructures.
- * </li>
- * <li>{@link DataObjectCodecContext} - Context for nodes, which does contain nested YANG modeled substructures. This
- * context nodes contains context for children nodes.</li>
+ *   <li>{@link ValueNodeCodecContext} for nodes, which do not contain any nested YANG modeled substructures</li>
+ *   <li>{@link DataContainerCodecContext} for nodes, which contain nested YANG modeled substructures. These context
+ *       nodes contain contexts for their individual children nodes</li>
  * </ul>
  */
-abstract class NodeCodecContext implements BindingCodecTreeNode {
+abstract sealed class NodeCodecContext implements BindingCodecTreeNode
+        permits DataContainerCodecContext, ValueNodeCodecContext {
     /**
      * Returns {@link NodeIdentifier} of current node, if applicable.
      *

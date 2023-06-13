@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
+sealed class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     static final class OfTypeObject<T extends TypeObject> extends LeafNodeCodecContext
             implements BindingTypeObjectCodecTreeNode<T> {
         private final @NonNull Class<T> bindingClass;

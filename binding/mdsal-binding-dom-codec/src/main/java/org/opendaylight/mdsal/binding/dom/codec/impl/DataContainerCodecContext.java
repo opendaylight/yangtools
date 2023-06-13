@@ -55,8 +55,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class DataContainerCodecContext<D extends DataObject, T extends RuntimeTypeContainer> extends NodeCodecContext
-        implements CommonDataObjectCodecTreeNode<D> {
+abstract sealed class DataContainerCodecContext<D extends DataObject, T extends RuntimeTypeContainer>
+        extends NodeCodecContext implements CommonDataObjectCodecTreeNode<D>
+        permits AbstractDataObjectCodecContext, ChoiceNodeCodecContext, SchemaRootCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);
     private static final VarHandle EVENT_STREAM_SERIALIZER;
 
