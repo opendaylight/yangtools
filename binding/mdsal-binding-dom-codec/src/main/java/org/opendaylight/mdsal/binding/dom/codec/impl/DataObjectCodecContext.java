@@ -258,7 +258,10 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             final var bindingClass = entry.getKey();
             final var codecProto = augmentToPrototype.get(bindingClass);
             if (codecProto != null) {
-                map.put(bindingClass, codecProto.get().deserializeObject(entry.getValue().build()));
+                final var bindingObj = codecProto.get().deserializeObject(entry.getValue().build());
+                if (bindingObj != null) {
+                    map.put(bindingClass, bindingObj);
+                }
             }
         }
         return map;
