@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediate
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.util.concurrent.FluentFuture;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -235,8 +234,6 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         }
 
         @Override
-        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
-            justification = "https://github.com/spotbugs/spotbugs/issues/600")
         protected void storeAsType(final File file, final YangTextSchemaSource cast) {
             try (var castStream = cast.asByteSource(StandardCharsets.UTF_8).openStream()) {
                 Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
