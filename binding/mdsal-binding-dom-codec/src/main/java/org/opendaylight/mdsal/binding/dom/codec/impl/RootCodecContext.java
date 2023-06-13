@@ -102,10 +102,10 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
             }
         });
 
-    private final LoadingCache<Class<? extends DataObject>, ChoiceNodeCodecContext<?>> choicesByClass =
+    private final LoadingCache<Class<? extends DataObject>, ChoiceCodecContext<?>> choicesByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public ChoiceNodeCodecContext<?> load(final Class<? extends DataObject> key) {
+            public ChoiceCodecContext<?> load(final Class<? extends DataObject> key) {
                 return createChoiceDataContext(key);
             }
         });
@@ -343,7 +343,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
         };
     }
 
-    ChoiceNodeCodecContext<?> createChoiceDataContext(final Class<? extends DataObject> caseType) {
+    ChoiceCodecContext<?> createChoiceDataContext(final Class<? extends DataObject> caseType) {
         final var choiceClass = findCaseChoice(caseType);
         if (choiceClass == null) {
             throw new IllegalArgumentException(caseType + " is not a valid case representation");
@@ -355,8 +355,8 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
         }
 
         final var choice = DataContainerCodecPrototype.from(choiceClass, choiceType, factory()).get();
-        verify(choice instanceof ChoiceNodeCodecContext);
-        return (ChoiceNodeCodecContext<?>) choice;
+        verify(choice instanceof ChoiceCodecContext);
+        return (ChoiceCodecContext<?>) choice;
     }
 
     @Override

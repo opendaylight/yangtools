@@ -58,7 +58,7 @@ non-sealed class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extend
                     ? KeyedListNodeCodecContext.create((DataContainerCodecPrototype<ListRuntimeType>) this)
                             : new ListNodeCodecContext(this);
         } else if (type instanceof ChoiceRuntimeType) {
-            return new ChoiceNodeCodecContext(this);
+            return new ChoiceCodecContext(this);
         }
         throw new IllegalArgumentException("Unsupported type " + getBindingClass() + " " + type);
     }

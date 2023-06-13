@@ -95,9 +95,9 @@ import org.slf4j.LoggerFactory;
  * ambiguous reference and issue warn once when they are encountered -- tracking warning information in
  * {@link #ambiguousByCaseChildWarnings}.
  */
-final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceRuntimeType>
+final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceRuntimeType>
         implements BindingDataObjectCodecTreeNode<D> {
-    private static final Logger LOG = LoggerFactory.getLogger(ChoiceNodeCodecContext.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ChoiceCodecContext.class);
 
     private final ImmutableMap<NodeIdentifier, DataContainerCodecPrototype<?>> byYangCaseChild;
     private final ImmutableListMultimap<Class<?>, DataContainerCodecPrototype<?>> ambiguousByCaseChildClass;
@@ -105,7 +105,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
     private final Set<Class<?>> ambiguousByCaseChildWarnings;
 
-    ChoiceNodeCodecContext(final DataContainerCodecPrototype<ChoiceRuntimeType> prototype) {
+    ChoiceCodecContext(final DataContainerCodecPrototype<ChoiceRuntimeType> prototype) {
         super(prototype);
         final var byYangCaseChildBuilder = new HashMap<NodeIdentifier, DataContainerCodecPrototype<?>>();
         final var byClassBuilder = new HashMap<Class<?>, DataContainerCodecPrototype<?>>();

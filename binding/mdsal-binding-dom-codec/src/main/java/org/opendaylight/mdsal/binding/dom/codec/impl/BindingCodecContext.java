@@ -314,7 +314,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 // We enter list, we do not update current Node yet,
                 // since we need to verify
                 currentList = listNode;
-            } else if (nextNode instanceof ChoiceNodeCodecContext) {
+            } else if (nextNode instanceof ChoiceCodecContext) {
                 // We do not add path argument for choice, since
                 // it is not supported by binding instance identifier.
                 currentNode = nextNode;
@@ -331,7 +331,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
         // Algorithm ended in list as whole representation
         // we sill need to emit identifier for list
-        if (currentNode instanceof ChoiceNodeCodecContext) {
+        if (currentNode instanceof ChoiceCodecContext) {
             LOG.debug("Instance identifier targeting a choice is not representable ({})", dom);
             return null;
         }

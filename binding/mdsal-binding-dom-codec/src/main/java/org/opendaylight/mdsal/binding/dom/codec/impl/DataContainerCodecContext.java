@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 
 abstract sealed class DataContainerCodecContext<D extends DataObject, T extends RuntimeTypeContainer>
         extends CodecContext implements CommonDataObjectCodecTreeNode<D>
-        permits AbstractDataObjectCodecContext, ChoiceNodeCodecContext, RootCodecContext {
+        permits AbstractDataObjectCodecContext, ChoiceCodecContext, RootCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);
     private static final VarHandle EVENT_STREAM_SERIALIZER;
 

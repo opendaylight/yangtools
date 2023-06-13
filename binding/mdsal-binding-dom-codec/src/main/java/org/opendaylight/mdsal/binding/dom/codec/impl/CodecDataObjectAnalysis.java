@@ -99,7 +99,7 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
             // FIXME: It really feels like we should be specializing DataContainerCodecPrototype so as to ditch
             //        createInstance() and then we could do an instanceof check instead.
             if (childProto.getType() instanceof ChoiceRuntimeType) {
-                final var choice = (ChoiceNodeCodecContext<?>) childProto.get();
+                final var choice = (ChoiceCodecContext<?>) childProto.get();
                 for (var cazeChild : choice.getCaseChildrenClasses()) {
                     byBindingArgClassBuilder.put(cazeChild, childProto);
                 }
