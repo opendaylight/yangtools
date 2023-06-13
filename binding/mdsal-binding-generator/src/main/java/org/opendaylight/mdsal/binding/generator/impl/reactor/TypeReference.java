@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 
-abstract class TypeReference {
+abstract sealed class TypeReference {
     private static final class Identityref extends TypeReference {
         private final List<IdentityGenerator> referencedGenerators;
 
@@ -43,7 +43,7 @@ abstract class TypeReference {
     }
 
     // Note: this is exposed only for legacy naming handling
-    abstract static class Leafref extends TypeReference {
+    abstract static sealed class Leafref extends TypeReference {
         private Leafref() {
             // Hidden on purpose
         }
@@ -75,8 +75,25 @@ abstract class TypeReference {
         }
     }
 
+    private static final class FailedLeafref extends Leafref {
+        private final IllegalArgumentException cause;
+
+        FailedLeafref(final IllegalArgumentException cause) {
+            this.cause = requireNonNull(cause);
+        }
+
+        @Override
+        Type methodReturnType(final TypeBuilderFactory builderFactory) {
+            throw new UnsupportedOperationException("Cannot ascertain type", cause);
+        }
+    }
+
     static @NonNull TypeReference leafRef(final @Nullable AbstractTypeObjectGenerator<?, ?> referencedGenerator) {
         return referencedGenerator == null ? UnresolvedLeafref.INSTANCE : new ResolvedLeafref(referencedGenerator);
+    }
+
+    static @NonNull TypeReference leafRef(final @NonNull IllegalArgumentException cause) {
+        return new FailedLeafref(cause);
     }
 
     static @NonNull TypeReference identityRef(final List<IdentityGenerator> referencedGenerators) {

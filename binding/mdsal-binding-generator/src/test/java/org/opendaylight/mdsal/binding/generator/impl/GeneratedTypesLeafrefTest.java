@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,7 +23,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class GeneratedTypesLeafrefTest {
@@ -212,12 +212,15 @@ public class GeneratedTypesLeafrefTest {
 
     @Test
     public void testLeafrefInvalidPathResolving() {
-        final EffectiveModelContext context =  YangParserTestUtils.parseYangResource(
+        final var context =  YangParserTestUtils.parseYangResource(
             "/leafref-test-invalid-model/foo.yang");
         assertEquals(1, context.getModules().size());
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        final var uoe = assertThrows(UnsupportedOperationException.class,
             () -> DefaultBindingGenerator.generateFor(context));
-        assertThat(ex.getMessage(), containsString("Failed to find leafref target"));
+        assertEquals("Cannot ascertain type", uoe.getMessage());
+        final var cause = uoe.getCause();
+        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertThat(cause.getMessage(), containsString("Failed to find leafref target"));
     }
 }

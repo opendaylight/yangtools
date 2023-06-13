@@ -213,7 +213,12 @@ public class DefaultBindingGeneratorTest {
     @Test
     public void javaTypeForSchemaDefinitionInvalidLeafrefPathTest() {
         final var ctx = YangParserTestUtils.parseYangResource("/unresolvable-leafref.yang");
-        final var ex = assertThrows(IllegalArgumentException.class, () -> DefaultBindingGenerator.generateFor(ctx));
+
+        final var uoe = assertThrows(UnsupportedOperationException.class,
+            () -> DefaultBindingGenerator.generateFor(ctx));
+        assertEquals("Cannot ascertain type", uoe.getMessage());
+        final var ex = uoe.getCause();
+        assertThat(ex, instanceOf(IllegalArgumentException.class));
         assertEquals("Failed to find leafref target /somewhere/i/belong", ex.getMessage());
         final var cause = ex.getCause();
         assertThat(cause, instanceOf(IllegalArgumentException.class));

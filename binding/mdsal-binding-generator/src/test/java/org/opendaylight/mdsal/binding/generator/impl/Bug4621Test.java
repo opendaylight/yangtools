@@ -7,19 +7,23 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4621Test {
     @Test
     public void testMissingLeafrefTarget() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/bug4621.yang");
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        final var context = YangParserTestUtils.parseYangResource("/bug4621.yang");
+        final var uoe = assertThrows(UnsupportedOperationException.class,
             () -> DefaultBindingGenerator.generateFor(context));
-        assertEquals("Failed to find leafref target /foo:neighbor/foo:mystring1", ex.getMessage());
+        assertEquals("Cannot ascertain type", uoe.getMessage());
+        final var cause = uoe.getCause();
+        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertEquals("Failed to find leafref target /foo:neighbor/foo:mystring1", cause.getMessage());
     }
 }

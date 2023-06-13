@@ -1,0 +1,17 @@
+module mdsal829 {
+  namespace mdsal829;
+  prefix mdsal829;
+
+  feature feat;
+
+  typedef foo {
+    type leafref {
+      path /mdsal829:bar;
+    }
+  }
+
+  leaf bar {
+    if-feature feat;
+    type string;
+  }
+}
