@@ -61,7 +61,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
             next = current;
         }
         schema.push(next);
-        return (NodeIdentifier) next.getDomPathArgument();
+        return next.getDomPathArgument();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
