@@ -154,7 +154,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     private final @NonNull InstanceIdentifierCodec instanceIdentifierCodec;
     private final @NonNull IdentityCodec identityCodec;
     private final @NonNull BindingRuntimeContext context;
-    private final @NonNull SchemaRootCodecContext<?> root;
+    private final @NonNull RootCodecContext<?> root;
 
     public BindingCodecContext() {
         this(ServiceLoader.load(BindingRuntimeContext.class).findFirst()
@@ -163,7 +163,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     public BindingCodecContext(final BindingRuntimeContext context) {
         this.context = requireNonNull(context, "Binding Runtime Context is required.");
-        root = new SchemaRootCodecContext<>(this);
+        root = new RootCodecContext<>(this);
         identityCodec = new IdentityCodec(context);
         instanceIdentifierCodec = new InstanceIdentifierCodec(this);
     }

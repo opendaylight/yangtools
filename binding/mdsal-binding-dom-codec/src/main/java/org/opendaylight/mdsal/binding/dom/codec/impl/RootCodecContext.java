@@ -67,7 +67,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
-final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, BindingRuntimeTypes>
+final class RootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, BindingRuntimeTypes>
         implements BindingDataObjectCodecTreeNode<D> {
     /**
      * Prototype for the root of YANG modeled world. This class only exists because DataContainerCodecContext requires
@@ -111,7 +111,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         });
 
     private final LoadingCache<Class<?>, NotificationCodecContext<?>> notificationsByClass = CacheBuilder.newBuilder()
-        .build(new CacheLoader<Class<?>, NotificationCodecContext<?>>() {
+        .build(new CacheLoader<>() {
             @Override
             public NotificationCodecContext<?> load(final Class<?> key) {
                 // FIXME: sharpen check to an Notification.class
@@ -127,7 +127,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         });
 
     private final LoadingCache<Class<?>, ContainerNodeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder()
-        .build(new CacheLoader<Class<?>, ContainerNodeCodecContext<?>>() {
+        .build(new CacheLoader<>() {
             @Override
             public ContainerNodeCodecContext<?> load(final Class<?> key) {
                 final BiFunction<BindingRuntimeTypes, QName, Optional<? extends ContainerLikeRuntimeType<?, ?>>> lookup;
@@ -224,7 +224,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             }
         });
 
-    SchemaRootCodecContext(final CodecContextFactory factory) {
+    RootCodecContext(final CodecContextFactory factory) {
         super(new Prototype(factory));
     }
 
