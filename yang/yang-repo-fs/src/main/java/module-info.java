@@ -13,6 +13,5 @@ module org.opendaylight.yangtools.yang.model.repo.fs {
     requires transitive org.opendaylight.yangtools.yang.repo.spi;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.yang.model.api;
     requires org.slf4j;
 }
