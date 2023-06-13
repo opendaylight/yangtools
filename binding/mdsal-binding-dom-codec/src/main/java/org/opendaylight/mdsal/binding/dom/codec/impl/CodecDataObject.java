@@ -78,7 +78,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return cached != null ? unmaskNull(cached) : loadMember(handle, context.streamChild(bindingClass));
     }
 
-    protected final Object codecMember(final VarHandle handle, final NodeContextSupplier supplier) {
+    protected final Object codecMember(final VarHandle handle, final CodecContextSupplier supplier) {
         final Object cached = handle.getAcquire(this);
         return cached != null ? unmaskNull(cached) : loadMember(handle, supplier.get());
     }
@@ -114,7 +114,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     // Helper split out of codecMember to aid its inlining
-    private Object loadMember(final VarHandle handle, final NodeCodecContext childCtx) {
+    private Object loadMember(final VarHandle handle, final CodecContext childCtx) {
         final var child = data.childByArg(childCtx.getDomPathArgument());
 
         // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have

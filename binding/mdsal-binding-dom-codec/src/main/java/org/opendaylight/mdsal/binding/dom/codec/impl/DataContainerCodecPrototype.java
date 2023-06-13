@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implements NodeContextSupplier
+abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer> implements CodecContextSupplier
         permits AugmentationCodecPrototype, DataObjectCodecPrototype {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecPrototype.class);
 

@@ -17,6 +17,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @Beta
 @FunctionalInterface
 @NonNullByDefault
-public interface NodeContextSupplier {
-    NodeCodecContext get();
+public interface CodecContextSupplier {
+    CodecContext get();
 }

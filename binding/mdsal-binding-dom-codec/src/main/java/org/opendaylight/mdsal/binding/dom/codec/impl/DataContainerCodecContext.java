@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract sealed class DataContainerCodecContext<D extends DataObject, T extends RuntimeTypeContainer>
-        extends NodeCodecContext implements CommonDataObjectCodecTreeNode<D>
+        extends CodecContext implements CommonDataObjectCodecTreeNode<D>
         permits AbstractDataObjectCodecContext, ChoiceNodeCodecContext, SchemaRootCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);
     private static final VarHandle EVENT_STREAM_SERIALIZER;
@@ -110,7 +110,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
     @Override
-    public abstract NodeCodecContext yangPathArgumentChild(YangInstanceIdentifier.PathArgument arg);
+    public abstract CodecContext yangPathArgumentChild(YangInstanceIdentifier.PathArgument arg);
 
     /**
      * Returns nested node context using supplied Binding Instance Identifier

@@ -49,7 +49,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         permits AugmentationNodeContext, DataObjectCodecContext {
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
-    private final ImmutableMap<NodeIdentifier, NodeContextSupplier> byYang;
+    private final ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final MethodHandle proxyConstructor;
 
@@ -123,8 +123,8 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     }
 
     @Override
-    public final NodeCodecContext yangPathArgumentChild(final PathArgument arg) {
-        NodeContextSupplier supplier;
+    public final CodecContext yangPathArgumentChild(final PathArgument arg) {
+        CodecContextSupplier supplier;
         if (arg instanceof NodeIdentifier nodeId) {
             supplier = yangChildSupplier(nodeId);
         } else if (arg instanceof NodeIdentifierWithPredicates nip) {
@@ -135,7 +135,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         return childNonNull(supplier, arg, "Argument %s is not valid child of %s", arg, getSchema()).get();
     }
 
-    @Nullable NodeContextSupplier yangChildSupplier(final @NonNull NodeIdentifier arg) {
+    @Nullable CodecContextSupplier yangChildSupplier(final @NonNull NodeIdentifier arg) {
         return byYang.get(arg);
     }
 

@@ -124,7 +124,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     @Override
-    final NodeContextSupplier yangChildSupplier(final NodeIdentifier arg) {
+    final CodecContextSupplier yangChildSupplier(final NodeIdentifier arg) {
         final var child = super.yangChildSupplier(arg);
         if (child == null) {
             final var augClass = yangToAugmentClass.get(arg);

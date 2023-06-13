@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * @param <T> BindingObject subtype
  * @param <C> Root codec context type
  */
-abstract class AbstractBindingNormalizedNodeCache<T extends BindingObject, C extends NodeCodecContext>
+abstract class AbstractBindingNormalizedNodeCache<T extends BindingObject, C extends CodecContext>
         extends CacheLoader<T, NormalizedNode> {
     private final LoadingCache<T, NormalizedNode> cache;
     private final @NonNull C rootContext;

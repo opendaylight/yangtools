@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.binding.BindingObject;
  */
 abstract class AbstractBindingNormalizedNodeCacheHolder {
     @SuppressWarnings("rawtypes")
-    private final LoadingCache<NodeCodecContext, AbstractBindingNormalizedNodeCache> caches =
+    private final LoadingCache<CodecContext, AbstractBindingNormalizedNodeCache> caches =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public AbstractBindingNormalizedNodeCache load(final NodeCodecContext key) {
+            public AbstractBindingNormalizedNodeCache load(final CodecContext key) {
                 // FIXME: Use a switch expression once we have https://openjdk.org/jeps/441
                 if (key instanceof DataContainerCodecContext<?, ?> dataContainer) {
                     return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this,
@@ -45,7 +45,7 @@ abstract class AbstractBindingNormalizedNodeCacheHolder {
     }
 
     @SuppressWarnings("unchecked")
-    <T extends BindingObject, C extends NodeCodecContext & BindingObjectCodecTreeNode<?>>
+    <T extends BindingObject, C extends CodecContext & BindingObjectCodecTreeNode<?>>
             AbstractBindingNormalizedNodeCache<T, C> getCachingSerializer(final C childCtx) {
         return isCached(childCtx.getBindingClass()) ? caches.getUnchecked(childCtx) : null;
     }

@@ -49,14 +49,14 @@ public final class ClassGeneratorBridge {
         }
     }
 
+    interface CodecContextSupplierProvider<T> extends BridgeProvider<T> {
+
+        @NonNull CodecContextSupplier resolveCodecContextSupplier(@NonNull String methodName);
+    }
+
     interface LocalNameProvider<T> extends BridgeProvider<T> {
 
         @NonNull String resolveLocalName(@NonNull String methodName);
-    }
-
-    interface NodeContextSupplierProvider<T> extends BridgeProvider<T> {
-
-        @NonNull NodeContextSupplier resolveNodeContextSupplier(@NonNull String methodName);
     }
 
     private static final ThreadLocal<BridgeProvider<?>> CURRENT_CUSTOMIZER = new ThreadLocal<>();
@@ -65,8 +65,8 @@ public final class ClassGeneratorBridge {
         // Hidden on purpose
     }
 
-    public static @NonNull NodeContextSupplier resolveNodeContextSupplier(final @NonNull String methodName) {
-        return current(NodeContextSupplierProvider.class).resolveNodeContextSupplier(methodName);
+    public static @NonNull CodecContextSupplier resolveCodecContextSupplier(final @NonNull String methodName) {
+        return current(CodecContextSupplierProvider.class).resolveCodecContextSupplier(methodName);
     }
 
     public static @NonNull String resolveLocalName(final @NonNull String methodName) {

@@ -270,7 +270,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
             final @Nullable Collection<InstanceIdentifier.PathArgument> bindingArguments) {
-        NodeCodecContext currentNode = root;
+        CodecContext currentNode = root;
         ListNodeCodecContext<?> currentList = null;
 
         for (var domArg : dom.getPathArguments()) {

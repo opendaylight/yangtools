@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 /**
  * A cache of NormalizedNodes corresponding to a particular TypeObject instantiation.
  */
-final class TypeObjectNormalizedNodeCache<C extends NodeCodecContext & BindingTypeObjectCodecTreeNode<TypeObject>>
+final class TypeObjectNormalizedNodeCache<C extends CodecContext & BindingTypeObjectCodecTreeNode<TypeObject>>
         extends AbstractBindingNormalizedNodeCache<TypeObject, C> {
     TypeObjectNormalizedNodeCache(final C rootContext) {
         super(rootContext);

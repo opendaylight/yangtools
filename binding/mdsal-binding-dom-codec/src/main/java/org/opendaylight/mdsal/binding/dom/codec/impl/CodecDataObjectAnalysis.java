@@ -47,7 +47,7 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
 
     final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
-    final @NonNull ImmutableMap<NodeIdentifier, NodeContextSupplier> byYang;
+    final @NonNull ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;
     final @NonNull ImmutableMap<String, ValueNodeCodecContext> leafNodes;
     final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
     final @NonNull List<AugmentRuntimeType> possibleAugmentations;
@@ -66,7 +66,7 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
         final var clsToMethod = getChildrenClassToMethod(bindingClass);
 
         // Indexing part: be very careful around what gets done when
-        final var byYangBuilder = new HashMap<NodeIdentifier, NodeContextSupplier>();
+        final var byYangBuilder = new HashMap<NodeIdentifier, CodecContextSupplier>();
 
         // Step 1: add leaf children
         var leafBuilder = ImmutableMap.<String, ValueNodeCodecContext>builderWithExpectedSize(leafContexts.size());

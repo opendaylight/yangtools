@@ -33,9 +33,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWriter,
         Delegator<NormalizedNodeStreamWriter> {
-    private final Deque<NodeCodecContext> schema = new ArrayDeque<>();
+    private final Deque<CodecContext> schema = new ArrayDeque<>();
     private final @NonNull NormalizedNodeStreamWriter delegate;
-    private final NodeCodecContext rootContext;
+    private final CodecContext rootContext;
 
     BindingToNormalizedStreamWriter(final DataContainerCodecContext<?, ?> rootContext,
             final NormalizedNodeStreamWriter delegate) {
@@ -47,13 +47,13 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
         delegate.nextDataSchemaNode((DataSchemaNode) schemaNode);
     }
 
-    NodeCodecContext current() {
+    CodecContext current() {
         return schema.peek();
     }
 
     private NodeIdentifier duplicateSchemaEnter() {
         final var current = current();
-        final NodeCodecContext next;
+        final CodecContext next;
         if (current == null) {
             // Entry of first node
             next = rootContext;
@@ -67,7 +67,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final Class<?> name, final Class<T> identifier) {
         final var current = current();
-        final NodeCodecContext next;
+        final CodecContext next;
         if (current == null) {
             // Entry of first node
             next = rootContext;
@@ -94,7 +94,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
 
     @Override
     public void endNode() throws IOException {
-        NodeCodecContext left = schema.pop();
+        CodecContext left = schema.pop();
         // Due to writer does not start a new node on startCase() and on startAugmentationNode()
         // node ending should not be triggered when associated endNode() is invoked.
         if (!(left instanceof CaseNodeCodecContext) && !(left instanceof AugmentationNodeContext)) {
