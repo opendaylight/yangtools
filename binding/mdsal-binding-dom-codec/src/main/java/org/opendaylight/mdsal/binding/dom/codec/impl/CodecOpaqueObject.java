@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 public abstract class CodecOpaqueObject<T extends OpaqueObject<T>> extends AbstractOpaqueObject<T> {
     private final @NonNull OpaqueData<?> value;
 
-    // This constructor is public so Javassist generates a public constructor and we do not need to muck
-    public CodecOpaqueObject(final OpaqueData<?> value) {
+    protected CodecOpaqueObject(final OpaqueData<?> value) {
         this.value = requireNonNull(value);
     }
 
