@@ -1,0 +1,31 @@
+module notification-test {
+  yang-version 1.1;
+  namespace "test:notification";
+  prefix tn;
+
+  notification root-notification {
+    leaf root-message {
+      type string;
+    }
+  }
+
+  container container-one {
+    notification inline-notification {
+      leaf inline-message {
+        type string;
+      }
+    }
+  }
+
+  container container-two {
+    uses grp;
+  }
+
+  grouping grp {
+    notification group-notification {
+      leaf group-message {
+        type string;
+      }
+    }
+  }
+}
