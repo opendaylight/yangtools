@@ -46,8 +46,8 @@ final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
             return Futures.immediateFailedFuture(
                 new MissingSchemaSourceException("No source registered", sourceIdentifier));
         }
-        return Futures.immediateFuture(YangTextSchemaSource.delegateForByteSource(sourceIdentifier,
-                    info.getYangTextByteSource()));
+        return Futures.immediateFuture(YangTextSchemaSource.delegateForCharSource(sourceIdentifier,
+                    info.getYangTextCharSource()));
     }
 
     @Override

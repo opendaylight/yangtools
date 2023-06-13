@@ -226,13 +226,13 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     }
 
     static @NonNull YangTextSchemaSource toYangTextSource(final YangModuleInfo moduleInfo) {
-        return YangTextSchemaSource.delegateForByteSource(sourceIdentifierFrom(moduleInfo),
-            moduleInfo.getYangTextByteSource());
+        return YangTextSchemaSource.delegateForCharSource(sourceIdentifierFrom(moduleInfo),
+            moduleInfo.getYangTextCharSource());
     }
 
     private static @NonNull YangTextSchemaSource toYangTextSource(final SourceIdentifier identifier,
             final YangModuleInfo moduleInfo) {
-        return YangTextSchemaSource.delegateForByteSource(identifier, moduleInfo.getYangTextByteSource());
+        return YangTextSchemaSource.delegateForCharSource(identifier, moduleInfo.getYangTextCharSource());
     }
 
     private static SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
