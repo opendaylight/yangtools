@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
 /**
- * Abstract base for {@link DataObjectCodecContext} and {@link AugmentationNodeContext}. They share most of their
+ * Abstract base for {@link DataObjectCodecContext} and {@link AugmentationCodecContext}. They share most of their
  * mechanics, but notably:
  * <ol>
  *   <li>DataObjectCodecContext has an exact DistinctNodeContainer and YangInstanceIdentifier mapping and can be the
@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  */
 public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends DataContainerCodecContext<D, T>
-        permits AugmentationNodeContext, DataObjectCodecContext {
+        permits AugmentationCodecContext, DataObjectCodecContext {
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;

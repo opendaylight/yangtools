@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Map;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -20,9 +19,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
+final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
         extends AbstractDataObjectCodecContext<D, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<D> {
-    AugmentationNodeContext(final AugmentationCodecPrototype prototype) {
+    AugmentationCodecContext(final AugmentationCodecPrototype prototype) {
         super(prototype, new CodecDataObjectAnalysis<>(prototype, CodecItemFactory.of(), null));
     }
 
@@ -46,14 +45,10 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
     public D filterFrom(final DataContainerNode parentData) {
         for (var childArg : ((AugmentationCodecPrototype) prototype).getChildArgs()) {
             if (parentData.childByArg(childArg) != null) {
-                return createProxy(parentData);
+                return createBindingProxy(parentData);
             }
         }
         return null;
-    }
-
-    private @NonNull D createProxy(final @NonNull DataContainerNode parentData) {
-        return createBindingProxy(parentData);
     }
 
     @Override

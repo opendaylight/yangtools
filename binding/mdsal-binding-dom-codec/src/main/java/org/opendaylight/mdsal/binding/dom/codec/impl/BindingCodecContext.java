@@ -283,7 +283,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
              * Compatibility case: if it's determined the node belongs to augmentation
              * then insert augmentation path argument in between.
              */
-            if (nextNode instanceof AugmentationNodeContext<?> augmContext) {
+            if (nextNode instanceof AugmentationCodecContext<?> augmContext) {
                 if (bindingArguments != null) {
                     bindingArguments.add(augmContext.bindingArg());
                 }

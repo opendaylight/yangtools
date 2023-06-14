@@ -62,7 +62,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
         @SuppressWarnings("rawtypes")
         final var optAugCtx = codecContext().possibleStreamChild((Class) augmentationType);
         if (optAugCtx.isPresent()) {
-            final var augCtx = (AugmentationNodeContext<A>) optAugCtx.orElseThrow();
+            final var augCtx = (AugmentationCodecContext<A>) optAugCtx.orElseThrow();
             // Due to binding specification not representing grouping instantiations we can end up having the same
             // augmentation applied to a grouping multiple times. While these augmentations have the same shape, they
             // are still represented by distinct binding classes and therefore we need to make sure the result matches

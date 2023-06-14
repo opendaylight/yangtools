@@ -33,8 +33,8 @@ final class AugmentationCodecPrototype extends DataContainerCodecPrototype<Augme
     }
 
     @Override
-    AugmentationNodeContext<?> createInstance() {
-        return new AugmentationNodeContext<>(this);
+    AugmentationCodecContext<?> createInstance() {
+        return new AugmentationCodecContext<>(this);
     }
 
     // Guaranteed to be non-empty

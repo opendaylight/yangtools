@@ -97,7 +97,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
         CodecContext left = schema.pop();
         // Due to writer does not start a new node on startCase() and on startAugmentationNode()
         // node ending should not be triggered when associated endNode() is invoked.
-        if (!(left instanceof CaseNodeCodecContext) && !(left instanceof AugmentationNodeContext)) {
+        if (!(left instanceof CaseNodeCodecContext) && !(left instanceof AugmentationCodecContext)) {
             delegate.endNode();
         }
     }
