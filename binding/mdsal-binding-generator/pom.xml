@@ -82,10 +82,6 @@
             <artifactId>mdsal-binding-runtime-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.mdsal</groupId>
-            <artifactId>mdsal-binding-spec-util</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.guicedee.services</groupId>
             <artifactId>javax.inject</artifactId>
             <optional>true</optional>
