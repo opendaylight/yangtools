@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.spi;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
 import java.util.Collection;
 import org.checkerframework.checker.lock.qual.GuardedBy;
@@ -28,9 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  *
  * @param <T> Binding DataObject type
  * @param <C> Context type
- * @author Robert Varga
  */
-@Beta
 public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> extends ForwardingObject
         implements BindingLazyContainerNode<T> {
     private final @NonNull NodeIdentifier identifier;
@@ -48,21 +45,20 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     }
 
     @Override
-    public final @NonNull T getDataObject() {
+    public final T getDataObject() {
         return bindingData;
     }
 
     @Override
-    public final @NonNull NodeIdentifier name() {
+    public final NodeIdentifier name() {
         return identifier;
     }
 
     @Override
     @Deprecated(since = "12.0.0", forRemoval = true)
-    public final @NonNull NodeIdentifier getIdentifier() {
+    public final NodeIdentifier getIdentifier() {
         return identifier;
     }
-
 
     @Override
     public final ContainerNode getDelegate() {
@@ -70,7 +66,7 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     }
 
     @Override
-    public Collection<DataContainerChild> body() {
+    public Collection<@NonNull DataContainerChild> body() {
         return delegate().body();
     }
 
@@ -96,29 +92,22 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     }
 
     @Override
-    public boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof ContainerNode other)) {
-            return false;
-        }
-        return delegate().equals(other);
+    public boolean equals(final Object obj) {
+        return this == obj || obj instanceof ContainerNode other && delegate().equals(other);
     }
 
     @Override
     protected final @NonNull ContainerNode delegate() {
-        ContainerNode local = delegate;
+        var local = delegate;
         if (local == null) {
             synchronized (this) {
                 local = delegate;
                 if (local == null) {
-                    local = delegate = requireNonNull(computeContainerNode(context));
+                    delegate = local = requireNonNull(computeContainerNode(context));
                     context = null;
                 }
             }
         }
-
         return local;
     }
 
