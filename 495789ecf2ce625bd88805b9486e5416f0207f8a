@@ -16,6 +16,24 @@
       "message": "wouldn\u0027t it be better to actually show that in this case isAugmenting() \u003d\u003d false\nand not just skip it?",
       "revId": "495789ecf2ce625bd88805b9486e5416f0207f8a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4344c019_e22eb680",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/Mdsal713IsAugmentingTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 9171
+      },
+      "writtenOn": "2023-06-14T13:20:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b1feeae_db3f48ae",
+      "revId": "495789ecf2ce625bd88805b9486e5416f0207f8a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
