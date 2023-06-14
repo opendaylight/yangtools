@@ -504,8 +504,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <E extends DataObject> CommonDataObjectCodecTreeNode<E> streamChild(final Class<E> childClass) {
-        return root.streamChild(childClass);
+    public <E extends DataObject> CommonDataObjectCodecTreeNode<E> getStreamChild(final Class<E> childClass) {
+        return root.getStreamChild(childClass);
     }
 
     @Override

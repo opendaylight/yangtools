@@ -72,7 +72,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
             // Entry of first node
             next = rootContext;
         } else if (current instanceof DataContainerCodecContext<?, ?> currentContainer) {
-            next = currentContainer.streamChild((Class) name);
+            next = currentContainer.getStreamChild((Class) name);
         } else {
             throw new IllegalArgumentException("Could not start node " + name + " in non-container " + current);
         }

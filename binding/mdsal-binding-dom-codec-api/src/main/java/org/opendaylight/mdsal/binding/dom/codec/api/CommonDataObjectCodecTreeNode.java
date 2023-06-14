@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -40,16 +39,15 @@ public interface CommonDataObjectCodecTreeNode<T extends DataObject>
      * one must issue getChild(ChoiceClass).getChild(CaseClass).
      *
      * <p>
-     * This method differs from {@link #streamChild(Class)}, that is less strict for interfaces representing
+     * This method differs from {@link #getStreamChild(Class)}, that is less strict for interfaces representing
      * augmentation and cases, that may return {@link BindingCodecTreeNode} even if augmentation interface containing
      * same data was supplied and does not represent augmentation of this node.
      *
      * @param childClass Child class by Binding Stream navigation
-     * @return Context of child or Optional.empty is supplied class is not
-     *         applicable in context.
+     * @return Context of child or {@code null} is supplied class is not applicable in context.
+     * @throws NullPointerException if {@code childClass} is {@code null}
      */
-    <E extends DataObject> Optional<? extends CommonDataObjectCodecTreeNode<E>> possibleStreamChild(
-            @NonNull Class<E> childClass);
+    <E extends DataObject> @Nullable CommonDataObjectCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
 
     /**
      * Returns nested node context using supplied YANG Instance Identifier.

@@ -124,7 +124,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             if (type.equals(currentCtx.getBindingClass())) {
                 return cacheHolder.getCachingSerializer(currentCtx);
             }
-            return cacheHolder.getCachingSerializer(currentCtx.streamChild(type));
+            return cacheHolder.getCachingSerializer(currentCtx.getStreamChild(type));
         }
         return null;
     }

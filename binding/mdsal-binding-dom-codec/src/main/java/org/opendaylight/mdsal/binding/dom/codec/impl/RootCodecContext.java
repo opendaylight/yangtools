@@ -187,7 +187,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
                 // TODO: improve this check?
                 final var childSchema = child.statement();
                 if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
-                    return streamChild(factory().getRuntimeContext().loadClass(child.javaType()));
+                    return getStreamChild(factory().getRuntimeContext().loadClass(child.javaType()));
                 }
 
                 throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
@@ -235,15 +235,15 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
 
     @Override
     @SuppressWarnings("unchecked")
-    public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
+    public <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
         final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationImpl(childClass)
             : getOrRethrow(childrenByClass, childClass);
         return (DataContainerCodecContext<C, ?>) result;
     }
 
     @Override
-    public <C extends DataObject> Optional<DataContainerCodecContext<C, ?>> possibleStreamChild(
-            final Class<C> childClass) {
+    public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
+        // FIXME: implement this
         throw new UnsupportedOperationException("Not supported");
     }
 
@@ -384,7 +384,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
             final @NonNull Class<? extends DataObject> type = caseType.orElseThrow();
             final var choice = choicesByClass.getUnchecked(type);
             choice.addYangPathArgument(arg, builder);
-            final var caze = choice.streamChild(type);
+            final var caze = choice.getStreamChild(type);
             caze.addYangPathArgument(arg, builder);
             return caze.bindingPathArgumentChild(arg, builder);
         }

@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
@@ -70,21 +69,16 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public final <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
-        return (DataContainerCodecContext<C, ?>) childNonNull(streamChildPrototype(childClass), childClass,
-            "Child %s is not valid child of %s", getBindingClass(), childClass).get();
+    public final <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
+        return childNonNull(streamChild(childClass), childClass,
+            "Child %s is not valid child of %s", getBindingClass(), childClass);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <C extends DataObject> Optional<DataContainerCodecContext<C, ?>> possibleStreamChild(
-            final Class<C> childClass) {
+    public final <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
         final var childProto = streamChildPrototype(childClass);
-        if (childProto != null) {
-            return Optional.of((DataContainerCodecContext<C, ?>) childProto.get());
-        }
-        return Optional.empty();
+        return childProto == null ? null : (DataContainerCodecContext<C, ?>) childProto.get();
     }
 
     @Nullable DataContainerCodecPrototype<?> streamChildPrototype(final @NonNull Class<?> childClass) {
@@ -106,7 +100,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
             final DataContainerCodecContext<?, ?> caze;
             if (caseType.isPresent()) {
                 // Non-ambiguous addressing this should not pose any problems
-                caze = choice.streamChild(caseType.orElseThrow());
+                caze = choice.getStreamChild(caseType.orElseThrow());
             } else {
                 caze = choice.getCaseByChildClass(type);
             }

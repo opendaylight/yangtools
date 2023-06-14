@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
@@ -204,23 +203,17 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
         return (WithStatus) getType().statement();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
-        final var child = byClass.get(childClass);
-        return (DataContainerCodecContext<C, ?>) childNonNull(child, childClass,
-            "Supplied class %s is not valid case in %s", childClass, bindingArg()).get();
+    public <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
+        return childNonNull(streamChild(childClass), childClass,
+            "Supplied class %s is not valid case in %s", childClass, bindingArg());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends DataObject> Optional<DataContainerCodecContext<C, ?>> possibleStreamChild(
-            final Class<C> childClass) {
+    public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
         final var child = byClass.get(childClass);
-        if (child != null) {
-            return Optional.of((DataContainerCodecContext<C, ?>) child.get());
-        }
-        return Optional.empty();
+        return child == null ? null : (DataContainerCodecContext<C, ?>) child.get();
     }
 
     Iterable<Class<?>> getCaseChildrenClasses() {

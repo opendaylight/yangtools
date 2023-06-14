@@ -226,7 +226,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <E extends DataObject> CommonDataObjectCodecTreeNode<E> streamChild(final Class<E> childClass) {
-        return delegate().streamChild(childClass);
+    public <E extends DataObject> CommonDataObjectCodecTreeNode<E> getStreamChild(final Class<E> childClass) {
+        return delegate().getStreamChild(childClass);
     }
 }

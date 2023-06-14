@@ -123,7 +123,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
     @Override
     public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
-        final var child = streamChild(arg.getType());
+        final var child = getStreamChild(arg.getType());
         child.addYangPathArgument(arg, builder);
         return child;
     }
@@ -165,7 +165,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
     }
 
     @Override
-    public abstract <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(Class<C> childClass);
+    public abstract <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(Class<C> childClass);
 
     /**
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case, one
@@ -175,8 +175,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
      * @return Context of child or Optional.empty is supplied class is not applicable in context.
      */
     @Override
-    public abstract <C extends DataObject> Optional<DataContainerCodecContext<C,?>> possibleStreamChild(
-            Class<C> childClass);
+    public abstract <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(Class<C> childClass);
 
     @Override
     public String toString() {

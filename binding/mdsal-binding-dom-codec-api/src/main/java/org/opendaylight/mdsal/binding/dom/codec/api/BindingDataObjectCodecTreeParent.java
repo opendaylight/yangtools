@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
  * class instance.
  *
  * @param <T> Dummy parameter to work around problems with streaming {@link ChoiceIn} classes. Essentially we want
- *            {@link #streamChild(Class)} to also service such classes, which are not {@link DataObject}s. The problem
- *            really is that {@code case} interfaces are DataObjects and hence are an alluring target for that method.
- *            The workaround works with two sides:
+ *            {@link #getStreamChild(Class)} to also service such classes, which are not {@link DataObject}s. The
+ *            problem really is that {@code case} interfaces are DataObjects and hence are an alluring target for that
+ *            method. The workaround works with two sides:
  *            <ul>
  *              <li>Here the fact that we are generic means that binary compatibility dictates that our signature be
  *                  backwards compatible with anyone who might have seen us as non-generic, i.e. in streamChild() taking
@@ -42,7 +42,8 @@ public interface BindingDataObjectCodecTreeParent<T> {
      * @param <E> Stream child DataObject type
      * @param childClass Child class by Binding Stream navigation
      * @return Context of child
+     * @throws NullPointerException if {@code childClass} is {@code null}
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
-    <E extends DataObject> @NonNull CommonDataObjectCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
+    <E extends DataObject> @NonNull CommonDataObjectCodecTreeNode<E> getStreamChild(@NonNull Class<E> childClass);
 }
