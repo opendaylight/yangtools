@@ -74,22 +74,20 @@ abstract sealed class KeyedListNodeCodecContext<I extends Identifier<D>, D exten
     }
 
     @Override
-    void addYangPathArgument(final InstanceIdentifier.PathArgument arg,
-            final List<YangInstanceIdentifier.PathArgument> builder) {
+    void addYangPathArgument(final List<YangInstanceIdentifier.PathArgument> builder,
+            final InstanceIdentifier.PathArgument arg) {
         /*
          * DOM Instance Identifier for list is always represent by two entries one for map and one for children. This
          * is also true for wildcarded instance identifiers
          */
-        if (builder == null) {
-            return;
-        }
+        final var yangArg = getDomPathArgument();
+        builder.add(yangArg);
 
-        super.addYangPathArgument(arg, builder);
         if (arg instanceof IdentifiableItem<?, ?> identifiable) {
             builder.add(codec.bindingToDom(identifiable));
         } else {
             // Adding wildcarded
-            super.addYangPathArgument(arg, builder);
+            builder.add(yangArg);
         }
     }
 

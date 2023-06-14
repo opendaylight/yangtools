@@ -123,10 +123,8 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
     @Override
     public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
-        final DataContainerCodecContext<?, ?> child = streamChild(arg.getType());
-        if (builder != null) {
-            child.addYangPathArgument(arg, builder);
-        }
+        final var child = streamChild(arg.getType());
+        child.addYangPathArgument(arg, builder);
         return child;
     }
 
@@ -136,12 +134,16 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
      * @param arg Binding Path Argument
      * @param builder DOM Path argument.
      */
-    void addYangPathArgument(final PathArgument arg, final List<YangInstanceIdentifier.PathArgument> builder) {
+    final void addYangPathArgument(final PathArgument arg, final List<YangInstanceIdentifier.PathArgument> builder) {
         if (builder != null) {
-            final var yangArg = getDomPathArgument();
-            if (yangArg != null) {
-                builder.add(yangArg);
-            }
+            addYangPathArgument(builder, arg);
+        }
+    }
+
+    void addYangPathArgument(final @NonNull List<YangInstanceIdentifier.PathArgument> builder, final PathArgument arg) {
+        final var yangArg = getDomPathArgument();
+        if (yangArg != null) {
+            builder.add(yangArg);
         }
     }
 

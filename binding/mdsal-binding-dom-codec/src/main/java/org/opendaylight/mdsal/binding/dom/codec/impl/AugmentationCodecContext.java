@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.List;
 import java.util.Map;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
@@ -59,6 +60,11 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
     @Override
     protected Object deserializeObject(final NormalizedNode normalizedNode) {
         return filterFrom(checkDataArgument(DataContainerNode.class, normalizedNode));
+    }
+
+    @Override
+    void addYangPathArgument(final List<PathArgument> builder, final InstanceIdentifier.PathArgument arg) {
+        // No-op
     }
 
     @Override
