@@ -14,6 +14,8 @@ import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 
 module org.opendaylight.mdsal.binding.dom.codec.impl {
+    // FIXME: MDSAL-828: do not export this package
+    exports org.opendaylight.mdsal.binding.dom.codec.impl;
     exports org.opendaylight.mdsal.binding.dom.codec.impl.di;
 
     uses BindingRuntimeContext;
