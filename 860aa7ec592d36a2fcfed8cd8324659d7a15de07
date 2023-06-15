@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74d98a76_3e13292e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-06-15T11:14:56Z",
+      "side": 1,
+      "message": "09:20:24 Caused by: org.apache.maven.plugin.MojoFailureException: You have 6 Checkstyle violations.",
+      "revId": "860aa7ec592d36a2fcfed8cd8324659d7a15de07",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
