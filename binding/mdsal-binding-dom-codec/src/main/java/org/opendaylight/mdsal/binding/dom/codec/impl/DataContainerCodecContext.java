@@ -80,10 +80,6 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
         this.prototype = requireNonNull(prototype);
     }
 
-    public final @NonNull T getType() {
-        return prototype.getType();
-    }
-
     @Override
     public final ChildAddressabilitySummary getChildAddressabilitySummary() {
         return prototype.getChildAddressabilitySummary();
@@ -95,6 +91,10 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
 
     protected final CodecContextFactory factory() {
         return prototype.getFactory();
+    }
+
+    protected final @NonNull T type() {
+        return prototype.getType();
     }
 
     @Override

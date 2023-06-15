@@ -200,7 +200,7 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
     @Override
     public WithStatus getSchema() {
         // FIXME: Bad cast, we should be returning an EffectiveStatement perhaps?
-        return (WithStatus) getType().statement();
+        return (WithStatus) type().statement();
     }
 
     @Override

@@ -37,7 +37,6 @@ import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.DataRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -119,7 +118,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
 
                 // TODO: we should be able to work with bindingChild() instead of schemaTreeChild() here
                 final var qname = BindingReflections.findQName(key);
-                if (getType().schemaTreeChild(qname) instanceof NotificationRuntimeType type) {
+                if (type().schemaTreeChild(qname) instanceof NotificationRuntimeType type) {
                     return new NotificationCodecContext<>(key, type, factory());
                 }
                 throw new IllegalArgumentException("Supplied " + key + " is not valid notification");
@@ -177,7 +176,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public DataContainerCodecContext<?, ?> load(final QName qname) throws ClassNotFoundException {
-                final var type = getType();
+                final var type = type();
                 final var child = childNonNull(type.schemaTreeChild(qname), qname,
                     "Argument %s is not valid child of %s", qname, type);
                 if (!(child instanceof DataRuntimeType)) {
@@ -230,7 +229,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
 
     @Override
     public WithStatus getSchema() {
-        return getType().getEffectiveModelContext();
+        return type().getEffectiveModelContext();
     }
 
     @Override
@@ -287,7 +286,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
     }
 
     DataContainerCodecContext<?, ?> createDataTreeChildContext(final Class<? extends DataObject> key) {
-        final RuntimeType childSchema = childNonNull(getType().bindingChild(JavaTypeName.create(key)), key,
+        final var childSchema = childNonNull(type().bindingChild(JavaTypeName.create(key)), key,
             "%s is not top-level item.", key);
         if (childSchema instanceof CompositeRuntimeType composite && childSchema instanceof DataRuntimeType) {
             return DataContainerCodecPrototype.from(key, composite, factory()).get();

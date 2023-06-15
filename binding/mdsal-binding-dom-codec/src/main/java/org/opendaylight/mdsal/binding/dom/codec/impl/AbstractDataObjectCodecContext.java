@@ -65,7 +65,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     @Override
     public final WithStatus getSchema() {
         // FIXME: Bad cast, we should be returning an EffectiveStatement perhaps?
-        return (WithStatus) getType().statement();
+        return (WithStatus) type().statement();
     }
 
     @Override
