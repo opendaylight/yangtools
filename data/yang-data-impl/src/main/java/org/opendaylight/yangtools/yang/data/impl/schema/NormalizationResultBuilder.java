@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
@@ -29,8 +30,8 @@ final class NormalizationResultBuilder implements NormalizedNodeContainerBuilder
         this.holder = requireNonNull(holder);
     }
 
-    @NonNull NormalizationResult result() {
-        return holder.getResult();
+    @Nullable NormalizationResult result() {
+        return holder.result();
     }
 
     void reset() {

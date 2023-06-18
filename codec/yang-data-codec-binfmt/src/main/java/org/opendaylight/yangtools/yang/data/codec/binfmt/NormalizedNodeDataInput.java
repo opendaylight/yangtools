@@ -59,7 +59,8 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
     default NormalizedNode readNormalizedNode(final ReusableStreamReceiver receiver) throws IOException {
         try {
             streamNormalizedNode(receiver);
-            return receiver.getResult().data();
+            final var result = receiver.result();
+            return result != null ? result.data() : null;
         } finally {
             receiver.reset();
         }

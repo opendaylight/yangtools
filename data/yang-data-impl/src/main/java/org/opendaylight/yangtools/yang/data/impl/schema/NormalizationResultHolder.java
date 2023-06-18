@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMountpoints;
@@ -24,6 +25,11 @@ public final class NormalizationResultHolder implements Mutable {
     private NormalizedNode data;
     private NormalizedMetadata metadata;
     private NormalizedMountpoints mountPoints;
+
+    public @Nullable NormalizationResult result() {
+        final var localData = data;
+        return localData == null ? null : new NormalizationResult(localData, metadata, mountPoints);
+    }
 
     public @NonNull NormalizationResult getResult() {
         final var localData = data;

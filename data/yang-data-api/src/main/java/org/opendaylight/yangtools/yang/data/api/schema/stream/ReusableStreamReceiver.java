@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -35,14 +35,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * Note the writer should always be {@link #reset()} in a {@code finally} block, so that any streaming state is
  * properly discarded.
  */
-@Beta
 public interface ReusableStreamReceiver extends NormalizedNodeStreamWriter {
     /**
      * Acquire the result of the last streaming session.
      *
-     * @return Result of streaming.
+     * @return Result of streaming, or {@code null} if not result is present.
      */
-    NormalizationResult getResult();
+    @Nullable NormalizationResult result();
 
     /**
      * Reset this writer to initial state.
