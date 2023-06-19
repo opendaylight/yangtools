@@ -43,7 +43,7 @@ public final class Main {
     private static final String YANG_MODEL = "yang-model";
     private static final String PATH = "path";
     private static final String RECURSIVE = "recursive";
-    private static final String LIST_WARNING_OFF = "no-warning-for-unkeyed-lists";
+    private static final String UNKEYED_LIST_WARNING_ON = "warning-for-unkeyed-lists";
     private static final String OUTPUT = "output";
     private static final String MODULE_NAME = "module-name";
     private static final String FEATURES = "features";
@@ -86,7 +86,7 @@ public final class Main {
         final Set<QName> supportedFeatures = initSupportedFeatures(arguments);
 
         runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.getBoolean(RECURSIVE),
-                !arguments.getBoolean(LIST_WARNING_OFF));
+                arguments.getBoolean(UNKEYED_LIST_WARNING_ON));
 
         LOG_ROOT.getLoggerContext().reset();
     }
@@ -186,9 +186,9 @@ public final class Main {
                 .help("recursive search of directories specified by -p option")
                 .dest(RECURSIVE)
                 .action(Arguments.storeTrue());
-        parser.addArgument("-K", "--no-warning-for-unkeyed-lists")
-                .help("do not add warnings about unkeyed lists with config true")
-                .dest(LIST_WARNING_OFF)
+        parser.addArgument("-W", "--warning-for-unkeyed-lists")
+                .help("add warnings about unkeyed lists with config true")
+                .dest(UNKEYED_LIST_WARNING_ON)
                 .action(Arguments.storeTrue());
         parser.addArgument("-o", "--output")
                 .help("path to output file for logs. Output file will be overwritten")

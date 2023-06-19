@@ -99,8 +99,7 @@ public final class YangParserConfiguration implements Immutable {
     public static final class Builder implements Mutable {
         private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
         private boolean retainDeclarationReferences;
-        // FIXME: YANGTOOLS-1423: default to false
-        private boolean warnForUnkeyedLists = true;
+        private boolean warnForUnkeyedLists = false;
 
         private Builder() {
             // Hidden on purpose
