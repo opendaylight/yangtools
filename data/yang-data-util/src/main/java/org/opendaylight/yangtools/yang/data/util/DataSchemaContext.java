@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -149,6 +151,18 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
      */
     sealed interface SimpleValue extends DataSchemaContext permits LeafContext, LeafListItemContext {
         // Marker interface
+    }
+
+    /**
+     * Get a {@link DataSchemaContextNode} for a particular {@link DataSchemaNode}.
+     *
+     * @param schema Backing DataSchemaNode
+     * @return A {@link DataSchemaContextNode}
+     * @throws NullPointerException if {@code schema} is {@code null}
+     * @throws IllegalStateException if {@code schema} is not handled
+     */
+    static @NonNull DataSchemaContext of(final DataSchemaNode schema) {
+        return AbstractContext.of(requireNonNull(schema));
     }
 
     @NonNull DataSchemaNode dataSchemaNode();

@@ -90,7 +90,7 @@ public abstract sealed class AbstractContext implements DataSchemaContext
         return null;
     }
 
-    static @NonNull AbstractContext of(final @NonNull DataSchemaNode schema) {
+    public static @NonNull AbstractContext of(final @NonNull DataSchemaNode schema) {
         if (schema instanceof ContainerLike containerLike) {
             return new ContainerContext(containerLike);
         } else if (schema instanceof ListSchemaNode list) {
