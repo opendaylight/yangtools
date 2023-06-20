@@ -16,11 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  */
 @Beta
 public interface BindingCodecTreeNode {
-
     /**
      * Return the schema node associated with this node.
      *
      * @return A schema node.
      */
+    // FIXME: 12.0.0: we should be able to do better
     @NonNull WithStatus getSchema();
 }

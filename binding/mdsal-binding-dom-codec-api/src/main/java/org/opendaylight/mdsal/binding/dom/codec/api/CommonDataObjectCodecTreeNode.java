@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -22,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  *
  * @param <T> DataObject type
  */
-@Beta
 public interface CommonDataObjectCodecTreeNode<T extends DataObject>
         extends BindingDataObjectCodecTreeParent<Empty>, BindingObjectCodecTreeNode<T> {
     /**
@@ -48,6 +48,32 @@ public interface CommonDataObjectCodecTreeNode<T extends DataObject>
      * @throws NullPointerException if {@code childClass} is {@code null}
      */
     <E extends DataObject> @Nullable CommonDataObjectCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
+
+    default <A extends Augmentation<?>> @Nullable BindingAugmentationCodecTreeNode<A> streamAugmentation(
+            final @NonNull Class<A> childClass) {
+        final var result = streamChild(childClass);
+        if (result instanceof BindingAugmentationCodecTreeNode) {
+            return (BindingAugmentationCodecTreeNode<A>) result;
+        } else if (result == null) {
+            return null;
+        } else {
+            throw new IllegalArgumentException(
+                "Child " + childClass.getName() + " results in non-Augmentation " + result);
+        }
+    }
+
+    default <E extends DataObject> @Nullable BindingDataObjectCodecTreeNode<E> streamDataObject(
+            final @NonNull Class<E> childClass) {
+        final var result = streamChild(childClass);
+        if (result instanceof BindingDataObjectCodecTreeNode) {
+            return (BindingDataObjectCodecTreeNode<E>) result;
+        } else if (result == null) {
+            return null;
+        } else {
+            throw new IllegalArgumentException(
+                "Child " + childClass.getName() + " results in non-DataObject " + result);
+        }
+    }
 
     /**
      * Returns nested node context using supplied YANG Instance Identifier.
