@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
@@ -37,7 +38,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 public interface BindingDataObjectCodecTreeParent<T> {
     /**
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case,
-     * one must issue {@code streamChild(ChoiceClass).streamChild(CaseClass)}.
+     * one must issue {@code getStreamChild(ChoiceClass).getStreamChild(CaseClass)}.
      *
      * @param <E> Stream child DataObject type
      * @param childClass Child class by Binding Stream navigation
@@ -46,4 +47,22 @@ public interface BindingDataObjectCodecTreeParent<T> {
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
     <E extends DataObject> @NonNull CommonDataObjectCodecTreeNode<E> getStreamChild(@NonNull Class<E> childClass);
+
+    default <A extends Augmentation<?>> @NonNull BindingAugmentationCodecTreeNode<A> getStreamAugmentation(
+            final @NonNull Class<A> childClass) {
+        final var result = getStreamChild(childClass);
+        if (result instanceof BindingAugmentationCodecTreeNode) {
+            return (BindingAugmentationCodecTreeNode<A>) result;
+        }
+        throw new IllegalArgumentException("Child " + childClass.getName() + " results in non-Augmentation " + result);
+    }
+
+    default <E extends DataObject> @NonNull BindingDataObjectCodecTreeNode<E> getStreamDataObject(
+            final @NonNull Class<E> childClass) {
+        final var result = getStreamChild(childClass);
+        if (result instanceof BindingDataObjectCodecTreeNode) {
+            return (BindingDataObjectCodecTreeNode<E>) result;
+        }
+        throw new IllegalArgumentException("Child " + childClass.getName() + " results in non-DataObject " + result);
+    }
 }
