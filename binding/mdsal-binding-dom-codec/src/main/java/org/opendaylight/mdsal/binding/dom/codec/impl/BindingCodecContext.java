@@ -53,7 +53,6 @@ import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -104,24 +103,6 @@ import org.slf4j.LoggerFactory;
 @MetaInfServices(value = BindingDOMCodecServices.class)
 public final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer
         implements BindingDOMCodecServices, Immutable, CodecContextFactory, DataObjectSerializerRegistry {
-    private final class DataObjectSerializerProxy implements DataObjectSerializer, Delegator<DataObjectStreamer<?>> {
-        private final @NonNull DataObjectStreamer<?> delegate;
-
-        DataObjectSerializerProxy(final DataObjectStreamer<?> delegate) {
-            this.delegate = requireNonNull(delegate);
-        }
-
-        @Override
-        public DataObjectStreamer<?> getDelegate() {
-            return delegate;
-        }
-
-        @Override
-        public void serialize(final DataObject obj, final BindingStreamEventWriter stream) throws IOException {
-            delegate.serialize(BindingCodecContext.this, obj, stream);
-        }
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final @NonNull NodeIdentifier FAKE_NODEID = new NodeIdentifier(QName.create("fake", "fake"));
     private static final File BYTECODE_DIRECTORY;
@@ -145,7 +126,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         new CacheLoader<Class<?>, DataObjectSerializer>() {
             @Override
             public DataObjectSerializer load(final Class<?> key) throws ExecutionException {
-                return new DataObjectSerializerProxy(streamers.get(key));
+                return new DataObjectSerializer(BindingCodecContext.this, streamers.get(key));
             }
         });
 
