@@ -82,7 +82,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
 
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final String localName, final Class<T> identifier) {
         final var current = current();
-        final var next = ((DataObjectCodecContext<?, ?>) current).getLeafChild(localName);
+        final var next = ((AbstractDataObjectCodecContext<?, ?>) current).getLeafChild(localName);
         schema.push(next);
         return identifier.cast(next.getDomPathArgument());
     }

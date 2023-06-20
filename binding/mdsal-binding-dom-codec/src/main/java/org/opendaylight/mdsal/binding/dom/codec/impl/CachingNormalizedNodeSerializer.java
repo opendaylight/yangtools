@@ -75,7 +75,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             // They are immutable and hence we can safely wrap them in LeafNodes and reuse them, if directed to do so.
             final var type = typed.getClass();
             if (cacheHolder.isCached(type)) {
-                final var context = ((DataObjectCodecContext<?, ?>) delegate.current()).getLeafChild(localName);
+                final var context = ((AbstractDataObjectCodecContext<?, ?>) delegate.current()).getLeafChild(localName);
                 if (context instanceof LeafNodeCodecContext.OfTypeObject<?> typeContext) {
                     final var cache = cacheHolder.getCachingSerializer(typeContext);
                     if (cache != null) {
