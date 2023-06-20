@@ -88,12 +88,8 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     private static final Generic BB_BESV = TypeDefinition.Sort.describe(BindingStreamEventWriter.class);
     private static final Generic BB_IOX = TypeDefinition.Sort.describe(IOException.class);
 
-    private static final int PUB_FINAL = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
-    private static final int PUB_CONST = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL
-            | Opcodes.ACC_SYNTHETIC;
-
     private static final Builder<?> TEMPLATE = new ByteBuddy().subclass(DataObjectStreamer.class)
-            .modifiers(PUB_FINAL);
+            .modifiers(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC);
 
     private static final StackManipulation REG = MethodVariableAccess.REFERENCE.loadFrom(1);
     private static final StackManipulation OBJ = MethodVariableAccess.REFERENCE.loadFrom(2);
@@ -237,7 +233,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         }
 
         final GeneratorResult<T> result = GeneratorResult.of(builder
-            .defineMethod("serialize", BB_VOID, PUB_FINAL)
+            .defineMethod("serialize", BB_VOID, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC)
                 .withParameters(BB_DOSR, BB_DATAOBJECT, BB_BESV)
                 .throwing(BB_IOX)
             .intercept(new SerializeImplementation(bindingInterface, startEvent, children)).make(), depBuilder.build());
@@ -402,7 +398,9 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         public InstrumentedType prepare(final InstrumentedType instrumentedType) {
             return instrumentedType
                     // private static final This INSTANCE = new This()
-                    .withField(new FieldDescription.Token(INSTANCE_FIELD, PUB_CONST, instrumentedType.asGenericType()))
+                    .withField(new FieldDescription.Token(INSTANCE_FIELD,
+                        Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC,
+                        instrumentedType.asGenericType()))
                     .withInitializer(InitializeInstanceField.INSTANCE);
         }
 

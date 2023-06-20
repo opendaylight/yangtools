@@ -32,12 +32,22 @@ import org.slf4j.LoggerFactory;
  * @param <T> DataObject type
  */
 @Beta
-public abstract class DataObjectStreamer<T extends DataObject> implements DataObjectSerializerImplementation {
+public abstract class DataObjectStreamer<T extends DataObject> {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectStreamer.class);
 
     protected DataObjectStreamer() {
 
     }
+
+    /**
+     * Writes stream events for supplied data object to provided stream.
+     *
+     * <p>
+     * DataObjectSerializerRegistry may be used to lookup serializers for other generated classes  in order to support
+     * writing their events.
+     */
+    protected abstract void serialize(DataObjectSerializerRegistry reg, DataObject obj, BindingStreamEventWriter stream)
+            throws IOException;
 
     protected static final void streamAnydata(final BindingStreamEventWriter writer, final String localName,
             final Object value) throws IOException {
