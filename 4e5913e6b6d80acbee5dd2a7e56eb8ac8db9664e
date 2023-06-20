@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "23c0ee87_c5c430ec",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-06-20T09:37:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3def825c_636ea671",
+      "revId": "4e5913e6b6d80acbee5dd2a7e56eb8ac8db9664e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bf76c762_de60581c",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-06-19T17:43:52Z",
       "side": 1,
       "message": "This should be:\n Copyright (c) 2023 PANTHEON.tech, s.r.o. and others.  All rights reserved.\nPls update your copyright profile",
+      "revId": "4e5913e6b6d80acbee5dd2a7e56eb8ac8db9664e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a1fd9bf_70827778",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-06-20T09:37:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf76c762_de60581c",
       "revId": "4e5913e6b6d80acbee5dd2a7e56eb8ac8db9664e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "49b5b512_9d37521b",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-06-20T09:37:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "191a79fc_2e1b9132",
+      "revId": "4e5913e6b6d80acbee5dd2a7e56eb8ac8db9664e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f948b60e_ef18c322",
@@ -65,6 +119,30 @@
       "writtenOn": "2023-06-19T17:43:52Z",
       "side": 1,
       "message": "Continuation indent should be 4 spaces - not 8",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 16
+      },
+      "revId": "4e5913e6b6d80acbee5dd2a7e56eb8ac8db9664e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3ad73bd_8d886e87",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-06-20T09:37:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f948b60e_ef18c322",
       "range": {
         "startLine": 45,
         "startChar": 8,
@@ -98,6 +176,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "65022e59_72c51602",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-06-20T09:37:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "507841bf_3672663c",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 16
+      },
+      "revId": "4e5913e6b6d80acbee5dd2a7e56eb8ac8db9664e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ca877bb3_c6a0da35",
@@ -111,6 +213,30 @@
       "writtenOn": "2023-06-19T17:43:52Z",
       "side": 1,
       "message": "4 spaces",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 16
+      },
+      "revId": "4e5913e6b6d80acbee5dd2a7e56eb8ac8db9664e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6774215f_44e6adb7",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-06-20T09:37:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ca877bb3_c6a0da35",
       "range": {
         "startLine": 37,
         "startChar": 0,
