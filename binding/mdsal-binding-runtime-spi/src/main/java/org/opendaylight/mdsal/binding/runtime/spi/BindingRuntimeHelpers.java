@@ -20,9 +20,9 @@ import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
 import org.opendaylight.mdsal.binding.runtime.api.DefaultBindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -40,7 +40,7 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull EffectiveModelContext createEffectiveModel(final Class<?>... classes) {
         return createEffectiveModel(Arrays.stream(classes)
-            .map(BindingRuntimeHelpers::extractYangModuleInfo)
+            .map(BindingRuntimeHelpers::getYangModuleInfo)
             .collect(Collectors.toList()));
     }
 
@@ -100,17 +100,22 @@ public final class BindingRuntimeHelpers {
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
             final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) throws YangParserException {
         final ModuleInfoSnapshot infos = prepareContext(parserFactory, classes.stream()
-            .map(BindingRuntimeHelpers::extractYangModuleInfo)
+            .map(BindingRuntimeHelpers::getYangModuleInfo)
             .collect(Collectors.toList()));
         return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.getEffectiveModelContext()), infos);
     }
 
-    public static @NonNull YangModuleInfo extractYangModuleInfo(final Class<?> clazz) {
-        final var namespace = BindingReflections.findQName(clazz).getNamespace();
-        return loadModuleInfos().stream()
-            .filter(info -> namespace.equals(info.getName().getNamespace()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Failed to extract module info from " + clazz));
+    public static @NonNull YangModuleInfo getYangModuleInfo(final Class<?> clazz) {
+        // Module info resides in the root package we will use that to ascertain identity
+        final var modelPackage = Naming.getModelRootPackageName(clazz.getPackage().getName());
+
+        for (var bindingProvider : ServiceLoader.load(YangModelBindingProvider.class, clazz.getClassLoader())) {
+            var moduleInfo = bindingProvider.getModuleInfo();
+            if (modelPackage.equals(moduleInfo.getClass().getPackage().getName())) {
+                return moduleInfo;
+            }
+        }
+        throw new IllegalStateException("Failed to find YangModuleInfo in package " + modelPackage + " for " + clazz);
     }
 
     public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos() {
