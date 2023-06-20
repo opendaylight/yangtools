@@ -10,14 +10,11 @@ module org.opendaylight.mdsal.binding.model.ri {
     exports org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
 
     requires transitive org.opendaylight.mdsal.binding.model.api;
-    requires org.opendaylight.mdsal.binding.spec.util;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.binding;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.yang.model.ri;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
-    requires static com.github.spotbugs.annotations;
 }

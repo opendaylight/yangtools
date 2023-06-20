@@ -21,7 +21,6 @@ module org.opendaylight.mdsal.binding.generator {
     requires transitive org.opendaylight.mdsal.binding.model.ri;
     requires transitive org.opendaylight.mdsal.binding.runtime.api;
     requires com.google.common;
-    requires org.opendaylight.mdsal.binding.spec.util;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.binding;
     requires org.opendaylight.yangtools.yang.common;
