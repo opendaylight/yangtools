@@ -48,8 +48,10 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
  *
  * <p>
  * Note this class only handles {@link DataSchemaNode}s, not all {@code schema tree} statements, as it strictly should.
+ *
+ * @deprecated This class should not be needed anymore.
  */
-// FIXME: YANGTOOLS-1403: this functionality should be integrated into EffectiveAugmentStatement/AugmentationSchemaNode
+@Deprecated(since = "11.0.0", forRemoval = true)
 public final class EffectiveAugmentationSchema implements AugmentationSchemaNode {
     private final ImmutableMap<QName, DataSchemaNode> children;
     private final AugmentationSchemaNode delegate;
