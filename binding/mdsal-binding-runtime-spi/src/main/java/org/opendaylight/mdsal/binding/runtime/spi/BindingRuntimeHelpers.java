@@ -122,6 +122,21 @@ public final class BindingRuntimeHelpers {
         return loadModuleInfos(Thread.currentThread().getContextClassLoader());
     }
 
+    /**
+     * Loads {@link YangModuleInfo} infos available on supplied classloader.
+     *
+     * <p>
+     * {@link YangModuleInfo} are discovered using {@link ServiceLoader} for {@link YangModelBindingProvider}.
+     * {@link YangModelBindingProvider} are simple classes which holds only pointers to actual instance
+     * {@link YangModuleInfo}.
+     *
+     * <p>
+     * When {@link YangModuleInfo} is available, all dependencies are recursively collected into returning set by
+     * collecting results of {@link YangModuleInfo#getImportedModules()}.
+     *
+     * @param classLoader Classloader for which {@link YangModuleInfo} should be retrieved.
+     * @return Set of {@link YangModuleInfo} available for supplied classloader.
+     */
     public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader classLoader) {
         final var moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
         for (var bindingProvider : ServiceLoader.load(YangModelBindingProvider.class, classLoader)) {

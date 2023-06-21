@@ -14,14 +14,11 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
-import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -34,7 +31,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcService;
-import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -178,41 +174,6 @@ public final class BindingReflections {
     static boolean isNotification(final Class<?> potentialNotification) {
         checkArgument(potentialNotification != null, "potentialNotification must not be null.");
         return Notification.class.isAssignableFrom(potentialNotification);
-    }
-
-    /**
-     * Loads {@link YangModuleInfo} infos available on supplied classloader.
-     *
-     * <p>
-     * {@link YangModuleInfo} are discovered using {@link ServiceLoader} for {@link YangModelBindingProvider}.
-     * {@link YangModelBindingProvider} are simple classes which holds only pointers to actual instance
-     * {@link YangModuleInfo}.
-     *
-     * <p>
-     * When {@link YangModuleInfo} is available, all dependencies are recursively collected into returning set by
-     * collecting results of {@link YangModuleInfo#getImportedModules()}.
-     *
-     * @param loader Classloader for which {@link YangModuleInfo} should be retrieved.
-     * @return Set of {@link YangModuleInfo} available for supplied classloader.
-     */
-    public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
-        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.builder();
-        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
-                loader);
-        for (YangModelBindingProvider bindingProvider : serviceLoader) {
-            YangModuleInfo moduleInfo = bindingProvider.getModuleInfo();
-            checkState(moduleInfo != null, "Module Info for %s is not available.", bindingProvider.getClass());
-            collectYangModuleInfo(bindingProvider.getModuleInfo(), moduleInfoSet);
-        }
-        return moduleInfoSet.build();
-    }
-
-    private static void collectYangModuleInfo(final YangModuleInfo moduleInfo,
-            final Builder<YangModuleInfo> moduleInfoSet) {
-        moduleInfoSet.add(moduleInfo);
-        for (YangModuleInfo dependency : moduleInfo.getImportedModules()) {
-            collectYangModuleInfo(dependency, moduleInfoSet);
-        }
     }
 
     /**
