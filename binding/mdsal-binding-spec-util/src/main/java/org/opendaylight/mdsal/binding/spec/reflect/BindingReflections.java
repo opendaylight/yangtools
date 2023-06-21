@@ -14,7 +14,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.Rpc;
-import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -60,23 +58,6 @@ public final class BindingReflections {
      */
     public static QName findQName(final Class<?> dataType) {
         return CLASS_TO_QNAME.getUnchecked(dataType).orElse(null);
-    }
-
-    /**
-     * Checks if method is RPC invocation.
-     *
-     * @param possibleMethod
-     *            Method to check
-     * @return true if method is RPC invocation, false otherwise.
-     */
-    public static boolean isRpcMethod(final Method possibleMethod) {
-        return possibleMethod != null && RpcService.class.isAssignableFrom(possibleMethod.getDeclaringClass())
-                && ListenableFuture.class.isAssignableFrom(possibleMethod.getReturnType())
-                // length <= 2: it seemed to be impossible to get correct RpcMethodInvoker because of
-                // resolveRpcInputClass() check.While RpcMethodInvoker counts with one argument for
-                // non input type and two arguments for input type, resolveRpcInputClass() counting
-                // with zero for non input and one for input type
-                && possibleMethod.getParameterCount() <= 2;
     }
 
     public static @NonNull QName getQName(final BaseIdentity identity) {

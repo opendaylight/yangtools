@@ -28,8 +28,6 @@ public class BindingReflectionsTest {
         assertTrue("Should be BindingClass", BindingReflections.isBindingClass(DataObject.class));
         assertFalse("Should not be Notification", BindingReflections.isNotification(DataObject.class));
 
-        assertTrue(BindingReflections.isRpcMethod(TestImplementation.class.getDeclaredMethod("rpcMethodTest")));
-
         assertEquals(QName.create("test", "test"), BindingReflections.getQName(TestIdentity.VALUE));
     }
 
