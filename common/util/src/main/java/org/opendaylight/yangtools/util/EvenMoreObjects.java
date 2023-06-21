@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.util;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.util.function.BiFunction;
 
@@ -29,7 +28,7 @@ import java.util.function.BiFunction;
  *
  * @author Michael Vorburger, Red Hat
  */
-@Beta
+@Deprecated(since = "11.0.0", forRemoval = true)
 public final class EvenMoreObjects {
 
     @SuppressWarnings("unchecked")
@@ -43,7 +42,7 @@ public final class EvenMoreObjects {
         if (self.getClass() != other.getClass()) {
             return false;
         }
-        return equals.apply(self, (T) other).booleanValue();
+        return equals.apply(self, (T) other);
     }
 
     @FunctionalInterface

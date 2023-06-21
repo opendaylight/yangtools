@@ -14,6 +14,7 @@ import com.google.common.testing.EqualsTester;
 import java.util.Objects;
 import org.junit.Test;
 
+@Deprecated(since = "11.0.0", forRemoval = true)
 public class EvenMoreObjectsTest {
 
     @Test
