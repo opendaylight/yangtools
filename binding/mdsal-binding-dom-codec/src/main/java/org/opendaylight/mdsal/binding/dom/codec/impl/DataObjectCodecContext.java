@@ -27,7 +27,6 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -155,7 +154,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             final ImmutableMap<Class<?>, AugmentationCodecPrototype> oldMismatched,
             final @NonNull Class<?> childClass) {
         @SuppressWarnings("rawtypes")
-        final Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
+        final Class<?> augTarget = findAugmentationTarget((Class) childClass);
         // Do not bother with proposals which are not augmentations of our class, or do not match what the runtime
         // context would load.
         if (getBindingClass().equals(augTarget) && belongsToRuntimeContext(childClass)) {

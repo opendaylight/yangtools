@@ -38,8 +38,8 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -378,8 +378,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
             return false;
         }
         if (Augmentation.class.isAssignableFrom(potential)
-                && !BindingReflections.findAugmentationTarget(potential).equals(
-                        BindingReflections.findAugmentationTarget(target))) {
+            && !findAugmentationTarget(potential).equals(findAugmentationTarget(target))) {
             return false;
         }
         for (Method potentialMethod : potential.getMethods()) {
@@ -401,5 +400,19 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
             }
         }
         return true;
+    }
+
+    /**
+     * Find augmentation target class from concrete Augmentation class. This method uses first generic argument of
+     * implemented {@link Augmentation} interface.
+     *
+     * @param augmentation {@link Augmentation} subclass for which we want to determine augmentation target.
+     * @return Augmentation target - class which augmentation provides additional extensions.
+     */
+    static final Class<? extends Augmentable<?>> findAugmentationTarget(
+            final Class<? extends Augmentation<?>> augmentation) {
+        final Optional<Class<Augmentable<?>>> opt = ClassLoaderUtils.findFirstGenericArgument(augmentation,
+            Augmentation.class);
+        return opt.orElse(null);
     }
 }

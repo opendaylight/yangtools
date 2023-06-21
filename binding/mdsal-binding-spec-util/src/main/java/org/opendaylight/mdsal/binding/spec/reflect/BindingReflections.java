@@ -25,9 +25,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BindingContract;
@@ -63,22 +61,6 @@ public final class BindingReflections {
 
     private BindingReflections() {
         // Hidden on purpose
-    }
-
-    /**
-     * Find augmentation target class from concrete Augmentation class. This method uses first generic argument of
-     * implemented {@link Augmentation} interface.
-     *
-     * @param augmentation
-     *            {@link Augmentation} subclass for which we want to determine
-     *            augmentation target.
-     * @return Augmentation target - class which augmentation provides additional extensions.
-     */
-    public static Class<? extends Augmentable<?>> findAugmentationTarget(
-            final Class<? extends Augmentation<?>> augmentation) {
-        final Optional<Class<Augmentable<?>>> opt = ClassLoaderUtils.findFirstGenericArgument(augmentation,
-            Augmentation.class);
-        return opt.orElse(null);
     }
 
     /**
