@@ -123,30 +123,6 @@ public final class BindingReflections {
             .orElseThrow(() -> new IllegalStateException("Failed to resolve QName of " + contract));
     }
 
-    /**
-     * Returns root package name for supplied package.
-     *
-     * @param pkg Package for which find model root package.
-     * @deprecated Use {@link Naming#getModelRootPackageName(String)} instead.
-     */
-    @Deprecated(since = "11.0.3", forRemoval = true)
-    public static String getModelRootPackageName(final Package pkg) {
-        return getModelRootPackageName(pkg.getName());
-    }
-
-    /**
-     * Returns root package name for supplied package name.
-     *
-     * @param name Package for which find model root package.
-     * @return Package of model root.
-     * @deprecated Use {@link Naming#getModelRootPackageName(String)} instead.
-     */
-    @Deprecated(since = "11.0.3", forRemoval = true)
-    public static String getModelRootPackageName(final String name) {
-        checkArgument(name != null, "Package name should not be null.");
-        return Naming.getModelRootPackageName(name);
-    }
-
     public static QNameModule getQNameModule(final Class<?> clz) {
         if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)
                 || Action.class.isAssignableFrom(clz)) {
