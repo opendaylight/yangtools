@@ -119,8 +119,12 @@ public final class BindingRuntimeHelpers {
     }
 
     public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos() {
+        return loadModuleInfos(Thread.currentThread().getContextClassLoader());
+    }
+
+    public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader classLoader) {
         final var moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
-        for (var bindingProvider : ServiceLoader.load(YangModelBindingProvider.class)) {
+        for (var bindingProvider : ServiceLoader.load(YangModelBindingProvider.class, classLoader)) {
             var moduleInfo = bindingProvider.getModuleInfo();
             checkState(moduleInfo != null, "Module Info for %s is not available.", bindingProvider.getClass());
             collectYangModuleInfo(bindingProvider.getModuleInfo(), moduleInfoSet);
