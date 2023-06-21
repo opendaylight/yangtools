@@ -10,13 +10,11 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
@@ -121,36 +119,6 @@ public final class BindingReflections {
             return true;
         }
         return cls.getName().startsWith(Naming.PACKAGE_PREFIX);
-    }
-
-    /**
-     * Checks if supplied method is callback for notifications.
-     *
-     * @param method method to check
-     * @return true if method is notification callback.
-     */
-    public static boolean isNotificationCallback(final Method method) {
-        checkArgument(method != null);
-        if (method.getName().startsWith("on") && method.getParameterCount() == 1) {
-            Class<?> potentialNotification = method.getParameterTypes()[0];
-            if (isNotification(potentialNotification)
-                    && method.getName().equals("on" + potentialNotification.getSimpleName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks is supplied class is a {@link Notification}.
-     *
-     * @param potentialNotification class to examine
-     * @return True if the class represents a Notification.
-     */
-    @VisibleForTesting
-    static boolean isNotification(final Class<?> potentialNotification) {
-        checkArgument(potentialNotification != null, "potentialNotification must not be null.");
-        return Notification.class.isAssignableFrom(potentialNotification);
     }
 
     /**

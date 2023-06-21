@@ -26,7 +26,6 @@ public class BindingReflectionsTest {
     public void testBindingWithDummyObject() throws Exception {
         assertFalse("Should not be RpcType", BindingReflections.isRpcType(DataObject.class));
         assertTrue("Should be BindingClass", BindingReflections.isBindingClass(DataObject.class));
-        assertFalse("Should not be Notification", BindingReflections.isNotification(DataObject.class));
 
         assertEquals(QName.create("test", "test"), BindingReflections.getQName(TestIdentity.VALUE));
     }
