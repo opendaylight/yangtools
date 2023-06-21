@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -46,7 +45,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-@Beta
 public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements Cloneable, ModifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends MutableOffsetMap<K, V> {
         Ordered() {
@@ -154,7 +152,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             objects[verifyNotNull(offsets.get(e.getKey()))] = requireNonNull(e.getValue());
         }
 
-        this.needClone = false;
+        needClone = false;
     }
 
     /**

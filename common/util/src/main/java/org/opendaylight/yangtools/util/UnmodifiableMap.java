@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.util;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-@Beta
 public final class UnmodifiableMap<K, V> implements Map<K, V>, Immutable {
     private final @NonNull Map<K, V> delegate;
 

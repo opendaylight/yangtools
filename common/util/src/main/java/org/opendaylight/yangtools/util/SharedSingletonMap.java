@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -32,7 +31,6 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-@Beta
 public abstract sealed class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
         @Serial

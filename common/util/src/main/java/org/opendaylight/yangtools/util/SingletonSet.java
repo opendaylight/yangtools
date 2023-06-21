@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.util;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Iterators;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serial;
@@ -27,9 +26,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * A {@link Set} containing a single value. For some reason neither Java nor Guava provide direct access to the retained
  * element -- which is desirable in some situations, as is the case in {@link SharedSingletonMap#entrySet()}.
  */
-@Beta
 public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Serializable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unchecked")
@@ -128,7 +126,7 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
         return obj == this || obj instanceof Set<?> other && other.size() == 1 && otherContains(other);
     }
 
-    @Serial
+    @java.io.Serial
     final Object writeReplace() {
         return new SSv1(getElement());
     }

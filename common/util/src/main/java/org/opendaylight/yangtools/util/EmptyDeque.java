@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.util;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.AbstractQueue;
 import java.util.Collections;
 import java.util.Deque;
@@ -22,11 +21,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * A specialized always-empty implementation of {@link java.util.Deque}. This implementation will always refuse new
  * elements in its {@link #offer(Object)} method.
 
- * @author Robert Varga
- *
  * @param <E> the type of elements held in this collection
  */
-@Beta
 public final class EmptyDeque<E> extends AbstractQueue<E> implements Deque<E>, Immutable {
     private static final EmptyDeque<?> INSTANCE = new EmptyDeque<>();
     private static final Object[] EMPTY_ARRAY = new Object[0];

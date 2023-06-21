@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.Serial;
@@ -38,7 +37,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-@Beta
 public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
         @Serial
