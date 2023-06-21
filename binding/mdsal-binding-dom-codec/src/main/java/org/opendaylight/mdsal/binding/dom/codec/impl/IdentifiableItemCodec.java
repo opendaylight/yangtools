@@ -22,9 +22,9 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -34,17 +34,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Codec support for extracting the {@link Identifiable#key()} method return from a MapEntryNode.
+ * Codec support for extracting the {@link KeyAware#key()} method return from a MapEntryNode.
  */
 abstract sealed class IdentifiableItemCodec {
     private static final class SingleKey extends IdentifiableItemCodec {
-        private static final MethodType CTOR_TYPE = MethodType.methodType(Identifier.class, Object.class);
+        private static final MethodType CTOR_TYPE = MethodType.methodType(Key.class, Object.class);
 
         private final ValueContext keyContext;
         private final MethodHandle ctor;
         private final QName keyName;
 
-        SingleKey(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
+        SingleKey(final ListEffectiveStatement schema, final Class<? extends Key<?>> keyClass,
                 final Class<?> identifiable, final QName keyName, final ValueContext keyContext) {
             super(schema, keyClass, identifiable);
             this.keyContext = requireNonNull(keyContext);
@@ -53,12 +53,12 @@ abstract sealed class IdentifiableItemCodec {
         }
 
         @Override
-        Identifier<?> deserializeIdentifierImpl(final NodeIdentifierWithPredicates nip) throws Throwable {
-            return (Identifier<?>) ctor.invokeExact(keyContext.deserialize(nip.getValue(keyName)));
+        Key<?> deserializeIdentifierImpl(final NodeIdentifierWithPredicates nip) throws Throwable {
+            return (Key<?>) ctor.invokeExact(keyContext.deserialize(nip.getValue(keyName)));
         }
 
         @Override
-        NodeIdentifierWithPredicates serializeIdentifier(final QName qname, final Identifier<?> key) {
+        NodeIdentifierWithPredicates serializeIdentifier(final QName qname, final Key<?> key) {
             return NodeIdentifierWithPredicates.of(qname, keyName, keyContext.getAndSerialize(key));
         }
     }
@@ -69,13 +69,13 @@ abstract sealed class IdentifiableItemCodec {
         private final ImmutableList<QName> keysInBindingOrder;
         private final MethodHandle ctor;
 
-        MultiKey(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
+        MultiKey(final ListEffectiveStatement schema, final Class<? extends Key<?>> keyClass,
                 final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
             super(schema, keyClass, identifiable);
 
             final var tmpCtor = getConstructor(keyClass, keyValueContexts.size());
             final var inv = MethodHandles.spreadInvoker(tmpCtor.type(), 0);
-            ctor = inv.asType(inv.type().changeReturnType(Identifier.class)).bindTo(tmpCtor);
+            ctor = inv.asType(inv.type().changeReturnType(Key.class)).bindTo(tmpCtor);
 
             /*
              * We need to re-index to make sure we instantiate nodes in the order in which they are defined. We will
@@ -98,18 +98,18 @@ abstract sealed class IdentifiableItemCodec {
         }
 
         @Override
-        Identifier<?> deserializeIdentifierImpl(final NodeIdentifierWithPredicates nip) throws Throwable {
+        Key<?> deserializeIdentifierImpl(final NodeIdentifierWithPredicates nip) throws Throwable {
             final var bindingValues = new Object[keysInBindingOrder.size()];
             int offset = 0;
             for (var key : keysInBindingOrder) {
                 bindingValues[offset++] = keyValueContexts.get(key).deserialize(nip.getValue(key));
             }
 
-            return (Identifier<?>) ctor.invokeExact(bindingValues);
+            return (Key<?>) ctor.invokeExact(bindingValues);
         }
 
         @Override
-        NodeIdentifierWithPredicates serializeIdentifier(final QName qname, final Identifier<?> key) {
+        NodeIdentifierWithPredicates serializeIdentifier(final QName qname, final Key<?> key) {
             final var values = new Object[keyValueContexts.size()];
             int offset = 0;
             for (var valueCtx : keyValueContexts.values()) {
@@ -125,13 +125,13 @@ abstract sealed class IdentifiableItemCodec {
     private final Class<?> identifiable;
     private final QName qname;
 
-    private IdentifiableItemCodec(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
+    private IdentifiableItemCodec(final ListEffectiveStatement schema, final Class<? extends Key<?>> keyClass,
             final Class<?> identifiable) {
         this.identifiable = requireNonNull(identifiable);
         qname = schema.argument();
     }
 
-    static IdentifiableItemCodec of(final ListEffectiveStatement schema, final Class<? extends Identifier<?>> keyClass,
+    static IdentifiableItemCodec of(final ListEffectiveStatement schema, final Class<? extends Key<?>> keyClass,
             final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
         return switch (keyValueContexts.size()) {
             case 0 -> throw new IllegalArgumentException(
@@ -146,7 +146,7 @@ abstract sealed class IdentifiableItemCodec {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     final @NonNull IdentifiableItem<?, ?> domToBinding(final NodeIdentifierWithPredicates input) {
-        return IdentifiableItem.of((Class) identifiable, (Identifier) deserializeIdentifier(requireNonNull(input)));
+        return IdentifiableItem.of((Class) identifiable, (Key) deserializeIdentifier(requireNonNull(input)));
     }
 
     final @NonNull NodeIdentifierWithPredicates bindingToDom(final IdentifiableItem<?, ?> input) {
@@ -154,7 +154,7 @@ abstract sealed class IdentifiableItemCodec {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    final @NonNull Identifier<?> deserializeIdentifier(final @NonNull NodeIdentifierWithPredicates input) {
+    final @NonNull Key<?> deserializeIdentifier(final @NonNull NodeIdentifierWithPredicates input) {
         try {
             return deserializeIdentifierImpl(input);
         } catch (Throwable e) {
@@ -164,12 +164,11 @@ abstract sealed class IdentifiableItemCodec {
     }
 
     @SuppressWarnings("checkstyle:illegalThrows")
-    abstract @NonNull Identifier<?> deserializeIdentifierImpl(@NonNull NodeIdentifierWithPredicates nip)
-            throws Throwable;
+    abstract @NonNull Key<?> deserializeIdentifierImpl(@NonNull NodeIdentifierWithPredicates nip) throws Throwable;
 
-    abstract @NonNull NodeIdentifierWithPredicates serializeIdentifier(QName qname, Identifier<?> key);
+    abstract @NonNull NodeIdentifierWithPredicates serializeIdentifier(QName qname, Key<?> key);
 
-    static MethodHandle getConstructor(final Class<? extends Identifier<?>> clazz, final int nrArgs) {
+    static MethodHandle getConstructor(final Class<? extends Key<?>> clazz, final int nrArgs) {
         for (var ctor : clazz.getConstructors()) {
             // Check argument count
             if (ctor.getParameterCount() != nrArgs) {

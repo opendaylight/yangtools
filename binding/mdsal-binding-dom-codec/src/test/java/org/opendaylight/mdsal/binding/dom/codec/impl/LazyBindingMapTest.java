@@ -19,7 +19,6 @@ import static org.mockito.Mockito.mock;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,8 +32,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 
 public class LazyBindingMapTest extends AbstractBindingCodecTest {
     private static Top TOP;
@@ -116,8 +115,8 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     private static void assertSameIteratorObjects(final Collection<?> collection) {
-        final Iterator<?> iter1 = collection.iterator();
-        final Iterator<?> iter2 = collection.iterator();
+        final var iter1 = collection.iterator();
+        final var iter2 = collection.iterator();
 
         while (iter1.hasNext()) {
             // Both iterators should return same values
@@ -197,7 +196,7 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     public void testLookupContainsKeyThrows() {
         final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
         assertThrows(NullPointerException.class, () -> list.containsKey(null));
-        assertThrows(ClassCastException.class, () -> list.containsKey(mock(Identifiable.class)));
+        assertThrows(ClassCastException.class, () -> list.containsKey(mock(KeyAware.class)));
     }
 
     @Test

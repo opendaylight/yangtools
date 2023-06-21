@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
  *
  * @author Robert Varga
  */
-public interface KeyedListAction<K extends Identifier<T>, T extends DataObject & Identifiable<K>,
+public interface KeyedListAction<K extends Key<T>, T extends DataObject & KeyAware<K>,
         I extends RpcInput, O extends RpcOutput> extends Action<KeyedInstanceIdentifier<T, K>, I, O> {
     @Override
     @CheckReturnValue

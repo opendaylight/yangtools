@@ -245,7 +245,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @return key associated with the component, or null if the component type
      *         is not present.
      */
-    public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> @Nullable K firstKeyOf(
+    public final <N extends KeyAware<K> & DataObject, K extends Key<N>> @Nullable K firstKeyOf(
             final Class<@NonNull N> listItem) {
         for (final PathArgument i : pathArguments) {
             if (listItem.equals(i.getType())) {
@@ -359,7 +359,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @throws NullPointerException if any argument is null
      */
     @SuppressWarnings("unchecked")
-    public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>>
+    public final <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>>
             @NonNull KeyedInstanceIdentifier<N, K> child(final Class<@NonNull N> listItem, final K listKey) {
         return (KeyedInstanceIdentifier<N, K>) childIdentifier(IdentifiableItem.of(listItem, listKey));
     }
@@ -396,8 +396,8 @@ public class InstanceIdentifier<T extends DataObject>
      */
     // FIXME: add a proper caller
     @SuppressWarnings("unchecked")
-    public final <C extends ChoiceIn<? super T> & DataObject, K extends Identifier<N>,
-        N extends Identifiable<K> & ChildOf<? super C>> @NonNull KeyedInstanceIdentifier<N, K> child(
+    public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
+        N extends KeyAware<K> & ChildOf<? super C>> @NonNull KeyedInstanceIdentifier<N, K> child(
                 final Class<@NonNull C> caze, final Class<@NonNull N> listItem, final K listKey) {
         return (KeyedInstanceIdentifier<N, K>) childIdentifier(IdentifiableItem.of(caze, listItem, listKey));
     }
@@ -470,8 +470,8 @@ public class InstanceIdentifier<T extends DataObject>
      * @return A new {@link Builder}
      * @throws NullPointerException if any argument is null
      */
-    public static <N extends Identifiable<K> & ChildOf<? extends DataRoot>,
-            K extends Identifier<N>> @NonNull KeyedBuilder<N, K> builder(final Class<N> listItem,
+    public static <N extends KeyAware<K> & ChildOf<? extends DataRoot>,
+            K extends Key<N>> @NonNull KeyedBuilder<N, K> builder(final Class<N> listItem,
                     final K listKey) {
         return new KeyedBuilder<>(IdentifiableItem.of(listItem, listKey));
     }
@@ -490,7 +490,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @throws NullPointerException if any argument is null
      */
     public static <C extends ChoiceIn<? extends DataRoot> & DataObject,
-            N extends Identifiable<K> & ChildOf<? super C>, K extends Identifier<N>>
+            N extends KeyAware<K> & ChildOf<? super C>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builder(final Class<C> caze, final Class<N> listItem,
                     final K listKey) {
         return new KeyedBuilder<>(IdentifiableItem.of(caze, listItem, listKey));
@@ -510,8 +510,8 @@ public class InstanceIdentifier<T extends DataObject>
         return new RegularBuilder<>(Item.of(caze, container));
     }
 
-    public static <R extends DataRoot & DataObject, N extends Identifiable<K> & ChildOf<? super R>,
-            K extends Identifier<N>>
+    public static <R extends DataRoot & DataObject, N extends KeyAware<K> & ChildOf<? super R>,
+            K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final Class<R> root,
                 final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
@@ -519,7 +519,7 @@ public class InstanceIdentifier<T extends DataObject>
     }
 
     public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
-            N extends Identifiable<K> & ChildOf<? super C>, K extends Identifier<N>>
+            N extends KeyAware<K> & ChildOf<? super C>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
@@ -552,7 +552,7 @@ public class InstanceIdentifier<T extends DataObject>
 
             hashBuilder.addArgument(arg);
 
-            if (Identifiable.class.isAssignableFrom(type) && !(arg instanceof IdentifiableItem)) {
+            if (KeyAware.class.isAssignableFrom(type) && !(arg instanceof IdentifiableItem)) {
                 wildcard = true;
             }
         } while (it.hasNext());
@@ -612,7 +612,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @throws NullPointerException if id is null.
      */
     // FIXME: reconsider naming and design of this method
-    public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K keyOf(
+    public static <N extends KeyAware<K> & DataObject, K extends Key<N>> K keyOf(
             final InstanceIdentifier<N> id) {
         requireNonNull(id);
         checkArgument(id instanceof KeyedInstanceIdentifier, "%s does not have a key", id);
@@ -630,7 +630,7 @@ public class InstanceIdentifier<T extends DataObject>
         }
 
         final var type = arg.getType();
-        return new InstanceIdentifier(type, pathArguments, wildcarded || Identifiable.class.isAssignableFrom(type),
+        return new InstanceIdentifier(type, pathArguments, wildcarded || KeyAware.class.isAssignableFrom(type),
             hash);
     }
 
@@ -762,7 +762,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @param <I> An object that is identifiable by an identifier
      * @param <T> The identifier of the object
      */
-    public static class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>>
+    public static class IdentifiableItem<I extends KeyAware<T> & DataObject, T extends Key<I>>
             extends AbstractPathArgument<I> {
         @Serial
         private static final long serialVersionUID = 1L;
@@ -784,7 +784,7 @@ public class InstanceIdentifier<T extends DataObject>
          * @return An IdentifiableItem
          * @throws NullPointerException if any argument is null.
          */
-        public static <T extends Identifiable<I> & DataObject, I extends Identifier<T>>
+        public static <T extends KeyAware<I> & DataObject, I extends Key<T>>
                 @NonNull IdentifiableItem<T, I> of(final Class<T> type, final I key) {
             return new IdentifiableItem<>(type, key);
         }
@@ -801,8 +801,8 @@ public class InstanceIdentifier<T extends DataObject>
          * @return A new PathArgument
          * @throws NullPointerException if any argument is null.
          */
-        public static <C extends ChoiceIn<?> & DataObject, T extends ChildOf<? super C> & Identifiable<I>,
-                I extends Identifier<T>> @NonNull IdentifiableItem<T, I> of(final Class<C> caseType,
+        public static <C extends ChoiceIn<?> & DataObject, T extends ChildOf<? super C> & KeyAware<I>,
+                I extends Key<T>> @NonNull IdentifiableItem<T, I> of(final Class<C> caseType,
                         final Class<T> type, final I key) {
             return new CaseIdentifiableItem<>(caseType, type, key);
         }
@@ -842,7 +842,7 @@ public class InstanceIdentifier<T extends DataObject>
     }
 
     private static final class CaseIdentifiableItem<C extends ChoiceIn<?> & DataObject,
-            T extends ChildOf<? super C> & Identifiable<K>, K extends Identifier<T>> extends IdentifiableItem<T, K> {
+            T extends ChildOf<? super C> & KeyAware<K>, K extends Key<T>> extends IdentifiableItem<T, K> {
         @Serial
         private static final long serialVersionUID = 1L;
 
@@ -931,7 +931,7 @@ public class InstanceIdentifier<T extends DataObject>
          * @throws NullPointerException if {@code container} is null
          */
         public final <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
-            return append(Item.of(container), Identifiable.class.isAssignableFrom(container));
+            return append(Item.of(container), KeyAware.class.isAssignableFrom(container));
         }
 
         /**
@@ -948,7 +948,7 @@ public class InstanceIdentifier<T extends DataObject>
          */
         public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
                 final Class<C> caze, final Class<N> container) {
-            return append(Item.of(caze, container), Identifiable.class.isAssignableFrom(container));
+            return append(Item.of(caze, container), KeyAware.class.isAssignableFrom(container));
         }
 
         /**
@@ -963,7 +963,7 @@ public class InstanceIdentifier<T extends DataObject>
          * @return this builder
          * @throws NullPointerException if any argument is null
          */
-        public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> KeyedBuilder<N, K> child(
+        public final <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> KeyedBuilder<N, K> child(
                 final Class<@NonNull N> listItem, final K listKey) {
             return append(IdentifiableItem.of(listItem, listKey));
         }
@@ -982,8 +982,8 @@ public class InstanceIdentifier<T extends DataObject>
          * @return this builder
          * @throws NullPointerException if any argument is null
          */
-        public final <C extends ChoiceIn<? super T> & DataObject, K extends Identifier<N>,
-                N extends Identifiable<K> & ChildOf<? super C>> KeyedBuilder<N, K> child(final Class<C> caze,
+        public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
+                N extends KeyAware<K> & ChildOf<? super C>> KeyedBuilder<N, K> child(final Class<C> caze,
                     final Class<N> listItem, final K listKey) {
             return append(IdentifiableItem.of(caze, listItem, listKey));
         }
@@ -1020,11 +1020,11 @@ public class InstanceIdentifier<T extends DataObject>
 
         abstract <X extends DataObject> @NonNull RegularBuilder<X> append(Item<X> item, boolean isWildcard);
 
-        abstract <X extends DataObject & Identifiable<Y>, Y extends Identifier<X>>
+        abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>>
             @NonNull KeyedBuilder<X, Y> append(IdentifiableItem<X, Y> item);
     }
 
-    public static final class KeyedBuilder<T extends DataObject & Identifiable<K>, K extends Identifier<T>>
+    public static final class KeyedBuilder<T extends DataObject & KeyAware<K>, K extends Key<T>>
             extends Builder<T> {
         private @NonNull IdentifiableItem<T, K> lastItem;
 
@@ -1061,7 +1061,7 @@ public class InstanceIdentifier<T extends DataObject>
 
         @Override
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        <X extends DataObject & Identifiable<Y>, Y extends Identifier<X>> KeyedBuilder<X, Y> append(
+        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
                 final IdentifiableItem<X, Y> item) {
             appendItem(item, false);
             lastItem = (IdentifiableItem) item;
@@ -1073,7 +1073,7 @@ public class InstanceIdentifier<T extends DataObject>
         private @NonNull Class<T> type;
 
         RegularBuilder(final Item<T> item) {
-            super(item, Identifiable.class.isAssignableFrom(item.getType()));
+            super(item, KeyAware.class.isAssignableFrom(item.getType()));
             type = item.getType();
         }
 
@@ -1101,7 +1101,7 @@ public class InstanceIdentifier<T extends DataObject>
         }
 
         @Override
-        <X extends DataObject & Identifiable<Y>, Y extends Identifier<X>> KeyedBuilder<X, Y> append(
+        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
                 final IdentifiableItem<X, Y> item) {
             return new KeyedBuilder<>(this, item);
         }

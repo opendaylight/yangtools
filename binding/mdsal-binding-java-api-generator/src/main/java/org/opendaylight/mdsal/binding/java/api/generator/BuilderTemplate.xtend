@@ -13,7 +13,7 @@ import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.DATA_OBJECT
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.AUGMENTATION_FIELD
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.IDENTIFIABLE_KEY_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.KEY_AWARE_KEY_NAME
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
@@ -472,7 +472,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private generateSetters() '''
         «IF keyType !== null»
             /**
-             * Set the key value corresponding to {@link «targetType.importedName»#«IDENTIFIABLE_KEY_NAME»()} to the specified
+             * Set the key value corresponding to {@link «targetType.importedName»#«KEY_AWARE_KEY_NAME»()} to the specified
              * value.
              *
              * @param key desired value
@@ -589,7 +589,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
-        this.key = base.«IDENTIFIABLE_KEY_NAME»();
+        this.key = base.«KEY_AWARE_KEY_NAME»();
         «FOR field : keyProps»
             this.«field.fieldName» = base.«field.getterMethodName»();
         «ENDFOR»

@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <T> Target data type
  * @param <K> Target key type
  */
-public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>>
+public class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K extends Key<T>>
         extends InstanceIdentifier<T> {
     @Serial
     private static final long serialVersionUID = 2L;

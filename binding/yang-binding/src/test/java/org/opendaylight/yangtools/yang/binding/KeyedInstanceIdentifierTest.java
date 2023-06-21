@@ -19,14 +19,14 @@ public class KeyedInstanceIdentifierTest {
 
     @Test
     public void basicTest() {
-        final Identifier<?> key = mock(Identifier.class);
+        final Key<?> key = mock(Key.class);
         final KeyedInstanceIdentifier<?, ?> keyedInstanceIdentifier =
-                new KeyedInstanceIdentifier(Identifiable.class, ImmutableList.of(), false, 0, key);
+                new KeyedInstanceIdentifier(KeyAware.class, ImmutableList.of(), false, 0, key);
 
         assertEquals(key, keyedInstanceIdentifier.getKey());
 
         assertFalse(keyedInstanceIdentifier.fastNonEqual(keyedInstanceIdentifier.builder().build()));
-        assertTrue(new KeyedInstanceIdentifier(Identifiable.class, ImmutableList.of(), false, 0, null)
+        assertTrue(new KeyedInstanceIdentifier(KeyAware.class, ImmutableList.of(), false, 0, null)
                 .fastNonEqual(keyedInstanceIdentifier.builder().build()));
     }
 }

@@ -230,7 +230,7 @@ public class GeneratedTypesTest {
                     final List<MethodSignature> methods = genType.getMethodDefinitions();
                     for (final MethodSignature method : methods) {
                         switch (method.getName()) {
-                            case Naming.IDENTIFIABLE_KEY_NAME:
+                            case Naming.KEY_AWARE_KEY_NAME:
                                 getSimpleListKeyMethodCount++;
                                 getSimpleListKeyMethodReturnTypeName = method.getReturnType().getName();
                                 break;

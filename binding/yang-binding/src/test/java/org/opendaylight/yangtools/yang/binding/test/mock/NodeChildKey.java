@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.binding.test.mock;
 
 import java.io.Serial;
-import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.Key;
 
-public class NodeChildKey implements Identifier<NodeChild> {
+public class NodeChildKey implements Key<NodeChild> {
     @Serial
     private static final long serialVersionUID = 1L;
 

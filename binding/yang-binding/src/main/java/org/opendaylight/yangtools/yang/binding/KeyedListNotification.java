@@ -20,7 +20,7 @@ import com.google.common.annotations.Beta;
  * @param <K> Parent data tree key type
  */
 @Beta
-public interface KeyedListNotification<N extends KeyedListNotification<N, T, K>, T extends DataObject & Identifiable<K>,
-    K extends Identifier<T>> extends InstanceNotification<N, T> {
+public interface KeyedListNotification<N extends KeyedListNotification<N, T, K>, T extends DataObject & KeyAware<K>,
+    K extends Key<T>> extends InstanceNotification<N, T> {
 
 }

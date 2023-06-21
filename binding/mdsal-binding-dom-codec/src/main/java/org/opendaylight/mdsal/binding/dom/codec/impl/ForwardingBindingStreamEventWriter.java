@@ -11,11 +11,11 @@ import java.io.IOException;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 
-//FIXME: Consider moving this to yang.binding.util.* in Be
+// FIXME: Consider moving this to yang.binding.util.* in Be
 abstract class ForwardingBindingStreamEventWriter implements AnydataBindingStreamWriter {
 
     protected abstract AnydataBindingStreamWriter delegate();
@@ -58,19 +58,19 @@ abstract class ForwardingBindingStreamEventWriter implements AnydataBindingStrea
     }
 
     @Override
-    public <T extends DataObject & Identifiable<?>> void startMapNode(final Class<T> mapEntryType,
-            final int childSizeHint) throws IOException {
+    public <T extends DataObject & KeyAware<?>> void startMapNode(final Class<T> mapEntryType, final int childSizeHint)
+            throws IOException {
         delegate().startMapNode(mapEntryType, childSizeHint);
     }
 
     @Override
-    public <T extends DataObject & Identifiable<?>> void startOrderedMapNode(final Class<T> mapEntryType,
+    public <T extends DataObject & KeyAware<?>> void startOrderedMapNode(final Class<T> mapEntryType,
             final int childSizeHint) throws IOException {
         delegate().startOrderedMapNode(mapEntryType, childSizeHint);
     }
 
     @Override
-    public void startMapEntryNode(final Identifier<?> keyValues, final int childSizeHint) throws IOException {
+    public void startMapEntryNode(final Key<?> keyValues, final int childSizeHint) throws IOException {
         delegate().startMapEntryNode(keyValues, childSizeHint);
     }
 

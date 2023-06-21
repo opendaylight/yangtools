@@ -50,7 +50,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTOBuilder(typeName());
 
-        builder.addImplementsType(BindingTypes.identifier(Type.of(listGen.typeName())));
+        builder.addImplementsType(BindingTypes.key(Type.of(listGen.typeName())));
 
         final var leafNames = statement().argument();
         for (var listChild : listGen) {

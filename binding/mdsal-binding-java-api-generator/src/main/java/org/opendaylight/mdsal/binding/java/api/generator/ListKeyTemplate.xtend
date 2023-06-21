@@ -75,7 +75,7 @@ final class ListKeyTemplate extends ClassTemplate {
     private static def Type findListType(GeneratedType type) {
         for (Type implType : type.getImplements()) {
             if (implType instanceof ParameterizedType) {
-                val identifiable = BindingTypes.extractIdentifiable(implType)
+                val identifiable = BindingTypes.extractKeyType(implType)
                 if (identifiable !== null) {
                     return identifiable
                 }

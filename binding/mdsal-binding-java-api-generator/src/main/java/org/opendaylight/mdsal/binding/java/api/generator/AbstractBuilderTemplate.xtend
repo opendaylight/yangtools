@@ -87,12 +87,12 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             @«OVERRIDE.importedName»
             «ELSE»
             /**
-             * Return current value associated with the property corresponding to {@link «targetType.importedName»#«Naming.IDENTIFIABLE_KEY_NAME»()}.
+             * Return current value associated with the property corresponding to {@link «targetType.importedName»#«Naming.KEY_AWARE_KEY_NAME»()}.
              *
              * @return current value
              */
             «ENDIF»
-            public «keyType.importedName» «Naming.IDENTIFIABLE_KEY_NAME»() {
+            public «keyType.importedName» «Naming.KEY_AWARE_KEY_NAME»() {
                 return key;
             }
 
@@ -118,7 +118,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             «IF augmentType !== null»
                 «generateCopyAugmentation(implType)»
             «ENDIF»
-            «IF keyType !== null && implementsIfc(targetType, BindingTypes.identifiable(targetType))»
+            «IF keyType !== null && implementsIfc(targetType, BindingTypes.keyAware(targetType))»
                 «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
                 «keyProps.sort(KEY_PROPS_COMPARATOR)»
                 «val allProps = new ArrayList(properties)»

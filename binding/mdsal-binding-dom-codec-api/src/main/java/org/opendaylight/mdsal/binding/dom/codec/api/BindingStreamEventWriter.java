@@ -14,8 +14,8 @@ import java.io.IOException;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 
 /**
  * Event Stream Writer for Binding Representation.
@@ -277,8 +277,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    <T extends DataObject & Identifiable<?>> void startMapNode(Class<T> mapEntryType, int childSizeHint)
-            throws IOException;
+    <T extends DataObject & KeyAware<?>> void startMapNode(Class<T> mapEntryType, int childSizeHint) throws IOException;
 
     /**
      * Emits start of ordered map node event.
@@ -303,7 +302,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    <T extends DataObject & Identifiable<?>> void startOrderedMapNode(Class<T> mapEntryType, int childSizeHint)
+    <T extends DataObject & KeyAware<?>> void startOrderedMapNode(Class<T> mapEntryType, int childSizeHint)
             throws IOException;
 
     /**
@@ -337,7 +336,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>map entry</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startMapEntryNode(Identifier<?> keyValues, int childSizeHint) throws IOException;
+    void startMapEntryNode(Key<?> keyValues, int childSizeHint) throws IOException;
 
     /**
      * Emits start of choice node.

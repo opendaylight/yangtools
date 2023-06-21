@@ -23,8 +23,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.impl.KeyedListNodeCodecContext.Unordered;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @param <K> key type
  * @param <V> value type
  */
-final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Identifiable<K>>
+final class LazyBindingMap<K extends Key<V>, V extends DataObject & KeyAware<K>>
         extends AbstractMap<K, V> implements Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(LazyBindingMap.class);
     private static final String LAZY_CUTOFF_PROPERTY =
@@ -80,7 +80,7 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
         this.mapNode = requireNonNull(mapNode);
     }
 
-    static <K extends Identifier<V>, V extends DataObject & Identifiable<K>> @NonNull Map<K, V> create(
+    static <K extends Key<V>, V extends DataObject & KeyAware<K>> @NonNull Map<K, V> create(
             final Unordered<K, V> codec, final MapNode mapNode, final int size) {
         if (size == 1) {
             // Do not bother with lazy instantiation in case of a singleton
@@ -90,7 +90,7 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
         return size > LAZY_CUTOFF ? new LazyBindingMap<>(codec, mapNode) : eagerMap(codec, mapNode, size);
     }
 
-    private static <K extends Identifier<V>, V extends DataObject & Identifiable<K>> @NonNull Map<K, V> eagerMap(
+    private static <K extends Key<V>, V extends DataObject & KeyAware<K>> @NonNull Map<K, V> eagerMap(
             final Unordered<K, V> codec, final MapNode mapNode, final int size) {
         final Builder<K, V> builder = ImmutableMap.builderWithExpectedSize(size);
         for (MapEntryNode node : mapNode.body()) {
@@ -129,9 +129,8 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
     @Override
     public boolean containsValue(final Object value) {
         /*
-         * This implementation relies on the relationship specified by Identifiable/Identifier and its use in binding
-         * objects. The key is a wrapper object composed of a subset (or all) properties in the value, i.e. we have
-         * a partial index.
+         * This implementation relies on the relationship specified by KeyAware/Key and its use in binding objects. The
+         * key is a wrapper object composed of a subset (or all) properties in the value, i.e. we have a partial index.
          *
          * Instead of performing an O(N) search, we extract the key from the value, look the for the corresponding
          * mapping. If we find a mapping we check if the mapped value equals the the value being looked up.
@@ -169,7 +168,7 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
     }
 
     Optional<V> lookupValue(final @NonNull Object key) {
-        final NodeIdentifierWithPredicates childId = codec.serialize((Identifier<?>) key);
+        final NodeIdentifierWithPredicates childId = codec.serialize((Key<?>) key);
         return mapNode.findChildByArg(childId).map(codec::createBindingProxy);
     }
 
@@ -205,7 +204,7 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
         return new UnsupportedOperationException("Modification is not supported");
     }
 
-    abstract static class State<K extends Identifier<V>, V extends DataObject & Identifiable<K>> {
+    abstract static class State<K extends Key<V>, V extends DataObject & KeyAware<K>> {
         abstract boolean containsKey(@NonNull Object key);
 
         abstract V get(@NonNull Object key);

@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -186,20 +186,20 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     }
 
     @Override
-    public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException {
+    public void startMapEntryNode(final Key<?> key, final int childSizeHint) throws IOException {
         duplicateSchemaEnter();
         NodeIdentifierWithPredicates identifier = ((KeyedListNodeCodecContext<?, ?>) current()).serialize(key);
         delegate.startMapEntryNode(identifier, childSizeHint);
     }
 
     @Override
-    public <T extends DataObject & Identifiable<?>> void startMapNode(final Class<T> mapEntryType,
-            final int childSizeHint) throws IOException {
+    public <T extends DataObject & KeyAware<?>> void startMapNode(final Class<T> mapEntryType, final int childSizeHint)
+            throws IOException {
         delegate.startMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
-    public <T extends DataObject & Identifiable<?>> void startOrderedMapNode(final Class<T> mapEntryType,
+    public <T extends DataObject & KeyAware<?>> void startOrderedMapNode(final Class<T> mapEntryType,
             final int childSizeHint) throws IOException {
         delegate.startOrderedMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }

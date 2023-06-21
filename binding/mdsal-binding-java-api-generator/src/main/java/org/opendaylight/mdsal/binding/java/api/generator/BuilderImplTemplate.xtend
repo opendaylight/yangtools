@@ -14,7 +14,7 @@ import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_EQ
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_HASHCODE_NAME
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_TO_STRING_NAME
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.BUILDER_SUFFIX
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.IDENTIFIABLE_KEY_NAME
+import static org.opendaylight.yangtools.yang.binding.contract.Naming.KEY_AWARE_KEY_NAME
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.NONNULL_PREFIX
 
 import java.util.Collection
@@ -70,7 +70,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     def private generateGetters() '''
         «IF keyType !== null»
             @«OVERRIDE.importedName»
-            public «keyType.importedName» «IDENTIFIABLE_KEY_NAME»() {
+            public «keyType.importedName» «KEY_AWARE_KEY_NAME»() {
                 return key;
             }
 
@@ -203,8 +203,8 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
-        if (base.«IDENTIFIABLE_KEY_NAME»() != null) {
-            this.key = base.«IDENTIFIABLE_KEY_NAME»();
+        if (base.«KEY_AWARE_KEY_NAME»() != null) {
+            this.key = base.«KEY_AWARE_KEY_NAME»();
         } else {
             this.key = new «keyType.importedName»(«FOR keyProp : keyProps SEPARATOR ", "»base.«keyProp.getterMethodName»()«ENDFOR»);
         }

@@ -13,10 +13,8 @@ import org.eclipse.jdt.annotation.NonNull;
  * Identifiable object, which could be identified by it's key.
  *
  * @param <T> Identifier class for this object
- *
- * @author ttkacik
  */
-public interface Identifiable<T extends Identifier<? extends Identifiable<T>>> {
+public interface KeyAware<T extends Key<? extends KeyAware<T>>> {
     /**
      * Returns an unique key for the object.
      *

@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.binding.test.mock;
 
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 
 public interface NodeChild extends
         DataObject,
-        Identifiable<NodeChildKey>,
+        KeyAware<NodeChildKey>,
         ChildOf<Node> {
 
 }

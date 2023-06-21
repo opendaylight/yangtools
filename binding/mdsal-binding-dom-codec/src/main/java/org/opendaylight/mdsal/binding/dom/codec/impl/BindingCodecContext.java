@@ -61,10 +61,10 @@ import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
@@ -471,11 +471,11 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListRuntimeType type) {
-        final Optional<Class<Identifier<?>>> optIdentifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
-                Identifiable.class);
+        final Optional<Class<Key<?>>> optIdentifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
+                KeyAware.class);
         checkState(optIdentifier.isPresent(), "Failed to find identifier for %s", listClz);
 
-        final Class<Identifier<?>> identifier = optIdentifier.orElseThrow();
+        final Class<Key<?>> identifier = optIdentifier.orElseThrow();
         final Map<QName, ValueContext> valueCtx = new HashMap<>();
         for (final ValueNodeCodecContext leaf : getLeafNodes(identifier, type.statement()).values()) {
             final QName name = leaf.getDomPathArgument().getNodeType();

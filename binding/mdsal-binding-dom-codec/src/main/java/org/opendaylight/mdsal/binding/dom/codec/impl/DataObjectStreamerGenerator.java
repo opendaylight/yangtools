@@ -60,8 +60,9 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -109,9 +110,9 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     // startMapEntryNode(obj.key(), UNKNOWN_SIZE)
     private static final StackManipulation START_MAP_ENTRY_NODE = new StackManipulation.Compound(
         OBJ,
-        invokeMethod(Identifiable.class, "key"),
+        invokeMethod(KeyAware.class, Naming.KEY_AWARE_KEY_NAME),
         UNKNOWN_SIZE,
-        invokeMethod(BindingStreamEventWriter.class, "startMapEntryNode", Identifier.class, int.class));
+        invokeMethod(BindingStreamEventWriter.class, "startMapEntryNode", Key.class, int.class));
 
     // startUnkeyedListItem(UNKNOWN_SIZE)
     private static final StackManipulation START_UNKEYED_LIST_ITEM = new StackManipulation.Compound(

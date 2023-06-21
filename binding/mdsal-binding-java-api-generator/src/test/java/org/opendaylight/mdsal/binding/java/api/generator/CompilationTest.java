@@ -132,7 +132,7 @@ public class CompilationTest extends BaseCompilationTest {
         // Test serialVersionUID generation
         final Field suid = CompilationTestUtils.assertContainsField(linksKeyClass, "serialVersionUID", Long.TYPE);
         suid.setAccessible(true);
-        assertEquals(-8829501012356283881L, suid.getLong(null));
+        assertEquals(-8290985055387641395L, suid.getLong(null));
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

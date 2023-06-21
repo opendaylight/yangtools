@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.identifiable;
+import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.keyAware;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
@@ -70,8 +70,8 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         if (keyGen != null) {
             // Add yang.binding.Identifiable and its key() method
             final GeneratedType keyType = keyGen.getGeneratedType(builderFactory);
-            builder.addImplementsType(identifiable(keyType));
-            builder.addMethod(Naming.IDENTIFIABLE_KEY_NAME)
+            builder.addImplementsType(keyAware(keyType));
+            builder.addMethod(Naming.KEY_AWARE_KEY_NAME)
                 .setReturnType(keyType)
                 .addAnnotation(OVERRIDE_ANNOTATION);
         }

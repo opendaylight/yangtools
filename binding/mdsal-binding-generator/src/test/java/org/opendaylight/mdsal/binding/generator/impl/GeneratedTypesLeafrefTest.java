@@ -113,7 +113,7 @@ public class GeneratedTypesLeafrefTest {
         MethodSignature getHigherLayerIf = null;
         for (final MethodSignature method : gtIfcMethods) {
             switch (method.getName()) {
-                case Naming.IDENTIFIABLE_KEY_NAME:
+                case Naming.KEY_AWARE_KEY_NAME:
                     getIfcKey = method;
                     break;
                 case "getHigherLayerIf":
@@ -184,7 +184,7 @@ public class GeneratedTypesLeafrefTest {
         assertNotNull(gtTunnelMethods);
         MethodSignature getTunnelKey = null;
         for (MethodSignature method : gtTunnelMethods) {
-            if (Naming.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
+            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                 getTunnelKey = method;
             }
         }

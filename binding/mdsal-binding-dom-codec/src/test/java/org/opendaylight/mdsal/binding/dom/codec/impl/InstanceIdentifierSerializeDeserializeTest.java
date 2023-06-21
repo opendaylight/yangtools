@@ -33,8 +33,8 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.con
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.cont.cont.choice.ContBase;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.grp.GrpCont;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.root.RootBase;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.Key;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -76,7 +76,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
         assertEquals(TopLevelList.class, instanceIdentifier.getTargetType());
         assertFalse(instanceIdentifier.isWildcarded());
         assertTrue(last instanceof InstanceIdentifier.IdentifiableItem);
-        final Identifier<?> key = ((InstanceIdentifier.IdentifiableItem<?, ?>) last).getKey();
+        final Key<?> key = ((InstanceIdentifier.IdentifiableItem<?, ?>) last).getKey();
         assertEquals(TopLevelListKey.class, key.getClass());
         assertEquals(TOP_LEVEL_LIST_KEY_VALUE, ((TopLevelListKey)key).getName());
     }

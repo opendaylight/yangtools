@@ -28,8 +28,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.BindingContract;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
@@ -97,9 +97,9 @@ public final class Naming {
     public static final @NonNull String AUGMENTABLE_AUGMENTATION_NAME = "augmentation";
 
     /**
-     * Name of {@link Identifiable#key()}.
+     * Name of {@link KeyAware#key()}.
      */
-    public static final @NonNull String IDENTIFIABLE_KEY_NAME = "key";
+    public static final @NonNull String KEY_AWARE_KEY_NAME = "key";
 
     /**
      * Name of {@link BindingContract#implementedInterface()}.

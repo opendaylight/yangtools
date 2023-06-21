@@ -16,8 +16,8 @@ import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 
@@ -54,7 +54,7 @@ non-sealed class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extend
             }
             return new ContainerNodeCodecContext(this);
         } else if (type instanceof ListRuntimeType) {
-            return Identifiable.class.isAssignableFrom(getBindingClass())
+            return KeyAware.class.isAssignableFrom(getBindingClass())
                     ? KeyedListNodeCodecContext.create((DataContainerCodecPrototype<ListRuntimeType>) this)
                             : new ListNodeCodecContext(this);
         } else if (type instanceof ChoiceRuntimeType) {

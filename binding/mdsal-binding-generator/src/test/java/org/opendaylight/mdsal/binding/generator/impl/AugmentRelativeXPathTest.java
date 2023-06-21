@@ -60,7 +60,7 @@ public class AugmentRelativeXPathTest {
 
                 MethodSignature getIfcKeyMethod = null;
                 for (final MethodSignature method : gtInterfaceMethods) {
-                    if (Naming.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
+                    if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                         getIfcKeyMethod = method;
                         break;
                     }
@@ -80,7 +80,7 @@ public class AugmentRelativeXPathTest {
 
                 MethodSignature getTunnelKeyMethod = null;
                 for (MethodSignature method : tunnelMethods) {
-                    if (Naming.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
+                    if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                         getTunnelKeyMethod = method;
                         break;
                     }

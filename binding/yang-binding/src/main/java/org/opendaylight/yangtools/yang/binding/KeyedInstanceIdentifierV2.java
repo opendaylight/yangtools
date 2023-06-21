@@ -14,7 +14,7 @@ import java.io.ObjectStreamException;
 import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
-final class KeyedInstanceIdentifierV2<T extends Identifiable<K> & DataObject, K extends Identifier<T>>
+final class KeyedInstanceIdentifierV2<T extends KeyAware<K> & DataObject, K extends Key<T>>
         extends InstanceIdentifierV3<T> {
     @Serial
     private static final long serialVersionUID = 2L;

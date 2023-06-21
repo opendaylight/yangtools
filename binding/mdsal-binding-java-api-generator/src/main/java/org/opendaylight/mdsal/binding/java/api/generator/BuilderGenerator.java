@@ -82,7 +82,7 @@ public final class BuilderGenerator implements CodeGenerator {
 
     private static Type getKey(final GeneratedType type) {
         for (MethodSignature m : type.getMethodDefinitions()) {
-            if (Naming.IDENTIFIABLE_KEY_NAME.equals(m.getName())) {
+            if (Naming.KEY_AWARE_KEY_NAME.equals(m.getName())) {
                 return m.getReturnType();
             }
         }

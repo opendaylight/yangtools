@@ -31,10 +31,10 @@ import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceNotification;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.KeyedListAction;
 import org.opendaylight.yangtools.yang.binding.KeyedListNotification;
@@ -83,9 +83,9 @@ public final class BindingTypes {
     @VisibleForTesting
     static final ConcreteType AUGMENTATION = typeForClass(Augmentation.class);
     @VisibleForTesting
-    static final ConcreteType IDENTIFIABLE = typeForClass(Identifiable.class);
+    static final ConcreteType KEY_AWARE = typeForClass(KeyAware.class);
     @VisibleForTesting
-    static final ConcreteType IDENTIFIER = typeForClass(Identifier.class);
+    static final ConcreteType KEY = typeForClass(Key.class);
 
     private static final ConcreteType ACTION = typeForClass(Action.class);
     private static final ConcreteType CHILD_OF = typeForClass(ChildOf.class);
@@ -214,25 +214,25 @@ public final class BindingTypes {
     }
 
     /**
-     * Type specializing {@link Identifier} for a particular type.
+     * Type specializing {@link Key} for a particular type.
      *
      * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code Identifier<Type>}
+     * @return A parameterized type corresponding to {@code Key<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static ParameterizedType identifier(final Type type) {
-        return parameterizedTypeFor(IDENTIFIER, type);
+    public static ParameterizedType key(final Type type) {
+        return parameterizedTypeFor(KEY, type);
     }
 
     /**
-     * Type specializing {@link Identifiable} for a particular type.
+     * Type specializing {@link KeyAware} for a particular type.
      *
      * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code Identifiable<Type>}
+     * @return A parameterized type corresponding to {@code KeyAware<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static ParameterizedType identifiable(final Type type) {
-        return parameterizedTypeFor(IDENTIFIABLE, type);
+    public static ParameterizedType keyAware(final Type type) {
+        return parameterizedTypeFor(KEY_AWARE, type);
     }
 
     /**
@@ -386,15 +386,15 @@ public final class BindingTypes {
     }
 
     /**
-     * Return the {@link Identifiable} type a parameterized {@link Identifier} type references.
+     * Return the {@link KeyAware} type a parameterized {@link Key} type references.
      *
      * @param type Parameterized type
-     * @return Identifiable target, or null if {@code type} does not match the result of {@link #identifier(Type)}
+     * @return Identifiable target, or null if {@code type} does not match the result of {@link #key(Type)}
      * @throws NullPointerException if {@code type} is {@code null}
      */
     @Beta
-    public static @Nullable Type extractIdentifiable(final ParameterizedType type) {
-        if (IDENTIFIER.equals(type.getRawType())) {
+    public static @Nullable Type extractKeyType(final ParameterizedType type) {
+        if (KEY.equals(type.getRawType())) {
             final var args = type.getActualTypeArguments();
             if (args.length == 1) {
                 final var arg = args[0];

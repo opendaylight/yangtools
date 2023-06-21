@@ -68,7 +68,7 @@ public class AugmentedTypeTest {
         assertNotNull("gtInterfaceMethods is null", gtInterfaceMethods);
         MethodSignature getIfcKeyMethod = null;
         for (final MethodSignature method : gtInterfaceMethods) {
-            if (Naming.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
+            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                 getIfcKeyMethod = method;
                 break;
             }
@@ -109,7 +109,7 @@ public class AugmentedTypeTest {
         assertNotNull("Tunnel methods are null", tunnelMethods);
         MethodSignature getTunnelKeyMethod = null;
         for (MethodSignature method : tunnelMethods) {
-            if (Naming.IDENTIFIABLE_KEY_NAME.equals(method.getName())) {
+            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                 getTunnelKeyMethod = method;
                 break;
             }

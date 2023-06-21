@@ -183,9 +183,9 @@ public class InstanceIdentifierTest {
 
     @Test
     public void keyOfTest() {
-        final Identifier<?> identifier = mock(Identifier.class);
+        final Key<?> identifier = mock(Key.class);
         assertEquals(identifier, InstanceIdentifier.keyOf(
-                new KeyedInstanceIdentifier(Identifiable.class, ImmutableList.of(), false, 0, identifier)));
+                new KeyedInstanceIdentifier(KeyAware.class, ImmutableList.of(), false, 0, identifier)));
     }
 
     @Test

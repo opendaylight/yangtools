@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.IDENTIFIABLE_KEY_NAME;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -16,18 +15,19 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
+import org.opendaylight.yangtools.yang.binding.Key;
+import org.opendaylight.yangtools.yang.binding.KeyAware;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 
-abstract sealed class KeyedListNodeCodecContext<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
+abstract sealed class KeyedListNodeCodecContext<I extends Key<D>, D extends DataObject & KeyAware<I>>
         extends ListNodeCodecContext<D> {
-    private static final class Ordered<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
+    private static final class Ordered<I extends Key<D>, D extends DataObject & KeyAware<I>>
             extends KeyedListNodeCodecContext<I, D> {
         Ordered(final DataContainerCodecPrototype<ListRuntimeType> prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
@@ -35,7 +35,7 @@ abstract sealed class KeyedListNodeCodecContext<I extends Identifier<D>, D exten
         }
     }
 
-    static final class Unordered<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
+    static final class Unordered<I extends Key<D>, D extends DataObject & KeyAware<I>>
             extends KeyedListNodeCodecContext<I, D> {
         Unordered(final DataContainerCodecPrototype<ListRuntimeType> prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
@@ -61,7 +61,7 @@ abstract sealed class KeyedListNodeCodecContext<I extends Identifier<D>, D exten
         final Class<?> bindingClass = prototype.getBindingClass();
         final Method keyMethod;
         try {
-            keyMethod = bindingClass.getMethod(IDENTIFIABLE_KEY_NAME);
+            keyMethod = bindingClass.getMethod(Naming.KEY_AWARE_KEY_NAME);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Required method not available", e);
         }
@@ -98,11 +98,11 @@ abstract sealed class KeyedListNodeCodecContext<I extends Identifier<D>, D exten
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    NodeIdentifierWithPredicates serialize(final Identifier<?> key) {
-        return codec.bindingToDom(IdentifiableItem.of((Class)getBindingClass(), (Identifier)key));
+    NodeIdentifierWithPredicates serialize(final Key<?> key) {
+        return codec.bindingToDom(IdentifiableItem.of((Class)getBindingClass(), (Key)key));
     }
 
-    @NonNull Identifier<?> deserialize(final @NonNull NodeIdentifierWithPredicates arg) {
+    @NonNull Key<?> deserialize(final @NonNull NodeIdentifierWithPredicates arg) {
         return codec.deserializeIdentifier(arg);
     }
 
