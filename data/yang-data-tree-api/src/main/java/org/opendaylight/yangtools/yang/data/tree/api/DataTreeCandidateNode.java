@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
+import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -91,15 +94,14 @@ public interface DataTreeCandidateNode {
      * when there is evidence of the node or its parent being involved in modification which has turned out not to
      * modify the node's contents.
      *
-     * @implSpec Default implementation defers to {@link #findModifiedChild(PathArgument)}.
+     * @implSpec Default implementation defers to {@link #modifiedChild(PathArgument)}.
      * @param childName Identifier of child node
-     * @return Modified child or empty.
-     * @throws NullPointerException if {@code childIdentifier} is {@code null}
-     * @deprecated Use {@link #modifiedChild(PathArgument)} or {@link #findModifiedChild(PathArgument)} instead.
+     * @return Modified child
+     * @throws NullPointerException if {@code childName} is {@code null}
+     * @throws VerifyException if no modified child with specified name is found
      */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childName) {
-        return findModifiedChild(childName);
+    default @NonNull DataTreeCandidateNode getModifiedChild(final PathArgument childName) {
+        return verifyNotNull(modifiedChild(childName), "No modified child named %s", childName);
     }
 
     /**
@@ -141,13 +143,12 @@ public interface DataTreeCandidateNode {
     /**
      * Return the before-image of data corresponding to the node.
      *
-     * @implSpec Default implementation defers to {@link #findDataBefore()}.
+     * @implSpec Default implementation defers to {@link #dataBefore()}.
      * @return Node data as they were present in the tree before the modification was applied.
-     * @deprecated Use {@link #dataBefore()} or {@link #findDataBefore()} instead.
+     * @throws VerifyException if no before-image is present
      */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Optional<NormalizedNode> getDataBefore() {
-        return findDataBefore();
+    default @NonNull NormalizedNode getDataBefore() {
+        return verifyNotNull(dataBefore(), "No before-image available");
     }
 
     /**
@@ -170,12 +171,11 @@ public interface DataTreeCandidateNode {
     /**
      * Return the after-image of data corresponding to the node.
      *
-     * @implSpec Default implementation defers to {@link #findDataAfter()}.
+     * @implSpec Default implementation defers to {@link #dataAfter()}.
      * @return Node data as they will be present in the tree after the modification is applied.
-     * @deprecated Use {@link #dataAfter()} or {@link #findDataAfter()} instead.
+     * @throws VerifyException if no after-image is present
      */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull Optional<NormalizedNode> getDataAfter() {
-        return findDataAfter();
+    default @NonNull NormalizedNode getDataAfter() {
+        return verifyNotNull(dataAfter(), "No after-image available");
     }
 }
