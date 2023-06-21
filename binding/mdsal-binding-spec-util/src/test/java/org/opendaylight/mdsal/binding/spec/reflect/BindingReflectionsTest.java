@@ -24,8 +24,6 @@ public class BindingReflectionsTest {
 
     @Test
     public void testBindingWithDummyObject() throws Exception {
-        assertEquals("ModuleInfoClassName should be equal to string", "test.$YangModuleInfoImpl",
-                BindingReflections.getModuleInfoClassName("test"));
         assertFalse("Should not be RpcType", BindingReflections.isRpcType(DataObject.class));
         assertTrue("Should be BindingClass", BindingReflections.isBindingClass(DataObject.class));
         assertFalse("Should not be Notification", BindingReflections.isNotification(DataObject.class));

@@ -108,8 +108,8 @@ public final class BindingReflections {
      * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
      */
     private static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) {
-        final String packageName = Naming.getModelRootPackageName(cls.getPackage().getName());
-        final String potentialClassName = getModuleInfoClassName(packageName);
+        final String potentialClassName = Naming.getModelRootPackageName(cls.getPackage().getName()) + "."
+            + Naming.MODULE_INFO_CLASS_NAME;
         final Class<?> moduleInfoClass;
         try {
             moduleInfoClass = cls.getClassLoader().loadClass(potentialClassName);
@@ -126,10 +126,6 @@ public final class BindingReflections {
 
         checkState(infoInstance instanceof YangModuleInfo, "Unexpected instance %s", infoInstance);
         return (YangModuleInfo) infoInstance;
-    }
-
-    public static @NonNull String getModuleInfoClassName(final String packageName) {
-        return packageName + "." + Naming.MODULE_INFO_CLASS_NAME;
     }
 
     /**
