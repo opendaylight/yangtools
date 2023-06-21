@@ -138,7 +138,7 @@ public final class BindingReflections {
      * @param cls data object class
      * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
      */
-    public static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) {
+    private static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) {
         final String packageName = Naming.getModelRootPackageName(cls.getPackage().getName());
         final String potentialClassName = getModuleInfoClassName(packageName);
         final Class<?> moduleInfoClass;
