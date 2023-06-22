@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -128,14 +129,15 @@ public final class BindingReflections {
      *            Class to be checked
      * @return true if class represents RPC Input or RPC Output class.
      */
-    public static boolean isRpcType(final Class<? extends DataObject> targetType) {
+    @VisibleForTesting
+    static boolean isRpcType(final Class<? extends DataObject> targetType) {
         return DataContainer.class.isAssignableFrom(targetType)
                 && !ChildOf.class.isAssignableFrom(targetType)
                 && !Notification.class.isAssignableFrom(targetType)
                 && (targetType.getName().endsWith("Input") || targetType.getName().endsWith("Output"));
     }
 
-    private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
+    private static final class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
 
         @Override
         public Optional<QName> load(@SuppressWarnings("NullableProblems") final Class<?> key) throws Exception {
