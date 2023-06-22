@@ -19,20 +19,18 @@ import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
-import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.YangFeature;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -61,9 +59,9 @@ public final class ModuleInfoSnapshotBuilder {
         return add(moduleInfo);
     }
 
-    @SuppressWarnings("unchecked")
-    public @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject>... classes) {
-        for (Class<? extends BindingObject> clazz : classes) {
+    @SafeVarargs
+    public final @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject>... classes) {
+        for (var clazz : classes) {
             add(clazz);
         }
         return this;
@@ -75,7 +73,7 @@ public final class ModuleInfoSnapshotBuilder {
     }
 
     public @NonNull ModuleInfoSnapshotBuilder add(final YangModuleInfo... infos) {
-        for (YangModuleInfo info : infos) {
+        for (var info : infos) {
             add(info);
         }
         return this;
@@ -103,15 +101,18 @@ public final class ModuleInfoSnapshotBuilder {
     public @NonNull ModuleInfoSnapshot build() throws YangParserException {
         final YangParser parser = parserFactory.createParser();
 
-        final Map<SourceIdentifier, YangModuleInfo> mappedInfos = new HashMap<>();
-        final Map<String, ClassLoader> classLoaders = new HashMap<>();
-        for (YangModuleInfo info : moduleInfos) {
-            final YangTextSchemaSource source = ModuleInfoSnapshotResolver.toYangTextSource(info);
+        final var mappedInfos = new HashMap<SourceIdentifier, YangModuleInfo>();
+        final var classLoaders = new HashMap<String, ClassLoader>();
+        final var namespaces = new HashMap<String, QNameModule>();
+
+        for (var info : moduleInfos) {
+            final var source = ModuleInfoSnapshotResolver.toYangTextSource(info);
             mappedInfos.put(source.getIdentifier(), info);
 
             final Class<?> infoClass = info.getClass();
-            classLoaders.put(Naming.getModelRootPackageName(infoClass.getPackage().getName()),
-                infoClass.getClassLoader());
+            final String infoRoot = Naming.getModelRootPackageName(infoClass.getPackage().getName());
+            classLoaders.put(infoRoot, infoClass.getClassLoader());
+            namespaces.put(infoRoot, info.getName().getModule());
 
             try {
                 parser.addSource(source);
@@ -123,9 +124,18 @@ public final class ModuleInfoSnapshotBuilder {
         if (!moduleFeatures.isEmpty()) {
             final var featuresByModule = FeatureSet.builder();
             for (var entry : Multimaps.asMap(moduleFeatures).entrySet()) {
-                featuresByModule.addModuleFeatures(BindingReflections.getQNameModule(entry.getKey()),
-                    entry.getValue().stream().map(YangFeature::qname).map(QName::getLocalName).sorted()
-                        .collect(ImmutableSet.toImmutableSet()));
+                final var moduleData = entry.getKey();
+                final var moduleRoot = Naming.getModelRootPackageName(moduleData.getPackage().getName());
+                final var moduleNamespace = namespaces.get(moduleRoot);
+                if (moduleNamespace == null) {
+                    throw new YangParserException("Failed to resolve namespace of " + moduleData);
+                }
+
+                featuresByModule.addModuleFeatures(moduleNamespace, entry.getValue().stream()
+                    .map(YangFeature::qname)
+                    .map(QName::getLocalName)
+                    .sorted()
+                    .collect(ImmutableSet.toImmutableSet()));
             }
             parser.setSupportedFeatures(featuresByModule.build());
         }
