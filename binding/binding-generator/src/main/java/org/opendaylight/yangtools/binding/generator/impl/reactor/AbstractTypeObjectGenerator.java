@@ -290,6 +290,9 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
      */
     private TypedefGenerator baseGen;
     private TypeReference refType;
+    // The generator corresponding to the furthest resolved leaf in leafref chain, at point when this was resolved
+    // serves to help in detection of circular leafref chains
+    private AbstractTypeObjectGenerator<?, ?> furthestInRefChain;
     private List<GeneratedType> auxiliaryGeneratedTypes = List.of();
     private UnionDependencies unionDependencies;
     private List<AbstractTypeObjectGenerator<?, ?>> inferred = List.of();
@@ -392,9 +395,27 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return TypeReference.leafRef(e);
         }
 
-        checkArgument(targetGenerator != this, "Effective model contains self-referencing leaf %s",
-            statement().argument());
+        checkCircularRefChain(targetGenerator);
+
         return TypeReference.leafRef(targetGenerator);
+    }
+
+    private void checkCircularRefChain(final AbstractTypeObjectGenerator<?, ?> targetGenerator) {
+        if (targetGenerator == null) {
+            // UnresolvedLeafref
+            return;
+        }
+        var current = targetGenerator;
+        // We can't rely on furthestInRefChain of our targetGenerator as it could be resolved in the meantime
+        while (current.furthestInRefChain != null) {
+            current = current.furthestInRefChain;
+        }
+
+        // At this point we either arrived at some not yet resolved leafref or at non leafref generator
+        // we check for circular leafref chain as the not yet resolved leafref could be this
+        checkArgument(current != this, "Circular leafref chain detected at leaf %s",
+                statement().argument());
+        furthestInRefChain = current;
     }
 
     private static boolean isBuiltinName(final QName typeName) {

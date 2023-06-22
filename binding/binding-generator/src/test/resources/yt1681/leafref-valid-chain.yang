@@ -1,0 +1,41 @@
+module leafref-valid-chain {
+    namespace "urn:xml:ns:yang:lvc";
+    prefix lcv;
+    revision "2023-06-22";
+
+    list neighbor {
+        description
+          "List of neighbors.";
+        leaf neighbor-id {
+            type leafref {
+                path "../../neighbor/neighbor3-id";
+            }
+            description "Neighbor.";
+        }
+
+        leaf neighbor2-id {
+            type leafref {
+                path "../../neighbor/neighbor4-id";
+            }
+            description "Neighbor.";
+        }
+
+        leaf neighbor3-id {
+            type leafref {
+                path "../../neighbor/neighbor2-id";
+            }
+            description "Neighbor.";
+        }
+
+        leaf neighbor4-id {
+            type leafref {
+                path "../../neighbor/mystring";
+            }
+            description "Neighbor.";
+        }
+
+        leaf mystring {
+            type string;
+        }
+    }
+}
