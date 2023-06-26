@@ -58,7 +58,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     final @NonNull ImmutableMap<Method, ValueNodeCodecContext> leafContexts;
     final @NonNull ImmutableMap<Class<?>, PropertyInfo> daoProperties;
 
-    DataContainerAnalysis(final CommonDataObjectCodecPrototype<R> prototype) {
+    DataContainerAnalysis(final DataContainerPrototype<?, R> prototype) {
         this(prototype.javaClass(), prototype.runtimeType(), prototype.contextFactory(), null);
     }
 
