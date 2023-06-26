@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.test.yang.data.demo.rev220222.YangDataWithContainer;
 import org.opendaylight.yang.gen.v1.urn.test.yang.data.demo.rev220222.YangDataWithContainerBuilder;
@@ -31,13 +30,11 @@ class YT1605Test extends AbstractBindingCodecTest {
         .setContainerFromYangData(new ContainerFromYangDataBuilder().setStr("some string").build())
         .build();
 
-    @Disabled
     @Test
     void testFromBinding() {
         assertEquals(NORMALIZED, codecContext.getYangDataCodec(BINDING.implementedInterface()).fromBinding(BINDING));
     }
 
-    @Disabled
     @Test
     void testToBinding() {
         assertEquals(BINDING, codecContext.getYangDataCodec(YangDataWithContainer.NAME).toBinding(NORMALIZED));

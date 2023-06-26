@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 abstract sealed class DataContainerPrototype<C extends DataContainerCodecContext<?, R, ?>,
         R extends CompositeRuntimeType>
-        extends LazyCodecContextSupplier<C> permits ChoiceCodecPrototype, CommonDataObjectCodecPrototype {
+        extends LazyCodecContextSupplier<C>
+        permits ChoiceCodecPrototype, CommonDataObjectCodecPrototype, YangDataCodecPrototype {
     private final @NonNull CodecContextFactory contextFactory;
     private final @NonNull R runtimeType;
 
