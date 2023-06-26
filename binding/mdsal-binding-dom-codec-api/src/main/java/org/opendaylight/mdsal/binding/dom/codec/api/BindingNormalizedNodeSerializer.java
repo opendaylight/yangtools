@@ -283,7 +283,7 @@ public interface BindingNormalizedNodeSerializer {
     @Beta default @NonNull BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
             @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcOutput output) {
         return toLazyNormalizedNodeActionOutput(action,
-            new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), output);
+            new NodeIdentifier(YangConstants.operationOutputQName(BindingReflections.getQNameModule(action))), output);
     }
 
     /**
@@ -295,7 +295,7 @@ public interface BindingNormalizedNodeSerializer {
     @Beta default @NonNull ContainerNode toNormalizedNodeActionOutput(
             @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcOutput output) {
         return toLazyNormalizedNodeActionOutput(action,
-            new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), output)
+            new NodeIdentifier(YangConstants.operationOutputQName(BindingReflections.getQNameModule(action))), output)
                 .getDelegate();
     }
 }
