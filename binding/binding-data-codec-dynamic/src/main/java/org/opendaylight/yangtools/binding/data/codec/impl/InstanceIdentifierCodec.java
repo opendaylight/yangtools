@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
@@ -65,6 +66,8 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
                     new LeafPropertyStep<>(doi.lastStep().type(), valueCodec.valueType(),
                         valueCodec.getSchema().getQName().unbind()));
             }
+            case YangDataCodecContext<?> yangData ->
+                throw new VerifyException(yangData + " should not be reachable here");
         };
     }
 

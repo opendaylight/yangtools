@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for {@link ClassGenerator}s for binding interfaces.
  */
-abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T>
-        permits CodecDataObjectGenerator {
+abstract sealed class CodecClassGenerator<T extends CodecDataContainer<?, ?>> implements ClassGenerator<T>
+        permits CodecDataObjectGenerator, CodecYangDataGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(CodecClassGenerator.class);
     private static final Generic BB_BOOLEAN = TypeDefinition.Sort.describe(boolean.class);
     private static final Generic BB_OBJECT = TypeDefinition.Sort.describe(Object.class);
