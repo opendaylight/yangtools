@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -20,55 +19,32 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
 /**
- * A base class for {@link DataObject}s backed by {@link DataObjectCodecContext}. While this class is public, it not
- * part of API surface and is an implementation detail. The only reason for it being public is that it needs to be
- * accessible by code generated at runtime.
+ * A base class for {@link DataObject}s backed by {@link AbstractDataObjectCodecContext}. While this class is public, it
+ * is not part of API surface and is an implementation detail. The only reason for it being public is that it needs to
+ * be accessible by code generated at runtime.
  *
  * @param <T> DataObject type
  */
-public abstract class CodecDataObject<T extends DataObject> implements DataObject {
+public abstract non-sealed class CodecDataObject<T extends DataObject> extends CodecDataContainer<DataContainerNode>
+        implements DataObject {
     // An object representing a null value in a member field.
     private static final @NonNull Object NULL_VALUE = new Object();
 
-    private static final VarHandle CACHED_HASH_CODE;
-
-    static {
-        try {
-            CACHED_HASH_CODE = MethodHandles.lookup().findVarHandle(CodecDataObject.class, "cachedHashcode",
-                Integer.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
     private final @NonNull CommonDataObjectCodecContext<T, ?> context;
-    private final @NonNull DataContainerNode data;
 
     // Accessed via a VarHandle
     // FIXME: consider using a primitive int-based cache (with 0 being uninit)
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile Integer cachedHashcode;
 
     protected CodecDataObject(final CommonDataObjectCodecContext<T, ?> context, final DataContainerNode data) {
-        this.data = requireNonNull(data, "Data must not be null");
+        super(data);
         this.context = requireNonNull(context, "Context must not be null");
     }
 
-    @Override
-    public final int hashCode() {
-        final var cached = (Integer) CACHED_HASH_CODE.getAcquire(this);
-        return cached != null ? cached : loadHashCode();
+    final @NonNull CommonDataObjectCodecContext<T, ?> codecContext() {
+        return context;
     }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        // Indirection to keep checkstyle happy
-        return codecEquals(obj);
-    }
-
-    @Override
-    public abstract String toString();
 
     protected final Object codecMember(final VarHandle handle, final String localName) {
         final Object cached = handle.getAcquire(this);
@@ -103,21 +79,9 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return cached != null ? cached : loadKey(handle);
     }
 
-    protected abstract int codecHashCode();
-
-    protected abstract boolean codecEquals(Object obj);
-
-    final @NonNull CommonDataObjectCodecContext<T, ?> codecContext() {
-        return context;
-    }
-
-    final @NonNull DataContainerNode codecData() {
-        return data;
-    }
-
     // Helper split out of codecMember to aid its inlining
     private Object loadMember(final VarHandle handle, final CodecContext childCtx) {
-        final var child = data.childByArg(childCtx.getDomPathArgument());
+        final var child = codecData().childByArg(childCtx.getDomPathArgument());
 
         // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
         // normal value because defaultObject() may end up throwing an exception intentionally.
@@ -128,6 +92,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // Helper split out of codecKey to aid its inlining
     private @NonNull Object loadKey(final VarHandle handle) {
+        final var data = codecData();
         if (!(data instanceof MapEntryNode mapEntry)) {
             throw new VerifyException("Unsupported value " + data);
         }
@@ -139,13 +104,6 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         // key is known to be non-null, no need to mask it
         final Object witness = handle.compareAndExchangeRelease(this, null, obj);
         return witness == null ? obj : witness;
-    }
-
-    // Helper split out of hashCode() to aid its inlining
-    private int loadHashCode() {
-        final int result = codecHashCode();
-        final Object witness = CACHED_HASH_CODE.compareAndExchangeRelease(this, null, result);
-        return witness == null ? result : (Integer) witness;
     }
 
     private static @NonNull Object maskNull(final @Nullable Object unmasked) {
