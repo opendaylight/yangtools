@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
@@ -38,15 +37,11 @@ import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import net.bytebuddy.implementation.bytecode.constant.ClassConstant;
 import net.bytebuddy.implementation.bytecode.constant.TextConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
-import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.data.codec.impl.ClassGeneratorBridge.CodecContextSupplierProvider;
 import org.opendaylight.yangtools.binding.data.codec.impl.ClassGeneratorBridge.LocalNameProvider;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
-import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
-import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +135,7 @@ import org.slf4j.LoggerFactory;
  * loading block runs with the class loading lock for this FQCN and the reference is not leaked until the process
  * completes.
  */
-abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
+abstract sealed class CodecDataObjectGenerator<T extends CodecDataObject<?>> extends CodecClassGenerator<T> {
     // Not reusable definition: we can inline NodeContextSuppliers without a problem
     // FIXME: MDSAL-443: wire this implementation, which requires that BindingRuntimeTypes provides information about
     //                   types being generated from within a grouping
@@ -228,25 +223,13 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CodecDataObjectGenerator.class);
-    private static final Generic BB_BOOLEAN = TypeDefinition.Sort.describe(boolean.class);
-    private static final Generic BB_OBJECT = TypeDefinition.Sort.describe(Object.class);
-    private static final Generic BB_INT = TypeDefinition.Sort.describe(int.class);
-    private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
     private static final TypeDescription BB_CDO = ForLoadedType.of(CodecDataObject.class);
     private static final TypeDescription BB_ACDO = ForLoadedType.of(AugmentableCodecDataObject.class);
 
-    private static final StackManipulation FIRST_ARG_REF = MethodVariableAccess.REFERENCE.loadFrom(1);
-
-    private static final int PROT_FINAL = Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
-    private static final int PUB_FINAL = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
-
-    private static final ByteBuddy BB = new ByteBuddy();
-
-    private final TypeDescription superClass;
     private final Method keyMethod;
 
     CodecDataObjectGenerator(final TypeDescription superClass, final @Nullable Method keyMethod) {
-        this.superClass = requireNonNull(superClass);
+        super(superClass);
         this.keyMethod = keyMethod;
     }
 
@@ -265,65 +248,16 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     @Override
-    public final GeneratorResult<T> generateClass(final BindingClassLoader loader, final String fqcn,
-            final Class<?> bindingInterface) {
-        LOG.trace("Generating class {}", fqcn);
-
-        final Generic bindingDef = TypeDefinition.Sort.describe(bindingInterface);
-        @SuppressWarnings("unchecked")
-        Builder<T> builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build())
-            .name(fqcn).implement(bindingDef);
-
-        builder = generateGetters(builder);
-
-        if (keyMethod != null) {
-            LOG.trace("Generating for key {}", keyMethod);
-            final String methodName = keyMethod.getName();
-            final TypeDescription retType = ForLoadedType.of(keyMethod.getReturnType());
-            builder = builder.defineMethod(methodName, retType, PUB_FINAL).intercept(
-                new KeyMethodImplementation(methodName, retType));
+    final Builder<T> customizeBuilder(final Builder<T> builder) {
+        if (keyMethod == null) {
+            return builder;
         }
 
-        // Final bits:
-        return GeneratorResult.of(builder
-                // codecHashCode() ...
-                .defineMethod("codecHashCode", BB_INT, PROT_FINAL)
-                .intercept(codecHashCode(bindingInterface))
-                // ... equals(Object) ...
-                .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_OBJECT)
-                .intercept(codecEquals(bindingInterface))
-                // ... toString() ...
-                .defineMethod("toString", BB_STRING, PUB_FINAL)
-                .intercept(toString(bindingInterface))
-                // ... and build it
-                .make());
-    }
-
-    abstract Builder<T> generateGetters(Builder<T> builder);
-
-    private static Implementation codecHashCode(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingHashCode(this);
-            loadThis(),
-            invokeMethod(bindingInterface, Naming.BINDING_HASHCODE_NAME, bindingInterface),
-            MethodReturn.INTEGER);
-    }
-
-    private static Implementation codecEquals(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingEquals(this, obj);
-            loadThis(),
-            FIRST_ARG_REF,
-            invokeMethod(bindingInterface, Naming.BINDING_EQUALS_NAME, bindingInterface, Object.class),
-            MethodReturn.INTEGER);
-    }
-
-    private static Implementation toString(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingToString(this);
-            loadThis(),
-            invokeMethod(bindingInterface, Naming.BINDING_TO_STRING_NAME, bindingInterface),
-            MethodReturn.REFERENCE);
+        LOG.trace("Generating for key {}", keyMethod);
+        final var methodName = keyMethod.getName();
+        final var retType = ForLoadedType.of(keyMethod.getReturnType());
+        return builder.defineMethod(methodName, retType, PUB_FINAL)
+            .intercept(new KeyMethodImplementation(methodName, retType));
     }
 
     private abstract static class AbstractMethodImplementation implements Implementation {
@@ -398,7 +332,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     private static final class NonnullMethodImplementation extends AbstractMethodImplementation {
-        private static final StackManipulation NONNULL_MEMBER = invokeMethod(CodecDataObject.class,
+        private static final StackManipulation NONNULL_MEMBER = invokeMethod(CodecDataContainer.class,
                 "codecMemberOrEmpty", Object.class, Class.class);
 
         private final Class<?> bindingClass;
@@ -439,7 +373,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
      * on the constant pool entry to resolve to the same object.
      */
     private static final class SimpleGetterMethodImplementation extends AbstractCachedMethodImplementation {
-        private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataObject.class,
+        private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataContainer.class,
             "codecMember", VarHandle.class, String.class);
         private static final StackManipulation BRIDGE_RESOLVE = invokeMethod(ClassGeneratorBridge.class,
             "resolveLocalName", String.class);
@@ -481,7 +415,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     private static final class StructuredGetterMethodImplementation extends AbstractCachedMethodImplementation {
-        private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataObject.class,
+        private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataContainer.class,
             "codecMember", VarHandle.class, Class.class);
 
         private final Class<?> bindingClass;
@@ -506,7 +440,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     private static final class SupplierGetterMethodImplementation extends AbstractCachedMethodImplementation {
-        private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataObject.class,
+        private static final StackManipulation CODEC_MEMBER = invokeMethod(CodecDataContainer.class,
             "codecMember", VarHandle.class, CodecContextSupplier.class);
         private static final StackManipulation BRIDGE_RESOLVE = invokeMethod(ClassGeneratorBridge.class,
             "resolveNodeContextSupplier", String.class);
