@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 final class FixedGetterGenerator extends GetterGenerator implements CodecContextSupplierProvider {
     private static final class SupplierGetterMethodImplementation extends CachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
-            invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, CodecContextSupplier.class);
+            invokeMethod(CodecDataContainer.class, "codecMember", VarHandle.class, CodecContextSupplier.class);
         private static final StackManipulation BRIDGE_RESOLVE =
             invokeMethod(ClassGeneratorBridge.class, "resolveCodecContextSupplier", String.class);
         private static final Generic BB_NCS = TypeDefinition.Sort.describe(CodecContextSupplier.class);
