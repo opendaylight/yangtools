@@ -240,7 +240,8 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation of action input
      * @throws NullPointerException if any of the arguments is null
      */
-    @Beta default @NonNull BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
+    @Beta
+    default @NonNull BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
             @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcInput input) {
         return toLazyNormalizedNodeActionInput(action,
             new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), input);
@@ -254,12 +255,9 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation of action input
      * @throws NullPointerException if any of the arguments is null
      */
-    @Beta default @NonNull ContainerNode toNormalizedNodeActionInput(
-            @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcInput input) {
-        return toLazyNormalizedNodeActionInput(action,
-            new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), input)
-                .getDelegate();
-    }
+    @Beta
+    @NonNull ContainerNode toNormalizedNodeActionInput(@NonNull Class<? extends Action<?, ?, ?>> action,
+        @NonNull RpcInput input);
 
     /**
      * Lazily translates supplied Binding action output into NormalizedNode data.
@@ -292,10 +290,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param output Binding action output
      * @return NormalizedNode representation of action output
      */
-    @Beta default @NonNull ContainerNode toNormalizedNodeActionOutput(
-            @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcOutput output) {
-        return toLazyNormalizedNodeActionOutput(action,
-            new NodeIdentifier(YangConstants.operationOutputQName(BindingReflections.getQNameModule(action))), output)
-                .getDelegate();
-    }
+    @Beta
+    @NonNull ContainerNode toNormalizedNodeActionOutput(@NonNull Class<? extends Action<?, ?, ?>> action,
+        @NonNull RpcOutput output);
 }
