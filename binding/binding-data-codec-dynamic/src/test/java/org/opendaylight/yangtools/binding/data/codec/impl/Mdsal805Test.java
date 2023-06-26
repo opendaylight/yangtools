@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,7 +23,6 @@ class Mdsal805Test extends AbstractBindingCodecTest {
     @Mock
     private NormalizedYangData mockYangData;
 
-    @Disabled
     @Test
     void testFromBinding() {
         final var binding = new YangDataWithContainerBuilder()
@@ -35,7 +33,6 @@ class Mdsal805Test extends AbstractBindingCodecTest {
         assertNotNull(dom);
     }
 
-    @Disabled
     @Test
     void testToBinding() {
         final var binding = codecContext.getYangDataCodec(YangDataWithContainer.NAME).toBinding(mockYangData);
