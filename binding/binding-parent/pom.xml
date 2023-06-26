@@ -44,13 +44,25 @@
             </activation>
             <dependencies>
                 <dependency>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-annotations</artifactId>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.jdt</groupId>
+                    <artifactId>org.eclipse.jdt.annotation</artifactId>
+                </dependency>
+                <dependency>
                     <groupId>org.opendaylight.mdsal</groupId>
                     <artifactId>yang-binding</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>com.github.spotbugs</groupId>
-                    <artifactId>spotbugs-annotations</artifactId>
-                    <optional>true</optional>
+                    <groupId>org.opendaylight.yangtools</groupId>
+                    <artifactId>yang-common</artifactId>
                 </dependency>
             </dependencies>
             <build>
@@ -89,6 +101,15 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <configuration>
+                            <ignoredUnusedDeclaredDependencies combine.children="append">
+                                <!-- Binding uses SpotBugs only for some constructs (RPCs) methods -->
+                                <ignoredUnusedDeclaredDependency>com.github.spotbugs:spotbugs-annotations</ignoredUnusedDeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
