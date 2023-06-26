@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 /**
  * A {@link RuntimeType} associated with a statement with similar semantics as {@code container} statement.
  */
-@Beta
 public interface ContainerLikeRuntimeType<D extends DeclaredStatement<QName>,
         E extends DataTreeEffectiveStatement<D> & DataTreeAwareEffectiveStatement<QName, D>>
         extends AugmentableRuntimeType, DataRuntimeType {

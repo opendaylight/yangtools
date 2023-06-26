@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
  * A {@link RuntimeType} associated with a {@code choice} statement. Note that unlike YANG semantics, in Binding Spec
  * semantics a type generated for a 'choice' statement is <b>does not</b> implement {@link Augmentable}.
  */
-@Beta
 public interface ChoiceRuntimeType extends CompositeRuntimeType, DataRuntimeType {
     @Override
     ChoiceEffectiveStatement statement();

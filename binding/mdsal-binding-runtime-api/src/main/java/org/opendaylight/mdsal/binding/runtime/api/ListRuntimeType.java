@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with a {@code list} statement.
  */
-@Beta
 public interface ListRuntimeType extends AugmentableRuntimeType, DataRuntimeType {
     @Override
     ListEffectiveStatement statement();

@@ -7,13 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with a {@code anydata} statement.
  */
-@Beta
 public interface AnydataRuntimeType extends OpaqueRuntimeType {
     @Override
     AnydataEffectiveStatement statement();

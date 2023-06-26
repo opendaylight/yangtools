@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Base interface for all run-time type information about a particular {@link Type}.
  */
-@Beta
 public interface RuntimeType extends Immutable {
     /**
      * Java type associated with this run-time type.

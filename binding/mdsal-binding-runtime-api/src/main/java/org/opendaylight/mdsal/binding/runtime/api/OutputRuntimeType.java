@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 
 /**
  * A {@link RuntimeType} associated with an {@code output} statement.
  */
-@Beta
 public interface OutputRuntimeType extends ContainerLikeRuntimeType<OutputStatement, OutputEffectiveStatement> {
 
 }

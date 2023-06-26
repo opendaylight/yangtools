@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A {@link CompositeRuntimeType} which is also can be targeted by {@code augment} statements.
  */
-@Beta
 public interface AugmentableRuntimeType extends CompositeRuntimeType {
     /**
      * Return the {@link AugmentRuntimeType}s extending this type, matching the underlying {@link #statement()}.

@@ -7,13 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with an {@code action} statement.
  */
-@Beta
 public interface ActionRuntimeType extends InvokableRuntimeType {
     @Override
     ActionEffectiveStatement statement();

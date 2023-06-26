@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -15,7 +14,6 @@ import org.opendaylight.yangtools.concepts.Identifiable;
 /**
  * A {@link RuntimeType} associated with a {@link GeneratedType}.
  */
-@Beta
 public interface GeneratedRuntimeType extends RuntimeType, Identifiable<JavaTypeName> {
     @Override
     GeneratedType javaType();

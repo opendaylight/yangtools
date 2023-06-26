@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 
 /**
  * A {@link RuntimeType} associated with an {@code input} statement.
  */
-@Beta
 public interface InputRuntimeType extends ContainerLikeRuntimeType<InputStatement, InputEffectiveStatement> {
 
 }

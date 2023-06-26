@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with an opaque construct, like {@code anydata} and {@code anyxml}.
  */
-@Beta
 public interface OpaqueRuntimeType extends GeneratedRuntimeType, DataRuntimeType {
     @Override
     DataTreeEffectiveStatement<?> statement();

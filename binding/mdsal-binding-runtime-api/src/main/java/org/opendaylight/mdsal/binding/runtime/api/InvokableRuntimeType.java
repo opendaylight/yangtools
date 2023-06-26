@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Common interface for run-time types associated with invokable operations, such as those defined by {@code action} and
  * {@code rpc} statements.
  */
-@Beta
 public interface InvokableRuntimeType extends CompositeRuntimeType {
     /**
      * Return the run-time type for this action's input.

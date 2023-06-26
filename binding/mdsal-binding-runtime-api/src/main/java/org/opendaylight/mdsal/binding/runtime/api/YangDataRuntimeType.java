@@ -7,10 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
-@NonNullByDefault
+/**
+ * A {@link CompositeRuntimeType} associated with a RESTCONF {@code yang-data} statement.
+ */
 public interface YangDataRuntimeType extends CompositeRuntimeType {
     @Override
     YangDataEffectiveStatement statement();

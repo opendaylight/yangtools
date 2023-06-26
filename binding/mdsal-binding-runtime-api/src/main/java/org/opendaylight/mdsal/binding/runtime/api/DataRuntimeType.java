@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 
 /**
@@ -26,7 +25,6 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
  * and similar, as those exist in outside of {@code data tree} contract, but are still part of what
  * {@link RuntimeTypeContainer#bindingChild(JavaTypeName)} considers as child constructs.
  */
-@Beta
 public interface DataRuntimeType extends RuntimeType {
     // Marker interface, no further contract is specified
 }

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * An object containing {@link RuntimeType}s.
  */
-@Beta
 public interface RuntimeTypeContainer extends Immutable {
     /**
      * Look up a child {@link RuntimeType} by its {@code schema tree} {@link QName}. Note the returned child does not

@@ -7,13 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import com.google.common.annotations.Beta;
-
 /**
  * A {@link RuntimeType} which is also a {@link RuntimeTypeContainer}. This is a pure composition interface and does not
  * imply further contract.
  */
-@Beta
 public interface CompositeRuntimeType extends GeneratedRuntimeType, RuntimeTypeContainer {
     // Pure contract composition
 }
