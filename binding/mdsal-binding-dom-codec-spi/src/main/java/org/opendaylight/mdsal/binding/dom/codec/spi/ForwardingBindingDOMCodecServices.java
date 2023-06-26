@@ -49,9 +49,21 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
+    public BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
+            final Class<? extends Action<?, ?, ?>> action, final RpcInput input) {
+        return delegate().toLazyNormalizedNodeActionInput(action, input);
+    }
+
+    @Override
     public BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
             final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcOutput output) {
         return delegate().toLazyNormalizedNodeActionOutput(action, identifier, output);
+    }
+
+    @Override
+    public BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
+            final Class<? extends Action<?, ?, ?>> action, final RpcOutput output) {
+        return delegate().toLazyNormalizedNodeActionOutput(action, output);
     }
 
     @Override

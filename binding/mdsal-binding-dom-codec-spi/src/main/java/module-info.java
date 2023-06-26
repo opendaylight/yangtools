@@ -9,7 +9,6 @@ module org.opendaylight.mdsal.binding.dom.codec.spi {
     exports org.opendaylight.mdsal.binding.dom.codec.spi;
 
     requires transitive org.opendaylight.mdsal.binding.dom.codec.api;
-    requires org.opendaylight.mdsal.binding.spec.util;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;

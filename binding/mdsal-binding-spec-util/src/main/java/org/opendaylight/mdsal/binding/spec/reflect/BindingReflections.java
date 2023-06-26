@@ -57,7 +57,7 @@ public final class BindingReflections {
         return CLASS_TO_QNAME.getUnchecked(dataType).orElse(null);
     }
 
-    public static QNameModule getQNameModule(final Class<?> clz) {
+    public static @NonNull QNameModule getQNameModule(final Class<?> clz) {
         if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)
                 || Action.class.isAssignableFrom(clz)) {
             return findQName(clz).getModule();

@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
@@ -698,6 +699,16 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return serializeDataObject(output, (ctx, iface, domWriter) -> ctx.newActionOutputWriter(action, domWriter));
     }
 
+    @Override
+    protected NodeIdentifier actionInputName(final Class<? extends Action<?, ?, ?>> action) {
+        return verifyNotNull(getActionCodec(action).input().getDomPathArgument());
+    }
+
+    @Override
+    protected NodeIdentifier actionOutputName(final Class<? extends Action<?, ?, ?>> action) {
+        return verifyNotNull(getActionCodec(action).output().getDomPathArgument());
+    }
+
     private <T extends DataContainer> @NonNull ContainerNode serializeDataObject(final DataObject data,
             final WriterFactoryMethod<T> newWriter) {
         final var result = new NormalizationResultHolder();
@@ -714,7 +725,6 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         }
         return (ContainerNode) result.getResult().data();
     }
-
 
     private static boolean notBindingRepresentable(final NormalizedNode data) {
         // ValueNode covers LeafNode and LeafSetEntryNode

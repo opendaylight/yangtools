@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.spi;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -24,8 +25,24 @@ public abstract class AbstractBindingNormalizedNodeSerializer implements Binding
     }
 
     @Override
+    public final BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
+            final Class<? extends Action<?, ?, ?>> action, final RpcInput input) {
+        return toLazyNormalizedNodeActionInput(action, actionInputName(action), input);
+    }
+
+    protected abstract @NonNull NodeIdentifier actionInputName(@NonNull Class<? extends Action<?, ?, ?>> action);
+
+    @Override
     public final BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
             final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcOutput output) {
         return new LazyActionOutputContainerNode(identifier, output, this, action);
     }
+
+    @Override
+    public final BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
+            final Class<? extends Action<?, ?, ?>> action, final RpcOutput output) {
+        return toLazyNormalizedNodeActionOutput(action, actionOutputName(action), output);
+    }
+
+    protected abstract @NonNull NodeIdentifier actionOutputName(@NonNull Class<? extends Action<?, ?, ?>> action);
 }
