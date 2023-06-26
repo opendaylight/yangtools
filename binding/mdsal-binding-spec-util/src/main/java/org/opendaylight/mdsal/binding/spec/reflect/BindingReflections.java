@@ -57,11 +57,6 @@ public final class BindingReflections {
         return CLASS_TO_QNAME.getUnchecked(dataType).orElse(null);
     }
 
-    public static @NonNull QName getQName(final BaseIdentity identity) {
-        return CLASS_TO_QNAME.getUnchecked(identity.implementedInterface())
-            .orElseThrow(() -> new IllegalStateException("Failed to resolve QName of " + identity));
-    }
-
     public static QNameModule getQNameModule(final Class<?> clz) {
         if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)
                 || Action.class.isAssignableFrom(clz)) {
