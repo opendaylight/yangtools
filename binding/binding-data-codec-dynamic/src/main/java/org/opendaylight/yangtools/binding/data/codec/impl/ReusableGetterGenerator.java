@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 final class ReusableGetterGenerator extends GetterGenerator implements LocalNameProvider {
     private static final class NonnullMethodImplementation extends MethodImplementation {
         private static final StackManipulation NONNULL_MEMBER =
-            invokeMethod(CodecDataObject.class, "codecMemberOrEmpty", Object.class, Class.class);
+            invokeMethod(CodecDataContainer.class, "codecMemberOrEmpty", Object.class, Class.class);
 
         private final @NonNull Class<?> bindingClass;
         private final @NonNull Method getterMethod;
@@ -86,7 +86,7 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
      */
     private static final class SimpleGetterMethodImplementation extends CachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
-            invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, String.class);
+            invokeMethod(CodecDataContainer.class, "codecMember", VarHandle.class, String.class);
         private static final StackManipulation BRIDGE_RESOLVE =
             invokeMethod(ClassGeneratorBridge.class, "resolveLocalName", String.class);
         private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
@@ -129,7 +129,7 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
 
     private static final class StructuredGetterMethodImplementation extends CachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
-            invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, Class.class);
+            invokeMethod(CodecDataContainer.class, "codecMember", VarHandle.class, Class.class);
 
         private final @NonNull Class<?> bindingClass;
 
