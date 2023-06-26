@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
 abstract sealed class DataContainerCodecContext<D extends DataContainer, R extends CompositeRuntimeType,
         P extends DataContainerPrototype<?, R>>
         extends CodecContext implements BindingDataContainerCodecTreeNode<D>
-        permits ChoiceCodecContext, CommonDataObjectCodecContext {
+        permits ChoiceCodecContext, CommonDataObjectCodecContext, YangDataCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);
     private static final VarHandle EVENT_STREAM_SERIALIZER;
 
@@ -101,7 +101,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
         return (Class<D>) prototype().javaClass();
     }
 
-    // overridden in AugmentationCodecContext
+    // overridden in AugmentationCodecContext and YangDataCodecContext
     @Override
     NodeIdentifier getDomPathArgument() {
         return prototype.yangArg();
