@@ -374,9 +374,9 @@
                 <!-- FIXME: remove this section once we can activate javadoc-links profile -->
                 <configuration combine.children="append">
                     <links>
-                        <link>https://junit.org/junit4/javadoc/4.13/</link>
-                        <link>http://hamcrest.org/JavaHamcrest/javadoc/2.2/</link>
-                        <link>http://www.slf4j.org/apidocs/</link>
+                        <link>https://junit.org/junit5/docs/current/api/</link>
+                        <link>https://hamcrest.org/JavaHamcrest/javadoc/2.2/</link>
+                        <link>https://www.slf4j.org/apidocs/</link>
                         <link>https://google.github.io/guava/releases/31.1-jre/api/docs/</link>
 
                         <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/13.0.3/</link>
