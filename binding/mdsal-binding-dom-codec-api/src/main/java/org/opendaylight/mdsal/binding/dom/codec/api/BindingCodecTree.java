@@ -29,6 +29,8 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      * A DTO holding a {@link CommonDataObjectCodecTreeNode} and the corresponding {@link YangInstanceIdentifier}.
      *
      * @param <T> {@link DataObject} type
+     * @param codec A CommonDataObjectCodecTreeNode handling the translation
+     * @param path A {@link YangInstanceIdentifier} corresponding to the backing Normalized Node
      */
     record CodecWithPath<T extends DataObject>(
             @NonNull CommonDataObjectCodecTreeNode<T> codec,
