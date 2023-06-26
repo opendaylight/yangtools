@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -96,7 +95,6 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      *
      * @return A BindingIdentityCodec instance.
      */
-    @Beta
     @NonNull BindingIdentityCodec getIdentityCodec();
 
     /**
@@ -104,6 +102,5 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      *
      * @return A BindingInstanceIdentifierCodec instance.
      */
-    @Beta
     @NonNull BindingInstanceIdentifierCodec getInstanceIdentifierCodec();
 }
