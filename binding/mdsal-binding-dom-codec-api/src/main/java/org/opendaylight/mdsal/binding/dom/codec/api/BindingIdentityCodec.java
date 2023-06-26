@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * A codec capable of translating {@code identity} values between their YANG (QName) and Binding (Class) representation.
  */
-@Beta
 public interface BindingIdentityCodec extends Immutable {
     /**
      * Convert a QNname to its corresponding Binding class.
