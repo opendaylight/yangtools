@@ -18,6 +18,8 @@ public final class BindingSchemaMapping {
     }
 
     public static String getGetterMethodName(final DataSchemaNode node) {
-        return Naming.getGetterMethodName(node.getQName());
+        final String candidate = Naming.getClassName(node.getQName().getLocalName());
+        final String getterSuffix = "Class".equals(candidate) ? "XmlClass" : candidate;
+        return Naming.GETTER_PREFIX + getterSuffix;
     }
 }
