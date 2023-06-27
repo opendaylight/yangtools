@@ -188,7 +188,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     @Override
     public void startMapEntryNode(final Key<?> key, final int childSizeHint) throws IOException {
         duplicateSchemaEnter();
-        NodeIdentifierWithPredicates identifier = ((KeyedListNodeCodecContext<?, ?>) current()).serialize(key);
+        NodeIdentifierWithPredicates identifier = ((MapCodecContext<?, ?>) current()).serialize(key);
         delegate.startMapEntryNode(identifier, childSizeHint);
     }
 

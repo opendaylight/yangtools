@@ -129,7 +129,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         if (!(data instanceof MapEntryNode mapEntry)) {
             throw new VerifyException("Unsupported value " + data);
         }
-        if (!(context instanceof KeyedListNodeCodecContext<?, ?> listContext)) {
+        if (!(context instanceof MapCodecContext<?, ?> listContext)) {
             throw new VerifyException("Unexpected context " + context);
         }
 

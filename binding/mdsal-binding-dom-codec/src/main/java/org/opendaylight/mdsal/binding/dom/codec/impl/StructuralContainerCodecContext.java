@@ -10,8 +10,9 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 
 /**
@@ -32,7 +33,12 @@ final class StructuralContainerCodecContext<D extends DataObject> extends Contai
     @SuppressWarnings("unused")
     private volatile D emptyObject;
 
-    StructuralContainerCodecContext(final DataContainerCodecPrototype<ContainerLikeRuntimeType<?, ?>> prototype) {
+    StructuralContainerCodecContext(final Class<D> cls, final ContainerRuntimeType type,
+            final CodecContextFactory factory) {
+        this(new StructuralContainerCodecPrototype(Item.of(cls), type, factory));
+    }
+
+    StructuralContainerCodecContext(final StructuralContainerCodecPrototype prototype) {
         super(prototype);
     }
 

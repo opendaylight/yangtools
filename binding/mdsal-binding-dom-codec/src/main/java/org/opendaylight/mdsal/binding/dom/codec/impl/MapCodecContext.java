@@ -17,6 +17,7 @@ import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.Key;
 import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
@@ -25,19 +26,18 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 
-abstract sealed class KeyedListNodeCodecContext<I extends Key<D>, D extends DataObject & KeyAware<I>>
-        extends ListNodeCodecContext<D> {
+abstract sealed class MapCodecContext<I extends Key<D>, D extends DataObject & KeyAware<I>>
+        extends ListCodecContext<D> {
     private static final class Ordered<I extends Key<D>, D extends DataObject & KeyAware<I>>
-            extends KeyedListNodeCodecContext<I, D> {
-        Ordered(final DataContainerCodecPrototype<ListRuntimeType> prototype, final Method keyMethod,
-                final IdentifiableItemCodec codec) {
+            extends MapCodecContext<I, D> {
+        Ordered(final MapCodecPrototype prototype, final Method keyMethod, final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
         }
     }
 
     static final class Unordered<I extends Key<D>, D extends DataObject & KeyAware<I>>
-            extends KeyedListNodeCodecContext<I, D> {
-        Unordered(final DataContainerCodecPrototype<ListRuntimeType> prototype, final Method keyMethod,
+            extends MapCodecContext<I, D> {
+        private Unordered(final MapCodecPrototype prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
         }
@@ -50,15 +50,19 @@ abstract sealed class KeyedListNodeCodecContext<I extends Key<D>, D extends Data
 
     private final IdentifiableItemCodec codec;
 
-    KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListRuntimeType> prototype,
-            final Method keyMethod, final IdentifiableItemCodec codec) {
+    private MapCodecContext(final MapCodecPrototype prototype, final Method keyMethod,
+            final IdentifiableItemCodec codec) {
         super(prototype, keyMethod);
         this.codec = requireNonNull(codec);
     }
 
-    @SuppressWarnings("rawtypes")
-    static KeyedListNodeCodecContext create(final DataContainerCodecPrototype<ListRuntimeType> prototype) {
-        final Class<?> bindingClass = prototype.getBindingClass();
+    static @NonNull MapCodecContext<?, ?>  of(final Class<? extends DataObject> cls,
+            final ListRuntimeType list, final CodecContextFactory factory) {
+        return of(new MapCodecPrototype(Item.of(cls), list, factory));
+    }
+
+    static @NonNull MapCodecContext<?, ?> of(final MapCodecPrototype prototype) {
+        final var bindingClass = prototype.getBindingClass();
         final Method keyMethod;
         try {
             keyMethod = bindingClass.getMethod(Naming.KEY_AWARE_KEY_NAME);
@@ -66,8 +70,8 @@ abstract sealed class KeyedListNodeCodecContext<I extends Key<D>, D extends Data
             throw new IllegalStateException("Required method not available", e);
         }
 
-        final ListRuntimeType type = prototype.getType();
-        final IdentifiableItemCodec codec = prototype.getFactory().getPathArgumentCodec(bindingClass, type);
+        final var type = prototype.getType();
+        final var codec = prototype.getFactory().getPathArgumentCodec(bindingClass, type);
 
         return type.statement().ordering() == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
             : new Ordered<>(prototype, keyMethod, codec);
@@ -92,28 +96,30 @@ abstract sealed class KeyedListNodeCodecContext<I extends Key<D>, D extends Data
     }
 
     @Override
-    protected InstanceIdentifier.PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
+    protected final InstanceIdentifier.PathArgument getBindingPathArgument(
+            final YangInstanceIdentifier.PathArgument domArg) {
         return domArg instanceof NodeIdentifierWithPredicates nip ? codec.domToBinding(nip)
             : super.getBindingPathArgument(domArg);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    NodeIdentifierWithPredicates serialize(final Key<?> key) {
+    final NodeIdentifierWithPredicates serialize(final Key<?> key) {
         return codec.bindingToDom(IdentifiableItem.of((Class)getBindingClass(), (Key)key));
     }
 
-    @NonNull Key<?> deserialize(final @NonNull NodeIdentifierWithPredicates arg) {
+    final @NonNull Key<?> deserialize(final @NonNull NodeIdentifierWithPredicates arg) {
         return codec.deserializeIdentifier(arg);
     }
 
     @Override
-    public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
+    public final YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         return arg instanceof IdentifiableItem<?, ?> identifiable ? codec.bindingToDom(identifiable)
             : super.serializePathArgument(arg);
     }
 
     @Override
-    public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
+    public final InstanceIdentifier.PathArgument deserializePathArgument(
+        final YangInstanceIdentifier.PathArgument arg) {
         return arg instanceof NodeIdentifierWithPredicates nip ? codec.domToBinding(nip)
             : super.deserializePathArgument(arg);
     }

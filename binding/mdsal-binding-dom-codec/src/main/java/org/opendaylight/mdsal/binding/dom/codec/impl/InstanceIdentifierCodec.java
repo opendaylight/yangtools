@@ -36,7 +36,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
         if (codec == null) {
             return null;
         }
-        if (codec instanceof ListNodeCodecContext && Iterables.getLast(builder) instanceof InstanceIdentifier.Item) {
+        if (codec instanceof ListCodecContext && Iterables.getLast(builder) instanceof InstanceIdentifier.Item) {
             // We ended up in list, but without key, which means it represent list as a whole,
             // which is not binding representable.
             return null;

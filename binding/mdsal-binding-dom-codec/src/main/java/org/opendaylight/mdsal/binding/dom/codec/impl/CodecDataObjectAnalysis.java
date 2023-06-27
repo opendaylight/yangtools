@@ -26,6 +26,9 @@ import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -33,6 +36,7 @@ import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 
 /**
  * Analysis of a {@link DataObject} specialization class. The primary point of this class is to separate out creation
@@ -163,9 +167,21 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
             throw DataContainerCodecContext.childNullException(factory.getRuntimeContext(), childClass,
                 "Node %s does not have child named %s", type, childClass);
         }
-
-        return DataContainerCodecPrototype.from(itemFactory.createItem(childClass, child.statement()),
-            (CompositeRuntimeType) child, factory);
+        final var item = itemFactory.createItem(childClass, child.statement());
+        if (child instanceof ContainerLikeRuntimeType containerLike) {
+            if (child instanceof ContainerRuntimeType container
+                && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isEmpty()) {
+                return new StructuralContainerCodecPrototype(item, container, factory);
+            }
+            return new ContainerLikeCodecPrototype(item, containerLike, factory);
+        } else if (child instanceof ListRuntimeType list) {
+            return list.keyType() != null ? new MapCodecPrototype(item, list, factory)
+                : new ListCodecPrototype(item, list, factory);
+        } else if (child instanceof ChoiceRuntimeType choice) {
+            return new ChoiceCodecPrototype(item, choice, factory);
+        } else {
+            throw new UnsupportedOperationException("Unhandled type " + child);
+        }
     }
 
 

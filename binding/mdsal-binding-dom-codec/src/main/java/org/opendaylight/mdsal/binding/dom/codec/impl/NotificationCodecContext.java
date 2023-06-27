@@ -123,17 +123,17 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
     }
 
     /**
-     * Prototype for a {@code notiofication}. This class only exists because DataContainerCodecContext requires a
+     * Prototype for a {@code notification}. This class only exists because DataContainerCodecContext requires a
      * prototype.
      */
-    private static final class Prototype<D extends DataObject & BaseNotification>
+    static final class Prototype<D extends DataObject & BaseNotification>
             extends DataObjectCodecPrototype<NotificationRuntimeType> {
-        Prototype(final Class<?> cls, final NotificationRuntimeType type, final CodecContextFactory factory) {
+        private Prototype(final Class<?> cls, final NotificationRuntimeType type, final CodecContextFactory factory) {
             super(cls, NodeIdentifier.create(type.statement().argument()), type, factory);
         }
 
         @Override
-        DataContainerCodecContext<?, NotificationRuntimeType> createInstance() {
+        NotificationCodecContext<?> createInstance() {
             throw new UnsupportedOperationException("Should never be invoked");
         }
     }

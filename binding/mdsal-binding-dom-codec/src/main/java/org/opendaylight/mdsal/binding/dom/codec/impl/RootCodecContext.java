@@ -33,9 +33,10 @@ import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.DataRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -64,6 +65,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 final class RootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, BindingRuntimeTypes>
@@ -72,15 +74,15 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
      * Prototype for the root of YANG modeled world. This class only exists because DataContainerCodecContext requires
      * a prototype.
      */
-    private static final class Prototype extends DataObjectCodecPrototype<BindingRuntimeTypes> {
+    static final class Prototype extends DataObjectCodecPrototype<BindingRuntimeTypes> {
         private static final @NonNull NodeIdentifier ROOT_NODEID = NodeIdentifier.create(SchemaContext.NAME);
 
-        Prototype(final CodecContextFactory factory) {
+        private Prototype(final CodecContextFactory factory) {
             super(DataRoot.class, ROOT_NODEID, factory.getRuntimeContext().getTypes(), factory);
         }
 
         @Override
-        DataContainerCodecContext<?, BindingRuntimeTypes> createInstance() {
+        RootCodecContext<?> createInstance() {
             throw new UnsupportedOperationException("Should never be invoked");
         }
     }
@@ -160,11 +162,11 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
                         final ContainerLike schema = getRpcDataSchema(potential, qname);
                         checkArgument(schema != null, "Schema for %s does not define input / output.", potentialQName);
 
-                        final ContainerLikeRuntimeType<?, ?> type = lookup.apply(context.getTypes(), potentialQName)
+                        final var type = lookup.apply(context.getTypes(), potentialQName)
                             .orElseThrow(() -> new IllegalArgumentException("Cannot find runtime type for " + key));
 
-                        return (ContainerLikeCodecContext) DataContainerCodecPrototype.from(key,
-                            (ContainerLikeRuntimeType<?, ?>) type, factory).get();
+                        // FIXME: accurate type
+                        return new ContainerLikeCodecContext(key, type, factory);
                     }
                 }
 
@@ -288,8 +290,17 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
     DataContainerCodecContext<?, ?> createDataTreeChildContext(final Class<? extends DataObject> key) {
         final var childSchema = childNonNull(type().bindingChild(JavaTypeName.create(key)), key,
             "%s is not top-level item.", key);
-        if (childSchema instanceof CompositeRuntimeType composite && childSchema instanceof DataRuntimeType) {
-            return DataContainerCodecPrototype.from(key, composite, factory()).get();
+        if (childSchema instanceof ContainerLikeRuntimeType containerLike) {
+            if (childSchema instanceof ContainerRuntimeType container
+                && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isEmpty()) {
+                return new StructuralContainerCodecContext<>(key, container, factory());
+            }
+            return new ContainerLikeCodecContext<>(key, containerLike, factory());
+        } else if (childSchema instanceof ListRuntimeType list) {
+            return list.keyType() == null ? new ListCodecContext<>(key, list, factory())
+                : MapCodecContext.of(key, list, factory());
+        } else if (childSchema instanceof ChoiceRuntimeType choice) {
+            return new ChoiceCodecContext<>(key, choice, factory());
         }
         throw new IncorrectNestingException("%s is not a valid data tree child of %s", key, this);
     }
@@ -313,10 +324,8 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
         checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments", args.length);
         final ActionRuntimeType schema = factory().getRuntimeContext().getActionDefinition(action);
         return new ActionCodecContext(
-            DataContainerCodecPrototype.from(asClass(args[inputOffset], RpcInput.class), schema.input(),
-                factory()).getDataObject(),
-            DataContainerCodecPrototype.from(asClass(args[outputOffset], RpcOutput.class), schema.output(),
-                factory()).getDataObject());
+            new ContainerLikeCodecContext(asClass(args[inputOffset], RpcInput.class), schema.input(), factory()),
+            new ContainerLikeCodecContext(asClass(args[outputOffset], RpcOutput.class), schema.output(), factory()));
     }
 
     private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
@@ -353,9 +362,8 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
             throw new IllegalArgumentException(caseType + " does not refer to a choice");
         }
 
-        final var choice = DataContainerCodecPrototype.from(choiceClass, choiceType, factory()).get();
-        verify(choice instanceof ChoiceCodecContext);
-        return (ChoiceCodecContext<?>) choice;
+        // FIXME: accurate type!
+        return new ChoiceCodecContext(choiceClass, choiceType, factory());
     }
 
     @Override

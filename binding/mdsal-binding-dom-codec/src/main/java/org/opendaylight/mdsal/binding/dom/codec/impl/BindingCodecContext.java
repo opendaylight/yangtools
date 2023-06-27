@@ -253,7 +253,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
             final @Nullable Collection<InstanceIdentifier.PathArgument> bindingArguments) {
         CodecContext currentNode = root;
-        ListNodeCodecContext<?> currentList = null;
+        ListCodecContext<?> currentList = null;
 
         for (var domArg : dom.getPathArguments()) {
             checkArgument(currentNode instanceof DataContainerCodecContext,
@@ -292,7 +292,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 }
                 currentList = null;
                 currentNode = nextNode;
-            } else if (nextNode instanceof ListNodeCodecContext<?> listNode) {
+            } else if (nextNode instanceof ListCodecContext<?> listNode) {
                 // We enter list, we do not update current Node yet,
                 // since we need to verify
                 currentList = listNode;

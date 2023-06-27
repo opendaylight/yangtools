@@ -35,6 +35,7 @@ import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -98,15 +99,19 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
         implements BindingDataObjectCodecTreeNode<D> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceCodecContext.class);
 
-    private final ImmutableMap<NodeIdentifier, DataContainerCodecPrototype<?>> byYangCaseChild;
     private final ImmutableListMultimap<Class<?>, DataContainerCodecPrototype<?>> ambiguousByCaseChildClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClass;
+    private final ImmutableMap<NodeIdentifier, CaseCodecPrototype> byYangCaseChild;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
     private final Set<Class<?>> ambiguousByCaseChildWarnings;
 
-    ChoiceCodecContext(final DataContainerCodecPrototype<ChoiceRuntimeType> prototype) {
+    ChoiceCodecContext(final Class<D> cls, final ChoiceRuntimeType type, final CodecContextFactory factory) {
+        this(new ChoiceCodecPrototype(Item.of(cls), type, factory));
+    }
+
+    ChoiceCodecContext(final ChoiceCodecPrototype prototype) {
         super(prototype);
-        final var byYangCaseChildBuilder = new HashMap<NodeIdentifier, DataContainerCodecPrototype<?>>();
+        final var byYangCaseChildBuilder = new HashMap<NodeIdentifier, CaseCodecPrototype>();
         final var byClassBuilder = new HashMap<Class<?>, DataContainerCodecPrototype<?>>();
         final var childToCase = SetMultimapBuilder.hashKeys().hashSetValues()
             .<Class<?>, DataContainerCodecPrototype<?>>build();
@@ -245,7 +250,7 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
             return null;
         }
         final var caze = byYangCaseChild.get(first.name());
-        return (D) caze.getDataObject().deserialize(data);
+        return ((CaseNodeCodecContext<D>) caze.get()).deserialize(data);
     }
 
     @Override

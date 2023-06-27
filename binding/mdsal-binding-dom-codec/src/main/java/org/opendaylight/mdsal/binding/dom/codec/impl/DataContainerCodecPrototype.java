@@ -7,18 +7,15 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode.ChildAddressabilitySummary;
-import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -149,22 +146,6 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
         return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
     }
 
-    static <T extends CompositeRuntimeType> DataContainerCodecPrototype<T> from(final Class<?> cls, final T type,
-            final CodecContextFactory factory) {
-        return new DataObjectCodecPrototype<>(cls, createIdentifier(type), type, factory);
-    }
-
-    static <T extends CompositeRuntimeType> DataContainerCodecPrototype<T> from(final Item<?> bindingArg, final T type,
-            final CodecContextFactory factory) {
-        return new DataObjectCodecPrototype<>(bindingArg, createIdentifier(type), type, factory);
-    }
-
-    private static @NonNull NodeIdentifier createIdentifier(final CompositeRuntimeType type) {
-        final Object arg = type.statement().argument();
-        verify(arg instanceof QName, "Unexpected type %s argument %s", type, arg);
-        return NodeIdentifier.create((QName) arg);
-    }
-
     final @NonNull T getType() {
         return type;
     }
@@ -195,13 +176,6 @@ abstract sealed class DataContainerCodecPrototype<T extends RuntimeTypeContainer
     public final DataContainerCodecContext<?, T> get() {
         final var existing = (DataContainerCodecContext<?, T>) INSTANCE.getAcquire(this);
         return existing != null ? existing : loadInstance();
-    }
-
-    @SuppressWarnings("unchecked")
-    final <R extends CompositeRuntimeType> DataObjectCodecContext<?, R> getDataObject() {
-        final var context = get();
-        verify(context instanceof DataObjectCodecContext, "Unexpected instance %s", context);
-        return (DataObjectCodecContext<?, R>) context;
     }
 
     private @NonNull DataContainerCodecContext<?, T> loadInstance() {
