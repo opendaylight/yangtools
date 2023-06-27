@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.binding.contract;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.HashMap;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -62,43 +60,6 @@ class NamingTest {
     }
 
     @Test
-    public void mapEnumAssignedNamesTest() {
-        // Okay identifier
-        assertEqualMapping("__", "__");
-        assertEqualMapping("True", "true");
-        assertEqualMapping("ĽaľahoPapľuhu", "ľaľaho papľuhu");
-
-        // Contains a '$', but that's okay
-        assertEqualMapping("$", "$");
-        assertEqualMapping("$abc", "$abc");
-        assertEqualMapping("A$bc", "a$bc");
-        assertEqualMapping("Ab$c", "ab$c");
-        assertEqualMapping("Abc$", "abc$");
-
-        // Mostly okay, but numbers need to be prefixed
-        assertEqualMapping(List.of("AZ", "_09"), List.of("a-z", "0-9"));
-
-        // Invalid identifier (conflicts with a Java 9 keyword)
-        assertEqualMapping("$_", "_");
-
-        // Invalid characters, fall back to bijection
-        assertEqualMapping("$$2A$", "*");
-        assertEqualMapping("$$2E$", ".");
-        assertEqualMapping("$$2F$", "/");
-        assertEqualMapping("$$3F$", "?");
-        assertEqualMapping("$a$2A$a", "a*a");
-
-        // Conflict, fallback to bijection
-        assertEqualMapping(List.of("_09", "$0$2D$9"), List.of("_09", "0-9"));
-        assertEqualMapping(List.of("$09", "$0$2D$9"), List.of("09", "0-9"));
-        assertEqualMapping(List.of("aZ", "$a$2D$z"), List.of("aZ", "a-z"));
-        assertEqualMapping(List.of("$a2$2E$5", "a25"), List.of("a2.5", "a25"));
-        assertEqualMapping(List.of("$a2$2E$5", "$a2$2D$5"), List.of("a2.5", "a2-5"));
-        assertEqualMapping(List.of("$ľaľaho$20$papľuhu", "$ľaľaho$20$$20$papľuhu"),
-            List.of("ľaľaho papľuhu", "ľaľaho  papľuhu"));
-    }
-
-    @Test
     void yangDataMapping() {
         final var ns = QNameModule.of("unused");
 
@@ -110,19 +71,5 @@ class NamingTest {
         assertEquals("$ľaľaho$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "ľaľaho papľuhu")));
         // latin1 non-compliant - all non-compliant characters encoded
         assertEquals("$привет$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "привет papľuhu")));
-    }
-
-    private static void assertEqualMapping(final String mapped, final String yang) {
-        assertEqualMapping(List.of(mapped), List.of(yang));
-    }
-
-    private static void assertEqualMapping(final List<String> mapped, final List<String> yang) {
-        assertEquals(mapped.size(), yang.size());
-        final var expected = new HashMap<String, String>();
-        for (int i = 0; i < mapped.size(); ++i) {
-            expected.put(yang.get(i), mapped.get(i));
-        }
-
-        assertEquals(expected, Naming.mapEnumAssignedNames(yang));
     }
 }

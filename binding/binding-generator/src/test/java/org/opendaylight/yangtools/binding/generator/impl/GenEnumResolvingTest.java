@@ -129,4 +129,70 @@ class GenEnumResolvingTest {
             "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface",
             operStatus.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString());
     }
+
+    @Test
+    public void testEnumNamesMapping() {
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+            "/enum-test-models/enum-names-mapping@2023-02-17.yang"));
+        assertNotNull(genTypes);
+        assertEquals(4, genTypes.size());
+
+        // ------------------- container test-enums -----------------------
+        final var testEnums = genTypes.get(1).getEnumerations();
+        assertEquals(4, testEnums.size());
+        final var dollarContaining = testEnums.get(0).getValues();
+        assertEquals(5, dollarContaining.size());
+        assertEquals("$", dollarContaining.get(0).getMappedName());
+        assertEquals("$abc", dollarContaining.get(1).getMappedName());
+        assertEquals("A$bc", dollarContaining.get(2).getMappedName());
+        assertEquals("Ab$c", dollarContaining.get(3).getMappedName());
+        assertEquals("Abc$", dollarContaining.get(4).getMappedName());
+        final var prefixRequired = testEnums.get(1).getValues();
+        assertEquals(2, prefixRequired.size());
+        assertEquals("_09", prefixRequired.get(0).getMappedName());
+        assertEquals("_1337LeetPro", prefixRequired.get(1).getMappedName());
+        final var invalidIdentifier = testEnums.get(2).getValues();
+        assertEquals(1, invalidIdentifier.size());
+        assertEquals("$_", invalidIdentifier.get(0).getMappedName());
+        final var invalidChars = testEnums.get(3).getValues();
+        assertEquals(5, invalidChars.size());
+        assertEquals("$$2A$", invalidChars.get(0).getMappedName());
+        assertEquals("$$2E$", invalidChars.get(1).getMappedName());
+        assertEquals("$$2F$", invalidChars.get(2).getMappedName());
+        assertEquals("$$3F$", invalidChars.get(3).getMappedName());
+        assertEquals("$a$2A$a", invalidChars.get(4).getMappedName());
+
+        // ------------------- container okay-identifier -----------------------
+        final var okayIdentifier = genTypes.get(2).getEnumerations();
+        assertEquals(2, okayIdentifier.size());
+        final var underscores = okayIdentifier.get(0).getValues();
+        assertEquals(1, underscores.size());
+        assertEquals("__", underscores.get(0).getMappedName());
+        final var wordsCapitalCamelCase = okayIdentifier.get(1).getValues();
+        assertEquals(2, wordsCapitalCamelCase.size());
+        assertEquals("True", wordsCapitalCamelCase.get(0).getMappedName());
+        assertEquals("ĽaľahoPapľuhu", wordsCapitalCamelCase.get(1).getMappedName());
+
+        // ------------------- container conflicting-names -----------------------
+        final var conflictingNames = genTypes.get(3).getEnumerations();
+        assertEquals(4, conflictingNames.size());
+        final var conflict1 = conflictingNames.get(0).getValues();
+        assertEquals(3, conflict1.size());
+        assertEquals("_09", conflict1.get(0).getMappedName());
+        assertEquals("$09", conflict1.get(1).getMappedName());
+        assertEquals("$0$2D$9", conflict1.get(2).getMappedName());
+        final var conflict2 = conflictingNames.get(1).getValues();
+        assertEquals(2, conflict2.size());
+        assertEquals("aZ", conflict2.get(0).getMappedName());
+        assertEquals("$a$2D$z", conflict2.get(1).getMappedName());
+        final var conflict3 = conflictingNames.get(2).getValues();
+        assertEquals(3, conflict3.size());
+        assertEquals("$a2$2E$5", conflict3.get(0).getMappedName());
+        assertEquals("a25", conflict3.get(1).getMappedName());
+        assertEquals("$a2$2D$5", conflict3.get(2).getMappedName());
+        final var conflict4 = conflictingNames.get(3).getValues();
+        assertEquals(2, conflict4.size());
+        assertEquals("$ľaľaho$20$papľuhu", conflict4.get(0).getMappedName());
+        assertEquals("$ľaľaho$20$$20$papľuhu", conflict4.get(1).getMappedName());
+    }
 }

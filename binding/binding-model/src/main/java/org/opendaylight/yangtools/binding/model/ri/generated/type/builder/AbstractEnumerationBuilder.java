@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -76,13 +80,55 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
     @Override
     public final void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef) {
         final List<EnumPair> enums = enumTypeDef.getValues();
-        final Map<String, String> valueIds = Naming.mapEnumAssignedNames(enums.stream().map(EnumPair::getName)
+        final Map<String, String> valueIds = mapEnumAssignedNames(enums.stream().map(EnumPair::getName)
             .collect(Collectors.toList()));
 
         for (EnumPair enumPair : enums) {
             addValue(enumPair.getName(), valueIds.get(enumPair.getName()), enumPair.getValue(), enumPair.getStatus(),
                 enumPair.getDescription().orElse(null), enumPair.getReference().orElse(null));
         }
+    }
+
+    /**
+     * Returns Java identifiers, conforming to JLS9 Section 3.8 to use for specified YANG assigned names
+     * (RFC7950 Section 9.6.4). This method considers two distinct encodings: one the pre-Fluorine mapping, which is
+     * okay and convenient for sane strings, and an escaping-based bijective mapping which works for all possible
+     * Unicode strings.
+     *
+     * @param assignedNames Collection of assigned names
+     * @return A BiMap keyed by assigned name, with Java identifiers as values
+     * @throws NullPointerException if assignedNames is null or contains null items
+     * @throws IllegalArgumentException if any of the names is empty
+     */
+    private static BiMap<String, String> mapEnumAssignedNames(final Collection<String> assignedNames) {
+        /*
+         * Original mapping assumed strings encountered are identifiers, hence it used getClassName to map the names
+         * and that function is not an injection -- this is evidenced in MDSAL-208 and results in a failure to compile
+         * generated code. If we encounter such a conflict or if the result is not a valid identifier (like '*'), we
+         * abort and switch the mapping schema to mapEnumAssignedName(), which is a bijection.
+         *
+         * Note that assignedNames can contain duplicates, which must not trigger a duplication fallback.
+         */
+        final BiMap<String, String> javaToYang = HashBiMap.create(assignedNames.size());
+        boolean valid = true;
+        for (final String name : assignedNames) {
+            checkArgument(!name.isEmpty());
+            if (!javaToYang.containsValue(name)) {
+                final String mappedName = Naming.getClassName(name);
+                if (!Naming.isValidJavaIdentifier(mappedName) || javaToYang.forcePut(mappedName, name) != null) {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        if (!valid) {
+            // Fall back to bijective mapping
+            javaToYang.clear();
+            for (final String name : assignedNames) {
+                javaToYang.put(Naming.mapEnumAssignedName(name), name);
+            }
+        }
+        return javaToYang.inverse();
     }
 
     abstract static class AbstractPair implements Enumeration.Pair {

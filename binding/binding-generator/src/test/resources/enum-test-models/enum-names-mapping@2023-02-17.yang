@@ -1,0 +1,122 @@
+module enum-names-mapping {
+  yang-version 1;
+  namespace "uri:map:enum:names";
+  prefix mapping;
+
+  description "Created enums serve as subjects for testing the name mapping (yang <--> java)";
+
+  revision 2023-02-17 {
+    description
+    "Enum names mapping test.";
+  }
+
+  container test-enums {
+    leaf dollar-containig {
+      type enumeration {
+        enum $;
+        enum $abc;
+        enum a$bc;
+        enum ab$c;
+        enum abc$;
+      }
+      description
+      "This enumeration contains again non-problematic enum names. Symbol '$' is introduced";
+    }
+
+    leaf prefix-required {
+      type enumeration {
+        enum 0-9;
+        enum 1337_leet_pro;
+      }
+      description
+      "This enumeration contains enums that have names begining with a digit.
+       This is not a big problem when mapping to java identifiers.
+       They just need to be prefixed with valid java-identifier-start";
+    }
+
+    leaf invalid-identifier {
+      type enumeration {
+        enum _;
+      }
+      description
+      "This enumeration contains enum with name that cannot be used as java identifier.
+       It conflicts with Java 9 keyword .. workaround needed";
+    }
+
+    leaf invalid-chars {
+      type enumeration {
+        enum *;
+        enum .;
+        enum /;
+        enum ?;
+        enum a*a;
+      }
+      description
+      "This enumeration contains enums, whose name cannot be used as java identifier
+       because they contain invalid characters";
+    }
+  }
+
+  container okay-identifier {
+    leaf underscores {
+      type enumeration {
+        enum __;
+      }
+    }
+
+    leaf words-capital-camel-case {
+      type enumeration {
+        enum true;
+        enum "ľaľaho papľuhu";
+      }
+    }
+
+    description
+    "Contained enums are okay, no special characters must be added to their java identifiers.
+     Separated words (by chars: ' ', '_', '.', '-', '/') fall in this 'OK' category.";
+  }
+
+  container conflicting-names {
+    description "This container contains leafs that have enumerations that contain enums,
+                 whose names are mapped to the same java-identifiers.
+                 This must be prevented by using a bijective mapping, which produces a less eye-pleasing names.";
+
+    leaf conflict-1 {
+      type enumeration {
+        enum _09;
+        enum 09;
+        enum 0-9;
+      }
+      description
+      "All enums get same identifier on intial mapping. Fallback to bijection.";
+    }
+
+    leaf conflict-2 {
+      type enumeration {
+        enum aZ;
+        enum a-z;
+      }
+      description
+      "Both enums get same identifier on initial mapping. Fallback to bijection.";
+    }
+
+    leaf conflict-3 {
+      type enumeration {
+        enum a2.5;
+        enum a25;
+        enum a2-5;
+      }
+      description
+      "All enums get same identifier on initial mapping. Fallback to bijection.";
+    }
+
+    leaf conflict-4 {
+      type enumeration {
+        enum "ľaľaho papľuhu";
+        enum "ľaľaho  papľuhu";
+      }
+      description
+      "Both enums get same identifier on initial mapping. Fallback to bijection.";
+    }
+  }
+}

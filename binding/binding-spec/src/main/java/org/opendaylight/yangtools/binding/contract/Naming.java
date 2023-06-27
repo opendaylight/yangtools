@@ -13,12 +13,9 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -440,50 +437,6 @@ public final class Naming {
     }
 
     /**
-     * Returns Java identifiers, conforming to JLS9 Section 3.8 to use for specified YANG assigned names
-     * (RFC7950 Section 9.6.4). This method considers two distinct encodings: one the pre-Fluorine mapping, which is
-     * okay and convenient for sane strings, and an escaping-based bijective mapping which works for all possible
-     * Unicode strings.
-     *
-     * @param assignedNames Collection of assigned names
-     * @return A BiMap keyed by assigned name, with Java identifiers as values
-     * @throws NullPointerException if assignedNames is null or contains null items
-     * @throws IllegalArgumentException if any of the names is empty
-     */
-    public static BiMap<String, String> mapEnumAssignedNames(final Collection<String> assignedNames) {
-        /*
-         * Original mapping assumed strings encountered are identifiers, hence it used getClassName to map the names
-         * and that function is not an injection -- this is evidenced in MDSAL-208 and results in a failure to compile
-         * generated code. If we encounter such a conflict or if the result is not a valid identifier (like '*'), we
-         * abort and switch the mapping schema to mapEnumAssignedName(), which is a bijection.
-         *
-         * Note that assignedNames can contain duplicates, which must not trigger a duplication fallback.
-         */
-        final BiMap<String, String> javaToYang = HashBiMap.create(assignedNames.size());
-        boolean valid = true;
-        for (String name : assignedNames) {
-            checkArgument(!name.isEmpty());
-            if (!javaToYang.containsValue(name)) {
-                final String mappedName = getClassName(name);
-                if (!isValidJavaIdentifier(mappedName) || javaToYang.forcePut(mappedName, name) != null) {
-                    valid = false;
-                    break;
-                }
-            }
-        }
-
-        if (!valid) {
-            // Fall back to bijective mapping
-            javaToYang.clear();
-            for (String name : assignedNames) {
-                javaToYang.put(mapEnumAssignedName(name), name);
-            }
-        }
-
-        return javaToYang.inverse();
-    }
-
-    /**
      * Builds class name representing yang-data template name which is not yang identifier compliant.
      *
      * @param templateName template name
@@ -499,13 +452,13 @@ public final class Naming {
     // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-3.html#jls-3.8
     // TODO: we are being conservative here, but should differentiate TypeIdentifier and UnqualifiedMethodIdentifier,
     //       which have different exclusions
-    private static boolean isValidJavaIdentifier(final String str) {
+    public static boolean isValidJavaIdentifier(final String str) {
         return !str.isEmpty() && !JAVA_RESERVED_WORDS.contains(str)
                 && Character.isJavaIdentifierStart(str.codePointAt(0))
                 && str.codePoints().skip(1).allMatch(Character::isJavaIdentifierPart);
     }
 
-    private static String mapEnumAssignedName(final String assignedName) {
+    public static String mapEnumAssignedName(final String assignedName) {
         checkArgument(!assignedName.isEmpty());
 
         // Mapping rules:
