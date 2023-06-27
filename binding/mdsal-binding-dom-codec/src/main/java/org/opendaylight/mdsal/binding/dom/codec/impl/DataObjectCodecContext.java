@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 @Beta
 public abstract sealed class DataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends AbstractDataObjectCodecContext<D, T> implements BindingDataObjectCodecTreeNode<D>
-        permits CaseNodeCodecContext, ContainerNodeCodecContext, ListNodeCodecContext, NotificationCodecContext {
+        permits CaseNodeCodecContext, ContainerLikeCodecContext, ListNodeCodecContext, NotificationCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
 
     private static final VarHandle MISMATCHED_AUGMENTED;

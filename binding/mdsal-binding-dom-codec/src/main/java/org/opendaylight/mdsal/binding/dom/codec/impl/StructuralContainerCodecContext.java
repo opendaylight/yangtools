@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 
 /**
- * A {@link ContainerNodeCodecContext} specialized for {@code container}s which do not have a presence statement.
+ * A {@link ContainerLikeCodecContext} specialized for {@code container}s which do not have a presence statement.
  */
-final class StructuralContainerCodecContext<D extends DataObject> extends ContainerNodeCodecContext<D> {
+final class StructuralContainerCodecContext<D extends DataObject> extends ContainerLikeCodecContext<D> {
     private static final VarHandle EMPTY_OBJECT;
 
     static {

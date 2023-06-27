@@ -125,10 +125,10 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
             }
         });
 
-    private final LoadingCache<Class<?>, ContainerNodeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder()
+    private final LoadingCache<Class<?>, ContainerLikeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder()
         .build(new CacheLoader<>() {
             @Override
-            public ContainerNodeCodecContext<?> load(final Class<?> key) {
+            public ContainerLikeCodecContext<?> load(final Class<?> key) {
                 final BiFunction<BindingRuntimeTypes, QName, Optional<? extends ContainerLikeRuntimeType<?, ?>>> lookup;
                 if (RpcInput.class.isAssignableFrom(key)) {
                     lookup = BindingRuntimeTypes::findRpcInput;
@@ -163,7 +163,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
                         final ContainerLikeRuntimeType<?, ?> type = lookup.apply(context.getTypes(), potentialQName)
                             .orElseThrow(() -> new IllegalArgumentException("Cannot find runtime type for " + key));
 
-                        return (ContainerNodeCodecContext) DataContainerCodecPrototype.from(key,
+                        return (ContainerLikeCodecContext) DataContainerCodecPrototype.from(key,
                             (ContainerLikeRuntimeType<?, ?>) type, factory).get();
                     }
                 }
@@ -277,7 +277,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
         return getOrRethrow(notificationsByClass, notification);
     }
 
-    ContainerNodeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
+    ContainerLikeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
         return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
     }
 

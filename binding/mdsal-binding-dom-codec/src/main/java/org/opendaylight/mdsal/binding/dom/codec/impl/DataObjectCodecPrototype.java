@@ -52,7 +52,7 @@ non-sealed class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extend
                     .isEmpty()) {
                 return new StructuralContainerCodecContext(this);
             }
-            return new ContainerNodeCodecContext(this);
+            return new ContainerLikeCodecContext(this);
         } else if (type instanceof ListRuntimeType) {
             return KeyAware.class.isAssignableFrom(getBindingClass())
                     ? KeyedListNodeCodecContext.create((DataContainerCodecPrototype<ListRuntimeType>) this)

@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
  * Marker interface for codecs dealing with RPC input being potentially unmapped. We use this interface to mark both
- * {@link UnmappedRpcInputCodec} and {@link ContainerNodeCodecContext}, which results in bimorphic invocation in
+ * {@link UnmappedRpcInputCodec} and {@link ContainerLikeCodecContext}, which results in bimorphic invocation in
  * {@link BindingNormalizedNodeSerializer#fromNormalizedNodeRpcData()}.
  *
  * <p>
