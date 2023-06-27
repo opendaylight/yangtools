@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
@@ -25,56 +24,12 @@ import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.yangtools.yang.binding.OpaqueData;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
-import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract sealed class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNodeCodecContext
-        implements BindingOpaqueObjectCodecTreeNode<T> {
-    static final class Anyxml<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
-        Anyxml(final AnyxmlSchemaNode schema, final String getterName, final Class<T> bindingClass,
-                final BindingClassLoader loader) {
-            super(schema, getterName, bindingClass, loader);
-        }
-
-        @Override
-        ForeignDataNode<?> serializedData(final OpaqueData<?> opaqueData) {
-            final Class<?> model = opaqueData.getObjectModel();
-            verify(DOMSource.class.isAssignableFrom(model), "Cannot just yet support object model %s", model);
-            return Builders.anyXmlBuilder().withNodeIdentifier(getDomPathArgument())
-                    .withValue((DOMSource) opaqueData.getData()).build();
-        }
-
-        @Override
-        T deserialize(final ForeignDataNode<?> foreignData) {
-            // Streaming cannot support anything but DOMSource-based AnyxmlNodes.
-            verify(foreignData instanceof DOMSourceAnyxmlNode, "Variable node %s not supported yet", foreignData);
-            return super.deserialize(foreignData);
-        }
-    }
-
-    static final class Anydata<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
-        Anydata(final AnydataSchemaNode schema, final String getterName, final Class<T> bindingClass,
-                final BindingClassLoader loader) {
-            super(schema, getterName, bindingClass, loader);
-        }
-
-        @Override
-        AnydataNode<?> serializedData(final OpaqueData<?> opaqueData) {
-            return buildAnydata(opaqueData);
-        }
-
-        private <M> @NonNull AnydataNode<M> buildAnydata(final OpaqueData<M> opaqueData) {
-            return Builders.anydataBuilder(opaqueData.getObjectModel()).withNodeIdentifier(getDomPathArgument())
-                    .withValue(opaqueData.getData()).build();
-        }
-    }
-
+abstract sealed class AbstractOpaqueCodecContext<T extends OpaqueObject<T>> extends ValueNodeCodecContext
+        implements BindingOpaqueObjectCodecTreeNode<T> permits AnydataCodecContext, AnyxmlCodecContext {
     private static final MethodType CTOR_LOOKUP_TYPE = MethodType.methodType(void.class, OpaqueData.class);
     private static final MethodType CTOR_INVOKE_TYPE = MethodType.methodType(OpaqueObject.class, OpaqueData.class);
     @SuppressWarnings("rawtypes")
@@ -95,14 +50,14 @@ abstract sealed class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends 
         @Override
         protected Object deserializeImpl(final Object input) {
             checkArgument(input instanceof NormalizedNode, "Unexpected input %s", input);
-            return OpaqueNodeCodecContext.this.deserializeObject((NormalizedNode) input);
+            return deserializeObject((NormalizedNode) input);
         }
     };
 
     private final MethodHandle proxyConstructor;
     private final @NonNull Class<T> bindingClass;
 
-    OpaqueNodeCodecContext(final DataSchemaNode schema, final String getterName, final Class<T> bindingClass,
+    AbstractOpaqueCodecContext(final DataSchemaNode schema, final String getterName, final Class<T> bindingClass,
             final BindingClassLoader loader) {
         super(schema, getterName, null);
         this.bindingClass = requireNonNull(bindingClass);

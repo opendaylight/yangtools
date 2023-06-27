@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * as LeafNodes and LeafSetNodes.
  */
 abstract sealed class ValueNodeCodecContext extends CodecContext implements CodecContextSupplier
-        permits OpaqueNodeCodecContext, ValueNodeCodecContext.WithCodec {
+        permits AbstractOpaqueCodecContext, ValueNodeCodecContext.WithCodec {
     abstract static sealed class WithCodec extends ValueNodeCodecContext
             permits LeafNodeCodecContext, LeafSetNodeCodecContext {
         private final @NonNull ValueCodec<Object, Object> valueCodec;

@@ -405,11 +405,11 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     final ValueCodec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
                     valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName());
                 } else if (schema instanceof AnyxmlSchemaNode anyxmlSchema) {
-                    valueNode = new OpaqueNodeCodecContext.Anyxml<>(anyxmlSchema, method.getName(),
-                            opaqueReturnType(method), loader);
+                    valueNode = new AnyxmlCodecContext<>(anyxmlSchema, method.getName(), opaqueReturnType(method),
+                        loader);
                 } else if (schema instanceof AnydataSchemaNode anydataSchema) {
-                    valueNode = new OpaqueNodeCodecContext.Anydata<>(anydataSchema, method.getName(),
-                            opaqueReturnType(method), loader);
+                    valueNode = new AnydataCodecContext<>(anydataSchema, method.getName(), opaqueReturnType(method),
+                        loader);
                 } else {
                     verify(schema == null, "Unhandled schema %s for method %s", schema, method);
                     // We do not have schema for leaf, so we will ignore it (e.g. getClass).
