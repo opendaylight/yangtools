@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.KeyedListAction;
 import org.opendaylight.yangtools.yang.binding.Notification;
@@ -70,23 +69,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 
 final class RootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, BindingRuntimeTypes>
         implements BindingDataObjectCodecTreeNode<D> {
-    /**
-     * Prototype for the root of YANG modeled world. This class only exists because DataContainerCodecContext requires
-     * a prototype.
-     */
-    static final class Prototype extends DataObjectCodecPrototype<BindingRuntimeTypes> {
-        private static final @NonNull NodeIdentifier ROOT_NODEID = NodeIdentifier.create(SchemaContext.NAME);
-
-        private Prototype(final CodecContextFactory factory) {
-            super(DataRoot.class, ROOT_NODEID, factory.getRuntimeContext().getTypes(), factory);
-        }
-
-        @Override
-        RootCodecContext<?> createInstance() {
-            throw new UnsupportedOperationException("Should never be invoked");
-        }
-    }
-
     private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
@@ -140,7 +122,6 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
                     throw new IllegalArgumentException(key + " does not represent an RPC container");
                 }
 
-                final CodecContextFactory factory = factory();
                 final BindingRuntimeContext context = factory.getRuntimeContext();
 
                 final QName qname = BindingReflections.findQName(key);
@@ -225,25 +206,51 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
             }
         });
 
+    private static final @NonNull NodeIdentifier ROOT_NODEID = NodeIdentifier.create(SchemaContext.NAME);
+
+    private final @NonNull CodecContextFactory factory;
+
     RootCodecContext(final CodecContextFactory factory) {
-        super(new Prototype(factory));
+        super(factory.getRuntimeContext().getTypes());
+        this.factory = requireNonNull(factory);
     }
 
     @Override
     public WithStatus getSchema() {
-        return type().getEffectiveModelContext();
+        return factory.getRuntimeContext().getEffectiveModelContext();
+    }
+
+    @Override
+    public Class<D> getBindingClass() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected NodeIdentifier getDomPathArgument() {
+        // FIXME: this is not right
+        return ROOT_NODEID;
+    }
+
+    @Override
+    protected CodecContextFactory factory() {
+        return factory;
+    }
+
+    @Override
+    protected BindingRuntimeTypes type() {
+        return factory.getRuntimeContext().getTypes();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
+    public <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
         final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationImpl(childClass)
             : getOrRethrow(childrenByClass, childClass);
-        return (DataContainerCodecContext<C, ?>) result;
+        return (CommonDataObjectCodecContext<C, ?>) result;
     }
 
     @Override
-    public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
+    public <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
         // FIXME: implement this
         throw new UnsupportedOperationException("Not supported");
     }
@@ -384,7 +391,7 @@ final class RootCodecContext<D extends DataObject> extends DataContainerCodecCon
     }
 
     @Override
-    public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
+    public CommonDataObjectCodecContext<?, ?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
             final List<PathArgument> builder) {
         final var caseType = arg.getCaseType();
         if (caseType.isPresent()) {

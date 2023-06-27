@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-final class AugmentationCodecPrototype extends DataContainerCodecPrototype<AugmentRuntimeType> {
+final class AugmentationCodecPrototype extends CommonDataObjectCodecPrototype<AugmentRuntimeType> {
     private final @NonNull ImmutableSet<NodeIdentifier> childArgs;
 
     @SuppressWarnings("unchecked")

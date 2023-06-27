@@ -44,15 +44,15 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  * public is that it needs to be accessible by code generated at runtime.
  */
 public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
-        extends DataContainerCodecContext<D, T>
+        extends CommonDataObjectCodecContext<D, T>
         permits AugmentationCodecContext, DataObjectCodecContext {
-    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
-    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
+    private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byBindingArgClass;
+    private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final MethodHandle proxyConstructor;
 
-    AbstractDataObjectCodecContext(final DataContainerCodecPrototype<T> prototype,
+    AbstractDataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype,
             final CodecDataObjectAnalysis<T> analysis) {
         super(prototype);
         byBindingArgClass = analysis.byBindingArgClass;
@@ -69,24 +69,24 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     }
 
     @Override
-    public final <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
+    public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
         return childNonNull(streamChild(childClass), childClass,
             "Child %s is not valid child of %s", getBindingClass(), childClass);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
+    public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
         final var childProto = streamChildPrototype(childClass);
-        return childProto == null ? null : (DataContainerCodecContext<C, ?>) childProto.get();
+        return childProto == null ? null : (CommonDataObjectCodecContext<C, ?>) childProto.get();
     }
 
-    @Nullable DataContainerCodecPrototype<?> streamChildPrototype(final @NonNull Class<?> childClass) {
+    @Nullable CommonDataObjectCodecPrototype<?> streamChildPrototype(final @NonNull Class<?> childClass) {
         return byStreamClass.get(childClass);
     }
 
     @Override
-    public final DataContainerCodecContext<?, ?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
+    public final CommonDataObjectCodecContext<?, ?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
             final List<PathArgument> builder) {
         final var argType = arg.getType();
         final var context = childNonNull(pathChildPrototype(argType), argType,
@@ -112,7 +112,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         return context;
     }
 
-    @Nullable DataContainerCodecPrototype<?> pathChildPrototype(final @NonNull Class<? extends DataObject> argType) {
+    @Nullable CommonDataObjectCodecPrototype<?> pathChildPrototype(final @NonNull Class<? extends DataObject> argType) {
         return byBindingArgClass.get(argType);
     }
 

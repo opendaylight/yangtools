@@ -26,10 +26,10 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataContainerCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
-import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrategyException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
@@ -37,6 +37,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassExcepti
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -48,16 +49,25 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract sealed class DataContainerCodecContext<D extends DataObject, T extends RuntimeTypeContainer>
-        extends CodecContext implements CommonDataObjectCodecTreeNode<D>
-        permits AbstractDataObjectCodecContext, ChoiceCodecContext, RootCodecContext {
+abstract sealed class DataContainerCodecContext<D extends BindingObject & DataContainer, T extends RuntimeTypeContainer>
+        extends CodecContext implements BindingDataContainerCodecTreeNode<D>
+        permits CommonDataObjectCodecContext, RootCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);
     private static final VarHandle EVENT_STREAM_SERIALIZER;
 
@@ -70,37 +80,27 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
         }
     }
 
-    final @NonNull DataContainerCodecPrototype<T> prototype;
+    private final @NonNull ChildAddressabilitySummary childAddressabilitySummary;
 
     // Accessed via a VarHandle
     @SuppressWarnings("unused")
     private volatile DataContainerSerializer eventStreamSerializer;
 
-    DataContainerCodecContext(final DataContainerCodecPrototype<T> prototype) {
-        this.prototype = requireNonNull(prototype);
+    DataContainerCodecContext(final T type) {
+        childAddressabilitySummary = type instanceof RuntimeType runtimeType
+            ? computeChildAddressabilitySummary(runtimeType.statement())
+                // BindingRuntimeTypes, does not matter
+                : ChildAddressabilitySummary.MIXED;
     }
 
     @Override
     public final ChildAddressabilitySummary getChildAddressabilitySummary() {
-        return prototype.getChildAddressabilitySummary();
+        return childAddressabilitySummary;
     }
 
-    protected final QNameModule namespace() {
-        return prototype.getNamespace();
-    }
+    protected abstract @NonNull CodecContextFactory factory();
 
-    protected final CodecContextFactory factory() {
-        return prototype.getFactory();
-    }
-
-    protected final @NonNull T type() {
-        return prototype.getType();
-    }
-
-    @Override
-    protected NodeIdentifier getDomPathArgument() {
-        return prototype.getYangArg();
-    }
+    protected abstract @NonNull T type();
 
     /**
      * Returns nested node context using supplied YANG Instance Identifier.
@@ -121,7 +121,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
     @Override
-    public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
+    public CommonDataObjectCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         final var child = getStreamChild(arg.getType());
         child.addYangPathArgument(arg, builder);
@@ -147,25 +147,8 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
         }
     }
 
-    /**
-     * Returns deserialized Binding Path Argument from YANG instance identifier.
-     */
-    protected PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
-        return bindingArg();
-    }
-
-    protected final PathArgument bindingArg() {
-        return prototype.getBindingArg();
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    public final Class<D> getBindingClass() {
-        return Class.class.cast(prototype.getBindingClass());
-    }
-
-    @Override
-    public abstract <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(Class<C> childClass);
+    public abstract <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(Class<C> childClass);
 
     /**
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case, one
@@ -175,11 +158,11 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
      * @return Context of child or Optional.empty is supplied class is not applicable in context.
      */
     @Override
-    public abstract <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(Class<C> childClass);
+    public abstract <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(Class<C> childClass);
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [" + prototype.getBindingClass() + "]";
+        return getClass().getSimpleName() + " [" + getBindingClass() + "]";
     }
 
     static final <T extends DataObject, C extends DataContainerCodecContext<T, ?> & BindingNormalizedNodeCodec<T>>
@@ -414,5 +397,81 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
         final Optional<Class<Augmentable<?>>> opt = ClassLoaderUtils.findFirstGenericArgument(augmentation,
             Augmentation.class);
         return opt.orElse(null);
+    }
+
+
+
+    private static @NonNull ChildAddressabilitySummary computeChildAddressabilitySummary(final Object nodeSchema) {
+        // FIXME: rework this to work on EffectiveStatements
+        if (nodeSchema instanceof DataNodeContainer contaner) {
+            boolean haveAddressable = false;
+            boolean haveUnaddressable = false;
+            for (DataSchemaNode child : contaner.getChildNodes()) {
+                if (child instanceof ContainerSchemaNode || child instanceof AugmentationSchemaNode) {
+                    haveAddressable = true;
+                } else if (child instanceof ListSchemaNode list) {
+                    if (list.getKeyDefinition().isEmpty()) {
+                        haveUnaddressable = true;
+                    } else {
+                        haveAddressable = true;
+                    }
+                } else if (child instanceof AnydataSchemaNode || child instanceof AnyxmlSchemaNode
+                        || child instanceof TypedDataSchemaNode) {
+                    haveUnaddressable = true;
+                } else if (child instanceof ChoiceSchemaNode choice) {
+                    switch (computeChildAddressabilitySummary(choice)) {
+                        case ADDRESSABLE -> haveAddressable = true;
+                        case UNADDRESSABLE -> haveUnaddressable = true;
+                        case MIXED -> {
+                            haveAddressable = true;
+                            haveUnaddressable = true;
+                        }
+                        default -> throw new IllegalStateException("Unhandled accessibility summary for " + child);
+                    }
+                } else {
+                    LOG.warn("Unhandled child node {}", child);
+                }
+            }
+
+            if (!haveAddressable) {
+                // Empty or all are unaddressable
+                return ChildAddressabilitySummary.UNADDRESSABLE;
+            }
+
+            return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
+        } else if (nodeSchema instanceof ChoiceSchemaNode choice) {
+            return computeChildAddressabilitySummary(choice);
+        }
+
+        // No child nodes possible: return unaddressable
+        return ChildAddressabilitySummary.UNADDRESSABLE;
+    }
+
+    private static @NonNull ChildAddressabilitySummary computeChildAddressabilitySummary(
+            final ChoiceSchemaNode choice) {
+        boolean haveAddressable = false;
+        boolean haveUnaddressable = false;
+        for (CaseSchemaNode child : choice.getCases()) {
+            switch (computeChildAddressabilitySummary(child)) {
+                case ADDRESSABLE:
+                    haveAddressable = true;
+                    break;
+                case UNADDRESSABLE:
+                    haveUnaddressable = true;
+                    break;
+                case MIXED:
+                    // A child is mixed, which means we are mixed, too
+                    return ChildAddressabilitySummary.MIXED;
+                default:
+                    throw new IllegalStateException("Unhandled accessibility summary for " + child);
+            }
+        }
+
+        if (!haveAddressable) {
+            // Empty or all are unaddressable
+            return ChildAddressabilitySummary.UNADDRESSABLE;
+        }
+
+        return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
     }
 }

@@ -69,21 +69,21 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     // Note this the content of this field depends only of invariants expressed as this class's fields or
     // BindingRuntimeContext. It is only accessed via MISMATCHED_AUGMENTED above.
     @SuppressWarnings("unused")
-    private volatile ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
+    private volatile ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
 
-    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
+    DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype) {
         this(prototype, CodecItemFactory.of());
     }
 
-    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype, final CodecItemFactory itemFactory) {
+    DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype, final CodecItemFactory itemFactory) {
         this(prototype, new CodecDataObjectAnalysis<>(prototype, itemFactory, null));
     }
 
-    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype, final Method keyMethod) {
+    DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype, final Method keyMethod) {
         this(prototype, new CodecDataObjectAnalysis<>(prototype, CodecItemFactory.of(), keyMethod));
     }
 
-    private DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype,
+    private DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype,
             final CodecDataObjectAnalysis<T> analysis) {
         super(prototype, analysis);
 
@@ -108,13 +108,13 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     @Override
-    final DataContainerCodecPrototype<?> pathChildPrototype(final Class<? extends DataObject> argType) {
+    final CommonDataObjectCodecPrototype<?> pathChildPrototype(final Class<? extends DataObject> argType) {
         final var child = super.pathChildPrototype(argType);
         return child != null ? child : augmentToPrototype.get(argType);
     }
 
     @Override
-    final DataContainerCodecPrototype<?> streamChildPrototype(final Class<?> childClass) {
+    final CommonDataObjectCodecPrototype<?> streamChildPrototype(final Class<?> childClass) {
         final var child = super.streamChildPrototype(childClass);
         if (child == null && Augmentation.class.isAssignableFrom(childClass)) {
             return getAugmentationProtoByClass(childClass);
@@ -175,7 +175,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         var expected = oldMismatched;
         while (true) {
             final var newMismatched =
-                ImmutableMap.<Class<?>, DataContainerCodecPrototype<?>>builderWithExpectedSize(expected.size() + 1)
+                ImmutableMap.<Class<?>, CommonDataObjectCodecPrototype<?>>builderWithExpectedSize(expected.size() + 1)
                     .putAll(expected)
                     .put(childClass, prototype)
                     .build();

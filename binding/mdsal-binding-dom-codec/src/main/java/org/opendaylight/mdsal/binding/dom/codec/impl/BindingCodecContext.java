@@ -112,8 +112,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         BYTECODE_DIRECTORY = Strings.isNullOrEmpty(dir) ? null : new File(dir);
     }
 
-    private final LoadingCache<Class<?>, DataContainerStreamer<?>> streamers = CacheBuilder.newBuilder().build(
-        new CacheLoader<>() {
+    private final LoadingCache<Class<?>, DataContainerStreamer<?>> streamers = CacheBuilder.newBuilder()
+        .build(new CacheLoader<>() {
             @Override
             public DataContainerStreamer<?> load(final Class<?> key) throws ReflectiveOperationException {
                 final var streamer = DataContainerStreamerGenerator.generateStreamer(loader, BindingCodecContext.this,
@@ -122,8 +122,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 return (DataContainerStreamer<?>) instance.get(null);
             }
         });
-    private final LoadingCache<Class<?>, DataContainerSerializer> serializers = CacheBuilder.newBuilder().build(
-        new CacheLoader<>() {
+    private final LoadingCache<Class<?>, DataContainerSerializer> serializers = CacheBuilder.newBuilder()
+        .build(new CacheLoader<>() {
             @Override
             public DataContainerSerializer load(final Class<?> key) throws ExecutionException {
                 return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
@@ -227,12 +227,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             final List<YangInstanceIdentifier.PathArgument> builder) {
         DataContainerCodecContext<?, ?> current = root;
         for (var bindingArg : binding.getPathArguments()) {
-            final var next = current.bindingPathArgumentChild(bindingArg, builder);
-            if (next == null) {
-                throw new IllegalArgumentException("%s is not valid: parent %s does not have a child %s".formatted(
-                    binding, current.bindingArg(), bindingArg));
-            }
-            current = next;
+            current = current.bindingPathArgumentChild(bindingArg, builder);
         }
         return current;
     }
@@ -299,7 +294,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 // We do not add path argument for choice, since
                 // it is not supported by binding instance identifier.
                 currentNode = nextNode;
-            } else if (nextNode instanceof DataContainerCodecContext<?, ?> containerNode) {
+            } else if (nextNode instanceof CommonDataObjectCodecContext<?, ?> containerNode) {
                 if (bindingArguments != null) {
                     bindingArguments.add(containerNode.getBindingPathArgument(domArg));
                 }

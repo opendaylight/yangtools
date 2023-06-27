@@ -49,15 +49,15 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         AbstractDataObjectCodecContext.class, DataContainerNode.class);
 
-    final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
-    final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
+    final @NonNull ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byStreamClass;
+    final @NonNull ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byBindingArgClass;
     final @NonNull ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;
     final @NonNull ImmutableMap<String, ValueNodeCodecContext> leafNodes;
     final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
     final @NonNull List<AugmentRuntimeType> possibleAugmentations;
     final @NonNull MethodHandle proxyConstructor;
 
-    CodecDataObjectAnalysis(final DataContainerCodecPrototype<R> prototype, final CodecItemFactory itemFactory,
+    CodecDataObjectAnalysis(final CommonDataObjectCodecPrototype<R> prototype, final CodecItemFactory itemFactory,
             final Method keyMethod) {
         // Preliminaries from prototype
         @SuppressWarnings("unchecked")
@@ -80,8 +80,8 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
         }
         leafNodes = leafBuilder.build();
 
-        final var byBindingArgClassBuilder = new HashMap<Class<?>, DataContainerCodecPrototype<?>>();
-        final var byStreamClassBuilder = new HashMap<Class<?>, DataContainerCodecPrototype<?>>();
+        final var byBindingArgClassBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
+        final var byStreamClassBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
         final var daoProperties = new HashMap<Class<?>, PropertyInfo>();
         for (var childDataObj : clsToMethod.entrySet()) {
             final var method = childDataObj.getValue();
@@ -159,7 +159,7 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
         proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
     }
 
-    private static @NonNull DataContainerCodecPrototype<?> getChildPrototype(final CompositeRuntimeType type,
+    private static @NonNull CommonDataObjectCodecPrototype<?> getChildPrototype(final CompositeRuntimeType type,
             final CodecContextFactory factory, final CodecItemFactory itemFactory,
             final Class<? extends DataContainer> childClass) {
         final var child = type.bindingChild(JavaTypeName.create(childClass));

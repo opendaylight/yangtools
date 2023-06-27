@@ -95,14 +95,14 @@ import org.slf4j.LoggerFactory;
  * ambiguous reference and issue warn once when they are encountered -- tracking warning information in
  * {@link #ambiguousByCaseChildWarnings}.
  */
-final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceRuntimeType>
+final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCodecContext<D, ChoiceRuntimeType>
         implements BindingDataObjectCodecTreeNode<D> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceCodecContext.class);
 
-    private final ImmutableListMultimap<Class<?>, DataContainerCodecPrototype<?>> ambiguousByCaseChildClass;
-    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClass;
+    private final ImmutableListMultimap<Class<?>, CommonDataObjectCodecPrototype<?>> ambiguousByCaseChildClass;
+    private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byCaseChildClass;
     private final ImmutableMap<NodeIdentifier, CaseCodecPrototype> byYangCaseChild;
-    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
+    private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byClass;
     private final Set<Class<?>> ambiguousByCaseChildWarnings;
 
     ChoiceCodecContext(final Class<D> cls, final ChoiceRuntimeType type, final CodecContextFactory factory) {
@@ -112,9 +112,9 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
     ChoiceCodecContext(final ChoiceCodecPrototype prototype) {
         super(prototype);
         final var byYangCaseChildBuilder = new HashMap<NodeIdentifier, CaseCodecPrototype>();
-        final var byClassBuilder = new HashMap<Class<?>, DataContainerCodecPrototype<?>>();
+        final var byClassBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
         final var childToCase = SetMultimapBuilder.hashKeys().hashSetValues()
-            .<Class<?>, DataContainerCodecPrototype<?>>build();
+            .<Class<?>, CommonDataObjectCodecPrototype<?>>build();
 
         // Load case statements valid in this choice and keep track of their names
         final var choiceType = prototype.getType();
@@ -142,8 +142,8 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
         byYangCaseChild = ImmutableMap.copyOf(byYangCaseChildBuilder);
 
         // Move unambiguous child->case mappings to byCaseChildClass, removing them from childToCase
-        final var ambiguousByCaseBuilder = ImmutableListMultimap.<Class<?>, DataContainerCodecPrototype<?>>builder();
-        final var unambiguousByCaseBuilder = ImmutableMap.<Class<?>, DataContainerCodecPrototype<?>>builder();
+        final var ambiguousByCaseBuilder = ImmutableListMultimap.<Class<?>, CommonDataObjectCodecPrototype<?>>builder();
+        final var unambiguousByCaseBuilder = ImmutableMap.<Class<?>, CommonDataObjectCodecPrototype<?>>builder();
         for (var entry : Multimaps.asMap(childToCase).entrySet()) {
             final var cases = entry.getValue();
             if (cases.size() != 1) {
@@ -170,7 +170,7 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
          * This is required due property of binding specification, that if choice is in grouping schema path location is
          * lost, and users may use incorrect case class using copy builders.
          */
-        final var bySubstitutionBuilder = new HashMap<Class<?>, DataContainerCodecPrototype<?>>();
+        final var bySubstitutionBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
         final var context = factory.getRuntimeContext();
         for (var caseType : context.getTypes().allCaseChildren(choiceType)) {
             final var caseName = caseType.getIdentifier();
@@ -209,16 +209,16 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
     }
 
     @Override
-    public <C extends DataObject> DataContainerCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
+    public <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
         return childNonNull(streamChild(childClass), childClass,
             "Supplied class %s is not valid case in %s", childClass, bindingArg());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
+    public <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
         final var child = byClass.get(childClass);
-        return child == null ? null : (DataContainerCodecContext<C, ?>) child.get();
+        return child == null ? null : (CommonDataObjectCodecContext<C, ?>) child.get();
     }
 
     Iterable<Class<?>> getCaseChildrenClasses() {
@@ -227,7 +227,7 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
 
     @Override
     public CodecContext yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
-        final DataContainerCodecPrototype<?> cazeProto;
+        final CommonDataObjectCodecPrototype<?> cazeProto;
         if (arg instanceof NodeIdentifierWithPredicates) {
             cazeProto = byYangCaseChild.get(new NodeIdentifier(arg.getNodeType()));
         } else {
@@ -295,7 +295,7 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
                         not guaranteed to be stable and is subject to variations based on runtime circumstances. \
                         Please see the stack trace for hints about the source of ambiguity.""",
                         type, bindingArg(), result.getBindingClass(),
-                        Lists.transform(inexact, DataContainerCodecPrototype::getBindingClass), new Throwable());
+                        Lists.transform(inexact, CommonDataObjectCodecPrototype::getBindingClass), new Throwable());
                 }
             }
         }
