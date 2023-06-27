@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
@@ -780,7 +781,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                             }
 
                             // ... otherwise generate this weird property name
-                            propSource = Naming.getUnionLeafrefMemberName(builder.getName(), baseType.getName());
+                            propSource = getUnionLeafrefMemberName(builder.getName(), baseType.getName());
                         }
                     }
 
@@ -834,6 +835,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         makeSerializable(builder);
         return builder.build();
+    }
+
+    // FIXME: this is legacy union/leafref property handling. The resulting value is *not* normalized for use as a
+    //        property.
+    private static @NonNull String getUnionLeafrefMemberName(final String unionClassSimpleName,
+        final String referencedClassSimpleName) {
+        return requireNonNull(referencedClassSimpleName) + requireNonNull(unionClassSimpleName) + "Value";
     }
 
     // FIXME: we should not rely on TypeDefinition
